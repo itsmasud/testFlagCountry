@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 
 import org.apache.http.HttpConnection;
 
@@ -24,7 +25,8 @@ public class Ws {
 	}
 
 	public Result httpRead(String method, String path, String options,
-			String contentType) throws MalformedURLException, IOException {
+			String contentType) throws MalformedURLException, IOException,
+			ParseException {
 		if (!path.startsWith("/"))
 			path = "/" + path;
 
@@ -52,23 +54,23 @@ public class Ws {
 	}
 
 	public Result httpGet(String path) throws MalformedURLException,
-			IOException {
+			IOException, ParseException {
 		return httpGet(path, null, null);
 	}
 
 	public Result httpGet(String path, String options, String contentType)
-			throws MalformedURLException, IOException {
+			throws MalformedURLException, IOException, ParseException {
 		return httpRead("GET", path, options, contentType);
 	}
 
 	public Result httpDelete(String path, String options, String contentType)
-			throws MalformedURLException, IOException {
+			throws MalformedURLException, IOException, ParseException {
 		return httpRead("DELETE", path, options, contentType);
 	}
 
 	public Result httpWrite(String method, String path, String options,
 			byte[] data, String contentType) throws MalformedURLException,
-			IOException {
+			IOException, ParseException {
 
 		if (!path.startsWith("/"))
 			path = "/" + path;
@@ -101,12 +103,14 @@ public class Ws {
 	}
 
 	public Result httpPost(String path, String options, byte[] data,
-			String contentType) throws MalformedURLException, IOException {
+			String contentType) throws MalformedURLException, IOException,
+			ParseException {
 		return httpWrite("POST", path, options, data, contentType);
 	}
 
 	public Result httpPut(String path, String options, byte[] data,
-			String contentType) throws MalformedURLException, IOException {
+			String contentType) throws MalformedURLException, IOException,
+			ParseException {
 		return httpWrite("PUT", path, options, data, contentType);
 	}
 }

@@ -5,8 +5,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.apache.http.ParseException;
+import java.text.ParseException;
 
 import com.fieldnation.json.JsonObject;
 
@@ -19,6 +18,17 @@ public class AccessToken {
 	private String _tokenType = null;
 	private String _scope = null;
 	private String _refreshToken = null;
+
+	private String _atString;
+
+	public AccessToken(JsonObject json) throws ParseException {
+		_accessToken = json.getString("access_token");
+		_tokenType = json.getString("token_type");
+		_scope = json.getString("scope");
+		_refreshToken = json.getString("refresh_token");
+		_expiresIn = json.getInt("expires_in");
+		_hostname = json.getString("hostname");
+	}
 
 	public AccessToken(String hostname, String grantType, String clientId,
 			String clientSecret, String username, String password)
@@ -69,6 +79,18 @@ public class AccessToken {
 		_scope = token.getString("scope");
 		_refreshToken = token.getString("refresh_token");
 		_expiresIn = token.getInt("expires_in");
+
+	}
+
+	public JsonObject toJson() throws java.text.ParseException {
+		JsonObject o = new JsonObject();
+		o.put("hostname", _hostname);
+		o.put("access_token", _accessToken);
+		o.put("scope", _scope);
+		o.put("refresh_token", _refreshToken);
+		o.put("expires_in", _expiresIn);
+
+		return o;
 	}
 
 	public String getHostname() {
@@ -82,7 +104,8 @@ public class AccessToken {
 			return "?access_token=" + _accessToken + "&" + options.substring(1);
 		}
 		throw new ParseException(
-				"Options must be nothing, or start with '?'. Got: " + options);
+				"Options must be nothing, or start with '?'. Got: " + options,
+				0);
 	}
 
 }

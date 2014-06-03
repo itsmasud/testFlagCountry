@@ -5,6 +5,12 @@ import com.fieldnation.webapi.AccessToken;
 import android.content.Context;
 import android.os.AsyncTask;
 
+/**
+ * Runs an authentication request against field nation's server
+ * 
+ * @author michael.carver
+ * 
+ */
 public class AccessTokenAsyncTask extends AsyncTask<String, Void, Object> {
 	private AccessTokenAsyncTaskListener _listener;
 
@@ -19,12 +25,14 @@ public class AccessTokenAsyncTask extends AsyncTask<String, Void, Object> {
 		String clientId = context.getString(R.string.fn_client_id);
 		String clientSecret = context.getString(R.string.fn_client_secret);
 
+		// build the query
 		execute(hostname, grantType, clientId, clientSecret, username, password);
 	}
 
 	@Override
 	protected Object doInBackground(String... params) {
-
+		// Execute the query, return the AT if success, otherwise return the
+		// exception
 		try {
 			return new AccessToken(params[0], params[1], params[2], params[3],
 					params[4], params[5]);

@@ -17,6 +17,12 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="settings">Settings</string>
+    <string name="fieldnation_provider">FieldNation Provider</string>
     <!-- /general strings -->
+
+
+    <!-- main activity strings -->
+    <string name="launcher_open">I am Open</string>
+    <string name="launcher_closed">I am Closed</string>
 
 </resources>

@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:text="jacobfaketech"
             android:hint="@string/username" />
 
         <EditText
@@ -25,6 +26,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/password"
+            android:text="jacobfaketech"
             android:inputType="textPassword" />
 
         <RelativeLayout
