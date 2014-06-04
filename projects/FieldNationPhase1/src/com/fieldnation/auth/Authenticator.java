@@ -1,5 +1,12 @@
 package com.fieldnation.auth;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.ParseException;
+
+import com.fieldnation.json.JsonObject;
+import com.fieldnation.webapi.AccessToken;
+
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -15,13 +22,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	public Authenticator(Context context) {
 		super(context);
 		_context = context;
-	}
-
-	@Override
-	public Bundle editProperties(AccountAuthenticatorResponse response,
-			String accountType) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -41,9 +41,18 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	}
 
 	@Override
+	public Bundle editProperties(AccountAuthenticatorResponse response,
+			String accountType) {
+		// TODO Auto-generated method stub
+		System.out.println("Method Stub: editProperties()");
+		return null;
+	}
+
+	@Override
 	public Bundle confirmCredentials(AccountAuthenticatorResponse response,
 			Account account, Bundle options) throws NetworkErrorException {
 		// TODO Auto-generated method stub
+		System.out.println("Method Stub: confirmCredentials()");
 		return null;
 	}
 
@@ -52,12 +61,34 @@ public class Authenticator extends AbstractAccountAuthenticator {
 			Account account, String authTokenType, Bundle options)
 			throws NetworkErrorException {
 		// TODO Auto-generated method stub
-		return null;
+		AccountManager am = AccountManager.get(_context);
+		String password = am.getPassword(account);
+
+		Bundle result = new Bundle();
+
+		try {
+			AccessToken at = AuthHelper.getToken(_context, account.name,
+					password);
+
+			result.putString("JSON_ACCESS_TOKEN", at.toString());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
 	@Override
 	public String getAuthTokenLabel(String authTokenType) {
 		// TODO Auto-generated method stub
+		System.out.println("Method Stub: getAuthTokenLabel()");
 		return null;
 	}
 
@@ -66,6 +97,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 			Account account, String authTokenType, Bundle options)
 			throws NetworkErrorException {
 		// TODO Auto-generated method stub
+		System.out.println("Method Stub: updateCredentials()");
 		return null;
 	}
 
@@ -73,6 +105,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	public Bundle hasFeatures(AccountAuthenticatorResponse response,
 			Account account, String[] features) throws NetworkErrorException {
 		// TODO Auto-generated method stub
+		System.out.println("Method Stub: hasFeatures()");
 		return null;
 	}
 

@@ -2,21 +2,15 @@ package com.fieldnation.auth;
 
 import java.text.ParseException;
 
-import com.fieldnation.AccessTokenAsyncTask;
-import com.fieldnation.AccessTokenAsyncTaskListener;
+import com.fieldnation.Constants;
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,7 +23,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 	private String _username;
 	private String _password;
 
-	private AccessTokenAsyncTask _atTask;
+	private AccessTokenWebRequestAsyncTask _atTask;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -57,13 +51,13 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 			_password = _passwordEditText.getText().toString();
 
 			// TODO display wait dialog
-			_atTask = new AccessTokenAsyncTask(_accessTokenListener);
+			_atTask = new AccessTokenWebRequestAsyncTask(_accessTokenListener);
 			_atTask.execute(AuthActivity.this, _username, _password);
 
 		}
 	};
 
-	private AccessTokenAsyncTaskListener _accessTokenListener = new AccessTokenAsyncTaskListener() {
+	private AccessTokenWebRequestAsyncTaskListener _accessTokenListener = new AccessTokenWebRequestAsyncTaskListener() {
 		@Override
 		public void onFail(Exception e) {
 			e.printStackTrace();
@@ -73,15 +67,15 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 		public void onComplete(AccessToken token) {
 			// TODO close wait dialog
 			try {
-
-				Account account = new Account(_username, "fieldnation_provider");
+				Account account = new Account(_username,
+						Constants.FIELD_NATION_ACCOUNT_TYPE);
 				AccountManager am = AccountManager.get(AuthActivity.this);
 				am.addAccountExplicitly(account, _password, null);
 
 				Intent intent = new Intent();
 				intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
 				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
-						"fieldnation_provider");
+						Constants.FIELD_NATION_ACCOUNT_TYPE);
 				intent.putExtra(AccountManager.KEY_AUTHTOKEN, token.toJson()
 						.toString());
 				AuthActivity.this.setAccountAuthenticatorResult(intent

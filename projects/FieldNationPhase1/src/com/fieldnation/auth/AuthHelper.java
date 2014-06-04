@@ -1,4 +1,4 @@
-package com.fieldnation;
+package com.fieldnation.auth;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -6,6 +6,8 @@ import java.text.ParseException;
 
 import android.content.Context;
 
+import com.fieldnation.R;
+import com.fieldnation.R.string;
 import com.fieldnation.webapi.AccessToken;
 
 public class AuthHelper {

@@ -8,8 +8,8 @@ public class AuthService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		return null;
+		Authenticator auth = new Authenticator(this);
+		return auth.getIBinder();
 	}
 
 }

@@ -93,6 +93,16 @@ public class AccessToken {
 		return o;
 	}
 
+	@Override
+	public String toString() {
+		try {
+			return toJson().toString();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public String getHostname() {
 		return _hostname;
 	}

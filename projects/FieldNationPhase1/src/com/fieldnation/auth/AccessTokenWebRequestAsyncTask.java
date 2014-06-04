@@ -1,5 +1,7 @@
-package com.fieldnation;
+package com.fieldnation.auth;
 
+import com.fieldnation.R;
+import com.fieldnation.R.string;
 import com.fieldnation.webapi.AccessToken;
 
 import android.content.Context;
@@ -11,10 +13,10 @@ import android.os.AsyncTask;
  * @author michael.carver
  * 
  */
-public class AccessTokenAsyncTask extends AsyncTask<String, Void, Object> {
-	private AccessTokenAsyncTaskListener _listener;
+public class AccessTokenWebRequestAsyncTask extends AsyncTask<String, Void, Object> {
+	private AccessTokenWebRequestAsyncTaskListener _listener;
 
-	public AccessTokenAsyncTask(AccessTokenAsyncTaskListener listener) {
+	public AccessTokenWebRequestAsyncTask(AccessTokenWebRequestAsyncTaskListener listener) {
 		super();
 		_listener = listener;
 	}
