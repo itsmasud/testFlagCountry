@@ -4,6 +4,7 @@ import java.text.ParseException;
 
 import com.fieldnation.Constants;
 import com.fieldnation.R;
+import com.fieldnation.service.ClockReceiver;
 import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.Account;
@@ -80,6 +81,10 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 						.toString());
 				AuthActivity.this.setAccountAuthenticatorResult(intent
 						.getExtras());
+
+				// TODO read the clock delay from somewhere
+				ClockReceiver.registerClock(AuthActivity.this, 5000);
+
 				AuthActivity.this.setResult(RESULT_OK);
 				AuthActivity.this.finish();
 			} catch (ParseException e) {

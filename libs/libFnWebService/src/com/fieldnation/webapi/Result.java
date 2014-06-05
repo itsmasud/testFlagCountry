@@ -21,8 +21,10 @@ public class Result {
 	private JsonObject _jsonResults = null;
 	private JsonArray _jaResults = null;
 
-	public Result(HttpURLConnection conn) {
+	public Result(HttpURLConnection conn) throws IOException {
 		_conn = conn;
+
+		getResultsAsByteArray();
 	}
 
 	public byte[] getResultsAsByteArray() throws IOException {
@@ -31,6 +33,8 @@ public class Result {
 			int contentlength = _conn.getContentLength();
 
 			_baResults = misc.readAllFromStream(in, 1024, contentlength, 3000);
+
+			in.close();
 		}
 		return _baResults;
 	}

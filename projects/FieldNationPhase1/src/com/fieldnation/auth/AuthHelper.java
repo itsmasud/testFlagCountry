@@ -7,7 +7,6 @@ import java.text.ParseException;
 import android.content.Context;
 
 import com.fieldnation.R;
-import com.fieldnation.R.string;
 import com.fieldnation.webapi.AccessToken;
 
 public class AuthHelper {

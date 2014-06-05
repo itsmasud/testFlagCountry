@@ -1,7 +1,6 @@
 package com.fieldnation.auth;
 
 import com.fieldnation.R;
-import com.fieldnation.R.string;
 import com.fieldnation.webapi.AccessToken;
 
 import android.content.Context;

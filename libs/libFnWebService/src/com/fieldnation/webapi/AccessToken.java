@@ -7,6 +7,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import com.fieldnation.json.JsonObject;
 
 public class AccessToken {
@@ -49,8 +51,11 @@ public class AccessToken {
 
 		HttpURLConnection conn = null;
 		if (Ws.USE_HTTPS) {
+			// TODO remove from production code!
+			Ws.trustAllHosts();
 			conn = (HttpURLConnection) new URL("https://" + hostname + path)
 					.openConnection();
+			((HttpsURLConnection) conn).setHostnameVerifier(Ws.DO_NOT_VERIFY);
 		} else {
 			conn = (HttpURLConnection) new URL("http://" + hostname + path)
 					.openConnection();
@@ -70,6 +75,8 @@ public class AccessToken {
 				+ "&password=" + password).getBytes());
 
 		Result result = new Result(conn);
+
+		conn.disconnect();
 
 		JsonObject token = result.getResultsAsJsonObject();
 

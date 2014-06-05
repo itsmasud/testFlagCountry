@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import org.w3c.dom.Element;
@@ -31,6 +32,19 @@ public class misc {
 	private static final String HEXES = "0123456789ABCDEF";
 	private static NumberFormat _currencyFormat = NumberFormat
 			.getCurrencyInstance();
+
+	private static DateFormat ISO_8601_DATE_TIME = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ");
+
+	static {
+		ISO_8601_DATE_TIME.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
+
+	public static String utcTo8601(long milliseconds) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(milliseconds);
+		return ISO_8601_DATE_TIME.format(calendar.getTime());
+	}
 
 	public static String toCurrency(double money) {
 		return _currencyFormat.format(money);

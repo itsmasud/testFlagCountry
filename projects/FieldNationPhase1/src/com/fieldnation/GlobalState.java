@@ -10,6 +10,6 @@ public class GlobalState extends Application {
 		super();
 
 		// TODO turn SSL back on
-		Ws.USE_HTTPS = false;
+		Ws.USE_HTTPS = true;
 	}
 }

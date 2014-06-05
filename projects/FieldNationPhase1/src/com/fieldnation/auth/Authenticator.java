@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.AbstractAccountAuthenticator;
