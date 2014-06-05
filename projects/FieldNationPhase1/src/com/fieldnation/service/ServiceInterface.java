@@ -7,7 +7,7 @@ public class ServiceInterface {
 
 	public static void pulseClock(Context context) {
 		Intent intent = new Intent(context, BackgroundService.class);
-		intent.putExtra("COMMAND", "CLOCK_PULSE");
+		intent.setAction("CLOCK_PULSE");
 		context.startService(intent);
 	}
 }

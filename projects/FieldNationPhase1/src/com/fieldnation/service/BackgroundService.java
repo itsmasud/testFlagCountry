@@ -1,47 +1,34 @@
 package com.fieldnation.service;
 
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.webapi.AccessToken;
-import com.fieldnation.webapi.rest.v1.Workorder;
-
+import java.util.HashMap;
+import com.fieldnation.service.rpc.WorkorderGetRequestedRpc;
+import com.fieldnation.service.rpc.RpcInterface;
 import android.app.IntentService;
 import android.content.Intent;
 
 public class BackgroundService extends IntentService {
 
+	private HashMap<String, RpcInterface> _rpcs = new HashMap<String, RpcInterface>();
+
 	public BackgroundService() {
-		super(null);
+		this(null);
 	}
 
 	public BackgroundService(String name) {
 		super(name);
+
+		// fill in the hashmap
+		new WorkorderGetRequestedRpc(_rpcs);
 	}
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		String command = intent.getExtras().getString("COMMAND");
+		String action = intent.getAction();
 
-		System.out.println("Command: " + command);
-
-		testWeb();
-	}
-
-	private void testWeb() {
-		try {
-			AccessToken token = new AccessToken("dev.fieldnation.com",
-					"password", "demoapp", "demopass", "jacobfaketech",
-					"jacobfaketech");
-
-			Workorder wo = new Workorder(token);
-
-			JsonArray ja = wo.getRequested();
-
-			String test = ja.getJsonObject(0).getString(
-					"providersPhoto[0].photo_url");
-
-			System.out.println(ja.display());
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if ("CLOCK_PULSE".equals(action)) {
+			// TODO, handle the clock pulse
+		} else if ("RPC".equals(action)) {
+			_rpcs.get(intent.getStringExtra("METHOD")).execute(this, intent);
 		}
 	}
 

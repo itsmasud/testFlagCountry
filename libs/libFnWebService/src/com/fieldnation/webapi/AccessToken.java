@@ -23,6 +23,10 @@ public class AccessToken {
 
 	private String _atString;
 
+	public AccessToken(String jsonString) throws ParseException {
+		this(new JsonObject(jsonString));
+	}
+
 	public AccessToken(JsonObject json) throws ParseException {
 		_accessToken = json.getString("access_token");
 		_tokenType = json.getString("token_type");
@@ -92,6 +96,7 @@ public class AccessToken {
 	public JsonObject toJson() throws java.text.ParseException {
 		JsonObject o = new JsonObject();
 		o.put("hostname", _hostname);
+		o.put("token_type", _tokenType);
 		o.put("access_token", _accessToken);
 		o.put("scope", _scope);
 		o.put("refresh_token", _refreshToken);

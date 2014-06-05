@@ -7,11 +7,9 @@ import java.util.List;
 public class JsonArray {
 	private List<Object> _objects = new LinkedList<Object>();
 
-
 	public JsonArray() {
 
 	}
-
 
 	public JsonArray(String string) throws ParseException {
 		JsonTokenizer tokenizer = new JsonTokenizer(string);
@@ -19,11 +17,9 @@ public class JsonArray {
 
 	}
 
-
 	public JsonArray(JsonTokenizer tokenizer) throws ParseException {
 		fromTokenizer(tokenizer);
 	}
-
 
 	private void fromTokenizer(JsonTokenizer tokenizer) throws ParseException {
 		if (!tokenizer.isNextTokenStartArray()) {
@@ -49,23 +45,19 @@ public class JsonArray {
 
 	}
 
-
 	public int size() {
 		return _objects.size();
 	}
 
-
 	public Object get(int index) {
 		return _objects.get(index);
 	}
-
 
 	public Object get(String path) {
 		List<String> dir = JsonTokenizer.parsePath(path);
 
 		return get(dir);
 	}
-
 
 	protected Object get(List<String> directions) {
 		if (directions.size() == 0)
@@ -82,49 +74,46 @@ public class JsonArray {
 
 		if (obj instanceof JsonObject) {
 			return ((JsonObject) obj).get(directions);
-		}
-		else if (obj instanceof JsonArray) {
+		} else if (obj instanceof JsonArray) {
 			return ((JsonArray) obj).get(directions);
 		}
 
 		return obj;
 	}
 
-
 	public String getString(int index) {
 		return (String) get(index);
 	}
-
 
 	public JsonObject getJsonObject(int index) {
 		return (JsonObject) get(index);
 	}
 
-
 	public JsonArray getJsonArray(int index) {
 		return (JsonArray) get(index);
 	}
-
 
 	public int getInt(int index) {
 		return Integer.parseInt(getString(index));
 	}
 
-
 	public long getLong(int index) {
 		return Long.parseLong(getString(index));
 	}
-
 
 	public float getFloat(int index) {
 		return Float.parseFloat(getString(index));
 	}
 
-
 	public double getDouble(int index) {
 		return Double.parseDouble(getString(index));
 	}
 
+	public void merge(JsonArray source) {
+		for (int i = 0; i < source.size(); i++) {
+			add(source.get(i));
+		}
+	}
 
 	public Object set(int index, Object value) {
 		while (index >= _objects.size())
@@ -133,8 +122,8 @@ public class JsonArray {
 		return _objects.set(index, value);
 	}
 
-
-	protected void set(List<String> directions, Object value) throws ParseException {
+	protected void set(List<String> directions, Object value)
+			throws ParseException {
 		if (directions.size() == 0)
 			throw new ParseException("Invalid path", 0);
 
@@ -147,8 +136,7 @@ public class JsonArray {
 
 		if (directions.size() == 0) {
 			set(index, value);
-		}
-		else {
+		} else {
 			// already exists
 			if (_objects.size() > index) {
 				Object obj = _objects.get(index);
@@ -158,8 +146,7 @@ public class JsonArray {
 
 					jo.put(directions, value);
 					return;
-				}
-				else if (obj instanceof JsonArray) {
+				} else if (obj instanceof JsonArray) {
 					JsonArray ja = (JsonArray) obj;
 
 					String child = directions.get(0);
@@ -169,8 +156,7 @@ public class JsonArray {
 						ja.set(directions, value);
 					return;
 				}
-			}
-			else {
+			} else {
 
 				String child = directions.get(0);
 				if (child.startsWith("[") && child.endsWith("]")) {
@@ -184,8 +170,7 @@ public class JsonArray {
 						ja.set(directions, value);
 
 					return;
-				}
-				else {
+				} else {
 					JsonObject jo = new JsonObject();
 
 					set(index, jo);
@@ -200,18 +185,16 @@ public class JsonArray {
 
 	}
 
-
 	public boolean add(Object value) {
 		return _objects.add(value);
 	}
-
 
 	public void add(int index, Object value) {
 		_objects.add(index, value);
 	}
 
-
-	protected void add(List<String> directions, Object value) throws ParseException {
+	protected void add(List<String> directions, Object value)
+			throws ParseException {
 		if (directions.size() == 0)
 			throw new ParseException("Invalid path", 0);
 
@@ -222,8 +205,7 @@ public class JsonArray {
 
 		if (directions.size() == 0) {
 			add(value);
-		}
-		else {
+		} else {
 			String child = directions.get(0);
 			if (child.startsWith("[") && child.endsWith("]")) {
 				JsonArray ja = new JsonArray();
@@ -236,8 +218,7 @@ public class JsonArray {
 					ja.set(directions, value);
 
 				return;
-			}
-			else {
+			} else {
 				JsonObject jo = new JsonObject();
 
 				_objects.add(jo);
@@ -251,11 +232,9 @@ public class JsonArray {
 
 	}
 
-
 	public Object remove(int index) {
 		return _objects.remove(index);
 	}
-
 
 	protected Object remove(List<String> directions) throws ParseException {
 		if (directions.size() == 0)
@@ -270,16 +249,14 @@ public class JsonArray {
 
 		if (directions.size() == 0) {
 			return remove(index);
-		}
-		else {
+		} else {
 			Object obj = get(index);
 
 			if (obj instanceof JsonObject) {
 				JsonObject jo = (JsonObject) obj;
 
 				return jo.remove(directions);
-			}
-			else if (obj instanceof JsonArray) {
+			} else if (obj instanceof JsonArray) {
 				JsonArray jo = (JsonArray) obj;
 
 				return jo.remove(directions);
@@ -290,16 +267,13 @@ public class JsonArray {
 
 	}
 
-
 	public void clear() {
 		_objects.clear();
 	}
 
-
 	public String display() {
 		return display(0).toString();
 	}
-
 
 	protected StringBuilder display(int depth) {
 		StringBuilder sb = new StringBuilder();
@@ -311,17 +285,13 @@ public class JsonArray {
 			sb.append(JsonTokenizer.repeat("  ", depth + 1));
 			if (obj == null) {
 				sb.append("null");
-			}
-			else if (obj instanceof JsonObject) {
+			} else if (obj instanceof JsonObject) {
 				sb.append(((JsonObject) obj).display(depth + 1));
-			}
-			else if (obj instanceof JsonArray) {
+			} else if (obj instanceof JsonArray) {
 				sb.append(((JsonArray) obj).display(depth + 1));
-			}
-			else if (obj instanceof String) {
+			} else if (obj instanceof String) {
 				sb.append(JsonTokenizer.escapeString((String) obj));
-			}
-			else {
+			} else {
 				sb.append(obj + "");
 			}
 
@@ -337,7 +307,6 @@ public class JsonArray {
 		return sb;
 	}
 
-
 	public StringBuilder toStringBuilder() {
 		StringBuilder sb = new StringBuilder();
 
@@ -347,17 +316,13 @@ public class JsonArray {
 
 			if (obj == null) {
 				sb.append("null");
-			}
-			else if (obj instanceof JsonObject) {
+			} else if (obj instanceof JsonObject) {
 				sb.append(((JsonObject) obj).toStringBuilder());
-			}
-			else if (obj instanceof JsonArray) {
+			} else if (obj instanceof JsonArray) {
 				sb.append(((JsonArray) obj).toStringBuilder());
-			}
-			else if (obj instanceof String) {
+			} else if (obj instanceof String) {
 				sb.append(JsonTokenizer.escapeString((String) obj));
-			}
-			else {
+			} else {
 				sb.append(obj + "");
 			}
 
@@ -370,14 +335,12 @@ public class JsonArray {
 		return sb;
 	}
 
-
 	public boolean has(int index) {
 		if (index < _objects.size())
 			return true;
 
 		return false;
 	}
-
 
 	protected boolean has(List<String> directions) throws ParseException {
 		if (directions.size() == 0)
@@ -401,8 +364,7 @@ public class JsonArray {
 			JsonObject jo = (JsonObject) obj;
 
 			return jo.has(directions);
-		}
-		else if (obj instanceof JsonArray) {
+		} else if (obj instanceof JsonArray) {
 			JsonArray ja = (JsonArray) obj;
 
 			return ja.has(directions);
@@ -410,7 +372,6 @@ public class JsonArray {
 
 		return false;
 	}
-
 
 	@Override
 	public String toString() {

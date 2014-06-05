@@ -59,7 +59,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	public Bundle getAuthToken(AccountAuthenticatorResponse response,
 			Account account, String authTokenType, Bundle options)
 			throws NetworkErrorException {
-		// TODO Auto-generated method stub
 		AccountManager am = AccountManager.get(_context);
 		String password = am.getPassword(account);
 

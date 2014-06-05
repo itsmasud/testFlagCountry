@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 import com.fieldnation.webapi.AccessToken;
 import com.fieldnation.webapi.Result;
@@ -16,10 +17,6 @@ public class Workorder extends Ws {
 		super(token);
 	}
 
-	public JsonArray getRequested() throws IOException, ParseException {
-		return getRequested(-1);
-	}
-
 	/**
 	 * 
 	 * @param page
@@ -28,59 +25,52 @@ public class Workorder extends Ws {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public JsonArray getRequested(int page) throws IOException, ParseException {
+	public Result getRequested(int page) throws IOException, ParseException {
 		if (page == -1)
-			return httpGet("/api/rest/v1/workorder/requested")
-					.getResultsAsJsonArray();
+			return httpGet("/api/rest/v1/workorder/requested");
 		else
 			return httpGet("/api/rest/v1/workorder/requested", "?page=" + page,
-					null).getResultsAsJsonArray();
+					null);
 	}
 
-	public JsonArray getAvailable(int page) throws MalformedURLException,
+	public Result getAvailable(int page) throws MalformedURLException,
 			ParseException, IOException {
 		if (page == -1)
-			return httpGet("/api/rest/v1/workorder/available")
-					.getResultsAsJsonArray();
+			return httpGet("/api/rest/v1/workorder/available");
 		else
 			return httpGet("/api/rest/v1/workorder/available", "?page=" + page,
-					null).getResultsAsJsonArray();
+					null);
 	}
 
-	public JsonArray getPendingApproval(int page) throws MalformedURLException,
+	public Result getPendingApproval(int page) throws MalformedURLException,
 			ParseException, IOException {
 		if (page == -1)
-			return httpGet("/api/rest/v1/workorder/pending-approval")
-					.getResultsAsJsonArray();
+			return httpGet("/api/rest/v1/workorder/pending-approval");
 		else
-			return httpGet("/api/rest/v1/workorder/pending_approval",
-					"?page=" + page, null).getResultsAsJsonArray();
+			return httpGet("/api/rest/v1/workorder/pending_approval", "?page="
+					+ page, null);
 	}
 
-	public JsonArray getAssigned(int page) throws MalformedURLException,
+	public Result getAssigned(int page) throws MalformedURLException,
 			ParseException, IOException {
 		if (page == -1)
-			return httpGet("/api/rest/v1/workorder/assigned")
-					.getResultsAsJsonArray();
+			return httpGet("/api/rest/v1/workorder/assigned");
 		else
 			return httpGet("/api/rest/v1/workorder/assigned", "?page=" + page,
-					null).getResultsAsJsonArray();
+					null);
 	}
 
-	// TODO figure out what response looks like
 	public Result getDetails(long workorderId) throws MalformedURLException,
 			IOException, ParseException {
 		return httpGet("/api/rest/v1/workorder/" + workorderId + "/details");
 	}
 
-	// TODO figure out what response looks like
 	public Result decline(long workorderId) throws MalformedURLException,
 			IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/decline",
 				null, "", "application/x-www-form-urlencoded");
 	}
 
-	// TODO figure out what response looks like
 	public Result addRequest(long workorderId, int expireInSeconds)
 			throws MalformedURLException, IOException, ParseException {
 		if (expireInSeconds == -1)
@@ -92,14 +82,12 @@ public class Workorder extends Ws {
 				"application/x-www-form-urlencoded");
 	}
 
-	// TODO figure out what response looks like
 	public Result removeRequest(long workorderId) throws MalformedURLException,
 			IOException, ParseException {
 		return httpDelete("/api/rest/v1/workorder/" + workorderId + "/request",
 				null, null);
 	}
 
-	// TODO figure out what response looks like
 	public Result confirmAssignment(long workorderId, long startTime,
 			long endTime) throws MalformedURLException, IOException,
 			ParseException {
@@ -112,7 +100,6 @@ public class Workorder extends Ws {
 	}
 
 	// TODO look up viable reasons and categories
-	// TODO figure out what response looks like
 	public Result cancelAssignment(long workorderId, String cancelCategory,
 			String cancelReason) throws MalformedURLException, IOException,
 			ParseException {
@@ -122,7 +109,6 @@ public class Workorder extends Ws {
 				"application/x-www-form-urlencoded");
 	}
 
-	// TODO figure out what response looks like
 	public Result ready(long workorderId, String cancelCategory,
 			String cancelReason) throws MalformedURLException, IOException,
 			ParseException {
@@ -130,7 +116,6 @@ public class Workorder extends Ws {
 				null, "", "application/x-www-form-urlencoded");
 	}
 
-	// TODO figure out what response looks like
 	public Result checkin(long workorderId, long checkinTime)
 			throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/checkin",
@@ -138,7 +123,6 @@ public class Workorder extends Ws {
 				"application/x-www-form-urlencoded");
 	}
 
-	// TODO figure out what response looks like
 	public Result checkout(long workorderId, long checkoutTime)
 			throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/checkin",
@@ -146,7 +130,6 @@ public class Workorder extends Ws {
 				"application/x-www-form-urlencoded");
 	}
 
-	// TODO figure out what response looks like
 	public Result closingNotes(long workorderId, String notes)
 			throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId
@@ -154,13 +137,11 @@ public class Workorder extends Ws {
 				"application/x-www-form-urlencoded");
 	}
 
-	// TODO figure out what response looks like
 	public Result getMessages(long workorderId) throws MalformedURLException,
 			IOException, ParseException {
 		return httpGet("/api/rest/v1/workorder/" + workorderId + "/messages");
 	}
 
-	// TODO figure out what response looks like
 	public Result newMessage(long workorderId, String message)
 			throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId
@@ -169,7 +150,6 @@ public class Workorder extends Ws {
 				"application/x-www-form-urlencoded");
 	}
 
-	// TODO figure out what response looks like
 	public Result newMessage(long workorderId, long messageId, String message)
 			throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/messages/"

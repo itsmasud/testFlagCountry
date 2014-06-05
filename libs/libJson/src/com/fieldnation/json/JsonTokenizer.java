@@ -135,6 +135,7 @@ public class JsonTokenizer {
 						break;
 					case 'u':
 						// TODO Parse unicode chars here
+						key.append("u");
 						break;
 					default:
 						key.append(c);

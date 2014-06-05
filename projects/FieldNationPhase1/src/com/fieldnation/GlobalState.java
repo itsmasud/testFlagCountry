@@ -8,8 +8,6 @@ public class GlobalState extends Application {
 
 	public GlobalState() {
 		super();
-
-		// TODO turn SSL back on
 		Ws.USE_HTTPS = true;
 	}
 }
