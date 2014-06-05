@@ -130,6 +130,12 @@ public class Ws {
 		}
 	}
 
+	public Result httpPost(String path, String options, String data,
+			String contentType) throws MalformedURLException, IOException,
+			ParseException {
+		return httpPost(path, options, data.getBytes(), contentType);
+	}
+
 	public Result httpPost(String path, String options, byte[] data,
 			String contentType) throws MalformedURLException, IOException,
 			ParseException {
