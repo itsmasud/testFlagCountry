@@ -60,7 +60,7 @@
         </receiver>
 
         <service
-            android:name="com.fieldnation.service.BackgroundService"
+            android:name="com.fieldnation.service.DataService"
             android:exported="false" >
         </service>
     </application>

@@ -9,15 +9,15 @@ import com.fieldnation.service.rpc.RpcInterface;
 import android.app.IntentService;
 import android.content.Intent;
 
-public class BackgroundService extends IntentService {
+public class DataService extends IntentService {
 
 	private HashMap<String, RpcInterface> _rpcs = new HashMap<String, RpcInterface>();
 
-	public BackgroundService() {
+	public DataService() {
 		this(null);
 	}
 
-	public BackgroundService(String name) {
+	public DataService(String name) {
 		super(name);
 
 		// fill in the hashmap

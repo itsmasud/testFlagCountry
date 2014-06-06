@@ -28,13 +28,16 @@ import android.view.MenuItem;
 import android.view.View;
 
 public class WorkorderActivity extends ActionBarActivity {
+	// UI
 	private ActionBarDrawerToggle _drawerToggle;
-	private FutureWaitAsyncTask _futureWaitAsyncTask;
 	private DrawerLayout _drawerLayout;
-
 	private NotificationActionBarView _notificationsView;
 
+	// Data
 	private AccessToken _accessToken;
+	
+	// Other
+	private FutureWaitAsyncTask _futureWaitAsyncTask;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -44,12 +47,9 @@ public class WorkorderActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_workorder);
 
-		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
-
 		buildTabs();
 		buildDrawer();
 		getAuthorization();
-
 	}
 
 	private void buildTabs() {
@@ -63,21 +63,22 @@ public class WorkorderActivity extends ActionBarActivity {
 		ActionBar.Tab tab3 = actionbar.newTab().setText("Completed");
 		ActionBar.Tab tab4 = actionbar.newTab().setText("Cancelled");
 
+		// TODO add the other fragments
 		tab1.setTabListener(_tabListener);
 		tab2.setTabListener(new FragmentSwaperTabListener(
 				new WorkorderAssignedFragment(), R.id.workorder_content));
 		tab3.setTabListener(_tabListener);
 		tab4.setTabListener(_tabListener);
 
+		// place the tabs
 		actionbar.addTab(tab1);
 		actionbar.addTab(tab2);
 		actionbar.addTab(tab3);
 		actionbar.addTab(tab4);
-
 	}
 
 	private void buildDrawer() {
-		// TODO, build into another class... or a method
+		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
 		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
 				R.drawable.ic_navigation_drawer, R.string.launcher_open,
 				R.string.launcher_open) {
@@ -108,7 +109,8 @@ public class WorkorderActivity extends ActionBarActivity {
 	}
 
 	private void getAuthorization() {
-		_futureWaitAsyncTask = new FutureWaitAsyncTask(_futureWaitAsyncTaskListener);
+		_futureWaitAsyncTask = new FutureWaitAsyncTask(
+				_futureWaitAsyncTaskListener);
 
 		AccountManager am = AccountManager.get(this);
 		Account[] accounts = am
@@ -154,6 +156,7 @@ public class WorkorderActivity extends ActionBarActivity {
 	/*-				Events				-*/
 	/*-*********************************-*/
 
+	// TODO remove
 	private TabListener _tabListener = new TabListener() {
 		@Override
 		public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
@@ -198,8 +201,10 @@ public class WorkorderActivity extends ActionBarActivity {
 				} else {
 					_accessToken = new AccessToken(tokenString);
 
-					WorkorderGetRequestedRpc.sendRpc(WorkorderActivity.this,
-							_rpcReciever, 0, _accessToken, 0);
+					startService(WorkorderGetRequestedRpc.makeIntent(
+							WorkorderActivity.this, _rpcReciever, 0,
+							_accessToken, 0));
+
 				}
 			} catch (ParseException e) {
 				e.printStackTrace();

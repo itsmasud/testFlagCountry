@@ -2,7 +2,7 @@ package com.fieldnation.service.rpc;
 
 import java.util.HashMap;
 
-import com.fieldnation.service.BackgroundService;
+import com.fieldnation.service.DataService;
 import com.fieldnation.webapi.AccessToken;
 import com.fieldnation.webapi.Result;
 import com.fieldnation.webapi.rest.v1.Workorder;
@@ -47,9 +47,9 @@ public class WorkorderGetRequestedRpc extends RpcInterface {
 		}
 	}
 
-	public static void sendRpc(Context context, ResultReceiver callback,
+	public static Intent makeIntent(Context context, ResultReceiver callback,
 			int resultCode, AccessToken at, int page) {
-		Intent intent = new Intent(context, BackgroundService.class);
+		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
 		intent.putExtra("METHOD", "Workorder.getRequested");
 		intent.putExtra("PARAM_PAGE", page);
@@ -60,6 +60,6 @@ public class WorkorderGetRequestedRpc extends RpcInterface {
 			intent.putExtra("PARAM_CALLBACK", callback);
 		}
 
-		context.startService(intent);
+		return intent;
 	}
 }

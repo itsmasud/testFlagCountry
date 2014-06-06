@@ -4,6 +4,8 @@ import com.fieldnation.Constants;
 import com.fieldnation.R;
 import com.fieldnation.service.ClockReceiver;
 import com.fieldnation.service.rpc.AuthRpc;
+import com.fieldnation.service.rpc.ClockRpc;
+
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
@@ -75,12 +77,14 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
 				Intent intent = new Intent();
 				intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.FIELD_NATION_ACCOUNT_TYPE);
-				intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString("authtoken"));
-				AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
+				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
+						Constants.FIELD_NATION_ACCOUNT_TYPE);
+				intent.putExtra(AccountManager.KEY_AUTHTOKEN,
+						resultData.getString("authtoken"));
+				AuthActivity.this.setAccountAuthenticatorResult(intent
+						.getExtras());
 
-				// TODO read the clock delay from somewhere
-				ClockReceiver.registerClock(AuthActivity.this, 5000);
+				ClockRpc.enableClock(AuthActivity.this, true);
 
 				AuthActivity.this.setResult(RESULT_OK);
 				AuthActivity.this.finish();

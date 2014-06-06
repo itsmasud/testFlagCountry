@@ -2,7 +2,7 @@ package com.fieldnation.service.rpc;
 
 import java.util.HashMap;
 
-import com.fieldnation.service.BackgroundService;
+import com.fieldnation.service.DataService;
 import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.AccountAuthenticatorResponse;
@@ -77,7 +77,7 @@ public class AuthRpc extends RpcInterface {
 			String grantType, String clientId, String clientSecret,
 			String username, String password) {
 
-		Intent intent = new Intent(context, BackgroundService.class);
+		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
 		intent.putExtra("METHOD", "getOauthToken");
 		intent.putExtra("PARAM_HOSTNAME", hostname);
@@ -97,7 +97,7 @@ public class AuthRpc extends RpcInterface {
 			int resultCode, String hostname, String grantType, String clientId,
 			String clientSecret, String username, String password) {
 
-		Intent intent = new Intent(context, BackgroundService.class);
+		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
 		intent.putExtra("METHOD", "getOauthToken");
 		intent.putExtra("PARAM_HOSTNAME", hostname);
