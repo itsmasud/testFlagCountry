@@ -1,0 +1,31 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Drawer">
+        <item name="android:background">@color/drawerBackground</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <style name="DrawerItem">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:background">@color/drawer_item_background</item>
+    </style>
+
+    <style name="DrawerPaymentAmount">
+        <item name="android:background">@color/drawer_payment_amount_background</item>
+        <item name="android:textColor">@color/drawerPaymentAmountForeground</item>
+    </style>
+
+    <style name="DrawerItemIcon">
+        <item name="android:paddingRight">5dp</item>
+    </style>
+
+    <style name="DrawerSeparator">
+        <item name="android:background">@color/drawerForeground</item>
+    </style>
+</resources>

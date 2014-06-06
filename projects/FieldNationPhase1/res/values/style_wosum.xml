@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="wosum_background">#00FF0000</color>
+    <color name="wosum_inside_bg">#FFFFFFFF</color>
+    <color name="wosum_data_container_bevel">#FFebeeee</color>
+
+    <style name="wosum">
+        <item name="android:background">@color/wosum_background</item>
+        <item name="android:paddingLeft">5px</item>
+        <item name="android:paddingRight">5px</item>
+        <item name="android:paddingTop">5px</item>
+        <item name="android:paddingBottom">5px</item>
+    </style>
+
+    <style name="wosum_inside">
+        <item name="android:background">@color/wosum_data_container_background</item>
+    </style>
+
+    <style name="wosum_data_container">
+        <item name="android:paddingLeft">10px</item>
+        <item name="android:paddingRight">10px</item>
+        <item name="android:paddingTop">10px</item>
+        <item name="android:paddingBottom">10px</item>
+    </style>
+
+    <style name="wosum_status_bar">
+        <item name="android:background">#FF00FF00</item>
+    </style>
+
+</resources>

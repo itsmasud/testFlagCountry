@@ -7,10 +7,17 @@ import com.fieldnation.auth.AuthWaitAsyncTaskListener;
 import com.fieldnation.service.rpc.WorkorderGetRequestedRpc;
 import com.fieldnation.webapi.AccessToken;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar.Tab;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -22,11 +29,13 @@ import android.os.ResultReceiver;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
-public class MainActivity extends ActionBarActivity {
+public class WorkorderActivity extends ActionBarActivity {
 	private ActionBarDrawerToggle _drawerToggle;
 	private AuthWaitAsyncTask _authWaitAsyncTask;
 	private DrawerLayout _drawerLayout;
+	private LinearLayout _contentsLinearLayout;
 
 	private NotificationActionBarView _notificationsView;
 
@@ -38,36 +47,65 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_workorder);
 
 		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
+		_contentsLinearLayout = (LinearLayout) findViewById(R.id.workorder_content);
 
+		buildTabs();
+		buildDrawer();
+		getAuthorization();
+
+	}
+
+	private void buildTabs() {
+		ActionBar actionbar = getSupportActionBar();
+		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionbar.setDisplayHomeAsUpEnabled(true);
+		actionbar.setHomeButtonEnabled(true);
+
+		ActionBar.Tab tab1 = actionbar.newTab().setText("In Progress");
+		ActionBar.Tab tab2 = actionbar.newTab().setText("Assigned");
+
+		Fragment frag1 = new Fragment();
+		Fragment frag2 = new Fragment();
+
+		tab1.setTabListener(_tabListener);
+		tab2.setTabListener(_tabListener);
+
+		actionbar.addTab(tab1);
+		actionbar.addTab(tab2);
+
+	}
+
+	private void buildDrawer() {
 		// TODO, build into another class... or a method
 		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
-				R.drawable.abc_ic_menu_moreoverflow_normal_holo_light,
-				R.string.launcher_open, R.string.launcher_open);
-		// {
-		// @Override
-		// public void onDrawerClosed(View drawerView) {
-		// super.onDrawerClosed(drawerView);
-		// getSupportActionBar().setTitle(
-		// getResources().getString(R.string.app_name));
-		// }
-		//
-		// @Override
-		// public void onDrawerOpened(View drawerView) {
-		// super.onDrawerOpened(drawerView);
-		// getSupportActionBar().setTitle(
-		// getResources().getString(R.string.launcher_open));
-		// }
-		// };
+				R.drawable.ic_navigation_drawer, R.string.launcher_open,
+				R.string.launcher_open) {
+
+			@Override
+			public void onDrawerStateChanged(int newState) {
+				if (newState != 0) {
+					getSupportActionBar().setNavigationMode(
+							ActionBar.NAVIGATION_MODE_STANDARD);
+				}
+				super.onDrawerStateChanged(newState);
+			}
+
+			@Override
+			public void onDrawerClosed(View drawerView) {
+				getSupportActionBar().setNavigationMode(
+						ActionBar.NAVIGATION_MODE_TABS);
+				super.onDrawerClosed(drawerView);
+			}
+		};
 
 		_drawerLayout.setDrawerListener(_drawerToggle);
 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
+	}
 
-		// TODO, build into a utility class
+	private void getAuthorization() {
 		_authWaitAsyncTask = new AuthWaitAsyncTask(_authWaitAsyncTaskListener);
 
 		AccountManager am = AccountManager.get(this);
@@ -103,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onPostCreate(savedInstanceState);
 		_drawerToggle.syncState();
 	}
-	
+
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		System.out.println("Method Stub: onRestoreInstanceState()");
@@ -113,6 +151,29 @@ public class MainActivity extends ActionBarActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+
+	private TabListener _tabListener = new TabListener() {
+		@Override
+		public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
+			// TODO Auto-generated method stub
+			System.out.println("Method Stub: onTabUnselected()");
+
+		}
+
+		@Override
+		public void onTabSelected(Tab arg0, FragmentTransaction arg1) {
+			// TODO Auto-generated method stub
+			System.out.println("Method Stub: onTabSelected()");
+
+		}
+
+		@Override
+		public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+			// TODO Auto-generated method stub
+			System.out.println("Method Stub: onTabReselected()");
+
+		}
+	};
 
 	// the next two events are related to authentication
 	private AuthWaitAsyncTaskListener _authWaitAsyncTaskListener = new AuthWaitAsyncTaskListener() {
@@ -125,9 +186,11 @@ public class MainActivity extends ActionBarActivity {
 		@Override
 		public void onComplete(Bundle bundle) {
 			try {
-				_accessToken = new AccessToken(
-						bundle.getString("JSON_ACCESS_TOKEN"));
-				WorkorderGetRequestedRpc.sendRpc(MainActivity.this,
+				String tokenString = bundle.getString("authtoken");
+
+				_accessToken = new AccessToken(tokenString);
+
+				WorkorderGetRequestedRpc.sendRpc(WorkorderActivity.this,
 						_rpcReciever, 0, _accessToken, 0);
 			} catch (ParseException e) {
 				e.printStackTrace();

@@ -46,7 +46,7 @@ public class AccessToken {
 	public AccessToken(String hostname, String path, String grantType,
 			String clientId, String clientSecret, String username,
 			String password) throws MalformedURLException, IOException,
-			java.text.ParseException {
+			ParseException {
 
 		_hostname = hostname;
 

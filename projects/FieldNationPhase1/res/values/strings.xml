@@ -10,14 +10,14 @@
 
 
     <!-- general strings -->
-    <string name="app_name">FieldNation</string>
+    <string name="app_name">Field Nation</string>
     <string name="hello_world">Hello world!</string>
-    <string name="activity_login_title">FieldNation Login</string>
+    <string name="activity_login_title">Field Nation Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="settings">Settings</string>
-    <string name="fieldnation_provider">FieldNation</string>
+    <string name="fieldnation_provider">Field Nation</string>
     <!-- /general strings -->
 
 

@@ -68,7 +68,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 			AccessToken at = AuthHelper.getToken(_context, account.name,
 					password);
 
-			result.putString("JSON_ACCESS_TOKEN", at.toString());
+			result.putString("authtoken", at.toString());
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
