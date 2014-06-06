@@ -20,6 +20,7 @@ public class AuthWaitAsyncTask extends
 		try {
 			return future.getResult();
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			return ex;
 		}
 	}

@@ -22,5 +22,5 @@ public class AuthHelper {
 		return new AccessToken(hostname, grantType, clientId, clientSecret,
 				username, password);
 	}
-	
+
 }

@@ -35,7 +35,6 @@ public class WorkorderActivity extends ActionBarActivity {
 	private ActionBarDrawerToggle _drawerToggle;
 	private AuthWaitAsyncTask _authWaitAsyncTask;
 	private DrawerLayout _drawerLayout;
-	private LinearLayout _contentsLinearLayout;
 
 	private NotificationActionBarView _notificationsView;
 
@@ -50,7 +49,6 @@ public class WorkorderActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_workorder);
 
 		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
-		_contentsLinearLayout = (LinearLayout) findViewById(R.id.workorder_content);
 
 		buildTabs();
 		buildDrawer();
@@ -66,15 +64,19 @@ public class WorkorderActivity extends ActionBarActivity {
 
 		ActionBar.Tab tab1 = actionbar.newTab().setText("In Progress");
 		ActionBar.Tab tab2 = actionbar.newTab().setText("Assigned");
-
-		Fragment frag1 = new Fragment();
-		Fragment frag2 = new Fragment();
+		ActionBar.Tab tab3 = actionbar.newTab().setText("Completed");
+		ActionBar.Tab tab4 = actionbar.newTab().setText("Cancelled");
 
 		tab1.setTabListener(_tabListener);
-		tab2.setTabListener(_tabListener);
+		tab2.setTabListener(new FragmentSwaperTabListener(
+				new WorkorderAssignedFragment(), R.id.workorder_content));
+		tab3.setTabListener(_tabListener);
+		tab4.setTabListener(_tabListener);
 
 		actionbar.addTab(tab1);
 		actionbar.addTab(tab2);
+		actionbar.addTab(tab3);
+		actionbar.addTab(tab4);
 
 	}
 
@@ -94,10 +96,14 @@ public class WorkorderActivity extends ActionBarActivity {
 			}
 
 			@Override
-			public void onDrawerClosed(View drawerView) {
-				getSupportActionBar().setNavigationMode(
-						ActionBar.NAVIGATION_MODE_TABS);
-				super.onDrawerClosed(drawerView);
+			public void onDrawerSlide(View drawerView, float slideOffset) {
+				if (slideOffset == 0.0) {
+					getSupportActionBar().setNavigationMode(
+							ActionBar.NAVIGATION_MODE_TABS);
+				}
+				System.out
+						.println("Method Stub: onDrawerSlide()" + slideOffset);
+				super.onDrawerSlide(drawerView, slideOffset);
 			}
 		};
 
@@ -188,10 +194,17 @@ public class WorkorderActivity extends ActionBarActivity {
 			try {
 				String tokenString = bundle.getString("authtoken");
 
-				_accessToken = new AccessToken(tokenString);
+				if (tokenString == null) {
+					if (bundle.containsKey("accountType")
+							&& bundle.containsKey("jacobfaketech")) {
+						getAuthorization();
+					}
+				} else {
+					_accessToken = new AccessToken(tokenString);
 
-				WorkorderGetRequestedRpc.sendRpc(WorkorderActivity.this,
-						_rpcReciever, 0, _accessToken, 0);
+					WorkorderGetRequestedRpc.sendRpc(WorkorderActivity.this,
+							_rpcReciever, 0, _accessToken, 0);
+				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

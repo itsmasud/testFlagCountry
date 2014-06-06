@@ -1,8 +1,11 @@
 package com.fieldnation.service;
 
 import java.util.HashMap;
+
+import com.fieldnation.service.rpc.AuthRpc;
 import com.fieldnation.service.rpc.WorkorderGetRequestedRpc;
 import com.fieldnation.service.rpc.RpcInterface;
+
 import android.app.IntentService;
 import android.content.Intent;
 
@@ -19,6 +22,7 @@ public class BackgroundService extends IntentService {
 
 		// fill in the hashmap
 		new WorkorderGetRequestedRpc(_rpcs);
+		new AuthRpc(_rpcs);
 	}
 
 	@Override

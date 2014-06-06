@@ -5,6 +5,7 @@ import java.text.ParseException;
 import com.fieldnation.Constants;
 import com.fieldnation.R;
 import com.fieldnation.service.ClockReceiver;
+import com.fieldnation.service.rpc.AuthRpc;
 import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.Account;
@@ -12,6 +13,8 @@ import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +26,6 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
 	private String _username;
 	private String _password;
-
-	private AccessTokenWebRequestAsyncTask _atTask;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -51,22 +52,24 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 			_username = _usernameEditText.getText().toString();
 			_password = _passwordEditText.getText().toString();
 
-			// TODO display wait dialog
-			_atTask = new AccessTokenWebRequestAsyncTask(_accessTokenListener);
-			_atTask.execute(AuthActivity.this, _username, _password);
+			String hostname = AuthActivity.this.getString(R.string.fn_hostname);
+			String grantType = AuthActivity.this
+					.getString(R.string.fn_grant_type);
+			String clientId = AuthActivity.this
+					.getString(R.string.fn_client_id);
+			String clientSecret = AuthActivity.this
+					.getString(R.string.fn_client_secret);
 
+			Intent intent = AuthRpc.makeIntent(AuthActivity.this, _rpcReceiver,
+					1, hostname, grantType, clientId, clientSecret, _username,
+					_password);
+
+			startService(intent);
 		}
 	};
 
-	private AccessTokenWebRequestAsyncTaskListener _accessTokenListener = new AccessTokenWebRequestAsyncTaskListener() {
-		@Override
-		public void onFail(Exception e) {
-			e.printStackTrace();
-		}
-
-		@Override
-		public void onComplete(AccessToken token) {
-			// TODO close wait dialog
+	private ResultReceiver _rpcReceiver = new ResultReceiver(new Handler()) {
+		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			try {
 				Account account = new Account(_username,
 						Constants.FIELD_NATION_ACCOUNT_TYPE);
@@ -75,22 +78,20 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
 				Intent intent = new Intent();
 				intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
-						Constants.FIELD_NATION_ACCOUNT_TYPE);
-				intent.putExtra(AccountManager.KEY_AUTHTOKEN, token.toJson()
-						.toString());
-				AuthActivity.this.setAccountAuthenticatorResult(intent
-						.getExtras());
+				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.FIELD_NATION_ACCOUNT_TYPE);
+				intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString("authtoken"));
+				AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
 
 				// TODO read the clock delay from somewhere
 				ClockReceiver.registerClock(AuthActivity.this, 5000);
 
 				AuthActivity.this.setResult(RESULT_OK);
 				AuthActivity.this.finish();
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				// TODO handle properly
 				e.printStackTrace();
 			}
-		}
+		};
 	};
+
 }

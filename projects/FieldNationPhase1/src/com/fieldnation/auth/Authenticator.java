@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 
+import com.fieldnation.R;
+import com.fieldnation.service.rpc.AuthRpc;
 import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.AbstractAccountAuthenticator;
@@ -61,26 +63,38 @@ public class Authenticator extends AbstractAccountAuthenticator {
 			throws NetworkErrorException {
 		AccountManager am = AccountManager.get(_context);
 		String password = am.getPassword(account);
+		String hostname = _context.getString(R.string.fn_hostname);
+		String grantType = _context.getString(R.string.fn_grant_type);
+		String clientId = _context.getString(R.string.fn_client_id);
+		String clientSecret = _context.getString(R.string.fn_client_secret);
 
-		Bundle result = new Bundle();
+		Intent intent = AuthRpc.makeIntent(_context, response, hostname,
+				grantType, clientId, clientSecret, account.name, password);
 
-		try {
-			AccessToken at = AuthHelper.getToken(_context, account.name,
-					password);
+		_context.startService(intent);
+		return null;
 
-			result.putString("authtoken", at.toString());
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return result;
+		// Bundle result = new Bundle();
+		//
+		// try {
+		// AccessToken at = AuthHelper.getToken(_context, account.name,
+		// password);
+		//
+		// result.putString(AccountManager.KEY_AUTHTOKEN, at.toString());
+		// result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
+		// result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
+		// } catch (MalformedURLException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (ParseException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		//
+		// return result;
 	}
 
 	@Override
