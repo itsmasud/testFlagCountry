@@ -1,13 +1,7 @@
 package com.fieldnation.auth;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.ParseException;
-
 import com.fieldnation.R;
 import com.fieldnation.service.rpc.AuthRpc;
-import com.fieldnation.webapi.AccessToken;
-
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;

@@ -4,18 +4,15 @@ import java.text.ParseException;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.content.Context;
 import android.os.Bundle;
 
 import com.fieldnation.Constants;
-import com.fieldnation.WorkorderActivity;
-import com.fieldnation.service.rpc.WorkorderGetRequestedRpc;
 import com.fieldnation.webapi.AccessToken;
 
 public class ContextAuthenticator {
-	private AuthWaitAsyncTask _authWaitAsyncTask;
+	private FutureWaitAsyncTask _authWaitAsyncTask;
 
 	public ContextAuthenticator() {
 
@@ -23,7 +20,7 @@ public class ContextAuthenticator {
 
 	public void getAuthToken(Context context) {
 		// TODO, build into a utility class
-		_authWaitAsyncTask = new AuthWaitAsyncTask(_authWaitAsyncTaskListener);
+		_authWaitAsyncTask = new FutureWaitAsyncTask(_authWaitAsyncTaskListener);
 
 		AccountManager am = AccountManager.get(context);
 		Account[] accounts = am
@@ -40,7 +37,7 @@ public class ContextAuthenticator {
 	}
 
 	// the next two events are related to authentication
-	private AuthWaitAsyncTaskListener _authWaitAsyncTaskListener = new AuthWaitAsyncTaskListener() {
+	private FutureWaitAsyncTaskListener _authWaitAsyncTaskListener = new FutureWaitAsyncTaskListener() {
 		@Override
 		public void onFail(Exception ex) {
 			// TODO Auto-generated method stub

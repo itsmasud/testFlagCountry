@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class DrawerView extends RelativeLayout {
@@ -14,6 +13,9 @@ public class DrawerView extends RelativeLayout {
 	private RelativeLayout _settingsView;
 	private RelativeLayout _logoutView;
 
+	/*-*************************************-*/
+	/*-				Life Cycle				-*/
+	/*-*************************************-*/
 	public DrawerView(Context context) {
 		this(context, null, -1);
 	}
@@ -46,6 +48,10 @@ public class DrawerView extends RelativeLayout {
 		_logoutView = (RelativeLayout) findViewById(R.id.logout_view);
 		_logoutView.setOnClickListener(_list);
 	}
+
+	/*-*********************************-*/
+	/*-				Events				-*/
+	/*-*********************************-*/
 
 	private View.OnClickListener _list = new View.OnClickListener() {
 

@@ -2,7 +2,7 @@ package com.fieldnation.auth;
 
 import android.os.Bundle;
 
-public interface AuthWaitAsyncTaskListener {
+public interface FutureWaitAsyncTaskListener {
 	public void onComplete(Bundle bundle);
 
 	public void onFail(Exception ex);

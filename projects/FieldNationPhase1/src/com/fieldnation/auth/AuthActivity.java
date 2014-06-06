@@ -1,13 +1,9 @@
 package com.fieldnation.auth;
 
-import java.text.ParseException;
-
 import com.fieldnation.Constants;
 import com.fieldnation.R;
 import com.fieldnation.service.ClockReceiver;
 import com.fieldnation.service.rpc.AuthRpc;
-import com.fieldnation.webapi.AccessToken;
-
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
@@ -69,6 +65,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 	};
 
 	private ResultReceiver _rpcReceiver = new ResultReceiver(new Handler()) {
+		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			try {
 				Account account = new Account(_username,

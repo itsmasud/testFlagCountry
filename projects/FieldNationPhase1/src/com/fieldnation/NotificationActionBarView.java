@@ -10,6 +10,10 @@ import android.widget.TextView;
 public class NotificationActionBarView extends RelativeLayout {
 	private TextView _countTextView;
 
+	/*-*************************************-*/
+	/*-				Life Cycle				-*/
+	/*-*************************************-*/
+
 	public NotificationActionBarView(Context context) {
 		this(context, null, -1);
 	}

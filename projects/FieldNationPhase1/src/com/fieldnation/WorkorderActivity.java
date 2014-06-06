@@ -2,8 +2,8 @@ package com.fieldnation;
 
 import java.text.ParseException;
 
-import com.fieldnation.auth.AuthWaitAsyncTask;
-import com.fieldnation.auth.AuthWaitAsyncTaskListener;
+import com.fieldnation.auth.FutureWaitAsyncTask;
+import com.fieldnation.auth.FutureWaitAsyncTaskListener;
 import com.fieldnation.service.rpc.WorkorderGetRequestedRpc;
 import com.fieldnation.webapi.AccessToken;
 
@@ -12,12 +12,9 @@ import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -29,11 +26,10 @@ import android.os.ResultReceiver;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 
 public class WorkorderActivity extends ActionBarActivity {
 	private ActionBarDrawerToggle _drawerToggle;
-	private AuthWaitAsyncTask _authWaitAsyncTask;
+	private FutureWaitAsyncTask _futureWaitAsyncTask;
 	private DrawerLayout _drawerLayout;
 
 	private NotificationActionBarView _notificationsView;
@@ -112,7 +108,7 @@ public class WorkorderActivity extends ActionBarActivity {
 	}
 
 	private void getAuthorization() {
-		_authWaitAsyncTask = new AuthWaitAsyncTask(_authWaitAsyncTaskListener);
+		_futureWaitAsyncTask = new FutureWaitAsyncTask(_futureWaitAsyncTaskListener);
 
 		AccountManager am = AccountManager.get(this);
 		Account[] accounts = am
@@ -182,7 +178,7 @@ public class WorkorderActivity extends ActionBarActivity {
 	};
 
 	// the next two events are related to authentication
-	private AuthWaitAsyncTaskListener _authWaitAsyncTaskListener = new AuthWaitAsyncTaskListener() {
+	private FutureWaitAsyncTaskListener _futureWaitAsyncTaskListener = new FutureWaitAsyncTaskListener() {
 		@Override
 		public void onFail(Exception ex) {
 			// TODO Auto-generated method stub
@@ -214,7 +210,7 @@ public class WorkorderActivity extends ActionBarActivity {
 	private AccountManagerCallback<Bundle> amc = new AccountManagerCallback<Bundle>() {
 		@Override
 		public void run(AccountManagerFuture<Bundle> future) {
-			_authWaitAsyncTask.execute(future);
+			_futureWaitAsyncTask.execute(future);
 		}
 	};
 

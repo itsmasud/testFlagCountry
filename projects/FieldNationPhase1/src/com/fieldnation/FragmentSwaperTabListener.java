@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
-import android.view.ViewGroup;
 
 public class FragmentSwaperTabListener implements TabListener {
 	private Fragment _fragment;

@@ -4,12 +4,12 @@ import android.accounts.AccountManagerFuture;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-public class AuthWaitAsyncTask extends
+public class FutureWaitAsyncTask extends
 		AsyncTask<AccountManagerFuture<Bundle>, Void, Object> {
 
-	private AuthWaitAsyncTaskListener _listener;
+	private FutureWaitAsyncTaskListener _listener;
 
-	public AuthWaitAsyncTask(AuthWaitAsyncTaskListener listener) {
+	public FutureWaitAsyncTask(FutureWaitAsyncTaskListener listener) {
 		super();
 		_listener = listener;
 	}
