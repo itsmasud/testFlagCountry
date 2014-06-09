@@ -3,7 +3,8 @@ package com.fieldnation.service;
 import java.util.HashMap;
 
 import com.fieldnation.service.rpc.AuthRpc;
-import com.fieldnation.service.rpc.WorkorderGetRequestedRpc;
+import com.fieldnation.service.rpc.ClockRpc;
+import com.fieldnation.service.rpc.WorkorderRpc;
 import com.fieldnation.service.rpc.RpcInterface;
 
 import android.app.IntentService;
@@ -21,8 +22,9 @@ public class DataService extends IntentService {
 		super(name);
 
 		// fill in the hashmap
-		new WorkorderGetRequestedRpc(_rpcs);
+		new WorkorderRpc(_rpcs);
 		new AuthRpc(_rpcs);
+		new ClockRpc(_rpcs);
 	}
 
 	@Override
@@ -32,7 +34,7 @@ public class DataService extends IntentService {
 		if ("CLOCK_PULSE".equals(action)) {
 			// TODO, handle the clock pulse
 		} else if ("RPC".equals(action)) {
-			_rpcs.get(intent.getStringExtra("METHOD")).execute(this, intent);
+			_rpcs.get(intent.getStringExtra("SERVICE")).execute(this, intent);
 		}
 	}
 

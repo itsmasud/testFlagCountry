@@ -34,7 +34,8 @@ public class ClockRpc extends RpcInterface {
 		Intent intent = new Intent(context, DataService.class);
 
 		intent.setAction("RPC");
-		intent.putExtra("METHOD", "clock");
+		intent.putExtra("SERVICE", "clock");
+		intent.putExtra("METHOD", "setState");
 		intent.putExtra("PARAM_ENABLE", enable);
 
 		context.startService(intent);

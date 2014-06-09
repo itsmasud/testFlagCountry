@@ -7,17 +7,17 @@
                 android:bottomLeftRadius="10dp"
                 android:topLeftRadius="10dp" />
 
-            <solid android:color="@color/wosumDataContainerBevel" >
+            <solid android:color="@color/wosumStatus6Bevel" >
             </solid>
         </shape>
     </item>
-    <item
-        android:bottom="5px">
+    <item android:bottom="5px">
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="10dp"                android:topLeftRadius="10dp" />
+                android:bottomLeftRadius="10dp"
+                android:topLeftRadius="10dp" />
 
-            <solid android:color="@color/wosumStatus1" />
+            <solid android:color="@color/wosumStatus6" />
         </shape>
     </item>
 

@@ -4,11 +4,9 @@
     android:layout_height="match_parent" >
 
     <com.fieldnation.WorkorderSummaryView
-        android:id="@+id/summaryView"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerInParent="true" >
     </com.fieldnation.WorkorderSummaryView>
 
 </RelativeLayout>

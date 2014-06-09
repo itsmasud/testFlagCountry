@@ -19,7 +19,7 @@ public class TestFnWeb {
 			System.out.println(Integer.class.getName());
 			System.out.println(Integer.class.getCanonicalName());
 
-			result = wo.getRequested(1);
+			result = wo.getAssigned(1);
 
 			System.out.println(result.getResultsAsJsonArray().display());
 

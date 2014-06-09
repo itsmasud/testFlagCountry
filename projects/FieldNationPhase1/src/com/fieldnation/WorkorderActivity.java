@@ -3,29 +3,20 @@ package com.fieldnation;
 import java.text.ParseException;
 
 import com.fieldnation.R;
-import com.fieldnation.R.drawable;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
-import com.fieldnation.R.menu;
-import com.fieldnation.R.string;
 import com.fieldnation.auth.FutureWaitAsyncTask;
 import com.fieldnation.auth.FutureWaitAsyncTaskListener;
-import com.fieldnation.service.rpc.WorkorderGetRequestedRpc;
+import com.fieldnation.service.rpc.WorkorderRpc;
 import com.fieldnation.webapi.AccessToken;
 
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar.Tab;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,8 +30,10 @@ public class WorkorderActivity extends ActionBarActivity {
 	private ActionBarDrawerToggle _drawerToggle;
 	private DrawerLayout _drawerLayout;
 	private NotificationActionBarView _notificationsView;
+	private MessagesActionBarView _messagesView;
 
 	// Data
+	private GlobalState _gs;
 	private AccessToken _accessToken;
 
 	// Other
@@ -57,8 +50,11 @@ public class WorkorderActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_workorder);
 
+		_gs = (GlobalState) getApplicationContext();
+
 		_accountManager = AccountManager.get(this);
 
+		// TODO present wait dialog
 		buildTabs();
 		buildDrawer();
 		getAuthorization();
@@ -135,15 +131,18 @@ public class WorkorderActivity extends ActionBarActivity {
 			_accountManager.addAccount(Constants.FIELD_NATION_ACCOUNT_TYPE,
 					Constants.FIELD_NATION_ACCOUNT_TYPE, null, new Bundle(),
 					this, amc, null);
+		} else if (accounts.length == 1) {
+			_accountManager.getAuthToken(accounts[0],
+					Constants.FIELD_NATION_ACCOUNT_TYPE, new Bundle(), this,
+					amc, null);
 		} else {
 			// TODO, ANDR-10 present a picker for the account
-			// Force an invalidation
+
 			_accountManager.getAuthToken(accounts[0],
 					Constants.FIELD_NATION_ACCOUNT_TYPE, new Bundle(), this,
 					amc, null);
 
 		}
-
 	}
 
 	@Override
@@ -155,6 +154,10 @@ public class WorkorderActivity extends ActionBarActivity {
 		_notificationsView = (NotificationActionBarView) MenuItemCompat
 				.getActionView(menu.findItem(R.id.notifications_menuitem));
 		_notificationsView.setCount(10);
+
+		_messagesView = (MessagesActionBarView) MenuItemCompat
+				.getActionView(menu.findItem(R.id.messages_menuitem));
+		_messagesView.setCount(100);
 
 		return true;
 	}
@@ -204,9 +207,10 @@ public class WorkorderActivity extends ActionBarActivity {
 						getAuthorization();
 					} else {
 
-						WorkorderGetRequestedRpc.getRequested(
-								WorkorderActivity.this, _rpcReciever, 0,
-								_accessToken, 1);
+						_gs.accessToken = _accessToken;
+
+						WorkorderRpc.getRequested(WorkorderActivity.this,
+								_rpcReciever, 0, _accessToken, 1);
 					}
 
 				}
@@ -226,6 +230,7 @@ public class WorkorderActivity extends ActionBarActivity {
 
 	// handles responses from the RPC service
 	private ResultReceiver _rpcReciever = new ResultReceiver(new Handler()) {
+		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			// TODO Method Stub: onFail()
 			System.out.println("Method Stub: onReceiveResult()");

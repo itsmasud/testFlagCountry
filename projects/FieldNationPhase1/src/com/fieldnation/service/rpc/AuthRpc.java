@@ -15,7 +15,7 @@ import android.os.ResultReceiver;
 public class AuthRpc extends RpcInterface {
 
 	public AuthRpc(HashMap<String, RpcInterface> map) {
-		super(map, "getOauthToken");
+		super(map, "auth");
 	}
 
 	@Override
@@ -78,6 +78,7 @@ public class AuthRpc extends RpcInterface {
 
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
+		intent.putExtra("SERVICE", "auth");
 		intent.putExtra("METHOD", "getOauthToken");
 		intent.putExtra("PARAM_HOSTNAME", hostname);
 		intent.putExtra("PARAM_PATH", "/authentication/api/oauth/token");
@@ -98,6 +99,7 @@ public class AuthRpc extends RpcInterface {
 
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
+		intent.putExtra("SERVICE", "auth");
 		intent.putExtra("METHOD", "getOauthToken");
 		intent.putExtra("PARAM_HOSTNAME", hostname);
 		intent.putExtra("PARAM_PATH", "/authentication/api/oauth/token");

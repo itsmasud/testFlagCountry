@@ -8,29 +8,32 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class NotificationActionBarView extends RelativeLayout {
+public class MessagesActionBarView extends RelativeLayout {
 	private TextView _countTextView;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 
-	public NotificationActionBarView(Context context) {
+	public MessagesActionBarView(Context context) {
 		this(context, null, -1);
 	}
 
-	public NotificationActionBarView(Context context, AttributeSet attrs) {
+	public MessagesActionBarView(Context context, AttributeSet attrs) {
 		this(context, attrs, -1);
 	}
 
-	public NotificationActionBarView(Context context, AttributeSet attrs,
+	public MessagesActionBarView(Context context, AttributeSet attrs,
 			int defStyle) {
 		super(context, attrs, defStyle);
 		final LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		inflater.inflate(R.layout.view_notification_action_bar, this);
+		inflater.inflate(R.layout.view_messages_action_bar, this);
 
 		_countTextView = (TextView) findViewById(R.id.count_textview);
+
+		if (isInEditMode())
+			return;
 
 		setOnClickListener(new View.OnClickListener() {
 

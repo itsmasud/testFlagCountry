@@ -2,7 +2,6 @@ package com.fieldnation.auth;
 
 import com.fieldnation.Constants;
 import com.fieldnation.R;
-import com.fieldnation.service.ClockReceiver;
 import com.fieldnation.service.rpc.AuthRpc;
 import com.fieldnation.service.rpc.ClockRpc;
 
