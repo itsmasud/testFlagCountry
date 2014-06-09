@@ -47,7 +47,7 @@ public class WorkorderGetRequestedRpc extends RpcInterface {
 		}
 	}
 
-	public static Intent makeIntent(Context context, ResultReceiver callback,
+	public static void getRequested(Context context, ResultReceiver callback,
 			int resultCode, AccessToken at, int page) {
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
@@ -60,6 +60,6 @@ public class WorkorderGetRequestedRpc extends RpcInterface {
 			intent.putExtra("PARAM_CALLBACK", callback);
 		}
 
-		return intent;
+		context.startService(intent);
 	}
 }

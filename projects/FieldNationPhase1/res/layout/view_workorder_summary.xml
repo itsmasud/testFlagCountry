@@ -13,7 +13,7 @@
         <View
             android:id="@+id/status_view"
             style="@style/wosum_status_bar"
-            android:layout_width="10px"
+            android:layout_width="10dp"
             android:layout_height="fill_parent" />
 
         <RelativeLayout
@@ -37,6 +37,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <LinearLayout
+                    android:id="@+id/client_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" >
@@ -52,6 +53,46 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Client Name"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/distance_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Distance:"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/distance_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3.5 mi"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/when_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="When:"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/when_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04/12/14 - 04/23/14 @ 2pm"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
                 </LinearLayout>
             </LinearLayout>
@@ -71,19 +112,20 @@
                     android:text="Check In" />
 
                 <LinearLayout
-                    android:id="@+id/cash_linearlayout"
+                    android:id="@+id/payment_linearlayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:orientation="horizontal" >
 
                     <TextView
-                        android:id="@+id/cash_textview"
+                        android:id="@+id/payment_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$5,000" />
 
                     <TextView
+                        android:id="@+id/firmness_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="fixed" />

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/com.fieldnation">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/app_gradeint" app:state_one="true"></item>
-    <item android:drawable="@drawable/drawer_payment_amount" app:state_two="true"></item>
-    <item android:drawable="@drawable/notification_number_background" app:state_three="true"></item>
+    <item android:drawable="@drawable/wosum_status_no_highlight"/>
 
 </selector>

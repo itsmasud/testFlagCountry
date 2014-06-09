@@ -15,11 +15,6 @@ public class FragmentSwaperTabListener implements TabListener {
 	}
 
 	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		System.out.println("Method Stub: onTabReselected()");
-	}
-
-	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		System.out.println("Method Stub: onTabSelected()");
 		ft.replace(_containerId, _fragment);
@@ -28,6 +23,13 @@ public class FragmentSwaperTabListener implements TabListener {
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 		System.out.println("Method Stub: onTabUnselected()");
-		ft.remove(_fragment);
+		//ft.remove(_fragment);
+	}
+
+	@Override
+	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+		// TODO Method Stub: onTabReselected()
+		System.out.println("Method Stub: onTabReselected()");
+
 	}
 }

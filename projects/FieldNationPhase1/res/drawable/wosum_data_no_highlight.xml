@@ -4,24 +4,22 @@
     <item>
         <shape android:shape="rectangle" >
             <corners
-                android:bottomRightRadius="5px"
-                android:topRightRadius="5px" />
+                android:bottomRightRadius="10dp"
+                android:topRightRadius="10dp" />
 
-            <solid android:color="@color/wosum_data_container_bevel" >
+            <solid android:color="@color/wosumDataContainerBevel" >
             </solid>
         </shape>
     </item>
     <item
-        android:bottom="4px"
-        android:left="2px"
-        android:right="2px"
-        android:top="2px">
+        android:bottom="5px"
+        android:right="2px">
         <shape android:shape="rectangle" >
             <corners
-                android:bottomRightRadius="5px"
-                android:topRightRadius="5px" />
+                android:bottomRightRadius="10dp"
+                android:topRightRadius="10dp" />
 
-            <solid android:color="@color/wosum_inside_bg" />
+            <solid android:color="@color/wosumInsideBg" />
         </shape>
     </item>
 

@@ -28,5 +28,9 @@
         <!-- Support library compatibility -->
         <item name="background">@color/background</item>
     </style>
+    
+    <!--  style name="floatActionBar" parent="@style/Theme.AppCompat">
+        <item name="windowActionBarOverlay">true</item>
+    </style -->
 
 </resources>

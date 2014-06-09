@@ -2,9 +2,11 @@
 <resources>
 
     <declare-styleable name="workorder">
-        <attr name="state_one" format="boolean" />
-        <attr name="state_two" format="boolean" />
-        <attr name="state_three" format="boolean" />
+        <attr name="state_workorder">
+            <enum name="state_one" value="1" />
+            <enum name="state_two" value="2" />
+            <enum name="state_three" value="3" />
+        </attr>
     </declare-styleable>
 
 </resources>

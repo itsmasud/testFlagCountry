@@ -7,9 +7,14 @@
     <color name="drawerForeground">#FFcecfc0</color>
     <color name="drawerPaymentAmountBackground">#FF3bc89e</color>
     <color name="drawerPaymentAmountForeground">#FFFFFFFF</color>
-    
+
     <!-- Misc colors -->
     <color name="notificationBackground">#FFfe6200</color>
     <color name="notificationForeground">#FFFFFFFF</color>
     
+    <!-- workorder summary colors -->
+    <color name="wosumBackground">#00FF0000</color>
+    <color name="wosumInsideBg">#FFFFFFFF</color>
+    <color name="wosumDataContainerBevel">#FFebeeee</color>
+	<color name="wosumStatus1">#FFFF0000</color>
 </resources>

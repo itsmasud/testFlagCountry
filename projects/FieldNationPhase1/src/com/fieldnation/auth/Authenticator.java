@@ -2,6 +2,7 @@ package com.fieldnation.auth;
 
 import com.fieldnation.R;
 import com.fieldnation.service.rpc.AuthRpc;
+
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -33,22 +34,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		result.putParcelable(AccountManager.KEY_INTENT, intent);
 
 		return result;
-	}
-
-	@Override
-	public Bundle editProperties(AccountAuthenticatorResponse response,
-			String accountType) {
-		// TODO Auto-generated method stub
-		System.out.println("Method Stub: editProperties()");
-		return null;
-	}
-
-	@Override
-	public Bundle confirmCredentials(AccountAuthenticatorResponse response,
-			Account account, Bundle options) throws NetworkErrorException {
-		// TODO Auto-generated method stub
-		System.out.println("Method Stub: confirmCredentials()");
-		return null;
 	}
 
 	@Override
@@ -92,8 +77,24 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	}
 
 	@Override
+	public Bundle editProperties(AccountAuthenticatorResponse response,
+			String accountType) {
+		// TODO Method Stub: editProperties()
+		System.out.println("Method Stub: editProperties()");
+		return null;
+	}
+
+	@Override
+	public Bundle confirmCredentials(AccountAuthenticatorResponse response,
+			Account account, Bundle options) throws NetworkErrorException {
+		// TODO Method Stub: confirmCredentials()
+		System.out.println("Method Stub: confirmCredentials()");
+		return null;
+	}
+
+	@Override
 	public String getAuthTokenLabel(String authTokenType) {
-		// TODO Auto-generated method stub
+		// TODO Method Stub: getAuthTokenLabel()
 		System.out.println("Method Stub: getAuthTokenLabel()");
 		return null;
 	}
@@ -102,7 +103,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	public Bundle updateCredentials(AccountAuthenticatorResponse response,
 			Account account, String authTokenType, Bundle options)
 			throws NetworkErrorException {
-		// TODO Auto-generated method stub
+		// TODO Method Stub: updateCredentials()
 		System.out.println("Method Stub: updateCredentials()");
 		return null;
 	}
@@ -110,7 +111,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	@Override
 	public Bundle hasFeatures(AccountAuthenticatorResponse response,
 			Account account, String[] features) throws NetworkErrorException {
-		// TODO Auto-generated method stub
+		// TODO Method Stub: hasFeatures()
 		System.out.println("Method Stub: hasFeatures()");
 		return null;
 	}

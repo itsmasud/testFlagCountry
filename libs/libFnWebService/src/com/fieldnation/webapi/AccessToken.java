@@ -16,6 +16,7 @@ public class AccessToken {
 	private String _hostname;
 
 	private int _expiresIn = 0;
+	private long _expiresOn = 0;
 	private String _accessToken = null;
 	private String _tokenType = null;
 	private String _scope = null;
@@ -34,6 +35,8 @@ public class AccessToken {
 		_refreshToken = json.getString("refresh_token");
 		_expiresIn = json.getInt("expires_in");
 		_hostname = json.getString("hostname");
+		if (json.has("expires_on"))
+			_expiresOn = json.getLong("expires_on");
 	}
 
 	public AccessToken(String hostname, String grantType, String clientId,
@@ -90,7 +93,12 @@ public class AccessToken {
 		_scope = token.getString("scope");
 		_refreshToken = token.getString("refresh_token");
 		_expiresIn = token.getInt("expires_in");
+		_expiresOn = System.currentTimeMillis() + _expiresIn * 1000;
 
+	}
+
+	public boolean isExpired() {
+		return System.currentTimeMillis() > _expiresOn;
 	}
 
 	public JsonObject toJson() throws java.text.ParseException {
@@ -101,7 +109,7 @@ public class AccessToken {
 		o.put("scope", _scope);
 		o.put("refresh_token", _refreshToken);
 		o.put("expires_in", _expiresIn);
-
+		o.put("expires_on", _expiresOn);
 		return o;
 	}
 

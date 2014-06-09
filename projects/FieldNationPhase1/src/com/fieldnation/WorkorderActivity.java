@@ -25,6 +25,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,9 +42,12 @@ public class WorkorderActivity extends ActionBarActivity {
 
 	// Data
 	private AccessToken _accessToken;
-	
+
 	// Other
 	private FutureWaitAsyncTask _futureWaitAsyncTask;
+
+	// Services
+	private AccountManager _accountManager;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -52,6 +56,8 @@ public class WorkorderActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_workorder);
+
+		_accountManager = AccountManager.get(this);
 
 		buildTabs();
 		buildDrawer();
@@ -70,11 +76,14 @@ public class WorkorderActivity extends ActionBarActivity {
 		ActionBar.Tab tab4 = actionbar.newTab().setText("Cancelled");
 
 		// TODO add the other fragments
-		tab1.setTabListener(_tabListener);
+		tab1.setTabListener(new FragmentSwaperTabListener(
+				new WorkorderInProgressFragment(), R.id.workorder_content));
 		tab2.setTabListener(new FragmentSwaperTabListener(
 				new WorkorderAssignedFragment(), R.id.workorder_content));
-		tab3.setTabListener(_tabListener);
-		tab4.setTabListener(_tabListener);
+		tab3.setTabListener(new FragmentSwaperTabListener(
+				new WorkorderCompletedFragment(), R.id.workorder_content));
+		tab4.setTabListener(new FragmentSwaperTabListener(
+				new WorkorderCancelledFragment(), R.id.workorder_content));
 
 		// place the tabs
 		actionbar.addTab(tab1);
@@ -94,6 +103,8 @@ public class WorkorderActivity extends ActionBarActivity {
 				if (newState != 0) {
 					getSupportActionBar().setNavigationMode(
 							ActionBar.NAVIGATION_MODE_STANDARD);
+					supportInvalidateOptionsMenu();
+					// getSupportActionBar().hide();
 				}
 				super.onDrawerStateChanged(newState);
 			}
@@ -103,9 +114,9 @@ public class WorkorderActivity extends ActionBarActivity {
 				if (slideOffset == 0.0) {
 					getSupportActionBar().setNavigationMode(
 							ActionBar.NAVIGATION_MODE_TABS);
+					supportInvalidateOptionsMenu();
+					// getSupportActionBar().show();
 				}
-				System.out
-						.println("Method Stub: onDrawerSlide()" + slideOffset);
 				super.onDrawerSlide(drawerView, slideOffset);
 			}
 		};
@@ -118,17 +129,19 @@ public class WorkorderActivity extends ActionBarActivity {
 		_futureWaitAsyncTask = new FutureWaitAsyncTask(
 				_futureWaitAsyncTaskListener);
 
-		AccountManager am = AccountManager.get(this);
-		Account[] accounts = am
+		Account[] accounts = _accountManager
 				.getAccountsByType(Constants.FIELD_NATION_ACCOUNT_TYPE);
 		if (accounts.length == 0) {
-			am.addAccount(Constants.FIELD_NATION_ACCOUNT_TYPE,
+			_accountManager.addAccount(Constants.FIELD_NATION_ACCOUNT_TYPE,
 					Constants.FIELD_NATION_ACCOUNT_TYPE, null, new Bundle(),
 					this, amc, null);
 		} else {
 			// TODO, ANDR-10 present a picker for the account
-			am.getAuthToken(accounts[0], Constants.FIELD_NATION_ACCOUNT_TYPE,
-					new Bundle(), this, amc, null);
+			// Force an invalidation
+			_accountManager.getAuthToken(accounts[0],
+					Constants.FIELD_NATION_ACCOUNT_TYPE, new Bundle(), this,
+					amc, null);
+
 		}
 
 	}
@@ -162,36 +175,13 @@ public class WorkorderActivity extends ActionBarActivity {
 	/*-				Events				-*/
 	/*-*********************************-*/
 
-	// TODO remove
-	private TabListener _tabListener = new TabListener() {
-		@Override
-		public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
-			// TODO Auto-generated method stub
-			System.out.println("Method Stub: onTabUnselected()");
-
-		}
-
-		@Override
-		public void onTabSelected(Tab arg0, FragmentTransaction arg1) {
-			// TODO Auto-generated method stub
-			System.out.println("Method Stub: onTabSelected()");
-
-		}
-
-		@Override
-		public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
-			// TODO Auto-generated method stub
-			System.out.println("Method Stub: onTabReselected()");
-
-		}
-	};
-
 	// the next two events are related to authentication
 	private FutureWaitAsyncTaskListener _futureWaitAsyncTaskListener = new FutureWaitAsyncTaskListener() {
 		@Override
 		public void onFail(Exception ex) {
-			// TODO Auto-generated method stub
+			// TODO Method Stub: onFail()
 			System.out.println("Method Stub: onFail()");
+
 		}
 
 		@Override
@@ -207,15 +197,24 @@ public class WorkorderActivity extends ActionBarActivity {
 				} else {
 					_accessToken = new AccessToken(tokenString);
 
-					startService(WorkorderGetRequestedRpc.makeIntent(
-							WorkorderActivity.this, _rpcReciever, 0,
-							_accessToken, 0));
+					if (_accessToken.isExpired()) {
+						_accountManager.invalidateAuthToken(
+								Constants.FIELD_NATION_ACCOUNT_TYPE,
+								tokenString);
+						getAuthorization();
+					} else {
+
+						WorkorderGetRequestedRpc.getRequested(
+								WorkorderActivity.this, _rpcReciever, 0,
+								_accessToken, 1);
+					}
 
 				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 		}
+
 	};
 
 	private AccountManagerCallback<Bundle> amc = new AccountManagerCallback<Bundle>() {
@@ -227,12 +226,11 @@ public class WorkorderActivity extends ActionBarActivity {
 
 	// handles responses from the RPC service
 	private ResultReceiver _rpcReciever = new ResultReceiver(new Handler()) {
-		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
-			// TODO Auto-generated method stub
+			// TODO Method Stub: onFail()
 			System.out.println("Method Stub: onReceiveResult()");
 			super.onReceiveResult(resultCode, resultData);
-		}
+		};
 	};
 
 	// when a menu item is selected

@@ -35,6 +35,8 @@ public class AuthRpc extends RpcInterface {
 			try {
 				at = new AccessToken(hostname, path, grantType, clientId,
 						clientSecret, username, password);
+
+				System.out.println(at.toString());
 			} catch (Exception ex) {
 				// could not get the token... need to figure out why
 				ex.printStackTrace();
@@ -64,9 +66,6 @@ public class AuthRpc extends RpcInterface {
 
 				rr.send(bundle.getInt("RESULT_CODE"), response);
 			}
-
-			// TODO Auto-generated method stub
-			System.out.println("Method Stub: execute()");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

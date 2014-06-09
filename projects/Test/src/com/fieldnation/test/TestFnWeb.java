@@ -18,12 +18,10 @@ public class TestFnWeb {
 
 			System.out.println(Integer.class.getName());
 			System.out.println(Integer.class.getCanonicalName());
-			
-			
 
-			// JsonArray dest = wo.getAllRequested();
+			result = wo.getRequested(1);
 
-			// System.out.println(dest.display());
+			System.out.println(result.getResultsAsJsonArray().display());
 
 			// System.out.println(dest.size());
 

@@ -61,7 +61,7 @@ public class DrawerView extends RelativeLayout {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
+			// TODO Method Stub: onClick()
 			System.out.println("Method Stub: onClick()");
 
 		}
