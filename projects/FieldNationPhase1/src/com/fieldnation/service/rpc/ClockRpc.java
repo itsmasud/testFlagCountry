@@ -19,7 +19,7 @@ public class ClockRpc extends RpcInterface {
 		try {
 			boolean enable = intent.getBooleanExtra("PARAM_ENABLE", true);
 
-			// TODO, pull down a duration
+			// TODO, ANDR-9 pull down a duration
 			if (enable)
 				ClockReceiver.registerClock(context, 5000);
 			else

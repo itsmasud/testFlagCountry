@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item>
+        <shape android:shape="rectangle" >
+            <corners
+                android:bottomLeftRadius="5px"
+                android:topLeftRadius="5px" />
+
+            <solid android:color="@color/wosum_data_container_bevel" >
+            </solid>
+        </shape>
+    </item>
+    <item
+        android:bottom="4px"
+        android:left="2px"
+        android:right="2px"
+        android:top="2px">
+        <shape android:shape="rectangle" >
+            <corners
+                android:bottomLeftRadius="5px"
+                android:topLeftRadius="5px" />
+
+            <solid android:color="@color/workorder_summary_status" />
+        </shape>
+    </item>
+
+</layer-list>

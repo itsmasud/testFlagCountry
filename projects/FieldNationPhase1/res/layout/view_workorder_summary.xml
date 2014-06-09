@@ -11,13 +11,13 @@
         android:orientation="horizontal" >
 
         <View
-            android:id="@+id/wosum_status"
+            android:id="@+id/status_view"
             style="@style/wosum_status_bar"
             android:layout_width="10px"
             android:layout_height="fill_parent" />
 
         <RelativeLayout
-            style="@style/wosum_data_container"
+            style="@style/data_container_viewgroup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
@@ -30,6 +30,7 @@
                 android:orientation="vertical" >
 
                 <TextView
+                    android:id="@+id/title_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Project Title Goes Here"
@@ -47,6 +48,7 @@
                         android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <TextView
+                        android:id="@+id/clientname_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Client Name"
@@ -62,18 +64,21 @@
                 android:layout_toRightOf="@+id/wosum_data" >
 
                 <Button
+                    android:id="@+id/detail_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="Check In" />
 
                 <LinearLayout
+                    android:id="@+id/cash_linearlayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:orientation="horizontal" >
 
                     <TextView
+                        android:id="@+id/cash_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$5,000" />

@@ -39,7 +39,7 @@ public class AuthRpc extends RpcInterface {
 				// could not get the token... need to figure out why
 				ex.printStackTrace();
 			}
-			// TODO, if failed, generate local auth token
+			// TODO, ANDR-11 if failed, generate local auth token
 
 			if (bundle.containsKey("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE")) {
 				AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle

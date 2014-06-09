@@ -17,7 +17,7 @@
         <item name="android:background">@color/wosum_data_container_background</item>
     </style>
 
-    <style name="wosum_data_container">
+    <style name="data_container_viewgroup">
         <item name="android:paddingLeft">10px</item>
         <item name="android:paddingRight">10px</item>
         <item name="android:paddingTop">10px</item>
@@ -25,7 +25,7 @@
     </style>
 
     <style name="wosum_status_bar">
-        <item name="android:background">#FF00FF00</item>
+        <item name="android:background">@drawable/wosum_status_no_highlight</item>
     </style>
 
 </resources>

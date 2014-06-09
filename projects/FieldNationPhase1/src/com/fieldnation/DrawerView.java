@@ -1,5 +1,9 @@
 package com.fieldnation;
 
+import com.fieldnation.R;
+import com.fieldnation.R.id;
+import com.fieldnation.R.layout;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
