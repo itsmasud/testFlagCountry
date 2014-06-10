@@ -44,7 +44,7 @@ public class WorkorderAssignedAdapter extends BaseAdapter {
 				JsonArray orders = null;
 				try {
 					orders = new JsonArray(data);
-				} catch (ParseException ex) {
+				} catch (Exception ex) {
 					// TODO report problem?
 					ex.printStackTrace();
 				}

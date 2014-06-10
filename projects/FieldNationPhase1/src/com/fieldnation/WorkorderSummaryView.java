@@ -85,7 +85,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_cashTextView = (TextView) findViewById(R.id.payment_textview);
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
 
-		_detailButton.setVisibility(GONE);
+		// _detailButton.setVisibility(GONE);
+		_cashLinearLayout.setVisibility(GONE);
 
 	}
 

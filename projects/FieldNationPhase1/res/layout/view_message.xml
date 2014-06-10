@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/linearLayout1" >
+
+            <View
+                android:id="@+id/status_view"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/filler"
+                android:background="@drawable/wosum_status_3_no_highlight" />
+
+            <View
+                android:id="@+id/filler"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Large Text"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Small Text"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
