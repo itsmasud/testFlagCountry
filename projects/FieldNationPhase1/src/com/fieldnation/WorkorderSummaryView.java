@@ -1,9 +1,11 @@
 package com.fieldnation;
 
 import java.text.ParseException;
+import java.util.Calendar;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.rpc.WorkorderRpc;
+import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -26,12 +28,15 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private TextView _cashTextView;
 	private LinearLayout _cashLinearLayout;
 	private TextView _basisTextView;
+	private TextView _distanceTextView;
+	private TextView _whenTextView;
 
 	// Data
 	private GlobalState _gs;
 	private int _state = 0;
 	private AttributeSet _attrs;
 
+	private boolean _hasDetail;
 	private JsonObject _workorder;
 
 	// state lookuptable
@@ -70,6 +75,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
 		_clientNameTextView = (TextView) findViewById(R.id.clientname_textview);
+		_distanceTextView = (TextView) findViewById(R.id.distance_textview);
+		_whenTextView = (TextView) findViewById(R.id.when_textview);
 
 		_detailButton = (Button) findViewById(R.id.detail_button);
 		_detailButton.setOnClickListener(_detailButton_onClick);
@@ -77,6 +84,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_cashLinearLayout = (LinearLayout) findViewById(R.id.payment_linearlayout);
 		_cashTextView = (TextView) findViewById(R.id.payment_textview);
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
+
+		_detailButton.setVisibility(GONE);
 
 	}
 
@@ -101,8 +110,19 @@ public class WorkorderSummaryView extends RelativeLayout {
 		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			if (resultCode == 1) {
-				// getDetails
-				
+				long workorderId = resultData.getLong("PARAM_WORKORDER_ID");
+				try {
+					if (workorderId == _workorder.getLong("workorder_id")) {
+						String data = new String(
+								resultData.getByteArray("PARAM_DATA"));
+						// getDetails
+
+					}
+				} catch (Exception ex) {
+					// TODO handle better?
+					ex.printStackTrace();
+				}
+
 			}
 			// TODO Method Stub: onReceiveResult()
 			System.out.println("Method Stub: onReceiveResult()");
@@ -122,14 +142,92 @@ public class WorkorderSummaryView extends RelativeLayout {
 	/*-				Util				-*/
 	/*-*********************************-*/
 	private void refresh() {
-
 		try {
-			WorkorderRpc.getDetails(getContext(), _rpcReceiver, 1, _gs.accessToken,
-					_workorder.getLong("workorder_id"));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// title
+			_titleTextView.setText(_workorder.getString("title"));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		try {
+			// client name location.contact_name
+			if (_workorder.has("location.contact_name")) {
+				_clientNameTextView.setText(_workorder
+						.getString("location.contact_name"));
+			} else {
+				_clientNameTextView.setText("NA");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		try {
+
+			// distance/address? location.state, location.zip, location.city,
+			// location.country,
+			if (_workorder.has("location.distance")) {
+				_distanceTextView.setText(_workorder
+						.getString("location.distance") + " mi");
+			} else {
+				_distanceTextView.setText("NA");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		try {
+
+			// when scheduledTimeStart/scheduledTimeEnd
+			if (_workorder.has("scheduledTimeStart")
+					&& _workorder.has("scheduledTimeEnd")) {
+				long scheduledTimeStart = _workorder
+						.getLong("scheduledTimeStart") * 1000;
+				long scheduledTimeEnd = _workorder.getLong("scheduledTimeEnd") * 1000;
+				String when = "";
+				Calendar cal = Calendar.getInstance();
+				cal.setTimeInMillis(scheduledTimeStart);
+
+				when = (cal.get(Calendar.MONTH) + 1) + "/"
+						+ cal.get(Calendar.DAY_OF_MONTH) + "/"
+						+ cal.get(Calendar.YEAR);
+
+				if (scheduledTimeEnd > 0) {
+					cal.setTimeInMillis(scheduledTimeEnd);
+
+					when += " - ";
+					when += (cal.get(Calendar.MONTH) + 1) + "/"
+							+ cal.get(Calendar.DAY_OF_MONTH) + "/"
+							+ cal.get(Calendar.YEAR);
+				}
+				when += " @ ";
+
+				when += cal.get(Calendar.HOUR)
+						+ (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
+
+				_whenTextView.setText(when);
+			} else {
+				_whenTextView.setText("NA");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		try {
+
+			// pay.basis
+			// basis/ pay : pay.basis
+			// if Fixed, then use pay.fixedAmount
+			// if Hourly, then use pay.fixedAmount
+			// if Blended, then use payblendedAdditionalRate
+			if (_workorder.has("pay.basis")) {
+				String basis = _workorder.getString("pay.basis");
+				_basisTextView.setText(basis);
+				if (_workorder.has("pay.fixedAmount")) {
+					_cashTextView.setText(misc.toCurrency(_workorder
+							.getFloat("pay.fixedAmount")));
+				} else if (_workorder.has("pay.blendedAdditionalRate")) {
+					_cashTextView.setText(misc.toCurrency(_workorder
+							.getFloat("pay.blendedAdditionalRate")));
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
-
 }

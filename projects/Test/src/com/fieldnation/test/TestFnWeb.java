@@ -1,6 +1,9 @@
 package com.fieldnation.test;
 
+import java.util.Enumeration;
+
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.webapi.AccessToken;
 import com.fieldnation.webapi.Result;
 import com.fieldnation.webapi.rest.v1.Workorder;
@@ -16,12 +19,18 @@ public class TestFnWeb {
 
 			Workorder wo = new Workorder(token);
 
-			System.out.println(Integer.class.getName());
-			System.out.println(Integer.class.getCanonicalName());
-
+			// result = wo.getDetails(41463);
 			result = wo.getAssigned(1);
 
-			System.out.println(result.getResultsAsJsonArray().display());
+			// JsonObject w = result.getResultsAsJsonObject();
+			JsonObject w = result.getResultsAsJsonArray().getJsonObject(0);
+
+			Enumeration<String> e = w.keys();
+			while (e.hasMoreElements()) {
+				System.out.println(e.nextElement());
+			}
+
+			// System.out.println(result.getResultsAsJsonObject().display());
 
 			// System.out.println(dest.size());
 

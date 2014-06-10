@@ -27,11 +27,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/wosum_actions"
                 android:orientation="vertical" >
 
                 <TextView
                     android:id="@+id/title_textview"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Project Title Goes Here"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -101,11 +102,11 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/wosum_actions"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/wosum_data" >
+                android:layout_centerVertical="true" >
 
                 <Button
                     android:id="@+id/detail_button"
@@ -121,18 +122,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:orientation="horizontal" >
+                    android:orientation="vertical" >
 
                     <TextView
                         android:id="@+id/payment_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="left"
                         android:text="$5,000" />
 
                     <TextView
                         android:id="@+id/basis_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="right"
                         android:text="fixed" />
                 </LinearLayout>
             </RelativeLayout>

@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.fieldnation.WorkorderSummaryView
-        android:layout_width="fill_parent"
+    <ListView
+        android:id="@+id/workorders_listview"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" >
-    </com.fieldnation.WorkorderSummaryView>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+    </ListView>
 
 </RelativeLayout>
