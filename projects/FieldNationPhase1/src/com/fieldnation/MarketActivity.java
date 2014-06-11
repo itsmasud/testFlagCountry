@@ -4,6 +4,7 @@ import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.AccountManager;
 import android.content.res.Configuration;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class MarketActivity extends BaseActivity {
 	private static final String TAG = "MarketActivity";
@@ -22,8 +26,13 @@ public class MarketActivity extends BaseActivity {
 	// UI
 	private ActionBarDrawerToggle _drawerToggle;
 	private DrawerLayout _drawerLayout;
+	private ListView _workordersListView;
+	private ProgressBar _loadingProgressBar;
+	private TextView _noDataTextView;
 
 	// Data
+	private WorkorderListAdapter _woAdapter;
+	private boolean _hasData = false;
 
 	// Services
 
@@ -36,12 +45,16 @@ public class MarketActivity extends BaseActivity {
 		setContentView(R.layout.activity_market);
 		setTitle(R.string.market_title);
 
-		buildDrawer();
+		_workordersListView = (ListView) findViewById(R.id.workorder_listview);
+		_loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
+		_noDataTextView = (TextView) findViewById(R.id.nodata_textview);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setDisplayHomeAsUpEnabled(true);
 		actionbar.setHomeButtonEnabled(true);
+		actionbar.setHomeAsUpIndicator(R.drawable.ic_navigation_drawer);
 
+		buildDrawer();
 	}
 
 	private void buildDrawer() {
@@ -69,9 +82,18 @@ public class MarketActivity extends BaseActivity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	protected void onStart() {
+		super.onStart();
+		updateUi();
+	}
 
-		return true;
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		if (_woAdapter != null) {
+			_woAdapter.onStop();
+		}
 	}
 
 	/*-*********************************-*/
@@ -102,13 +124,51 @@ public class MarketActivity extends BaseActivity {
 		// TODO Method Stub: onHaveAuthToken()
 		Log.v(TAG, "Method Stub: onHaveAuthToken()");
 
+		try {
+			_woAdapter = new WorkorderListAdapter(this, WorkorderListAdapter.TYPE_AVAILABLE);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		_woAdapter.registerDataSetObserver(_listAdapter_observer);
+		_woAdapter.update();
+
+		_workordersListView.setAdapter(_woAdapter);
+
 	}
 
 	@Override
 	public void onFailedAuthToken(Exception ex) {
 		// TODO Method Stub: onFailedAuthToken()
 		Log.v(TAG, "Method Stub: onFailedAuthToken()");
+	}
 
+	private DataSetObserver _listAdapter_observer = new DataSetObserver() {
+		@Override
+		public void onChanged() {
+			_hasData = true;
+			updateUi();
+			super.onChanged();
+		}
+	};
+
+	/*-*********************************-*/
+	/*-				Util				-*/
+	/*-*********************************-*/
+	private void updateUi() {
+		if (_loadingProgressBar != null) {
+			if (_hasData) {
+				_loadingProgressBar.setVisibility(View.GONE);
+				if (_woAdapter != null) {
+					if (_woAdapter.getCount() == 0) {
+						_noDataTextView.setVisibility(View.VISIBLE);
+					} else {
+						_noDataTextView.setVisibility(View.GONE);
+					}
+				}
+			} else {
+				_loadingProgressBar.setVisibility(View.VISIBLE);
+			}
+		}
 	}
 
 }

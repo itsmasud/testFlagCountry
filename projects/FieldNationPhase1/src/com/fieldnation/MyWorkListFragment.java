@@ -26,7 +26,7 @@ public class MyWorkListFragment extends Fragment {
 	private TextView _noDataTextView;
 
 	// Data
-	private MyWorkAdapter _listAdapter;
+	private WorkorderListAdapter _listAdapter;
 	private String _displayType = TYPE_REQUESTED;
 	private boolean _hasData = false;
 
@@ -43,7 +43,7 @@ public class MyWorkListFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-			_listAdapter = new MyWorkAdapter(getActivity(), _displayType);
+			_listAdapter = new WorkorderListAdapter(getActivity(), _displayType);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}

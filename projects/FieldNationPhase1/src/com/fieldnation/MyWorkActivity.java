@@ -126,7 +126,6 @@ public class MyWorkActivity extends BaseActivity {
 		};
 
 		_drawerLayout.setDrawerListener(_drawerToggle);
-
 	}
 
 	@Override
@@ -139,8 +138,8 @@ public class MyWorkActivity extends BaseActivity {
 	/*-				Events				-*/
 	/*-*********************************-*/
 
+	// swaps fragments on a pager transition
 	private class ScreenSlitdePagerAdapter extends FragmentStatePagerAdapter {
-
 		public ScreenSlitdePagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
@@ -154,9 +153,9 @@ public class MyWorkActivity extends BaseActivity {
 		public int getCount() {
 			return _fragments.length;
 		}
-
 	}
 
+	// sync set actionbar tabs on page viewer change
 	private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
 		@Override
 		public void onPageSelected(int position) {
@@ -164,8 +163,8 @@ public class MyWorkActivity extends BaseActivity {
 		};
 	};
 
+	// sync pageviewer based on tab selection
 	private TabListener _tabListener = new TabListener() {
-
 		@Override
 		public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
 		}
