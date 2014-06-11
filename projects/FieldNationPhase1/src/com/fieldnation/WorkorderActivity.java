@@ -9,9 +9,17 @@ import com.fieldnation.service.rpc.WorkorderRpc;
 import com.fieldnation.webapi.AccessToken;
 
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
+import android.support.v7.app.ActionBar.TabListener;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -31,10 +39,14 @@ public class WorkorderActivity extends ActionBarActivity {
 	private DrawerLayout _drawerLayout;
 	private NotificationActionBarView _notificationsView;
 	private MessagesActionBarView _messagesView;
+	private ViewPager _viewPager;
+
+	private Fragment[] _fragments;
 
 	// Data
 	private GlobalState _gs;
 	private AccessToken _accessToken;
+	private PagerAdapter _pagerAdapter;
 
 	// Other
 	private FutureWaitAsyncTask _futureWaitAsyncTask;
@@ -61,6 +73,15 @@ public class WorkorderActivity extends ActionBarActivity {
 	}
 
 	private void buildTabs() {
+		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
+
+		_fragments = new Fragment[4];
+
+		_fragments[0] = new WorkorderInProgressFragment();
+		_fragments[1] = new WorkorderAssignedFragment();
+		_fragments[2] = new WorkorderCompletedFragment();
+		_fragments[3] = new WorkorderCancelledFragment();
+
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionbar.setDisplayHomeAsUpEnabled(true);
@@ -71,22 +92,62 @@ public class WorkorderActivity extends ActionBarActivity {
 		ActionBar.Tab tab3 = actionbar.newTab().setText("Completed");
 		ActionBar.Tab tab4 = actionbar.newTab().setText("Cancelled");
 
-		// TODO add the other fragments
-		tab1.setTabListener(new FragmentSwaperTabListener(
-				new WorkorderInProgressFragment(), R.id.workorder_content));
-		tab2.setTabListener(new FragmentSwaperTabListener(
-				new WorkorderAssignedFragment(), R.id.workorder_content));
-		tab3.setTabListener(new FragmentSwaperTabListener(
-				new WorkorderCompletedFragment(), R.id.workorder_content));
-		tab4.setTabListener(new FragmentSwaperTabListener(
-				new WorkorderCancelledFragment(), R.id.workorder_content));
+		tab1.setTabListener(_tabListener);
+		tab2.setTabListener(_tabListener);
+		tab3.setTabListener(_tabListener);
+		tab4.setTabListener(_tabListener);
 
-		// place the tabs
 		actionbar.addTab(tab1);
 		actionbar.addTab(tab2);
 		actionbar.addTab(tab3);
 		actionbar.addTab(tab4);
+
+		_pagerAdapter = new ScreenSlitdePagerAdapter(
+				getSupportFragmentManager());
+
+		_viewPager.setAdapter(_pagerAdapter);
+		_viewPager.setOnPageChangeListener(_viewPager_onChange);
 	}
+
+	private class ScreenSlitdePagerAdapter extends FragmentStatePagerAdapter {
+
+		public ScreenSlitdePagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int postition) {
+			return _fragments[postition];
+		}
+
+		@Override
+		public int getCount() {
+			return _fragments.length;
+		}
+
+	}
+
+	private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
+		public void onPageSelected(int position) {
+			getSupportActionBar().setSelectedNavigationItem(position);
+		};
+	};
+
+	private TabListener _tabListener = new TabListener() {
+
+		@Override
+		public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
+		}
+
+		@Override
+		public void onTabSelected(Tab arg0, FragmentTransaction arg1) {
+			_viewPager.setCurrentItem(arg0.getPosition(), true);
+		}
+
+		@Override
+		public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+		}
+	};
 
 	private void buildDrawer() {
 		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
@@ -100,7 +161,6 @@ public class WorkorderActivity extends ActionBarActivity {
 					getSupportActionBar().setNavigationMode(
 							ActionBar.NAVIGATION_MODE_STANDARD);
 					supportInvalidateOptionsMenu();
-					// getSupportActionBar().hide();
 				}
 				super.onDrawerStateChanged(newState);
 			}
@@ -111,7 +171,6 @@ public class WorkorderActivity extends ActionBarActivity {
 					getSupportActionBar().setNavigationMode(
 							ActionBar.NAVIGATION_MODE_TABS);
 					supportInvalidateOptionsMenu();
-					// getSupportActionBar().show();
 				}
 				super.onDrawerSlide(drawerView, slideOffset);
 			}
@@ -168,16 +227,9 @@ public class WorkorderActivity extends ActionBarActivity {
 		_drawerToggle.syncState();
 	}
 
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		System.out.println("Method Stub: onRestoreInstanceState()");
-		super.onRestoreInstanceState(savedInstanceState);
-	}
-
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	
 
 	// the next two events are related to authentication
 	private FutureWaitAsyncTaskListener _futureWaitAsyncTaskListener = new FutureWaitAsyncTaskListener() {
