@@ -177,6 +177,7 @@ public class WorkorderActivity extends ActionBarActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	
 
 	// the next two events are related to authentication
 	private FutureWaitAsyncTaskListener _futureWaitAsyncTaskListener = new FutureWaitAsyncTaskListener() {

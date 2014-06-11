@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
     <LinearLayout
@@ -11,29 +11,31 @@
         <RelativeLayout
             android:id="@+id/relativeLayout1"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toLeftOf="@+id/linearLayout1" >
+            android:layout_height="fill_parent" >
 
             <View
                 android:id="@+id/status_view"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
-                android:layout_toLeftOf="@+id/filler"
                 android:background="@drawable/wosum_status_3_no_highlight" />
 
             <View
                 android:id="@+id/filler"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentRight="true" />
+                android:layout_toRightOf="@+id/status_view" />
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/profile_pic" 
+                android:scaleType="centerCrop"/>
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout1"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
             android:orientation="vertical" >
 
             <TextView
