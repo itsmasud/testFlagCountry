@@ -38,4 +38,7 @@
     <string name="settings_subtitle">Preferences and Switch Account</string>
     <string name="logout_title">Log Out</string>
     
+    <!-- fragment strings -->
+    <string name="no_data">No Data Available</string>
+    
 </resources>

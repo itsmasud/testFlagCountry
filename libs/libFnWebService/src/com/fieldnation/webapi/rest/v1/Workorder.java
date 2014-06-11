@@ -33,8 +33,7 @@ public class Workorder extends Ws {
 					null);
 	}
 
-	public Result getAvailable(int page) throws MalformedURLException,
-			ParseException, IOException {
+	public Result getAvailable(int page) throws MalformedURLException, ParseException, IOException {
 		if (page == -1)
 			return httpGet("/api/rest/v1/workorder/available");
 		else
@@ -42,17 +41,15 @@ public class Workorder extends Ws {
 					null);
 	}
 
-	public Result getPendingApproval(int page) throws MalformedURLException,
-			ParseException, IOException {
+	public Result getPendingApproval(int page) throws MalformedURLException, ParseException, IOException {
 		if (page == -1)
 			return httpGet("/api/rest/v1/workorder/pending-approval");
 		else
-			return httpGet("/api/rest/v1/workorder/pending_approval", "?page="
-					+ page, null);
+			return httpGet("/api/rest/v1/workorder/pending_approval",
+					"?page=" + page, null);
 	}
 
-	public Result getAssigned(int page) throws MalformedURLException,
-			ParseException, IOException {
+	public Result getAssigned(int page) throws MalformedURLException, ParseException, IOException {
 		if (page == -1)
 			return httpGet("/api/rest/v1/workorder/assigned");
 		else
@@ -60,101 +57,90 @@ public class Workorder extends Ws {
 					null);
 	}
 
-	public Result getDetails(long workorderId) throws MalformedURLException,
-			IOException, ParseException {
+	public Result getDetails(long workorderId) throws MalformedURLException, IOException, ParseException {
 		return httpGet("/api/rest/v1/workorder/" + workorderId + "/details");
 	}
 
-	public Result decline(long workorderId) throws MalformedURLException,
-			IOException, ParseException {
+	public Result decline(long workorderId) throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/decline",
 				null, "", "application/x-www-form-urlencoded");
 	}
 
-	public Result addRequest(long workorderId, int expireInSeconds)
-			throws MalformedURLException, IOException, ParseException {
+	public Result addRequest(long workorderId, int expireInSeconds) throws MalformedURLException, IOException, ParseException {
 		if (expireInSeconds == -1)
-			return httpPost("/api/rest/v1/workorder/" + workorderId
-					+ "/request", null, "", "application/x-www-form-urlencoded");
+			return httpPost(
+					"/api/rest/v1/workorder/" + workorderId + "/request", null,
+					"", "application/x-www-form-urlencoded");
 
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/request",
 				null, "expiration=" + expireInSeconds,
 				"application/x-www-form-urlencoded");
 	}
 
-	public Result removeRequest(long workorderId) throws MalformedURLException,
-			IOException, ParseException {
+	public Result removeRequest(long workorderId) throws MalformedURLException, IOException, ParseException {
 		return httpDelete("/api/rest/v1/workorder/" + workorderId + "/request",
 				null, null);
 	}
 
 	public Result confirmAssignment(long workorderId, long startTime,
-			long endTime) throws MalformedURLException, IOException,
-			ParseException {
+			long endTime) throws MalformedURLException, IOException, ParseException {
 		return httpPost(
 				"/api/rest/v1/workorder/" + workorderId + "/assignment",
 				null,
-				"start_time=" + misc.utcTo8601(startTime) + "&end_time="
-						+ misc.utcTo8601(endTime),
+				"start_time=" + misc.utcTo8601(startTime) + "&end_time=" + misc.utcTo8601(endTime),
 				"application/x-www-form-urlencoded");
 	}
 
 	// TODO look up viable reasons and categories
 	public Result cancelAssignment(long workorderId, String cancelCategory,
-			String cancelReason) throws MalformedURLException, IOException,
-			ParseException {
-		return httpPost("/api/rest/v1/workorder/" + workorderId
-				+ "/cancel-assignment", null, "cancel_category="
-				+ cancelCategory + "&cancel_reason=" + cancelReason,
+			String cancelReason) throws MalformedURLException, IOException, ParseException {
+		return httpPost(
+				"/api/rest/v1/workorder/" + workorderId + "/cancel-assignment",
+				null,
+				"cancel_category=" + cancelCategory + "&cancel_reason=" + cancelReason,
 				"application/x-www-form-urlencoded");
 	}
 
 	public Result ready(long workorderId, String cancelCategory,
-			String cancelReason) throws MalformedURLException, IOException,
-			ParseException {
+			String cancelReason) throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/ready",
 				null, "", "application/x-www-form-urlencoded");
 	}
 
-	public Result checkin(long workorderId, long checkinTime)
-			throws MalformedURLException, IOException, ParseException {
+	public Result checkin(long workorderId, long checkinTime) throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/checkin",
 				null, "checkin_time=" + misc.utcTo8601(checkinTime),
 				"application/x-www-form-urlencoded");
 	}
 
-	public Result checkout(long workorderId, long checkoutTime)
-			throws MalformedURLException, IOException, ParseException {
+	public Result checkout(long workorderId, long checkoutTime) throws MalformedURLException, IOException, ParseException {
 		return httpPost("/api/rest/v1/workorder/" + workorderId + "/checkin",
 				null, "checkout_time=" + misc.utcTo8601(checkoutTime),
 				"application/x-www-form-urlencoded");
 	}
 
-	public Result closingNotes(long workorderId, String notes)
-			throws MalformedURLException, IOException, ParseException {
-		return httpPost("/api/rest/v1/workorder/" + workorderId
-				+ "/closing-notes", null, "notes=" + misc.escapeForURL(notes),
+	public Result closingNotes(long workorderId, String notes) throws MalformedURLException, IOException, ParseException {
+		return httpPost(
+				"/api/rest/v1/workorder/" + workorderId + "/closing-notes",
+				null, "notes=" + misc.escapeForURL(notes),
 				"application/x-www-form-urlencoded");
 	}
 
-	public Result getMessages(long workorderId) throws MalformedURLException,
-			IOException, ParseException {
+	public Result getMessages(long workorderId) throws MalformedURLException, IOException, ParseException {
 		return httpGet("/api/rest/v1/workorder/" + workorderId + "/messages");
 	}
 
-	public Result newMessage(long workorderId, String message)
-			throws MalformedURLException, IOException, ParseException {
-		return httpPost("/api/rest/v1/workorder/" + workorderId
-				+ "/messages/new", null,
-				"message=" + misc.escapeForURL(message),
+	public Result newMessage(long workorderId, String message) throws MalformedURLException, IOException, ParseException {
+		return httpPost(
+				"/api/rest/v1/workorder/" + workorderId + "/messages/new",
+				null, "message=" + misc.escapeForURL(message),
 				"application/x-www-form-urlencoded");
 	}
 
-	public Result newMessage(long workorderId, long messageId, String message)
-			throws MalformedURLException, IOException, ParseException {
-		return httpPost("/api/rest/v1/workorder/" + workorderId + "/messages/"
-				+ messageId + "/reply", null,
-				"message=" + misc.escapeForURL(message),
+	public Result newMessage(long workorderId, long messageId, String message) throws MalformedURLException, IOException, ParseException {
+		return httpPost(
+				"/api/rest/v1/workorder/" + workorderId + "/messages/" + messageId + "/reply",
+				null, "message=" + misc.escapeForURL(message),
 				"application/x-www-form-urlencoded");
 	}
 }

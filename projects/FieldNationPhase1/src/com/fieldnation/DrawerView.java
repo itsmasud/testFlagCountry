@@ -1,13 +1,17 @@
 package com.fieldnation;
 
 import com.fieldnation.R;
+
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 public class DrawerView extends RelativeLayout {
+	private static final String TAG = "DrawerView";
+
 	private RelativeLayout _workorderView;
 	private RelativeLayout _marketView;
 	private RelativeLayout _paymentView;
@@ -27,8 +31,7 @@ public class DrawerView extends RelativeLayout {
 
 	public DrawerView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		final LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.view_drawer, this);
 
 		if (isInEditMode())
@@ -59,9 +62,10 @@ public class DrawerView extends RelativeLayout {
 		@Override
 		public void onClick(View v) {
 			// TODO Method Stub: onClick()
-			System.out.println("Method Stub: onClick()");
+			Log.v(TAG, "Method Stub: onClick()");
 
 		}
+
 	};
 
 }

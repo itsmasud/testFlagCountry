@@ -41,4 +41,10 @@ public class ClockRpc extends RpcInterface {
 		context.startService(intent);
 	}
 
+	public static void pulseClock(Context context) {
+		Intent intent = new Intent(context, DataService.class);
+		intent.setAction("CLOCK_PULSE");
+		context.startService(intent);
+	}
+
 }

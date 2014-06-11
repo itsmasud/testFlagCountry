@@ -1,5 +1,7 @@
 package com.fieldnation.service;
 
+import com.fieldnation.service.rpc.ClockRpc;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -10,25 +12,24 @@ public class ClockReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		ServiceInterface.pulseClock(context);
+		ClockRpc.pulseClock(context);
 	}
 
 	public static void registerClock(Context context, long delay) {
 		PendingIntent pintent = getOneSecondTickAlarmIntent(context);
 
-		AlarmManager alarm = (AlarmManager) context
-				.getSystemService(Context.ALARM_SERVICE);
+		AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
 		alarm.cancel(pintent);
 
-		alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), delay, pintent);
+		alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
+				delay, pintent);
 	}
 
 	public static void unregisterOneSecondTickAlarm(Context context) {
 		PendingIntent pintent = getOneSecondTickAlarmIntent(context);
 
-		AlarmManager alarm = (AlarmManager) context
-				.getSystemService(Context.ALARM_SERVICE);
+		AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
 		alarm.cancel(pintent);
 	}

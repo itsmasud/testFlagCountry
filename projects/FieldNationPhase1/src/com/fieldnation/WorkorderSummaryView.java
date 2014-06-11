@@ -1,10 +1,8 @@
 package com.fieldnation;
 
-import java.text.ParseException;
 import java.util.Calendar;
 
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.rpc.WorkorderRpc;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -40,16 +38,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private JsonObject _workorder;
 
 	// state lookuptable
-	private static final int[] _STATUS_LOOKUP_TABLE = {
-			R.drawable.wosum_status_1_no_highlight,
-			R.drawable.wosum_status_2_no_highlight,
-			R.drawable.wosum_status_3_no_highlight,
-			R.drawable.wosum_status_4_no_highlight,
-			R.drawable.wosum_status_5_no_highlight,
-			R.drawable.wosum_status_6_no_highlight,
-			R.drawable.wosum_status_7_no_highlight,
-			R.drawable.wosum_status_8_no_highlight,
-			R.drawable.wosum_status_9_no_highlight };
+	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1_no_highlight, R.drawable.wosum_status_2_no_highlight, R.drawable.wosum_status_3_no_highlight, R.drawable.wosum_status_4_no_highlight, R.drawable.wosum_status_5_no_highlight, R.drawable.wosum_status_6_no_highlight, R.drawable.wosum_status_7_no_highlight, R.drawable.wosum_status_8_no_highlight, R.drawable.wosum_status_9_no_highlight };
 
 	public WorkorderSummaryView(Context context) {
 		this(context, null, -1);
@@ -59,11 +48,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 		this(context, attrs, -1);
 	}
 
-	public WorkorderSummaryView(Context context, AttributeSet attrs,
-			int defStyle) {
+	public WorkorderSummaryView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		final LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.view_workorder_summary, this);
 
 		if (isInEditMode())
@@ -114,8 +101,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 				long workorderId = resultData.getLong("PARAM_WORKORDER_ID");
 				try {
 					if (workorderId == _workorder.getLong("workorder_id")) {
-						String data = new String(
-								resultData.getByteArray("PARAM_DATA"));
+						String data = new String(resultData.getByteArray("PARAM_DATA"));
 						// getDetails
 
 					}
@@ -152,8 +138,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		try {
 			// client name location.contact_name
 			if (_workorder.has("location.contact_name")) {
-				_clientNameTextView.setText(_workorder
-						.getString("location.contact_name"));
+				_clientNameTextView.setText(_workorder.getString("location.contact_name"));
 			} else {
 				_clientNameTextView.setText("NA");
 			}
@@ -165,8 +150,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			// distance/address? location.state, location.zip, location.city,
 			// location.country,
 			if (_workorder.has("location.distance")) {
-				_distanceTextView.setText(_workorder
-						.getString("location.distance") + " mi");
+				_distanceTextView.setText(_workorder.getString("location.distance") + " mi");
 			} else {
 				_distanceTextView.setText("NA");
 			}
@@ -176,31 +160,24 @@ public class WorkorderSummaryView extends RelativeLayout {
 		try {
 
 			// when scheduledTimeStart/scheduledTimeEnd
-			if (_workorder.has("scheduledTimeStart")
-					&& _workorder.has("scheduledTimeEnd")) {
-				long scheduledTimeStart = _workorder
-						.getLong("scheduledTimeStart") * 1000;
+			if (_workorder.has("scheduledTimeStart") && _workorder.has("scheduledTimeEnd")) {
+				long scheduledTimeStart = _workorder.getLong("scheduledTimeStart") * 1000;
 				long scheduledTimeEnd = _workorder.getLong("scheduledTimeEnd") * 1000;
 				String when = "";
 				Calendar cal = Calendar.getInstance();
 				cal.setTimeInMillis(scheduledTimeStart);
 
-				when = (cal.get(Calendar.MONTH) + 1) + "/"
-						+ cal.get(Calendar.DAY_OF_MONTH) + "/"
-						+ cal.get(Calendar.YEAR);
+				when = (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR);
 
 				if (scheduledTimeEnd > 0) {
 					cal.setTimeInMillis(scheduledTimeEnd);
 
 					when += " - ";
-					when += (cal.get(Calendar.MONTH) + 1) + "/"
-							+ cal.get(Calendar.DAY_OF_MONTH) + "/"
-							+ cal.get(Calendar.YEAR);
+					when += (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR);
 				}
 				when += " @ ";
 
-				when += cal.get(Calendar.HOUR)
-						+ (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
+				when += cal.get(Calendar.HOUR) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
 
 				_whenTextView.setText(when);
 			} else {
@@ -220,11 +197,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 				String basis = _workorder.getString("pay.basis");
 				_basisTextView.setText(basis);
 				if (_workorder.has("pay.fixedAmount")) {
-					_cashTextView.setText(misc.toCurrency(_workorder
-							.getFloat("pay.fixedAmount")));
+					_cashTextView.setText(misc.toCurrency(_workorder.getFloat("pay.fixedAmount")));
 				} else if (_workorder.has("pay.blendedAdditionalRate")) {
-					_cashTextView.setText(misc.toCurrency(_workorder
-							.getFloat("pay.blendedAdditionalRate")));
+					_cashTextView.setText(misc.toCurrency(_workorder.getFloat("pay.blendedAdditionalRate")));
 				}
 			}
 		} catch (Exception ex) {

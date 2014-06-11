@@ -50,12 +50,9 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 			_password = _passwordEditText.getText().toString();
 
 			String hostname = AuthActivity.this.getString(R.string.fn_hostname);
-			String grantType = AuthActivity.this
-					.getString(R.string.fn_grant_type);
-			String clientId = AuthActivity.this
-					.getString(R.string.fn_client_id);
-			String clientSecret = AuthActivity.this
-					.getString(R.string.fn_client_secret);
+			String grantType = AuthActivity.this.getString(R.string.fn_grant_type);
+			String clientId = AuthActivity.this.getString(R.string.fn_client_id);
+			String clientSecret = AuthActivity.this.getString(R.string.fn_client_secret);
 
 			Intent intent = AuthRpc.makeIntent(AuthActivity.this, _rpcReceiver,
 					1, hostname, grantType, clientId, clientSecret, _username,
@@ -69,24 +66,27 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			try {
-				Account account = new Account(_username,
-						Constants.FIELD_NATION_ACCOUNT_TYPE);
+				Account account = new Account(_username, Constants.FIELD_NATION_ACCOUNT_TYPE);
 				AccountManager am = AccountManager.get(AuthActivity.this);
 				am.addAccountExplicitly(account, _password, null);
+				am.setAuthToken(account, Constants.FIELD_NATION_ACCOUNT_TYPE,
+						resultData.getString("authtoken"));
 
 				Intent intent = new Intent();
 				intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
 				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
 						Constants.FIELD_NATION_ACCOUNT_TYPE);
+				// intent.putExtra(AccountManager.KEY_AUTHTOKEN,
+				// Constants.FIELD_NATION_ACCOUNT_TYPE);
 				intent.putExtra(AccountManager.KEY_AUTHTOKEN,
 						resultData.getString("authtoken"));
-				AuthActivity.this.setAccountAuthenticatorResult(intent
-						.getExtras());
+
+				AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
+				AuthActivity.this.setResult(RESULT_OK, intent);
+				AuthActivity.this.finish();
 
 				ClockRpc.enableClock(AuthActivity.this, true);
 
-				AuthActivity.this.setResult(RESULT_OK);
-				AuthActivity.this.finish();
 			} catch (Exception e) {
 				// TODO handle properly
 				e.printStackTrace();

@@ -1,14 +1,17 @@
 package com.fieldnation;
 
 import com.fieldnation.R;
+
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class NotificationActionBarView extends RelativeLayout {
+	private static final String TAG = "NotificationActionBarView";
 	private TextView _countTextView;
 
 	/*-*************************************-*/
@@ -23,11 +26,9 @@ public class NotificationActionBarView extends RelativeLayout {
 		this(context, attrs, -1);
 	}
 
-	public NotificationActionBarView(Context context, AttributeSet attrs,
-			int defStyle) {
+	public NotificationActionBarView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		final LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.view_notification_action_bar, this);
 
 		_countTextView = (TextView) findViewById(R.id.count_textview);
@@ -36,9 +37,10 @@ public class NotificationActionBarView extends RelativeLayout {
 
 			@Override
 			public void onClick(View v) {
-				System.out.println("Method Stub: onClick()");
-
+				// TODO Method Stub: onClick()
+				Log.v(TAG, "Method Stub: onClick()");
 			}
+
 		});
 	}
 

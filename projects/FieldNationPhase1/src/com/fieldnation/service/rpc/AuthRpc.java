@@ -11,8 +11,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.util.Log;
 
 public class AuthRpc extends RpcInterface {
+	private final static String TAG = "service.rpc.AuthRpc";
 
 	public AuthRpc(HashMap<String, RpcInterface> map) {
 		super(map, "auth");
@@ -33,10 +35,9 @@ public class AuthRpc extends RpcInterface {
 
 			AccessToken at = null;
 			try {
-				at = new AccessToken(hostname, path, grantType, clientId,
-						clientSecret, username, password);
+				at = new AccessToken(hostname, path, grantType, clientId, clientSecret, username, password);
+				Log.v(TAG, at.toString());
 
-				System.out.println(at.toString());
 			} catch (Exception ex) {
 				// could not get the token... need to figure out why
 				ex.printStackTrace();
@@ -44,8 +45,7 @@ public class AuthRpc extends RpcInterface {
 			// TODO, ANDR-11 if failed, generate local auth token
 
 			if (bundle.containsKey("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE")) {
-				AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle
-						.getParcelable("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE");
+				AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle.getParcelable("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE");
 
 				Bundle result = new Bundle();
 				result.putString("ACTION", "RPC_getOauthToken");
@@ -56,8 +56,7 @@ public class AuthRpc extends RpcInterface {
 			}
 
 			if (bundle.containsKey("PARAM_RESULT_RECEIVER")) {
-				ResultReceiver rr = bundle
-						.getParcelable("PARAM_RESULT_RECEIVER");
+				ResultReceiver rr = bundle.getParcelable("PARAM_RESULT_RECEIVER");
 
 				Bundle response = new Bundle();
 

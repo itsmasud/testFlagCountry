@@ -4,11 +4,13 @@ import java.util.HashMap;
 
 import com.fieldnation.service.rpc.AuthRpc;
 import com.fieldnation.service.rpc.ClockRpc;
+import com.fieldnation.service.rpc.WebRpc;
 import com.fieldnation.service.rpc.WorkorderRpc;
 import com.fieldnation.service.rpc.RpcInterface;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.webkit.WebResourceResponse;
 
 public class DataService extends IntentService {
 
@@ -22,9 +24,9 @@ public class DataService extends IntentService {
 		super(name);
 
 		// fill in the hashmap
-		new WorkorderRpc(_rpcs);
 		new AuthRpc(_rpcs);
 		new ClockRpc(_rpcs);
+		new WebRpc(_rpcs);
 	}
 
 	@Override

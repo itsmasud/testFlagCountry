@@ -148,7 +148,7 @@ public class Ws {
 		return httpWrite("PUT", path, options, data, contentType);
 	}
 
-	/*-******HACK! REMOVE FROM PRODUCTION CODE!*******-*/
+	/*-******TODO HACK! REMOVE FROM PRODUCTION CODE!*******-*/
 
 	// always verify the host - dont check for certificate
 	protected final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {

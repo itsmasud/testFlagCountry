@@ -1,463 +1,149 @@
 package com.fieldnation.service.rpc;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.ParseException;
 
-import com.fieldnation.service.DataService;
+import com.fieldnation.utils.misc;
 import com.fieldnation.webapi.AccessToken;
-import com.fieldnation.webapi.Result;
-import com.fieldnation.webapi.rest.v1.Workorder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.ResultReceiver;
 
-public class WorkorderRpc extends RpcInterface {
+public class WorkorderRpc extends WebRpcCaller {
 
-	public WorkorderRpc(HashMap<String, RpcInterface> map) {
-		super(map, "workorder");
+	public WorkorderRpc(Context conetxt, AccessToken at, ResultReceiver callback) {
+		super(conetxt, at, callback);
 	}
 
-	@Override
-	public void execute(Context context, Intent intent) {
-		try {
-			String method = intent.getStringExtra("METHOD");
-			AccessToken at = new AccessToken(
-					intent.getStringExtra("PARAM_ACCESS_TOKEN"));
-
-			if ("getRequested".equals(method)) {
-				doGetRequested(context, intent, at);
-			} else if ("getAvailable".equals(method)) {
-				doGetAvailable(context, intent, at);
-			} else if ("getPendingApproval".equals(method)) {
-				doGetPendingApproval(context, intent, at);
-			} else if ("getAssigned".equals(method)) {
-				doGetAssigned(context, intent, at);
-			} else if ("getDetails".equals(method)) {
-				doGetDetails(context, intent, at);
-			} else if ("doDecline".equals(method)) {
-				doDecline(context, intent, at);
-			} else if ("addRequest".equals(method)) {
-				doAddRequest(context, intent, at);
-			} else if ("removeRequest".equals(method)) {
-				doRemoveRequest(context, intent, at);
-			} else if ("confirmAssignment".equals(method)) {
-				doConfirmAssignment(context, intent, at);
-			}
-
-		} catch (Exception ex) {
-			// TODO report error
-			ex.printStackTrace();
-		}
-	}
-	/*- TODO			cancelAssignment			-*/
-	/*- TODO			ready			-*/
-
-	/*-			confirmAssignment			-*/
-	private void doConfirmAssignment(Context context, Intent intent,
-			AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			long workorderId = bundle.getLong("PARAM_WORKORDER_ID");
-			long startTime = bundle.getLong("PARAM_START_TIME");
-			long endTime = bundle.getLong("PARAM_END_TIME");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.confirmAssignment(workorderId, startTime,
-					endTime);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.confirmAssignment");
-				response.putLong("PARAM_WORKORDER_ID", workorderId);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public Intent getRequested(int resultCode, int page) {
+		return httpGet(resultCode, "/api/rest/v1/workorder/requested",
+				"?page=" + page);
 	}
 
-	public static void confirmAssignment(Context context,
-			ResultReceiver callback, int resultCode, AccessToken at,
-			long workorderId, long startTime, long endTime) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "confirmAssignment");
-		intent.putExtra("PARAM_WORKORDER_ID", workorderId);
-		intent.putExtra("PARAM_START_TIME", startTime);
-		intent.putExtra("PARAM_END_TIME", endTime);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
-
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
+	public Intent getAvailable(int resultCode, int page) {
+		return httpGet(resultCode, "/api/rest/v1/workorder/available",
+				"?page=" + page);
 	}
 
-	/*-			removeRequest			-*/
-	private void doRemoveRequest(Context context, Intent intent, AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			long workorderId = bundle.getLong("PARAM_WORKORDER_ID");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.removeRequest(workorderId);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.removeRequest");
-				response.putLong("PARAM_WORKORDER_ID", workorderId);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public Intent getPendingApproval(int resultCode, int page) {
+		return httpGet(resultCode, "/api/rest/v1/workorder/pending_approval",
+				"?page=" + page);
 	}
 
-	public static void removeRequest(Context context, ResultReceiver callback,
-			int resultCode, AccessToken at, long workorderId) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "removeRequest");
-		intent.putExtra("PARAM_WORKORDER_ID", workorderId);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
-
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
+	public Intent getAssigned(int resultCode, int page) {
+		return httpGet(resultCode, "/api/rest/v1/workorder/assigned",
+				"?page=" + page);
 	}
 
-	/*-			addRequest			-*/
-	private void doAddRequest(Context context, Intent intent, AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			long workorderId = bundle.getLong("PARAM_WORKORDER_ID");
-			int expireInSeconds = bundle.getInt("PARAM_EXPIRATION");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.addRequest(workorderId, expireInSeconds);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.addRequest");
-				response.putLong("PARAM_WORKORDER_ID", workorderId);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public Intent getCompleted(int resultCode, int page) {
+		return httpGet(resultCode, "/api/rest/v1/workorder/completed",
+				"?page=" + page);
 	}
 
-	public static void addRequest(Context context, ResultReceiver callback,
-			int resultCode, AccessToken at, long workorderId,
+	public Intent getCanceled(int resultCode, int page) {
+		return httpGet(resultCode, "/api/rest/v1/workorder/canceled",
+				"?page=" + page);
+	}
+
+	public Intent getDetails(int resultCode, long workorderId) {
+		return httpGet(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/details");
+	}
+
+	public Intent decline(int resultCode, long workorderId) {
+		return httpPost(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/decline", null, "",
+				"application/x-www-form-urlencoded");
+	}
+
+	public Intent addRequest(int resultCode, long workorderId,
 			int expireInSeconds) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "addRequest");
-		intent.putExtra("PARAM_WORKORDER_ID", workorderId);
-		intent.putExtra("PARAM_EXPIRATION", expireInSeconds);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
+		if (expireInSeconds == -1)
+			return httpPost(resultCode,
+					"/api/rest/v1/workorder/" + workorderId + "/request", null,
+					"", "application/x-www-form-urlencoded");
 
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
+		return httpPost(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/request", null,
+				"expiration=" + expireInSeconds,
+				"application/x-www-form-urlencoded");
 	}
 
-	/*-			doDecline			-*/
-	private void doDecline(Context context, Intent intent, AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			long workorderId = bundle.getLong("PARAM_WORKORDER_ID");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.decline(workorderId);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.decline");
-				response.putLong("PARAM_WORKORDER_ID", workorderId);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public Intent removeRequest(int resultCode, long workorderId) {
+		return httpDelete(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/request", null);
 	}
 
-	public static void decline(Context context, ResultReceiver callback,
-			int resultCode, AccessToken at, long workorderId) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "decline");
-		intent.putExtra("PARAM_WORKORDER_ID", workorderId);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
-
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
+	public Intent confirmAssignment(int resultCode, long workorderId,
+			long startTime, long endTime) {
+		return httpPost(
+				resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/assignment",
+				null,
+				"start_time=" + misc.utcTo8601(startTime) + "&end_time=" + misc.utcTo8601(endTime),
+				"application/x-www-form-urlencoded");
 	}
 
-	/*-			getDetails			-*/
-	private void doGetDetails(Context context, Intent intent, AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			long workorderId = bundle.getLong("PARAM_WORKORDER_ID");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.getDetails(workorderId);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.getDetails");
-				response.putLong("PARAM_WORKORDER_ID", workorderId);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	// TODO look up viable reasons and categories
+	public Intent cancelAssignment(int resultCode, long workorderId,
+			String cancelCategory, String cancelReason) {
+		return httpPost(
+				resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/cancel-assignment",
+				null,
+				"cancel_category=" + cancelCategory + "&cancel_reason=" + cancelReason,
+				"application/x-www-form-urlencoded");
 	}
 
-	public static void getDetails(Context context, ResultReceiver callback,
-			int resultCode, AccessToken at, long workorderId) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "getDetails");
-		intent.putExtra("PARAM_WORKORDER_ID", workorderId);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
-
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
+	public Intent ready(int resultCode, long workorderId,
+			String cancelCategory, String cancelReason) {
+		return httpPost(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/ready", null, "",
+				"application/x-www-form-urlencoded");
 	}
 
-	/*-			getAssigned			-*/
-	private void doGetAssigned(Context context, Intent intent, AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			int page = bundle.getInt("PARAM_PAGE");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.getAssigned(page);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.getAssigned");
-				response.putInt("PARAM_PAGE", page);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public Intent checkin(int resultCode, long workorderId, long checkinTime) {
+		return httpPost(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/checkin", null,
+				"checkin_time=" + misc.utcTo8601(checkinTime),
+				"application/x-www-form-urlencoded");
 	}
 
-	public static void getAssigned(Context context, ResultReceiver callback,
-			int resultCode, AccessToken at, int page) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "getAssigned");
-		intent.putExtra("PARAM_PAGE", page);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
-
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
+	public Intent checkout(int resultCode, long workorderId, long checkoutTime) {
+		return httpPost(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/checkin", null,
+				"checkout_time=" + misc.utcTo8601(checkoutTime),
+				"application/x-www-form-urlencoded");
 	}
 
-	/*-			getPendingApproval			-*/
-	private void doGetPendingApproval(Context context, Intent intent,
-			AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			int page = bundle.getInt("PARAM_PAGE");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.getPendingApproval(page);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.getPendingApproval");
-				response.putInt("PARAM_PAGE", page);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public Intent closingNotes(int resultCode, long workorderId, String notes) {
+		return httpPost(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/closing-notes",
+				null, "notes=" + misc.escapeForURL(notes),
+				"application/x-www-form-urlencoded");
 	}
 
-	public static void getPendingApproval(Context context,
-			ResultReceiver callback, int resultCode, AccessToken at, int page) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "getPendingApproval");
-		intent.putExtra("PARAM_PAGE", page);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
-
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
+	public Intent getMessages(int resultCode, long workorderId) {
+		return httpGet(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/messages");
 	}
 
-	/*-			getAvailable			-*/
-	private void doGetAvailable(Context context, Intent intent, AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			int page = bundle.getInt("PARAM_PAGE");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.getAvailable(page);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.getAvailable");
-				response.putInt("PARAM_PAGE", page);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public Intent newMessage(int resultCode, long workorderId, String message) {
+		return httpPost(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/messages/new",
+				null, "message=" + misc.escapeForURL(message),
+				"application/x-www-form-urlencoded");
 	}
 
-	public static void getAvailable(Context context, ResultReceiver callback,
-			int resultCode, AccessToken at, int page) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "getAvailable");
-		intent.putExtra("PARAM_PAGE", page);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
-
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
-	}
-
-	/*-			getRequested			-*/
-	private void doGetRequested(Context context, Intent intent, AccessToken at) {
-		try {
-			Bundle bundle = intent.getExtras();
-			int page = bundle.getInt("PARAM_PAGE");
-
-			Workorder wo = new Workorder(at);
-
-			Result result = wo.getRequested(page);
-
-			if (bundle.containsKey("PARAM_CALLBACK")) {
-				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
-				Bundle response = new Bundle();
-
-				response.putString("ACTION", "RPC_Workorder.getRequested");
-				response.putInt("PARAM_PAGE", page);
-				response.putByteArray("PARAM_DATA",
-						result.getResultsAsByteArray());
-
-				rr.send(bundle.getInt("RESULT_CODE"), response);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	public static void getRequested(Context context, ResultReceiver callback,
-			int resultCode, AccessToken at, int page) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "workorder");
-		intent.putExtra("METHOD", "getRequested");
-		intent.putExtra("PARAM_PAGE", page);
-		intent.putExtra("PARAM_ACCESS_TOKEN", at.toString());
-		intent.putExtra("RESULT_CODE", resultCode);
-
-		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
-		}
-
-		context.startService(intent);
+	public Intent newMessage(int resultCode, long workorderId, long messageId,
+			String message) {
+		return httpPost(
+				resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/messages/" + messageId + "/reply",
+				null, "message=" + misc.escapeForURL(message),
+				"application/x-www-form-urlencoded");
 	}
 
 }

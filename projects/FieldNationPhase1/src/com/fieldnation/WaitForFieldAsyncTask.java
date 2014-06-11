@@ -1,20 +1,29 @@
 package com.fieldnation;
 
 import java.lang.reflect.Field;
-
+import android.annotation.TargetApi;
 import android.os.AsyncTask;
+import android.os.Build;
 
 public class WaitForFieldAsyncTask extends AsyncTask<Object, Void, Object> {
 	private Listener _listener;
 
 	public WaitForFieldAsyncTask(Listener listener) {
 		super();
-
 		_listener = listener;
 	}
 
 	public void execute(Object object, String fieldName) {
-		super.execute(object, fieldName);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			executeHoneyComb(object, fieldName);
+		} else {
+			super.execute(object, fieldName);
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void executeHoneyComb(Object... params) {
+		super.executeOnExecutor(THREAD_POOL_EXECUTOR, params);
 	}
 
 	@Override
