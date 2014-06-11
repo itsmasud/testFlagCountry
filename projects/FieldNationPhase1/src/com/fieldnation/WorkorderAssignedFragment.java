@@ -46,23 +46,19 @@ public class WorkorderAssignedFragment extends Fragment {
 				.findViewById(R.id.workorders_listview);
 		_workordersListView.setDivider(null);
 
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-
 		_listAdapter = new WorkorderAssignedAdapter(getActivity());
 
 		_workordersListView.setAdapter(_listAdapter);
 		_listAdapter.registerDataSetObserver(_listAdapter_observer);
 		_listAdapter.update();
 		_loadingProgressBar.setVisibility(View.VISIBLE);
+
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+
 	private DataSetObserver _listAdapter_observer = new DataSetObserver() {
 		@Override
 		public void onChanged() {
@@ -79,8 +75,4 @@ public class WorkorderAssignedFragment extends Fragment {
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
-	private void getWorkorders() {
-		WorkorderRpc.getAssigned(this.getActivity(), _rpcReceiver,
-				RPC_GET_ASSIGNED, _gs.accessToken, 0);
-	}
 }

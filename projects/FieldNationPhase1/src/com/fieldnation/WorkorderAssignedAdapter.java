@@ -21,6 +21,7 @@ public class WorkorderAssignedAdapter extends BaseAdapter {
 	private GlobalState _gs;
 	private Context _context;
 	private JsonArray _workorders = null;
+	private WaitForFieldAsyncTask _waitForField;
 
 	public WorkorderAssignedAdapter(Context context) {
 		_context = context;
@@ -29,9 +30,29 @@ public class WorkorderAssignedAdapter extends BaseAdapter {
 
 	public void update() {
 		_workorders = new JsonArray();
-		WorkorderRpc.getAssigned(_context, _rpcReceiver, RPC_GET_ASSIGNED,
-				_gs.accessToken, 1);
+		if (_gs.accessToken == null) {
+			System.out.println("[WorkorderAssignedAdapter] Waiting for accesstoken");
+			
+			_waitForField = new WaitForFieldAsyncTask(_waitForAccessToken_listener);
+			_waitForField.execute(_gs, "accessToken");
+		} else {
+			System.out.println("[WorkorderAssignedAdapter] Have accesstoken");
+			
+			WorkorderRpc.getAssigned(_context, _rpcReceiver, RPC_GET_ASSIGNED, _gs.accessToken, 1);
+		}
 	}
+
+	private WaitForFieldAsyncTask.Listener _waitForAccessToken_listener = new WaitForFieldAsyncTask.Listener() {
+		@Override
+		public void onSuccess(Object value) {
+			update();
+		}
+
+		@Override
+		public void onFail(Exception ex) {
+			update();
+		}
+	};
 
 	private ResultReceiver _rpcReceiver = new ResultReceiver(new Handler()) {
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
