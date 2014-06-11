@@ -12,6 +12,7 @@ import android.os.ResultReceiver;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,6 +29,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private TextView _basisTextView;
 	private TextView _distanceTextView;
 	private TextView _whenTextView;
+	private TextView _statusTextView;
 
 	// Data
 	private GlobalState _gs;
@@ -38,7 +40,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private JsonObject _workorder;
 
 	// state lookuptable
-	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1_no_highlight, R.drawable.wosum_status_2_no_highlight, R.drawable.wosum_status_3_no_highlight, R.drawable.wosum_status_4_no_highlight, R.drawable.wosum_status_5_no_highlight, R.drawable.wosum_status_6_no_highlight, R.drawable.wosum_status_7_no_highlight, R.drawable.wosum_status_8_no_highlight, R.drawable.wosum_status_9_no_highlight };
+	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1, R.drawable.wosum_status_2, R.drawable.wosum_status_3, R.drawable.wosum_status_4, R.drawable.wosum_status_5, R.drawable.wosum_status_6, R.drawable.wosum_status_7, R.drawable.wosum_status_8, R.drawable.wosum_status_9 };
 
 	public WorkorderSummaryView(Context context) {
 		this(context, null, -1);
@@ -71,6 +73,10 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_cashLinearLayout = (LinearLayout) findViewById(R.id.payment_linearlayout);
 		_cashTextView = (TextView) findViewById(R.id.payment_textview);
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
+
+		_statusTextView = (TextView) findViewById(R.id.status_textview);
+		_statusTextView.startAnimation(AnimationUtils.loadAnimation(
+				getContext(), R.anim.animate_vertical));
 
 		// _detailButton.setVisibility(GONE);
 		_cashLinearLayout.setVisibility(GONE);
@@ -201,6 +207,17 @@ public class WorkorderSummaryView extends RelativeLayout {
 				} else if (_workorder.has("pay.blendedAdditionalRate")) {
 					_cashTextView.setText(misc.toCurrency(_workorder.getFloat("pay.blendedAdditionalRate")));
 				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		try {
+			if (_workorder.has("status")) {
+				String status = _workorder.getString("status");
+				_statusTextView.setText(status);
+			} else {
+				_statusTextView.setText("");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

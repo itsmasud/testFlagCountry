@@ -17,8 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-public class WorkorderAdapter extends BaseAdapter {
-	private static final String TAG = "WorkorderAdapter";
+public class MyWorkAdapter extends BaseAdapter {
+	private static final String TAG = "MyWorkAdapter";
 	private static final int RPC_GET = 1;
 
 	public static final String TYPE_REQUESTED = "getRequested";
@@ -36,7 +36,7 @@ public class WorkorderAdapter extends BaseAdapter {
 	private Method _rpcMethod;
 	private boolean _running;
 
-	public WorkorderAdapter(Context context, String type) throws NoSuchMethodException {
+	public MyWorkAdapter(Context context, String type) throws NoSuchMethodException {
 		_context = context;
 		_gs = (GlobalState) context.getApplicationContext();
 

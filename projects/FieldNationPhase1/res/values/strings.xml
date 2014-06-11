@@ -23,22 +23,25 @@
 
     <!-- main activity strings -->
     <string name="launcher_open">I am Open</string>
-    
+
     <!-- Drawer strings -->
-    <string name="workorders_title">Work Orders</string>
-    <string name="workorders_subtitle">Assigned, Pending Approval and Completed jobs</string>
-    
+    <string name="mywork_title">Work Orders</string>
+    <string name="mywork_subtitle">Assigned, Pending Approval and Completed jobs</string>
     <string name="market_title">Market</string>
     <string name="market_subtitle">Available, Requested and Recruitment</string>
-
     <string name="payment_title">Payment</string>
     <string name="payment_subtitle">Pending, lorem ipsum and Ipsom Lorem</string>
-
     <string name="settings_title">Settings</string>
     <string name="settings_subtitle">Preferences and Switch Account</string>
     <string name="logout_title">Log Out</string>
-    
+
     <!-- fragment strings -->
     <string name="no_data">No Data Available</string>
-    
+
+    <!-- my work categories -->
+    <string name="my_work_category1">In Progress</string>
+    <string name="my_work_category2">Assigned</string>
+    <string name="my_work_category3">Completed</string>
+    <string name="my_work_category4">Canceled</string>
+
 </resources>

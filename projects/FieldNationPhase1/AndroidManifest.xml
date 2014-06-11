@@ -21,14 +21,16 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity
-            android:name="com.fieldnation.WorkorderActivity"
-            android:label="@string/app_name" >
+        <activity android:name="com.fieldnation.MarketActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.fieldnation.MyWorkActivity"
+            android:label="@string/mywork_title" >
         </activity>
         <activity
             android:name="com.fieldnation.auth.AuthActivity"

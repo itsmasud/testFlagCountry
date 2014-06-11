@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class WorkorderListFragment extends Fragment {
+public class MyWorkListFragment extends Fragment {
 	public static final String TYPE_REQUESTED = "getRequested";
 	public static final String TYPE_AVAILABLE = "getAvailable";
 	public static final String TYPE_PENDING_APPROVAL = "getPendingApproval";
@@ -26,7 +26,7 @@ public class WorkorderListFragment extends Fragment {
 	private TextView _noDataTextView;
 
 	// Data
-	private WorkorderAdapter _listAdapter;
+	private MyWorkAdapter _listAdapter;
 	private String _displayType = TYPE_REQUESTED;
 	private boolean _hasData = false;
 
@@ -34,7 +34,7 @@ public class WorkorderListFragment extends Fragment {
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 
-	public WorkorderListFragment setDisplayType(String displayType) {
+	public MyWorkListFragment setDisplayType(String displayType) {
 		_displayType = displayType;
 		return this;
 	}
@@ -43,7 +43,7 @@ public class WorkorderListFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-			_listAdapter = new WorkorderAdapter(getActivity(), _displayType);
+			_listAdapter = new MyWorkAdapter(getActivity(), _displayType);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}
@@ -55,7 +55,7 @@ public class WorkorderListFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_wo_list, container, false);
+		return inflater.inflate(R.layout.fragment_mywork_list, container, false);
 	}
 
 	@Override

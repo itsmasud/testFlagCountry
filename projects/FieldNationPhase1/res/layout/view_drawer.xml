@@ -12,13 +12,13 @@
         <!-- Work orders -->
 
         <RelativeLayout
-            android:id="@+id/workorder_view"
+            android:id="@+id/mywork_view"
             style="@style/DrawerItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
             <ImageView
-                android:id="@+id/workorder_imageview"
+                android:id="@+id/mywork_imageview"
                 style="@style/DrawerItemIcon"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
@@ -27,21 +27,21 @@
                 android:src="@drawable/todo" />
 
             <TextView
-                android:id="@+id/workorder_title_textView"
+                android:id="@+id/mywork_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/workorder_imageview"
-                android:layout_toRightOf="@+id/workorder_imageview"
-                android:text="@string/workorders_title"
+                android:layout_alignTop="@+id/mywork_imageview"
+                android:layout_toRightOf="@+id/mywork_imageview"
+                android:text="@string/mywork_title"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
                 android:id="@+id/workorder_subtext_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/workorder_title_textView"
-                android:layout_toRightOf="@+id/workorder_imageview"
-                android:text="@string/workorders_subtitle"
+                android:layout_below="@+id/mywork_title_textView"
+                android:layout_toRightOf="@+id/mywork_imageview"
+                android:text="@string/mywork_subtitle"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </RelativeLayout>
 

@@ -15,8 +15,13 @@ import android.os.ResultReceiver;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 public class AuthActivity extends AccountAuthenticatorActivity {
+	// UI
+	private LinearLayout _contentLayout;
+	private ProgressBar _loadingProgressBar;
 	private Button _loginButton;
 	private EditText _usernameEditText;
 	private EditText _passwordEditText;
@@ -33,10 +38,15 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
+		_contentLayout = (LinearLayout) findViewById(R.id.content_layout);
 		_loginButton = (Button) findViewById(R.id.login_button);
 		_loginButton.setOnClickListener(_loginButton_onClick);
 		_usernameEditText = (EditText) findViewById(R.id.username_edittext);
 		_passwordEditText = (EditText) findViewById(R.id.password_edittext);
+		_loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
+		_loadingProgressBar.setVisibility(View.GONE);
+		_contentLayout.setVisibility(View.VISIBLE);
+
 	}
 
 	/*-*********************************-*/
@@ -59,6 +69,9 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 					_password);
 
 			startService(intent);
+
+			_loadingProgressBar.setVisibility(View.VISIBLE);
+			_contentLayout.setVisibility(View.GONE);
 		}
 	};
 

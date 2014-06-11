@@ -1,11 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/ActivityLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}" >
 
     <LinearLayout
+        android:id="@+id/content_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:text="jacobfaketech"
-            android:hint="@string/username" />
+            android:hint="@string/username"
+            android:text="jacobfaketech" />
 
         <EditText
             android:id="@+id/password_edittext"
@@ -26,8 +26,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/password"
-            android:text="jacobfaketech"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:text="jacobfaketech" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -41,5 +41,13 @@
                 android:text="@string/login" />
         </RelativeLayout>
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loading_progressbar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

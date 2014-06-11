@@ -10,11 +10,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <View
+        <RelativeLayout
             android:id="@+id/status_view"
             style="@style/wosum_status_bar"
-            android:layout_width="10dp"
-            android:layout_height="fill_parent" />
+            android:layout_width="30dp"
+            android:layout_height="fill_parent" >
+        </RelativeLayout>
 
         <RelativeLayout
             style="@style/data_container_viewgroup"
@@ -141,5 +142,15 @@
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/status_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:paddingTop="5dp"
+        android:maxLines="1"
+        android:text="Tesssst" />
 
 </RelativeLayout>

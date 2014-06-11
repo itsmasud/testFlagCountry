@@ -9,6 +9,8 @@ import java.text.ParseException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import android.os.Debug;
+
 import com.fieldnation.json.JsonObject;
 
 public class AccessToken {
@@ -39,17 +41,11 @@ public class AccessToken {
 			_expiresOn = json.getLong("expires_on");
 	}
 
-	public AccessToken(String hostname, String grantType, String clientId,
-			String clientSecret, String username, String password)
-			throws MalformedURLException, IOException, java.text.ParseException {
-		this(hostname, "/authentication/api/oauth/token", grantType, clientId,
-				clientSecret, username, password);
+	public AccessToken(String hostname, String grantType, String clientId, String clientSecret, String username, String password) throws MalformedURLException, IOException, java.text.ParseException {
+		this(hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, username, password);
 	}
 
-	public AccessToken(String hostname, String path, String grantType,
-			String clientId, String clientSecret, String username,
-			String password) throws MalformedURLException, IOException,
-			ParseException {
+	public AccessToken(String hostname, String path, String grantType, String clientId, String clientSecret, String username, String password) throws MalformedURLException, IOException, ParseException {
 
 		_hostname = hostname;
 
@@ -58,14 +54,16 @@ public class AccessToken {
 
 		HttpURLConnection conn = null;
 		if (Ws.USE_HTTPS) {
-			// TODO remove from production code!
-			Ws.trustAllHosts();
-			conn = (HttpURLConnection) new URL("https://" + hostname + path)
-					.openConnection();
-			((HttpsURLConnection) conn).setHostnameVerifier(Ws.DO_NOT_VERIFY);
+			// only allow if debugging
+			if (Debug.isDebuggerConnected())
+				Ws.trustAllHosts();
+			conn = (HttpURLConnection) new URL("https://" + hostname + path).openConnection();
+
+			// only allow if debugging
+			if (Debug.isDebuggerConnected())
+				((HttpsURLConnection) conn).setHostnameVerifier(Ws.DO_NOT_VERIFY);
 		} else {
-			conn = (HttpURLConnection) new URL("http://" + hostname + path)
-					.openConnection();
+			conn = (HttpURLConnection) new URL("http://" + hostname + path).openConnection();
 		}
 
 		conn.setRequestMethod("POST");
@@ -77,9 +75,7 @@ public class AccessToken {
 
 		OutputStream out = conn.getOutputStream();
 
-		out.write(("grant_type=" + grantType + "&client_id=" + clientId
-				+ "&client_secret=" + clientSecret + "&username=" + username
-				+ "&password=" + password).getBytes());
+		out.write(("grant_type=" + grantType + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&username=" + username + "&password=" + password).getBytes());
 
 		Result result = new Result(conn);
 
@@ -133,9 +129,7 @@ public class AccessToken {
 		} else if (options.startsWith("?")) { // if options already specified
 			return "?access_token=" + _accessToken + "&" + options.substring(1);
 		}
-		throw new ParseException(
-				"Options must be nothing, or start with '?'. Got: " + options,
-				0);
+		throw new ParseException("Options must be nothing, or start with '?'. Got: " + options, 0);
 	}
 
 }

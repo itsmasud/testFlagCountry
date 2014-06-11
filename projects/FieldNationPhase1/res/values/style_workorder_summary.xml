@@ -45,7 +45,7 @@
     </style>
 
     <style name="wosum_status_bar">
-        <item name="android:background">@drawable/wosum_status_1_no_highlight</item>
+        <item name="android:background">@drawable/wosum_status_1</item>
     </style>
 
     <style name="wosum_button">
