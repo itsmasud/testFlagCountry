@@ -6,6 +6,8 @@
     <string name="fn_grant_type">password</string>
     <string name="fn_client_id">demoapp</string>
     <string name="fn_client_secret">demopass</string>
+    <string name="accounttype">com.fieldnation</string>
+    <string name="authority">com.fieldnation.service</string>
     <!-- /connection info -->
 
 
@@ -17,7 +19,7 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="settings">Settings</string>
-    <string name="fieldnation_provider">Field Nation</string>
+    <string name="fieldnation_provider_name">Field Nation</string>
     <!-- /general strings -->
 
 
@@ -43,5 +45,27 @@
     <string name="my_work_category2">Assigned</string>
     <string name="my_work_category3">Completed</string>
     <string name="my_work_category4">Canceled</string>
+
+    <!-- Account Preferences -->
+    <string name="pref_sync">Sync Frequency</string>
+
+    <string-array name="pref_sync_titles">
+        <item>1 minute</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_values">
+        <item>1</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
 
 </resources>

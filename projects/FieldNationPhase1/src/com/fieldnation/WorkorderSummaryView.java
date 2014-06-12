@@ -78,8 +78,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_statusTextView.startAnimation(AnimationUtils.loadAnimation(
 				getContext(), R.anim.animate_vertical));
 
-		// _detailButton.setVisibility(GONE);
-		_cashLinearLayout.setVisibility(GONE);
+		_detailButton.setVisibility(GONE);
+		// _cashLinearLayout.setVisibility(GONE);
 
 	}
 

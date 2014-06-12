@@ -3,18 +3,21 @@ package com.fieldnation;
 import java.text.ParseException;
 
 import com.fieldnation.auth.FutureWaitAsyncTask;
+import com.fieldnation.service.ClockReceiver;
 import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 public abstract class BaseActivity extends ActionBarActivity {
 	private static final String TAG = "BaseActivity";
@@ -43,6 +46,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 		_gs = (GlobalState) getApplicationContext();
 
+		ClockReceiver.registerClock(this);
+
 		getAuthorization();
 	}
 
@@ -50,28 +55,25 @@ public abstract class BaseActivity extends ActionBarActivity {
 		if (_accountManager == null)
 			_accountManager = AccountManager.get(this);
 
-		Account[] accounts = _accountManager.getAccountsByType(Constants.FIELD_NATION_ACCOUNT_TYPE);
+		Account[] accounts = _accountManager.getAccountsByType(_gs.accountType);
 		Log.v(TAG, "Found accounts: " + accounts.length);
 		AccountManagerFuture<Bundle> future = null;
 		if (accounts.length == 0) {
-			future = _accountManager.addAccount(
-					Constants.FIELD_NATION_ACCOUNT_TYPE, null, null, null,
-					this, _amc, new Handler());
+			future = _accountManager.addAccount(_gs.accountType, null, null,
+					null, this, _amc, new Handler());
 
 		} else if (accounts.length == 1) {
-			future = _accountManager.getAuthToken(accounts[0],
-					Constants.FIELD_NATION_ACCOUNT_TYPE, null, this, _amc,
-					new Handler());
+			future = _accountManager.getAuthToken(accounts[0], _gs.accountType,
+					null, this, _amc, new Handler());
 		} else {
 			// TODO, ANDR-10 present a picker for the account
-			future = _accountManager.getAuthToken(accounts[0],
-					Constants.FIELD_NATION_ACCOUNT_TYPE, null, this, _amc,
-					new Handler());
+			future = _accountManager.getAuthToken(accounts[0], _gs.accountType,
+					null, this, _amc, new Handler());
 
 		}
 		if (future != null) {
 			// new
-			// FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+			new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
 		}
 	}
 
@@ -93,6 +95,17 @@ public abstract class BaseActivity extends ActionBarActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	private AccountManagerCallback<Bundle> _amc = new AccountManagerCallback<Bundle>() {
 		@Override
 		public void run(AccountManagerFuture<Bundle> future) {
@@ -120,8 +133,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 					_accessToken = new AccessToken(tokenString);
 
 					if (_accessToken.isExpired()) {
-						_accountManager.invalidateAuthToken(
-								Constants.FIELD_NATION_ACCOUNT_TYPE,
+						_accountManager.invalidateAuthToken(_gs.accountType,
 								tokenString);
 						getAuthorization();
 					} else {

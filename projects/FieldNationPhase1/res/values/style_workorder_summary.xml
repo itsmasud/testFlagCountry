@@ -3,7 +3,9 @@
 
     <color name="wosumBackground">#00FF0000</color>
     <color name="wosumInsideBg">#FFFFFFFF</color>
-    <color name="wosumDataContainerBevel">#FFebeeee</color>
+    <color name="wosumInsideBevel">#FFebeeee</color>
+
+    <!-- status colors -->
     <color name="wosumStatus1">#FFFFFFFF</color>
     <color name="wosumStatus1Bevel">#FFEBEBEB</color>
     <color name="wosumStatus2">#FFFFFF00</color>
@@ -22,41 +24,53 @@
     <color name="wosumStatus8Bevel">#FF6B6B6B</color>
     <color name="wosumStatus9">#FF7F7F00</color>
     <color name="wosumStatus9Bevel">#FF6B6B00</color>
+
+    <!-- wosum button colors -->
     <color name="wosumButtonBackground">#FF78a3f2</color>
     <color name="wosumButtonBorder">#FFf1f1e9</color>
     <color name="wosumButtonBevel">#FF6b90d3</color>
 
-    <style name="wosum">
-        <item name="android:background">@color/wosumBackground</item>
+    <style name="WorkorderSummary">
+        <item name="android:background">@color/transparent</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
     </style>
 
-    <style name="wosum_inside"></style>
-
-    <style name="data_container_viewgroup">
+    <style name="WorkorderSummary_Inside">
         <item name="android:background">@color/wosum_data_container_background</item>
-        <item name="android:paddingLeft">10px</item>
-        <item name="android:paddingRight">10px</item>
-        <item name="android:paddingTop">10px</item>
-        <item name="android:paddingBottom">10px</item>
     </style>
 
-    <style name="wosum_status_bar">
+    <style name="WorkorderSummary_DataContainer">
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="WorkorderSummary_StatusBar">
         <item name="android:background">@drawable/wosum_status_1</item>
     </style>
 
-    <style name="wosum_button">
+    <style name="WorkorderSummary_StatusText"></style>
+
+    <style name="WorkorderSummary_Title"></style>
+
+    <style name="WorkorderSummary_Button">
         <item name="android:textColor">#FFFFFFFF</item>
         <item name="android:foreground">#FFFFFFFF</item>
         <item name="android:background">@drawable/wosum_button_background</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="wosum_label">
+    <style name="WorkorderSummary_Label">
         <item name="android:textColor">#FFc1c1a9</item>
         <item name="android:paddingRight">5dp</item>
+    </style>
+
+    <style name="WorkorderSummary_PaymentLabel">
+        <item name="android:textColor">#FF3dd0ab</item>
     </style>
 
 </resources>

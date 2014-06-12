@@ -1,6 +1,6 @@
 package com.fieldnation.auth;
 
-import com.fieldnation.Constants;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.service.rpc.AuthRpc;
 import com.fieldnation.service.rpc.ClockRpc;
@@ -26,8 +26,10 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 	private EditText _usernameEditText;
 	private EditText _passwordEditText;
 
+	// data
 	private String _username;
 	private String _password;
+	private GlobalState _gs;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -37,6 +39,8 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+
+		_gs = (GlobalState) getApplicationContext();
 
 		_contentLayout = (LinearLayout) findViewById(R.id.content_layout);
 		_loginButton = (Button) findViewById(R.id.login_button);
@@ -79,16 +83,16 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			try {
-				Account account = new Account(_username, Constants.FIELD_NATION_ACCOUNT_TYPE);
+				Account account = new Account(_username, _gs.accountType);
 				AccountManager am = AccountManager.get(AuthActivity.this);
 				am.addAccountExplicitly(account, _password, null);
-				am.setAuthToken(account, Constants.FIELD_NATION_ACCOUNT_TYPE,
+				am.setAuthToken(account, _gs.accountType,
 						resultData.getString("authtoken"));
 
 				Intent intent = new Intent();
 				intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
 				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
-						Constants.FIELD_NATION_ACCOUNT_TYPE);
+						_gs.accountType);
 				// intent.putExtra(AccountManager.KEY_AUTHTOKEN,
 				// Constants.FIELD_NATION_ACCOUNT_TYPE);
 				intent.putExtra(AccountManager.KEY_AUTHTOKEN,
@@ -98,7 +102,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 				AuthActivity.this.setResult(RESULT_OK, intent);
 				AuthActivity.this.finish();
 
-				ClockRpc.enableClock(AuthActivity.this, true);
+				ClockRpc.enableClock(AuthActivity.this);
 
 			} catch (Exception e) {
 				// TODO handle properly

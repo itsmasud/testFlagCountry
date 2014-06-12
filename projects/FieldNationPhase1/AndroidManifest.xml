@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 
     <application
         android:name="com.fieldnation.GlobalState"
@@ -37,9 +39,17 @@
             android:label="@string/activity_login_title" >
         </activity>
 
+        <provider
+            android:name="com.fieldnation.service.StubProvider"
+            android:authorities="com.fieldnation.service"
+            android:exported="false"
+            android:syncable="true" >
+        </provider>
+
         <service
             android:name="com.fieldnation.auth.AuthService"
-            android:process=":remote" >
+            android:exported="true"
+            android:process=":auth" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -63,8 +73,24 @@
 
         <service
             android:name="com.fieldnation.service.DataService"
-            android:exported="false" >
+            android:process=":remote" >
         </service>
+        <service
+            android:name="com.fieldnation.service.SyncService"
+            android:exported="true"
+            android:process=":sync" >
+            <intent-filter>com.fieldnation.service                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <activity
+            android:name="com.fieldnation.SettingsActivity"
+            android:label="@string/settings" >
+        </activity>
     </application>
 
 </manifest>

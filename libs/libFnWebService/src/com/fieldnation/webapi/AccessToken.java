@@ -55,12 +55,12 @@ public class AccessToken {
 		HttpURLConnection conn = null;
 		if (Ws.USE_HTTPS) {
 			// only allow if debugging
-			if (Debug.isDebuggerConnected())
+			if (Ws.DEBUG)
 				Ws.trustAllHosts();
 			conn = (HttpURLConnection) new URL("https://" + hostname + path).openConnection();
 
 			// only allow if debugging
-			if (Debug.isDebuggerConnected())
+			if (Ws.DEBUG)
 				((HttpsURLConnection) conn).setHostnameVerifier(Ws.DO_NOT_VERIFY);
 		} else {
 			conn = (HttpURLConnection) new URL("http://" + hostname + path).openConnection();

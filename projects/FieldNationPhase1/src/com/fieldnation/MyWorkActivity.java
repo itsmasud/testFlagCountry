@@ -1,35 +1,23 @@
 package com.fieldnation;
 
-import java.text.ParseException;
-
 import com.fieldnation.R;
-import com.fieldnation.auth.FutureWaitAsyncTask;
-import com.fieldnation.service.rpc.WorkorderRpc;
 import com.fieldnation.webapi.AccessToken;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
+import android.content.ContentResolver;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -182,11 +170,6 @@ public class MyWorkActivity extends BaseActivity {
 	// when a menu item is selected
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-
 		if (_drawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
@@ -203,6 +186,8 @@ public class MyWorkActivity extends BaseActivity {
 	public void onHaveAuthToken(AccessToken accessToken) {
 		// TODO Method Stub: onHaveAuthToken()
 		Log.v(TAG, "Method Stub: onHaveAuthToken()");
+
+		ContentResolver resolver = getContentResolver();
 
 	}
 

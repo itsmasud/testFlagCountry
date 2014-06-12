@@ -10,7 +10,7 @@ public class BootReciever extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		ClockRpc.enableClock(context, true);
+		ClockRpc.enableClock(context);
 	}
 
 }

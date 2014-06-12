@@ -20,10 +20,11 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.http.HttpConnection;
 
 import android.net.Uri;
-import android.os.Debug;
 
 public class Ws {
 	public static boolean USE_HTTPS = true;
+
+	public static final boolean DEBUG = true;
 
 	private AccessToken _accessToken = null;
 
@@ -45,12 +46,12 @@ public class Ws {
 		HttpURLConnection conn = null;
 		if (USE_HTTPS) {
 			// only disabled if debugging
-			if (Debug.isDebuggerConnected())
+			if (DEBUG)
 				trustAllHosts();
 
 			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
-			if (Debug.isDebuggerConnected())
+			if (DEBUG)
 				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 
 		} else {
@@ -94,12 +95,12 @@ public class Ws {
 		HttpURLConnection conn = null;
 		if (USE_HTTPS) {
 			// only enabled if debugging
-			if (Debug.isDebuggerConnected())
+			if (DEBUG)
 				trustAllHosts();
 
 			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
-			if (Debug.isDebuggerConnected())
+			if (DEBUG)
 				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 		} else {
 			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
@@ -142,7 +143,7 @@ public class Ws {
 	// always verify the host - don't check for certificate
 	protected final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
 		public boolean verify(String hostname, SSLSession session) {
-			if (Debug.isDebuggerConnected())
+			if (DEBUG)
 				return true;
 			else
 				// disable all if not debugging
@@ -156,7 +157,7 @@ public class Ws {
 	 */
 	protected static void trustAllHosts() {
 		// disable this if not debugging
-		if (!Debug.isDebuggerConnected())
+		if (!DEBUG)
 			return;
 
 		// Create a trust manager that does not validate certificate chains

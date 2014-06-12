@@ -2,6 +2,7 @@ package com.fieldnation.service.rpc;
 
 import java.util.HashMap;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.service.DataService;
 import com.fieldnation.webapi.AccessToken;
 
@@ -16,12 +17,15 @@ import android.util.Log;
 public class AuthRpc extends RpcInterface {
 	private final static String TAG = "service.rpc.AuthRpc";
 
+	private GlobalState _gs;
+
 	public AuthRpc(HashMap<String, RpcInterface> map) {
 		super(map, "auth");
 	}
 
 	@Override
 	public void execute(Context context, Intent intent) {
+		_gs = (GlobalState) context.getApplicationContext();
 		try {
 			Bundle bundle = intent.getExtras();
 
@@ -51,7 +55,8 @@ public class AuthRpc extends RpcInterface {
 				result.putString("ACTION", "RPC_getOauthToken");
 				result.putString(AccountManager.KEY_AUTHTOKEN, at.toString());
 				result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-				result.putString(AccountManager.KEY_ACCOUNT_TYPE, "fieldnation");
+				result.putString(AccountManager.KEY_ACCOUNT_TYPE,
+						_gs.accountType);
 				aar.onResult(result);
 			}
 

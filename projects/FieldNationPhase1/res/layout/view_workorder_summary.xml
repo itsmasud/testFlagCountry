@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/wosum"
+    style="@style/WorkorderSummary"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
     <LinearLayout
-        style="@style/wosum_inside"
+        style="@style/WorkorderSummary_Inside"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <RelativeLayout
             android:id="@+id/status_view"
-            style="@style/wosum_status_bar"
+            style="@style/WorkorderSummary_StatusBar"
             android:layout_width="30dp"
             android:layout_height="fill_parent" >
         </RelativeLayout>
 
         <RelativeLayout
-            style="@style/data_container_viewgroup"
+            style="@style/WorkorderSummary_DataContainer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
@@ -33,6 +33,7 @@
 
                 <TextView
                     android:id="@+id/title_textview"
+                    style="@style/WorkorderSummary_Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Project Title Goes Here"
@@ -43,13 +44,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" >
-
-                    <TextView
-                        style="@style/wosum_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Client:"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <TextView
                         android:id="@+id/clientname_textview"
@@ -66,13 +60,6 @@
                     android:orientation="horizontal" >
 
                     <TextView
-                        style="@style/wosum_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Distance:"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                    <TextView
                         android:id="@+id/distance_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -85,13 +72,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" >
-
-                    <TextView
-                        style="@style/wosum_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="When:"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <TextView
                         android:id="@+id/when_textview"
@@ -111,12 +91,11 @@
 
                 <Button
                     android:id="@+id/detail_button"
+                    style="@style/WorkorderSummary_Button"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/wosum_button_background"
-                    android:text="Check In"
-                    android:textSize="12sp" />
+                    android:text="Check In" />
 
                 <LinearLayout
                     android:id="@+id/payment_linearlayout"
@@ -127,6 +106,7 @@
 
                     <TextView
                         android:id="@+id/payment_textview"
+                        style="@style/WorkorderSummary_PaymentLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
@@ -145,12 +125,13 @@
 
     <TextView
         android:id="@+id/status_textview"
+        style="@style/WorkorderSummary_StatusText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:paddingTop="5dp"
         android:maxLines="1"
+        android:paddingTop="5dp"
         android:text="Tesssst" />
 
 </RelativeLayout>

@@ -2,20 +2,15 @@ package com.fieldnation;
 
 import com.fieldnation.webapi.AccessToken;
 
-import android.accounts.AccountManager;
 import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -55,6 +50,7 @@ public class MarketActivity extends BaseActivity {
 		actionbar.setHomeAsUpIndicator(R.drawable.ic_navigation_drawer);
 
 		buildDrawer();
+
 	}
 
 	private void buildDrawer() {
@@ -100,13 +96,9 @@ public class MarketActivity extends BaseActivity {
 	/*-				Events				-*/
 	/*-*********************************-*/
 
+	// when a menu item is selected
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-
 		if (_drawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
