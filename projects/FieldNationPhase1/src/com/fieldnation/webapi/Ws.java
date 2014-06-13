@@ -26,10 +26,10 @@ public class Ws {
 
 	public static final boolean DEBUG = true;
 
-	private AccessToken _accessToken = null;
+	private OAuth _accessToken = null;
 
-	public Ws(AccessToken accessToken) {
-		_accessToken = accessToken;
+	public Ws(OAuth oAuth) {
+		_accessToken = oAuth;
 	}
 
 	protected Ws() {
@@ -41,7 +41,7 @@ public class Ws {
 			path = "/" + path;
 
 		if (_accessToken != null)
-			options = _accessToken.addToken(options);
+			options = _accessToken.applyToUrlOptions(options);
 
 		HttpURLConnection conn = null;
 		if (USE_HTTPS) {
@@ -90,7 +90,7 @@ public class Ws {
 			path = "/" + path;
 
 		if (_accessToken != null)
-			options = _accessToken.addToken(options);
+			options = _accessToken.applyToUrlOptions(options);
 
 		HttpURLConnection conn = null;
 		if (USE_HTTPS) {

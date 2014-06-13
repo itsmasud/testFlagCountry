@@ -1,7 +1,7 @@
 package com.fieldnation;
 
 import com.fieldnation.R;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
@@ -186,7 +186,7 @@ public class MyWorkActivity extends BaseActivity {
 	}
 
 	@Override
-	public void onHaveAuthToken(AccessToken accessToken) {
+	public void onHaveAuthToken(OAuth oAuth) {
 		// TODO Method Stub: onHaveAuthToken()
 		Log.v(TAG, "Method Stub: onHaveAuthToken()");
 

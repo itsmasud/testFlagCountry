@@ -1,7 +1,7 @@
 package com.fieldnation.service.rpc;
 
 import com.fieldnation.utils.misc;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import android.os.ResultReceiver;
 
 public class WorkorderRpc extends WebRpcCaller {
 
-	public WorkorderRpc(Context conetxt, AccessToken at, ResultReceiver callback) {
+	public WorkorderRpc(Context conetxt, OAuth at, ResultReceiver callback) {
 		super(conetxt, at, callback);
 	}
 

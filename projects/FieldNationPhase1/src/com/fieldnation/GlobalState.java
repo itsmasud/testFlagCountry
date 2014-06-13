@@ -1,7 +1,7 @@
 package com.fieldnation;
 
 import com.fieldnation.service.ClockReceiver;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 import com.fieldnation.webapi.Ws;
 
 import android.app.Application;
@@ -11,7 +11,7 @@ import android.util.Log;
 public class GlobalState extends Application {
 	private static final String TAG = "GlobalState";
 
-	public AccessToken accessToken = null;
+	public OAuth oAuth = null;
 	public String accountType;
 	public String authority;
 

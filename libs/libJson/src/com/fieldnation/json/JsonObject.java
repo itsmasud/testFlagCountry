@@ -12,16 +12,13 @@ public class JsonObject {
 
 	public static JsonObject JsonNULL = new JsonObject(true);
 
-
 	public JsonObject() {
 		_isNullObject = false;
 	}
 
-
 	private JsonObject(boolean isNullObject) {
 		_isNullObject = isNullObject;
 	}
-
 
 	public JsonObject(String string) throws ParseException {
 		_isNullObject = false;
@@ -30,18 +27,15 @@ public class JsonObject {
 
 	}
 
-
 	public JsonObject(String key, Object value) throws ParseException {
 		_isNullObject = false;
 		put(key, value);
 	}
 
-
 	public JsonObject(JsonTokenizer tokenizer) throws ParseException {
 		_isNullObject = false;
 		fromTokenizer(tokenizer);
 	}
-
 
 	private void fromTokenizer(JsonTokenizer tokenizer) throws ParseException {
 		if (!tokenizer.isNextTokenStartObject()) {
@@ -60,8 +54,7 @@ public class JsonObject {
 			String key = tokenizer.nextToken();
 
 			if (!tokenizer.nextToken().equals(":")) {
-				throw new ParseException("token must be ':' ("
-						+ tokenizer.getTemp() + ")", 1);
+				throw new ParseException("token must be ':' (" + tokenizer.getTemp() + ")", 1);
 			}
 
 			_fields.put(key, tokenizer.parseValue());
@@ -71,7 +64,6 @@ public class JsonObject {
 			}
 		}
 	}
-
 
 	/**
 	 * Should be int,long,string,float,double,JsonObject, or JsonArray
@@ -90,7 +82,6 @@ public class JsonObject {
 		put(directions, value);
 	}
 
-
 	protected void put(List<String> directions, Object value) throws ParseException {
 		if (directions.size() == 0)
 			throw new ParseException("Invalid path", 0);
@@ -103,8 +94,7 @@ public class JsonObject {
 				_fields.put(item, "");
 			else
 				_fields.put(item, value);
-		}
-		else {
+		} else {
 			// goes into a child
 			if (_fields.containsKey(item)) {
 				Object obj = _fields.get(item);
@@ -114,8 +104,7 @@ public class JsonObject {
 
 					jo.put(directions, value);
 					return;
-				}
-				else if (obj instanceof JsonArray) {
+				} else if (obj instanceof JsonArray) {
 					JsonArray ja = (JsonArray) obj;
 
 					String child = directions.get(0);
@@ -126,8 +115,7 @@ public class JsonObject {
 
 					return;
 				}
-			}
-			else {
+			} else {
 				// need to create object
 				String child = directions.get(0);
 
@@ -142,8 +130,7 @@ public class JsonObject {
 						ja.set(directions, value);
 
 					return;
-				}
-				else {
+				} else {
 					JsonObject jo = new JsonObject();
 
 					_fields.put(item, jo);
@@ -157,7 +144,6 @@ public class JsonObject {
 
 	}
 
-
 	public Object get(String path) throws ParseException {
 		if (_isNullObject) {
 			throw new ParseException("JsonNULL cannot contain keys!", -1);
@@ -167,7 +153,6 @@ public class JsonObject {
 
 		return get(directions);
 	}
-
 
 	protected Object get(List<String> directions) {
 		if (directions.size() == 0)
@@ -179,8 +164,7 @@ public class JsonObject {
 
 		if (obj instanceof JsonObject) {
 			return ((JsonObject) obj).get(directions);
-		}
-		else if (obj instanceof JsonArray) {
+		} else if (obj instanceof JsonArray) {
 			return ((JsonArray) obj).get(directions);
 		}
 
@@ -188,46 +172,37 @@ public class JsonObject {
 
 	}
 
-
 	public String getString(String path) throws ParseException {
 		return get(path).toString();
 	}
-
 
 	public int getInt(String path) throws ParseException {
 		return Integer.parseInt(getString(path));
 	}
 
-
 	public long getLong(String path) throws ParseException {
 		return Long.parseLong(getString(path));
 	}
-
 
 	public float getFloat(String path) throws ParseException {
 		return Float.parseFloat(getString(path));
 	}
 
-
 	public double getDouble(String path) throws ParseException {
 		return Double.parseDouble(getString(path));
 	}
-
 
 	public boolean getBoolean(String path) throws ParseException {
 		return "true".equals(getString(path));
 	}
 
-
 	public JsonObject getJsonObject(String path) throws ParseException {
 		return (JsonObject) get(path);
 	}
 
-
 	public JsonArray getJsonArray(String path) throws ParseException {
 		return (JsonArray) get(path);
 	}
-
 
 	public Enumeration<String> keys() throws ParseException {
 		if (_isNullObject) {
@@ -235,7 +210,6 @@ public class JsonObject {
 		}
 		return _fields.keys();
 	}
-
 
 	public boolean has(String path) throws ParseException {
 		if (_isNullObject) {
@@ -246,7 +220,6 @@ public class JsonObject {
 
 		return has(dir);
 	}
-
 
 	protected boolean has(List<String> directions) throws ParseException {
 		if (directions.size() == 0) {
@@ -266,8 +239,7 @@ public class JsonObject {
 			JsonObject jo = (JsonObject) obj;
 
 			return jo.has(directions);
-		}
-		else if (obj instanceof JsonArray) {
+		} else if (obj instanceof JsonArray) {
 			JsonArray ja = (JsonArray) obj;
 
 			return ja.has(directions);
@@ -275,7 +247,6 @@ public class JsonObject {
 
 		return false;
 	}
-
 
 	public Object remove(String path) throws ParseException {
 		if (_isNullObject) {
@@ -291,7 +262,6 @@ public class JsonObject {
 		return null;
 	}
 
-
 	protected Object remove(List<String> directions) throws ParseException {
 		if (directions.size() == 0)
 			throw new ParseException("Invalid path!", -1);
@@ -300,16 +270,14 @@ public class JsonObject {
 
 		if (directions.size() == 0) {
 			return _fields.remove(item);
-		}
-		else {
+		} else {
 			Object obj = get(item);
 
 			if (obj instanceof JsonObject) {
 				JsonObject jo = (JsonObject) obj;
 
 				return jo.remove(directions);
-			}
-			else if (obj instanceof JsonArray) {
+			} else if (obj instanceof JsonArray) {
 				JsonArray jo = (JsonArray) obj;
 
 				return jo.remove(directions);
@@ -318,7 +286,6 @@ public class JsonObject {
 
 		return null;
 	}
-
 
 	public void mixin(JsonObject jsonObject) throws ParseException {
 		Enumeration<String> keys = jsonObject.keys();
@@ -329,11 +296,9 @@ public class JsonObject {
 		}
 	}
 
-
 	public String display() {
 		return display(0).toString();
 	}
-
 
 	protected StringBuilder display(int depth) {
 		StringBuilder sb = new StringBuilder();
@@ -362,17 +327,13 @@ public class JsonObject {
 
 			if (obj == null) {
 				sb.append("null");
-			}
-			else if (obj instanceof JsonObject) {
+			} else if (obj instanceof JsonObject) {
 				sb.append(((JsonObject) obj).display(depth + 1));
-			}
-			else if (obj instanceof JsonArray) {
+			} else if (obj instanceof JsonArray) {
 				sb.append(((JsonArray) obj).display(depth + 1));
-			}
-			else if (obj instanceof String) {
+			} else if (obj instanceof String) {
 				sb.append(JsonTokenizer.escapeString((String) obj));
-			}
-			else {
+			} else {
 				sb.append(obj + "");
 			}
 
@@ -388,7 +349,6 @@ public class JsonObject {
 
 		return sb;
 	}
-
 
 	public StringBuilder toStringBuilder() {
 		StringBuilder sb = new StringBuilder();
@@ -416,17 +376,13 @@ public class JsonObject {
 
 			if (obj == null) {
 				sb.append("null");
-			}
-			else if (obj instanceof JsonObject) {
+			} else if (obj instanceof JsonObject) {
 				sb.append(((JsonObject) obj).toStringBuilder());
-			}
-			else if (obj instanceof JsonArray) {
+			} else if (obj instanceof JsonArray) {
 				sb.append(((JsonArray) obj).toStringBuilder());
-			}
-			else if (obj instanceof String) {
+			} else if (obj instanceof String) {
 				sb.append(JsonTokenizer.escapeString((String) obj));
-			}
-			else {
+			} else {
 				sb.append(obj + "");
 			}
 
@@ -442,9 +398,68 @@ public class JsonObject {
 		return sb;
 	}
 
+	/**
+	 * Merges the contents of source into this object.
+	 * 
+	 * @param src
+	 *            the object to read from.
+	 * @param overwrite
+	 *            if true, then when there is a key conflict, the key value from
+	 *            src is used. If false, then it is not used.
+	 * @param copy
+	 *            if true, then a deep copy of the data is made. Otherwise they
+	 *            are just linked.
+	 * @throws ParseException
+	 * @throws CloneNotSupportedException
+	 */
+	public void merge(JsonObject src, boolean overwrite, boolean copy) throws ParseException {
+		Enumeration<String> e = src.keys();
+
+		while (e.hasMoreElements()) {
+			String key = e.nextElement();
+			Object value = src.get(key);
+
+			if (has(key) && overwrite || !has(key)) {
+				if (copy) {
+					try {
+						if (value instanceof JsonObject)
+							put(key, ((JsonObject) value).clone());
+						else if (value instanceof JsonArray)
+							put(key, ((JsonArray) value).clone());
+						else {
+							put(key, value);
+						}
+					} catch (CloneNotSupportedException ex) {
+					}
+
+				} else {
+					put(key, value);
+				}
+			}
+		}
+	}
 
 	@Override
 	public String toString() {
 		return toStringBuilder().toString();
 	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		try {
+			return new JsonObject(this.toString());
+		} catch (ParseException e) {
+		}
+		return null;
+	}
+
+	public JsonObject copy() {
+		try {
+			return new JsonObject(this.toString());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

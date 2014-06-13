@@ -4,7 +4,7 @@ import java.util.Enumeration;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 import com.fieldnation.webapi.Result;
 import com.fieldnation.webapi.rest.v1.Workorder;
 
@@ -14,7 +14,7 @@ public class TestFnWeb {
 		Result result = null;
 		try {
 
-			AccessToken token = new AccessToken("dev.fieldnation.com", "password", "demoapp", "demopass", "jacobfaketech", "jacobfaketech");
+			OAuth token = new OAuth("dev.fieldnation.com", "password", "demoapp", "demopass", "jacobfaketech", "jacobfaketech");
 
 			Workorder wo = new Workorder(token);
 

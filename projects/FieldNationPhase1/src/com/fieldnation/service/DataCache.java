@@ -3,7 +3,7 @@ package com.fieldnation.service;
 import java.util.Hashtable;
 
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +19,7 @@ public class DataCache {
 
 	private static Hashtable<String, Bundle> _cache = new Hashtable<String, Bundle>();
 
-	public static Bundle query(AccessToken at, Bundle bundle) {
+	public static Bundle query(OAuth at, Bundle bundle) {
 		String hashdata = hashBundle(at, bundle);
 		if (_cache.containsKey(hashdata)) {
 			Log.v(TAG, "hit!");
@@ -29,13 +29,13 @@ public class DataCache {
 		return null;
 	}
 
-	public static void store(AccessToken at, Bundle source, Bundle result) {
+	public static void store(OAuth at, Bundle source, Bundle result) {
 		String hashdata = hashBundle(at, source);
 
 		_cache.put(hashdata, result);
 	}
 
-	private static String hashBundle(AccessToken at, Bundle bundle) {
+	private static String hashBundle(OAuth at, Bundle bundle) {
 		String hashdata = bundle.getString("METHOD");
 
 		hashdata += "." + at.getAccessToken();

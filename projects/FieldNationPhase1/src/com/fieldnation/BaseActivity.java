@@ -4,7 +4,7 @@ import java.text.ParseException;
 
 import com.fieldnation.auth.FutureWaitAsyncTask;
 import com.fieldnation.service.ClockReceiver;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -28,7 +28,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	// Data
 	GlobalState _gs;
-	AccessToken _accessToken;
+	OAuth _accessToken;
 
 	// Other
 	private FutureWaitAsyncTask _amc_future;
@@ -130,14 +130,14 @@ public abstract class BaseActivity extends ActionBarActivity {
 						getAuthorization();
 					}
 				} else {
-					_accessToken = new AccessToken(tokenString);
+					_accessToken = OAuth.fromString(tokenString);
 
 					if (_accessToken.isExpired()) {
 						_accountManager.invalidateAuthToken(_gs.accountType,
 								tokenString);
 						getAuthorization();
 					} else {
-						_gs.accessToken = _accessToken;
+						_gs.oAuth = _accessToken;
 						onHaveAuthToken(_accessToken);
 					}
 				}
@@ -150,7 +150,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 	/*-*********************************************-*/
 	/*-				Abstract Methods				-*/
 	/*-*********************************************-*/
-	public abstract void onHaveAuthToken(AccessToken accessToken);
+	public abstract void onHaveAuthToken(OAuth oAuth);
 
 	public abstract void onFailedAuthToken(Exception ex);
 }

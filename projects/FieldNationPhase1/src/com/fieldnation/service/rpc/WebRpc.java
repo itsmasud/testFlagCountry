@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 
 import com.fieldnation.service.DataCache;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 import com.fieldnation.webapi.Result;
 import com.fieldnation.webapi.Ws;
 
@@ -24,7 +24,7 @@ public class WebRpc extends RpcInterface {
 	public void execute(Context context, Intent intent) {
 		try {
 			String method = intent.getStringExtra("METHOD");
-			AccessToken at = new AccessToken(intent.getStringExtra("PARAM_ACCESS_TOKEN"));
+			OAuth at = OAuth.fromString(intent.getStringExtra("PARAM_ACCESS_TOKEN"));
 
 			if ("httpread".equals(method)) {
 				doHttpRead(context, intent, at);
@@ -38,7 +38,7 @@ public class WebRpc extends RpcInterface {
 		}
 	}
 
-	private void doHttpRead(Context context, Intent intent, AccessToken at) {
+	private void doHttpRead(Context context, Intent intent, OAuth at) {
 		try {
 			Bundle bundle = intent.getExtras();
 			String method = bundle.getString("PARAM_METHOD");
@@ -79,7 +79,7 @@ public class WebRpc extends RpcInterface {
 		}
 	}
 
-	private void doHttpWrite(Context context, Intent intent, AccessToken at) {
+	private void doHttpWrite(Context context, Intent intent, OAuth at) {
 		try {
 			Bundle bundle = intent.getExtras();
 			String method = bundle.getString("PARAM_METHOD");

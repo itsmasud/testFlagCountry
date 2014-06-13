@@ -30,11 +30,10 @@ import com.fieldnation.json.JsonObject;
 
 public class misc {
 	private static final String HEXES = "0123456789ABCDEF";
-	private static NumberFormat _currencyFormat = NumberFormat
-			.getCurrencyInstance();
+	private static NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
+	private static NumberFormat _normalNumber = NumberFormat.getIntegerInstance();
 
-	private static DateFormat ISO_8601_DATE_TIME = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ");
+	private static DateFormat ISO_8601_DATE_TIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ");
 
 	static {
 		ISO_8601_DATE_TIME.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -47,7 +46,7 @@ public class misc {
 	}
 
 	public static String toCurrency(double money) {
-		return _currencyFormat.format(money);
+		return "$" + _normalNumber.format(money);
 	}
 
 	// public static JsonObject getNetworkInformation() throws ParseException {
@@ -159,8 +158,7 @@ public class misc {
 		return time;
 	}
 
-	public static void copyDirectoryTree(File sourceDir, File destDir)
-			throws IOException {
+	public static void copyDirectoryTree(File sourceDir, File destDir) throws IOException {
 
 		if (!destDir.exists()) {
 			destDir.mkdir();
@@ -267,14 +265,9 @@ public class misc {
 	}
 
 	public static String escapeForURL(String Data) {
-		String[] srch = { "\\x20", "\\x3C", "\\x3E", "\\x23", "\\x25", "\\x7B",
-				"\\x7D", "\\x7C", "\\x5C", "\\x5E", "\\x7E", "\\x5B", "\\x5D",
-				"\\x60", "\\x3B", "\\x2F", "\\x3F", "\\x3A", "\\x40", "\\x3D",
-				"\\x26", "\\x24" };
+		String[] srch = { "\\x20", "\\x3C", "\\x3E", "\\x23", "\\x25", "\\x7B", "\\x7D", "\\x7C", "\\x5C", "\\x5E", "\\x7E", "\\x5B", "\\x5D", "\\x60", "\\x3B", "\\x2F", "\\x3F", "\\x3A", "\\x40", "\\x3D", "\\x26", "\\x24" };
 
-		String[] replace = { "%20", "%3C", "%3E", "%23", "%25", "%7B", "%7D",
-				"%7C", "%5C", "%5E", "%7E", "%5B", "%5D", "%60", "%3B", "%2F",
-				"%3F", "%3A", "%40", "%3D", "%26", "%24" };
+		String[] replace = { "%20", "%3C", "%3E", "%23", "%25", "%7B", "%7D", "%7C", "%5C", "%5E", "%7E", "%5B", "%5D", "%60", "%3B", "%2F", "%3F", "%3A", "%40", "%3D", "%26", "%24" };
 
 		for (int i = 0; i < srch.length; i++) {
 			Data = Data.replaceAll(srch[i], replace[i]);
@@ -455,12 +448,9 @@ public class misc {
 	}
 
 	public static String unescapeForURL(String Data) {
-		String[] replace = { " ", "<", ">", "#", "%", "{", "}", "|", "\\", "^",
-				"~", "[", "]", "`", ";", "/", "?", ":", "@", "=", "&", "$" };
+		String[] replace = { " ", "<", ">", "#", "%", "{", "}", "|", "\\", "^", "~", "[", "]", "`", ";", "/", "?", ":", "@", "=", "&", "$" };
 
-		String[] srch = { "%20", "%3C", "%3E", "%23", "%25", "%7B", "%7D",
-				"%7C", "%5C", "%5E", "%7E", "%5B", "%5D", "%60", "%3B", "%2F",
-				"%3F", "%3A", "%40", "%3D", "%26", "%24" };
+		String[] srch = { "%20", "%3C", "%3E", "%23", "%25", "%7B", "%7D", "%7C", "%5C", "%5E", "%7E", "%5B", "%5D", "%60", "%3B", "%2F", "%3F", "%3A", "%40", "%3D", "%26", "%24" };
 
 		for (int i = 0; i < srch.length; i++) {
 			Data = Data.replaceAll(srch[i], replace[i]);
@@ -548,8 +538,7 @@ public class misc {
 	}
 
 	public static void copyStream(InputStream source, OutputStream dest,
-			int packetSize, int expectedSize, long timeoutInMilli)
-			throws IOException {
+			int packetSize, int expectedSize, long timeoutInMilli) throws IOException {
 		int read = 0;
 		int pos = 0;
 		int size = expectedSize;
@@ -646,9 +635,8 @@ public class misc {
 		}
 		final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
 		int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-		return new DecimalFormat("#,##0.##").format(size
-				/ Math.pow(1024, digitGroups))
-				+ " " + units[digitGroups];
+		return new DecimalFormat("#,##0.##").format(size / Math.pow(1024,
+				digitGroups)) + " " + units[digitGroups];
 	}
 
 	public static String getStackTrace(Exception e) {
@@ -657,9 +645,7 @@ public class misc {
 		trace.append(e.getMessage() + "\n");
 		for (int i = 0; i < e.getStackTrace().length; i++) {
 			StackTraceElement elem = e.getStackTrace()[i];
-			trace.append(elem.getClassName() + "." + elem.getMethodName() + "("
-					+ elem.getFileName() + ":"
-					+ String.valueOf(elem.getLineNumber()) + ")\n");
+			trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
 		}
 
 		return trace.toString();
@@ -672,12 +658,10 @@ public class misc {
 		int stop = sliceMe.indexOf(endString, (start + 1));
 
 		if (-1 == start) {
-			throw new Exception("Could not find beginString(" + beginString
-					+ ") in " + sliceMe);
+			throw new Exception("Could not find beginString(" + beginString + ") in " + sliceMe);
 		}
 		if (-1 == stop) {
-			throw new Exception("Could not find endString(" + endString
-					+ ") in " + sliceMe);
+			throw new Exception("Could not find endString(" + endString + ") in " + sliceMe);
 		}
 
 		return sliceMe.substring((start + beginString.length()), stop);

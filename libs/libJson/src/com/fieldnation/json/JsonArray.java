@@ -122,8 +122,7 @@ public class JsonArray {
 		return _objects.set(index, value);
 	}
 
-	protected void set(List<String> directions, Object value)
-			throws ParseException {
+	protected void set(List<String> directions, Object value) throws ParseException {
 		if (directions.size() == 0)
 			throw new ParseException("Invalid path", 0);
 
@@ -193,8 +192,7 @@ public class JsonArray {
 		_objects.add(index, value);
 	}
 
-	protected void add(List<String> directions, Object value)
-			throws ParseException {
+	protected void add(List<String> directions, Object value) throws ParseException {
 		if (directions.size() == 0)
 			throw new ParseException("Invalid path", 0);
 
@@ -377,6 +375,24 @@ public class JsonArray {
 	public String toString() {
 		return toStringBuilder().toString();
 
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		try {
+			return new JsonArray(this.toString());
+		} catch (ParseException e) {
+		}
+		return null;
+	}
+
+	public JsonArray copy() {
+		try {
+			return new JsonArray(this.toString());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.fieldnation;
 
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 
 import android.content.res.Configuration;
 import android.database.DataSetObserver;
@@ -112,7 +112,7 @@ public class MarketActivity extends BaseActivity {
 	}
 
 	@Override
-	public void onHaveAuthToken(AccessToken accessToken) {
+	public void onHaveAuthToken(OAuth oAuth) {
 		// TODO Method Stub: onHaveAuthToken()
 		Log.v(TAG, "Method Stub: onHaveAuthToken()");
 

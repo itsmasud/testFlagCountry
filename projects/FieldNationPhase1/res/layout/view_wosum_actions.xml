@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/payment_textview"
+        style="@style/WorkorderSummary_PaymentLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:gravity="left"
+        android:text="$5,000" />
+
+    <TextView
+        android:id="@+id/basis_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/payment_textview"
+        android:gravity="right"
+        android:text="fixed" />
+
+    <Button
+        android:id="@+id/detail_button"
+        style="@style/WorkorderSummary_Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/basis_textview"
+        android:maxLines="1"
+        android:text="Check In" />
+
+</RelativeLayout>

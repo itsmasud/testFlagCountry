@@ -55,7 +55,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 		if (!_running)
 			return;
 		_workorders = new JsonArray();
-		if (_gs.accessToken == null) {
+		if (_gs.oAuth == null) {
 			Log.v(TAG, "Waiting for accessToken");
 
 			_workorderRpc = null;
@@ -64,7 +64,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 		} else {
 			Log.v(TAG, "Have accessToken");
 			if (_workorderRpc == null) {
-				_workorderRpc = new WorkorderRpc(_context, _gs.accessToken, _rpcReceiver);
+				_workorderRpc = new WorkorderRpc(_context, _gs.oAuth, _rpcReceiver);
 			}
 			try {
 				Intent intent = (Intent) _rpcMethod.invoke(_workorderRpc,

@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ public class MyWorkListFragment extends Fragment {
 	private ListView _workordersListView;
 	private ProgressBar _loadingProgressBar;
 	private TextView _noDataTextView;
+	private ImageButton _refreshButton;
 
 	// Data
 	private WorkorderListAdapter _listAdapter;
@@ -42,6 +45,7 @@ public class MyWorkListFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		try {
 			_listAdapter = new WorkorderListAdapter(getActivity(), _displayType);
 		} catch (NoSuchMethodException e) {
@@ -70,6 +74,9 @@ public class MyWorkListFragment extends Fragment {
 
 		_workordersListView.setAdapter(_listAdapter);
 
+		_refreshButton = (ImageButton) view.findViewById(R.id.refresh_button);
+		_refreshButton.setOnClickListener(_refresh_onClick);
+
 	}
 
 	@Override
@@ -91,6 +98,15 @@ public class MyWorkListFragment extends Fragment {
 	/*-				Events				-*/
 	/*-*********************************-*/
 
+	private View.OnClickListener _refresh_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			_hasData = false;
+			updateUi();
+			_listAdapter.update();
+		}
+	};
+
 	private DataSetObserver _listAdapter_observer = new DataSetObserver() {
 		@Override
 		public void onChanged() {
@@ -110,11 +126,15 @@ public class MyWorkListFragment extends Fragment {
 				if (_listAdapter != null) {
 					if (_listAdapter.getCount() == 0) {
 						_noDataTextView.setVisibility(View.VISIBLE);
+						_refreshButton.setVisibility(View.VISIBLE);
 					} else {
 						_noDataTextView.setVisibility(View.GONE);
+						_refreshButton.setVisibility(View.GONE);
 					}
 				}
 			} else {
+				_noDataTextView.setVisibility(View.GONE);
+				_refreshButton.setVisibility(View.GONE);
 				_loadingProgressBar.setVisibility(View.VISIBLE);
 			}
 		}

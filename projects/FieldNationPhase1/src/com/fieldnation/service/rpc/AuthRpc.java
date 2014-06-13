@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.service.DataService;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
@@ -37,9 +37,10 @@ public class AuthRpc extends RpcInterface {
 			String username = bundle.getString("PARAM_USERNAME");
 			String password = bundle.getString("PARAM_PASSWORD");
 
-			AccessToken at = null;
+			OAuth at = null;
 			try {
-				at = new AccessToken(hostname, path, grantType, clientId, clientSecret, username, password);
+				at = OAuth.authServer(hostname, path, grantType, clientId,
+						clientSecret, username, password);
 				Log.v(TAG, at.toString());
 
 			} catch (Exception ex) {

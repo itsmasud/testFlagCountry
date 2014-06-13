@@ -29,11 +29,12 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private TextView _clientNameTextView;
 	private Button _detailButton;
 	private TextView _cashTextView;
-	private LinearLayout _cashLinearLayout;
 	private TextView _basisTextView;
 	private TextView _distanceTextView;
 	private TextView _whenTextView;
 	private TextView _statusTextView;
+	private LinearLayout _contentLayout;
+	private RelativeLayout _optionsLayout;
 
 	// Data
 	private GlobalState _gs;
@@ -42,6 +43,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 	private boolean _hasDetail;
 	private JsonObject _workorder;
+
+	private Animation _slideAnimation;
+	private Animation _slideBackAnimation;
 
 	// state lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1, R.drawable.wosum_status_2, R.drawable.wosum_status_3, R.drawable.wosum_status_4, R.drawable.wosum_status_5, R.drawable.wosum_status_6, R.drawable.wosum_status_7, R.drawable.wosum_status_8, R.drawable.wosum_status_9 };
@@ -64,11 +68,16 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		_gs = (GlobalState) getContext().getApplicationContext();
 
+		_contentLayout = (LinearLayout) findViewById(R.id.content_layout);
+		_optionsLayout = (RelativeLayout) findViewById(R.id.options_layout);
+		_optionsLayout.setOnClickListener(_options_onClick);
+		_optionsLayout.setClickable(false);
+
 		_statusTextView = (TextView) findViewById(R.id.status_textview);
-//		Animation anim = AnimationUtils.loadAnimation(getContext(),
-//				R.anim.animate_vertical);
-//		anim.setAnimationListener(_textView_animationListener);
-//		_statusTextView.startAnimation(anim);
+		// Animation anim = AnimationUtils.loadAnimation(getContext(),
+		// R.anim.animate_vertical);
+		// anim.setAnimationListener(_textView_animationListener);
+		// _statusTextView.startAnimation(anim);
 
 		_statusView = findViewById(R.id.status_view);
 
@@ -80,30 +89,39 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_detailButton = (Button) findViewById(R.id.detail_button);
 		_detailButton.setOnClickListener(_detailButton_onClick);
 
-		_cashLinearLayout = (LinearLayout) findViewById(R.id.payment_linearlayout);
 		_cashTextView = (TextView) findViewById(R.id.payment_textview);
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
 
 		_detailButton.setVisibility(GONE);
 		// _cashLinearLayout.setVisibility(GONE);
 
+		setOnLongClickListener(_onLongClickListener);
+
+		_slideAnimation = AnimationUtils.loadAnimation(getContext(),
+				R.anim.wosum_slide_away);
+
+		_slideBackAnimation = AnimationUtils.loadAnimation(getContext(),
+				R.anim.wosum_slide_back);
+
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private AnimationListener _textView_animationListener = new AnimationListener() {
+	private View.OnClickListener _options_onClick = new View.OnClickListener() {
 		@Override
-		public void onAnimationStart(Animation animation) {
+		public void onClick(View v) {
+			_optionsLayout.setClickable(false);
+			_contentLayout.startAnimation(_slideBackAnimation);
 		}
+	};
+	private View.OnLongClickListener _onLongClickListener = new View.OnLongClickListener() {
 
 		@Override
-		public void onAnimationRepeat(Animation animation) {
-		}
-
-		@Override
-		public void onAnimationEnd(Animation animation) {
-			_statusTextView.setVisibility(VISIBLE);
+		public boolean onLongClick(View v) {
+			_optionsLayout.setClickable(true);
+			_contentLayout.startAnimation(_slideAnimation);
+			return true;
 		}
 	};
 
@@ -243,5 +261,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+
+		_contentLayout.clearAnimation();
+		_optionsLayout.setClickable(false);
 	}
 }

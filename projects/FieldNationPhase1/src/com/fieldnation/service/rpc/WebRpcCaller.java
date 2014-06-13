@@ -5,15 +5,15 @@ import android.content.Intent;
 import android.os.ResultReceiver;
 
 import com.fieldnation.service.DataService;
-import com.fieldnation.webapi.AccessToken;
+import com.fieldnation.webapi.OAuth;
 
 public class WebRpcCaller {
 	private Context context;
-	private AccessToken _at;
+	private OAuth _at;
 	private String atString;
 	private ResultReceiver callback;
 
-	public WebRpcCaller(Context conetxt, AccessToken at, ResultReceiver callback) {
+	public WebRpcCaller(Context conetxt, OAuth at, ResultReceiver callback) {
 		this.context = conetxt;
 		_at = at;
 		atString = _at.toString();
