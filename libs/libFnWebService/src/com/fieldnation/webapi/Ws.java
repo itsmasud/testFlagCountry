@@ -24,6 +24,8 @@ import android.net.Uri;
 public class Ws {
 	public static boolean USE_HTTPS = true;
 
+	public static final boolean DEBUG = true;
+
 	private AccessToken _accessToken = null;
 
 	public Ws(AccessToken accessToken) {
@@ -34,8 +36,7 @@ public class Ws {
 	}
 
 	public Result httpRead(String method, String path, String options,
-			String contentType) throws MalformedURLException, IOException,
-			ParseException {
+			String contentType) throws MalformedURLException, IOException, ParseException {
 		if (!path.startsWith("/"))
 			path = "/" + path;
 
@@ -44,17 +45,17 @@ public class Ws {
 
 		HttpURLConnection conn = null;
 		if (USE_HTTPS) {
-			// TODO remove from production code!
-			trustAllHosts();
-			conn = (HttpURLConnection) new URL("https://"
-					+ _accessToken.getHostname() + path + options)
-					.openConnection();
-			((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+			// only disabled if debugging
+			if (DEBUG)
+				trustAllHosts();
+
+			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+
+			if (DEBUG)
+				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 
 		} else {
-			conn = (HttpURLConnection) new URL("http://"
-					+ _accessToken.getHostname() + path + options)
-					.openConnection();
+			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
 		}
 
 		conn.setRequestMethod(method);
@@ -70,24 +71,20 @@ public class Ws {
 		}
 	}
 
-	public Result httpGet(String path) throws MalformedURLException,
-			IOException, ParseException {
+	public Result httpGet(String path) throws MalformedURLException, IOException, ParseException {
 		return httpGet(path, null, null);
 	}
 
-	public Result httpGet(String path, String options, String contentType)
-			throws MalformedURLException, IOException, ParseException {
+	public Result httpGet(String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpRead("GET", path, options, contentType);
 	}
 
-	public Result httpDelete(String path, String options, String contentType)
-			throws MalformedURLException, IOException, ParseException {
+	public Result httpDelete(String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpRead("DELETE", path, options, contentType);
 	}
 
 	public Result httpWrite(String method, String path, String options,
-			byte[] data, String contentType) throws MalformedURLException,
-			IOException, ParseException {
+			byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
 
 		if (!path.startsWith("/"))
 			path = "/" + path;
@@ -97,18 +94,16 @@ public class Ws {
 
 		HttpURLConnection conn = null;
 		if (USE_HTTPS) {
-			// TODO remove from production code!
-			trustAllHosts();
+			// only enabled if debugging
+			if (DEBUG)
+				trustAllHosts();
 
-			conn = (HttpURLConnection) new URL("https://"
-					+ _accessToken.getHostname() + path + options)
-					.openConnection();
+			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
-			((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+			if (DEBUG)
+				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 		} else {
-			conn = (HttpURLConnection) new URL("http://"
-					+ _accessToken.getHostname() + path + options)
-					.openConnection();
+			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
 		}
 
 		conn.setRequestMethod(method);
@@ -131,29 +126,29 @@ public class Ws {
 	}
 
 	public Result httpPost(String path, String options, String data,
-			String contentType) throws MalformedURLException, IOException,
-			ParseException {
+			String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpPost(path, options, data.getBytes(), contentType);
 	}
 
 	public Result httpPost(String path, String options, byte[] data,
-			String contentType) throws MalformedURLException, IOException,
-			ParseException {
+			String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpWrite("POST", path, options, data, contentType);
 	}
 
 	public Result httpPut(String path, String options, byte[] data,
-			String contentType) throws MalformedURLException, IOException,
-			ParseException {
+			String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpWrite("PUT", path, options, data, contentType);
 	}
 
-	/*-******HACK! REMOVE FROM PRODUCTION CODE!*******-*/
-
-	// always verify the host - dont check for certificate
+	// always verify the host - don't check for certificate
 	protected final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
 		public boolean verify(String hostname, SSLSession session) {
-			return true;
+			if (DEBUG)
+				return true;
+			else
+				// disable all if not debugging
+				// (this class shouldn't be used anyway)
+				return false;
 		}
 	};
 
@@ -161,6 +156,10 @@ public class Ws {
 	 * Trust every server - dont check for any certificate
 	 */
 	protected static void trustAllHosts() {
+		// disable this if not debugging
+		if (!DEBUG)
+			return;
+
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 			public X509Certificate[] getAcceptedIssuers() {
@@ -168,13 +167,11 @@ public class Ws {
 			}
 
 			@Override
-			public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-					throws CertificateException {
+			public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
 			}
 
 			@Override
-			public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-					throws CertificateException {
+			public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
 			}
 		} };
 
@@ -182,8 +179,7 @@ public class Ws {
 		try {
 			SSLContext sc = SSLContext.getInstance("TLS");
 			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection
-					.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

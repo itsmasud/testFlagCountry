@@ -2,6 +2,7 @@ package com.fieldnation.auth;
 
 import com.fieldnation.R;
 import com.fieldnation.service.rpc.AuthRpc;
+
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -10,21 +11,24 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 public class Authenticator extends AbstractAccountAuthenticator {
+	private static final String TAG = "auth.Authenticator";
 	private Context _context;
 
 	public Authenticator(Context context) {
 		super(context);
 		_context = context;
+		Log.v(TAG, "Constructor");
 	}
 
 	@Override
 	public Bundle addAccount(AccountAuthenticatorResponse response,
 			String accountType, String authTokenType,
-			String[] requiredFeatures, Bundle options)
-			throws NetworkErrorException {
+			String[] requiredFeatures, Bundle options) throws NetworkErrorException {
 
+		Log.v(TAG, "addAccount");
 		Intent intent = new Intent(_context, AuthActivity.class);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
 				response);
@@ -36,25 +40,9 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	}
 
 	@Override
-	public Bundle editProperties(AccountAuthenticatorResponse response,
-			String accountType) {
-		// TODO Auto-generated method stub
-		System.out.println("Method Stub: editProperties()");
-		return null;
-	}
-
-	@Override
-	public Bundle confirmCredentials(AccountAuthenticatorResponse response,
-			Account account, Bundle options) throws NetworkErrorException {
-		// TODO Auto-generated method stub
-		System.out.println("Method Stub: confirmCredentials()");
-		return null;
-	}
-
-	@Override
 	public Bundle getAuthToken(AccountAuthenticatorResponse response,
-			Account account, String authTokenType, Bundle options)
-			throws NetworkErrorException {
+			Account account, String authTokenType, Bundle options) throws NetworkErrorException {
+		Log.v(TAG, "getAuthToken");
 		AccountManager am = AccountManager.get(_context);
 		String password = am.getPassword(account);
 		String hostname = _context.getString(R.string.fn_hostname);
@@ -92,26 +80,41 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	}
 
 	@Override
+	public Bundle editProperties(AccountAuthenticatorResponse response,
+			String accountType) {
+		// TODO Method Stub: editProperties()
+		Log.v(TAG, "Method Stub: editProperties()");
+		return null;
+	}
+
+	@Override
+	public Bundle confirmCredentials(AccountAuthenticatorResponse response,
+			Account account, Bundle options) throws NetworkErrorException {
+		// TODO Method Stub: confirmCredentials()
+		Log.v(TAG, "Method Stub: confirmCredentials()");
+		return null;
+	}
+
+	@Override
 	public String getAuthTokenLabel(String authTokenType) {
-		// TODO Auto-generated method stub
-		System.out.println("Method Stub: getAuthTokenLabel()");
+		// TODO Method Stub: getAuthTokenLabel()
+		Log.v(TAG, "Method Stub: getAuthTokenLabel()");
 		return null;
 	}
 
 	@Override
 	public Bundle updateCredentials(AccountAuthenticatorResponse response,
-			Account account, String authTokenType, Bundle options)
-			throws NetworkErrorException {
-		// TODO Auto-generated method stub
-		System.out.println("Method Stub: updateCredentials()");
+			Account account, String authTokenType, Bundle options) throws NetworkErrorException {
+		// TODO Method Stub: updateCredentials()
+		Log.v(TAG, "Method Stub: updateCredentials()");
 		return null;
 	}
 
 	@Override
 	public Bundle hasFeatures(AccountAuthenticatorResponse response,
 			Account account, String[] features) throws NetworkErrorException {
-		// TODO Auto-generated method stub
-		System.out.println("Method Stub: hasFeatures()");
+		// TODO Method Stub: hasFeatures()
+		Log.v(TAG, "Method Stub: hasFeatures()");
 		return null;
 	}
 

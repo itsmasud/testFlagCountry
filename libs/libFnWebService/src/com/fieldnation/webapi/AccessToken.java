@@ -9,6 +9,8 @@ import java.text.ParseException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import android.os.Debug;
+
 import com.fieldnation.json.JsonObject;
 
 public class AccessToken {
@@ -16,6 +18,7 @@ public class AccessToken {
 	private String _hostname;
 
 	private int _expiresIn = 0;
+	private long _expiresOn = 0;
 	private String _accessToken = null;
 	private String _tokenType = null;
 	private String _scope = null;
@@ -27,6 +30,10 @@ public class AccessToken {
 		this(new JsonObject(jsonString));
 	}
 
+	public String getAccessToken() {
+		return _accessToken;
+	}
+
 	public AccessToken(JsonObject json) throws ParseException {
 		_accessToken = json.getString("access_token");
 		_tokenType = json.getString("token_type");
@@ -34,19 +41,15 @@ public class AccessToken {
 		_refreshToken = json.getString("refresh_token");
 		_expiresIn = json.getInt("expires_in");
 		_hostname = json.getString("hostname");
+		if (json.has("expires_on"))
+			_expiresOn = json.getLong("expires_on");
 	}
 
-	public AccessToken(String hostname, String grantType, String clientId,
-			String clientSecret, String username, String password)
-			throws MalformedURLException, IOException, java.text.ParseException {
-		this(hostname, "/authentication/api/oauth/token", grantType, clientId,
-				clientSecret, username, password);
+	public AccessToken(String hostname, String grantType, String clientId, String clientSecret, String username, String password) throws MalformedURLException, IOException, java.text.ParseException {
+		this(hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, username, password);
 	}
 
-	public AccessToken(String hostname, String path, String grantType,
-			String clientId, String clientSecret, String username,
-			String password) throws MalformedURLException, IOException,
-			ParseException {
+	public AccessToken(String hostname, String path, String grantType, String clientId, String clientSecret, String username, String password) throws MalformedURLException, IOException, ParseException {
 
 		_hostname = hostname;
 
@@ -55,14 +58,16 @@ public class AccessToken {
 
 		HttpURLConnection conn = null;
 		if (Ws.USE_HTTPS) {
-			// TODO remove from production code!
-			Ws.trustAllHosts();
-			conn = (HttpURLConnection) new URL("https://" + hostname + path)
-					.openConnection();
-			((HttpsURLConnection) conn).setHostnameVerifier(Ws.DO_NOT_VERIFY);
+			// only allow if debugging
+			if (Ws.DEBUG)
+				Ws.trustAllHosts();
+			conn = (HttpURLConnection) new URL("https://" + hostname + path).openConnection();
+
+			// only allow if debugging
+			if (Ws.DEBUG)
+				((HttpsURLConnection) conn).setHostnameVerifier(Ws.DO_NOT_VERIFY);
 		} else {
-			conn = (HttpURLConnection) new URL("http://" + hostname + path)
-					.openConnection();
+			conn = (HttpURLConnection) new URL("http://" + hostname + path).openConnection();
 		}
 
 		conn.setRequestMethod("POST");
@@ -74,9 +79,7 @@ public class AccessToken {
 
 		OutputStream out = conn.getOutputStream();
 
-		out.write(("grant_type=" + grantType + "&client_id=" + clientId
-				+ "&client_secret=" + clientSecret + "&username=" + username
-				+ "&password=" + password).getBytes());
+		out.write(("grant_type=" + grantType + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&username=" + username + "&password=" + password).getBytes());
 
 		Result result = new Result(conn);
 
@@ -90,7 +93,12 @@ public class AccessToken {
 		_scope = token.getString("scope");
 		_refreshToken = token.getString("refresh_token");
 		_expiresIn = token.getInt("expires_in");
+		_expiresOn = System.currentTimeMillis() + _expiresIn * 1000;
 
+	}
+
+	public boolean isExpired() {
+		return System.currentTimeMillis() > _expiresOn;
 	}
 
 	public JsonObject toJson() throws java.text.ParseException {
@@ -101,7 +109,7 @@ public class AccessToken {
 		o.put("scope", _scope);
 		o.put("refresh_token", _refreshToken);
 		o.put("expires_in", _expiresIn);
-
+		o.put("expires_on", _expiresOn);
 		return o;
 	}
 
@@ -125,9 +133,7 @@ public class AccessToken {
 		} else if (options.startsWith("?")) { // if options already specified
 			return "?access_token=" + _accessToken + "&" + options.substring(1);
 		}
-		throw new ParseException(
-				"Options must be nothing, or start with '?'. Got: " + options,
-				0);
+		throw new ParseException("Options must be nothing, or start with '?'. Got: " + options, 0);
 	}
 
 }

@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/wosum"
+    style="@style/WorkorderSummary"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
     <LinearLayout
-        style="@style/wosum_inside"
+        android:id="@+id/content_layout"
+        style="@style/WorkorderSummary_Inside"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <View
-            android:id="@+id/wosum_status"
-            style="@style/wosum_status_bar"
-            android:layout_width="10px"
-            android:layout_height="fill_parent" />
+        <RelativeLayout
+            android:id="@+id/status_view"
+            style="@style/WorkorderSummary_StatusBar"
+            android:layout_width="30dp"
+            android:layout_height="fill_parent" >
+        </RelativeLayout>
 
         <RelativeLayout
-            style="@style/wosum_data_container"
+            style="@style/WorkorderSummary_DataContainer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
@@ -27,64 +29,110 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/wosum_actions"
                 android:orientation="vertical" >
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/title_textview"
+                    style="@style/WorkorderSummary_Title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Project Title Goes Here"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <LinearLayout
+                    android:id="@+id/client_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" >
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Client:"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                    <TextView
+                        android:id="@+id/clientname_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Client Name"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/distance_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/distance_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3.5 mi"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/when_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/when_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04/12/14 - 04/23/14 @ 2pm"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
             </LinearLayout>
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/wosum_actions"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/wosum_data" >
+                android:layout_centerVertical="true" >
 
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/detail_button"
+                    style="@style/WorkorderSummary_Button"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:layout_centerInParent="true"
                     android:text="Check In" />
 
                 <LinearLayout
+                    android:id="@+id/payment_linearlayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:orientation="horizontal" >
+                    android:orientation="vertical" >
 
                     <TextView
+                        android:id="@+id/payment_textview"
+                        style="@style/WorkorderSummary_PaymentLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="left"
                         android:text="$5,000" />
 
                     <TextView
+                        android:id="@+id/basis_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="right"
                         android:text="fixed" />
                 </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
+
+    <com.fieldnation.VerticalTextView
+        android:id="@+id/status_textview"
+        style="@style/WorkorderSummary_StatusText"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:maxLines="1"
+        android:paddingTop="5dp"
+        android:text="Tesssst" />
 
 </RelativeLayout>

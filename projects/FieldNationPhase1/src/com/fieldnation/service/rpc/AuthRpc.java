@@ -2,7 +2,8 @@ package com.fieldnation.service.rpc;
 
 import java.util.HashMap;
 
-import com.fieldnation.service.BackgroundService;
+import com.fieldnation.GlobalState;
+import com.fieldnation.service.DataService;
 import com.fieldnation.webapi.AccessToken;
 
 import android.accounts.AccountAuthenticatorResponse;
@@ -11,15 +12,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.util.Log;
 
 public class AuthRpc extends RpcInterface {
+	private final static String TAG = "service.rpc.AuthRpc";
+
+	private GlobalState _gs;
 
 	public AuthRpc(HashMap<String, RpcInterface> map) {
-		super(map, "getOauthToken");
+		super(map, "auth");
 	}
 
 	@Override
 	public void execute(Context context, Intent intent) {
+		_gs = (GlobalState) context.getApplicationContext();
 		try {
 			Bundle bundle = intent.getExtras();
 
@@ -33,29 +39,29 @@ public class AuthRpc extends RpcInterface {
 
 			AccessToken at = null;
 			try {
-				at = new AccessToken(hostname, path, grantType, clientId,
-						clientSecret, username, password);
+				at = new AccessToken(hostname, path, grantType, clientId, clientSecret, username, password);
+				Log.v(TAG, at.toString());
+
 			} catch (Exception ex) {
 				// could not get the token... need to figure out why
 				ex.printStackTrace();
 			}
-			// TODO, if failed, generate local auth token
+			// TODO, ANDR-11 if failed, generate local auth token
 
 			if (bundle.containsKey("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE")) {
-				AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle
-						.getParcelable("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE");
+				AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle.getParcelable("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE");
 
 				Bundle result = new Bundle();
 				result.putString("ACTION", "RPC_getOauthToken");
 				result.putString(AccountManager.KEY_AUTHTOKEN, at.toString());
 				result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-				result.putString(AccountManager.KEY_ACCOUNT_TYPE, "fieldnation");
+				result.putString(AccountManager.KEY_ACCOUNT_TYPE,
+						_gs.accountType);
 				aar.onResult(result);
 			}
 
 			if (bundle.containsKey("PARAM_RESULT_RECEIVER")) {
-				ResultReceiver rr = bundle
-						.getParcelable("PARAM_RESULT_RECEIVER");
+				ResultReceiver rr = bundle.getParcelable("PARAM_RESULT_RECEIVER");
 
 				Bundle response = new Bundle();
 
@@ -64,9 +70,6 @@ public class AuthRpc extends RpcInterface {
 
 				rr.send(bundle.getInt("RESULT_CODE"), response);
 			}
-
-			// TODO Auto-generated method stub
-			System.out.println("Method Stub: execute()");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -77,8 +80,9 @@ public class AuthRpc extends RpcInterface {
 			String grantType, String clientId, String clientSecret,
 			String username, String password) {
 
-		Intent intent = new Intent(context, BackgroundService.class);
+		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
+		intent.putExtra("SERVICE", "auth");
 		intent.putExtra("METHOD", "getOauthToken");
 		intent.putExtra("PARAM_HOSTNAME", hostname);
 		intent.putExtra("PARAM_PATH", "/authentication/api/oauth/token");
@@ -97,8 +101,9 @@ public class AuthRpc extends RpcInterface {
 			int resultCode, String hostname, String grantType, String clientId,
 			String clientSecret, String username, String password) {
 
-		Intent intent = new Intent(context, BackgroundService.class);
+		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
+		intent.putExtra("SERVICE", "auth");
 		intent.putExtra("METHOD", "getOauthToken");
 		intent.putExtra("PARAM_HOSTNAME", hostname);
 		intent.putExtra("PARAM_PATH", "/authentication/api/oauth/token");
