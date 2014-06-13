@@ -3,10 +3,12 @@ package com.fieldnation.service.rpc;
 import java.text.ParseException;
 import java.util.HashMap;
 
+import com.fieldnation.service.DataCache;
 import com.fieldnation.webapi.AccessToken;
 import com.fieldnation.webapi.Result;
 import com.fieldnation.webapi.Ws;
 
+import android.app.DownloadManager.Query;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,19 +45,30 @@ public class WebRpc extends RpcInterface {
 			String path = bundle.getString("PARAM_PATH");
 			String options = bundle.getString("PARAM_OPTIONS");
 			String contentType = bundle.getString("PARAM_CONTENT_TYPE");
-			
-			// TODO ANDR-16 implement a cache here
 
-			Ws ws = new Ws(at);
-
-			Result result = ws.httpRead(method, path, options, contentType);
 			if (bundle.containsKey("PARAM_CALLBACK")) {
 				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
 
-				bundle.putByteArray("RESPONSE_DATA",
-						result.getResultsAsByteArray());
-				bundle.putInt("RESPONSE_CODE",
-						result.getUrlConnection().getResponseCode());
+				Bundle cachedData = DataCache.query(at, bundle);
+				if (cachedData != null) {
+					bundle.putByteArray("RESPONSE_DATA",
+							cachedData.getByteArray("RESPONSE_DATA"));
+					bundle.putInt("RESPONSE_CODE",
+							cachedData.getInt("RESPONSE_CODE"));
+					bundle.putBoolean("RESPONSE_CACHED", true);
+				} else {
+					Ws ws = new Ws(at);
+					Result result = ws.httpRead(method, path, options,
+							contentType);
+
+					bundle.putByteArray("RESPONSE_DATA",
+							result.getResultsAsByteArray());
+					bundle.putInt("RESPONSE_CODE",
+							result.getUrlConnection().getResponseCode());
+					bundle.putBoolean("RESPONSE_CACHED", false);
+
+					DataCache.store(at, bundle, bundle);
+				}
 
 				rr.send(bundle.getInt("RESULT_CODE"), bundle);
 			}
@@ -75,19 +88,29 @@ public class WebRpc extends RpcInterface {
 			String contentType = bundle.getString("PARAM_CONTENT_TYPE");
 			byte[] data = bundle.getByteArray("PARAM_DATA");
 
-			// TODO ANDR-16 implement a cache here
-			
-			Ws ws = new Ws(at);
-
-			Result result = ws.httpWrite(method, path, options, data,
-					contentType);
 			if (bundle.containsKey("PARAM_CALLBACK")) {
 				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
 
-				bundle.putByteArray("RESPONSE_DATA",
-						result.getResultsAsByteArray());
-				bundle.putInt("RESPONSE_CODE",
-						result.getUrlConnection().getResponseCode());
+				Bundle cachedData = DataCache.query(at, bundle);
+				if (cachedData != null) {
+					bundle.putByteArray("RESPONSE_DATA",
+							cachedData.getByteArray("RESPONSE_DATA"));
+					bundle.putInt("RESPONSE_CODE",
+							cachedData.getInt("RESPONSE_CODE"));
+					bundle.putBoolean("RESPONSE_CACHED", true);
+				} else {
+					Ws ws = new Ws(at);
+					Result result = ws.httpWrite(method, path, options, data,
+							contentType);
+
+					bundle.putByteArray("RESPONSE_DATA",
+							result.getResultsAsByteArray());
+					bundle.putInt("RESPONSE_CODE",
+							result.getUrlConnection().getResponseCode());
+					bundle.putBoolean("RESPONSE_CACHED", false);
+
+					DataCache.store(at, bundle, bundle);
+				}
 
 				rr.send(bundle.getInt("RESULT_CODE"), bundle);
 			}

@@ -147,7 +147,10 @@ public class MyWorkActivity extends BaseActivity {
 	private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
 		@Override
 		public void onPageSelected(int position) {
-			getSupportActionBar().setSelectedNavigationItem(position);
+			try {
+				getSupportActionBar().setSelectedNavigationItem(position);
+			} catch (Exception ex) {
+			}
 		};
 	};
 

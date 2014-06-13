@@ -13,9 +13,8 @@ public class TestFnWeb {
 	public static void main(String[] args) {
 		Result result = null;
 		try {
-			AccessToken token = new AccessToken("dev.fieldnation.com",
-					"password", "demoapp", "demopass", "jacobfaketech",
-					"jacobfaketech");
+
+			AccessToken token = new AccessToken("dev.fieldnation.com", "password", "demoapp", "demopass", "jacobfaketech", "jacobfaketech");
 
 			Workorder wo = new Workorder(token);
 

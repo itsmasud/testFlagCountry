@@ -38,11 +38,10 @@
         <item name="android:paddingBottom">10dp</item>
     </style>
 
-    <style name="WorkorderSummary_Inside">
-        <item name="android:background">@color/wosum_data_container_background</item>
-    </style>
+    <style name="WorkorderSummary_Inside"></style>
 
     <style name="WorkorderSummary_DataContainer">
+        <item name="android:background">@color/wosum_data_container_background</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>

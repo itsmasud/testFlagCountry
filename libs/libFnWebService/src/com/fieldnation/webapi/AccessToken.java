@@ -30,6 +30,10 @@ public class AccessToken {
 		this(new JsonObject(jsonString));
 	}
 
+	public String getAccessToken() {
+		return _accessToken;
+	}
+
 	public AccessToken(JsonObject json) throws ParseException {
 		_accessToken = json.getString("access_token");
 		_tokenType = json.getString("token_type");
