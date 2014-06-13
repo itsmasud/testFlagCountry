@@ -5,6 +5,7 @@
     android:layout_height="wrap_content" >
 
     <LinearLayout
+        android:id="@+id/content_layout"
         style="@style/WorkorderSummary_Inside"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
