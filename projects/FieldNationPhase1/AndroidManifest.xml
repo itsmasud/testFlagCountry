@@ -32,6 +32,7 @@
         </activity>
         <activity
             android:name="com.fieldnation.MyWorkActivity"
+            android:configChanges="orientation"
             android:label="@string/mywork_title" >
         </activity>
         <activity
@@ -79,7 +80,9 @@
             android:name="com.fieldnation.service.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>com.fieldnation.service                <action android:name="android.content.SyncAdapter" />
+            <intent-filter>
+com.fieldnation.service                
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data

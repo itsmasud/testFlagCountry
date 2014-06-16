@@ -53,7 +53,7 @@ public class MyWorkListFragment extends Fragment {
 		}
 		_hasData = false;
 		_listAdapter.registerDataSetObserver(_listAdapter_observer);
-		_listAdapter.update();
+		_listAdapter.update(true);
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class MyWorkListFragment extends Fragment {
 		public void onClick(View v) {
 			_hasData = false;
 			updateUi();
-			_listAdapter.update();
+			_listAdapter.update(false);
 		}
 	};
 

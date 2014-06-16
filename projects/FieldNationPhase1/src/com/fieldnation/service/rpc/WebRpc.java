@@ -45,11 +45,16 @@ public class WebRpc extends RpcInterface {
 			String path = bundle.getString("PARAM_PATH");
 			String options = bundle.getString("PARAM_OPTIONS");
 			String contentType = bundle.getString("PARAM_CONTENT_TYPE");
+			boolean allowCache = bundle.getBoolean("ALLOW_CACHE");
 
 			if (bundle.containsKey("PARAM_CALLBACK")) {
 				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
 
-				Bundle cachedData = DataCache.query(at, bundle);
+				Bundle cachedData = null;
+
+				if (allowCache)
+					cachedData = DataCache.query(at, bundle);
+
 				if (cachedData != null) {
 					bundle.putByteArray("RESPONSE_DATA",
 							cachedData.getByteArray("RESPONSE_DATA"));
@@ -87,11 +92,16 @@ public class WebRpc extends RpcInterface {
 			String options = bundle.getString("PARAM_OPTIONS");
 			String contentType = bundle.getString("PARAM_CONTENT_TYPE");
 			byte[] data = bundle.getByteArray("PARAM_DATA");
+			boolean allowCache = bundle.getBoolean("ALLOW_CACHE");
 
 			if (bundle.containsKey("PARAM_CALLBACK")) {
 				ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
 
-				Bundle cachedData = DataCache.query(at, bundle);
+				Bundle cachedData = null;
+
+				if (allowCache)
+					cachedData = DataCache.query(at, bundle);
+
 				if (cachedData != null) {
 					bundle.putByteArray("RESPONSE_DATA",
 							cachedData.getByteArray("RESPONSE_DATA"));

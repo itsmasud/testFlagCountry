@@ -46,6 +46,10 @@ public class MyWorkActivity extends BaseActivity {
 
 		buildTabs();
 		buildDrawer();
+
+		_viewPager.setCurrentItem(
+				getSupportActionBar().getSelectedNavigationIndex(), false);
+
 	}
 
 	private void buildTabs() {

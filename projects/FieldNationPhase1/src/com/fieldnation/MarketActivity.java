@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ public class MarketActivity extends BaseActivity {
 	private ListView _workordersListView;
 	private ProgressBar _loadingProgressBar;
 	private TextView _noDataTextView;
+	private ImageButton _refreshButton;
 
 	// Data
 	private WorkorderListAdapter _woAdapter;
@@ -43,6 +45,8 @@ public class MarketActivity extends BaseActivity {
 		_workordersListView = (ListView) findViewById(R.id.workorder_listview);
 		_loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
 		_noDataTextView = (TextView) findViewById(R.id.nodata_textview);
+		_refreshButton = (ImageButton) findViewById(R.id.refresh_button);
+		_refreshButton.setOnClickListener(_refresh_onClick);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setDisplayHomeAsUpEnabled(true);
@@ -95,6 +99,14 @@ public class MarketActivity extends BaseActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _refresh_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			_hasData = false;
+			updateUi();
+			_woAdapter.update(false);
+		}
+	};
 
 	// when a menu item is selected
 	@Override
@@ -122,7 +134,7 @@ public class MarketActivity extends BaseActivity {
 			e.printStackTrace();
 		}
 		_woAdapter.registerDataSetObserver(_listAdapter_observer);
-		_woAdapter.update();
+		_woAdapter.update(true);
 
 		_workordersListView.setAdapter(_woAdapter);
 
@@ -153,11 +165,15 @@ public class MarketActivity extends BaseActivity {
 				if (_woAdapter != null) {
 					if (_woAdapter.getCount() == 0) {
 						_noDataTextView.setVisibility(View.VISIBLE);
+						_refreshButton.setVisibility(View.VISIBLE);
 					} else {
 						_noDataTextView.setVisibility(View.GONE);
+						_refreshButton.setVisibility(View.GONE);
 					}
 				}
 			} else {
+				_noDataTextView.setVisibility(View.GONE);
+				_refreshButton.setVisibility(View.GONE);
 				_loadingProgressBar.setVisibility(View.VISIBLE);
 			}
 		}

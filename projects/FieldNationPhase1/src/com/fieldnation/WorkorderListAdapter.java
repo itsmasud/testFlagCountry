@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.fieldnation.json.JsonArray;
@@ -33,6 +34,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	private WorkorderRpc _workorderRpc;
 	private Method _rpcMethod;
 	private boolean _running;
+	private boolean _allowCache = true;
 
 	public WorkorderListAdapter(Context context, String type) throws NoSuchMethodException {
 		_context = context;
@@ -41,7 +43,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 		_running = true;
 
 		_rpcMethod = WorkorderRpc.class.getDeclaredMethod(type,
-				new Class<?>[] { int.class, int.class });
+				new Class<?>[] { int.class, int.class, boolean.class });
 		_rpcMethod.setAccessible(true);
 
 	}
@@ -51,9 +53,12 @@ public class WorkorderListAdapter extends BaseAdapter {
 		_running = false;
 	}
 
-	public void update() {
+	public void update(boolean allowCache) {
 		if (!_running)
 			return;
+
+		_allowCache = allowCache;
+
 		_workorders = new JsonArray();
 		if (_gs.oAuth == null) {
 			Log.v(TAG, "Waiting for accessToken");
@@ -67,8 +72,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 				_workorderRpc = new WorkorderRpc(_context, _gs.oAuth, _rpcReceiver);
 			}
 			try {
-				Intent intent = (Intent) _rpcMethod.invoke(_workorderRpc,
-						RPC_GET, 1);
+				Intent intent = callRpc(RPC_GET, 1, _allowCache);
 
 				intent.putExtra("PARAM_PAGE", 1);
 				_context.startService(intent);
@@ -79,15 +83,33 @@ public class WorkorderListAdapter extends BaseAdapter {
 		}
 	}
 
+	private Intent callRpc(int resultCode, int page, boolean allowCache) {
+		try {
+			return (Intent) _rpcMethod.invoke(_workorderRpc, resultCode, page,
+					allowCache);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	private WaitForFieldAsyncTask.Listener _waitForAccessToken_listener = new WaitForFieldAsyncTask.Listener() {
 		@Override
 		public void onSuccess(Object value) {
-			update();
+			update(_allowCache);
 		}
 
 		@Override
 		public void onFail(Exception ex) {
-			update();
+			update(_allowCache);
 		}
 	};
 
@@ -120,8 +142,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 				if (orders.size() == 25) {
 					try {
-						Intent intent = (Intent) _rpcMethod.invoke(
-								_workorderRpc, RPC_GET, page + 1);
+						Intent intent = callRpc(RPC_GET, page + 1, _allowCache);
 
 						intent.putExtra("PARAM_PAGE", page + 1);
 						_context.startService(intent);
@@ -129,6 +150,9 @@ public class WorkorderListAdapter extends BaseAdapter {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				} else {
+					// chain is complete, re-enable caching
+					_allowCache = true;
 				}
 			}
 		};
