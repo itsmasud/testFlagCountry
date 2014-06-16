@@ -3,6 +3,7 @@ package com.fieldnation.service.rpc;
 import java.util.HashMap;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.R;
 import com.fieldnation.auth.db.User;
 import com.fieldnation.auth.db.UserDataSource;
 import com.fieldnation.json.JsonObject;
@@ -29,6 +30,7 @@ public class AuthRpc extends RpcInterface {
 	@Override
 	public void execute(Context context, Intent intent) {
 		_gs = (GlobalState) context.getApplicationContext();
+		String errorMessage = null;
 		try {
 			Bundle bundle = intent.getExtras();
 
@@ -47,6 +49,11 @@ public class AuthRpc extends RpcInterface {
 				Log.v(TAG, at.toString());
 
 			} catch (Exception ex) {
+				Log.v(TAG, ex.getMessage());
+				if (ex.getMessage().startsWith(
+						"No authentication challenges found")) {
+					errorMessage = context.getString(R.string.login_error_invalid_remote_creds);
+				}
 				// could not get the token... need to figure out why
 				ex.printStackTrace();
 			}
@@ -60,7 +67,8 @@ public class AuthRpc extends RpcInterface {
 				User user = ds.get(username);
 				if (user == null) {
 					Log.d(TAG, "User not in database");
-					// TODO user not in database, can't auth locally. Fail
+					if (errorMessage == null)
+						errorMessage = context.getString(R.string.login_error_not_found_in_db);
 				} else {
 
 					if (user.validatePassword(password)) {
@@ -78,7 +86,8 @@ public class AuthRpc extends RpcInterface {
 
 						at = OAuth.fromJson(json);
 					} else {
-						// TODO invalid creds. fail here!?
+						if (errorMessage == null)
+							errorMessage = context.getString(R.string.login_error_invalid_local_creds);
 						Log.d(TAG, "Invalid local creds");
 					}
 				}
@@ -98,6 +107,9 @@ public class AuthRpc extends RpcInterface {
 				ds.close();
 			}
 
+			if (errorMessage == null)
+				errorMessage = context.getString(R.string.login_error_no_error);
+
 			if (bundle.containsKey("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE")) {
 				AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle.getParcelable("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE");
 
@@ -111,9 +123,8 @@ public class AuthRpc extends RpcInterface {
 					result.putString(AccountManager.KEY_ACCOUNT_TYPE,
 							_gs.accountType);
 				} else {
-					// TODO refrence strings.xml
 					result.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE,
-							"Authentication failed!");
+							errorMessage);
 				}
 				aar.onResult(result);
 			}
@@ -124,11 +135,9 @@ public class AuthRpc extends RpcInterface {
 				Bundle response = new Bundle();
 
 				response.putString("ACTION", "RPC_getOauthToken");
+				response.putString("error", errorMessage);
 				if (at != null) {
 					response.putString("authtoken", at.toString());
-				} else {
-					// TODO pull from strings.xml
-					response.putString("error", "Could not authenticate user!");
 				}
 
 				rr.send(bundle.getInt("RESULT_CODE"), response);

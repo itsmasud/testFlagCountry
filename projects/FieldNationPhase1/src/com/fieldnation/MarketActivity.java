@@ -16,6 +16,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+/**
+ * Displays all the work orders in the market that are available to this user
+ * 
+ * @author michael.carver
+ * 
+ */
 public class MarketActivity extends BaseActivity {
 	private static final String TAG = "MarketActivity";
 
@@ -59,7 +65,9 @@ public class MarketActivity extends BaseActivity {
 
 	private void buildDrawer() {
 		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
-		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout, R.drawable.ic_navigation_drawer, R.string.launcher_open, R.string.launcher_open) {
+		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
+				R.drawable.ic_navigation_drawer, R.string.launcher_open,
+				R.string.launcher_open) {
 
 			// @Override
 			// public void onDrawerStateChanged(int newState) {
@@ -129,7 +137,8 @@ public class MarketActivity extends BaseActivity {
 		Log.v(TAG, "Method Stub: onHaveAuthToken()");
 
 		try {
-			_woAdapter = new WorkorderListAdapter(this, WorkorderListAdapter.TYPE_AVAILABLE);
+			_woAdapter = new WorkorderListAdapter(this,
+					WorkorderListAdapter.TYPE_AVAILABLE);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}

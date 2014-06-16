@@ -68,4 +68,10 @@
         <item>-1</item>
     </string-array>
 
+    <!-- login error messages -->
+    <string name="login_error_no_error">Success!</string>
+    <string name="login_error_not_found_in_db">Authentication Failed, check your network settings, and retry.[1]</string>
+    <string name="login_error_invalid_local_creds">Authentication Failed, check your network settings, and retry.[2]</string>
+    <string name="login_error_invalid_remote_creds">Authentication Failed, please check username and password</string>
+
 </resources>

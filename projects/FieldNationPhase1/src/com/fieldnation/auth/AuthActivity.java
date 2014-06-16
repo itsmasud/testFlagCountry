@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class AuthActivity extends AccountAuthenticatorActivity {
 	// UI
@@ -83,26 +84,34 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			try {
-				Account account = new Account(_username, _gs.accountType);
-				AccountManager am = AccountManager.get(AuthActivity.this);
-				am.addAccountExplicitly(account, _password, null);
-				am.setAuthToken(account, _gs.accountType,
-						resultData.getString("authtoken"));
+				String authToken = resultData.getString("authtoken");
+				String error = resultData.getString("error");
 
-				Intent intent = new Intent();
-				intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
-						_gs.accountType);
-				// intent.putExtra(AccountManager.KEY_AUTHTOKEN,
-				// Constants.FIELD_NATION_ACCOUNT_TYPE);
-				intent.putExtra(AccountManager.KEY_AUTHTOKEN,
-						resultData.getString("authtoken"));
+				if (authToken != null) {
+					Account account = new Account(_username, _gs.accountType);
+					AccountManager am = AccountManager.get(AuthActivity.this);
+					am.addAccountExplicitly(account, _password, null);
+					am.setAuthToken(account, _gs.accountType, authToken);
 
-				AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
-				AuthActivity.this.setResult(RESULT_OK, intent);
-				AuthActivity.this.finish();
+					Intent intent = new Intent();
+					intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
+					intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
+							_gs.accountType);
+					// intent.putExtra(AccountManager.KEY_AUTHTOKEN,
+					// Constants.FIELD_NATION_ACCOUNT_TYPE);
+					intent.putExtra(AccountManager.KEY_AUTHTOKEN,
+							resultData.getString("authtoken"));
 
-				ClockRpc.enableClock(AuthActivity.this);
+					AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
+					AuthActivity.this.setResult(RESULT_OK, intent);
+					AuthActivity.this.finish();
+
+					ClockRpc.enableClock(AuthActivity.this);
+				} else {
+					_loadingProgressBar.setVisibility(View.GONE);
+					_contentLayout.setVisibility(View.VISIBLE);
+				}
+				Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
 
 			} catch (Exception e) {
 				// TODO handle properly

@@ -12,6 +12,7 @@ import java.text.ParseException;
 import javax.net.ssl.HttpsURLConnection;
 
 import android.os.Debug;
+import android.util.Log;
 
 import com.fieldnation.auth.db.User;
 import com.fieldnation.json.JsonObject;

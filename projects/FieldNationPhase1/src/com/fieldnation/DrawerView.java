@@ -10,6 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+/**
+ * This view defines what is in the pull out drawer, and how it behaves.
+ * 
+ * @author michael.carver
+ * 
+ */
 public class DrawerView extends RelativeLayout {
 	private static final String TAG = "DrawerView";
 

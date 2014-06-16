@@ -19,6 +19,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * This is the base of all the activities in this project. It provides
+ * authentication and applies the action bars
+ * 
+ * @author michael.carver
+ * 
+ */
 public abstract class BaseActivity extends ActionBarActivity {
 	private static final String TAG = "BaseActivity";
 

@@ -8,6 +8,12 @@ import android.app.Application;
 import android.content.res.Configuration;
 import android.util.Log;
 
+/**
+ * Defines some global values that will be shared between all objects.
+ * 
+ * @author michael.carver
+ * 
+ */
 public class GlobalState extends Application {
 	private static final String TAG = "GlobalState";
 
@@ -26,14 +32,5 @@ public class GlobalState extends Application {
 
 		accountType = getString(R.string.accounttype);
 		authority = getString(R.string.authority);
-
-		Log.v(TAG, "Method Stub: onCreate()");
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		// TODO Method Stub: onConfigurationChanged()
-		Log.v(TAG, "Method Stub: onConfigurationChanged()");
-		super.onConfigurationChanged(newConfig);
 	}
 }
