@@ -5,6 +5,7 @@ import com.fieldnation.R;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MyWorkListFragment extends Fragment {
+	private static final String TAG = "MyWorkListFragment";
+
 	public static final String TYPE_REQUESTED = "getRequested";
 	public static final String TYPE_AVAILABLE = "getAvailable";
 	public static final String TYPE_PENDING_APPROVAL = "getPendingApproval";
@@ -46,7 +49,15 @@ public class MyWorkListFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		if (savedInstanceState != null) {
+			if (savedInstanceState.containsKey("_displayType")) {
+				Log.v(TAG, "Restoring state");
+				_displayType = savedInstanceState.getString("_displayType");
+			}
+		}
+
 		try {
+			Log.v(TAG, "Display Type: " + _displayType);
 			_listAdapter = new WorkorderListAdapter(getActivity(), _displayType);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
@@ -92,6 +103,12 @@ public class MyWorkListFragment extends Fragment {
 		if (_listAdapter != null) {
 			_listAdapter.onStop();
 		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putString("_displayType", _displayType);
+		super.onSaveInstanceState(outState);
 	}
 
 	/*-*********************************-*/

@@ -92,8 +92,8 @@
 
             <RelativeLayout
                 android:id="@+id/actions_layout"
-                style="@style/WorkorderSummary_DataContainer"
-                android:layout_width="70dp"
+                style="@style/WorkorderSummary_ActionsLayout"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_alignBottom="@+id/wosum_data"
                 android:layout_alignParentRight="true"
@@ -104,7 +104,7 @@
                     style="@style/WorkorderSummary_PaymentLabel"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignRight="@+id/basis_textview"
+                    android:layout_alignParentRight="true"
                     android:gravity="right"
                     android:maxLines="1"
                     android:text="$5,000" />
@@ -113,7 +113,7 @@
                     android:id="@+id/basis_textview"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignRight="@+id/detail_button"
+                    android:layout_alignParentRight="true"
                     android:layout_below="@+id/payment_textview"
                     android:gravity="right"
                     android:maxLines="1"
@@ -123,7 +123,7 @@
                     android:id="@+id/detail_button"
                     style="@style/WorkorderSummary_Button"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="32dp"
                     android:layout_alignParentBottom="true"
                     android:maxLines="1"
                     android:text="Check In" />

@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public class WorkorderListAdapter extends BaseAdapter {
-	private static final String TAG = "MyWorkAdapter";
+	private static final String TAG = "WorkorderListAdapter";
 	private static final int RPC_GET = 1;
 
 	public static final String TYPE_REQUESTED = "getRequested";
@@ -57,6 +57,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 		if (!_running)
 			return;
 
+		Log.v(TAG, "Starting query: " + _rpcMethod.getName());
 		_allowCache = allowCache;
 
 		_workorders = new JsonArray();

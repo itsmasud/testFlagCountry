@@ -9,11 +9,21 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.Base64;
 import com.fieldnation.utils.misc;
@@ -21,14 +31,13 @@ import com.fieldnation.utils.misc;
 public class WSB extends WsbUi {
 	private static final long serialVersionUID = 1L;
 
-
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		trustAllHosts();
 		new WSB().setVisible(true);
 	}
-
 
 	public WSB() {
 		super();
@@ -39,7 +48,6 @@ public class WSB extends WsbUi {
 			}
 		});
 	}
-
 
 	@Override
 	public void goButton_onClick(ActionEvent e) {
@@ -56,17 +64,15 @@ public class WSB extends WsbUi {
 			}
 
 			if ("GET".equals(method) || "DELETE".equals(method)) {
-				getData(method, url, username, password);
-			}
-			else if ("POST".equals(method) || "PUT".equals(method)) {
-				pushData(method, url, payload, mime, username, password);
+				httpRead(method, url, username, password);
+			} else if ("POST".equals(method) || "PUT".equals(method)) {
+				httpWrite(method, url, payload, mime, username, password);
 			}
 		} catch (Exception ex) {
 			log(ex);
 		}
 
 	}
-
 
 	public void log(String logging) {
 		try {
@@ -79,25 +85,30 @@ public class WSB extends WsbUi {
 		logTextArea.setCaretPosition(logTextArea.getText().length());
 	}
 
-
 	public void log(Exception e) {
 		log(misc.getStackTrace(e));
 	}
 
-
-	public WebResult getData(String method, String path, String username, String password) {
+	public WebResult httpRead(String method, String path, String username,
+			String password) {
 		URL url = null;
 		HttpURLConnection conn = null;
 		try {
 			url = new URL(path);
 			conn = (HttpURLConnection) url.openConnection();
+
+			if (conn instanceof HttpsURLConnection) {
+				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+			}
+
 			conn.setRequestMethod(method);
 			conn.setRequestProperty("User-Agent", "Internet Access");
 
 			// configure the authorization
 			if (username != null && password != null) {
-				conn.setRequestProperty("Authorization", "Basic "
-						+ Base64.encode((username + ":" + password).getBytes()));
+				conn.setRequestProperty(
+						"Authorization",
+						"Basic " + Base64.encode((username + ":" + password).getBytes()));
 			}
 
 			log("*******************************************");
@@ -115,7 +126,18 @@ public class WSB extends WsbUi {
 			log("                Response");
 			log("*******************************************");
 			dumpConnectionResponse(conn);
-			log(new String(rawData));
+			String strData = new String(rawData);
+			try {
+				JsonObject jo = new JsonObject(strData);
+				log(jo.display());
+			} catch (Exception ex) {
+				try {
+					JsonArray ja = new JsonArray(strData);
+					log(ja.display());
+				} catch (Exception ex2) {
+					log(strData);
+				}
+			}
 
 			return new WebResult(conn.getResponseCode(), rawData);
 
@@ -131,13 +153,18 @@ public class WSB extends WsbUi {
 		return null;
 	}
 
-
-	public WebResult pushData(String method, String path, String payload, String contentType, String username, String password) {
+	public WebResult httpWrite(String method, String path, String payload,
+			String contentType, String username, String password) {
 		URL url = null;
 		HttpURLConnection conn = null;
 		try {
 			url = new URL(path);
 			conn = (HttpURLConnection) url.openConnection();
+
+			if (conn instanceof HttpsURLConnection) {
+				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+			}
+
 			conn.setRequestMethod(method);
 			conn.setRequestProperty("User-Agent", "Internet Access");
 			conn.setRequestProperty("Content-Type", contentType);
@@ -146,8 +173,9 @@ public class WSB extends WsbUi {
 
 			// configure the authorization
 			if (username != null && password != null) {
-				conn.setRequestProperty("Authorization", "Basic "
-						+ Base64.encode((username + ":" + password).getBytes()));
+				conn.setRequestProperty(
+						"Authorization",
+						"Basic " + Base64.encode((username + ":" + password).getBytes()));
 			}
 
 			log("*******************************************");
@@ -173,7 +201,18 @@ public class WSB extends WsbUi {
 			log("                Response");
 			log("*******************************************");
 			dumpConnectionResponse(conn);
-			log(new String(rawData));
+			String strData = new String(rawData);
+			try {
+				JsonObject jo = new JsonObject(strData);
+				log(jo.display());
+			} catch (Exception ex) {
+				try {
+					JsonArray ja = new JsonArray(strData);
+					log(ja.display());
+				} catch (Exception ex2) {
+					log(strData);
+				}
+			}
 
 			return new WebResult(conn.getResponseCode(), rawData);
 
@@ -188,7 +227,6 @@ public class WSB extends WsbUi {
 
 		return null;
 	}
-
 
 	public void dumpConnectionRequest(HttpURLConnection conn) {
 		Map<String, List<String>> map = conn.getRequestProperties();
@@ -208,7 +246,6 @@ public class WSB extends WsbUi {
 		}
 	}
 
-
 	public void dumpConnectionResponse(HttpURLConnection conn) throws IOException {
 		Map<String, List<String>> map = conn.getHeaderFields();
 
@@ -226,4 +263,41 @@ public class WSB extends WsbUi {
 			log(header.trim());
 		}
 	}
+
+	// always verify the host - don't check for certificate
+	protected final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+		public boolean verify(String hostname, SSLSession session) {
+			return true;
+		}
+	};
+
+	/**
+	 * Trust every server - dont check for any certificate
+	 */
+	protected static void trustAllHosts() {
+		// Create a trust manager that does not validate certificate chains
+		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			public X509Certificate[] getAcceptedIssuers() {
+				return new X509Certificate[] {};
+			}
+
+			@Override
+			public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			}
+
+			@Override
+			public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			}
+		} };
+
+		// Install the all-trusting trust manager
+		try {
+			SSLContext sc = SSLContext.getInstance("TLS");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

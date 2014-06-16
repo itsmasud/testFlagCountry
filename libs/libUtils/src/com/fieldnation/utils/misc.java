@@ -49,6 +49,16 @@ public class misc {
 		return "$" + _normalNumber.format(money);
 	}
 
+	public static boolean isEmptyOrNull(String str) {
+		if (str == null)
+			return true;
+
+		if (str.equals(""))
+			return true;
+
+		return false;
+	}
+
 	// public static JsonObject getNetworkInformation() throws ParseException {
 	// int index = -1;
 	// byte[] mac = new byte[1];

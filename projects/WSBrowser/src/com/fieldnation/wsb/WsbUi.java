@@ -41,16 +41,17 @@ public abstract class WsbUi extends JFrame {
 	private JLabel mimeLabel;
 	private JScrollPane scrollPane;
 	private JScrollPane scrollPane_1;
-
+	private JButton btnClear;
 
 	public WsbUi() {
 		setTitle("Webservice Browser");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ex) {}
+		} catch (Exception ex) {
+		}
 
 		this.setLocationRelativeTo(null);
-		this.setSize(582, 480);
+		this.setSize(648, 480);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0 };
 		gridBagLayout.columnWeights = new double[] { 1.0 };
@@ -75,15 +76,13 @@ public abstract class WsbUi extends JFrame {
 				if ("post".equals(method) || "put".equals(method)) {
 					mimeLabel.setVisible(true);
 					mimeContentType.setVisible(true);
-				}
-				else {
+				} else {
 					mimeLabel.setVisible(false);
 					mimeContentType.setVisible(false);
 				}
 			}
 		});
-		methodComboBox.setModel(new DefaultComboBoxModel(new String[] { "GET",
-				"POST", "PUT", "DELETE" }));
+		methodComboBox.setModel(new DefaultComboBoxModel(new String[] { "GET", "POST", "PUT", "DELETE" }));
 		panel.add(methodComboBox);
 
 		urlTextField = new JTextField();
@@ -110,8 +109,7 @@ public abstract class WsbUi extends JFrame {
 			public void stateChanged(ChangeEvent e) {
 				if (moreChkBox.isSelected()) {
 					morePanel.setVisible(true);
-				}
-				else {
+				} else {
 					morePanel.setVisible(false);
 				}
 			}
@@ -149,10 +147,21 @@ public abstract class WsbUi extends JFrame {
 
 		mimeContentType = new JComboBox();
 		mimeContentType.setVisible(false);
-		mimeContentType.setModel(new DefaultComboBoxModel(new String[] {
-				"application/json", "application/x-www-form-urlencoded" }));
+		mimeContentType.setModel(new DefaultComboBoxModel(new String[] { "application/json", "application/x-www-form-urlencoded", "application/xml", "text/xml" }));
 		mimeContentType.setEditable(true);
 		morePanel.add(mimeContentType);
+
+		btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				logTextArea.setText("");
+			}
+		});
+		GridBagConstraints gbc_btnClear = new GridBagConstraints();
+		gbc_btnClear.anchor = GridBagConstraints.NORTHEAST;
+		gbc_btnClear.gridx = 0;
+		gbc_btnClear.gridy = 2;
+		getContentPane().add(btnClear, gbc_btnClear);
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_tabbedPane = new GridBagConstraints();
@@ -195,7 +204,6 @@ public abstract class WsbUi extends JFrame {
 		logTextArea = new JTextArea();
 		scrollPane_1.setViewportView(logTextArea);
 	}
-
 
 	public abstract void goButton_onClick(ActionEvent e);
 }

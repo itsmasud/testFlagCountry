@@ -43,7 +43,7 @@
     <style name="WorkorderSummary_Inside"></style>
 
     <style name="WorkorderSummary_DataContainer">
-        <item name="android:background">@color/wosum_data_container_background</item>
+        <item name="android:background">@drawable/wosum_inside</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
@@ -59,16 +59,23 @@
         <item name="android:paddingTop">5dp</item>
     </style>
 
+    <style name="WorkorderSummary_ActionsLayout">
+        <item name="android:background">@drawable/wosum_rightside</item>
+    </style>
+
     <style name="WorkorderSummary_StatusSeparator">
         <item name="android:background">@color/wosumStatusSeparator</item>
     </style>
 
     <style name="WorkorderSummary_Title"></style>
 
-    <style name="WorkorderSummary_Button">
-<!--         <item name="android:textColor">#FFFFFFFF</item>
+    <style name="WorkorderSummary_Button" parent="android:attr/buttonStyleSmall">
+
+        <!--
+             <item name="android:textColor">#FFFFFFFF</item>
         <item name="android:foreground">#FFFFFFFF</item>
-        <item name="android:background">@drawable/wosum_button_background</item> -->
+        <item name="android:background">@drawable/wosum_button_background</item>
+        -->
         <item name="android:textSize">10sp</item>
     </style>
 
@@ -77,8 +84,7 @@
         <item name="android:paddingRight">5dp</item>
     </style>
 
-    <style name="WorkorderSummary_PaymentLabel">
-    </style>
+    <style name="WorkorderSummary_PaymentLabel"></style>
 
     <style name="WorkorderSummary_Options">
         <item name="android:background">@color/wosumOptionsBackground</item>

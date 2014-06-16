@@ -24,7 +24,7 @@
     </style>
 
     <style name="DrawerPaymentAmount">
-        <item name="android:background">@color/drawer_payment_amount_background</item>
+        <item name="android:background">@drawable/drawer_payment_amount</item>
         <item name="android:textColor">@color/drawerPaymentAmountForeground</item>
     </style>
 

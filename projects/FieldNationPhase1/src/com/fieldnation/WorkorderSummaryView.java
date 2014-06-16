@@ -194,7 +194,23 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 			// distance/address? location.state, location.zip, location.city,
 			// location.country,
-			if (_workorder.has("location.distance")) {
+			if (_workorder.has("location.address1") || _workorder.has("location.address2")) {
+				String address1 = null;
+				String address2 = null;
+
+				if (_workorder.has("location.address1"))
+					address1 = _workorder.getString("location.address1");
+				if (_workorder.has("location.address2"))
+					address2 = _workorder.getString("location.address2");
+
+				if (misc.isEmptyOrNull(address1))
+					address1 = null;
+				if (misc.isEmptyOrNull(address2))
+					address2 = null;
+				
+				
+
+			} else if (_workorder.has("location.distance")) {
 				_distanceTextView.setText(_workorder.getString("location.distance") + " mi");
 			} else {
 				_distanceTextView.setText("NA");

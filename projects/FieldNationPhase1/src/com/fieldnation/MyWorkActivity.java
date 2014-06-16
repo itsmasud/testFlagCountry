@@ -33,6 +33,7 @@ public class MyWorkActivity extends BaseActivity {
 
 	// Data
 	private PagerAdapter _pagerAdapter;
+	private boolean _created = false;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -41,11 +42,15 @@ public class MyWorkActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mywork);
+		Log.v(TAG, "onCreate()");
 
 		_gs = (GlobalState) getApplicationContext();
 
-		buildTabs();
-		buildDrawer();
+		if (!_created) {
+			buildTabs();
+			buildDrawer();
+			_created = true;
+		}
 
 		_viewPager.setCurrentItem(
 				getSupportActionBar().getSelectedNavigationIndex(), false);
@@ -86,7 +91,7 @@ public class MyWorkActivity extends BaseActivity {
 		actionbar.addTab(tab3);
 		actionbar.addTab(tab4);
 
-		_pagerAdapter = new ScreenSlitdePagerAdapter(getSupportFragmentManager());
+		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
 
 		_viewPager.setAdapter(_pagerAdapter);
 		_viewPager.setOnPageChangeListener(_viewPager_onChange);
@@ -131,8 +136,8 @@ public class MyWorkActivity extends BaseActivity {
 	/*-*********************************-*/
 
 	// swaps fragments on a pager transition
-	private class ScreenSlitdePagerAdapter extends FragmentStatePagerAdapter {
-		public ScreenSlitdePagerAdapter(FragmentManager fm) {
+	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+		public ScreenSlidePagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
 
