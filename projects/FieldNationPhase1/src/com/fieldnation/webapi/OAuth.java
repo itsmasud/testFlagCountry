@@ -5,12 +5,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import android.os.Debug;
 
+import com.fieldnation.auth.db.User;
 import com.fieldnation.json.JsonObject;
 
 /**
@@ -46,10 +49,24 @@ public class OAuth {
 
 	private OAuth(JsonObject json) throws ParseException {
 		_oauth.merge(json, true, true);
+
+		if (_oauth.getLong("expires_in") == -1 && _oauth.getLong("expires_on") != -1) {
+			_oauth.put(
+					"expires_in",
+					(_oauth.getLong("expires_on") - System.currentTimeMillis()) / 1000);
+		} else if (_oauth.getLong("expires_in") != -1 && _oauth.getLong("expires_on") == -1) {
+			_oauth.put(
+					"expires_on",
+					_oauth.getLong("expires_in") * 1000 + System.currentTimeMillis());
+		}
 	}
 
 	private OAuth(String jsonString) throws ParseException {
 		this(new JsonObject(jsonString));
+	}
+
+	public static OAuth fromJson(JsonObject json) throws ParseException {
+		return new OAuth(json);
 	}
 
 	public static OAuth fromString(String str) throws ParseException {
@@ -107,12 +124,14 @@ public class OAuth {
 
 		// TODO, add some timing, learn how to use the refresh token
 		oauth.merge(token, true, true);
-		oauth.put("expires_on",
-				System.currentTimeMillis() + token.getLong("expires_in") * 1000);
 
 		return new OAuth(oauth);
 	}
 
+	/**
+	 * 
+	 * @return The TTL on this oauth token in seconds
+	 */
 	public long getExpiresIn() {
 		try {
 			return _oauth.getLong("expires_in");
@@ -122,6 +141,10 @@ public class OAuth {
 		return -1;
 	}
 
+	/**
+	 * 
+	 * @return The UTC time in milliseconds that this expires on
+	 */
 	public long getExpiresOn() {
 		try {
 			return _oauth.getLong("expires_on");
@@ -131,6 +154,10 @@ public class OAuth {
 		return -1;
 	}
 
+	/**
+	 * 
+	 * @return the access token for web requests
+	 */
 	public String getAccessToken() {
 		try {
 			return _oauth.getString("access_token");
@@ -140,6 +167,10 @@ public class OAuth {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return true if the token is expired, false otherwise
+	 */
 	public boolean isExpired() {
 		return System.currentTimeMillis() > getExpiresOn();
 	}
@@ -173,7 +204,9 @@ public class OAuth {
 		} else if (options.startsWith("?")) { // if options already specified
 			return "?access_token=" + getAccessToken() + "&" + options.substring(1);
 		}
-		throw new ParseException("Options must be nothing, or start with '?'. Got: " + options, 0);
+		throw new ParseException(
+				"Options must be nothing, or start with '?'. Got: " + options,
+				0);
 	}
 
 }

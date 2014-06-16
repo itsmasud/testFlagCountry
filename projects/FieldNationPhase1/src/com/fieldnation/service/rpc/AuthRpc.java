@@ -3,6 +3,9 @@ package com.fieldnation.service.rpc;
 import java.util.HashMap;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.auth.db.User;
+import com.fieldnation.auth.db.UserDataSource;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.DataService;
 import com.fieldnation.webapi.OAuth;
 
@@ -47,17 +50,71 @@ public class AuthRpc extends RpcInterface {
 				// could not get the token... need to figure out why
 				ex.printStackTrace();
 			}
-			// TODO, ANDR-11 if failed, generate local auth token
+
+			// auth against server failed, try to do some local work
+			if (at == null) {
+				Log.d(TAG, "Authentication failed, trying local");
+				// get local stuff
+				UserDataSource ds = new UserDataSource(context);
+				ds.open();
+				User user = ds.get(username);
+				if (user == null) {
+					Log.d(TAG, "User not in database");
+					// TODO user not in database, can't auth locally. Fail
+				} else {
+
+					if (user.validatePassword(password)) {
+						// valid user... generate local oauth
+						String authToken = user.createAuthToken(3600);
+						long expiresIn = 3600;
+						long expiresOn = user.getExpirationDate();
+
+						JsonObject json = new JsonObject();
+
+						json.put("access_token", authToken);
+						json.put("expires_in", expiresIn);
+						json.put("expires_on", expiresOn);
+						json.put("is_local", true);
+
+						at = OAuth.fromJson(json);
+					} else {
+						// TODO invalid creds. fail here!?
+						Log.d(TAG, "Invalid local creds");
+					}
+				}
+				ds.close();
+			} else {
+				Log.d(TAG, "Saving user");
+				// store to local
+				UserDataSource ds = new UserDataSource(context);
+				ds.open();
+				User user = ds.get(username);
+				if (user == null) {
+					user = ds.get(ds.create(username, password));
+				} else {
+					user.setPassword(password);
+				}
+				ds.save(user);
+				ds.close();
+			}
 
 			if (bundle.containsKey("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE")) {
 				AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle.getParcelable("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE");
 
 				Bundle result = new Bundle();
 				result.putString("ACTION", "RPC_getOauthToken");
-				result.putString(AccountManager.KEY_AUTHTOKEN, at.toString());
-				result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-				result.putString(AccountManager.KEY_ACCOUNT_TYPE,
-						_gs.accountType);
+
+				if (at != null) {
+					result.putString(AccountManager.KEY_AUTHTOKEN,
+							at.toString());
+					result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+					result.putString(AccountManager.KEY_ACCOUNT_TYPE,
+							_gs.accountType);
+				} else {
+					// TODO refrence strings.xml
+					result.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE,
+							"Authentication failed!");
+				}
 				aar.onResult(result);
 			}
 
@@ -67,7 +124,12 @@ public class AuthRpc extends RpcInterface {
 				Bundle response = new Bundle();
 
 				response.putString("ACTION", "RPC_getOauthToken");
-				response.putString("authtoken", at.toString());
+				if (at != null) {
+					response.putString("authtoken", at.toString());
+				} else {
+					// TODO pull from strings.xml
+					response.putString("error", "Could not authenticate user!");
+				}
 
 				rr.send(bundle.getInt("RESULT_CODE"), response);
 			}
