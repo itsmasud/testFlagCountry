@@ -16,10 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+/**
+ * A list adapter that loads work order lists.
+ * 
+ * @author michael.carver
+ * 
+ */
 public class WorkorderListAdapter extends BaseAdapter {
 	private static final String TAG = "WorkorderListAdapter";
 	private static final int RPC_GET = 1;
 
+	// available method calls
 	public static final String TYPE_REQUESTED = "getRequested";
 	public static final String TYPE_AVAILABLE = "getAvailable";
 	public static final String TYPE_PENDING_APPROVAL = "getPendingApproval";
@@ -36,6 +43,13 @@ public class WorkorderListAdapter extends BaseAdapter {
 	private boolean _running;
 	private boolean _allowCache = true;
 
+	/**
+	 * 
+	 * @param context
+	 * @param type
+	 *            should be one of the TYPE_* strings
+	 * @throws NoSuchMethodException
+	 */
 	public WorkorderListAdapter(Context context, String type) throws NoSuchMethodException {
 		_context = context;
 		_gs = (GlobalState) context.getApplicationContext();
@@ -48,11 +62,20 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 	}
 
+	/**
+	 * Will stop the task from looking up work orders
+	 */
 	public void onStop() {
 		notifyDataSetInvalidated();
 		_running = false;
 	}
 
+	/**
+	 * Starts getting the list of work orders
+	 * 
+	 * @param allowCache
+	 *            if true, then it will use the local cache if available
+	 */
 	public void update(boolean allowCache) {
 		if (!_running)
 			return;
@@ -65,12 +88,14 @@ public class WorkorderListAdapter extends BaseAdapter {
 			Log.v(TAG, "Waiting for accessToken");
 
 			_workorderRpc = null;
-			_waitForField = new WaitForFieldAsyncTask(_waitForAccessToken_listener);
+			_waitForField = new WaitForFieldAsyncTask(
+					_waitForAccessToken_listener);
 			_waitForField.execute(_gs, "accessToken");
 		} else {
 			Log.v(TAG, "Have accessToken");
 			if (_workorderRpc == null) {
-				_workorderRpc = new WorkorderRpc(_context, _gs.oAuth, _rpcReceiver);
+				_workorderRpc = new WorkorderRpc(_context, _gs.oAuth,
+						_rpcReceiver);
 			}
 			try {
 				Intent intent = callRpc(RPC_GET, 1, _allowCache);
@@ -122,7 +147,8 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 			if (resultCode == RPC_GET) {
 				int page = resultData.getInt("PARAM_PAGE");
-				String data = new String(resultData.getByteArray("RESPONSE_DATA"));
+				String data = new String(
+						resultData.getByteArray("RESPONSE_DATA"));
 
 				JsonArray orders = null;
 				try {

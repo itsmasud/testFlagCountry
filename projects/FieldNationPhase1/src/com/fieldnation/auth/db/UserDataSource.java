@@ -7,6 +7,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * An API that creates, and persists user objects
+ * 
+ * @author michael.carver
+ * 
+ */
 public class UserDataSource {
 	private AuthSqlHelper _helper;
 	private SQLiteDatabase _db;

@@ -5,6 +5,14 @@ import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
 
+/**
+ * An async task that waits for a field in an object to become non-null
+ * 
+ * @author michael.carver
+ * 
+ */
+
+// TODO add the ability to fail after a certain timeout
 public class WaitForFieldAsyncTask extends AsyncTask<Object, Void, Object> {
 	private Listener _listener;
 
@@ -13,6 +21,13 @@ public class WaitForFieldAsyncTask extends AsyncTask<Object, Void, Object> {
 		_listener = listener;
 	}
 
+	/**
+	 * 
+	 * @param object
+	 *            the object to watch
+	 * @param fieldName
+	 *            the name of the field of that object
+	 */
 	public void execute(Object object, String fieldName) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			executeHoneyComb(object, fieldName);
@@ -21,6 +36,11 @@ public class WaitForFieldAsyncTask extends AsyncTask<Object, Void, Object> {
 		}
 	}
 
+	/**
+	 * Switch to a thread pool to allow multiple async tasks to run at once
+	 * 
+	 * @param params
+	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void executeHoneyComb(Object... params) {
 		super.executeOnExecutor(THREAD_POOL_EXECUTOR, params);

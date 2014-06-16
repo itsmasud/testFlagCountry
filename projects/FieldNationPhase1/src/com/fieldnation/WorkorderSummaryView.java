@@ -21,6 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+/**
+ * Displays the summary of a workorder to the user. Will also allow some simple
+ * actions.
+ * 
+ * @author michael.carver
+ * 
+ */
 public class WorkorderSummaryView extends RelativeLayout {
 	private static final String TAG = "WorkorderSummaryView";
 	// UI
@@ -146,7 +153,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 				long workorderId = resultData.getLong("PARAM_WORKORDER_ID");
 				try {
 					if (workorderId == _workorder.getLong("workorder_id")) {
-						String data = new String(resultData.getByteArray("PARAM_DATA"));
+						String data = new String(
+								resultData.getByteArray("PARAM_DATA"));
 						// getDetails
 
 					}
@@ -207,8 +215,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 					address1 = null;
 				if (misc.isEmptyOrNull(address2))
 					address2 = null;
-				
-				
 
 			} else if (_workorder.has("location.distance")) {
 				_distanceTextView.setText(_workorder.getString("location.distance") + " mi");

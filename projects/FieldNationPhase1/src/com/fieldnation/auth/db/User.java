@@ -11,6 +11,12 @@ import android.os.Message;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
+/**
+ * An object that represents a user.
+ * 
+ * @author michael.carver
+ * 
+ */
 public class User {
 	protected long _id;
 	protected String _username;

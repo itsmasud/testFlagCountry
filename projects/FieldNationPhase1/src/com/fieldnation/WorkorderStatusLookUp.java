@@ -4,6 +4,14 @@ import java.text.ParseException;
 
 import com.fieldnation.json.JsonObject;
 
+/**
+ * A lookup table for getting the colors for a work order summary
+ * 
+ * TODO this table is incomplete!
+ * 
+ * @author michael.carver
+ * 
+ */
 public class WorkorderStatusLookUp {
 
 	private static JsonObject _table;
@@ -17,12 +25,12 @@ public class WorkorderStatusLookUp {
 			_table.put("9", R.drawable.wosum_status_1);
 			_table.put("9.11", R.drawable.wosum_status_1);
 
-			// in progress 
+			// in progress
 			_table.put("3", R.drawable.wosum_status_3);
 			_table.put("3.1", R.drawable.wosum_status_3);
 			_table.put("3.2", R.drawable.wosum_status_3);
-			_table.put("3.26", R.drawable.wosum_status_4); //? two states here?
-			
+			_table.put("3.26", R.drawable.wosum_status_4); // ? two states here?
+
 			// assigned
 			_table.put("3.6", R.drawable.wosum_status_3);
 			_table.put("3.7", R.drawable.wosum_status_3);

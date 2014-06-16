@@ -4,6 +4,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+/**
+ * Called by the OS when a user needs authenticating. This class just passes the
+ * request to the Authenticator
+ * 
+ * @author michael.carver
+ * 
+ */
 public class AuthService extends Service {
 
 	@Override

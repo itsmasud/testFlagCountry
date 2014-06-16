@@ -9,17 +9,25 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 
+/**
+ * A textview that displays its text vertically.
+ * 
+ * taken from: http://blog.stylingandroid.com/archives/796
+ * 
+ * @author michael.carver
+ * 
+ */
 public class VerticalTextView extends TextView {
-	final boolean topDown;
+	private final boolean _topDown;
 
 	public VerticalTextView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		final int gravity = getGravity();
 		if (Gravity.isVertical(gravity) && (gravity & Gravity.VERTICAL_GRAVITY_MASK) == Gravity.BOTTOM) {
 			setGravity((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) | Gravity.TOP);
-			topDown = false;
+			_topDown = false;
 		} else {
-			topDown = true;
+			_topDown = true;
 		}
 	}
 
@@ -37,7 +45,7 @@ public class VerticalTextView extends TextView {
 
 		canvas.save();
 
-		if (!topDown) {
+		if (!_topDown) {
 			canvas.translate(getWidth(), 0);
 			canvas.rotate(90);
 		} else {

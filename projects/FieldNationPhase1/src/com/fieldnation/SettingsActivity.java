@@ -6,6 +6,12 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+/**
+ * Gives the user the ability to configure the app
+ * 
+ * @author michael.carver
+ * 
+ */
 public class SettingsActivity extends PreferenceActivity {
 	private static final String TAG = "SettingsActivity";
 

@@ -13,6 +13,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * The OS will call this when authenticating a user. It is mostly a wrapper for
+ * the AuthRpc
+ * 
+ * @author michael.carver
+ * 
+ */
 public class Authenticator extends AbstractAccountAuthenticator {
 	private static final String TAG = "auth.Authenticator";
 	private Context _context;

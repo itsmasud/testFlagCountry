@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
+@Deprecated
 public class WoSumActionView extends RelativeLayout {
 
 	public WoSumActionView(Context context) {

@@ -19,6 +19,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+/**
+ * Provides an authentication UI for the field nation user
+ * 
+ * @author michael.carver
+ * 
+ */
 public class AuthActivity extends AccountAuthenticatorActivity {
 	// UI
 	private LinearLayout _contentLayout;
