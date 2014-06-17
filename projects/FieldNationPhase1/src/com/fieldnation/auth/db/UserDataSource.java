@@ -1,7 +1,5 @@
 package com.fieldnation.auth.db;
 
-import java.security.NoSuchAlgorithmException;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -24,8 +22,9 @@ public class UserDataSource {
 	/**
 	 * Opens the database connection
 	 */
-	public void open() {
+	public UserDataSource open() {
 		_db = _helper.getWritableDatabase();
+		return this;
 	}
 
 	/**
@@ -88,22 +87,24 @@ public class UserDataSource {
 	 * @return
 	 * @throws Exception
 	 */
-	public long create(String username, String password) throws Exception {
+	public long create(String username, String password) {
 		User user = null;
 
 		user = get(username);
 
 		if (user != null) {
-			throw new Exception("User already exists");
+			return -1;
 		}
 
 		user = new User(username, password);
 
 		ContentValues values = new ContentValues();
 		values.put(AuthSqlHelper.COLUMN_USERNAME, user._username);
+		values.put(AuthSqlHelper.COLUMN_PASSWORD, user._password);
 		values.put(AuthSqlHelper.COLUMN_SECURITY_HASH, user._securityHash);
 		values.put(AuthSqlHelper.COLUMN_AUTH_TOKEN, user._authToken);
 		values.put(AuthSqlHelper.COLUMN_AUTH_EXPIRY, user._authExpiresOn);
+		values.put(AuthSqlHelper.COLUMN_AUTH_BLOB, user._authBlob);
 
 		return _db.insert(AuthSqlHelper.TABLE_NAME, null, values);
 	}
@@ -116,9 +117,11 @@ public class UserDataSource {
 	public void save(User data) {
 		ContentValues values = new ContentValues();
 		values.put(AuthSqlHelper.COLUMN_USERNAME, data._username);
+		values.put(AuthSqlHelper.COLUMN_PASSWORD, data._password);
 		values.put(AuthSqlHelper.COLUMN_SECURITY_HASH, data._securityHash);
 		values.put(AuthSqlHelper.COLUMN_AUTH_TOKEN, data._authToken);
 		values.put(AuthSqlHelper.COLUMN_AUTH_EXPIRY, data._authExpiresOn);
+		values.put(AuthSqlHelper.COLUMN_AUTH_BLOB, data._authBlob);
 
 		_db.update(AuthSqlHelper.TABLE_NAME, values, "_id=" + data._id, null);
 	}

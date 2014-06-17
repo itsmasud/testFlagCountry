@@ -5,16 +5,13 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import android.os.Debug;
-import android.util.Log;
-
-import com.fieldnation.auth.db.User;
+import android.accounts.AccountManager;
+import android.content.Context;
+import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 
 /**
@@ -64,14 +61,6 @@ public class OAuth {
 
 	private OAuth(String jsonString) throws ParseException {
 		this(new JsonObject(jsonString));
-	}
-
-	public static OAuth fromJson(JsonObject json) throws ParseException {
-		return new OAuth(json);
-	}
-
-	public static OAuth fromString(String str) throws ParseException {
-		return new OAuth(str);
 	}
 
 	public static OAuth authServer(String hostname, String grantType,
@@ -127,6 +116,12 @@ public class OAuth {
 		oauth.merge(token, true, true);
 
 		return new OAuth(oauth);
+	}
+
+	public void invalidate(Context context) {
+		AccountManager am = AccountManager.get(context);
+		am.invalidateAuthToken(context.getString(R.string.accounttype),
+				toString());
 	}
 
 	/**

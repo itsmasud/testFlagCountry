@@ -1,12 +1,9 @@
 package com.fieldnation;
 
-import com.fieldnation.service.ClockReceiver;
 import com.fieldnation.webapi.OAuth;
 import com.fieldnation.webapi.Ws;
 
 import android.app.Application;
-import android.content.res.Configuration;
-import android.util.Log;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -17,9 +14,10 @@ import android.util.Log;
 public class GlobalState extends Application {
 	private static final String TAG = "GlobalState";
 
-	public OAuth oAuth = null;
 	public String accountType;
 	public String authority;
+	public String username = null;
+	public String accessToken = null;
 
 	public GlobalState() {
 		super();

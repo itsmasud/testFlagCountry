@@ -99,7 +99,9 @@ public class MyWorkActivity extends BaseActivity {
 
 	private void buildDrawer() {
 		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
-		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout, R.drawable.ic_navigation_drawer, R.string.launcher_open, R.string.launcher_open) {
+		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
+				R.drawable.ic_navigation_drawer, R.string.launcher_open,
+				R.string.launcher_open) {
 
 			@Override
 			public void onDrawerStateChanged(int newState) {
@@ -195,7 +197,7 @@ public class MyWorkActivity extends BaseActivity {
 	}
 
 	@Override
-	public void onHaveAuthToken(OAuth oAuth) {
+	public void onHaveAuthToken(String username, String accessToken) {
 		// TODO Method Stub: onHaveAuthToken()
 		Log.v(TAG, "Method Stub: onHaveAuthToken()");
 

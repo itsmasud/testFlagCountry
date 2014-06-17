@@ -132,7 +132,7 @@ public class MarketActivity extends BaseActivity {
 	}
 
 	@Override
-	public void onHaveAuthToken(OAuth oAuth) {
+	public void onHaveAuthToken(String username, String accessToken) {
 		// TODO Method Stub: onHaveAuthToken()
 		Log.v(TAG, "Method Stub: onHaveAuthToken()");
 

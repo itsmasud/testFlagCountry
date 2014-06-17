@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -58,7 +57,8 @@ public class MyWorkListFragment extends Fragment {
 
 		try {
 			Log.v(TAG, "Display Type: " + _displayType);
-			_listAdapter = new WorkorderListAdapter(getActivity(), _displayType);
+			_listAdapter = new WorkorderListAdapter(
+					(BaseActivity) getActivity(), _displayType);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}

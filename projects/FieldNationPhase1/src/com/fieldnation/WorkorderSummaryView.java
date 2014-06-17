@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -99,10 +98,11 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_cashTextView = (TextView) findViewById(R.id.payment_textview);
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
 
-		_detailButton.setVisibility(GONE);
+		// _detailButton.setVisibility(GONE);
 		// _cashLinearLayout.setVisibility(GONE);
 
-		setOnLongClickListener(_onLongClickListener);
+		setOnLongClickListener(_this_onLongClickListener);
+		setOnClickListener(_this_onClick);
 
 		_slideAnimation = AnimationUtils.loadAnimation(getContext(),
 				R.anim.wosum_slide_away);
@@ -122,7 +122,15 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_contentLayout.startAnimation(_slideBackAnimation);
 		}
 	};
-	private View.OnLongClickListener _onLongClickListener = new View.OnLongClickListener() {
+
+	private View.OnClickListener _this_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: _this_onClick.onClick()");
+		}
+	};
+	private View.OnLongClickListener _this_onLongClickListener = new View.OnLongClickListener() {
 
 		@Override
 		public boolean onLongClick(View v) {

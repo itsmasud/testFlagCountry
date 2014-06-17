@@ -2,7 +2,6 @@ package com.fieldnation.service;
 
 import java.util.Hashtable;
 
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.webapi.OAuth;
 
 import android.os.Bundle;

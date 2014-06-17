@@ -3,7 +3,6 @@ package com.fieldnation.service;
 import java.util.HashMap;
 
 import com.fieldnation.service.rpc.AuthRpc;
-import com.fieldnation.service.rpc.ClockRpc;
 import com.fieldnation.service.rpc.WebRpc;
 import com.fieldnation.service.rpc.RpcInterface;
 

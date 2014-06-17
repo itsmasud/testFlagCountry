@@ -1,7 +1,6 @@
 package com.fieldnation.webapi;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -16,10 +15,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import org.apache.http.HttpConnection;
-
-import android.net.Uri;
 
 public class Ws {
 	public static boolean USE_HTTPS = true;
@@ -142,6 +137,7 @@ public class Ws {
 
 	// always verify the host - don't check for certificate
 	protected final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+		@Override
 		public boolean verify(String hostname, SSLSession session) {
 			if (DEBUG)
 				return true;
@@ -162,6 +158,7 @@ public class Ws {
 
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			@Override
 			public X509Certificate[] getAcceptedIssuers() {
 				return new X509Certificate[] {};
 			}

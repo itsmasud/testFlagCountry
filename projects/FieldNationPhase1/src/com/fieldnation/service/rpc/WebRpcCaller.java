@@ -9,14 +9,14 @@ import com.fieldnation.webapi.OAuth;
 
 public class WebRpcCaller {
 	private Context context;
-	private OAuth _at;
-	private String atString;
 	private ResultReceiver callback;
+	private String _accessToken;
+	private String _username;
 
-	public WebRpcCaller(Context conetxt, OAuth at, ResultReceiver callback) {
+	public WebRpcCaller(Context conetxt, String username, String accessToken, ResultReceiver callback) {
 		this.context = conetxt;
-		_at = at;
-		atString = _at.toString();
+		_accessToken = accessToken;
+		_username = username;
 		this.callback = callback;
 	}
 
@@ -26,7 +26,8 @@ public class WebRpcCaller {
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
 		intent.putExtra("SERVICE", "web_request");
-		intent.putExtra("PARAM_ACCESS_TOKEN", atString);
+		intent.putExtra("PARAM_ACCESS_TOKEN", _accessToken);
+		intent.putExtra("PARAM_USERNAME", _username);
 		intent.putExtra("METHOD", "httpread");
 		intent.putExtra("ALLOW_CACHE", allowCache);
 		intent.putExtra("PARAM_METHOD", method);
@@ -47,7 +48,8 @@ public class WebRpcCaller {
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
 		intent.putExtra("SERVICE", "web_request");
-		intent.putExtra("PARAM_ACCESS_TOKEN", atString);
+		intent.putExtra("PARAM_ACCESS_TOKEN", _accessToken);
+		intent.putExtra("PARAM_USERNAME", _username);
 		intent.putExtra("METHOD", "httpwrite");
 		intent.putExtra("ALLOW_CACHE", allowCache);
 		intent.putExtra("PARAM_METHOD", method);

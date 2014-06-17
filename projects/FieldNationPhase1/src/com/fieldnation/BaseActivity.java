@@ -35,7 +35,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	// Data
 	GlobalState _gs;
-	OAuth _accessToken;
+	String _username;
+	String _accessToken;
 
 	// Other
 	private FutureWaitAsyncTask _amc_future;
@@ -58,7 +59,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 		getAuthorization();
 	}
 
-	private void getAuthorization() {
+	final public void getAuthorization() {
 		if (_accountManager == null)
 			_accountManager = AccountManager.get(this);
 
@@ -67,21 +68,23 @@ public abstract class BaseActivity extends ActionBarActivity {
 		AccountManagerFuture<Bundle> future = null;
 		if (accounts.length == 0) {
 			future = _accountManager.addAccount(_gs.accountType, null, null,
-					null, this, _amc, new Handler());
+					null, this, null, new Handler());
 
 		} else if (accounts.length == 1) {
 			future = _accountManager.getAuthToken(accounts[0], _gs.accountType,
-					null, this, _amc, new Handler());
+					null, this, null, new Handler());
 		} else {
 			// TODO, ANDR-10 present a picker for the account
 			future = _accountManager.getAuthToken(accounts[0], _gs.accountType,
-					null, this, _amc, new Handler());
+					null, this, null, new Handler());
 
 		}
 		if (future != null) {
 			// new
+			Log.v(TAG, "got future");
 			new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
 		}
+
 	}
 
 	@Override
@@ -116,6 +119,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 	private AccountManagerCallback<Bundle> _amc = new AccountManagerCallback<Bundle>() {
 		@Override
 		public void run(AccountManagerFuture<Bundle> future) {
+			Log.v(TAG, "_amc.run()");
 			_amc_future = new FutureWaitAsyncTask(_futureWaitAsyncTaskListener);
 			_amc_future.execute(future);
 		}
@@ -129,27 +133,18 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 		@Override
 		public void onComplete(Bundle bundle) {
-			try {
-				String tokenString = bundle.getString("authtoken");
+			String tokenString = bundle.getString("authtoken");
 
-				if (tokenString == null) {
-					if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
-						getAuthorization();
-					}
-				} else {
-					_accessToken = OAuth.fromString(tokenString);
-
-					if (_accessToken.isExpired()) {
-						_accountManager.invalidateAuthToken(_gs.accountType,
-								tokenString);
-						getAuthorization();
-					} else {
-						_gs.oAuth = _accessToken;
-						onHaveAuthToken(_accessToken);
-					}
+			if (tokenString == null) {
+				if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
+					getAuthorization();
 				}
-			} catch (ParseException e) {
-				e.printStackTrace();
+			} else {
+				_accessToken = tokenString;
+				_username = bundle.getString("authAccount");
+				_gs.username = _username;
+				_gs.accessToken = _accessToken;
+				onHaveAuthToken(_username, _accessToken);
 			}
 		}
 	};
@@ -157,7 +152,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 	/*-*********************************************-*/
 	/*-				Abstract Methods				-*/
 	/*-*********************************************-*/
-	public abstract void onHaveAuthToken(OAuth oAuth);
+	public abstract void onHaveAuthToken(String username, String accessToken);
 
 	public abstract void onFailedAuthToken(Exception ex);
 }

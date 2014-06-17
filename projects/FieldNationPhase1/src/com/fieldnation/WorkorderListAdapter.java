@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.service.rpc.WorkorderRpc;
 
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	public static final String TYPE_CANCELED = "getCanceled";
 
 	private GlobalState _gs;
-	private Context _context;
+	private BaseActivity _activity;
 	private JsonArray _workorders = null;
 	private WaitForFieldAsyncTask _waitForField;
 	private WorkorderRpc _workorderRpc;
@@ -50,9 +51,9 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 *            should be one of the TYPE_* strings
 	 * @throws NoSuchMethodException
 	 */
-	public WorkorderListAdapter(Context context, String type) throws NoSuchMethodException {
-		_context = context;
-		_gs = (GlobalState) context.getApplicationContext();
+	public WorkorderListAdapter(BaseActivity activity, String type) throws NoSuchMethodException {
+		_activity = activity;
+		_gs = (GlobalState) activity.getApplicationContext();
 
 		_running = true;
 
@@ -84,7 +85,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 		_allowCache = allowCache;
 
 		_workorders = new JsonArray();
-		if (_gs.oAuth == null) {
+		if (_gs.accessToken == null) {
 			Log.v(TAG, "Waiting for accessToken");
 
 			_workorderRpc = null;
@@ -94,14 +95,14 @@ public class WorkorderListAdapter extends BaseAdapter {
 		} else {
 			Log.v(TAG, "Have accessToken");
 			if (_workorderRpc == null) {
-				_workorderRpc = new WorkorderRpc(_context, _gs.oAuth,
-						_rpcReceiver);
+				_workorderRpc = new WorkorderRpc(_activity, _gs.username,
+						_gs.accessToken, _rpcReceiver);
 			}
 			try {
 				Intent intent = callRpc(RPC_GET, 1, _allowCache);
 
 				intent.putExtra("PARAM_PAGE", 1);
-				_context.startService(intent);
+				_activity.startService(intent);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -146,6 +147,18 @@ public class WorkorderListAdapter extends BaseAdapter {
 				return;
 
 			if (resultCode == RPC_GET) {
+				String error = resultData.getString("RESPONSE_ERROR");
+				if (error != null) {
+					Log.v(TAG, error);
+					AccountManager.get(_activity).invalidateAuthToken(
+							_gs.accountType, _gs.accessToken);
+					_workorderRpc = null;
+					_gs.username = null;
+					_gs.accessToken = null;
+					notifyDataSetChanged();
+					return;
+				}
+
 				int page = resultData.getInt("PARAM_PAGE");
 				String data = new String(
 						resultData.getByteArray("RESPONSE_DATA"));
@@ -172,7 +185,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 						Intent intent = callRpc(RPC_GET, page + 1, _allowCache);
 
 						intent.putExtra("PARAM_PAGE", page + 1);
-						_context.startService(intent);
+						_activity.startService(intent);
 
 					} catch (Exception e) {
 						e.printStackTrace();

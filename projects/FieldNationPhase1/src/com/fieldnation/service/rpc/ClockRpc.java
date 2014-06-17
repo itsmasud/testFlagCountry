@@ -1,7 +1,5 @@
 package com.fieldnation.service.rpc;
 
-import java.util.HashMap;
-
 import com.fieldnation.service.ClockReceiver;
 import com.fieldnation.service.DataService;
 

@@ -31,6 +31,10 @@
     <color name="wosumButtonBackground">#FF78a3f2</color>
     <color name="wosumButtonBorder">#FFf1f1e9</color>
     <color name="wosumButtonBevel">#FF6b90d3</color>
+    <color name="wosumButton1Foreground">#FFFFFFFF</color>
+    <color name="wosumButton1GradientTop">#FF5bd7b8</color>
+    <color name="wosumButton1GradientBot">#FF36bb9a</color>
+    <color name="wosumButton1Bevel">#FF35a689</color>
 
     <style name="WorkorderSummary">
         <item name="android:background">@color/transparent</item>
@@ -70,12 +74,8 @@
     <style name="WorkorderSummary_Title"></style>
 
     <style name="WorkorderSummary_Button" parent="android:attr/buttonStyleSmall">
-
-        <!--
-             <item name="android:textColor">#FFFFFFFF</item>
-        <item name="android:foreground">#FFFFFFFF</item>
-        <item name="android:background">@drawable/wosum_button_background</item>
-        -->
+        <item name="android:background">@drawable/wosum_button1_bg</item>
+        <item name="android:textColor">@color/wosumButton1Foreground</item>
         <item name="android:textSize">10sp</item>
     </style>
 

@@ -7,7 +7,6 @@ import java.text.ParseException;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.utils.Base64;
 import com.fieldnation.utils.misc;
 
 public class Result {
