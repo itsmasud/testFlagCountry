@@ -8,7 +8,7 @@ import android.os.ResultReceiver;
 
 public class WorkorderRpc extends WebRpcCaller {
 
-	public WorkorderRpc(Context conetxt, String username, String accessToken, ResultReceiver callback) {
+	public WorkorderRpc(Context conetxt, String username, String accessToken, WebRpcResultReciever callback) {
 		super(conetxt, username, accessToken, callback);
 	}
 

@@ -27,6 +27,10 @@ public class Result {
 		getResultsAsByteArray();
 	}
 
+	public int getResponseCode() throws IOException {
+		return _conn.getResponseCode();
+	}
+
 	public byte[] getResultsAsByteArray() throws IOException {
 		if (_baResults == null) {
 			InputStream in = _conn.getInputStream();
@@ -46,8 +50,7 @@ public class Result {
 		return _sResults;
 	}
 
-	public JsonObject getResultsAsJsonObject() throws ParseException,
-			IOException {
+	public JsonObject getResultsAsJsonObject() throws ParseException, IOException {
 		if (_jsonResults == null) {
 			_jsonResults = new JsonObject(getResultsAsString());
 		}

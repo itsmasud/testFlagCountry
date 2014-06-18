@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.service.rpc.WebRpcResultReciever;
 import com.fieldnation.service.rpc.WorkorderRpc;
 
 import android.accounts.AccountManager;
@@ -96,7 +97,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 			Log.v(TAG, "Have accessToken");
 			if (_workorderRpc == null) {
 				_workorderRpc = new WorkorderRpc(_activity, _gs.username,
-						_gs.accessToken, _rpcReceiver);
+						_gs.accessToken, _webRpcReceiver);
 			}
 			try {
 				Intent intent = callRpc(RPC_GET, 1, _allowCache);
@@ -140,62 +141,59 @@ public class WorkorderListAdapter extends BaseAdapter {
 		}
 	};
 
-	private ResultReceiver _rpcReceiver = new ResultReceiver(new Handler()) {
+	private WebRpcResultReciever _webRpcReceiver = new WebRpcResultReciever(
+			new Handler()) {
+
 		@Override
-		protected void onReceiveResult(int resultCode, Bundle resultData) {
-			if (!_running)
-				return;
+		public void onSuccess(int resultCode, Bundle resultData) {
+			int page = resultData.getInt("PARAM_PAGE");
+			String data = new String(resultData.getByteArray("RESPONSE_DATA"));
 
-			if (resultCode == RPC_GET) {
-				String error = resultData.getString("RESPONSE_ERROR");
-				if (error != null) {
-					Log.v(TAG, error);
-					AccountManager.get(_activity).invalidateAuthToken(
-							_gs.accountType, _gs.accessToken);
-					_workorderRpc = null;
-					_gs.username = null;
-					_gs.accessToken = null;
-					notifyDataSetChanged();
-					return;
-				}
-
-				int page = resultData.getInt("PARAM_PAGE");
-				String data = new String(
-						resultData.getByteArray("RESPONSE_DATA"));
-
-				JsonArray orders = null;
-				try {
-					orders = new JsonArray(data);
-				} catch (Exception ex) {
-					// TODO report problem?
-					Log.v(TAG, data);
-					ex.printStackTrace();
-				}
-				if (orders == null) {
-					notifyDataSetChanged();
-					return;
-				}
-
-				_workorders.merge(orders);
-
-				notifyDataSetChanged();
-
-				if (orders.size() == 25) {
-					try {
-						Intent intent = callRpc(RPC_GET, page + 1, _allowCache);
-
-						intent.putExtra("PARAM_PAGE", page + 1);
-						_activity.startService(intent);
-
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					// chain is complete, re-enable caching
-					_allowCache = true;
-				}
+			JsonArray orders = null;
+			try {
+				orders = new JsonArray(data);
+			} catch (Exception ex) {
+				// TODO report problem?
+				Log.v(TAG, data);
+				ex.printStackTrace();
 			}
-		};
+			if (orders == null) {
+				notifyDataSetChanged();
+				return;
+			}
+
+			_workorders.merge(orders);
+
+			notifyDataSetChanged();
+
+			if (orders.size() == 25) {
+				try {
+					Intent intent = callRpc(RPC_GET, page + 1, _allowCache);
+
+					intent.putExtra("PARAM_PAGE", page + 1);
+					_activity.startService(intent);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				// chain is complete, re-enable caching
+				_allowCache = true;
+			}
+
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			Log.v(TAG, errorType);
+			Log.v(TAG, resultData.toString());
+			// AccountManager.get(_activity).invalidateAuthToken(_gs.accountType,
+			// _gs.accessToken);
+			// _workorderRpc = null;
+			// _gs.username = null;
+			// _gs.accessToken = null;
+			notifyDataSetChanged();
+		}
 	};
 
 	@Override

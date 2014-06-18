@@ -57,7 +57,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		String clientId = _context.getString(R.string.fn_client_id);
 		String clientSecret = _context.getString(R.string.fn_client_secret);
 
-		Intent intent = AuthRpc.makeIntent(_context, response, hostname,
+		Intent intent = AuthRpc.authenticateWeb(_context, response, hostname,
 				grantType, clientId, clientSecret, account.name, password);
 
 		_context.startService(intent);

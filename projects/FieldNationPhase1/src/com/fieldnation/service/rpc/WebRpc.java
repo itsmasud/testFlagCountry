@@ -5,9 +5,8 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.HashMap;
 
-import com.fieldnation.auth.db.AuthSqlHelper;
-import com.fieldnation.auth.db.User;
-import com.fieldnation.auth.db.UserDataSource;
+import com.fieldnation.auth.db.AuthCacheSqlHelper;
+import com.fieldnation.auth.db.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.DataCache;
 import com.fieldnation.webapi.OAuth;
@@ -29,70 +28,60 @@ public class WebRpc extends RpcInterface {
 
 	@Override
 	public void execute(Context context, Intent intent) {
-		try {
-			String method = intent.getStringExtra("METHOD");
-			String accessToken = intent.getStringExtra("PARAM_ACCESS_TOKEN");
-			String username = intent.getStringExtra("PARAM_USERNAME");
-			String errorMessage = null;
+		String method = intent.getStringExtra("METHOD");
+		String accessToken = intent.getStringExtra("PARAM_ACCESS_TOKEN");
+		String username = intent.getStringExtra("PARAM_USERNAME");
+		String errorMessage = null;
+		String errorType = "NONE";
 
-			Log.v(TAG, "username " + username);
+		Log.v(TAG, "username " + username);
 
-			UserDataSource ds = new UserDataSource(context).open();
-			OAuth auth = null;
-			try {
-				User user = ds.get(username);
+		OAuth auth = null;
 
-				if (user.isAuthTokenValid(accessToken)) {
-					JsonObject json = new JsonObject(user.getAuthBlob());
-					try {
-						// TODO, this sucks bad, need to cache stuff like this
-						// when
-						// possible
-						auth = OAuth.authServer(json.getString("hostname"),
-								json.getString("grantType"),
-								json.getString("clientId"),
-								json.getString("clientSecret"), username,
-								user.getPassword());
-					} catch (Exception e) {
-						e.printStackTrace();
-						// TODO, make into something user friendly.
-						errorMessage = e.getMessage();
-					}
-				} else {
-					errorMessage = "Invalid Token";
-				}
-			} finally {
-				ds.close();
-			}
+		// look up user in the cache
+		AuthCache authCache = AuthCache.get(context, username);
 
-			if (auth != null) {
-				if ("httpread".equals(method)) {
-					doHttpRead(context, intent, auth);
-				} else if ("httpwrite".equals(method)) {
-					doHttpWrite(context, intent, auth);
+		// not found
+		if (authCache == null) {
+			errorType = "USER_NOT_FOUND";
+			errorMessage = "Could not find the user.";
+		} else {
+			// validate session
+			if (authCache.validateSessionHash(accessToken)) {
+				try {
+					auth = OAuth.fromCache(authCache.getOAuthBlob());
+				} catch (ParseException e) {
+					// this is handled below when we check for auth != null
+					e.printStackTrace();
 				}
 			} else {
-				doHttpError(context, intent, errorMessage);
+				errorType = "SESSION_INVALID";
+				errorMessage = "The accesstoken is invalid, or has expired.";
 			}
+		}
 
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			doHttpError(context, intent, e.getMessage());
+		if (auth != null) {
+			if ("httpread".equals(method)) {
+				doHttpRead(context, intent, auth);
+			} else if ("httpwrite".equals(method)) {
+				doHttpWrite(context, intent, auth);
+			}
+		} else {
+			doHttpError(context, intent, errorType, errorMessage);
 		}
 	}
 
-	private void doHttpError(Context context, Intent intent, String message) {
+	private void doHttpError(Context context, Intent intent, String errorType,
+			String message) {
 		Bundle bundle = intent.getExtras();
 
 		if (bundle.containsKey("PARAM_CALLBACK")) {
 			ResultReceiver rr = bundle.getParcelable("PARAM_CALLBACK");
 
+			bundle.putString("RESPONSE_ERROR_TYPE", errorType);
 			bundle.putString("RESPONSE_ERROR", message);
-
 			rr.send(bundle.getInt("RESULT_CODE"), bundle);
 		}
-
 	}
 
 	private void doHttpRead(Context context, Intent intent, OAuth at) {
@@ -118,6 +107,7 @@ public class WebRpc extends RpcInterface {
 				bundle.putInt("RESPONSE_CODE",
 						cachedData.getInt("RESPONSE_CODE"));
 				bundle.putBoolean("RESPONSE_CACHED", true);
+				bundle.putString("RESPONSE_ERROR_TYPE", "NONE");
 			} else {
 				Log.v(TAG, "Atempting web request");
 				Ws ws = new Ws(at);
@@ -125,16 +115,35 @@ public class WebRpc extends RpcInterface {
 					Result result = ws.httpRead(method, path, options,
 							contentType);
 
-					bundle.putByteArray("RESPONSE_DATA",
-							result.getResultsAsByteArray());
-					bundle.putInt("RESPONSE_CODE",
-							result.getUrlConnection().getResponseCode());
-					bundle.putBoolean("RESPONSE_CACHED", false);
+					try {
+						// happy path
+						bundle.putByteArray("RESPONSE_DATA",
+								result.getResultsAsByteArray());
+						bundle.putInt("RESPONSE_CODE", result.getResponseCode());
+						bundle.putBoolean("RESPONSE_CACHED", false);
+						bundle.putString("RESPONSE_ERROR_TYPE", "NONE");
+						DataCache.store(at, bundle, bundle);
+						Log.v(TAG, "web request success");
+					} catch (Exception ex) {
+						try {
+							// unhappy, but http error
+							bundle.putInt("RESPONSE_CODE",
+									result.getResponseCode());
+							bundle.putString("RESPONSE_ERROR_TYPE",
+									"HTTP_ERROR");
+							bundle.putString(
+									"RESPONSE_ERROR",
+									result.getUrlConnection().getResponseMessage());
+						} catch (Exception ex1) {
+							// sad path
+							bundle.putString("RESPONSE_ERROR_TYPE", "UNKNOWN");
+							bundle.putString("RESPONSE_ERROR", ex1.getMessage());
+						}
+					}
 
-					DataCache.store(at, bundle, bundle);
-					Log.v(TAG, "web request success");
 				} catch (Exception ex) {
 					Log.v(TAG, "web request fail");
+					bundle.putString("RESPONSE_ERROR_TYPE", "UNKNOWN");
 					bundle.putString("RESPONSE_ERROR", ex.getMessage());
 				}
 			}
@@ -172,15 +181,37 @@ public class WebRpc extends RpcInterface {
 					Result result = ws.httpWrite(method, path, options, data,
 							contentType);
 
-					bundle.putByteArray("RESPONSE_DATA",
-							result.getResultsAsByteArray());
-					bundle.putInt("RESPONSE_CODE",
-							result.getUrlConnection().getResponseCode());
-					bundle.putBoolean("RESPONSE_CACHED", false);
+					try {
+						// happy path
+						bundle.putByteArray("RESPONSE_DATA",
+								result.getResultsAsByteArray());
+						bundle.putInt("RESPONSE_CODE", result.getResponseCode());
+						bundle.putBoolean("RESPONSE_CACHED", false);
+						bundle.putString("RESPONSE_ERROR_TYPE", "NONE");
+						DataCache.store(at, bundle, bundle);
+						Log.v(TAG, "web request success");
+					} catch (Exception ex) {
+						try {
+							// unhappy, but http error
+							bundle.putInt("RESPONSE_CODE",
+									result.getResponseCode());
+							bundle.putString("RESPONSE_ERROR_TYPE",
+									"HTTP_ERROR");
+							bundle.putString(
+									"RESPONSE_ERROR",
+									result.getUrlConnection().getResponseMessage());
+						} catch (Exception ex1) {
+							// sad path
+							bundle.putString("RESPONSE_ERROR_TYPE", "UNKNOWN");
+							bundle.putString("RESPONSE_ERROR", ex1.getMessage());
+						}
+					}
+
 				} catch (Exception ex) {
+					Log.v(TAG, "web request fail");
+					bundle.putString("RESPONSE_ERROR_TYPE", "UNKNOWN");
 					bundle.putString("RESPONSE_ERROR", ex.getMessage());
 				}
-				DataCache.store(at, bundle, bundle);
 			}
 
 			rr.send(bundle.getInt("RESULT_CODE"), bundle);

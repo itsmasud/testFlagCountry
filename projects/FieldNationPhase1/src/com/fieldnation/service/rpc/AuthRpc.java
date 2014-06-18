@@ -4,8 +4,7 @@ import java.util.HashMap;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.db.User;
-import com.fieldnation.auth.db.UserDataSource;
+import com.fieldnation.auth.db.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.DataService;
 import com.fieldnation.webapi.OAuth;
@@ -42,7 +41,7 @@ public class AuthRpc extends RpcInterface {
 		String username = bundle.getString("PARAM_USERNAME");
 		String password = bundle.getString("PARAM_PASSWORD");
 
-		String authBlob = "";
+		String requestBlob = "";
 		try {
 			JsonObject json = new JsonObject();
 			json.put("hostname", hostname);
@@ -51,9 +50,10 @@ public class AuthRpc extends RpcInterface {
 			json.put("clientSecret", clientSecret);
 			json.put("path", path);
 
-			authBlob = json.toString();
+			requestBlob = json.toString();
 		} catch (Exception ex) {
 			// TODO should never happen
+			ex.printStackTrace();
 		}
 
 		OAuth at = null;
@@ -76,38 +76,33 @@ public class AuthRpc extends RpcInterface {
 		if (at == null) {
 			Log.d(TAG, "Authentication failed, trying local");
 			// get local stuff
-			UserDataSource ds = new UserDataSource(context).open();
-			User user = ds.get(username);
-			if (user == null) {
+			AuthCache authCache = AuthCache.get(context, username);
+			if (authCache == null) {
 				Log.d(TAG, "User not in database");
 				if (errorMessage == null)
 					errorMessage = context.getString(R.string.login_error_not_found_in_db);
 			} else {
-
-				if (user.validatePassword(password)) {
-					// valid user... generate local oauth
-					accessToken = user.createAuthToken(3600);
+				if (authCache.validatePassword(password)) {
+					// valid user... generate session
+					accessToken = authCache.startSession(password, 3600);
 				} else {
 					if (errorMessage == null)
 						errorMessage = context.getString(R.string.login_error_invalid_local_creds);
 					Log.d(TAG, "Invalid local creds");
 				}
 			}
-			ds.close();
 		} else {
 			Log.d(TAG, "Saving user");
 			// store to local
-			UserDataSource ds = new UserDataSource(context).open();
-			User user = ds.get(username);
-			if (user == null) {
-				user = ds.get(ds.create(username, password));
+			AuthCache authCache = AuthCache.get(context, username);
+			if (authCache == null) {
+				authCache = AuthCache.create(context, username, password);
 			} else {
-				user.setPassword(password);
+				authCache.setPassword(password);
 			}
-			user.setAuthBlob(authBlob);
-			accessToken = user.createAuthToken(3600);
-			ds.save(user);
-			ds.close();
+			authCache.setRequestBlob(requestBlob);
+			authCache.setOAuthBlob(at.toString());
+			accessToken = authCache.startSession(password, 3600);
 		}
 
 		if (errorMessage == null)
@@ -146,7 +141,7 @@ public class AuthRpc extends RpcInterface {
 		}
 	}
 
-	public static Intent makeIntent(Context context,
+	public static Intent authenticateWeb(Context context,
 			AccountAuthenticatorResponse response, String hostname,
 			String grantType, String clientId, String clientSecret,
 			String username, String password) {
@@ -168,7 +163,7 @@ public class AuthRpc extends RpcInterface {
 		return intent;
 	}
 
-	public static Intent makeIntent(Context context, ResultReceiver callback,
+	public static Intent authenticateWeb(Context context, ResultReceiver callback,
 			int resultCode, String hostname, String grantType, String clientId,
 			String clientSecret, String username, String password) {
 

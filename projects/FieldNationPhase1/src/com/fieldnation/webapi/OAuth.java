@@ -63,6 +63,10 @@ public class OAuth {
 		this(new JsonObject(jsonString));
 	}
 
+	public static OAuth fromCache(String oauthBlob) throws ParseException {
+		return new OAuth(oauthBlob);
+	}
+
 	public static OAuth authServer(String hostname, String grantType,
 			String clientId, String clientSecret, String username,
 			String password) throws MalformedURLException, IOException, ParseException {

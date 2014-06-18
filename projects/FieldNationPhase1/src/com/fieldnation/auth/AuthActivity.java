@@ -75,7 +75,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 			String clientId = AuthActivity.this.getString(R.string.fn_client_id);
 			String clientSecret = AuthActivity.this.getString(R.string.fn_client_secret);
 
-			Intent intent = AuthRpc.makeIntent(AuthActivity.this, _rpcReceiver,
+			Intent intent = AuthRpc.authenticateWeb(AuthActivity.this, _rpcReceiver,
 					1, hostname, grantType, clientId, clientSecret, _username,
 					_password);
 
