@@ -29,11 +29,12 @@ public class MyWorkActivity extends BaseActivity {
 	private DrawerLayout _drawerLayout;
 	private ViewPager _viewPager;
 
-	private Fragment[] _fragments;
+	private MyWorkListFragment[] _fragments;
 
 	// Data
 	private PagerAdapter _pagerAdapter;
 	private boolean _created = false;
+	private int _currentFragment = 0;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -51,16 +52,15 @@ public class MyWorkActivity extends BaseActivity {
 			buildDrawer();
 			_created = true;
 		}
-
-		_viewPager.setCurrentItem(
-				getSupportActionBar().getSelectedNavigationIndex(), false);
+		_currentFragment = getSupportActionBar().getSelectedNavigationIndex();
+		_viewPager.setCurrentItem(_currentFragment, false);
 
 	}
 
 	private void buildTabs() {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
-		_fragments = new Fragment[4];
+		_fragments = new MyWorkListFragment[4];
 
 		_fragments[0] = new MyWorkListFragment().setDisplayType(MyWorkListFragment.TYPE_REQUESTED);
 		_fragments[1] = new MyWorkListFragment().setDisplayType(MyWorkListFragment.TYPE_ASSIGNED);
@@ -159,6 +159,7 @@ public class MyWorkActivity extends BaseActivity {
 		@Override
 		public void onPageSelected(int position) {
 			try {
+				_currentFragment = position;
 				getSupportActionBar().setSelectedNavigationItem(position);
 			} catch (Exception ex) {
 			}
@@ -173,7 +174,8 @@ public class MyWorkActivity extends BaseActivity {
 
 		@Override
 		public void onTabSelected(Tab arg0, FragmentTransaction arg1) {
-			_viewPager.setCurrentItem(arg0.getPosition(), true);
+			_currentFragment = arg0.getPosition();
+			_viewPager.setCurrentItem(_currentFragment, true);
 		}
 
 		@Override
@@ -184,6 +186,13 @@ public class MyWorkActivity extends BaseActivity {
 	// when a menu item is selected
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+
+		if (id == R.id.action_refresh) {
+			Log.v(TAG, "onOptionsItemSelected:action_refresh");
+			_fragments[_currentFragment].update();
+		}
+
 		if (_drawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}

@@ -59,6 +59,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	public WorkorderListAdapter(BaseActivity activity, String type) throws NoSuchMethodException {
 		_activity = activity;
 		_gs = (GlobalState) activity.getApplicationContext();
+		_gs.addApplicationStateListener(_applicationState_listener);
 
 		_viable = true;
 
@@ -72,6 +73,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 * Will stop the task from looking up work orders
 	 */
 	public void onStop() {
+		_gs.removeApplicationStateListener(_applicationState_listener);
 		notifyDataSetInvalidated();
 		_viable = false;
 	}
@@ -101,9 +103,9 @@ public class WorkorderListAdapter extends BaseAdapter {
 			Log.v(TAG, "Waiting for accessToken");
 
 			_workorderRpc = null;
-			_waitForField = new WaitForFieldAsyncTask(
-					_waitForAccessToken_listener);
-			_waitForField.execute(_gs, "accessToken");
+			// _waitForField = new WaitForFieldAsyncTask(
+			// _waitForAccessToken_listener);
+			// _waitForField.execute(_gs, "accessToken");
 		} else {
 			Log.v(TAG, "Have accessToken");
 			if (_workorderRpc == null) {
@@ -118,7 +120,6 @@ public class WorkorderListAdapter extends BaseAdapter {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
 	}
 
@@ -140,15 +141,17 @@ public class WorkorderListAdapter extends BaseAdapter {
 		return null;
 	}
 
-	private WaitForFieldAsyncTask.Listener _waitForAccessToken_listener = new WaitForFieldAsyncTask.Listener() {
+	private ApplicationState _applicationState_listener = new ApplicationState() {
 		@Override
-		public void onSuccess(Object value) {
-			update(_allowCache);
+		public void onAuthenticationObtained() {
+			update(false);
 		}
 
 		@Override
-		public void onFail(Exception ex) {
-			update(_allowCache);
+		public void onAuthenticationLost() {
+			// TODO Method Stub: onAuthenticationLost()
+			Log.v(TAG, "Method Stub: onAuthenticationLost()");
+
 		}
 	};
 
@@ -204,6 +207,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 			// _workorderRpc = null;
 			// _gs.username = null;
 			// _gs.accessToken = null;
+			_gs.dispatchAuthenticationLost();
 			notifyDataSetChanged();
 		}
 	};

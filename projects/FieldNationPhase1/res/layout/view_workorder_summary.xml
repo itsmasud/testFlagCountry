@@ -125,8 +125,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignRight="@+id/basis_textview"
                     android:maxLines="1"
                     android:text="Check In" />
+
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>

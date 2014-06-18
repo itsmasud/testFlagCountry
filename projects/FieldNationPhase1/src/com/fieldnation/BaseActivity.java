@@ -35,8 +35,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	// Data
 	GlobalState _gs;
-	String _username;
-	String _accessToken;
+	private boolean _authenticating = false;
 
 	// Other
 	private FutureWaitAsyncTask _amc_future;
@@ -60,6 +59,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 	}
 
 	final public void getAuthorization() {
+		if (_authenticating)
+			return;
+
+		_authenticating = true;
 		if (_accountManager == null)
 			_accountManager = AccountManager.get(this);
 
@@ -105,6 +108,37 @@ public abstract class BaseActivity extends ActionBarActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private ApplicationState _applicationState_listener = new ApplicationState() {
+		@Override
+		public void onAuthenticationLost() {
+			_accountManager.invalidateAuthToken(_gs.accountType,
+					_gs.accessToken);
+			//getAuthorization();
+			// TODO Method Stub: onAuthenticationLost()
+			Log.v(TAG, "Method Stub: onAuthenticationLost()");
+		}
+
+		@Override
+		public void onAuthenticationObtained() {
+			_authenticating = false;
+			// TODO Method Stub: onAuthenticationObtained()
+			Log.v(TAG, "Method Stub: onAuthenticationObtained()");
+
+		}
+	};
+
+	@Override
+	protected void onResume() {
+		_gs.addApplicationStateListener(_applicationState_listener);
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		_gs.removeApplicationStateListener(_applicationState_listener);
+		super.onPause();
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
@@ -140,11 +174,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 					getAuthorization();
 				}
 			} else {
-				_accessToken = tokenString;
-				_username = bundle.getString("authAccount");
-				_gs.username = _username;
-				_gs.accessToken = _accessToken;
-				onHaveAuthToken(_username, _accessToken);
+				_gs.username = bundle.getString("authAccount");
+				_gs.accessToken = tokenString;
+				onHaveAuthToken(_gs.username, tokenString);
+				_gs.dispatchAuthenticationObtained();
 			}
 		}
 	};

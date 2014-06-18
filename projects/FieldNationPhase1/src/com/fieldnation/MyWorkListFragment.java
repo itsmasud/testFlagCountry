@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -118,9 +119,7 @@ public class MyWorkListFragment extends Fragment {
 		public void onClick(View v) {
 			Log.v(TAG,
 					"_refresh_onClick: " + MyWorkListFragment.this.toString() + "/" + _displayType);
-			_hasData = false;
-			updateUi();
-			getListAdapter().update(false);
+			update();
 		}
 	};
 
@@ -136,6 +135,12 @@ public class MyWorkListFragment extends Fragment {
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
+	public void update() {
+		_hasData = false;
+		updateUi();
+		getListAdapter().update(false);
+	}
+
 	private void updateUi() {
 		if (_loadingProgressBar != null) {
 			if (_hasData) {
