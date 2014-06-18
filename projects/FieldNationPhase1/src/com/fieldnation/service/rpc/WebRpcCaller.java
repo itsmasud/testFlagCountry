@@ -25,18 +25,18 @@ public class WebRpcCaller {
 
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "web_request");
-		intent.putExtra("PARAM_ACCESS_TOKEN", _accessToken);
-		intent.putExtra("PARAM_USERNAME", _username);
-		intent.putExtra("METHOD", "httpread");
-		intent.putExtra("ALLOW_CACHE", allowCache);
-		intent.putExtra("PARAM_METHOD", method);
-		intent.putExtra("PARAM_PATH", path);
-		intent.putExtra("PARAM_OPTIONS", options);
-		intent.putExtra("RESULT_CODE", resultCode);
+		intent.putExtra("SERVICE", WebRpc.ACTION_NAME);
+		intent.putExtra(WebRpc.KEY_PARAM_ACCESS_TOKEN, _accessToken);
+		intent.putExtra(WebRpc.KEY_PARAM_USERNAME, _username);
+		intent.putExtra(WebRpc.KEY_METHOD, WebRpc.METHOD_HTTP_READ);
+		intent.putExtra(WebRpc.KEY_ALLOW_CACHE, allowCache);
+		intent.putExtra(WebRpc.KEY_PARAM_METHOD, method);
+		intent.putExtra(WebRpc.KEY_PARAM_PATH, path);
+		intent.putExtra(WebRpc.KEY_PARAM_OPTIONS, options);
+		intent.putExtra(WebRpc.KEY_RESULT_CODE, resultCode);
 
 		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
+			intent.putExtra(WebRpc.KEY_PARAM_CALLBACK, callback);
 		}
 
 		return intent;
@@ -47,20 +47,20 @@ public class WebRpcCaller {
 
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "web_request");
-		intent.putExtra("PARAM_ACCESS_TOKEN", _accessToken);
-		intent.putExtra("PARAM_USERNAME", _username);
-		intent.putExtra("METHOD", "httpwrite");
-		intent.putExtra("ALLOW_CACHE", allowCache);
-		intent.putExtra("PARAM_METHOD", method);
-		intent.putExtra("PARAM_PATH", path);
-		intent.putExtra("PARAM_OPTIONS", options);
-		intent.putExtra("PARAM_CONTENT_TYPE", contentType);
-		intent.putExtra("PARAM_DATA", data);
-		intent.putExtra("RESULT_CODE", resultCode);
+		intent.putExtra("SERVICE", WebRpc.ACTION_NAME);
+		intent.putExtra(WebRpc.KEY_PARAM_ACCESS_TOKEN, _accessToken);
+		intent.putExtra(WebRpc.KEY_PARAM_USERNAME, _username);
+		intent.putExtra(WebRpc.KEY_METHOD, WebRpc.METHOD_HTTP_WRITE);
+		intent.putExtra(WebRpc.KEY_ALLOW_CACHE, allowCache);
+		intent.putExtra(WebRpc.KEY_PARAM_METHOD, method);
+		intent.putExtra(WebRpc.KEY_PARAM_PATH, path);
+		intent.putExtra(WebRpc.KEY_PARAM_OPTIONS, options);
+		intent.putExtra(WebRpc.KEY_PARAM_CONTENT_TYPE, contentType);
+		intent.putExtra(WebRpc.KEY_PARAM_DATA, data);
+		intent.putExtra(WebRpc.KEY_RESULT_CODE, resultCode);
 
 		if (callback != null) {
-			intent.putExtra("PARAM_CALLBACK", callback);
+			intent.putExtra(WebRpc.KEY_PARAM_CALLBACK, callback);
 		}
 
 		return intent;

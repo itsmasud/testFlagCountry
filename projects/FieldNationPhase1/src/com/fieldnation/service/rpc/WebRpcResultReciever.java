@@ -8,11 +8,6 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 public abstract class WebRpcResultReciever extends ResultReceiver {
-	public static final String ERROR_NONE = "NONE";
-	public static final String ERROR_USER_NOT_FOUND = "USER_NOT_FOUND";
-	public static final String ERROR_SESSION_INVALID = "SESSION_INVALID";
-	public static final String ERROR_HTTP_ERROR = "HTTP_ERROR";
-	public static final String ERROR_UNKNOWN = "UNKNOWN";
 
 	public WebRpcResultReciever(Handler handler) {
 		super(handler);
@@ -20,9 +15,9 @@ public abstract class WebRpcResultReciever extends ResultReceiver {
 
 	@Override
 	protected void onReceiveResult(int resultCode, Bundle resultData) {
-		String errorType = resultData.getString("RESPONSE_ERROR_TYPE");
+		String errorType = resultData.getString(WebRpc.KEY_RESPONSE_ERROR_TYPE);
 
-		if (ERROR_NONE.equals(errorType))
+		if (WebRpc.ERROR_NONE.equals(errorType))
 			onSuccess(resultCode, resultData);
 		else
 			onError(resultCode, resultData, errorType);

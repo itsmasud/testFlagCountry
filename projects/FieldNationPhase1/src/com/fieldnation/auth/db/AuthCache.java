@@ -68,14 +68,18 @@ public class AuthCache {
 
 	/*-				Sessions				-*/
 	public boolean validateSessionHash(String sessionHash) {
-		if (_sessionHash.equals(""))
+		if (_sessionHash.equals("")) {
+			Log.v(TAG, "no session");
 			return false;
+		}
 
 		if (_sessionExpiry < System.currentTimeMillis()) {
 			Log.v(TAG, "session expired");
 			invalidateSession();
 			return false;
 		}
+
+		Log.d(TAG, _sessionHash);
 
 		return _sessionHash.equals(sessionHash);
 	}

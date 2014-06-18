@@ -11,6 +11,11 @@ import android.content.Intent;
 import android.util.Log;
 
 public class DataService extends IntentService {
+	public static final String ACTION_RPC = "RPC";
+	public static final String ACTION_CLOCK_PULSE = "CLOCK_PULSE";
+
+	public static final String KEY_SERVICE = "SERVICE";
+
 	private static final String TAG = "service.DataService";
 
 	private HashMap<String, RpcInterface> _rpcs = new HashMap<String, RpcInterface>();
@@ -37,11 +42,11 @@ public class DataService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		String action = intent.getAction();
 
-		if ("CLOCK_PULSE".equals(action)) {
+		if (ACTION_CLOCK_PULSE.equals(action)) {
 			// TODO, handle the clock pulse
-			Log.v(TAG, "CLOCK_PULSE");
-		} else if ("RPC".equals(action)) {
-			_rpcs.get(intent.getStringExtra("SERVICE")).execute(this, intent);
+			Log.v(TAG, ACTION_CLOCK_PULSE);
+		} else if (ACTION_RPC.equals(action)) {
+			_rpcs.get(intent.getStringExtra(KEY_SERVICE)).execute(this, intent);
 		}
 	}
 

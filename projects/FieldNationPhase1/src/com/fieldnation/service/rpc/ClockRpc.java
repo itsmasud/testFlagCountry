@@ -15,7 +15,7 @@ public class ClockRpc {
 
 	public static void pulseClock(Context context) {
 		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("CLOCK_PULSE");
+		intent.setAction(DataService.ACTION_CLOCK_PULSE);
 		context.startService(intent);
 	}
 }

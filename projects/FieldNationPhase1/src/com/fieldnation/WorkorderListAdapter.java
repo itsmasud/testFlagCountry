@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.service.rpc.WebRpc;
 import com.fieldnation.service.rpc.WebRpcResultReciever;
 import com.fieldnation.service.rpc.WorkorderRpc;
 
@@ -26,7 +27,10 @@ import android.widget.BaseAdapter;
  */
 public class WorkorderListAdapter extends BaseAdapter {
 	private static final String TAG = "WorkorderListAdapter";
+
 	private static final int RPC_GET = 1;
+
+	public static final String KEY_PARAM_PAGE = "PARAM_PAGE";
 
 	// available method calls
 	public static final String TYPE_REQUESTED = "getRequested";
@@ -42,7 +46,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	private WaitForFieldAsyncTask _waitForField;
 	private WorkorderRpc _workorderRpc;
 	private Method _rpcMethod;
-	private boolean _running;
+	private boolean _viable;
 	private boolean _allowCache = true;
 
 	/**
@@ -56,7 +60,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 		_activity = activity;
 		_gs = (GlobalState) activity.getApplicationContext();
 
-		_running = true;
+		_viable = true;
 
 		_rpcMethod = WorkorderRpc.class.getDeclaredMethod(type,
 				new Class<?>[] { int.class, int.class, boolean.class });
@@ -69,7 +73,11 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 */
 	public void onStop() {
 		notifyDataSetInvalidated();
-		_running = false;
+		_viable = false;
+	}
+
+	public boolean isViable() {
+		return _viable;
 	}
 
 	/**
@@ -79,8 +87,11 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 *            if true, then it will use the local cache if available
 	 */
 	public void update(boolean allowCache) {
-		if (!_running)
+		Log.v(TAG, "update()");
+		if (!_viable) {
+			Log.v(TAG, "not running!");
 			return;
+		}
 
 		Log.v(TAG, "Starting query: " + _rpcMethod.getName());
 		_allowCache = allowCache;
@@ -102,7 +113,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 			try {
 				Intent intent = callRpc(RPC_GET, 1, _allowCache);
 
-				intent.putExtra("PARAM_PAGE", 1);
+				intent.putExtra(KEY_PARAM_PAGE, 1);
 				_activity.startService(intent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -146,8 +157,9 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			int page = resultData.getInt("PARAM_PAGE");
-			String data = new String(resultData.getByteArray("RESPONSE_DATA"));
+			int page = resultData.getInt(KEY_PARAM_PAGE);
+			String data = new String(
+					resultData.getByteArray(WebRpc.KEY_RESPONSE_DATA));
 
 			JsonArray orders = null;
 			try {
@@ -170,7 +182,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 				try {
 					Intent intent = callRpc(RPC_GET, page + 1, _allowCache);
 
-					intent.putExtra("PARAM_PAGE", page + 1);
+					intent.putExtra(KEY_PARAM_PAGE, page + 1);
 					_activity.startService(intent);
 
 				} catch (Exception e) {

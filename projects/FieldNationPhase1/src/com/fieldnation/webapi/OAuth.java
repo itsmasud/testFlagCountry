@@ -11,6 +11,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.util.Log;
+
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 
@@ -21,6 +23,7 @@ import com.fieldnation.json.JsonObject;
  * 
  */
 public class OAuth {
+	private static final String TAG = "webapi.OAuth";
 
 	/* creates a default string to use for all tokens */
 	private static String _defaults;
@@ -78,10 +81,6 @@ public class OAuth {
 			String grantType, String clientId, String clientSecret,
 			String username, String password) throws MalformedURLException, IOException, ParseException {
 
-		JsonObject oauth = new JsonObject();
-
-		oauth.put("hostname", hostname);
-
 		if (!path.startsWith("/"))
 			path = "/" + path;
 
@@ -113,13 +112,12 @@ public class OAuth {
 		Result result = new Result(conn);
 
 		conn.disconnect();
-
+		Log.v(TAG, result.getResponseCode() + "");
 		JsonObject token = result.getResultsAsJsonObject();
-
 		// TODO, add some timing, learn how to use the refresh token
-		oauth.merge(token, true, true);
+		token.put("hostname", hostname);
 
-		return new OAuth(oauth);
+		return new OAuth(token);
 	}
 
 	public void invalidate(Context context) {

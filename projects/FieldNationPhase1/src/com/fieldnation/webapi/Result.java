@@ -10,7 +10,6 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
 public class Result {
-	private HttpURLConnection _conn;
 
 	/*
 	 * note, we use cacheing here to prevent multiple interpretations of the
@@ -21,50 +20,55 @@ public class Result {
 	private JsonObject _jsonResults = null;
 	private JsonArray _jaResults = null;
 
+	private int _responseCode;
+	private String _responseMessage;
+
 	public Result(HttpURLConnection conn) throws IOException {
-		_conn = conn;
-
-		getResultsAsByteArray();
+		_responseCode = conn.getResponseCode();
+		_responseMessage = conn.getResponseMessage();
+		cacheResults(conn);
 	}
 
-	public int getResponseCode() throws IOException {
-		return _conn.getResponseCode();
+	public int getResponseCode() {
+		return _responseCode;
 	}
 
-	public byte[] getResultsAsByteArray() throws IOException {
-		if (_baResults == null) {
-			InputStream in = _conn.getInputStream();
-			int contentlength = _conn.getContentLength();
+	public String getResponseMessage() {
+		return _responseMessage;
+	}
 
-			_baResults = misc.readAllFromStream(in, 1024, contentlength, 3000);
+	private void cacheResults(HttpURLConnection conn) throws IOException {
+		InputStream in = conn.getInputStream();
+		int contentlength = conn.getContentLength();
 
-			in.close();
-		}
+		_baResults = misc.readAllFromStream(in, 1024, contentlength, 3000);
+
+		in.close();
+	}
+
+	public byte[] getResultsAsByteArray() {
 		return _baResults;
 	}
 
-	public String getResultsAsString() throws IOException {
+	public String getResultsAsString() {
 		if (_sResults == null) {
 			_sResults = new String(getResultsAsByteArray());
 		}
 		return _sResults;
 	}
 
-	public JsonObject getResultsAsJsonObject() throws ParseException, IOException {
+	public JsonObject getResultsAsJsonObject() throws ParseException {
 		if (_jsonResults == null) {
 			_jsonResults = new JsonObject(getResultsAsString());
 		}
 		return _jsonResults;
 	}
 
-	public JsonArray getResultsAsJsonArray() throws ParseException, IOException {
+	public JsonArray getResultsAsJsonArray() throws ParseException {
 		if (_jaResults == null) {
 			_jaResults = new JsonArray(getResultsAsString());
 		}
 		return _jaResults;
 	}
 
-	public HttpURLConnection getUrlConnection() {
-		return _conn;
-	}
 }

@@ -1,5 +1,7 @@
 package com.fieldnation.service.rpc;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 
 import com.fieldnation.GlobalState;
@@ -8,6 +10,7 @@ import com.fieldnation.auth.db.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.DataService;
 import com.fieldnation.webapi.OAuth;
+import com.fieldnation.webapi.Result;
 
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
@@ -18,28 +21,86 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 public class AuthRpc extends RpcInterface {
+
 	private final static String TAG = "service.rpc.AuthRpc";
+
+	public static final String ACTION_NAME = "auth";
+
+	public static final String METHOD_REFRESH_TOKEN = "refreshToken";
+	public static final String METHOD_GET_OAUTH_TOKEN = "getOauthToken";
+
+	public static final String KEY_RESULT_CODE = "RESULT_CODE";
+	public static final String KEY_PARAM_RESULT_RECEIVER = "PARAM_RESULT_RECEIVER";
+	public static final String KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE = "PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE";
+	public static final String KEY_PARAM_PASSWORD = "PARAM_PASSWORD";
+	public static final String KEY_PARAM_CLIENT_SECRET = "PARAM_CLIENT_SECRET";
+	public static final String KEY_PARAM_CLIENT_ID = "PARAM_CLIENT_ID";
+	public static final String KEY_PARAM_GRANT_TYPE = "PARAM_GRANT_TYPE";
+	public static final String KEY_PARAM_PATH = "PARAM_PATH";
+	public static final String KEY_PARAM_HOSTNAME = "PARAM_HOSTNAME";
+	public static final String KEY_PARAM_USERNAME = "PARAM_USERNAME";
+	public static final String KEY_PARAM_ACCESS_TOKEN = "PARAM_ACCESS_TOKEN";
+	public static final String KEY_METHOD = "METHOD";
 
 	private GlobalState _gs;
 
 	public AuthRpc(HashMap<String, RpcInterface> map) {
-		super(map, "auth");
+		super(map, ACTION_NAME);
 	}
 
 	@Override
 	public void execute(Context context, Intent intent) {
 		_gs = (GlobalState) context.getApplicationContext();
+		String method = intent.getStringExtra(KEY_METHOD);
+
+		if (METHOD_GET_OAUTH_TOKEN.equals(method)) {
+			getOauthToken(context, intent);
+		} else if (METHOD_REFRESH_TOKEN.equals(method)) {
+			refreshToken(context, intent);
+		}
+
+	}
+
+	private void refreshToken(Context context, Intent intent) {
+		String accessToken = intent.getStringExtra(KEY_PARAM_ACCESS_TOKEN);
+		String username = intent.getStringExtra(KEY_PARAM_USERNAME);
+
+		AuthCache ac = AuthCache.get(context, username);
+		if (ac == null)
+			return;
+
+		if (!ac.validateSessionHash(accessToken)) {
+			return;
+		}
+
+		try {
+			JsonObject reqBlob = new JsonObject(ac.getRequestBlob());
+
+			OAuth auth = OAuth.authServer(reqBlob.getString("hostname"),
+					reqBlob.getString("grantType"),
+					reqBlob.getString("clientId"),
+					reqBlob.getString("clientSecret"), username,
+					ac.getPassword());
+
+			ac.setOAuthBlob(auth.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+	}
+
+	private void getOauthToken(Context context, Intent intent) {
 		String errorMessage = null;
 
 		Bundle bundle = intent.getExtras();
 
-		String hostname = bundle.getString("PARAM_HOSTNAME");
-		String path = bundle.getString("PARAM_PATH");
-		String grantType = bundle.getString("PARAM_GRANT_TYPE");
-		String clientId = bundle.getString("PARAM_CLIENT_ID");
-		String clientSecret = bundle.getString("PARAM_CLIENT_SECRET");
-		String username = bundle.getString("PARAM_USERNAME");
-		String password = bundle.getString("PARAM_PASSWORD");
+		String hostname = bundle.getString(KEY_PARAM_HOSTNAME);
+		String path = bundle.getString(KEY_PARAM_PATH);
+		String grantType = bundle.getString(KEY_PARAM_GRANT_TYPE);
+		String clientId = bundle.getString(KEY_PARAM_CLIENT_ID);
+		String clientSecret = bundle.getString(KEY_PARAM_CLIENT_SECRET);
+		String username = bundle.getString(KEY_PARAM_USERNAME);
+		String password = bundle.getString(KEY_PARAM_PASSWORD);
 
 		String requestBlob = "";
 		try {
@@ -61,6 +122,7 @@ public class AuthRpc extends RpcInterface {
 		try {
 			at = OAuth.authServer(hostname, path, grantType, clientId,
 					clientSecret, username, password);
+
 			Log.v(TAG, at.toString());
 
 		} catch (Exception ex) {
@@ -108,36 +170,36 @@ public class AuthRpc extends RpcInterface {
 		if (errorMessage == null)
 			errorMessage = context.getString(R.string.login_error_no_error);
 
-		if (bundle.containsKey("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE")) {
-			AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle.getParcelable("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE");
+		if (bundle.containsKey(KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
+			AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle.getParcelable(KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE);
 
-			Bundle result = new Bundle();
-			result.putString("ACTION", "RPC_getOauthToken");
+			Bundle resultBundle = new Bundle();
 
 			if (accessToken != null) {
-				result.putString(AccountManager.KEY_AUTHTOKEN, accessToken);
-				result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-				result.putString(AccountManager.KEY_ACCOUNT_TYPE,
+				resultBundle.putString(AccountManager.KEY_AUTHTOKEN,
+						accessToken);
+				resultBundle.putString(AccountManager.KEY_ACCOUNT_NAME,
+						username);
+				resultBundle.putString(AccountManager.KEY_ACCOUNT_TYPE,
 						_gs.accountType);
 			} else {
-				result.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE,
+				resultBundle.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE,
 						errorMessage);
 			}
-			aar.onResult(result);
+			aar.onResult(resultBundle);
 		}
 
-		if (bundle.containsKey("PARAM_RESULT_RECEIVER")) {
-			ResultReceiver rr = bundle.getParcelable("PARAM_RESULT_RECEIVER");
+		if (bundle.containsKey(KEY_PARAM_RESULT_RECEIVER)) {
+			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_RESULT_RECEIVER);
 
 			Bundle response = new Bundle();
 
-			response.putString("ACTION", "RPC_getOauthToken");
 			response.putString("error", errorMessage);
 			if (at != null) {
 				response.putString("authtoken", accessToken);
 			}
 
-			rr.send(bundle.getInt("RESULT_CODE"), response);
+			rr.send(bundle.getInt(KEY_RESULT_CODE), response);
 		}
 	}
 
@@ -147,40 +209,53 @@ public class AuthRpc extends RpcInterface {
 			String username, String password) {
 
 		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "auth");
-		intent.putExtra("METHOD", "getOauthToken");
-		intent.putExtra("PARAM_HOSTNAME", hostname);
-		intent.putExtra("PARAM_PATH", "/authentication/api/oauth/token");
-		intent.putExtra("PARAM_GRANT_TYPE", grantType);
-		intent.putExtra("PARAM_CLIENT_ID", clientId);
-		intent.putExtra("PARAM_CLIENT_SECRET", clientSecret);
-		intent.putExtra("PARAM_USERNAME", username);
-		intent.putExtra("PARAM_PASSWORD", password);
+		intent.setAction(DataService.ACTION_RPC);
+		intent.putExtra(DataService.KEY_SERVICE, ACTION_NAME);
+		intent.putExtra(KEY_METHOD, METHOD_GET_OAUTH_TOKEN);
+		intent.putExtra(KEY_PARAM_HOSTNAME, hostname);
+		intent.putExtra(KEY_PARAM_PATH, "/authentication/api/oauth/token");
+		intent.putExtra(KEY_PARAM_GRANT_TYPE, grantType);
+		intent.putExtra(KEY_PARAM_CLIENT_ID, clientId);
+		intent.putExtra(KEY_PARAM_CLIENT_SECRET, clientSecret);
+		intent.putExtra(KEY_PARAM_USERNAME, username);
+		intent.putExtra(KEY_PARAM_PASSWORD, password);
 
-		intent.putExtra("PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE", response);
+		intent.putExtra(KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
 		return intent;
 	}
 
-	public static Intent authenticateWeb(Context context, ResultReceiver callback,
-			int resultCode, String hostname, String grantType, String clientId,
-			String clientSecret, String username, String password) {
+	public static Intent authenticateWeb(Context context,
+			ResultReceiver callback, int resultCode, String hostname,
+			String grantType, String clientId, String clientSecret,
+			String username, String password) {
 
 		Intent intent = new Intent(context, DataService.class);
-		intent.setAction("RPC");
-		intent.putExtra("SERVICE", "auth");
-		intent.putExtra("METHOD", "getOauthToken");
-		intent.putExtra("PARAM_HOSTNAME", hostname);
-		intent.putExtra("PARAM_PATH", "/authentication/api/oauth/token");
-		intent.putExtra("PARAM_GRANT_TYPE", grantType);
-		intent.putExtra("PARAM_CLIENT_ID", clientId);
-		intent.putExtra("PARAM_CLIENT_SECRET", clientSecret);
-		intent.putExtra("PARAM_USERNAME", username);
-		intent.putExtra("PARAM_PASSWORD", password);
+		intent.setAction(DataService.ACTION_RPC);
+		intent.putExtra(DataService.KEY_SERVICE, ACTION_NAME);
+		intent.putExtra(KEY_METHOD, METHOD_GET_OAUTH_TOKEN);
+		intent.putExtra(KEY_PARAM_HOSTNAME, hostname);
+		intent.putExtra(KEY_PARAM_PATH, "/authentication/api/oauth/token");
+		intent.putExtra(KEY_PARAM_GRANT_TYPE, grantType);
+		intent.putExtra(KEY_PARAM_CLIENT_ID, clientId);
+		intent.putExtra(KEY_PARAM_CLIENT_SECRET, clientSecret);
+		intent.putExtra(KEY_PARAM_USERNAME, username);
+		intent.putExtra(KEY_PARAM_PASSWORD, password);
 
-		intent.putExtra("PARAM_RESULT_RECEIVER", callback);
-		intent.putExtra("RESULT_CODE", resultCode);
+		intent.putExtra(KEY_PARAM_RESULT_RECEIVER, callback);
+		intent.putExtra(KEY_RESULT_CODE, resultCode);
+
+		return intent;
+	}
+
+	public static Intent refreshToken(Context context, String username,
+			String accessToken) {
+		Intent intent = new Intent(context, DataService.class);
+		intent.setAction(DataService.ACTION_RPC);
+		intent.putExtra(DataService.KEY_SERVICE, ACTION_NAME);
+		intent.putExtra(KEY_METHOD, METHOD_REFRESH_TOKEN);
+		intent.putExtra(KEY_PARAM_ACCESS_TOKEN, accessToken);
+		intent.putExtra(KEY_PARAM_USERNAME, username);
 
 		return intent;
 	}
