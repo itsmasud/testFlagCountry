@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.db.AuthCache;
+import com.fieldnation.authserver.db.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.DataService;
 import com.fieldnation.webapi.OAuth;

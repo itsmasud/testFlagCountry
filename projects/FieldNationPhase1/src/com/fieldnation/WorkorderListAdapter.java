@@ -41,14 +41,20 @@ public class WorkorderListAdapter extends BaseAdapter {
 	public static final String TYPE_CANCELED = "getCanceled";
 
 	private GlobalState _gs;
-	private BaseActivity _activity;
+	private Context _context;
 	private JsonArray _workorders = null;
 	private WaitForFieldAsyncTask _waitForField;
 	private WorkorderRpc _workorderRpc;
 	private Method _rpcMethod;
 	private boolean _viable;
 	private boolean _allowCache = true;
+	private MyAuthenticationClient _authClient;
+	private String _authToken;
+	private String _username;
 
+	/*-*****************************-*/
+	/*-			Lifecycle			-*/
+	/*-*****************************-*/
 	/**
 	 * 
 	 * @param context
@@ -56,10 +62,11 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 *            should be one of the TYPE_* strings
 	 * @throws NoSuchMethodException
 	 */
-	public WorkorderListAdapter(BaseActivity activity, String type) throws NoSuchMethodException {
-		_activity = activity;
-		_gs = (GlobalState) activity.getApplicationContext();
-		_gs.addApplicationStateListener(_applicationState_listener);
+	public WorkorderListAdapter(Context context, String type) throws NoSuchMethodException {
+		_context = context;
+		_gs = (GlobalState) context.getApplicationContext();
+		_authClient = new MyAuthenticationClient(context);
+		_gs.requestAuthentication(_authClient);
 
 		_viable = true;
 
@@ -73,144 +80,16 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 * Will stop the task from looking up work orders
 	 */
 	public void onStop() {
-		_gs.removeApplicationStateListener(_applicationState_listener);
 		notifyDataSetInvalidated();
 		_viable = false;
 	}
 
+	/*-*********************************-*/
+	/*-			Getters/Setters			-*/
+	/*-*********************************-*/
 	public boolean isViable() {
 		return _viable;
 	}
-
-	/**
-	 * Starts getting the list of work orders
-	 * 
-	 * @param allowCache
-	 *            if true, then it will use the local cache if available
-	 */
-	public void update(boolean allowCache) {
-		Log.v(TAG, "update()");
-		if (!_viable) {
-			Log.v(TAG, "not running!");
-			return;
-		}
-
-		Log.v(TAG, "Starting query: " + _rpcMethod.getName());
-		_allowCache = allowCache;
-
-		_workorders = new JsonArray();
-		if (_gs.accessToken == null) {
-			Log.v(TAG, "Waiting for accessToken");
-
-			_workorderRpc = null;
-			// _waitForField = new WaitForFieldAsyncTask(
-			// _waitForAccessToken_listener);
-			// _waitForField.execute(_gs, "accessToken");
-		} else {
-			Log.v(TAG, "Have accessToken");
-			if (_workorderRpc == null) {
-				_workorderRpc = new WorkorderRpc(_activity, _gs.username,
-						_gs.accessToken, _webRpcReceiver);
-			}
-			try {
-				Intent intent = callRpc(RPC_GET, 1, _allowCache);
-
-				intent.putExtra(KEY_PARAM_PAGE, 1);
-				_activity.startService(intent);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private Intent callRpc(int resultCode, int page, boolean allowCache) {
-		try {
-			return (Intent) _rpcMethod.invoke(_workorderRpc, resultCode, page,
-					allowCache);
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	private ApplicationState _applicationState_listener = new ApplicationState() {
-		@Override
-		public void onAuthenticationObtained() {
-			update(false);
-		}
-
-		@Override
-		public void onAuthenticationLost() {
-			// TODO Method Stub: onAuthenticationLost()
-			Log.v(TAG, "Method Stub: onAuthenticationLost()");
-
-		}
-	};
-
-	private WebRpcResultReciever _webRpcReceiver = new WebRpcResultReciever(
-			new Handler()) {
-
-		@Override
-		public void onSuccess(int resultCode, Bundle resultData) {
-			int page = resultData.getInt(KEY_PARAM_PAGE);
-			String data = new String(
-					resultData.getByteArray(WebRpc.KEY_RESPONSE_DATA));
-
-			JsonArray orders = null;
-			try {
-				orders = new JsonArray(data);
-			} catch (Exception ex) {
-				// TODO report problem?
-				Log.v(TAG, data);
-				ex.printStackTrace();
-			}
-			if (orders == null) {
-				notifyDataSetChanged();
-				return;
-			}
-
-			_workorders.merge(orders);
-
-			notifyDataSetChanged();
-
-			if (orders.size() == 25) {
-				try {
-					Intent intent = callRpc(RPC_GET, page + 1, _allowCache);
-
-					intent.putExtra(KEY_PARAM_PAGE, page + 1);
-					_activity.startService(intent);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else {
-				// chain is complete, re-enable caching
-				_allowCache = true;
-			}
-
-		}
-
-		@Override
-		public void onError(int resultCode, Bundle resultData, String errorType) {
-			Log.v(TAG, errorType);
-			Log.v(TAG, resultData.toString());
-			// AccountManager.get(_activity).invalidateAuthToken(_gs.accountType,
-			// _gs.accessToken);
-			// _workorderRpc = null;
-			// _gs.username = null;
-			// _gs.accessToken = null;
-			_gs.dispatchAuthenticationLost();
-			notifyDataSetChanged();
-		}
-	};
 
 	@Override
 	public int getCount() {
@@ -245,6 +124,143 @@ public class WorkorderListAdapter extends BaseAdapter {
 		wosum.setWorkorder(_workorders.getJsonObject(position));
 
 		return wosum;
+	}
+
+	/*-*********************************-*/
+	/*-			Event Handlers			-*/
+	/*-*********************************-*/
+	private class MyAuthenticationClient extends AuthenticationClient {
+
+		public MyAuthenticationClient(Context context) {
+			super(context);
+		}
+
+		@Override
+		public void onAuthentication(String username, String accessToken) {
+			_username = username;
+			_authToken = accessToken;
+			// TODO Method Stub: onAuthentication()
+			Log.v(TAG,
+					"Method Stub: onAuthentication(" + username + ", " + accessToken + ")");
+			update(false);
+		}
+	}
+
+	private WebRpcResultReciever _webRpcReceiver = new WebRpcResultReciever(
+			new Handler()) {
+
+		@Override
+		public void onSuccess(int resultCode, Bundle resultData) {
+			int page = resultData.getInt(KEY_PARAM_PAGE);
+			String data = new String(
+					resultData.getByteArray(WebRpc.KEY_RESPONSE_DATA));
+
+			JsonArray orders = null;
+			try {
+				orders = new JsonArray(data);
+			} catch (Exception ex) {
+				// TODO report problem?
+				Log.v(TAG, data);
+				ex.printStackTrace();
+			}
+			if (orders == null) {
+				notifyDataSetChanged();
+				return;
+			}
+
+			_workorders.merge(orders);
+
+			notifyDataSetChanged();
+
+			if (orders.size() == 25) {
+				try {
+					Intent intent = callRpc(RPC_GET, page + 1, _allowCache);
+
+					intent.putExtra(KEY_PARAM_PAGE, page + 1);
+					_context.startService(intent);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				// chain is complete, re-enable caching
+				_allowCache = true;
+			}
+
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			Log.v(TAG, errorType);
+			Log.v(TAG, resultData.toString());
+			_gs.invalidateAuthToken(_authToken);
+			_authToken = null;
+			_username = null;
+			_gs.requestAuthentication(_authClient);
+			notifyDataSetChanged();
+		}
+	};
+
+	/*-*****************************-*/
+	/*-			Processing			-*/
+	/*-*****************************-*/
+	/**
+	 * Starts getting the list of work orders
+	 * 
+	 * @param allowCache
+	 *            if true, then it will use the local cache if available
+	 */
+	public void update(boolean allowCache) {
+		Log.v(TAG, "update()");
+		if (!_viable) {
+			Log.v(TAG, "not running!");
+			return;
+		}
+
+		Log.v(TAG, "Starting query: " + _rpcMethod.getName());
+		_allowCache = allowCache;
+
+		_workorders = new JsonArray();
+		if (_authToken == null) {
+			Log.v(TAG, "Waiting for accessToken");
+
+			// _workorderRpc = null;
+			// _waitForField = new WaitForFieldAsyncTask(
+			// _waitForAccessToken_listener);
+			// _waitForField.execute(_gs, "accessToken");
+		} else {
+			Log.v(TAG, "Have accessToken");
+			if (_workorderRpc == null) {
+				_workorderRpc = new WorkorderRpc(_context, _username,
+						_authToken, _webRpcReceiver);
+			}
+			try {
+				Intent intent = callRpc(RPC_GET, 1, _allowCache);
+
+				intent.putExtra(KEY_PARAM_PAGE, 1);
+				_context.startService(intent);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private Intent callRpc(int resultCode, int page, boolean allowCache) {
+		try {
+			return (Intent) _rpcMethod.invoke(_workorderRpc, resultCode, page,
+					allowCache);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import com.fieldnation.webapi.OAuth;
 import com.fieldnation.webapi.Ws;
 
+import android.accounts.Account;
+import android.app.Activity;
 import android.app.Application;
 
 /**
@@ -17,12 +19,10 @@ import android.app.Application;
 public class GlobalState extends Application {
 	private static final String TAG = "GlobalState";
 
-	public String accountType;
-	public String authority;
-	public String username = null;
-	public String accessToken = null;
+	private AuthenticationServer _authServer = null;
 
-	private List<ApplicationState> _listeners = new LinkedList<ApplicationState>();
+	public String authority;
+	public String accountType;
 
 	public GlobalState() {
 		super();
@@ -37,23 +37,19 @@ public class GlobalState extends Application {
 		authority = getString(R.string.authority);
 	}
 
-	public void addApplicationStateListener(ApplicationState listener) {
-		_listeners.add(listener);
+	public void setAuthenticationServer(AuthenticationServer server) {
+		_authServer = server;
 	}
 
-	public void removeApplicationStateListener(ApplicationState listener) {
-		_listeners.remove(listener);
-	}
-
-	public void dispatchAuthenticationLost() {
-		for (int i = 0; i < _listeners.size(); i++) {
-			_listeners.get(i).onAuthenticationLost();
+	public void requestAuthentication(AuthenticationClient client) {
+		if (_authServer == null) {
+			client.waitForObject(this, "_authServer");
+		} else {
+			_authServer.requestAuthentication(client);
 		}
 	}
 
-	public void dispatchAuthenticationObtained() {
-		for (int i = 0; i < _listeners.size(); i++) {
-			_listeners.get(i).onAuthenticationObtained();
-		}
+	public void invalidateAuthToken(String token) {
+		_authServer.invalidateToken(token);
 	}
 }

@@ -47,7 +47,7 @@
         android:layout_alignParentTop="true" >
 
         <com.fieldnation.ProgressBarRev
-            android:id="@+id/progressBar1"
+            android:id="@+id/overscrollleft_progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0px"
             android:layout_height="wrap_content"
@@ -56,12 +56,12 @@
             app:layout_column="0"
             app:layout_gravity="left|top"
             app:layout_row="0"
-            android:max="100"
+            android:max="200"
             android:padding="0px"
-            android:progress="10" />
+            android:progress="0" />
 
         <ProgressBar
-            android:id="@+id/progressBar2"
+            android:id="@+id/overscrollright_progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0px"
             android:layout_height="wrap_content"
@@ -70,9 +70,9 @@
             app:layout_column="1"
             app:layout_gravity="right|top"
             app:layout_row="0"
-            android:max="100"
+            android:max="200"
             android:padding="0px"
-            android:progress="10" />
+            android:progress="0" />
     </LinearLayout>
 
 </RelativeLayout>

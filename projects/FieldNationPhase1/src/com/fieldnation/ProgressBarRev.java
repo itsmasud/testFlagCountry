@@ -22,8 +22,8 @@ public class ProgressBarRev extends ProgressBar {
 	@Override
 	protected synchronized void onDraw(Canvas canvas) {
 		canvas.save();
-		canvas.rotate(180, getWidth() / 2, getHeight() / 2);
+		canvas.scale(-1f, 1f, getWidth() / 2, getHeight() / 2);
 		super.onDraw(canvas);
-		canvas.restore();
+		//canvas.restore();
 	}
 }

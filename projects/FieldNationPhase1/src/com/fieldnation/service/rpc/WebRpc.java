@@ -5,8 +5,8 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.HashMap;
 
-import com.fieldnation.auth.db.AuthCacheSqlHelper;
-import com.fieldnation.auth.db.AuthCache;
+import com.fieldnation.authserver.db.AuthCache;
+import com.fieldnation.authserver.db.AuthCacheSqlHelper;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.DataCache;
 import com.fieldnation.webapi.OAuth;

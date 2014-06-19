@@ -36,7 +36,7 @@
             android:label="@string/mywork_title" >
         </activity>
         <activity
-            android:name="com.fieldnation.auth.AuthActivity"
+            android:name="com.fieldnation.authserver.AuthActivity"
             android:label="@string/activity_login_title" >
         </activity>
 
@@ -48,7 +48,7 @@
         </provider>
 
         <service
-            android:name="com.fieldnation.auth.AuthService"
+            android:name="com.fieldnation.authserver.AuthService"
             android:exported="true"
             android:process=":auth" >
             <intent-filter>

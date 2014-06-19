@@ -1,4 +1,4 @@
-package com.fieldnation.auth.db;
+package com.fieldnation.authserver.db;
 
 import java.util.LinkedList;
 import java.util.List;

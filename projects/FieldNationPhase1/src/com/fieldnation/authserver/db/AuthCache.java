@@ -1,4 +1,4 @@
-package com.fieldnation.auth.db;
+package com.fieldnation.authserver.db;
 
 import java.security.MessageDigest;
 
@@ -39,6 +39,10 @@ public class AuthCache {
 		_oAuthBlob = src.getString(AuthCacheSqlHelper.Column.OAUTH_BLOB.getIndex());
 		_requestBlob = src.getString(AuthCacheSqlHelper.Column.REQUEST_BLOB.getIndex());
 		_sessionExpiry = src.getLong(AuthCacheSqlHelper.Column.SESSION_EXPIRY.getIndex());
+
+		Log.v(TAG, _username);
+		Log.v(TAG, _requestBlob);
+		Log.v(TAG, _oAuthBlob);
 	}
 
 	private AuthCache(Context context, String username, String password) {
@@ -87,8 +91,6 @@ public class AuthCache {
 	public void invalidateSession() {
 		_sessionHash = "";
 		_sessionExpiry = 0;
-		_oAuthBlob = "";
-		_requestBlob = "";
 		save();
 	}
 

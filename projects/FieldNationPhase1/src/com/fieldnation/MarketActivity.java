@@ -2,6 +2,7 @@ package com.fieldnation;
 
 import com.fieldnation.webapi.OAuth;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.os.Bundle;
@@ -60,6 +61,16 @@ public class MarketActivity extends BaseActivity {
 		actionbar.setHomeAsUpIndicator(R.drawable.ic_navigation_drawer);
 
 		buildDrawer();
+
+		try {
+			_woAdapter = new WorkorderListAdapter(MarketActivity.this,
+					WorkorderListAdapter.TYPE_AVAILABLE);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		_woAdapter.registerDataSetObserver(_listAdapter_observer);
+		_workordersListView.setAdapter(_woAdapter);
+		_woAdapter.update(true);
 
 	}
 
@@ -129,30 +140,6 @@ public class MarketActivity extends BaseActivity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		_drawerToggle.onConfigurationChanged(newConfig);
-	}
-
-	@Override
-	public void onHaveAuthToken(String username, String accessToken) {
-		// TODO Method Stub: onHaveAuthToken()
-		Log.v(TAG, "Method Stub: onHaveAuthToken()");
-
-		try {
-			_woAdapter = new WorkorderListAdapter(this,
-					WorkorderListAdapter.TYPE_AVAILABLE);
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-		_woAdapter.registerDataSetObserver(_listAdapter_observer);
-		_woAdapter.update(true);
-
-		_workordersListView.setAdapter(_woAdapter);
-
-	}
-
-	@Override
-	public void onFailedAuthToken(Exception ex) {
-		// TODO Method Stub: onFailedAuthToken()
-		Log.v(TAG, "Method Stub: onFailedAuthToken()");
 	}
 
 	private DataSetObserver _listAdapter_observer = new DataSetObserver() {

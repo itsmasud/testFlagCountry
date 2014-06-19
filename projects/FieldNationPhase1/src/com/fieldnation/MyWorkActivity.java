@@ -205,20 +205,4 @@ public class MyWorkActivity extends BaseActivity {
 		_drawerToggle.onConfigurationChanged(newConfig);
 	}
 
-	@Override
-	public void onHaveAuthToken(String username, String accessToken) {
-		// TODO Method Stub: onHaveAuthToken()
-		Log.v(TAG, "Method Stub: onHaveAuthToken()");
-
-		ContentResolver resolver = getContentResolver();
-
-	}
-
-	@Override
-	public void onFailedAuthToken(Exception ex) {
-		// TODO Method Stub: onFailedAuthToken()
-		Log.v(TAG, "Method Stub: onFailedAuthToken()");
-
-	}
-
 }

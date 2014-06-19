@@ -2,7 +2,7 @@ package com.fieldnation;
 
 import java.text.ParseException;
 
-import com.fieldnation.auth.FutureWaitAsyncTask;
+import com.fieldnation.authserver.FutureWaitAsyncTask;
 import com.fieldnation.service.ClockReceiver;
 import com.fieldnation.webapi.OAuth;
 
@@ -35,10 +35,9 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	// Data
 	GlobalState _gs;
+	Handler handler = null;
+	private Account _account;
 	private boolean _authenticating = false;
-
-	// Other
-	private FutureWaitAsyncTask _amc_future;
 
 	// Services
 	private AccountManager _accountManager;
@@ -51,14 +50,17 @@ public abstract class BaseActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		handler = new Handler();
+
 		_gs = (GlobalState) getApplicationContext();
+		_gs.setAuthenticationServer(authServer);
 
 		ClockReceiver.registerClock(this);
 
-		getAuthorization();
+		getAccount();
 	}
 
-	final public void getAuthorization() {
+	final public void getAccount() {
 		if (_authenticating)
 			return;
 
@@ -71,16 +73,13 @@ public abstract class BaseActivity extends ActionBarActivity {
 		AccountManagerFuture<Bundle> future = null;
 		if (accounts.length == 0) {
 			future = _accountManager.addAccount(_gs.accountType, null, null,
-					null, this, null, new Handler());
+					null, this, null, handler);
 
 		} else if (accounts.length == 1) {
-			future = _accountManager.getAuthToken(accounts[0], _gs.accountType,
-					null, this, null, new Handler());
+			_account = accounts[0];
 		} else {
 			// TODO, ANDR-10 present a picker for the account
-			future = _accountManager.getAuthToken(accounts[0], _gs.accountType,
-					null, this, null, new Handler());
-
+			_account = accounts[0];
 		}
 		if (future != null) {
 			// new
@@ -108,37 +107,32 @@ public abstract class BaseActivity extends ActionBarActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private ApplicationState _applicationState_listener = new ApplicationState() {
+	private AuthenticationServer authServer = new AuthenticationServer() {
+
 		@Override
-		public void onAuthenticationLost() {
-			_accountManager.invalidateAuthToken(_gs.accountType,
-					_gs.accessToken);
-			//getAuthorization();
-			// TODO Method Stub: onAuthenticationLost()
-			Log.v(TAG, "Method Stub: onAuthenticationLost()");
+		public void requestAuthentication(AuthenticationClient client) {
+			// TODO Method Stub: requestAuthentication()
+			Log.v(TAG, "Method Stub: requestAuthentication()");
+			if (_account == null) {
+				Log.v(TAG, "Method Stub: requestAuthentication()1");
+				client.waitForObject(BaseActivity.this, "_acccount");
+			} else {
+				Log.v(TAG, "Method Stub: requestAuthentication()2");
+				AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
+						_account, _gs.accountType, null, BaseActivity.this,
+						null, handler);
+				client.waitForFuture(future);
+			}
 		}
 
 		@Override
-		public void onAuthenticationObtained() {
-			_authenticating = false;
-			// TODO Method Stub: onAuthenticationObtained()
-			Log.v(TAG, "Method Stub: onAuthenticationObtained()");
-
+		public void invalidateToken(String token) {
+			Log.v(TAG, "invalidateToken(" + token + ")");
+			_accountManager.invalidateAuthToken(_gs.accountType, token);
 		}
 	};
 
-	@Override
-	protected void onResume() {
-		_gs.addApplicationStateListener(_applicationState_listener);
-		super.onResume();
-	}
-
-	@Override
-	protected void onPause() {
-		_gs.removeApplicationStateListener(_applicationState_listener);
-		super.onPause();
-	}
-
+	// Menu
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
@@ -150,19 +144,21 @@ public abstract class BaseActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private AccountManagerCallback<Bundle> _amc = new AccountManagerCallback<Bundle>() {
-		@Override
-		public void run(AccountManagerFuture<Bundle> future) {
-			Log.v(TAG, "_amc.run()");
-			_amc_future = new FutureWaitAsyncTask(_futureWaitAsyncTaskListener);
-			_amc_future.execute(future);
-		}
-	};
+	// Authentication
+	// private AccountManagerCallback<Bundle> _amc = new
+	// AccountManagerCallback<Bundle>() {
+	// @Override
+	// public void run(AccountManagerFuture<Bundle> future) {
+	// Log.v(TAG, "_amc.run()");
+	// new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+	// }
+	// };
 
 	private FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
 		@Override
 		public void onFail(Exception ex) {
-			onFailedAuthToken(ex);
+			// TODO stub
+			Log.v(TAG, "_futureWaitAsyncTaskListener.onFail()");
 		}
 
 		@Override
@@ -171,21 +167,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 			if (tokenString == null) {
 				if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
-					getAuthorization();
+					getAccount();
 				}
-			} else {
-				_gs.username = bundle.getString("authAccount");
-				_gs.accessToken = tokenString;
-				onHaveAuthToken(_gs.username, tokenString);
-				_gs.dispatchAuthenticationObtained();
 			}
 		}
 	};
 
-	/*-*********************************************-*/
-	/*-				Abstract Methods				-*/
-	/*-*********************************************-*/
-	public abstract void onHaveAuthToken(String username, String accessToken);
-
-	public abstract void onFailedAuthToken(Exception ex);
 }

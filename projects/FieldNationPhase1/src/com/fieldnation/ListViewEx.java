@@ -1,14 +1,22 @@
 package com.fieldnation;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ListView;
 
 public class ListViewEx extends ListView {
 	private static final String TAG = "OverScrollingListView";
+	private int offset = 0;
+	private List<OnOverscrollListener> _onOverscrollListeners = new LinkedList<OnOverscrollListener>();
 
 	public ListViewEx(Context context) {
 		this(context, null, -1);
@@ -20,46 +28,44 @@ public class ListViewEx extends ListView {
 
 	public ListViewEx(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+
 	}
 
-	@Override
-	protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX,
-			boolean clampedY) {
-		// TODO Method Stub: onOverScrolled()
-		Log.v(TAG,
-				"Method Stub: onOverScrolled(" + scrollX + ", " + scrollY + ", " + clampedX + ", " + clampedY + ")");
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			superOnOverScrolled(scrollX, scrollY, clampedX, clampedY);
+	public void setOnOverScrollListener(OnOverscrollListener l) {
+		_onOverscrollListeners.add(l);
+	}
+
+	private void dispatchOverscroll() {
+		for (int i = 0; i < _onOverscrollListeners.size(); i++) {
+			_onOverscrollListeners.get(i).onOverScroll(offset);
 		}
 	}
 
 	@Override
+	public boolean onTouchEvent(MotionEvent ev) {
+		if ((ev.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+			offset = 0;
+			dispatchOverscroll();
+		}
+		return super.onTouchEvent(ev);
+	}
+
+	@Override
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	protected boolean overScrollBy(int deltaX, int deltaY, int scrollX,
 			int scrollY, int scrollRangeX, int scrollRangeY,
 			int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
-		// TODO Method Stub: overScrollBy()
-		Log.v(TAG, "Method Stub: overScrollBy(" + deltaX + "," + deltaY + ")");
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			return superOverScrollBy(deltaX, deltaY, scrollX, scrollY,
-					scrollRangeX, scrollRangeY, maxOverScrollX, maxOverScrollY,
-					isTouchEvent);
-		}
-		return false;
-	}
 
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	private void superOnOverScrolled(int scrollX, int scrollY,
-			boolean clampedX, boolean clampedY) {
-		super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
-	}
+		offset += deltaY;
 
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	private boolean superOverScrollBy(int deltaX, int deltaY, int scrollX,
-			int scrollY, int scrollRangeX, int scrollRangeY,
-			int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
+		dispatchOverscroll();
+
 		return super.overScrollBy(deltaX, deltaY, scrollX, scrollY,
 				scrollRangeX, scrollRangeY, maxOverScrollX, maxOverScrollY,
 				isTouchEvent);
 	}
 
+	public interface OnOverscrollListener {
+		public void onOverScroll(int offset);
+	}
 }

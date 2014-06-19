@@ -1,4 +1,4 @@
-package com.fieldnation.auth;
+package com.fieldnation.authserver;
 
 import com.fieldnation.R;
 import com.fieldnation.service.rpc.AuthRpc;
