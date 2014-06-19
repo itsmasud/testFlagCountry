@@ -39,6 +39,10 @@
             android:name="com.fieldnation.authserver.AuthActivity"
             android:label="@string/activity_login_title" >
         </activity>
+        <activity
+            android:name="com.fieldnation.WorkorderDetailActivity"
+            android:label="@string/work_order_detail_title" >
+        </activity>
 
         <provider
             android:name="com.fieldnation.service.StubProvider"
@@ -81,7 +85,7 @@
             android:exported="true"
             android:process=":sync" >
             <intent-filter>
-com.fieldnation.service                
+com.fieldnation.service                
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 

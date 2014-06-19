@@ -35,7 +35,6 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	// Data
 	GlobalState _gs;
-	Handler handler = null;
 	private Account _account;
 	private boolean _authenticating = false;
 
@@ -49,8 +48,6 @@ public abstract class BaseActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		handler = new Handler();
 
 		_gs = (GlobalState) getApplicationContext();
 		_gs.setAuthenticationServer(authServer);
@@ -73,7 +70,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 		AccountManagerFuture<Bundle> future = null;
 		if (accounts.length == 0) {
 			future = _accountManager.addAccount(_gs.accountType, null, null,
-					null, this, null, handler);
+					null, this, null, new Handler());
 
 		} else if (accounts.length == 1) {
 			_account = accounts[0];
@@ -120,7 +117,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 				Log.v(TAG, "Method Stub: requestAuthentication()2");
 				AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
 						_account, _gs.accountType, null, BaseActivity.this,
-						null, handler);
+						null, new Handler());
 				client.waitForFuture(future);
 			}
 		}

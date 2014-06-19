@@ -10,12 +10,12 @@ import com.fieldnation.webapi.OAuth;
 public class WebRpcCaller {
 	private Context context;
 	private ResultReceiver callback;
-	private String _accessToken;
+	private String _authToken;
 	private String _username;
 
-	public WebRpcCaller(Context conetxt, String username, String accessToken, ResultReceiver callback) {
+	public WebRpcCaller(Context conetxt, String username, String authToken, ResultReceiver callback) {
 		this.context = conetxt;
-		_accessToken = accessToken;
+		_authToken = authToken;
 		_username = username;
 		this.callback = callback;
 	}
@@ -26,7 +26,7 @@ public class WebRpcCaller {
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
 		intent.putExtra("SERVICE", WebRpc.ACTION_NAME);
-		intent.putExtra(WebRpc.KEY_PARAM_ACCESS_TOKEN, _accessToken);
+		intent.putExtra(WebRpc.KEY_PARAM_AUTH_TOKEN, _authToken);
 		intent.putExtra(WebRpc.KEY_PARAM_USERNAME, _username);
 		intent.putExtra(WebRpc.KEY_METHOD, WebRpc.METHOD_HTTP_READ);
 		intent.putExtra(WebRpc.KEY_ALLOW_CACHE, allowCache);
@@ -48,7 +48,7 @@ public class WebRpcCaller {
 		Intent intent = new Intent(context, DataService.class);
 		intent.setAction("RPC");
 		intent.putExtra("SERVICE", WebRpc.ACTION_NAME);
-		intent.putExtra(WebRpc.KEY_PARAM_ACCESS_TOKEN, _accessToken);
+		intent.putExtra(WebRpc.KEY_PARAM_AUTH_TOKEN, _authToken);
 		intent.putExtra(WebRpc.KEY_PARAM_USERNAME, _username);
 		intent.putExtra(WebRpc.KEY_METHOD, WebRpc.METHOD_HTTP_WRITE);
 		intent.putExtra(WebRpc.KEY_ALLOW_CACHE, allowCache);

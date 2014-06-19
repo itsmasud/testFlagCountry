@@ -41,7 +41,7 @@ public class WebRpc extends RpcInterface {
 	public static final String KEY_PARAM_CALLBACK = "PARAM_CALLBACK";
 	public static final String KEY_PARAM_USERNAME = "PARAM_USERNAME";
 	public static final String KEY_METHOD = "METHOD";
-	public static final String KEY_PARAM_ACCESS_TOKEN = "PARAM_ACCESS_TOKEN";
+	public static final String KEY_PARAM_AUTH_TOKEN = "PARAM_AUTH_TOKEN";
 
 	public static final String ERROR_SESSION_INVALID = "SESSION_INVALID";
 	public static final String ERROR_USER_NOT_FOUND = "USER_NOT_FOUND";;
@@ -57,7 +57,7 @@ public class WebRpc extends RpcInterface {
 	@Override
 	public void execute(Context context, Intent intent) {
 		String method = intent.getStringExtra(KEY_METHOD);
-		String accessToken = intent.getStringExtra(KEY_PARAM_ACCESS_TOKEN);
+		String authToken = intent.getStringExtra(KEY_PARAM_AUTH_TOKEN);
 		String username = intent.getStringExtra(KEY_PARAM_USERNAME);
 		String errorMessage = null;
 		String errorType = ERROR_NONE;
@@ -75,8 +75,8 @@ public class WebRpc extends RpcInterface {
 			errorMessage = "Could not find the user.";
 		} else {
 			// validate session
-			Log.v(TAG, accessToken);
-			if (authCache.validateSessionHash(accessToken)) {
+			Log.v(TAG, authToken);
+			if (authCache.validateSessionHash(authToken)) {
 				try {
 					auth = OAuth.fromCache(authCache.getOAuthBlob());
 				} catch (ParseException e) {
@@ -85,7 +85,7 @@ public class WebRpc extends RpcInterface {
 				}
 			} else {
 				errorType = ERROR_SESSION_INVALID;
-				errorMessage = "The accesstoken is invalid or has expired.";
+				errorMessage = "The authtoken is invalid or has expired.";
 			}
 		}
 

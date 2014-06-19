@@ -78,26 +78,15 @@ public class MarketActivity extends BaseActivity {
 		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
 		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
 				R.drawable.ic_navigation_drawer, R.string.launcher_open,
-				R.string.launcher_open) {
-
-			// @Override
-			// public void onDrawerStateChanged(int newState) {
-			// if (newState != 0) {
-			// supportInvalidateOptionsMenu();
-			// }
-			// super.onDrawerStateChanged(newState);
-			// }
-			//
-			// @Override
-			// public void onDrawerSlide(View drawerView, float slideOffset) {
-			// if (slideOffset == 0.0) {
-			// supportInvalidateOptionsMenu();
-			// }
-			// super.onDrawerSlide(drawerView, slideOffset);
-			// }
-		};
+				R.string.launcher_open);
 
 		_drawerLayout.setDrawerListener(_drawerToggle);
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		_drawerToggle.syncState();
 	}
 
 	@Override

@@ -8,8 +8,8 @@ import android.os.ResultReceiver;
 
 public class WorkorderRpc extends WebRpcCaller {
 
-	public WorkorderRpc(Context conetxt, String username, String accessToken, WebRpcResultReciever callback) {
-		super(conetxt, username, accessToken, callback);
+	public WorkorderRpc(Context conetxt, String username, String authToken, WebRpcResultReciever callback) {
+		super(conetxt, username, authToken, callback);
 	}
 
 	public Intent getRequested(int resultCode, int page, boolean allowCache) {

@@ -59,6 +59,10 @@ public class MyWorkListFragment extends Fragment {
 				Log.v(TAG, "Restoring state");
 				_displayType = savedInstanceState.getString("_displayType");
 			}
+			if (savedInstanceState.containsKey("_hasData")) {
+				Log.v(TAG, "Restoring state");
+				_hasData = savedInstanceState.getBoolean("_hasData");
+			}
 		}
 
 		Log.v(TAG, "Display Type: " + _displayType);
@@ -96,7 +100,7 @@ public class MyWorkListFragment extends Fragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		updateUi();
+		//update();
 	}
 
 	@Override
@@ -113,6 +117,7 @@ public class MyWorkListFragment extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putString("_displayType", _displayType);
+		outState.putBoolean("_hasData", _hasData);
 		super.onSaveInstanceState(outState);
 	}
 

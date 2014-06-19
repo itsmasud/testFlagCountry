@@ -6,6 +6,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -126,8 +127,16 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: _this_onClick.onClick()");
+			try {
+				Intent intent = new Intent(getContext(),
+						WorkorderDetailActivity.class);
+				intent.putExtra("workorder_id",
+						_workorder.getLong("workorder_id"));
+				// TODO package up the workorder... or send the id
+				getContext().startActivity(intent);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	};
 	private View.OnLongClickListener _this_onLongClickListener = new View.OnLongClickListener() {

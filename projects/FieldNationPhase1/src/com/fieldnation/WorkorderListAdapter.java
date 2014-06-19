@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 /**
  * A list adapter that loads work order lists.
@@ -196,7 +197,11 @@ public class WorkorderListAdapter extends BaseAdapter {
 			_gs.invalidateAuthToken(_authToken);
 			_authToken = null;
 			_username = null;
-			_gs.requestAuthentication(_authClient);
+			// TODO, this is a bit dumb, but it works
+			Toast.makeText(
+					_context,
+					"Could not get data. Please check your network and try again.",
+					Toast.LENGTH_LONG).show();
 			notifyDataSetChanged();
 		}
 	};
@@ -228,6 +233,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 			// _waitForField = new WaitForFieldAsyncTask(
 			// _waitForAccessToken_listener);
 			// _waitForField.execute(_gs, "accessToken");
+			_gs.requestAuthentication(_authClient);
 		} else {
 			Log.v(TAG, "Have accessToken");
 			if (_workorderRpc == null) {

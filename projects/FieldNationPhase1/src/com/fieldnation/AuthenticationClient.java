@@ -2,8 +2,6 @@ package com.fieldnation;
 
 import com.fieldnation.authserver.FutureWaitAsyncTask;
 
-import android.accounts.Account;
-import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,10 +10,8 @@ import android.util.Log;
 public abstract class AuthenticationClient {
 	private static final String TAG = "AuthenticationClient";
 	private GlobalState _gs;
-	private Context _context;
 
 	public AuthenticationClient(Context context) {
-		_context = context;
 		_gs = (GlobalState) context.getApplicationContext();
 	}
 
@@ -63,6 +59,6 @@ public abstract class AuthenticationClient {
 		}
 	};
 
-	public abstract void onAuthentication(String username, String accessToken);
+	public abstract void onAuthentication(String username, String authToken);
 
 }
