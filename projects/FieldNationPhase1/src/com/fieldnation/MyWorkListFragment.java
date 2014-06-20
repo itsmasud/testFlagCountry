@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -192,13 +190,13 @@ public class MyWorkListFragment extends Fragment {
 		try {
 			if (_listAdapter == null) {
 				_listAdapter = new WorkorderListAdapter(
-						(BaseActivity) this.getActivity(), _displayType);
+						this.getActivity(), _displayType);
 				_listAdapter.registerDataSetObserver(_listAdapter_observer);
 			}
 
 			if (!_listAdapter.isViable()) {
 				_listAdapter = new WorkorderListAdapter(
-						(BaseActivity) this.getActivity(), _displayType);
+						this.getActivity(), _displayType);
 				_listAdapter.registerDataSetObserver(_listAdapter_observer);
 			}
 

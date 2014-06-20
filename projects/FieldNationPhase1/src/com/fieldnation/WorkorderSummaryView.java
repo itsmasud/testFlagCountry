@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -92,7 +91,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
 		_bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);
 		_bundleTextView = (TextView) findViewById(R.id.bundle_textview);
-		_bundleSeparator = (View) findViewById(R.id.bundle_separator);
+		_bundleSeparator = findViewById(R.id.bundle_separator);
 
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
 		_clientNameTextView = (TextView) findViewById(R.id.clientname_textview);

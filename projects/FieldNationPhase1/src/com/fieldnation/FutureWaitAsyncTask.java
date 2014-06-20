@@ -1,4 +1,4 @@
-package com.fieldnation.auth.server;
+package com.fieldnation;
 
 import android.accounts.AccountManagerFuture;
 import android.annotation.TargetApi;

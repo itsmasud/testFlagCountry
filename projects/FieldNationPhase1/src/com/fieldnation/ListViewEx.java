@@ -7,12 +7,15 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ListView;
 
+/**
+ * A custom listview class that provides hooks into the overscoll detection
+ * 
+ * @author michael.carver
+ * 
+ */
 public class ListViewEx extends ListView {
 	private static final String TAG = "OverScrollingListView";
 	private int offset = 0;

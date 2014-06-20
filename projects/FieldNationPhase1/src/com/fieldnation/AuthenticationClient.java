@@ -1,7 +1,5 @@
 package com.fieldnation;
 
-import com.fieldnation.auth.server.FutureWaitAsyncTask;
-
 import android.accounts.AccountManagerFuture;
 import android.content.Context;
 import android.os.Bundle;

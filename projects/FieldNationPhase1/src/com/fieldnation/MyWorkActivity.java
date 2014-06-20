@@ -1,8 +1,6 @@
 package com.fieldnation;
 
 import com.fieldnation.R;
-import com.fieldnation.webapi.OAuth;
-
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
@@ -14,7 +12,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.content.ContentResolver;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;

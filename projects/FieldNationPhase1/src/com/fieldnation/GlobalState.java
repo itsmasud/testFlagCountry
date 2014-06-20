@@ -1,13 +1,7 @@
 package com.fieldnation;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import com.fieldnation.webapi.OAuth;
 import com.fieldnation.webapi.Ws;
 
-import android.accounts.Account;
-import android.app.Activity;
 import android.app.Application;
 
 /**

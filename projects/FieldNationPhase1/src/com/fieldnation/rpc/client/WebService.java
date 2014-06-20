@@ -7,7 +7,6 @@ import android.os.ResultReceiver;
 import com.fieldnation.rpc.common.DataServiceConstants;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.server.DataService;
-import com.fieldnation.webapi.OAuth;
 
 public class WebService implements WebServiceConstants {
 	private Context _context;

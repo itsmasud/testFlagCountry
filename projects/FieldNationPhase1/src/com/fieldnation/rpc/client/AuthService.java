@@ -10,17 +10,17 @@ import com.fieldnation.rpc.common.DataServiceConstants;
 import com.fieldnation.rpc.server.DataService;
 
 public class AuthService implements AuthServiceConstants {
-	private Context context;
+	private Context _context;
 
 	public AuthService(Context conetxt) {
-		context = conetxt;
+		_context = conetxt;
 	}
 
 	public Intent authenticateWeb(AccountAuthenticatorResponse response,
 			String hostname, String grantType, String clientId,
 			String clientSecret, String username, String password) {
 
-		Intent intent = new Intent(context, DataService.class);
+		Intent intent = new Intent(_context, DataService.class);
 		intent.setAction(DataServiceConstants.ACTION_RPC);
 		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
 		intent.putExtra(KEY_METHOD, METHOD_GET_OAUTH_TOKEN);
@@ -41,7 +41,7 @@ public class AuthService implements AuthServiceConstants {
 			String hostname, String grantType, String clientId,
 			String clientSecret, String username, String password) {
 
-		Intent intent = new Intent(context, DataService.class);
+		Intent intent = new Intent(_context, DataService.class);
 		intent.setAction(DataServiceConstants.ACTION_RPC);
 		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
 		intent.putExtra(KEY_METHOD, METHOD_GET_OAUTH_TOKEN);

@@ -1,14 +1,8 @@
 package com.fieldnation;
 
-import java.text.ParseException;
-
-import com.fieldnation.auth.server.FutureWaitAsyncTask;
 import com.fieldnation.rpc.server.ClockReceiver;
-import com.fieldnation.webapi.OAuth;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.content.Intent;
 import android.os.Bundle;

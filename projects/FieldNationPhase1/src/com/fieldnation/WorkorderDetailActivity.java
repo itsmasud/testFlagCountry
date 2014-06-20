@@ -1,7 +1,5 @@
 package com.fieldnation;
 
-import java.net.PasswordAuthentication;
-
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
@@ -40,6 +38,7 @@ public class WorkorderDetailActivity extends BaseActivity {
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_workorder_detail);

@@ -2,11 +2,15 @@ package com.fieldnation.rpc.common;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.os.ResultReceiver;
-import android.util.Log;
 
+/**
+ * Performs some basic parsing on the response and provides some convenience
+ * methods for interacting with the response
+ * 
+ * @author michael.carver
+ * 
+ */
 public abstract class WebServiceResultReciever extends ResultReceiver implements WebServiceConstants {
 
 	public WebServiceResultReciever(Handler handler) {

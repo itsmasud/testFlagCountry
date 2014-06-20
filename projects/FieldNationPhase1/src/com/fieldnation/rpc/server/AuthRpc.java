@@ -1,7 +1,5 @@
 package com.fieldnation.rpc.server;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.HashMap;
 
 import com.fieldnation.GlobalState;
@@ -10,9 +8,6 @@ import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.AuthServiceConstants;
 import com.fieldnation.webapi.OAuth;
-import com.fieldnation.webapi.Result;
-
-import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.content.Context;
