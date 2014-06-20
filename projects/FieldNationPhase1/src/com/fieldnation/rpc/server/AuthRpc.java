@@ -12,6 +12,7 @@ import com.fieldnation.rpc.common.AuthServiceConstants;
 import com.fieldnation.webapi.OAuth;
 import com.fieldnation.webapi.Result;
 
+import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.content.Context;
@@ -36,39 +37,54 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
 
 		if (METHOD_GET_OAUTH_TOKEN.equals(method)) {
 			getOauthToken(context, intent);
-		} else if (METHOD_REFRESH_TOKEN.equals(method)) {
-			refreshToken(context, intent);
+			// } else if (METHOD_REFRESH_TOKEN.equals(method)) {
+			// refreshToken(context, intent);
 		}
 
 	}
 
-	private void refreshToken(Context context, Intent intent) {
-		String accessToken = intent.getStringExtra(KEY_PARAM_ACCESS_TOKEN);
-		String username = intent.getStringExtra(KEY_PARAM_USERNAME);
-
-		AuthCache ac = AuthCache.get(context, username);
-		if (ac == null)
-			return;
-
-		if (!ac.validateSessionHash(accessToken)) {
-			return;
-		}
-
-		try {
-			JsonObject reqBlob = new JsonObject(ac.getRequestBlob());
-
-			OAuth auth = OAuth.authServer(reqBlob.getString("hostname"),
-					reqBlob.getString("grantType"),
-					reqBlob.getString("clientId"),
-					reqBlob.getString("clientSecret"), username,
-					ac.getPassword());
-
-			ac.setOAuthBlob(auth.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-	}
+	// private void refreshToken(Context context, Intent intent) {
+	// String accessToken = intent.getStringExtra(KEY_PARAM_ACCESS_TOKEN);
+	// String username = intent.getStringExtra(KEY_PARAM_USERNAME);
+	//
+	// AuthCache ac = AuthCache.get(context, username);
+	// if (ac == null)
+	// return;
+	//
+	// if (!ac.validateSessionHash(accessToken)) {
+	// return;
+	// }
+	//
+	// AccountManager am = AccountManager.get(context);
+	//
+	// Account[] accounts = am.getAccountsByType(_gs.accountType);
+	//
+	// Account account = null;
+	//
+	// for (int i = 0; i < accounts.length; i++) {
+	// if (accounts[i].name.equals(username)) {
+	// account = accounts[i];
+	// break;
+	// }
+	// }
+	// String password = am.getPassword(account);
+	//
+	// Log.d(TAG, password);
+	//
+	// try {
+	// JsonObject reqBlob = new JsonObject(ac.getRequestBlob());
+	//
+	// OAuth auth = OAuth.authServer(reqBlob.getString("hostname"),
+	// reqBlob.getString("grantType"),
+	// reqBlob.getString("clientId"),
+	// reqBlob.getString("clientSecret"), username, password);
+	//
+	// ac.setOAuthBlob(auth.toString());
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// return;
+	// }
+	// }
 
 	private void getOauthToken(Context context, Intent intent) {
 		String errorMessage = null;

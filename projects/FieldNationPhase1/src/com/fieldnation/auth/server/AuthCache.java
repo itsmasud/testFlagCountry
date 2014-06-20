@@ -24,7 +24,7 @@ public class AuthCache {
 	private Context _context;
 	private long _id;
 	private String _username;
-	private String _password = "";
+	private String _passwordHash = "";
 	private String _sessionHash = "";
 	private long _sessionExpiry = 0;
 	private String _oAuthBlob = "";
@@ -34,7 +34,7 @@ public class AuthCache {
 		_context = context;
 		_id = src.getLong(0);
 		_username = src.getString(AuthCacheSqlHelper.Column.USERNAME.getIndex());
-		_password = src.getString(AuthCacheSqlHelper.Column.PASSWORD.getIndex());
+		_passwordHash = src.getString(AuthCacheSqlHelper.Column.PASSWORD_HASH.getIndex());
 		_sessionHash = src.getString(AuthCacheSqlHelper.Column.SESSION_HASH.getIndex());
 		_oAuthBlob = src.getString(AuthCacheSqlHelper.Column.OAUTH_BLOB.getIndex());
 		_requestBlob = src.getString(AuthCacheSqlHelper.Column.REQUEST_BLOB.getIndex());
@@ -48,22 +48,18 @@ public class AuthCache {
 	private AuthCache(Context context, String username, String password) {
 		_context = context;
 		_username = username;
-		_password = password;
+		_passwordHash = generatePasswordHash(password);
 	}
 
 	/*-			Password		-*/
 	public void setPassword(String password) {
-		_password = password;
+		_passwordHash = generatePasswordHash(password);
 		save();
-	}
-
-	public String getPassword() {
-		return _password;
 	}
 
 	public boolean validatePassword(String password) {
 		try {
-			return _password.equals(password);
+			return _passwordHash.equals(generatePasswordHash(password));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -131,11 +127,22 @@ public class AuthCache {
 	private String generateSessionHash(String password) {
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			// TODO, salt this hash
+			return misc.getHex(md.digest((password + ":" + _username + ":" + System.currentTimeMillis()).getBytes()));
+		} catch (Exception ex) {
+			// TODO should never happen!
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	private String generatePasswordHash(String password) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			// TODO, salt this hash !?
 			return misc.getHex(md.digest(password.getBytes()));
 		} catch (Exception ex) {
-			// TODO should never happen
-			System.exit(1);
+			// TODO should never happen!
+			ex.printStackTrace();
 			return null;
 		}
 	}
@@ -206,8 +213,8 @@ public class AuthCache {
 			ContentValues values = new ContentValues();
 			values.put(AuthCacheSqlHelper.Column.USERNAME.getName(),
 					authCache._username);
-			values.put(AuthCacheSqlHelper.Column.PASSWORD.getName(),
-					authCache._password);
+			values.put(AuthCacheSqlHelper.Column.PASSWORD_HASH.getName(),
+					authCache._passwordHash);
 			values.put(AuthCacheSqlHelper.Column.OAUTH_BLOB.getName(),
 					authCache._oAuthBlob);
 			values.put(AuthCacheSqlHelper.Column.SESSION_HASH.getName(),
@@ -231,8 +238,8 @@ public class AuthCache {
 			ContentValues values = new ContentValues();
 			values.put(AuthCacheSqlHelper.Column.USERNAME.getName(),
 					authCache._username);
-			values.put(AuthCacheSqlHelper.Column.PASSWORD.getName(),
-					authCache._password);
+			values.put(AuthCacheSqlHelper.Column.PASSWORD_HASH.getName(),
+					authCache._passwordHash);
 			values.put(AuthCacheSqlHelper.Column.OAUTH_BLOB.getName(),
 					authCache._oAuthBlob);
 			values.put(AuthCacheSqlHelper.Column.SESSION_HASH.getName(),

@@ -8,11 +8,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class AuthCacheSqlHelper extends SQLiteOpenHelper {
+	// Note: increment this value every time the structure of the database is
+	// changed.
+	private static final int TABLE_VER = 7;
+	public static final String TABLE_NAME = "auth_cache";
 
 	public enum Column {
 		ID(0, "_id", "integer primary key autoincrement"),
 		USERNAME(1, "username", "text not null", true),
-		PASSWORD(2, "password", "text not null"),
+		PASSWORD_HASH(2, "passwordHash", "text not null"),
 		SESSION_HASH(3, "sessionHash", "text not null"),
 		SESSION_EXPIRY(4, "sessionExpiry", "number not null"),
 		OAUTH_BLOB(5, "oAuthBlob", "text not null"),
@@ -70,10 +74,8 @@ public class AuthCacheSqlHelper extends SQLiteOpenHelper {
 		}
 	}
 
-	public static final String TABLE_NAME = "auth_cache";
-
 	public AuthCacheSqlHelper(Context context) {
-		super(context, TABLE_NAME + ".db", null, 6);
+		super(context, TABLE_NAME + ".db", null, TABLE_VER);
 	}
 
 	@Override

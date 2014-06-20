@@ -59,14 +59,4 @@ public class AuthService implements AuthServiceConstants {
 		return intent;
 	}
 
-	public Intent refreshToken(String username, String accessToken) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction(DataServiceConstants.ACTION_RPC);
-		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
-		intent.putExtra(KEY_METHOD, METHOD_REFRESH_TOKEN);
-		intent.putExtra(KEY_PARAM_ACCESS_TOKEN, accessToken);
-		intent.putExtra(KEY_PARAM_USERNAME, username);
-
-		return intent;
-	}
 }
