@@ -139,6 +139,8 @@ public class WorkorderListAdapter extends BaseAdapter {
 			_username = username;
 			_authToken = accessToken;
 			// TODO Method Stub: onAuthentication()
+			_workorderRpc = new WorkorderService(_context, _username,
+					_authToken, _webRpcReceiver);
 			Log.v(TAG,
 					"Method Stub: onAuthentication(" + username + ", " + accessToken + ")");
 			update(false);
@@ -227,7 +229,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 		if (_authToken == null) {
 			Log.v(TAG, "Waiting for accessToken");
 
-			// _workorderRpc = null;
+			_workorderRpc = null;
 			// _waitForField = new WaitForFieldAsyncTask(
 			// _waitForAccessToken_listener);
 			// _waitForField.execute(_gs, "accessToken");

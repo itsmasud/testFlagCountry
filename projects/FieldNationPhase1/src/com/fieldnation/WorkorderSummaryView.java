@@ -59,7 +59,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private JsonObject _workorder;
 
 	// state lookuptable
-	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1, R.drawable.wosum_status_2, R.drawable.wosum_status_3, R.drawable.wosum_status_4, R.drawable.wosum_status_5, R.drawable.wosum_status_6, R.drawable.wosum_status_7, R.drawable.wosum_status_8, R.drawable.wosum_status_9 };
+	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1, R.drawable.wosum_status_2, R.drawable.wosum_status_3, R.drawable.wosum_status_4 };
+	private static final int[] _STATUS_TEXT_TABLE = { R.color.wosumStatusLabel1, R.color.wosumStatusLabel2, R.color.wosumStatusLabel3, R.color.wosumStatusLabel4 };
 
 	public WorkorderSummaryView(Context context) {
 		this(context, null, -1);
@@ -116,7 +117,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_slideBackAnimation = AnimationUtils.loadAnimation(getContext(),
 				R.anim.wosum_slide_back);
 
-		setIsBundle(true);
+		setIsBundle(false);
 	}
 
 	/*-*********************************-*/
@@ -159,9 +160,11 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		@Override
 		public void onClick(View v) {
-			_state = (_state + 1) % 9;
+			_state = (_state + 1) % 4;
 
 			_statusLayout.setBackgroundResource(_STATUS_LOOKUP_TABLE[_state]);
+			_statusTextView.setTextColor(getContext().getResources().getColor(
+					_STATUS_TEXT_TABLE[_state]));
 
 			// TODO Method Stub: onClick()
 			System.out.println("Method Stub: onClick()");

@@ -43,7 +43,10 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 			errorMessage = "Could not find the user.";
 		} else {
 			// validate session
-			Log.v(TAG, authToken);
+			if (authToken != null)
+				Log.v(TAG, authToken);
+			else
+				Log.v(TAG, "null authToken");
 			if (authCache.validateSessionHash(authToken)) {
 				try {
 					auth = OAuth.fromCache(authCache.getOAuthBlob());

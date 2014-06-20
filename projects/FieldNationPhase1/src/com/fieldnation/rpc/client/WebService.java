@@ -16,8 +16,8 @@ public class WebService implements WebServiceConstants {
 
 	public WebService(Context context, String username, String authToken, ResultReceiver callback) {
 		_context = context;
-		_authToken = authToken;
 		_username = username;
+		_authToken = authToken;
 		_callback = callback;
 	}
 

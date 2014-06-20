@@ -140,40 +140,45 @@
                 <RelativeLayout
                     android:id="@+id/actions_layout"
                     style="@style/WorkorderSummary_ActionsLayout"
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:layout_alignBottom="@+id/data_layout"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentRight="true" >
 
-                    <TextView
-                        android:id="@+id/payment_textview"
-                        style="@style/WorkorderSummary_PaymentLabel"
+                    <LinearLayout
+                        android:id="@+id/payment_layout"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:gravity="right"
-                        android:maxLines="1"
-                        android:text="$5,000"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:layout_alignParentTop="true"
+                        android:orientation="vertical" >
 
-                    <TextView
-                        android:id="@+id/basis_textview"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_below="@+id/payment_textview"
-                        android:gravity="right"
-                        android:maxLines="1"
-                        android:text="fixed"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textSize="12sp" />
+                        <TextView
+                            android:id="@+id/payment_textview"
+                            style="@style/WorkorderSummary_PaymentLabel"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:maxLines="1"
+                            android:text="$5,000"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <TextView
+                            android:id="@+id/basis_textview"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:maxLines="1"
+                            android:text="fixed"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textSize="12sp" />
+                    </LinearLayout>
 
                     <Button
                         android:id="@+id/detail_button"
                         style="@style/WorkorderSummary_Button"
                         android:layout_width="match_parent"
-                        android:layout_height="32dp"
-                        android:layout_alignParentBottom="true"
+                        android:layout_height="48dp"
+                        android:layout_below="@+id/payment_layout"
                         android:maxLines="1"
                         android:text="Check In" />
                 </RelativeLayout>
