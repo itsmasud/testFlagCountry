@@ -1,14 +1,15 @@
-package com.fieldnation.service.rpc;
+package com.fieldnation.rpc.client;
 
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.common.WebServiceResultReciever;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.ResultReceiver;
 
-public class WorkorderRpc extends WebRpcCaller {
+public class WorkorderService extends WebService implements WebServiceConstants {
 
-	public WorkorderRpc(Context conetxt, String username, String authToken, WebRpcResultReciever callback) {
+	public WorkorderService(Context conetxt, String username, String authToken, WebServiceResultReciever callback) {
 		super(conetxt, username, authToken, callback);
 	}
 

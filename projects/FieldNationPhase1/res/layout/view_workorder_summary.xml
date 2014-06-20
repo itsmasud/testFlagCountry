@@ -45,93 +45,129 @@
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
+            style="@style/WorkorderSummary_DataContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-            <LinearLayout
-                android:id="@+id/wosum_data"
-                style="@style/WorkorderSummary_DataContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/actions_layout"
-                android:orientation="vertical" >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/bundle_imageview"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/bundle_icon" />
 
                 <TextView
-                    android:id="@+id/title_textview"
                     style="@style/WorkorderSummary_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
+                    android:layout_toRightOf="@+id/bundle_imageview"
                     android:maxLines="1"
-                    android:text="Project Title"
+                    android:text="Bundle"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
-                    android:id="@+id/clientname_textview"
+                    style="@style/WorkorderSummary_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Client Name"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/distance_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="3.5 mi"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/when_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="04/12/14 2pm"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
+                    android:layout_alignParentRight="true"
+                    android:maxLines="1"
+                    android:text="5 Work Orders"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/actions_layout"
-                style="@style/WorkorderSummary_ActionsLayout"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/wosum_data"
-                android:layout_alignParentRight="true"
-                android:padding="10dp" >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-                <TextView
-                    android:id="@+id/payment_textview"
-                    style="@style/WorkorderSummary_PaymentLabel"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:gravity="right"
-                    android:maxLines="1"
-                    android:text="$5,000" />
-
-                <TextView
-                    android:id="@+id/basis_textview"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/payment_textview"
-                    android:gravity="right"
-                    android:maxLines="1"
-                    android:text="fixed" />
-
-                <Button
-                    android:id="@+id/detail_button"
-                    style="@style/WorkorderSummary_Button"
+                <LinearLayout
+                    android:id="@+id/wosum_data"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_alignParentBottom="true"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignRight="@+id/basis_textview"
-                    android:maxLines="1"
-                    android:text="Check In" />
+                    android:layout_toLeftOf="@+id/actions_layout"
+                    android:orientation="vertical" >
 
+                    <TextView
+                        android:id="@+id/title_textview"
+                        style="@style/WorkorderSummary_Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Project Title"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/clientname_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Client Name"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/distance_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3.5 mi"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/when_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04/12/14 2pm"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/actions_layout"
+                    style="@style/WorkorderSummary_ActionsLayout"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@+id/wosum_data"
+                    android:layout_alignParentRight="true"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/payment_textview"
+                        style="@style/WorkorderSummary_PaymentLabel"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:gravity="right"
+                        android:maxLines="1"
+                        android:text="$5,000" />
+
+                    <TextView
+                        android:id="@+id/basis_textview"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/payment_textview"
+                        android:gravity="right"
+                        android:maxLines="1"
+                        android:text="fixed" />
+
+                    <Button
+                        android:id="@+id/detail_button"
+                        style="@style/WorkorderSummary_Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignRight="@+id/basis_textview"
+                        android:maxLines="1"
+                        android:text="Check In" />
+                </RelativeLayout>
             </RelativeLayout>
-        </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.service.rpc.WebRpc;
-import com.fieldnation.service.rpc.WebRpcResultReciever;
-import com.fieldnation.service.rpc.WorkorderRpc;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.common.WebServiceResultReciever;
 
 import android.accounts.AccountManager;
 import android.content.Context;
@@ -45,7 +45,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	private Context _context;
 	private JsonArray _workorders = null;
 	private WaitForFieldAsyncTask _waitForField;
-	private WorkorderRpc _workorderRpc;
+	private WorkorderService _workorderRpc;
 	private Method _rpcMethod;
 	private boolean _viable;
 	private boolean _allowCache = true;
@@ -71,7 +71,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 		_viable = true;
 
-		_rpcMethod = WorkorderRpc.class.getDeclaredMethod(type,
+		_rpcMethod = WorkorderService.class.getDeclaredMethod(type,
 				new Class<?>[] { int.class, int.class, boolean.class });
 		_rpcMethod.setAccessible(true);
 
@@ -147,14 +147,14 @@ public class WorkorderListAdapter extends BaseAdapter {
 		}
 	}
 
-	private WebRpcResultReciever _webRpcReceiver = new WebRpcResultReciever(
+	private WebServiceResultReciever _webRpcReceiver = new WebServiceResultReciever(
 			new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			int page = resultData.getInt(KEY_PARAM_PAGE);
 			String data = new String(
-					resultData.getByteArray(WebRpc.KEY_RESPONSE_DATA));
+					resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 
 			JsonArray orders = null;
 			try {
@@ -237,7 +237,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 		} else {
 			Log.v(TAG, "Have accessToken");
 			if (_workorderRpc == null) {
-				_workorderRpc = new WorkorderRpc(_context, _username,
+				_workorderRpc = new WorkorderService(_context, _username,
 						_authToken, _webRpcReceiver);
 			}
 			try {

@@ -1,4 +1,4 @@
-package com.fieldnation.service.rpc;
+package com.fieldnation.rpc.server;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -6,9 +6,9 @@ import java.util.HashMap;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.authserver.db.AuthCache;
+import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.DataService;
+import com.fieldnation.rpc.common.AuthServiceConstants;
 import com.fieldnation.webapi.OAuth;
 import com.fieldnation.webapi.Result;
 
@@ -20,27 +20,9 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-public class AuthRpc extends RpcInterface {
+public class AuthRpc extends RpcInterface implements AuthServiceConstants {
 
 	private final static String TAG = "service.rpc.AuthRpc";
-
-	public static final String ACTION_NAME = "auth";
-
-	public static final String METHOD_REFRESH_TOKEN = "refreshToken";
-	public static final String METHOD_GET_OAUTH_TOKEN = "getOauthToken";
-
-	public static final String KEY_RESULT_CODE = "RESULT_CODE";
-	public static final String KEY_PARAM_RESULT_RECEIVER = "PARAM_RESULT_RECEIVER";
-	public static final String KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE = "PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE";
-	public static final String KEY_PARAM_PASSWORD = "PARAM_PASSWORD";
-	public static final String KEY_PARAM_CLIENT_SECRET = "PARAM_CLIENT_SECRET";
-	public static final String KEY_PARAM_CLIENT_ID = "PARAM_CLIENT_ID";
-	public static final String KEY_PARAM_GRANT_TYPE = "PARAM_GRANT_TYPE";
-	public static final String KEY_PARAM_PATH = "PARAM_PATH";
-	public static final String KEY_PARAM_HOSTNAME = "PARAM_HOSTNAME";
-	public static final String KEY_PARAM_USERNAME = "PARAM_USERNAME";
-	public static final String KEY_PARAM_ACCESS_TOKEN = "PARAM_ACCESS_TOKEN";
-	public static final String KEY_METHOD = "METHOD";
 
 	private GlobalState _gs;
 
@@ -203,60 +185,5 @@ public class AuthRpc extends RpcInterface {
 		}
 	}
 
-	public static Intent authenticateWeb(Context context,
-			AccountAuthenticatorResponse response, String hostname,
-			String grantType, String clientId, String clientSecret,
-			String username, String password) {
-
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction(DataService.ACTION_RPC);
-		intent.putExtra(DataService.KEY_SERVICE, ACTION_NAME);
-		intent.putExtra(KEY_METHOD, METHOD_GET_OAUTH_TOKEN);
-		intent.putExtra(KEY_PARAM_HOSTNAME, hostname);
-		intent.putExtra(KEY_PARAM_PATH, "/authentication/api/oauth/token");
-		intent.putExtra(KEY_PARAM_GRANT_TYPE, grantType);
-		intent.putExtra(KEY_PARAM_CLIENT_ID, clientId);
-		intent.putExtra(KEY_PARAM_CLIENT_SECRET, clientSecret);
-		intent.putExtra(KEY_PARAM_USERNAME, username);
-		intent.putExtra(KEY_PARAM_PASSWORD, password);
-
-		intent.putExtra(KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
-
-		return intent;
-	}
-
-	public static Intent authenticateWeb(Context context,
-			ResultReceiver callback, int resultCode, String hostname,
-			String grantType, String clientId, String clientSecret,
-			String username, String password) {
-
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction(DataService.ACTION_RPC);
-		intent.putExtra(DataService.KEY_SERVICE, ACTION_NAME);
-		intent.putExtra(KEY_METHOD, METHOD_GET_OAUTH_TOKEN);
-		intent.putExtra(KEY_PARAM_HOSTNAME, hostname);
-		intent.putExtra(KEY_PARAM_PATH, "/authentication/api/oauth/token");
-		intent.putExtra(KEY_PARAM_GRANT_TYPE, grantType);
-		intent.putExtra(KEY_PARAM_CLIENT_ID, clientId);
-		intent.putExtra(KEY_PARAM_CLIENT_SECRET, clientSecret);
-		intent.putExtra(KEY_PARAM_USERNAME, username);
-		intent.putExtra(KEY_PARAM_PASSWORD, password);
-
-		intent.putExtra(KEY_PARAM_RESULT_RECEIVER, callback);
-		intent.putExtra(KEY_RESULT_CODE, resultCode);
-
-		return intent;
-	}
-
-	public static Intent refreshToken(Context context, String username,
-			String accessToken) {
-		Intent intent = new Intent(context, DataService.class);
-		intent.setAction(DataService.ACTION_RPC);
-		intent.putExtra(DataService.KEY_SERVICE, ACTION_NAME);
-		intent.putExtra(KEY_METHOD, METHOD_REFRESH_TOKEN);
-		intent.putExtra(KEY_PARAM_ACCESS_TOKEN, accessToken);
-		intent.putExtra(KEY_PARAM_USERNAME, username);
-
-		return intent;
-	}
+	
 }

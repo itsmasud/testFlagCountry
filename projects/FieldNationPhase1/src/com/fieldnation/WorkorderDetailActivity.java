@@ -3,9 +3,9 @@ package com.fieldnation;
 import java.net.PasswordAuthentication;
 
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.rpc.WebRpc;
-import com.fieldnation.service.rpc.WebRpcResultReciever;
-import com.fieldnation.service.rpc.WorkorderRpc;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.common.WebServiceResultReciever;
 
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +35,7 @@ public class WorkorderDetailActivity extends BaseActivity {
 
 	// Services
 	private MyAuthenticationClient _authClient;
-	private WorkorderRpc _woRpc;
+	private WorkorderService _woRpc;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -99,8 +99,8 @@ public class WorkorderDetailActivity extends BaseActivity {
 			_username = username;
 			_authToken = authToken;
 
-			_woRpc = new WorkorderRpc(WorkorderDetailActivity.this, username,
-					authToken, _rpcReciever);
+			_woRpc = new WorkorderService(WorkorderDetailActivity.this,
+					username, authToken, _rpcReciever);
 
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
 			// TODO Method Stub: onAuthentication()
@@ -108,7 +108,7 @@ public class WorkorderDetailActivity extends BaseActivity {
 		}
 	}
 
-	private WebRpcResultReciever _rpcReciever = new WebRpcResultReciever(
+	private WebServiceResultReciever _rpcReciever = new WebServiceResultReciever(
 			new Handler()) {
 
 		@Override
@@ -118,8 +118,9 @@ public class WorkorderDetailActivity extends BaseActivity {
 			Log.v(TAG, resultData.toString());
 
 			try {
-				_detailEditText.setText(new JsonObject(new String(
-						resultData.getByteArray(WebRpc.KEY_RESPONSE_DATA))).display());
+				_detailEditText.setText(new JsonObject(
+						new String(
+								resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))).display());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

@@ -1,4 +1,4 @@
-package com.fieldnation.service.rpc;
+package com.fieldnation.rpc.common;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,17 +7,17 @@ import android.os.Parcelable;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-public abstract class WebRpcResultReciever extends ResultReceiver {
+public abstract class WebServiceResultReciever extends ResultReceiver implements WebServiceConstants {
 
-	public WebRpcResultReciever(Handler handler) {
+	public WebServiceResultReciever(Handler handler) {
 		super(handler);
 	}
 
 	@Override
 	protected void onReceiveResult(int resultCode, Bundle resultData) {
-		String errorType = resultData.getString(WebRpc.KEY_RESPONSE_ERROR_TYPE);
+		String errorType = resultData.getString(KEY_RESPONSE_ERROR_TYPE);
 
-		if (WebRpc.ERROR_NONE.equals(errorType))
+		if (ERROR_NONE.equals(errorType))
 			onSuccess(resultCode, resultData);
 		else
 			onError(resultCode, resultData, errorType);

@@ -1,12 +1,11 @@
-package com.fieldnation.service.rpc;
+package com.fieldnation.rpc.server;
 
-import com.fieldnation.service.ClockReceiver;
-import com.fieldnation.service.DataService;
+import com.fieldnation.rpc.common.DataServiceConstants;
 
 import android.content.Context;
 import android.content.Intent;
 
-public class ClockRpc {
+public class ClockService {
 	private static final String TAG = "service.rpc.ClockRpc";
 
 	public static void enableClock(Context context) {
@@ -15,7 +14,7 @@ public class ClockRpc {
 
 	public static void pulseClock(Context context) {
 		Intent intent = new Intent(context, DataService.class);
-		intent.setAction(DataService.ACTION_CLOCK_PULSE);
+		intent.setAction(DataServiceConstants.ACTION_CLOCK_PULSE);
 		context.startService(intent);
 	}
 }

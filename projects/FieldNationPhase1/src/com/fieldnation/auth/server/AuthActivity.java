@@ -1,9 +1,9 @@
-package com.fieldnation.authserver;
+package com.fieldnation.auth.server;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.service.rpc.AuthRpc;
-import com.fieldnation.service.rpc.ClockRpc;
+import com.fieldnation.rpc.client.AuthService;
+import com.fieldnation.rpc.server.ClockService;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
@@ -75,8 +75,9 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 			String clientId = AuthActivity.this.getString(R.string.fn_client_id);
 			String clientSecret = AuthActivity.this.getString(R.string.fn_client_secret);
 
-			Intent intent = AuthRpc.authenticateWeb(AuthActivity.this, _rpcReceiver,
-					1, hostname, grantType, clientId, clientSecret, _username,
+			AuthService authserve = new AuthService(AuthActivity.this);
+			Intent intent = authserve.authenticateWeb(_rpcReceiver, 1,
+					hostname, grantType, clientId, clientSecret, _username,
 					_password);
 
 			startService(intent);
@@ -112,7 +113,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 					AuthActivity.this.setResult(RESULT_OK, intent);
 					AuthActivity.this.finish();
 
-					ClockRpc.enableClock(AuthActivity.this);
+					ClockService.enableClock(AuthActivity.this);
 				} else {
 					_loadingProgressBar.setVisibility(View.GONE);
 					_contentLayout.setVisibility(View.VISIBLE);

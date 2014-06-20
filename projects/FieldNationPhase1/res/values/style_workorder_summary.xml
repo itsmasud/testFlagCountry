@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <color name="wosumBackground">#00FF0000</color>
-    <color name="wosumInsideBg">#FFFFFFFF</color>
-    <color name="wosumInsideBevel">#FFebeeee</color>
+    <color name="wosumBackground">#00000000</color>
+    <color name="wosumInsideBg">#FFFCFCFC</color>
+    <color name="wosumInsideBevel">#FFe0e0e0</color>
     <color name="wosumOptionsBackground">#FF383f49</color>
 
     <!-- status colors -->
-    <color name="wosumStatus1">#FFFFFFFF</color>
-    <color name="wosumStatus1Bevel">#FFEBEBEB</color>
+    <color name="wosumStatus1">#FFFCFCFC</color>
+    <color name="wosumStatus1Bevel">#FFe0e0e0</color>
     <color name="wosumStatus2">#FFFFFF00</color>
     <color name="wosumStatus2Bevel">#FFEBEB00</color>
     <color name="wosumStatus3">#FFFF00FF</color>
@@ -34,7 +34,7 @@
     <color name="wosumButton1Foreground">#FFFFFFFF</color>
     <color name="wosumButton1GradientTop">#FF5bd7b8</color>
     <color name="wosumButton1GradientBot">#FF36bb9a</color>
-    <color name="wosumButton1Bevel">#FF35a689</color>
+    <color name="wosumButton1Bevel">#8035a689</color>
 
     <style name="WorkorderSummary">
         <item name="android:background">@color/transparent</item>
@@ -64,7 +64,7 @@
     </style>
 
     <style name="WorkorderSummary_ActionsLayout">
-        <item name="android:background">@drawable/wosum_rightside</item>
+        
     </style>
 
     <style name="WorkorderSummary_StatusSeparator">

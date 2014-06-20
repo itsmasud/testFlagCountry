@@ -1,4 +1,4 @@
-package com.fieldnation.authserver;
+package com.fieldnation.auth.server;
 
 import android.app.Service;
 import android.content.Intent;

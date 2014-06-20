@@ -1,7 +1,7 @@
-package com.fieldnation.authserver;
+package com.fieldnation.auth.server;
 
 import com.fieldnation.R;
-import com.fieldnation.service.rpc.AuthRpc;
+import com.fieldnation.rpc.client.AuthService;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -57,7 +57,8 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		String clientId = _context.getString(R.string.fn_client_id);
 		String clientSecret = _context.getString(R.string.fn_client_secret);
 
-		Intent intent = AuthRpc.authenticateWeb(_context, response, hostname,
+		AuthService authServe = new AuthService(_context);
+		Intent intent = authServe.authenticateWeb(response, hostname,
 				grantType, clientId, clientSecret, account.name, password);
 
 		_context.startService(intent);

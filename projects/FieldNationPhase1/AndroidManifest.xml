@@ -23,7 +23,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.fieldnation.MarketActivity" >
+        <activity
+            android:name="com.fieldnation.MarketActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,26 +35,29 @@
         <activity
             android:name="com.fieldnation.MyWorkActivity"
             android:configChanges="orientation"
+            android:exported="false"
             android:label="@string/mywork_title" >
         </activity>
         <activity
-            android:name="com.fieldnation.authserver.AuthActivity"
+            android:name="com.fieldnation.auth.server.AuthActivity"
+            android:exported="true"
             android:label="@string/activity_login_title" >
         </activity>
         <activity
             android:name="com.fieldnation.WorkorderDetailActivity"
+            android:exported="false"
             android:label="@string/work_order_detail_title" >
         </activity>
 
         <provider
-            android:name="com.fieldnation.service.StubProvider"
+            android:name="com.fieldnation.rpc.server.StubProvider"
             android:authorities="com.fieldnation.service"
             android:exported="false"
             android:syncable="true" >
         </provider>
 
         <service
-            android:name="com.fieldnation.authserver.AuthService"
+            android:name="com.fieldnation.auth.server.AuthService"
             android:exported="true"
             android:process=":auth" >
             <intent-filter>
@@ -65,27 +70,28 @@
         </service>
 
         <receiver
-            android:name="com.fieldnation.service.BootReciever"
+            android:name="com.fieldnation.rpc.server.BootReciever"
             android:process=":remote" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.fieldnation.service.ClockReceiver"
+            android:name="com.fieldnation.rpc.server.ClockReceiver"
             android:process=":remote" >
         </receiver>
 
         <service
-            android:name="com.fieldnation.service.DataService"
+            android:name="com.fieldnation.rpc.server.DataService"
+            android:exported="false"
             android:process=":remote" >
         </service>
         <service
-            android:name="com.fieldnation.service.SyncService"
+            android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
             <intent-filter>
-com.fieldnation.service                
+com.fieldnation.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
@@ -96,6 +102,7 @@ com.fieldnation.service
 
         <activity
             android:name="com.fieldnation.SettingsActivity"
+            android:exported="false"
             android:label="@string/settings" >
         </activity>
     </application>

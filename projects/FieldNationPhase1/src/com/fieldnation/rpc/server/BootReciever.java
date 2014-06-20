@@ -1,6 +1,4 @@
-package com.fieldnation.service;
-
-import com.fieldnation.service.rpc.ClockRpc;
+package com.fieldnation.rpc.server;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +8,7 @@ public class BootReciever extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		ClockRpc.enableClock(context);
+		ClockService.enableClock(context);
 	}
 
 }

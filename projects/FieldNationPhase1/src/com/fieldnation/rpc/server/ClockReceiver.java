@@ -1,6 +1,4 @@
-package com.fieldnation.service;
-
-import com.fieldnation.service.rpc.ClockRpc;
+package com.fieldnation.rpc.server;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -11,12 +9,13 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+//TODO unlink from client side app?
 public class ClockReceiver extends BroadcastReceiver {
 	private static final String TAG = "ClockReceiver";
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		ClockRpc.pulseClock(context);
+		ClockService.pulseClock(context);
 
 		// TODO, setup next clock
 		if (intent.hasExtra("IS_ONE_TIME")) {

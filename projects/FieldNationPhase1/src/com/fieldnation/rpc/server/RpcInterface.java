@@ -1,4 +1,4 @@
-package com.fieldnation.service.rpc;
+package com.fieldnation.rpc.server;
 
 import java.util.HashMap;
 

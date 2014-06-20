@@ -11,9 +11,7 @@
             </solid>
         </shape>
     </item>
-    <item
-        android:bottom="5px"
-        android:right="2px">
+    <item android:bottom="5px">
         <shape android:shape="rectangle" >
             <corners
                 android:bottomRightRadius="10dp"

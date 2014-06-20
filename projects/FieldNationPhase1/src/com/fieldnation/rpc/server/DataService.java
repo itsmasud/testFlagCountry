@@ -1,21 +1,14 @@
-package com.fieldnation.service;
+package com.fieldnation.rpc.server;
 
 import java.util.HashMap;
 
-import com.fieldnation.service.rpc.AuthRpc;
-import com.fieldnation.service.rpc.WebRpc;
-import com.fieldnation.service.rpc.RpcInterface;
+import com.fieldnation.rpc.common.DataServiceConstants;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-public class DataService extends IntentService {
-	public static final String ACTION_RPC = "RPC";
-	public static final String ACTION_CLOCK_PULSE = "CLOCK_PULSE";
-
-	public static final String KEY_SERVICE = "SERVICE";
-
+public class DataService extends IntentService implements DataServiceConstants {
 	private static final String TAG = "service.DataService";
 
 	private HashMap<String, RpcInterface> _rpcs = new HashMap<String, RpcInterface>();

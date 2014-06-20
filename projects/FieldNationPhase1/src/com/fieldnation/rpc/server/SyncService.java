@@ -1,4 +1,4 @@
-package com.fieldnation.service;
+package com.fieldnation.rpc.server;
 
 import android.app.Service;
 import android.content.Intent;
