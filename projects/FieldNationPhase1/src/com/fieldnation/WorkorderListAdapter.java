@@ -197,11 +197,16 @@ public class WorkorderListAdapter extends BaseAdapter {
 			_gs.invalidateAuthToken(_authToken);
 			_authToken = null;
 			_username = null;
-			// TODO, this is a bit dumb, but it works
-			Toast.makeText(
-					_context,
-					"Could not get data. Please check your network and try again.",
-					Toast.LENGTH_LONG).show();
+
+			if (WebServiceConstants.ERROR_SESSION_INVALID.equals(errorType)) {
+				_gs.requestAuthentication(_authClient);
+			} else {
+				// TODO, this is a bit dumb, but it works
+				Toast.makeText(
+						_context,
+						"Could not get data. Please check your network and try again.",
+						Toast.LENGTH_LONG).show();
+			}
 			notifyDataSetChanged();
 		}
 	};

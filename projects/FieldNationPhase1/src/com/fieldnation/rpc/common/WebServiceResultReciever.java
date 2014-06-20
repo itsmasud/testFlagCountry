@@ -29,6 +29,13 @@ public abstract class WebServiceResultReciever extends ResultReceiver implements
 		super.onReceiveResult(resultCode, resultData);
 	}
 
+	/**
+	 * 
+	 * @param resultCode
+	 * @param resultData
+	 * @param errorType
+	 *            Will be one of the following WebServiceConstants.ERROR_*
+	 */
 	public abstract void onError(int resultCode, Bundle resultData,
 			String errorType);
 
