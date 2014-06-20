@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.util.Log;
 
 public class DataService extends IntentService implements DataServiceConstants {
-	private static final String TAG = "service.DataService";
+	private static final String TAG = "rpc.server.DataService";
 
 	private HashMap<String, RpcInterface> _rpcs = new HashMap<String, RpcInterface>();
 

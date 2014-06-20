@@ -20,7 +20,7 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 public class WebRpc extends RpcInterface implements WebServiceConstants {
-	private static final String TAG = "service.rpc.WebRpc";
+	private static final String TAG = "rpc.server.WebRpc";
 
 	public WebRpc(HashMap<String, RpcInterface> map) {
 		super(map, ACTION_NAME);

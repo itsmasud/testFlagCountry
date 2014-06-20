@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,8 +31,9 @@ import android.widget.TextView;
  */
 public class WorkorderSummaryView extends RelativeLayout {
 	private static final String TAG = "WorkorderSummaryView";
+
 	// UI
-	private View _statusView;
+	private RelativeLayout _statusLayout;
 	private TextView _titleTextView;
 	private TextView _clientNameTextView;
 	private Button _detailButton;
@@ -42,17 +44,20 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private TextView _statusTextView;
 	private LinearLayout _contentLayout;
 	private RelativeLayout _optionsLayout;
+	private RelativeLayout _bundleLayout;
+	private ImageView _bundleImageView;
+	private TextView _bundleTextView;
+	private View _bundleSeparator;
+
+	// animations
+	private Animation _slideAnimation;
+	private Animation _slideBackAnimation;
 
 	// Data
 	private GlobalState _gs;
 	private int _state = 0;
-	private AttributeSet _attrs;
 
-	private boolean _hasDetail;
 	private JsonObject _workorder;
-
-	private Animation _slideAnimation;
-	private Animation _slideBackAnimation;
 
 	// state lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1, R.drawable.wosum_status_2, R.drawable.wosum_status_3, R.drawable.wosum_status_4, R.drawable.wosum_status_5, R.drawable.wosum_status_6, R.drawable.wosum_status_7, R.drawable.wosum_status_8, R.drawable.wosum_status_9 };
@@ -81,12 +86,13 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_optionsLayout.setClickable(false);
 
 		_statusTextView = (TextView) findViewById(R.id.status_textview);
-		// Animation anim = AnimationUtils.loadAnimation(getContext(),
-		// R.anim.animate_vertical);
-		// anim.setAnimationListener(_textView_animationListener);
-		// _statusTextView.startAnimation(anim);
 
-		_statusView = findViewById(R.id.status_view);
+		_statusLayout = (RelativeLayout) findViewById(R.id.status_layout);
+
+		_bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
+		_bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);
+		_bundleTextView = (TextView) findViewById(R.id.bundle_textview);
+		_bundleSeparator = (View) findViewById(R.id.bundle_separator);
 
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
 		_clientNameTextView = (TextView) findViewById(R.id.clientname_textview);
@@ -111,6 +117,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_slideBackAnimation = AnimationUtils.loadAnimation(getContext(),
 				R.anim.wosum_slide_back);
 
+		setIsBundle(true);
 	}
 
 	/*-*********************************-*/
@@ -155,7 +162,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		public void onClick(View v) {
 			_state = (_state + 1) % 9;
 
-			_statusView.setBackgroundResource(_STATUS_LOOKUP_TABLE[_state]);
+			_statusLayout.setBackgroundResource(_STATUS_LOOKUP_TABLE[_state]);
 
 			// TODO Method Stub: onClick()
 			System.out.println("Method Stub: onClick()");
@@ -198,6 +205,22 @@ public class WorkorderSummaryView extends RelativeLayout {
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
+	private void setIsBundle(boolean isBundle) {
+		if (isBundle) {
+			_bundleLayout.setVisibility(VISIBLE);
+			_titleTextView.setVisibility(GONE);
+			_basisTextView.setVisibility(GONE);
+			_cashTextView.setVisibility(GONE);
+			_bundleSeparator.setVisibility(VISIBLE);
+		} else {
+			_bundleLayout.setVisibility(GONE);
+			_bundleSeparator.setVisibility(GONE);
+			_titleTextView.setVisibility(VISIBLE);
+			_basisTextView.setVisibility(VISIBLE);
+			_cashTextView.setVisibility(VISIBLE);
+		}
+	}
+
 	private void refresh() {
 		try {
 			// title
@@ -208,11 +231,20 @@ public class WorkorderSummaryView extends RelativeLayout {
 		try {
 			// client name location.contact_name
 			if (_workorder.has("location.contact_name")) {
-				_clientNameTextView.setText(_workorder.getString("location.contact_name"));
+				String t = _workorder.getString("location.contact_name");
+				if (t == null) {
+					_clientNameTextView.setVisibility(GONE);
+				} else if (t.trim().equals("")) {
+					_clientNameTextView.setVisibility(GONE);
+				} else {
+					_clientNameTextView.setVisibility(VISIBLE);
+					_clientNameTextView.setText(t);
+				}
 			} else {
-				_clientNameTextView.setText("NA");
+				_clientNameTextView.setVisibility(GONE);
 			}
 		} catch (Exception ex) {
+			_clientNameTextView.setVisibility(GONE);
 			ex.printStackTrace();
 		}
 		try {

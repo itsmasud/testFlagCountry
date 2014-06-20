@@ -13,7 +13,7 @@
         android:layout_alignLeft="@+id/content_layout"
         android:layout_alignRight="@+id/content_layout"
         android:layout_alignTop="@+id/content_layout"
-        android:layout_margin="10dp" >
+        android:layout_margin="20dp" >
     </RelativeLayout>
 
     <LinearLayout
@@ -24,7 +24,7 @@
         android:orientation="horizontal" >
 
         <RelativeLayout
-            android:id="@+id/status_view"
+            android:id="@+id/status_layout"
             style="@style/WorkorderSummary_StatusBar"
             android:layout_width="30dp"
             android:layout_height="fill_parent" >
@@ -38,8 +38,7 @@
                 android:text="Tesssst" />
 
             <View
-                android:id="@+id/separator"
-                style="@style/WorkorderSummary_StatusSeparator"
+                style="@style/WorkorderSummary_Separator"
                 android:layout_width="2px"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true" />
@@ -52,8 +51,11 @@
             android:orientation="vertical" >
 
             <RelativeLayout
+                android:id="@+id/bundle_layout"
+                style="@style/WorkorderSummary_BundleLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
 
                 <ImageView
                     android:id="@+id/bundle_imageview"
@@ -73,6 +75,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
+                    android:id="@+id/bundle_textview"
                     style="@style/WorkorderSummary_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -82,12 +85,20 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
 
+            <View
+                android:id="@+id/bundle_separator"
+                style="@style/WorkorderSummary_Separator"
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:visibility="gone" />
+
             <RelativeLayout
+                style="@style/WorkorderSummary_Inside"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
                 <LinearLayout
-                    android:id="@+id/wosum_data"
+                    android:id="@+id/data_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -131,9 +142,8 @@
                     style="@style/WorkorderSummary_ActionsLayout"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
-                    android:layout_alignBottom="@+id/wosum_data"
-                    android:layout_alignParentRight="true"
-                    android:padding="10dp" >
+                    android:layout_alignBottom="@+id/data_layout"
+                    android:layout_alignParentRight="true" >
 
                     <TextView
                         android:id="@+id/payment_textview"
@@ -143,7 +153,8 @@
                         android:layout_alignParentRight="true"
                         android:gravity="right"
                         android:maxLines="1"
-                        android:text="$5,000" />
+                        android:text="$5,000"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
                         android:id="@+id/basis_textview"
@@ -153,16 +164,16 @@
                         android:layout_below="@+id/payment_textview"
                         android:gravity="right"
                         android:maxLines="1"
-                        android:text="fixed" />
+                        android:text="fixed"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/detail_button"
                         style="@style/WorkorderSummary_Button"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="32dp"
                         android:layout_alignParentBottom="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignRight="@+id/basis_textview"
                         android:maxLines="1"
                         android:text="Check In" />
                 </RelativeLayout>

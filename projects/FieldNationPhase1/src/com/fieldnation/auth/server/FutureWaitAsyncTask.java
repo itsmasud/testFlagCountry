@@ -13,7 +13,7 @@ import android.os.Bundle;
  * 
  */
 public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
-	private static final String TAG = "auth.FutureWaitAsyncTask";
+	private static final String TAG = "auth.server.FutureWaitAsyncTask";
 
 	private Listener _listener;
 

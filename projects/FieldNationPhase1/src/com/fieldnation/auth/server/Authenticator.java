@@ -21,7 +21,7 @@ import android.util.Log;
  * 
  */
 public class Authenticator extends AbstractAccountAuthenticator {
-	private static final String TAG = "auth.Authenticator";
+	private static final String TAG = "auth.server.Authenticator";
 	private Context _context;
 
 	public Authenticator(Context context) {

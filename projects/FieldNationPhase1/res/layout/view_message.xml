@@ -14,7 +14,7 @@
             android:layout_height="fill_parent" >
 
             <View
-                android:id="@+id/status_view"
+                android:id="@+id/status_layout"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/wosum_status_3" />
@@ -23,7 +23,7 @@
                 android:id="@+id/filler"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
-                android:layout_toRightOf="@+id/status_view" />
+                android:layout_toRightOf="@+id/status_layout" />
 
             <ImageView
                 android:layout_width="64dp"

@@ -21,8 +21,7 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 public class AuthRpc extends RpcInterface implements AuthServiceConstants {
-
-	private final static String TAG = "service.rpc.AuthRpc";
+	private final static String TAG = "rpc.server.AuthRpc";
 
 	private GlobalState _gs;
 
@@ -185,5 +184,4 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
 		}
 	}
 
-	
 }

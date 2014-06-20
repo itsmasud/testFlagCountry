@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-	private static final String TAG = "service.SyncAdapter";
+	private static final String TAG = "rpc.server.SyncAdapter";
 
 	public SyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);

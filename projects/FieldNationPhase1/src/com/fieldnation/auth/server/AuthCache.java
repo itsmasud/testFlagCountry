@@ -19,7 +19,7 @@ import com.fieldnation.utils.misc;
  * 
  */
 public class AuthCache {
-	private static final String TAG = "auth.db.AuthCache";
+	private static final String TAG = "auth.server.AuthCache";
 
 	private Context _context;
 	private long _id;

@@ -28,5 +28,4 @@ public interface WebServiceConstants {
 	public static final String ERROR_NETWORK_ERROR = "NETWORK_ERROR";
 	public static final String ERROR_UNKNOWN = "UNKNOWN";
 	public static final String ERROR_HTTP_ERROR = "HTTP_ERROR";
-
 }

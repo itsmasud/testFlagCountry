@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 public class ClockService {
-	private static final String TAG = "service.rpc.ClockRpc";
+	private static final String TAG = "rpc.server.ClockService";
 
 	public static void enableClock(Context context) {
 		ClockReceiver.registerClock(context);

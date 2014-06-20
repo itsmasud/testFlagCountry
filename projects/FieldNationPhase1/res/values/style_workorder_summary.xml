@@ -25,7 +25,7 @@
     <color name="wosumStatus8Bevel">#FF6B6B6B</color>
     <color name="wosumStatus9">#FF7F7F00</color>
     <color name="wosumStatus9Bevel">#FF6B6B00</color>
-    <color name="wosumStatusSeparator">#FFf6f5f5</color>
+    <color name="wosumStatusSeparator">#FFe0e0e0</color>
 
     <!-- wosum button colors -->
     <color name="wosumButtonBackground">#FF78a3f2</color>
@@ -38,20 +38,32 @@
 
     <style name="WorkorderSummary">
         <item name="android:background">@color/transparent</item>
+        <!--
+             <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        -->
+    </style>
+
+    <style name="WorkorderSummary_Inside">
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
     </style>
 
-    <style name="WorkorderSummary_Inside"></style>
+    <style name="WorkorderSummary_BundleLayout">
 
-    <style name="WorkorderSummary_DataContainer">
-        <item name="android:background">@drawable/wosum_inside</item>
+        <!-- item name="android:background">@drawable/wosum_bundle</item -->
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="WorkorderSummary_DataContainer">
+        <item name="android:background">@drawable/wosum_data_container</item>
     </style>
 
     <style name="WorkorderSummary_StatusBar">
@@ -63,11 +75,9 @@
         <item name="android:paddingTop">5dp</item>
     </style>
 
-    <style name="WorkorderSummary_ActionsLayout">
-        
-    </style>
+    <style name="WorkorderSummary_ActionsLayout"></style>
 
-    <style name="WorkorderSummary_StatusSeparator">
+    <style name="WorkorderSummary_Separator">
         <item name="android:background">@color/wosumStatusSeparator</item>
     </style>
 

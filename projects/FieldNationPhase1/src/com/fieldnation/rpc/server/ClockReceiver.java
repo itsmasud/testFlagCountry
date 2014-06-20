@@ -11,7 +11,7 @@ import android.util.Log;
 
 //TODO unlink from client side app?
 public class ClockReceiver extends BroadcastReceiver {
-	private static final String TAG = "ClockReceiver";
+	private static final String TAG = "rpc.server.ClockReceiver";
 
 	@Override
 	public void onReceive(Context context, Intent intent) {

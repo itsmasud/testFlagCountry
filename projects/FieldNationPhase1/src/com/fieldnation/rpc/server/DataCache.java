@@ -14,7 +14,7 @@ import android.util.Log;
  * 
  */
 public class DataCache {
-	private static final String TAG = "service.DataCache";
+	private static final String TAG = "rpc.server.DataCache";
 
 	private static Hashtable<String, Bundle> _cache = new Hashtable<String, Bundle>();
 

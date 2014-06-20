@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 public class SyncService extends Service {
-	private static final String TAG = "sevice.SyncService";
+	private static final String TAG = "rpc.server.SyncService";
 
 	private static SyncAdapter _syncAdapter = null;
 
