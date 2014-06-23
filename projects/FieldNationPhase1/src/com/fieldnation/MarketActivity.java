@@ -60,13 +60,13 @@ public class MarketActivity extends BaseActivity {
 
 		try {
 			_woAdapter = new WorkorderListAdapter(MarketActivity.this,
-					WorkorderListAdapter.TYPE_AVAILABLE);
+					DataView.AVAILABLE);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 		_woAdapter.registerDataSetObserver(_listAdapter_observer);
 		_workordersListView.setAdapter(_woAdapter);
-		_woAdapter.update(true);
+		//_woAdapter.update(true);
 
 	}
 

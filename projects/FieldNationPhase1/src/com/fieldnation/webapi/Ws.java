@@ -16,7 +16,10 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import android.util.Log;
+
 public class Ws {
+	private static final String TAG = "webapi.Ws";
 	public static boolean USE_HTTPS = true;
 
 	public static final boolean DEBUG = true;
@@ -38,19 +41,23 @@ public class Ws {
 		if (_accessToken != null)
 			options = _accessToken.applyToUrlOptions(options);
 
+		Log.v(TAG, path + options);
+
 		HttpURLConnection conn = null;
 		if (USE_HTTPS) {
 			// only disabled if debugging
 			if (DEBUG)
 				trustAllHosts();
 
-			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+			conn = (HttpURLConnection) new URL(
+					"https://" + _accessToken.getHostname() + path + options).openConnection();
 
 			if (DEBUG)
 				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 
 		} else {
-			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+			conn = (HttpURLConnection) new URL(
+					"http://" + _accessToken.getHostname() + path + options).openConnection();
 		}
 
 		conn.setRequestMethod(method);
@@ -87,18 +94,22 @@ public class Ws {
 		if (_accessToken != null)
 			options = _accessToken.applyToUrlOptions(options);
 
+		Log.v(TAG, path + options);
+
 		HttpURLConnection conn = null;
 		if (USE_HTTPS) {
 			// only enabled if debugging
 			if (DEBUG)
 				trustAllHosts();
 
-			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+			conn = (HttpURLConnection) new URL(
+					"https://" + _accessToken.getHostname() + path + options).openConnection();
 
 			if (DEBUG)
 				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 		} else {
-			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+			conn = (HttpURLConnection) new URL(
+					"http://" + _accessToken.getHostname() + path + options).openConnection();
 		}
 
 		conn.setRequestMethod(method);

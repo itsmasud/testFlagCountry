@@ -39,10 +39,18 @@
     <color name="wosumButtonBackground">#FF78a3f2</color>
     <color name="wosumButtonBorder">#FFf1f1e9</color>
     <color name="wosumButtonBevel">#FF6b90d3</color>
-    <color name="wosumButton1Foreground">#FFFFFFFF</color>
-    <color name="wosumButton1GradientTop">#FF5bd7b8</color>
-    <color name="wosumButton1GradientBot">#FF36bb9a</color>
-    <color name="wosumButton1Bevel">#8035a689</color>
+    <color name="wosumButton1Foreground">#FF000000</color>
+    <color name="wosumButton1GradientTop">#FFFFFFFF</color>
+    <color name="wosumButton1GradientBot">#FFe7e7e7</color>
+    <color name="wosumButton1Bevel">#80c3c3c3</color>
+    <color name="wosumButton2Foreground">#FFFFFFFF</color>
+    <color name="wosumButton2GradientTop">#FFFD7723</color>
+    <color name="wosumButton2GradientBot">#FFE35700</color>
+    <color name="wosumButton2Bevel">#80C85207</color>
+    <color name="wosumButton3Foreground">#FFFFFFFF</color>
+    <color name="wosumButton3GradientTop">#FF5bd7b8</color>
+    <color name="wosumButton3GradientBot">#FF36bb9a</color>
+    <color name="wosumButton3Bevel">#8035a689</color>
 
     <style name="WorkorderSummary">
         <item name="android:background">@color/transparent</item>
@@ -50,7 +58,7 @@
              <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
-        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
         -->
     </style>
 

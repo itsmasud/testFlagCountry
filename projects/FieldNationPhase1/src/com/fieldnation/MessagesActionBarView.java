@@ -37,14 +37,11 @@ public class MessagesActionBarView extends RelativeLayout {
 			return;
 
 		setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				// TODO Method Stub: onClick()
 				Log.v(TAG, "Method Stub: onClick()");
-
 			}
-
 		});
 	}
 

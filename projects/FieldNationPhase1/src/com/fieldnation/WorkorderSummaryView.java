@@ -1,7 +1,12 @@
 package com.fieldnation;
 
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
@@ -54,6 +59,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 	// Data
 	private GlobalState _gs;
+	private DataView _dataView = null;
 	private int _state = 0;
 
 	private JsonObject _workorder;
@@ -61,6 +67,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 	// state lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1, R.drawable.wosum_status_2, R.drawable.wosum_status_3, R.drawable.wosum_status_4 };
 	private static final int[] _STATUS_TEXT_TABLE = { R.color.wosumStatusLabel1, R.color.wosumStatusLabel2, R.color.wosumStatusLabel3, R.color.wosumStatusLabel4 };
+	private static final int[] _STATUS_BUTTON_FG = { R.color.wosumButton1Foreground, R.color.wosumButton2Foreground, R.color.wosumButton3Foreground, R.color.wosumButton1Foreground };
+	private static final int[] _STATUS_BUTTON_BG = { R.drawable.wosum_button1_bg, R.drawable.wosum_button2_bg, R.drawable.wosum_button3_bg, R.drawable.wosum_button1_bg };
 
 	public WorkorderSummaryView(Context context) {
 		this(context, null, -1);
@@ -162,9 +170,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		public void onClick(View v) {
 			_state = (_state + 1) % 4;
 
-			_statusLayout.setBackgroundResource(_STATUS_LOOKUP_TABLE[_state]);
-			_statusTextView.setTextColor(getContext().getResources().getColor(
-					_STATUS_TEXT_TABLE[_state]));
+			updateStatusUi();
 
 			// TODO Method Stub: onClick()
 			System.out.println("Method Stub: onClick()");
@@ -199,14 +205,25 @@ public class WorkorderSummaryView extends RelativeLayout {
 	/*-*********************************-*/
 	/*-				Data				-*/
 	/*-*********************************-*/
-	public void setWorkorder(JsonObject workorder) {
+	public void setWorkorder(DataView dataView, JsonObject workorder) {
 		_workorder = workorder;
+		_dataView = dataView;
 		refresh();
 	}
 
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
+	private void updateStatusUi() {
+		_statusLayout.setBackgroundResource(_STATUS_LOOKUP_TABLE[_state]);
+		_statusTextView.setTextColor(getContext().getResources().getColor(
+				_STATUS_TEXT_TABLE[_state]));
+		_detailButton.setBackgroundResource(_STATUS_BUTTON_BG[_state]);
+		_detailButton.setTextColor(getContext().getResources().getColor(
+				_STATUS_BUTTON_FG[_state]));
+
+	}
+
 	private void setIsBundle(boolean isBundle) {
 		if (isBundle) {
 			_bundleLayout.setVisibility(VISIBLE);
@@ -226,7 +243,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private void refresh() {
 		try {
 			// title
-			_titleTextView.setText(_workorder.getString("title"));
+			_titleTextView.setText(_workorder.getString("title") + _workorder.getInt("workorder_id"));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -331,11 +348,184 @@ public class WorkorderSummaryView extends RelativeLayout {
 			} else {
 				_statusTextView.setText("");
 			}
+			buildStatus();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
 		_contentLayout.clearAnimation();
 		_optionsLayout.setClickable(false);
+	}
+
+	private void buildStatus() throws ParseException {
+		switch (_dataView) {
+		case ASSIGNED:
+			buildStatusAssigned();
+			break;
+		case AVAILABLE:
+			buildStatusAvailable();
+			break;
+		case CANCELLED:
+			break;
+		case COMPLETED:
+			break;
+		case IN_PROGRESS:
+			buildStatusInProgress();
+			break;
+		}
+	}
+
+	private void buildStatusAssigned() throws ParseException {
+		// if on-hold, then only check for acknowledged
+		boolean isOnHold = false;
+		boolean isAcked = false;
+		boolean has16 = false;
+		boolean hasAction = false;
+		String action;
+
+		// get on-hold value
+		JsonArray jsonLabels = _workorder.getJsonArray("label");
+
+		for (int i = 0; i < jsonLabels.size(); i++) {
+			JsonObject label = jsonLabels.getJsonObject(i);
+			if (label.has("type")) {
+				if (label.getString("type").equals("on-hold"))
+					isOnHold = true;
+
+				if (!label.has("action") || !label.getString("action").equals(
+						"acknowledge")) {
+					isAcked = true;
+				}
+			}
+
+			if (label.getInt("label_id") == 16) {
+				has16 = true;
+			}
+		}
+
+		// TODO need to change the button's fg/bg
+		if (isOnHold) {
+			_statusTextView.setText("On Hold");
+			if (isAcked) {
+				_state = 3;
+				_detailButton.setVisibility(GONE);
+			} else {
+				_detailButton.setText("Acknowledge");
+				_detailButton.setVisibility(VISIBLE);
+				_state = 1;
+			}
+		} else if (has16) {
+			_state = 2;
+			_statusTextView.setText("Unconfirmed");
+			_detailButton.setText("Check In");
+			_detailButton.setVisibility(VISIBLE);
+		} else {
+			_state = 0;
+			_statusTextView.setText("Confirmed");
+			_detailButton.setText("Check In");
+			_detailButton.setVisibility(VISIBLE);
+		}
+		updateStatusUi();
+	}
+
+	private void buildStatusAvailable() throws ParseException {
+		int statusId = _workorder.getInt("workorder_id");
+		if (statusId == 9) {
+			_state = 1;
+			_statusTextView.setText("Routed");
+			_detailButton.setText("Accept");
+			_detailButton.setVisibility(VISIBLE);
+		} else {
+			boolean has11 = false;
+			boolean has12 = false;
+			boolean has13 = false;
+
+			JsonArray jsonLabels = _workorder.getJsonArray("label");
+
+			for (int i = 0; i < jsonLabels.size(); i++) {
+				JsonObject label = jsonLabels.getJsonObject(i);
+				if (label.getInt("label_id") == 11) {
+					has11 = true;
+				}
+				if (label.getInt("label_id") == 12) {
+					has12 = true;
+				}
+				if (label.getInt("label_id") == 12) {
+					has12 = true;
+				}
+			}
+
+			if (has11) {
+				_state = 0;
+				_statusTextView.setText("Available");
+				_detailButton.setText("Request");
+				_detailButton.setVisibility(VISIBLE);
+			} else if (has12) {
+				_state = 2;
+				_statusTextView.setText("Requested");
+				_detailButton.setVisibility(GONE);
+			} else if (has13) {
+				_state = 3;
+				_statusTextView.setText("Sent Counter");
+				_detailButton.setVisibility(VISIBLE);
+				_detailButton.setText("View Counter");
+			}
+			updateStatusUi();
+		}
+	}
+
+	private void buildStatusInProgress() throws ParseException {
+		// if on-hold, then only check for acknowledged
+		boolean isOnHold = false;
+		boolean isAcked = false;
+		boolean has1 = false;
+		boolean has2 = false;
+
+		// get on-hold value
+		JsonArray jsonLabels = _workorder.getJsonArray("label");
+
+		for (int i = 0; i < jsonLabels.size(); i++) {
+			JsonObject label = jsonLabels.getJsonObject(i);
+			if (label.has("type")) {
+				if (label.getString("type").equals("on-hold"))
+					isOnHold = true;
+
+				if (!label.has("action") || !label.getString("action").equals(
+						"acknowledge")) {
+					isAcked = true;
+				}
+			}
+
+			if (label.getInt("label_id") == 1) {
+				has1 = true;
+			}
+			if (label.getInt("label_id") == 2) {
+				has2 = true;
+			}
+		}
+
+		// TODO need to change the button's fg/bg
+		if (isOnHold) {
+			_statusTextView.setText("On Hold");
+			if (isAcked) {
+				_state = 3;
+				_detailButton.setVisibility(GONE);
+			} else {
+				_state = 1;
+				_detailButton.setText("Acknowledge");
+				_detailButton.setVisibility(VISIBLE);
+			}
+		} else if (has1) {
+			_state = 2;
+			_statusTextView.setText("Checked In");
+			_detailButton.setText("Check Out");
+			_detailButton.setVisibility(VISIBLE);
+		} else {
+			_state = 0;
+			_statusTextView.setText("Checked Out");
+			_detailButton.setText("Check In");
+			_detailButton.setVisibility(VISIBLE);
+		}
+		updateStatusUi();
 	}
 }

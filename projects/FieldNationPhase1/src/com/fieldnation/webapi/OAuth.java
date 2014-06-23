@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.misc;
 
 /**
  * Represents an oauth token. This class is designed to be immutable.
@@ -107,7 +108,10 @@ public class OAuth {
 
 		OutputStream out = conn.getOutputStream();
 
-		out.write(("grant_type=" + grantType + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&username=" + username + "&password=" + password).getBytes());
+		String payload = "grant_type=" + grantType + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&username=" + misc.escapeForURL(username) + "&password=" + misc.escapeForURL(password);
+		Log.v(TAG, payload);
+		// payload = misc.escapeForURL(payload);
+		out.write(payload.getBytes());
 
 		Result result = new Result(conn);
 

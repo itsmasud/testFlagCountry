@@ -2,8 +2,12 @@ package com.fieldnation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+
+import org.json.JSONObject;
 
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReciever;
@@ -31,14 +35,6 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 	public static final String KEY_PARAM_PAGE = "PARAM_PAGE";
 
-	// available method calls
-	public static final String TYPE_REQUESTED = "getRequested";
-	public static final String TYPE_AVAILABLE = "getAvailable";
-	public static final String TYPE_PENDING_APPROVAL = "getPendingApproval";
-	public static final String TYPE_ASSIGNED = "getAssigned";
-	public static final String TYPE_COMPLETED = "getCompleted";
-	public static final String TYPE_CANCELED = "getCanceled";
-
 	private GlobalState _gs;
 	private Context _context;
 	private JsonArray _workorders = null;
@@ -50,6 +46,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	private MyAuthenticationClient _authClient;
 	private String _authToken;
 	private String _username;
+	private DataView _viewType;
 
 	/*-*****************************-*/
 	/*-			Lifecycle			-*/
@@ -61,15 +58,17 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 *            should be one of the TYPE_* strings
 	 * @throws NoSuchMethodException
 	 */
-	public WorkorderListAdapter(Context context, String type) throws NoSuchMethodException {
+	public WorkorderListAdapter(Context context, DataView viewType) throws NoSuchMethodException {
 		_context = context;
 		_gs = (GlobalState) context.getApplicationContext();
 		_authClient = new MyAuthenticationClient(context);
 		_gs.requestAuthentication(_authClient);
+		_viewType = viewType;
 
 		_viable = true;
 
-		_rpcMethod = WorkorderService.class.getDeclaredMethod(type,
+		_rpcMethod = WorkorderService.class.getDeclaredMethod(
+				viewType.getCall(),
 				new Class<?>[] { int.class, int.class, boolean.class });
 		_rpcMethod.setAccessible(true);
 
@@ -120,7 +119,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 			wosum = new WorkorderSummaryView(parent.getContext());
 		}
 
-		wosum.setWorkorder(_workorders.getJsonObject(position));
+		wosum.setWorkorder(_viewType, _workorders.getJsonObject(position));
 
 		return wosum;
 	}
@@ -165,11 +164,31 @@ public class WorkorderListAdapter extends BaseAdapter {
 				ex.printStackTrace();
 			}
 			if (orders == null) {
+				Log.v(TAG, "orders is null");
 				notifyDataSetChanged();
 				return;
 			}
 
-			_workorders.merge(orders);
+			// perform merge
+			Log.v(TAG, "perform merge: " + orders.size());
+			for (int i = 0; i < orders.size(); i++) {
+				try {
+					JsonArray labels = orders.getJsonObject(i).getJsonArray(
+							"label");
+
+					for (int j = 0; j < labels.size(); j++) {
+						JsonObject label = labels.getJsonObject(j);
+						if (_viewType.hasLabel(label.getInt("label_id"))) {
+							_workorders.add(orders.getJsonObject(i));
+							break;
+						}
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					_workorders.add(orders.getJsonObject(i));
+				}
+			}
+			Log.v(TAG, "merge complete: " + _workorders.size());
 
 			notifyDataSetChanged();
 
@@ -246,9 +265,9 @@ public class WorkorderListAdapter extends BaseAdapter {
 						_authToken, _webRpcReceiver);
 			}
 			try {
-				Intent intent = callRpc(RPC_GET, 1, _allowCache);
+				Intent intent = callRpc(RPC_GET, 0, _allowCache);
 
-				intent.putExtra(KEY_PARAM_PAGE, 1);
+				intent.putExtra(KEY_PARAM_PAGE, 0);
 				_context.startService(intent);
 			} catch (Exception e) {
 				e.printStackTrace();

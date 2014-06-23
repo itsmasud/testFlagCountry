@@ -16,13 +16,6 @@ import android.widget.TextView;
 public class MyWorkListFragment extends Fragment {
 	private static final String TAG = "MyWorkListFragment";
 
-	public static final String TYPE_REQUESTED = "getRequested";
-	public static final String TYPE_AVAILABLE = "getAvailable";
-	public static final String TYPE_PENDING_APPROVAL = "getPendingApproval";
-	public static final String TYPE_ASSIGNED = "getAssigned";
-	public static final String TYPE_COMPLETED = "getCompleted";
-	public static final String TYPE_CANCELED = "getCanceled";
-
 	// UI
 	private ListViewEx _workordersListView;
 	private ProgressBar _loadingProgressBar;
@@ -33,15 +26,15 @@ public class MyWorkListFragment extends Fragment {
 
 	// Data
 	private WorkorderListAdapter _listAdapter;
-	private String _displayType = TYPE_REQUESTED;
+	private DataView _displayView = DataView.AVAILABLE;
 	private boolean _hasData = false;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 
-	public MyWorkListFragment setDisplayType(String displayType) {
-		_displayType = displayType;
+	public MyWorkListFragment setDisplayType(DataView displayView) {
+		_displayView = displayView;
 		return this;
 	}
 
@@ -50,12 +43,12 @@ public class MyWorkListFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		Log.v(TAG,
-				"onCreate: " + MyWorkListFragment.this.toString() + "/" + _displayType);
+				"onCreate: " + MyWorkListFragment.this.toString() + "/" + _displayView.getCall());
 
 		if (savedInstanceState != null) {
-			if (savedInstanceState.containsKey("_displayType")) {
+			if (savedInstanceState.containsKey("_displayView")) {
 				Log.v(TAG, "Restoring state");
-				_displayType = savedInstanceState.getString("_displayType");
+				_displayView = DataView.fromName(savedInstanceState.getString("_displayView"));
 			}
 			if (savedInstanceState.containsKey("_hasData")) {
 				Log.v(TAG, "Restoring state");
@@ -63,9 +56,9 @@ public class MyWorkListFragment extends Fragment {
 			}
 		}
 
-		Log.v(TAG, "Display Type: " + _displayType);
+		Log.v(TAG, "Display Type: " + _displayView.getCall());
 		_hasData = false;
-		getListAdapter().update(true);
+		//getListAdapter().update(true);
 	}
 
 	@Override
@@ -98,7 +91,7 @@ public class MyWorkListFragment extends Fragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		//update();
+		// update();
 	}
 
 	@Override
@@ -114,7 +107,7 @@ public class MyWorkListFragment extends Fragment {
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putString("_displayType", _displayType);
+		outState.putString("_displayView", _displayView.name());
 		outState.putBoolean("_hasData", _hasData);
 		super.onSaveInstanceState(outState);
 	}
@@ -141,7 +134,7 @@ public class MyWorkListFragment extends Fragment {
 		@Override
 		public void onClick(View v) {
 			Log.v(TAG,
-					"_refresh_onClick: " + MyWorkListFragment.this.toString() + "/" + _displayType);
+					"_refresh_onClick: " + MyWorkListFragment.this.toString() + "/" + _displayView.getCall());
 			update();
 		}
 	};
@@ -189,14 +182,14 @@ public class MyWorkListFragment extends Fragment {
 	private WorkorderListAdapter getListAdapter() {
 		try {
 			if (_listAdapter == null) {
-				_listAdapter = new WorkorderListAdapter(
-						this.getActivity(), _displayType);
+				_listAdapter = new WorkorderListAdapter(this.getActivity(),
+						_displayView);
 				_listAdapter.registerDataSetObserver(_listAdapter_observer);
 			}
 
 			if (!_listAdapter.isViable()) {
-				_listAdapter = new WorkorderListAdapter(
-						this.getActivity(), _displayType);
+				_listAdapter = new WorkorderListAdapter(this.getActivity(),
+						_displayView);
 				_listAdapter.registerDataSetObserver(_listAdapter_observer);
 			}
 

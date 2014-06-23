@@ -1,6 +1,8 @@
 package com.fieldnation;
 
 import com.fieldnation.R;
+
+import android.renderscript.Element.DataType;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
@@ -59,10 +61,10 @@ public class MyWorkActivity extends BaseActivity {
 
 		_fragments = new MyWorkListFragment[4];
 
-		_fragments[0] = new MyWorkListFragment().setDisplayType(MyWorkListFragment.TYPE_REQUESTED);
-		_fragments[1] = new MyWorkListFragment().setDisplayType(MyWorkListFragment.TYPE_ASSIGNED);
-		_fragments[2] = new MyWorkListFragment().setDisplayType(MyWorkListFragment.TYPE_COMPLETED);
-		_fragments[3] = new MyWorkListFragment().setDisplayType(MyWorkListFragment.TYPE_CANCELED);
+		_fragments[0] = new MyWorkListFragment().setDisplayType(DataView.IN_PROGRESS);
+		_fragments[1] = new MyWorkListFragment().setDisplayType(DataView.ASSIGNED);
+		_fragments[2] = new MyWorkListFragment().setDisplayType(DataView.COMPLETED);
+		_fragments[3] = new MyWorkListFragment().setDisplayType(DataView.CANCELLED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

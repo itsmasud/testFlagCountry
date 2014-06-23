@@ -33,7 +33,8 @@ public class misc {
 	private static NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
 	private static NumberFormat _normalNumber = NumberFormat.getIntegerInstance();
 
-	private static DateFormat ISO_8601_DATE_TIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ");
+	private static DateFormat ISO_8601_DATE_TIME = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ");
 
 	static {
 		ISO_8601_DATE_TIME.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -275,9 +276,9 @@ public class misc {
 	}
 
 	public static String escapeForURL(String Data) {
-		String[] srch = { "\\x20", "\\x3C", "\\x3E", "\\x23", "\\x25", "\\x7B", "\\x7D", "\\x7C", "\\x5C", "\\x5E", "\\x7E", "\\x5B", "\\x5D", "\\x60", "\\x3B", "\\x2F", "\\x3F", "\\x3A", "\\x40", "\\x3D", "\\x26", "\\x24" };
+		String[] srch = { "\\x25", "\\x2B", "\\x20", "\\x3C", "\\x3E", "\\x23", "\\x7B", "\\x7D", "\\x7C", "\\x5C", "\\x5E", "\\x7E", "\\x5B", "\\x5D", "\\x60", "\\x3B", "\\x2F", "\\x3F", "\\x3A", "\\x40", "\\x3D", "\\x26", "\\x24" };
 
-		String[] replace = { "%20", "%3C", "%3E", "%23", "%25", "%7B", "%7D", "%7C", "%5C", "%5E", "%7E", "%5B", "%5D", "%60", "%3B", "%2F", "%3F", "%3A", "%40", "%3D", "%26", "%24" };
+		String[] replace = { "%25", "%2B", "%20", "%3C", "%3E", "%23", "%7B", "%7D", "%7C", "%5C", "%5E", "%7E", "%5B", "%5D", "%60", "%3B", "%2F", "%3F", "%3A", "%40", "%3D", "%26", "%24" };
 
 		for (int i = 0; i < srch.length; i++) {
 			Data = Data.replaceAll(srch[i], replace[i]);
@@ -668,10 +669,12 @@ public class misc {
 		int stop = sliceMe.indexOf(endString, (start + 1));
 
 		if (-1 == start) {
-			throw new Exception("Could not find beginString(" + beginString + ") in " + sliceMe);
+			throw new Exception(
+					"Could not find beginString(" + beginString + ") in " + sliceMe);
 		}
 		if (-1 == stop) {
-			throw new Exception("Could not find endString(" + endString + ") in " + sliceMe);
+			throw new Exception(
+					"Could not find endString(" + endString + ") in " + sliceMe);
 		}
 
 		return sliceMe.substring((start + beginString.length()), stop);
