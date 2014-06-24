@@ -57,6 +57,7 @@ public class WorkorderActivity extends DrawerActivity {
 		}
 
 		_detailEditText = (EditText) findViewById(R.id.detail_edittext);
+		_loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
 
 		_authClient = new MyAuthenticationClient(this);
 		_gs = (GlobalState) getApplicationContext();

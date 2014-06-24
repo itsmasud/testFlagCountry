@@ -10,6 +10,10 @@
     <string name="authority">com.fieldnation.service</string>
     <!-- /connection info -->
 
+    <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
+    <string name="pull_to_refresh_release_label">Release to refresh...</string>
+    <string name="pull_to_refresh_refreshing_label">Loading...</string>
+    <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
 
     <!-- general strings -->
     <string name="app_name">Field Nation</string>

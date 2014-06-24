@@ -21,8 +21,6 @@ public class MyWorkListFragment extends Fragment {
 	private ProgressBar _loadingProgressBar;
 	private TextView _noDataTextView;
 	private ImageButton _refreshButton;
-	private ProgressBar _overscrollBarLeft;
-	private ProgressBar _overscrollBarRight;
 
 	// Data
 	private WorkorderListAdapter _listAdapter;
@@ -75,16 +73,12 @@ public class MyWorkListFragment extends Fragment {
 
 		_loadingProgressBar = (ProgressBar) view.findViewById(R.id.loading_progressbar);
 		_workordersListView = (ListViewEx) view.findViewById(R.id.workorders_listview);
-		_workordersListView.setOnOverScrollListener(_listView_onOverScroll);
 		_workordersListView.setDivider(null);
-
+		_workordersListView.setOnRefreshListener(_listView_onRefreshListener);
 		_workordersListView.setAdapter(getListAdapter());
 
 		_refreshButton = (ImageButton) view.findViewById(R.id.refresh_button);
 		_refreshButton.setOnClickListener(_refresh_onClick);
-
-		_overscrollBarLeft = (ProgressBar) view.findViewById(R.id.overscrollleft_progressBar);
-		_overscrollBarRight = (ProgressBar) view.findViewById(R.id.overscrollright_progressBar);
 
 	}
 
@@ -115,18 +109,10 @@ public class MyWorkListFragment extends Fragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private int _lastOffset = 0;
-	private ListViewEx.OnOverscrollListener _listView_onOverScroll = new ListViewEx.OnOverscrollListener() {
+	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
 		@Override
-		public void onOverScroll(int offset) {
-			offset = Math.abs(offset);
-			_overscrollBarLeft.setProgress(offset);
-			_overscrollBarRight.setProgress(offset);
-
-			if (_lastOffset >= 200 && offset == 0) {
-				update();
-			}
-			_lastOffset = offset;
+		public void onRefresh() {
+			update();
 		}
 	};
 
@@ -169,12 +155,13 @@ public class MyWorkListFragment extends Fragment {
 					} else {
 						_noDataTextView.setVisibility(View.GONE);
 						_refreshButton.setVisibility(View.GONE);
+						_workordersListView.onRefreshComplete();
 					}
 				}
 			} else {
 				_noDataTextView.setVisibility(View.GONE);
 				_refreshButton.setVisibility(View.GONE);
-				_loadingProgressBar.setVisibility(View.VISIBLE);
+				// _loadingProgressBar.setVisibility(View.VISIBLE);
 			}
 		}
 	}

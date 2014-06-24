@@ -38,34 +38,5 @@
         android:layout_centerHorizontal="true"
         android:src="@android:drawable/ic_popup_sync"
         android:visibility="gone" />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" >
-
-        <com.fieldnation.ProgressBarRev
-            android:id="@+id/overscrollleft_progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-6dp"
-            android:layout_weight="1"
-            android:max="200"
-            android:padding="0px"
-            android:progress="0" />
-
-        <ProgressBar
-            android:id="@+id/overscrollright_progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-6dp"
-            android:layout_weight="1"
-            android:max="200"
-            android:padding="0px"
-            android:progress="0" />
-    </LinearLayout>
 
 </RelativeLayout>
