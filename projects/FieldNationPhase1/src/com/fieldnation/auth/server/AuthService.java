@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 /**
- * Called by the OS when a user needs authenticating. This class just passes the
+ * Called by the OS when a user needs authenticating. This class passes the
  * request to the Authenticator
  * 
  * @author michael.carver

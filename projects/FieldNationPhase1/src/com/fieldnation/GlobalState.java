@@ -31,6 +31,12 @@ public class GlobalState extends Application {
 		authority = getString(R.string.authority);
 	}
 
+	/**
+	 * Call this to connect an authentication server. Note, only one server can
+	 * be registered at a time.
+	 * 
+	 * @param server
+	 */
 	public void setAuthenticationServer(AuthenticationServer server) {
 		_authServer = server;
 	}

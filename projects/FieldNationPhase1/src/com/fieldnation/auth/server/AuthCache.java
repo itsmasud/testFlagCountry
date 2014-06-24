@@ -11,8 +11,8 @@ import android.util.Log;
 import com.fieldnation.utils.misc;
 
 /**
- * These are database backed persistent objects. All changes made to them will
- * be saved as the changes are made.
+ * Provides authentication caching. It caches authentication tokens, and
+ * provides authentication tokens to activities that request them.
  * 
  * @author michael.carver
  * 

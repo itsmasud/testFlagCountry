@@ -2,7 +2,6 @@ package com.fieldnation;
 
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,9 +11,6 @@ import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;

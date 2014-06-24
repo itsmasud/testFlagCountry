@@ -3,9 +3,21 @@ package com.fieldnation;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fieldnation.json.JsonArray;
-
-// available method calls
+/**
+ * <P>
+ * An enum that provides data selection abilities. Used primarily in
+ * {@link WorkorderListAdapter}
+ * </p>
+ * 
+ * <p>
+ * TODO, should be expanded to include statusId with label id. This currently
+ * works due to a fluke in the way status IDs and label IDs match up
+ * </p>
+ * 
+ * @see WorkorderListAdapter
+ * @author michael.carver
+ * 
+ */
 public enum DataSelector {
 	AVAILABLE("getAvailable", new int[] { 11, 12, 13 }),
 	ASSIGNED("getAssigned", new int[] { 17, 18, 16 }),

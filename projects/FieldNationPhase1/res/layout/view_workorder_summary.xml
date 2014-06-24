@@ -14,6 +14,14 @@
         android:layout_alignRight="@+id/content_layout"
         android:layout_alignTop="@+id/content_layout"
         android:layout_margin="20dp" >
+
+        <ImageView
+            android:id="@+id/back_imageview"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/right_arrow" />
     </RelativeLayout>
 
     <LinearLayout
@@ -21,7 +29,8 @@
         style="@style/WorkorderSummary_Inside"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="visible" >
 
         <RelativeLayout
             android:id="@+id/status_layout"

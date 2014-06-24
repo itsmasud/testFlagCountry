@@ -7,8 +7,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+/**
+ * A base class for any activity that needs to support authentication and have a
+ * DrawerLayout
+ * 
+ * @author michael.carver
+ * 
+ */
 public class DrawerActivity extends BaseActivity {
 	private final static String TAG = "DrawerActivity";
+
 	// UI
 	private ActionBarDrawerToggle _drawerToggle = null;
 	private DrawerLayout _drawerLayout;
@@ -17,7 +25,7 @@ public class DrawerActivity extends BaseActivity {
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setDisplayHomeAsUpEnabled(true);
 		actionbar.setHomeButtonEnabled(true);
-		actionbar.setHomeAsUpIndicator(R.drawable.ic_navigation_drawer);
+		actionbar.setHomeAsUpIndicator(R.drawable.ic_drawer);
 
 		_drawerLayout = (DrawerLayout) findViewById(drawerId);
 		_drawerToggle = getActionBarDrawerToggle();
@@ -36,7 +44,7 @@ public class DrawerActivity extends BaseActivity {
 	public ActionBarDrawerToggle createActionBarDrawerToggle(
 			DrawerLayout drawerLayout) {
 		return new ActionBarDrawerToggle(this, drawerLayout,
-				R.drawable.ic_navigation_drawer, R.string.launcher_open,
+				R.drawable.ic_drawer, R.string.launcher_open,
 				R.string.launcher_open);
 	}
 

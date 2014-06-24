@@ -7,7 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 /**
- * Waits for an AccountManagerFuture<Bundle> future to resolve.
+ * Waits for an {@link AccountManagerFuture} to resolve.
  * 
  * @author michael.carver
  * 
@@ -62,6 +62,12 @@ public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
 
 	}
 
+	/**
+	 * Called when a future either completes, or an error happens.
+	 * 
+	 * @author michael.carver
+	 * 
+	 */
 	public interface Listener {
 		public void onComplete(Bundle bundle);
 

@@ -9,11 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 public class WorkorderActivity extends DrawerActivity {
 	private static final String TAG = "WorkorderActivity";
@@ -22,6 +21,7 @@ public class WorkorderActivity extends DrawerActivity {
 
 	// UI
 	private EditText _detailEditText;
+	private ProgressBar _loadingProgressBar;
 
 	// Data
 	private GlobalState _gs;
@@ -39,7 +39,7 @@ public class WorkorderActivity extends DrawerActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_workorder_detail);
+		setContentView(R.layout.activity_workorder);
 
 		Intent intent = getIntent();
 		if (intent != null) {
@@ -98,6 +98,8 @@ public class WorkorderActivity extends DrawerActivity {
 				_detailEditText.setText(new JsonObject(
 						new String(
 								resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))).display());
+
+				_loadingProgressBar.setVisibility(View.GONE);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

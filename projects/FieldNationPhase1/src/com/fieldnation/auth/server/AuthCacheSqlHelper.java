@@ -7,6 +7,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Handles database maintenance and updating.
+ * 
+ * @author michael.carver
+ * 
+ */
 public class AuthCacheSqlHelper extends SQLiteOpenHelper {
 	// Note: increment this value every time the structure of the database is
 	// changed.

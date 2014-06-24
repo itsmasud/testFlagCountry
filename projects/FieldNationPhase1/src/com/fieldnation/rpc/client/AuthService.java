@@ -1,14 +1,23 @@
 package com.fieldnation.rpc.client;
 
 import android.accounts.AccountAuthenticatorResponse;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
+import com.fieldnation.auth.server.Authenticator;
 import com.fieldnation.rpc.common.AuthServiceConstants;
 import com.fieldnation.rpc.common.DataServiceConstants;
+import com.fieldnation.rpc.server.AuthRpc;
 import com.fieldnation.rpc.server.DataService;
 
+/**
+ * Provides intents that will call the authentication services.
+ * 
+ * @author michael.carver
+ * 
+ */
 public class AuthService implements AuthServiceConstants {
 	private Context _context;
 
@@ -16,6 +25,24 @@ public class AuthService implements AuthServiceConstants {
 		_context = conetxt;
 	}
 
+	/**
+	 * This is usually called by the {@link AccountManager} via the
+	 * {@link Authenticator}
+	 * 
+	 * @see Authenticator
+	 * @see AccountManager
+	 * @see com.fieldnation.auth.server.AuthService
+	 * @see AuthRpc
+	 * 
+	 * @param response
+	 * @param hostname
+	 * @param grantType
+	 * @param clientId
+	 * @param clientSecret
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	public Intent authenticateWeb(AccountAuthenticatorResponse response,
 			String hostname, String grantType, String clientId,
 			String clientSecret, String username, String password) {
@@ -37,6 +64,19 @@ public class AuthService implements AuthServiceConstants {
 		return intent;
 	}
 
+	/**
+	 * This should be called by a normal application to authenticate.
+	 * 
+	 * @param callback
+	 * @param resultCode
+	 * @param hostname
+	 * @param grantType
+	 * @param clientId
+	 * @param clientSecret
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	public Intent authenticateWeb(ResultReceiver callback, int resultCode,
 			String hostname, String grantType, String clientId,
 			String clientSecret, String username, String password) {

@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 /**
- * This view defines what is in the pull out drawer, and how it behaves.
+ * This view defines what is in the pull out drawer, and what the buttons do.
  * 
  * @author michael.carver
  * 

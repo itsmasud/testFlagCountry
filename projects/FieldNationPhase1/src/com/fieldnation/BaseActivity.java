@@ -15,7 +15,7 @@ import android.view.MenuItem;
 
 /**
  * This is the base of all the activities in this project. It provides
- * authentication and applies the action bars
+ * authentication and sets up the action bars.
  * 
  * @author michael.carver
  * 
@@ -51,40 +51,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 		getAccount();
 	}
 
-	final public void getAccount() {
-		if (_authenticating)
-			return;
-
-		_authenticating = true;
-		if (_accountManager == null)
-			_accountManager = AccountManager.get(this);
-
-		Account[] accounts = _accountManager.getAccountsByType(_gs.accountType);
-		Log.v(TAG, "Found accounts: " + accounts.length);
-		AccountManagerFuture<Bundle> future = null;
-		if (accounts.length == 0) {
-			future = _accountManager.addAccount(_gs.accountType, null, null,
-					null, this, null, new Handler());
-
-		} else if (accounts.length == 1) {
-			_account = accounts[0];
-		} else {
-			// TODO, ANDR-10 present a picker for the account
-			_account = accounts[0];
-		}
-		if (future != null) {
-			// new
-			Log.v(TAG, "got future");
-			new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
-		}
-
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 
-		// pull out connections to our custom views
 		_notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
 		_notificationsView.setCount(10);
 
@@ -98,6 +68,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+
+	/**
+	 * Implements the AuthenticationServer interface.
+	 */
 	private AuthenticationServer authServer = new AuthenticationServer() {
 
 		@Override
@@ -135,16 +109,6 @@ public abstract class BaseActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	// Authentication
-	// private AccountManagerCallback<Bundle> _amc = new
-	// AccountManagerCallback<Bundle>() {
-	// @Override
-	// public void run(AccountManagerFuture<Bundle> future) {
-	// Log.v(TAG, "_amc.run()");
-	// new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
-	// }
-	// };
-
 	private FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
 		@Override
 		public void onFail(Exception ex) {
@@ -163,5 +127,34 @@ public abstract class BaseActivity extends ActionBarActivity {
 			}
 		}
 	};
+
+	private void getAccount() {
+		if (_authenticating)
+			return;
+
+		_authenticating = true;
+		if (_accountManager == null)
+			_accountManager = AccountManager.get(this);
+
+		Account[] accounts = _accountManager.getAccountsByType(_gs.accountType);
+		Log.v(TAG, "Found accounts: " + accounts.length);
+		AccountManagerFuture<Bundle> future = null;
+		if (accounts.length == 0) {
+			future = _accountManager.addAccount(_gs.accountType, null, null,
+					null, this, null, new Handler());
+
+		} else if (accounts.length == 1) {
+			_account = accounts[0];
+		} else {
+			// TODO, ANDR-10 present a picker for the account
+			_account = accounts[0];
+		}
+		if (future != null) {
+			// new
+			Log.v(TAG, "got future");
+			new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+		}
+
+	}
 
 }

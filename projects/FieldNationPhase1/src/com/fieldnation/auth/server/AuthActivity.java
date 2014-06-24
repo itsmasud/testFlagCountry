@@ -20,7 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 /**
- * Provides an authentication UI for the field nation user
+ * Provides an authentication UI for the field nation user. This will be called
+ * by {@link Authenticator} via requets made to the {@link AccountManager}. It
+ * does not need to be called explicitly by the application.
  * 
  * @author michael.carver
  * 

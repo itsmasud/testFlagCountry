@@ -5,6 +5,23 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * <p>
+ * This class should be implemented by any other class that needs to get web
+ * service authentication.
+ * </p>
+ * 
+ * <p>
+ * TODO, this class will fail silently. It needs to be updated to do something
+ * intelligent on failure
+ * </p>
+ * 
+ * @see GlobalState
+ * @see AuthenticationServer
+ * 
+ * @author michael.carver
+ * 
+ */
 public abstract class AuthenticationClient {
 	private static final String TAG = "AuthenticationClient";
 	private GlobalState _gs;
@@ -13,10 +30,26 @@ public abstract class AuthenticationClient {
 		_gs = (GlobalState) context.getApplicationContext();
 	}
 
+	/**
+	 * Waits for the future to finish. When finished it will check for an
+	 * authentication token. If not found, then it requests authentication
+	 * again. If found, then it calls onAuthentication()
+	 * 
+	 * @param future
+	 */
 	public void waitForFuture(AccountManagerFuture<Bundle> future) {
 		new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
 	}
 
+	/**
+	 * Waits for the field of the passed object to become non-null. When that
+	 * event happens, then the client asks for authentication again.
+	 * 
+	 * @param obj
+	 *            the object to monitor.
+	 * @param fieldname
+	 *            the name of the field to monitor.
+	 */
 	public void waitForObject(Object obj, String fieldname) {
 		new WaitForFieldAsyncTask(_waitForAccessToken_listener).execute(obj,
 				fieldname);
