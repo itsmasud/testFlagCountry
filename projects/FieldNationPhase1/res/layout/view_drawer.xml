@@ -21,7 +21,7 @@
                 android:id="@+id/mywork_imageview"
                 style="@style/DrawerItemIcon"
                 android:layout_width="64dp"
-                android:layout_height="wrap_content"
+                android:layout_height="64dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/todo" />

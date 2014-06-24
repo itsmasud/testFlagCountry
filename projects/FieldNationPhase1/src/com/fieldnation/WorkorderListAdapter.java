@@ -46,7 +46,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	private MyAuthenticationClient _authClient;
 	private String _authToken;
 	private String _username;
-	private DataView _viewType;
+	private DataSelector _viewType;
 
 	/*-*****************************-*/
 	/*-			Lifecycle			-*/
@@ -58,7 +58,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 *            should be one of the TYPE_* strings
 	 * @throws NoSuchMethodException
 	 */
-	public WorkorderListAdapter(Context context, DataView viewType) throws NoSuchMethodException {
+	public WorkorderListAdapter(Context context, DataSelector viewType) throws NoSuchMethodException {
 		_context = context;
 		_gs = (GlobalState) context.getApplicationContext();
 		_authClient = new MyAuthenticationClient(context);
@@ -173,15 +173,19 @@ public class WorkorderListAdapter extends BaseAdapter {
 			Log.v(TAG, "perform merge: " + orders.size());
 			for (int i = 0; i < orders.size(); i++) {
 				try {
-					JsonArray labels = orders.getJsonObject(i).getJsonArray(
-							"label");
+					if (orders.getJsonObject(i).has("label")) {
+						JsonArray labels = orders.getJsonObject(i).getJsonArray(
+								"label");
 
-					for (int j = 0; j < labels.size(); j++) {
-						JsonObject label = labels.getJsonObject(j);
-						if (_viewType.hasLabel(label.getInt("label_id"))) {
-							_workorders.add(orders.getJsonObject(i));
-							break;
+						for (int j = 0; j < labels.size(); j++) {
+							JsonObject label = labels.getJsonObject(j);
+							if (_viewType.hasLabel(label.getInt("label_id"))) {
+								_workorders.add(orders.getJsonObject(i));
+								break;
+							}
 						}
+					} else {
+						_workorders.add(orders.getJsonObject(i));
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();

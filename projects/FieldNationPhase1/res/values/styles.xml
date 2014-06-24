@@ -1,13 +1,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light"></style>
+    <style name="AppBaseTheme" parent="@style/Theme.FieldNation"></style>
 
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!--  item name="android:background">@color/background</item -->
-    </style>
-    
-    <style name="TransparentTextView" parent="android:Widget.TextView">
-        <item name="android:background">@color/transparent</item>
-    </style>
+    <style name="AppTheme" parent="AppBaseTheme"></style>
 
 </resources>

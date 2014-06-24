@@ -3,18 +3,20 @@ package com.fieldnation;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fieldnation.json.JsonArray;
+
 // available method calls
-public enum DataView {
+public enum DataSelector {
 	AVAILABLE("getAvailable", new int[] { 11, 12, 13 }),
 	ASSIGNED("getAssigned", new int[] { 17, 18, 16 }),
 	IN_PROGRESS("getAssigned", new int[] { 1, 2, 16, 17, 18 }),
 	COMPLETED("getCompleted", new int[] { 19, 20, 21 }),
-	CANCELLED("getCanceled", new int[] { 0 });
+	CANCELLED("getCanceled", new int[] {});
 
 	private String _call;
 	private Set<Integer> _labelTable;
 
-	private DataView(String call, int[] labelIds) {
+	private DataSelector(String call, int[] labelIds) {
 		_call = call;
 		_labelTable = new HashSet<Integer>();
 
@@ -31,12 +33,8 @@ public enum DataView {
 		return _labelTable.contains(labelId);
 	}
 
-	public int getStatusBg() {
-		return 1;
-	}
-
-	public static DataView fromName(String name) {
-		DataView[] vs = values();
+	public static DataSelector fromName(String name) {
+		DataSelector[] vs = values();
 		for (int i = 0; i < vs.length; i++) {
 			if (vs[i].name().equals(name)) {
 				return vs[i];
@@ -44,5 +42,4 @@ public enum DataView {
 		}
 		return null;
 	}
-
 }

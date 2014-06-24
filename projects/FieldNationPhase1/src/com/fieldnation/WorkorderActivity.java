@@ -15,14 +15,12 @@ import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.widget.EditText;
 
-public class WorkorderDetailActivity extends BaseActivity {
-	private static final String TAG = "WorkOrderDetailActivity";
+public class WorkorderActivity extends DrawerActivity {
+	private static final String TAG = "WorkorderActivity";
 
 	private static final int RPC_GET_DETAIL = 1;
 
 	// UI
-	private ActionBarDrawerToggle _drawerToggle;
-	private DrawerLayout _drawerLayout;
 	private EditText _detailEditText;
 
 	// Data
@@ -50,6 +48,8 @@ public class WorkorderDetailActivity extends BaseActivity {
 			}
 		}
 
+		addActionBarAndDrawer(R.id.container);
+
 		if (_workorderId == 0) {
 			// epic fail!
 			Log.e(TAG, "must have a workorder id!");
@@ -58,31 +58,9 @@ public class WorkorderDetailActivity extends BaseActivity {
 
 		_detailEditText = (EditText) findViewById(R.id.detail_edittext);
 
-		ActionBar actionbar = getSupportActionBar();
-		actionbar.setDisplayHomeAsUpEnabled(true);
-		actionbar.setHomeButtonEnabled(true);
-		actionbar.setHomeAsUpIndicator(R.drawable.ic_navigation_drawer);
-
-		buildDrawer();
-
 		_authClient = new MyAuthenticationClient(this);
 		_gs = (GlobalState) getApplicationContext();
 		_gs.requestAuthentication(_authClient);
-	}
-
-	private void buildDrawer() {
-		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
-		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
-				R.drawable.ic_navigation_drawer, R.string.launcher_open,
-				R.string.launcher_open);
-
-		_drawerLayout.setDrawerListener(_drawerToggle);
-	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		_drawerToggle.syncState();
 	}
 
 	/*-*************************-*/
@@ -98,8 +76,8 @@ public class WorkorderDetailActivity extends BaseActivity {
 			_username = username;
 			_authToken = authToken;
 
-			_woRpc = new WorkorderService(WorkorderDetailActivity.this,
-					username, authToken, _rpcReciever);
+			_woRpc = new WorkorderService(WorkorderActivity.this, username,
+					authToken, _rpcReciever);
 
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
 			// TODO Method Stub: onAuthentication()

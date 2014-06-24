@@ -4,10 +4,10 @@
     <item>
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="2dp"
-                android:bottomRightRadius="2dp"
-                android:topLeftRadius="2dp"
-                android:topRightRadius="2dp" />
+                android:bottomLeftRadius="@dimen/buttonCorners"
+                android:bottomRightRadius="@dimen/buttonCorners"
+                android:topLeftRadius="@dimen/buttonCorners"
+                android:topRightRadius="@dimen/buttonCorners" />
 
             <solid android:color="@color/wosumButton3Bevel" >
             </solid>
@@ -18,10 +18,10 @@
         android:left="2px">
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="2dp"
-                android:bottomRightRadius="2dp"
-                android:topLeftRadius="2dp"
-                android:topRightRadius="2dp" />
+                android:bottomLeftRadius="@dimen/buttonCorners"
+                android:bottomRightRadius="@dimen/buttonCorners"
+                android:topLeftRadius="@dimen/buttonCorners"
+                android:topRightRadius="@dimen/buttonCorners" />
 
             <gradient
                 android:angle="-90"

@@ -20,12 +20,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MyWorkActivity extends BaseActivity {
+public class MyWorkActivity extends DrawerActivity {
 	private static final String TAG = "MyWorkActivity";
 
 	// UI
-	private ActionBarDrawerToggle _drawerToggle;
-	private DrawerLayout _drawerLayout;
 	private ViewPager _viewPager;
 
 	private MyWorkListFragment[] _fragments;
@@ -47,8 +45,8 @@ public class MyWorkActivity extends BaseActivity {
 		_gs = (GlobalState) getApplicationContext();
 
 		if (!_created) {
+			addActionBarAndDrawer(R.id.container);
 			buildTabs();
-			buildDrawer();
 			_created = true;
 		}
 		_currentFragment = getSupportActionBar().getSelectedNavigationIndex();
@@ -61,15 +59,13 @@ public class MyWorkActivity extends BaseActivity {
 
 		_fragments = new MyWorkListFragment[4];
 
-		_fragments[0] = new MyWorkListFragment().setDisplayType(DataView.IN_PROGRESS);
-		_fragments[1] = new MyWorkListFragment().setDisplayType(DataView.ASSIGNED);
-		_fragments[2] = new MyWorkListFragment().setDisplayType(DataView.COMPLETED);
-		_fragments[3] = new MyWorkListFragment().setDisplayType(DataView.CANCELLED);
+		_fragments[0] = new MyWorkListFragment().setDisplayType(DataSelector.IN_PROGRESS);
+		_fragments[1] = new MyWorkListFragment().setDisplayType(DataSelector.ASSIGNED);
+		_fragments[2] = new MyWorkListFragment().setDisplayType(DataSelector.COMPLETED);
+		_fragments[3] = new MyWorkListFragment().setDisplayType(DataSelector.CANCELLED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionbar.setDisplayHomeAsUpEnabled(true);
-		actionbar.setHomeButtonEnabled(true);
 
 		ActionBar.Tab tab1 = actionbar.newTab().setText(
 				getString(R.string.my_work_category1));
@@ -96,9 +92,10 @@ public class MyWorkActivity extends BaseActivity {
 		_viewPager.setOnPageChangeListener(_viewPager_onChange);
 	}
 
-	private void buildDrawer() {
-		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
-		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
+	@Override
+	public ActionBarDrawerToggle createActionBarDrawerToggle(
+			DrawerLayout drawerLayout) {
+		return new ActionBarDrawerToggle(this, drawerLayout,
 				R.drawable.ic_navigation_drawer, R.string.launcher_open,
 				R.string.launcher_open) {
 
@@ -122,14 +119,6 @@ public class MyWorkActivity extends BaseActivity {
 				super.onDrawerSlide(drawerView, slideOffset);
 			}
 		};
-
-		_drawerLayout.setDrawerListener(_drawerToggle);
-	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		_drawerToggle.syncState();
 	}
 
 	/*-*********************************-*/
@@ -192,16 +181,7 @@ public class MyWorkActivity extends BaseActivity {
 			_fragments[_currentFragment].update();
 		}
 
-		if (_drawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		_drawerToggle.onConfigurationChanged(newConfig);
 	}
 
 }

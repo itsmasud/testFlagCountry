@@ -44,7 +44,7 @@
             android:label="@string/activity_login_title" >
         </activity>
         <activity
-            android:name="com.fieldnation.WorkorderDetailActivity"
+            android:name="com.fieldnation.WorkorderActivity"
             android:exported="false"
             android:label="@string/work_order_detail_title" >
         </activity>

@@ -9,17 +9,17 @@
 
     <style name="Drawer">
         <item name="android:background">@color/drawerBackground</item>
-        <item name="android:paddingLeft">10px</item>
-        <item name="android:paddingTop">10px</item>
-        <item name="android:paddingRight">10px</item>
-        <item name="android:paddingBottom">10px</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
     </style>
 
     <style name="DrawerItem">
-        <item name="android:paddingLeft">10px</item>
-        <item name="android:paddingTop">30px</item>
-        <item name="android:paddingRight">10px</item>
-        <item name="android:paddingBottom">30px</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingBottom">20dp</item>
         <item name="android:background">@color/drawer_item_background</item>
     </style>
 
@@ -29,7 +29,7 @@
     </style>
 
     <style name="DrawerItemIcon">
-        <item name="android:paddingRight">30px</item>
+        <item name="android:paddingRight">5dp</item>
     </style>
 
     <style name="DrawerSeparator">

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Theme.FieldNation" parent="@style/Theme.AppCompat.Light">
+        <item name="actionBarStyle">@style/ActionBar.Solid.FieldNation</item>
+        <item name="actionBarTabTextStyle">@style/ActionBar.TabTextStyle.FieldNation</item>
+        <item name="actionBarTabStyle">@style/ActionBar.TabViewStyle.FieldNation</item>
+    </style>
+
+    <style name="ActionBar.Solid.FieldNation" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="background">@drawable/actionbar_background</item>
+        <item name="backgroundStacked">@drawable/actionbar_stacked_background</item>
+        <item name="titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
+    </style>
+
+    <style name="ActionBar.TextStyle.FieldNation" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">#FFFFFFFF</item>
+    </style>
+
+    <style name="ActionBar.TabTextStyle.FieldNation" parent="@style/Widget.AppCompat.ActionBar.TabText">
+        <item name="android:textColor">#FFFFFFFF</item>
+    </style>
+
+    <style name="ActionBar.TabViewStyle.FieldNation" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/actionbar_tab</item>
+    </style>
+
+</resources>

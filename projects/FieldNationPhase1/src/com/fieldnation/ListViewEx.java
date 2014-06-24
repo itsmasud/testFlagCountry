@@ -7,7 +7,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 /**
@@ -31,7 +33,6 @@ public class ListViewEx extends ListView {
 
 	public ListViewEx(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-
 	}
 
 	public void setOnOverScrollListener(OnOverscrollListener l) {
@@ -59,9 +60,10 @@ public class ListViewEx extends ListView {
 			int scrollY, int scrollRangeX, int scrollRangeY,
 			int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
 
-		offset += deltaY;
-
-		dispatchOverscroll();
+		if (deltaY < 0) {
+			offset += deltaY;
+			dispatchOverscroll();
+		}
 
 		return super.overScrollBy(deltaX, deltaY, scrollX, scrollY,
 				scrollRangeX, scrollRangeY, maxOverScrollX, maxOverScrollY,

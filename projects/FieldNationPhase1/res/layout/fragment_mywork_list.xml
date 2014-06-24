@@ -38,8 +38,7 @@
         android:layout_centerHorizontal="true"
         android:src="@android:drawable/ic_popup_sync"
         android:visibility="gone" />
-
-    <LinearLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

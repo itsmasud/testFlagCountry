@@ -1,12 +1,7 @@
 package com.fieldnation;
 
-import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -19,12 +14,10 @@ import android.widget.TextView;
  * @author michael.carver
  * 
  */
-public class MarketActivity extends BaseActivity {
+public class MarketActivity extends DrawerActivity {
 	private static final String TAG = "MarketActivity";
 
 	// UI
-	private ActionBarDrawerToggle _drawerToggle;
-	private DrawerLayout _drawerLayout;
 	private ListView _workordersListView;
 	private ProgressBar _loadingProgressBar;
 	private TextView _noDataTextView;
@@ -51,38 +44,18 @@ public class MarketActivity extends BaseActivity {
 		_refreshButton = (ImageButton) findViewById(R.id.refresh_button);
 		_refreshButton.setOnClickListener(_refresh_onClick);
 
-		ActionBar actionbar = getSupportActionBar();
-		actionbar.setDisplayHomeAsUpEnabled(true);
-		actionbar.setHomeButtonEnabled(true);
-		actionbar.setHomeAsUpIndicator(R.drawable.ic_navigation_drawer);
-
-		buildDrawer();
+		addActionBarAndDrawer(R.id.container);
 
 		try {
 			_woAdapter = new WorkorderListAdapter(MarketActivity.this,
-					DataView.AVAILABLE);
+					DataSelector.AVAILABLE);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 		_woAdapter.registerDataSetObserver(_listAdapter_observer);
 		_workordersListView.setAdapter(_woAdapter);
-		//_woAdapter.update(true);
+		// _woAdapter.update(true);
 
-	}
-
-	private void buildDrawer() {
-		_drawerLayout = (DrawerLayout) findViewById(R.id.container);
-		_drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
-				R.drawable.ic_navigation_drawer, R.string.launcher_open,
-				R.string.launcher_open);
-
-		_drawerLayout.setDrawerListener(_drawerToggle);
-	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		_drawerToggle.syncState();
 	}
 
 	@Override
@@ -111,21 +84,6 @@ public class MarketActivity extends BaseActivity {
 			_woAdapter.update(false);
 		}
 	};
-
-	// when a menu item is selected
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (_drawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		_drawerToggle.onConfigurationChanged(newConfig);
-	}
 
 	private DataSetObserver _listAdapter_observer = new DataSetObserver() {
 		@Override

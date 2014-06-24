@@ -26,14 +26,14 @@ public class MyWorkListFragment extends Fragment {
 
 	// Data
 	private WorkorderListAdapter _listAdapter;
-	private DataView _displayView = DataView.AVAILABLE;
+	private DataSelector _displayView = DataSelector.AVAILABLE;
 	private boolean _hasData = false;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 
-	public MyWorkListFragment setDisplayType(DataView displayView) {
+	public MyWorkListFragment setDisplayType(DataSelector displayView) {
 		_displayView = displayView;
 		return this;
 	}
@@ -48,7 +48,7 @@ public class MyWorkListFragment extends Fragment {
 		if (savedInstanceState != null) {
 			if (savedInstanceState.containsKey("_displayView")) {
 				Log.v(TAG, "Restoring state");
-				_displayView = DataView.fromName(savedInstanceState.getString("_displayView"));
+				_displayView = DataSelector.fromName(savedInstanceState.getString("_displayView"));
 			}
 			if (savedInstanceState.containsKey("_hasData")) {
 				Log.v(TAG, "Restoring state");
@@ -58,7 +58,7 @@ public class MyWorkListFragment extends Fragment {
 
 		Log.v(TAG, "Display Type: " + _displayView.getCall());
 		_hasData = false;
-		//getListAdapter().update(true);
+		// getListAdapter().update(true);
 	}
 
 	@Override
@@ -180,6 +180,8 @@ public class MyWorkListFragment extends Fragment {
 	}
 
 	private WorkorderListAdapter getListAdapter() {
+		if (this.getActivity() == null)
+			return null;
 		try {
 			if (_listAdapter == null) {
 				_listAdapter = new WorkorderListAdapter(this.getActivity(),

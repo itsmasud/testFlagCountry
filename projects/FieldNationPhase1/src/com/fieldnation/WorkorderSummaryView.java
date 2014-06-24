@@ -59,12 +59,12 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 	// Data
 	private GlobalState _gs;
-	private DataView _dataView = null;
-	private int _state = 0;
+	private DataSelector _dataView = null;
 
 	private JsonObject _workorder;
 
-	// state lookuptable
+	// status lookuptable
+	private int _statusDisplayState = 0;
 	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1, R.drawable.wosum_status_2, R.drawable.wosum_status_3, R.drawable.wosum_status_4 };
 	private static final int[] _STATUS_TEXT_TABLE = { R.color.wosumStatusLabel1, R.color.wosumStatusLabel2, R.color.wosumStatusLabel3, R.color.wosumStatusLabel4 };
 	private static final int[] _STATUS_BUTTON_FG = { R.color.wosumButton1Foreground, R.color.wosumButton2Foreground, R.color.wosumButton3Foreground, R.color.wosumButton1Foreground };
@@ -144,7 +144,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		public void onClick(View v) {
 			try {
 				Intent intent = new Intent(getContext(),
-						WorkorderDetailActivity.class);
+						WorkorderActivity.class);
 				intent.putExtra("workorder_id",
 						_workorder.getLong("workorder_id"));
 				// TODO package up the workorder... or send the id
@@ -168,7 +168,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		@Override
 		public void onClick(View v) {
-			_state = (_state + 1) % 4;
+			_statusDisplayState = (_statusDisplayState + 1) % 4;
 
 			updateStatusUi();
 
@@ -178,36 +178,12 @@ public class WorkorderSummaryView extends RelativeLayout {
 		}
 	};
 
-	private ResultReceiver _rpcReceiver = new ResultReceiver(new Handler()) {
-		@Override
-		protected void onReceiveResult(int resultCode, Bundle resultData) {
-			if (resultCode == 1) {
-				long workorderId = resultData.getLong("PARAM_WORKORDER_ID");
-				try {
-					if (workorderId == _workorder.getLong("workorder_id")) {
-						String data = new String(
-								resultData.getByteArray("PARAM_DATA"));
-						// getDetails
-
-					}
-				} catch (Exception ex) {
-					// TODO handle better?
-					ex.printStackTrace();
-				}
-
-			}
-			// TODO Method Stub: onReceiveResult()
-			System.out.println("Method Stub: onReceiveResult()");
-			super.onReceiveResult(resultCode, resultData);
-		}
-	};
-
 	/*-*********************************-*/
 	/*-				Data				-*/
 	/*-*********************************-*/
-	public void setWorkorder(DataView dataView, JsonObject workorder) {
+	public void setWorkorder(DataSelector dataSelector, JsonObject workorder) {
 		_workorder = workorder;
-		_dataView = dataView;
+		_dataView = dataSelector;
 		refresh();
 	}
 
@@ -215,12 +191,12 @@ public class WorkorderSummaryView extends RelativeLayout {
 	/*-				Util				-*/
 	/*-*********************************-*/
 	private void updateStatusUi() {
-		_statusLayout.setBackgroundResource(_STATUS_LOOKUP_TABLE[_state]);
+		_statusLayout.setBackgroundResource(_STATUS_LOOKUP_TABLE[_statusDisplayState]);
 		_statusTextView.setTextColor(getContext().getResources().getColor(
-				_STATUS_TEXT_TABLE[_state]));
-		_detailButton.setBackgroundResource(_STATUS_BUTTON_BG[_state]);
+				_STATUS_TEXT_TABLE[_statusDisplayState]));
+		_detailButton.setBackgroundResource(_STATUS_BUTTON_BG[_statusDisplayState]);
 		_detailButton.setTextColor(getContext().getResources().getColor(
-				_STATUS_BUTTON_FG[_state]));
+				_STATUS_BUTTON_FG[_statusDisplayState]));
 
 	}
 
@@ -342,12 +318,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 		}
 
 		try {
-			if (_workorder.has("status")) {
-				String status = _workorder.getString("status");
-				_statusTextView.setText(status);
-			} else {
-				_statusTextView.setText("");
-			}
 			buildStatus();
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -358,6 +328,17 @@ public class WorkorderSummaryView extends RelativeLayout {
 	}
 
 	private void buildStatus() throws ParseException {
+		try {
+			if (_workorder.has("status")) {
+				String status = _workorder.getString("status");
+				_statusTextView.setText(status);
+			} else {
+				_statusTextView.setText("");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		switch (_dataView) {
 		case ASSIGNED:
 			buildStatusAssigned();
@@ -366,8 +347,10 @@ public class WorkorderSummaryView extends RelativeLayout {
 			buildStatusAvailable();
 			break;
 		case CANCELLED:
+			// TODO setup status indicators for cancelled
 			break;
 		case COMPLETED:
+			buildStatusCompleted();
 			break;
 		case IN_PROGRESS:
 			buildStatusInProgress();
@@ -380,8 +363,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 		boolean isOnHold = false;
 		boolean isAcked = false;
 		boolean has16 = false;
-		boolean hasAction = false;
-		String action;
 
 		// get on-hold value
 		JsonArray jsonLabels = _workorder.getJsonArray("label");
@@ -407,20 +388,20 @@ public class WorkorderSummaryView extends RelativeLayout {
 		if (isOnHold) {
 			_statusTextView.setText("On Hold");
 			if (isAcked) {
-				_state = 3;
+				_statusDisplayState = 3;
 				_detailButton.setVisibility(GONE);
 			} else {
 				_detailButton.setText("Acknowledge");
 				_detailButton.setVisibility(VISIBLE);
-				_state = 1;
+				_statusDisplayState = 1;
 			}
 		} else if (has16) {
-			_state = 2;
+			_statusDisplayState = 2;
 			_statusTextView.setText("Unconfirmed");
 			_detailButton.setText("Check In");
 			_detailButton.setVisibility(VISIBLE);
 		} else {
-			_state = 0;
+			_statusDisplayState = 0;
 			_statusTextView.setText("Confirmed");
 			_detailButton.setText("Check In");
 			_detailButton.setVisibility(VISIBLE);
@@ -431,7 +412,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private void buildStatusAvailable() throws ParseException {
 		int statusId = _workorder.getInt("workorder_id");
 		if (statusId == 9) {
-			_state = 1;
+			_statusDisplayState = 1;
 			_statusTextView.setText("Routed");
 			_detailButton.setText("Accept");
 			_detailButton.setVisibility(VISIBLE);
@@ -456,20 +437,21 @@ public class WorkorderSummaryView extends RelativeLayout {
 			}
 
 			if (has11) {
-				_state = 0;
+				_statusDisplayState = 0;
 				_statusTextView.setText("Available");
 				_detailButton.setText("Request");
 				_detailButton.setVisibility(VISIBLE);
 			} else if (has12) {
-				_state = 2;
+				_statusDisplayState = 2;
 				_statusTextView.setText("Requested");
 				_detailButton.setVisibility(GONE);
 			} else if (has13) {
-				_state = 3;
+				_statusDisplayState = 3;
 				_statusTextView.setText("Sent Counter");
 				_detailButton.setVisibility(VISIBLE);
 				_detailButton.setText("View Counter");
 			}
+
 			updateStatusUi();
 		}
 	}
@@ -479,7 +461,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 		boolean isOnHold = false;
 		boolean isAcked = false;
 		boolean has1 = false;
-		boolean has2 = false;
 
 		// get on-hold value
 		JsonArray jsonLabels = _workorder.getJsonArray("label");
@@ -499,32 +480,61 @@ public class WorkorderSummaryView extends RelativeLayout {
 			if (label.getInt("label_id") == 1) {
 				has1 = true;
 			}
-			if (label.getInt("label_id") == 2) {
-				has2 = true;
-			}
 		}
 
 		// TODO need to change the button's fg/bg
 		if (isOnHold) {
 			_statusTextView.setText("On Hold");
 			if (isAcked) {
-				_state = 3;
+				_statusDisplayState = 3;
 				_detailButton.setVisibility(GONE);
 			} else {
-				_state = 1;
+				_statusDisplayState = 1;
 				_detailButton.setText("Acknowledge");
 				_detailButton.setVisibility(VISIBLE);
 			}
 		} else if (has1) {
-			_state = 2;
+			_statusDisplayState = 2;
 			_statusTextView.setText("Checked In");
 			_detailButton.setText("Check Out");
 			_detailButton.setVisibility(VISIBLE);
 		} else {
-			_state = 0;
+			_statusDisplayState = 0;
 			_statusTextView.setText("Checked Out");
 			_detailButton.setText("Check In");
 			_detailButton.setVisibility(VISIBLE);
+		}
+		updateStatusUi();
+	}
+
+	private void buildStatusCompleted() throws ParseException {
+		Set<Integer> labels = new HashSet<Integer>();
+
+		JsonArray jsonlabels = _workorder.getJsonArray("label");
+		for (int i = 0; i < jsonlabels.size(); i++) {
+			int labelid = jsonlabels.getJsonObject(i).getInt("label_id");
+			labels.add(labelid);
+		}
+
+		if (labels.contains(19)) {
+			_statusDisplayState = 0;
+			_statusTextView.setText("Pending");
+			_detailButton.setVisibility(GONE);
+			_detailButton.setText("Payments");
+		} else if (labels.contains(20)) {
+			_statusDisplayState = 0;
+			_statusTextView.setText("In Review");
+			_detailButton.setVisibility(GONE);
+		} else if (labels.contains(21)) {
+			_statusDisplayState = 2;
+			_statusTextView.setText("Processing");
+			_detailButton.setVisibility(VISIBLE);
+			_detailButton.setText("Payments");
+		} else if (_workorder.has("status") && _workorder.getString("status").equals(
+				"Paid")) {
+			_statusDisplayState = 3;
+			_statusTextView.setText("Paid");
+			_detailButton.setVisibility(GONE);
 		}
 		updateStatusUi();
 	}
