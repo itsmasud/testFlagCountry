@@ -42,11 +42,11 @@ public class ListViewEx extends ListView {
 	// private LayoutInflater mInflater;
 
 	// UI
-	private RelativeLayout mRefreshView;
-	private TextView mRefreshViewText;
-	private ImageView mRefreshViewImage;
-	private ProgressBar mRefreshViewProgress;
-	private TextView mRefreshViewLastUpdated;
+	private RelativeLayout _refreshView;
+	private TextView _refreshTextView;
+	private ImageView _refreshImageView;
+	private ProgressBar _refreshProgressView;
+	private TextView _refreshViewLastUpdated;
 
 	// State
 	private int _currentScrollState;
@@ -90,25 +90,25 @@ public class ListViewEx extends ListView {
 
 		// TODO make into custom view
 		final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mRefreshView = (RelativeLayout) inflater.inflate(
-				R.layout.pull_to_refresh_header, this, false);
-		mRefreshViewText = (TextView) mRefreshView.findViewById(R.id.pull_to_refresh_text);
-		mRefreshViewImage = (ImageView) mRefreshView.findViewById(R.id.pull_to_refresh_image);
-		mRefreshViewProgress = (ProgressBar) mRefreshView.findViewById(R.id.pull_to_refresh_progress);
-		mRefreshViewLastUpdated = (TextView) mRefreshView.findViewById(R.id.pull_to_refresh_updated_at);
+		_refreshView = (RelativeLayout) inflater.inflate(
+				R.layout.view_listviewex_header, this, false);
+		_refreshTextView = (TextView) _refreshView.findViewById(R.id.pull_to_refresh_text);
+		_refreshImageView = (ImageView) _refreshView.findViewById(R.id.pull_to_refresh_image);
+		_refreshProgressView = (ProgressBar) _refreshView.findViewById(R.id.pull_to_refresh_progress);
+		_refreshViewLastUpdated = (TextView) _refreshView.findViewById(R.id.pull_to_refresh_updated_at);
 
-		mRefreshViewImage.setMinimumHeight(50);
-		mRefreshView.setOnClickListener(new OnClickRefreshListener());
-		_refreshOriginalTopPadding = mRefreshView.getPaddingTop();
+		_refreshImageView.setMinimumHeight(50);
+		_refreshView.setOnClickListener(new OnClickRefreshListener());
+		_refreshOriginalTopPadding = _refreshView.getPaddingTop();
 
 		_refreshState = _TAP_TO_REFRESH;
 
-		addHeaderView(mRefreshView);
+		addHeaderView(_refreshView);
 
 		super.setOnScrollListener(_this_onScrollListener);
 
-		measureView(mRefreshView);
-		_refreshViewHeight = mRefreshView.getMeasuredHeight();
+		measureView(_refreshView);
+		_refreshViewHeight = _refreshView.getMeasuredHeight();
 
 		prepareForRefresh();
 	}
@@ -135,22 +135,22 @@ public class ListViewEx extends ListView {
 			// "Release to refresh..." and flip the arrow drawable.
 			if (_currentScrollState == SCROLL_STATE_TOUCH_SCROLL && _refreshState != _REFRESHING) {
 				if (firstVisibleItem == 0) {
-					mRefreshViewImage.setVisibility(View.VISIBLE);
-					if ((mRefreshView.getBottom() >= _refreshViewHeight + 20 || mRefreshView.getTop() >= 0) && _refreshState != _RELEASE_TO_REFRESH) {
-						mRefreshViewText.setText(R.string.pull_to_refresh_release_label);
-						mRefreshViewImage.clearAnimation();
-						mRefreshViewImage.startAnimation(_flipAnimation);
+					_refreshImageView.setVisibility(View.VISIBLE);
+					if ((_refreshView.getBottom() >= _refreshViewHeight + 20 || _refreshView.getTop() >= 0) && _refreshState != _RELEASE_TO_REFRESH) {
+						_refreshTextView.setText(R.string.pull_to_refresh_release_label);
+						_refreshImageView.clearAnimation();
+						_refreshImageView.startAnimation(_flipAnimation);
 						_refreshState = _RELEASE_TO_REFRESH;
-					} else if (mRefreshView.getBottom() < _refreshViewHeight + 20 && _refreshState != _PULL_TO_REFRESH) {
-						mRefreshViewText.setText(R.string.pull_to_refresh_pull_label);
+					} else if (_refreshView.getBottom() < _refreshViewHeight + 20 && _refreshState != _PULL_TO_REFRESH) {
+						_refreshTextView.setText(R.string.pull_to_refresh_pull_label);
 						if (_refreshState != _TAP_TO_REFRESH) {
-							mRefreshViewImage.clearAnimation();
-							mRefreshViewImage.startAnimation(_reverseFlipAnimation);
+							_refreshImageView.clearAnimation();
+							_refreshImageView.startAnimation(_reverseFlipAnimation);
 						}
 						_refreshState = _PULL_TO_REFRESH;
 					}
 				} else {
-					mRefreshViewImage.setVisibility(View.GONE);
+					_refreshImageView.setVisibility(View.GONE);
 					resetHeader();
 				}
 			} else if (_currentScrollState == SCROLL_STATE_FLING && firstVisibleItem == 0 && _refreshState != _REFRESHING) {
@@ -209,10 +209,10 @@ public class ListViewEx extends ListView {
 	 */
 	public void setLastUpdated(CharSequence lastUpdated) {
 		if (lastUpdated != null) {
-			mRefreshViewLastUpdated.setVisibility(View.VISIBLE);
-			mRefreshViewLastUpdated.setText(lastUpdated);
+			_refreshViewLastUpdated.setVisibility(View.VISIBLE);
+			_refreshViewLastUpdated.setText(lastUpdated);
 		} else {
-			mRefreshViewLastUpdated.setVisibility(View.GONE);
+			_refreshViewLastUpdated.setVisibility(View.GONE);
 		}
 	}
 
@@ -227,12 +227,12 @@ public class ListViewEx extends ListView {
 				setVerticalScrollBarEnabled(true);
 			}
 			if (getFirstVisiblePosition() == 0 && _refreshState != _REFRESHING) {
-				if ((mRefreshView.getBottom() >= _refreshViewHeight || mRefreshView.getTop() >= 0) && _refreshState == _RELEASE_TO_REFRESH) {
+				if ((_refreshView.getBottom() >= _refreshViewHeight || _refreshView.getTop() >= 0) && _refreshState == _RELEASE_TO_REFRESH) {
 					// Initiate the refresh
 					_refreshState = _REFRESHING;
 					prepareForRefresh();
 					onRefresh();
-				} else if (mRefreshView.getBottom() < _refreshViewHeight || mRefreshView.getTop() <= 0) {
+				} else if (_refreshView.getBottom() < _refreshViewHeight || _refreshView.getTop() <= 0) {
 					// Abort refresh and scroll down below the refresh view
 					resetHeader();
 					setSelection(1);
@@ -265,9 +265,9 @@ public class ListViewEx extends ListView {
 				// simulate a more resistant effect during pull.
 				int topPadding = (int) (((historicalY - _lastMotionY) - _refreshViewHeight) / 1.7);
 
-				mRefreshView.setPadding(mRefreshView.getPaddingLeft(),
-						topPadding, mRefreshView.getPaddingRight(),
-						mRefreshView.getPaddingBottom());
+				_refreshView.setPadding(_refreshView.getPaddingLeft(),
+						topPadding, _refreshView.getPaddingRight(),
+						_refreshView.getPaddingBottom());
 			}
 		}
 	}
@@ -276,9 +276,9 @@ public class ListViewEx extends ListView {
 	 * Sets the header padding back to original size.
 	 */
 	private void resetHeaderPadding() {
-		mRefreshView.setPadding(mRefreshView.getPaddingLeft(),
-				_refreshOriginalTopPadding, mRefreshView.getPaddingRight(),
-				mRefreshView.getPaddingBottom());
+		_refreshView.setPadding(_refreshView.getPaddingLeft(),
+				_refreshOriginalTopPadding, _refreshView.getPaddingRight(),
+				_refreshView.getPaddingBottom());
 	}
 
 	/**
@@ -292,14 +292,14 @@ public class ListViewEx extends ListView {
 			resetHeaderPadding();
 
 			// Set refresh view text to the pull label
-			mRefreshViewText.setText(R.string.pull_to_refresh_tap_label);
+			_refreshTextView.setText(R.string.pull_to_refresh_tap_label);
 			// Replace refresh drawable with arrow drawable
-			mRefreshViewImage.setImageResource(R.drawable.ic_pulltorefresh_arrow);
+			_refreshImageView.setImageResource(R.drawable.ic_pulltorefresh_arrow);
 			// Clear the full rotation animation
-			mRefreshViewImage.clearAnimation();
+			_refreshImageView.clearAnimation();
 			// Hide progress bar and arrow.
-			mRefreshViewImage.setVisibility(View.GONE);
-			mRefreshViewProgress.setVisibility(View.GONE);
+			_refreshImageView.setVisibility(View.GONE);
+			_refreshProgressView.setVisibility(View.GONE);
 		}
 	}
 
@@ -326,13 +326,13 @@ public class ListViewEx extends ListView {
 	public void prepareForRefresh() {
 		resetHeaderPadding();
 
-		mRefreshViewImage.setVisibility(View.GONE);
+		_refreshImageView.setVisibility(View.GONE);
 		// We need this hack, otherwise it will keep the previous drawable.
-		mRefreshViewImage.setImageDrawable(null);
-		mRefreshViewProgress.setVisibility(View.VISIBLE);
+		_refreshImageView.setImageDrawable(null);
+		_refreshProgressView.setVisibility(View.VISIBLE);
 
 		// Set refresh view text to the refreshing label
-		mRefreshViewText.setText(R.string.pull_to_refresh_refreshing_label);
+		_refreshTextView.setText(R.string.pull_to_refresh_refreshing_label);
 
 		_refreshState = _REFRESHING;
 	}

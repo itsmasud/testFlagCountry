@@ -39,6 +39,7 @@
                 android:id="@+id/workorder_subtext_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_below="@+id/mywork_title_textView"
                 android:layout_toRightOf="@+id/mywork_imageview"
                 android:text="@string/mywork_subtitle"
@@ -80,6 +81,7 @@
                 android:id="@+id/market_subtext_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_below="@+id/market_title_textview"
                 android:layout_toRightOf="@+id/market_imageview"
                 android:text="@string/market_subtitle"
@@ -121,6 +123,7 @@
                 android:id="@+id/payment_subtext_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_below="@+id/payment_title_textview"
                 android:layout_toRightOf="@+id/payment_imageview"
                 android:text="@string/payment_subtitle"
@@ -171,6 +174,7 @@
                 android:id="@+id/settings_subtext_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_below="@+id/settings_title_textview"
                 android:layout_toRightOf="@+id/settings_imageview"
                 android:text="@string/settings_subtitle"
@@ -208,11 +212,6 @@
                 android:text="@string/logout_title"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </RelativeLayout>
-
-        <View
-            style="@style/DrawerSeparator"
-            android:layout_width="fill_parent"
-            android:layout_height="2px" />
     </LinearLayout>
 
 </ScrollView>

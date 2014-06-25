@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="wosum_bevel_size">5px</dimen>
+    <dimen name="wosum_corner_radius">5dp</dimen>
+    <dimen name="wosum_button_dropshadow">2px</dimen>
+    <dimen name="wosum_button_radius">4px</dimen>
+
+</resources>

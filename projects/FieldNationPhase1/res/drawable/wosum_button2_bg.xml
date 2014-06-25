@@ -4,24 +4,24 @@
     <item>
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="@dimen/buttonCorners"
-                android:bottomRightRadius="@dimen/buttonCorners"
-                android:topLeftRadius="@dimen/buttonCorners"
-                android:topRightRadius="@dimen/buttonCorners" />
+                android:bottomLeftRadius="@dimen/wosum_button_radius"
+                android:bottomRightRadius="@dimen/wosum_button_radius"
+                android:topLeftRadius="@dimen/wosum_button_radius"
+                android:topRightRadius="@dimen/wosum_button_radius" />
 
             <solid android:color="@color/wosumButton2Bevel" >
             </solid>
         </shape>
     </item>
     <item
-        android:bottom="2px"
-        android:left="2px">
+        android:bottom="@dimen/wosum_button_dropshadow"
+        android:left="@dimen/wosum_button_dropshadow">
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="@dimen/buttonCorners"
-                android:bottomRightRadius="@dimen/buttonCorners"
-                android:topLeftRadius="@dimen/buttonCorners"
-                android:topRightRadius="@dimen/buttonCorners" />
+                android:bottomLeftRadius="@dimen/wosum_button_radius"
+                android:bottomRightRadius="@dimen/wosum_button_radius"
+                android:topLeftRadius="@dimen/wosum_button_radius"
+                android:topRightRadius="@dimen/wosum_button_radius" />
 
             <gradient
                 android:angle="-90"

@@ -76,6 +76,7 @@ public class MyWorkListFragment extends Fragment {
 
 		WorkorderListAdapter adapter = getListAdapter();
 		if (adapter != null) {
+			Log.v(TAG, "onPause");
 			adapter.onStop();
 			adapter = null;
 		}

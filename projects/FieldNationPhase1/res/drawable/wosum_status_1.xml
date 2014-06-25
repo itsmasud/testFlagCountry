@@ -4,18 +4,18 @@
     <item>
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="10dp"
-                android:topLeftRadius="10dp" />
+                android:bottomLeftRadius="@dimen/wosum_corner_radius"
+                android:topLeftRadius="@dimen/wosum_corner_radius" />
 
             <solid android:color="@color/wosumStatus1Bevel" >
             </solid>
         </shape>
     </item>
-    <item android:bottom="5px">
+    <item android:bottom="@dimen/wosum_bevel_size">
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="10dp"
-                android:topLeftRadius="10dp" />
+                android:bottomLeftRadius="@dimen/wosum_corner_radius"
+                android:topLeftRadius="@dimen/wosum_corner_radius" />
 
             <solid android:color="@color/wosumStatus1" />
         </shape>

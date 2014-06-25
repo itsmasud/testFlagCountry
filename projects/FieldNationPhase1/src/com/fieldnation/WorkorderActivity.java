@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-public class WorkorderActivity extends DrawerActivity {
+public class WorkorderActivity extends BaseActivity {
 	private static final String TAG = "WorkorderActivity";
 
 	private static final int RPC_GET_DETAIL = 1;
@@ -47,8 +49,6 @@ public class WorkorderActivity extends DrawerActivity {
 			}
 		}
 
-		addActionBarAndDrawer(R.id.container);
-
 		if (_workorderId == 0) {
 			// epic fail!
 			Log.e(TAG, "must have a workorder id!");
@@ -60,6 +60,10 @@ public class WorkorderActivity extends DrawerActivity {
 		_authClient = new MyAuthenticationClient(this);
 		_gs = (GlobalState) getApplicationContext();
 		_gs.requestAuthentication(_authClient);
+
+		ActionBar actionbar = getSupportActionBar();
+		actionbar.setDisplayHomeAsUpEnabled(true);
+		actionbar.setHomeButtonEnabled(true);
 	}
 
 	/*-*************************-*/
@@ -101,7 +105,6 @@ public class WorkorderActivity extends DrawerActivity {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-
 		}
 
 		@Override
@@ -112,4 +115,13 @@ public class WorkorderActivity extends DrawerActivity {
 		}
 	};
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent gohome = new Intent(this, MarketActivity.class);
+			startActivity(gohome);
+		}
+		return super.onOptionsItemSelected(item);
+	};
 }

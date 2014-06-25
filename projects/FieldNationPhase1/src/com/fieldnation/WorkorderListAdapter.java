@@ -174,6 +174,11 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 		@Override
 		public void onAuthentication(String username, String accessToken) {
+			if (!_viable) {
+				Log.v(TAG,
+						"MyAuthenticationClient.onAuthentication(), not viable");
+				return;
+			}
 			_username = username;
 			_authToken = accessToken;
 			_workorderRpc = new WorkorderService(_context, _username,
@@ -190,6 +195,10 @@ public class WorkorderListAdapter extends BaseAdapter {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			Log.v(TAG, "WebServiceResultReciever.onSuccess");
+			if (!_viable) {
+				Log.v(TAG, "WebServiceResultReciever.onSuccess(), not viable");
+				return;
+			}
 			_nextPage++;
 			// int page = resultData.getInt(KEY_PARAM_PAGE);
 			String data = new String(
@@ -221,6 +230,11 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
+			if (!_viable) {
+				Log.v(TAG, "WebServiceResultReciever.onError(), not viable");
+				return;
+			}
+
 			Log.v(TAG, errorType);
 			Log.v(TAG, resultData.toString());
 			_gs.invalidateAuthToken(_authToken);
@@ -266,6 +280,11 @@ public class WorkorderListAdapter extends BaseAdapter {
 	}
 
 	public void getNextPage() {
+		if (!_viable) {
+			Log.v(TAG, "not running![2]");
+			return;
+		}
+
 		dispatchOnLoading();
 		if (_authToken == null) {
 			Log.v(TAG, "Waiting for accessToken");

@@ -2,6 +2,7 @@ package com.fieldnation;
 
 import com.fieldnation.R;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
@@ -68,6 +69,7 @@ public class DrawerView extends RelativeLayout {
 		public void onClick(View v) {
 			Intent intent = new Intent(getContext(), MyWorkActivity.class);
 			getContext().startActivity(intent);
+			attachAnimations();
 		}
 	};
 
@@ -76,6 +78,7 @@ public class DrawerView extends RelativeLayout {
 		public void onClick(View v) {
 			Intent intent = new Intent(getContext(), MarketActivity.class);
 			getContext().startActivity(intent);
+			attachAnimations();
 		}
 	};
 	private View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
@@ -90,6 +93,7 @@ public class DrawerView extends RelativeLayout {
 		public void onClick(View v) {
 			Intent intent = new Intent(getContext(), SettingsActivity.class);
 			getContext().startActivity(intent);
+			attachAnimations();
 		}
 	};
 	private View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
@@ -100,4 +104,11 @@ public class DrawerView extends RelativeLayout {
 		}
 	};
 
+	private void attachAnimations() {
+		Context context = getContext();
+		if (context instanceof Activity) {
+			((Activity) context).overridePendingTransition(-1, -1);
+		}
+
+	}
 }
