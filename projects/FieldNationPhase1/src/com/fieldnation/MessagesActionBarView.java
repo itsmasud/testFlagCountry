@@ -3,6 +3,7 @@ package com.fieldnation;
 import com.fieldnation.R;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,14 +37,16 @@ public class MessagesActionBarView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
-		setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Method Stub: onClick()
-				Log.v(TAG, "Method Stub: onClick()");
-			}
-		});
+		setOnClickListener(_this_onClickListener);
 	}
+
+	private View.OnClickListener _this_onClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent(getContext(), MessageListActivity.class);
+			getContext().startActivity(intent);
+		}
+	};
 
 	public void setCount(int count) {
 		if (count == 0) {

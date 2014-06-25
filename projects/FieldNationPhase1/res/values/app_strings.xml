@@ -31,6 +31,9 @@
     <!-- main activity strings -->
     <string name="launcher_open">I am Open</string>
     <string name="work_order_detail_title">Work Order</string>
+    
+    <!-- message list activity -->
+    <string name="activity_message_list_title">Messages</string>
 
     <!-- Drawer strings -->
     <string name="mywork_title">Work Orders</string>

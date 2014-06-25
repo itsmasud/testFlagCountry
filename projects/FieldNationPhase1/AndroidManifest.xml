@@ -48,6 +48,11 @@
             android:exported="false"
             android:label="@string/work_order_detail_title" >
         </activity>
+        <activity
+            android:name="com.fieldnation.MessageListActivity"
+            android:exported="false"
+            android:label="@string/activity_message_list_title" >
+        </activity>
 
         <provider
             android:name="com.fieldnation.rpc.server.StubProvider"
@@ -91,7 +96,7 @@
             android:exported="true"
             android:process=":sync" >
             <intent-filter>
-com.fieldnation.service
+com.fieldnation.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 

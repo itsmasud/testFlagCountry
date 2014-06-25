@@ -22,7 +22,7 @@ public class MarketActivity extends DrawerActivity {
 	private ListViewEx _workordersListView;
 
 	// Data
-	private WorkorderListAdapter _woAdapter;
+	private WorkorderListAdapter _listAdapter;
 
 	// Services
 
@@ -40,22 +40,15 @@ public class MarketActivity extends DrawerActivity {
 
 		addActionBarAndDrawer(R.id.container);
 
-		try {
-			_woAdapter = new WorkorderListAdapter(MarketActivity.this,
-					DataSelector.AVAILABLE);
-			_woAdapter.setLoadingListener(_workorderAdapter_listener);
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-		_workordersListView.setAdapter(_woAdapter);
+		_workordersListView.setAdapter(getListAdapter());
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 
-		if (_woAdapter != null) {
-			_woAdapter.onStop();
+		if (_listAdapter != null) {
+			_listAdapter.onStop();
 		}
 	}
 
@@ -81,12 +74,33 @@ public class MarketActivity extends DrawerActivity {
 
 		@Override
 		public void onRefresh() {
-			_woAdapter.update(false);
+			getListAdapter().update(false);
 		}
 	};
 
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
+	private WorkorderListAdapter getListAdapter() {
+		try {
+			if (_listAdapter == null) {
+				_listAdapter = new WorkorderListAdapter(this,
+						DataSelector.AVAILABLE);
+				_listAdapter.setLoadingListener(_workorderAdapter_listener);
+			}
 
+			if (!_listAdapter.isViable()) {
+				_listAdapter = new WorkorderListAdapter(this,
+						DataSelector.AVAILABLE);
+				_listAdapter.setLoadingListener(_workorderAdapter_listener);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+
+		return _listAdapter;
+
+	}
 }
