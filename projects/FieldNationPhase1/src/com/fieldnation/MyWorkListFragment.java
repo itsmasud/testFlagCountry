@@ -18,14 +18,10 @@ public class MyWorkListFragment extends Fragment {
 
 	// UI
 	private ListViewEx _workordersListView;
-	private ProgressBar _loadingProgressBar;
-	private TextView _noDataTextView;
-	private ImageButton _refreshButton;
 
 	// Data
 	private WorkorderListAdapter _listAdapter;
 	private DataSelector _displayView = DataSelector.AVAILABLE;
-	private boolean _hasData = false;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -48,15 +44,8 @@ public class MyWorkListFragment extends Fragment {
 				Log.v(TAG, "Restoring state");
 				_displayView = DataSelector.fromName(savedInstanceState.getString("_displayView"));
 			}
-			if (savedInstanceState.containsKey("_hasData")) {
-				Log.v(TAG, "Restoring state");
-				_hasData = savedInstanceState.getBoolean("_hasData");
-			}
 		}
-
 		Log.v(TAG, "Display Type: " + _displayView.getCall());
-		_hasData = false;
-		// getListAdapter().update(true);
 	}
 
 	@Override
@@ -69,17 +58,10 @@ public class MyWorkListFragment extends Fragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		_noDataTextView = (TextView) view.findViewById(R.id.nodata_textview);
-
-		_loadingProgressBar = (ProgressBar) view.findViewById(R.id.loading_progressbar);
 		_workordersListView = (ListViewEx) view.findViewById(R.id.workorders_listview);
 		_workordersListView.setDivider(null);
 		_workordersListView.setOnRefreshListener(_listView_onRefreshListener);
 		_workordersListView.setAdapter(getListAdapter());
-
-		_refreshButton = (ImageButton) view.findViewById(R.id.refresh_button);
-		_refreshButton.setOnClickListener(_refresh_onClick);
-
 	}
 
 	@Override
@@ -102,35 +84,31 @@ public class MyWorkListFragment extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putString("_displayView", _displayView.name());
-		outState.putBoolean("_hasData", _hasData);
 		super.onSaveInstanceState(outState);
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private WorkorderListAdapter.Listener _workorderAdapter_listener = new WorkorderListAdapter.Listener() {
+
+		@Override
+		public void onLoading() {
+			// TODO Method Stub: onLoading()
+			Log.v(TAG, "Method Stub: onLoading()");
+		}
+
+		@Override
+		public void onLoadComplete() {
+			_workordersListView.onRefreshComplete();
+		}
+	};
+
 	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
+
 		@Override
 		public void onRefresh() {
-			update();
-		}
-	};
-
-	private View.OnClickListener _refresh_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Log.v(TAG,
-					"_refresh_onClick: " + MyWorkListFragment.this.toString() + "/" + _displayView.getCall());
-			update();
-		}
-	};
-
-	private DataSetObserver _listAdapter_observer = new DataSetObserver() {
-		@Override
-		public void onChanged() {
-			_hasData = true;
-			updateUi();
-			super.onChanged();
+			_listAdapter.update(false);
 		}
 	};
 
@@ -138,32 +116,7 @@ public class MyWorkListFragment extends Fragment {
 	/*-				Util				-*/
 	/*-*********************************-*/
 	public void update() {
-		_hasData = false;
-		updateUi();
-		getListAdapter().update(false);
-	}
-
-	private void updateUi() {
-		if (_loadingProgressBar != null) {
-			if (_hasData) {
-				_loadingProgressBar.setVisibility(View.GONE);
-				WorkorderListAdapter adapter = getListAdapter();
-				if (adapter != null) {
-					if (adapter.getCount() == 0) {
-						_noDataTextView.setVisibility(View.VISIBLE);
-						_refreshButton.setVisibility(View.VISIBLE);
-					} else {
-						_noDataTextView.setVisibility(View.GONE);
-						_refreshButton.setVisibility(View.GONE);
-						_workordersListView.onRefreshComplete();
-					}
-				}
-			} else {
-				_noDataTextView.setVisibility(View.GONE);
-				_refreshButton.setVisibility(View.GONE);
-				// _loadingProgressBar.setVisibility(View.VISIBLE);
-			}
-		}
+		// TODO method stub update
 	}
 
 	private WorkorderListAdapter getListAdapter() {
@@ -173,13 +126,13 @@ public class MyWorkListFragment extends Fragment {
 			if (_listAdapter == null) {
 				_listAdapter = new WorkorderListAdapter(this.getActivity(),
 						_displayView);
-				_listAdapter.registerDataSetObserver(_listAdapter_observer);
+				_listAdapter.setLoadingListener(_workorderAdapter_listener);
 			}
 
 			if (!_listAdapter.isViable()) {
 				_listAdapter = new WorkorderListAdapter(this.getActivity(),
 						_displayView);
-				_listAdapter.registerDataSetObserver(_listAdapter_observer);
+				_listAdapter.setLoadingListener(_workorderAdapter_listener);
 			}
 
 		} catch (Exception ex) {

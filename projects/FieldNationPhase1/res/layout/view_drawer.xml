@@ -24,7 +24,7 @@
                 android:layout_height="64dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/todo" />
+                android:src="@drawable/ic_todo" />
 
             <TextView
                 android:id="@+id/mywork_title_textView"
@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/hiring" />
+                android:src="@drawable/ic_hiring" />
 
             <TextView
                 android:id="@+id/market_title_textview"
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/payment" />
+                android:src="@drawable/ic_payment" />
 
             <TextView
                 android:id="@+id/payment_title_textview"
@@ -156,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/settings" />
+                android:src="@drawable/ic_settings" />
 
             <TextView
                 android:id="@+id/settings_title_textview"
@@ -197,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/logout" />
+                android:src="@drawable/ic_logout" />
 
             <TextView
                 android:id="@+id/title_textView3"

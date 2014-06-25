@@ -2,6 +2,7 @@ package com.fieldnation;
 
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -18,14 +19,10 @@ public class MarketActivity extends DrawerActivity {
 	private static final String TAG = "MarketActivity";
 
 	// UI
-	private ListView _workordersListView;
-	private ProgressBar _loadingProgressBar;
-	private TextView _noDataTextView;
-	private ImageButton _refreshButton;
+	private ListViewEx _workordersListView;
 
 	// Data
 	private WorkorderListAdapter _woAdapter;
-	private boolean _hasData = false;
 
 	// Services
 
@@ -38,30 +35,19 @@ public class MarketActivity extends DrawerActivity {
 		setContentView(R.layout.activity_market);
 		setTitle(R.string.market_title);
 
-		_workordersListView = (ListView) findViewById(R.id.workorder_listview);
-		_loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
-		_noDataTextView = (TextView) findViewById(R.id.nodata_textview);
-		_refreshButton = (ImageButton) findViewById(R.id.refresh_button);
-		_refreshButton.setOnClickListener(_refresh_onClick);
+		_workordersListView = (ListViewEx) findViewById(R.id.workorder_listview);
+		_workordersListView.setOnRefreshListener(_listView_onRefreshListener);
 
 		addActionBarAndDrawer(R.id.container);
 
 		try {
 			_woAdapter = new WorkorderListAdapter(MarketActivity.this,
 					DataSelector.AVAILABLE);
+			_woAdapter.setLoadingListener(_workorderAdapter_listener);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}
-		_woAdapter.registerDataSetObserver(_listAdapter_observer);
 		_workordersListView.setAdapter(_woAdapter);
-		// _woAdapter.update(true);
-
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		updateUi();
 	}
 
 	@Override
@@ -76,46 +62,31 @@ public class MarketActivity extends DrawerActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private View.OnClickListener _refresh_onClick = new View.OnClickListener() {
+	private WorkorderListAdapter.Listener _workorderAdapter_listener = new WorkorderListAdapter.Listener() {
+
 		@Override
-		public void onClick(View v) {
-			_hasData = false;
-			updateUi();
-			_woAdapter.update(false);
+		public void onLoading() {
+			// TODO Method Stub: onLoading()
+			Log.v(TAG, "Method Stub: onLoading()");
+
+		}
+
+		@Override
+		public void onLoadComplete() {
+			_workordersListView.onRefreshComplete();
 		}
 	};
 
-	private DataSetObserver _listAdapter_observer = new DataSetObserver() {
+	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
+
 		@Override
-		public void onChanged() {
-			_hasData = true;
-			updateUi();
-			super.onChanged();
+		public void onRefresh() {
+			_woAdapter.update(false);
 		}
 	};
 
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
-	private void updateUi() {
-		if (_loadingProgressBar != null) {
-			if (_hasData) {
-				_loadingProgressBar.setVisibility(View.GONE);
-				if (_woAdapter != null) {
-					if (_woAdapter.getCount() == 0) {
-						_noDataTextView.setVisibility(View.VISIBLE);
-						_refreshButton.setVisibility(View.VISIBLE);
-					} else {
-						_noDataTextView.setVisibility(View.GONE);
-						_refreshButton.setVisibility(View.GONE);
-					}
-				}
-			} else {
-				_noDataTextView.setVisibility(View.GONE);
-				_refreshButton.setVisibility(View.GONE);
-				_loadingProgressBar.setVisibility(View.VISIBLE);
-			}
-		}
-	}
 
 }

@@ -72,7 +72,7 @@
                     android:layout_height="24dp"
                     android:layout_alignParentLeft="true"
                     android:layout_marginRight="5dp"
-                    android:src="@drawable/bundle_icon" />
+                    android:src="@drawable/ic_bundle" />
 
                 <TextView
                     style="@style/WorkorderSummary_Title"

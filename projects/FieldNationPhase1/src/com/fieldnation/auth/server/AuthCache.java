@@ -38,10 +38,6 @@ public class AuthCache {
 		_oAuthBlob = src.getString(AuthCacheSqlHelper.Column.OAUTH_BLOB.getIndex());
 		_requestBlob = src.getString(AuthCacheSqlHelper.Column.REQUEST_BLOB.getIndex());
 		_sessionExpiry = src.getLong(AuthCacheSqlHelper.Column.SESSION_EXPIRY.getIndex());
-
-		Log.v(TAG, _username);
-		Log.v(TAG, _requestBlob);
-		Log.v(TAG, _oAuthBlob);
 	}
 
 	private AuthCache(Context context, String username, String password) {

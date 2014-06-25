@@ -21,33 +21,6 @@
 
             <requestFocus />
         </EditText>
-
-        <ProgressBar
-            android:id="@+id/loading_progressbar"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminate="true" />
-
-        <TextView
-            android:id="@+id/nodata_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/no_data"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:visibility="gone" />
-
-        <ImageButton
-            android:id="@+id/refresh_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/nodata_textview"
-            android:layout_centerHorizontal="true"
-            android:src="@android:drawable/ic_popup_sync"
-            android:visibility="gone" />
     </RelativeLayout>
 
     <!-- The navigation drawer -->

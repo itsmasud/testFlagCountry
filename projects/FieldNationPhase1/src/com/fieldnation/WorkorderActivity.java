@@ -21,7 +21,6 @@ public class WorkorderActivity extends DrawerActivity {
 
 	// UI
 	private EditText _detailEditText;
-	private ProgressBar _loadingProgressBar;
 
 	// Data
 	private GlobalState _gs;
@@ -57,7 +56,6 @@ public class WorkorderActivity extends DrawerActivity {
 		}
 
 		_detailEditText = (EditText) findViewById(R.id.detail_edittext);
-		_loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
 
 		_authClient = new MyAuthenticationClient(this);
 		_gs = (GlobalState) getApplicationContext();
@@ -100,7 +98,6 @@ public class WorkorderActivity extends DrawerActivity {
 						new String(
 								resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))).display());
 
-				_loadingProgressBar.setVisibility(View.GONE);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

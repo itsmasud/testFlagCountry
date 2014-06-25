@@ -13,6 +13,12 @@
         <item name="titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
     </style>
 
+    <style name="ActionBar.Transparent.FieldNation" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="background">@drawable/actionbar_background</item>
+        <item name="backgroundStacked">@drawable/actionbar_stacked_background</item>
+        <item name="titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
+    </style>
+
     <style name="ActionBar.TextStyle.FieldNation" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">#FFFFFFFF</item>
     </style>
