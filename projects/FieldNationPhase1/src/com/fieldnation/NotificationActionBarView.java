@@ -33,16 +33,17 @@ public class NotificationActionBarView extends RelativeLayout {
 
 		_countTextView = (TextView) findViewById(R.id.count_textview);
 
-		setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Method Stub: onClick()
-				Log.v(TAG, "Method Stub: onClick()");
-			}
-
-		});
+		setOnClickListener(_this_onClick);
 	}
+
+	private View.OnClickListener _this_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+
+		}
+	};
 
 	public void setCount(int count) {
 		if (count == 0) {

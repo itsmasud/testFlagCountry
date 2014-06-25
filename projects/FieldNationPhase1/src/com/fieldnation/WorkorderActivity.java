@@ -61,9 +61,6 @@ public class WorkorderActivity extends BaseActivity {
 		_gs = (GlobalState) getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
-		ActionBar actionbar = getSupportActionBar();
-		actionbar.setDisplayHomeAsUpEnabled(true);
-		actionbar.setHomeButtonEnabled(true);
 	}
 
 	/*-*************************-*/
@@ -83,8 +80,6 @@ public class WorkorderActivity extends BaseActivity {
 					authToken, _rpcReciever);
 
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
-			// TODO Method Stub: onAuthentication()
-			Log.v(TAG, "Method Stub: onAuthentication()");
 		}
 	}
 
@@ -93,8 +88,7 @@ public class WorkorderActivity extends BaseActivity {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			// TODO Method Stub: onSuccess()
-			Log.v(TAG, "Method Stub: onSuccess()");
+			Log.v(TAG, "onSuccess()");
 			Log.v(TAG, resultData.toString());
 
 			try {
@@ -115,13 +109,4 @@ public class WorkorderActivity extends BaseActivity {
 		}
 	};
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			Intent gohome = new Intent(this, MarketActivity.class);
-			startActivity(gohome);
-		}
-		return super.onOptionsItemSelected(item);
-	};
 }

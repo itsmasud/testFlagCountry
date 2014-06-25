@@ -59,7 +59,7 @@ public abstract class AuthenticationClient {
 		@Override
 		public void onSuccess(Object value) {
 			_gs.requestAuthentication(AuthenticationClient.this);
-			// TODO Method Stub: onFail()
+			// TODO Method Stub: onSuccess()
 			Log.v(TAG, "Method Stub: onSuccess()");
 		}
 

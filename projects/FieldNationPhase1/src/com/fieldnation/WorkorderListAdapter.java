@@ -311,13 +311,10 @@ public class WorkorderListAdapter extends BaseAdapter {
 			return (Intent) _rpcMethod.invoke(_workorderRpc, resultCode, page,
 					allowCache);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

@@ -117,7 +117,8 @@ public class MyWorkListFragment extends Fragment {
 	/*-				Util				-*/
 	/*-*********************************-*/
 	public void update() {
-		// TODO method stub update
+		// TODO method stub update()
+		Log.v(TAG, "update() stub");
 	}
 
 	private WorkorderListAdapter getListAdapter() {

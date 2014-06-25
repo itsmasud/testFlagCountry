@@ -1,6 +1,7 @@
 package com.fieldnation;
 
 import com.fieldnation.rpc.server.ClockReceiver;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -49,6 +51,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 		ClockReceiver.registerClock(this);
 
 		getAccount();
+
+		ActionBar actionbar = getSupportActionBar();
+		actionbar.setDisplayHomeAsUpEnabled(true);
+		actionbar.setHomeButtonEnabled(true);
 	}
 
 	@Override
@@ -76,13 +82,12 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 		@Override
 		public void requestAuthentication(AuthenticationClient client) {
-			// TODO Method Stub: requestAuthentication()
-			Log.v(TAG, "Method Stub: requestAuthentication()");
+			Log.v(TAG, "requestAuthentication()");
 			if (_account == null) {
-				Log.v(TAG, "Method Stub: requestAuthentication()1");
+				Log.v(TAG, "requestAuthentication() no account");
 				client.waitForObject(BaseActivity.this, "_acccount");
 			} else {
-				Log.v(TAG, "Method Stub: requestAuthentication()2");
+				Log.v(TAG, "requestAuthentication() asking for account token");
 				AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
 						_account, _gs.accountType, null, BaseActivity.this,
 						null, new Handler());
@@ -100,8 +105,12 @@ public abstract class BaseActivity extends ActionBarActivity {
 	// Menu
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent gohome = new Intent(this, MarketActivity.class);
+			startActivity(gohome);
+			return true;
+		case R.id.action_settings:
 			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
 			return true;
@@ -112,7 +121,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 	private FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
 		@Override
 		public void onFail(Exception ex) {
-			// TODO stub
+			// TODO stub onFail()
 			Log.v(TAG, "_futureWaitAsyncTaskListener.onFail()");
 		}
 

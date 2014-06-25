@@ -63,34 +63,11 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
 		_context.startService(intent);
 		return null;
-
-		// Bundle result = new Bundle();
-		//
-		// try {
-		// AccessToken at = AuthHelper.getToken(_context, account.name,
-		// password);
-		//
-		// result.putString(AccountManager.KEY_AUTHTOKEN, at.toString());
-		// result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
-		// result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
-		// } catch (MalformedURLException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (ParseException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// return result;
 	}
 
 	@Override
 	public Bundle editProperties(AccountAuthenticatorResponse response,
 			String accountType) {
-		// TODO Method Stub: editProperties()
 		Log.v(TAG, "Method Stub: editProperties()");
 		return null;
 	}
@@ -98,14 +75,12 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	@Override
 	public Bundle confirmCredentials(AccountAuthenticatorResponse response,
 			Account account, Bundle options) throws NetworkErrorException {
-		// TODO Method Stub: confirmCredentials()
 		Log.v(TAG, "Method Stub: confirmCredentials()");
 		return null;
 	}
 
 	@Override
 	public String getAuthTokenLabel(String authTokenType) {
-		// TODO Method Stub: getAuthTokenLabel()
 		Log.v(TAG, "Method Stub: getAuthTokenLabel()");
 		return null;
 	}
@@ -113,7 +88,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	@Override
 	public Bundle updateCredentials(AccountAuthenticatorResponse response,
 			Account account, String authTokenType, Bundle options) throws NetworkErrorException {
-		// TODO Method Stub: updateCredentials()
 		Log.v(TAG, "Method Stub: updateCredentials()");
 		return null;
 	}
@@ -121,7 +95,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	@Override
 	public Bundle hasFeatures(AccountAuthenticatorResponse response,
 			Account account, String[] features) throws NetworkErrorException {
-		// TODO Method Stub: hasFeatures()
 		Log.v(TAG, "Method Stub: hasFeatures()");
 		return null;
 	}

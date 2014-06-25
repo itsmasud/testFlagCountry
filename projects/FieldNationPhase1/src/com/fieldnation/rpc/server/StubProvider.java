@@ -11,7 +11,6 @@ public class StubProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
-		// TODO Method Stub: onCreate()
 		Log.v(TAG, "Method Stub: onCreate()");
 		return false;
 	}
@@ -19,28 +18,24 @@ public class StubProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
-		// TODO Method Stub: query()
 		Log.v(TAG, "Method Stub: query()");
 		return null;
 	}
 
 	@Override
 	public String getType(Uri uri) {
-		// TODO Method Stub: getType()
 		Log.v(TAG, "Method Stub: getType()");
 		return null;
 	}
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		// TODO Method Stub: insert()
 		Log.v(TAG, "Method Stub: insert()");
 		return null;
 	}
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		// TODO Method Stub: delete()
 		Log.v(TAG, "Method Stub: delete()");
 		return 0;
 	}
@@ -48,7 +43,6 @@ public class StubProvider extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		// TODO Method Stub: update()
 		Log.v(TAG, "Method Stub: update()");
 		return 0;
 	}

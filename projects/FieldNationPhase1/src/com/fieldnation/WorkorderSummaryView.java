@@ -143,7 +143,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 						WorkorderActivity.class);
 				intent.putExtra("workorder_id",
 						_workorder.getLong("workorder_id"));
-				// TODO package up the workorder... or send the id
 				getContext().startActivity(intent);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -167,10 +166,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_statusDisplayState = (_statusDisplayState + 1) % 4;
 
 			updateStatusUi();
-
-			// TODO Method Stub: onClick()
-			System.out.println("Method Stub: onClick()");
-
 		}
 	};
 
@@ -380,7 +375,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 			}
 		}
 
-		// TODO need to change the button's fg/bg
 		if (isOnHold) {
 			_statusTextView.setText("On Hold");
 			if (isAcked) {
@@ -402,7 +396,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_detailButton.setText("Check In");
 			_detailButton.setVisibility(VISIBLE);
 		}
-		updateStatusUi();
 	}
 
 	private void buildStatusAvailable() throws ParseException {
@@ -447,8 +440,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 				_detailButton.setVisibility(VISIBLE);
 				_detailButton.setText("View Counter");
 			}
-
-			updateStatusUi();
 		}
 	}
 
@@ -478,7 +469,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 			}
 		}
 
-		// TODO need to change the button's fg/bg
 		if (isOnHold) {
 			_statusTextView.setText("On Hold");
 			if (isAcked) {
@@ -500,7 +490,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_detailButton.setText("Check In");
 			_detailButton.setVisibility(VISIBLE);
 		}
-		updateStatusUi();
 	}
 
 	private void buildStatusCompleted() throws ParseException {
@@ -532,6 +521,5 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_statusTextView.setText("Paid");
 			_detailButton.setVisibility(GONE);
 		}
-		updateStatusUi();
 	}
 }
