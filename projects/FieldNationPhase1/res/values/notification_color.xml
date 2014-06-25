@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="notificationBackground">#FFfe6200</color>
+    <color name="notificationForeground">#FFFFFFFF</color>
+
+</resources>

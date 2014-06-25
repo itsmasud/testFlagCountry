@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="drawer_padding">5dp</dimen>
+    <dimen name="drawer_item_paddingLeft">5dp</dimen>
+    <dimen name="drawer_item_paddingTop">20dp</dimen>
+    <dimen name="drawer_item_paddingRight">5dp</dimen>
+    <dimen name="drawer_item_paddingBottom">20dp</dimen>
+    <dimen name="drawer_item_icon_paddingRight">5dp</dimen>
+
+</resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/MessageView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
@@ -9,47 +10,75 @@
         android:orientation="horizontal" >
 
         <RelativeLayout
-            android:id="@+id/relativeLayout1"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent" >
 
             <View
-                android:id="@+id/status_layout"
-                android:layout_width="20dp"
+                android:id="@+id/status_view"
+                android:layout_width="@dimen/MessageView_StatusWidth"
                 android:layout_height="match_parent"
-                android:background="@drawable/wosum_status_3" />
+                android:background="@drawable/wosum_status_1" />
 
             <View
                 android:id="@+id/filler"
-                android:layout_width="20dp"
+                style="@style/MessageView_Padding"
+                android:layout_width="@dimen/MessageView_PaddingWidth"
                 android:layout_height="match_parent"
-                android:layout_toRightOf="@+id/status_layout" />
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/profile_pic" 
-                android:scaleType="centerCrop"/>
+                android:layout_toRightOf="@+id/status_view" />
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout1"
+            style="@style/MessageView_RightSide"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/title_textview"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Large Text"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Project Title Goes Here dot dot dot dot dot dot"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    style="@style/MessageView_StatusLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status: "
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/substatus_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Substatus Title dot dot dot dot dot dot dot dot dot dot dot dot"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/messagebody_textview"
+                style="@style/MessageView_Body"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Small Text"
+                android:text="Here is the message body. This should be able to handle a lot of text. On many lines, going forever. Uhg."
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/time_textview"
+                style="@style/MessageView_Time"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Posted June 10, 2014"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
     </LinearLayout>

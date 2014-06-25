@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="drawerBackground">#FFe7e8da</color>
+    <color name="drawerHighlightBackground">#FFc0e4bc</color>
+    <color name="drawerHighlightBorder">#FF5cc087</color>
+    <color name="drawerForeground">#FFcecfc0</color>
+    <color name="drawerPaymentAmountBackground">#FF3bc89e</color>
+    <color name="drawerPaymentAmountForeground">#FFFFFFFF</color>
+
+</resources>
