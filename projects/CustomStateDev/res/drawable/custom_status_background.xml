@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/com.fieldnation.customstatedev">
+
+    <item android:drawable="@drawable/custom_status_background_baked" app:state_baked="true" app:state_fried="false"/>
+    <item android:drawable="@drawable/custom_status_background_fried" app:state_baked="false" app:state_fried="true"/>
+    <item android:drawable="@drawable/custom_status_background_norm" app:state_baked="false" app:state_fried="false"/>
+    <item android:drawable="@drawable/custom_status_background_both" app:state_baked="true" app:state_fried="true"/>
+
+</selector>

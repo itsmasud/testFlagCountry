@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MyCustomState">
+        <attr name="state_fried" format="boolean" />
+        <attr name="state_baked" format="boolean" />
+        <attr name="status_background" format="reference" />
+    </declare-styleable>
+
+</resources>
