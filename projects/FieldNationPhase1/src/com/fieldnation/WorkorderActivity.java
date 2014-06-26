@@ -9,12 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 public class WorkorderActivity extends BaseActivity {
 	private static final String TAG = "WorkorderActivity";

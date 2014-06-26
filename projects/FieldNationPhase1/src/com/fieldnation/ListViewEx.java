@@ -1,17 +1,13 @@
 package com.fieldnation;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
@@ -76,14 +72,14 @@ public class ListViewEx extends ListView {
 
 		// Load all of the animations we need in code rather than through XML
 		_flipAnimation = new RotateAnimation(0, -180,
-				RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+				Animation.RELATIVE_TO_SELF, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f);
 		_flipAnimation.setInterpolator(new LinearInterpolator());
 		_flipAnimation.setDuration(250);
 		_flipAnimation.setFillAfter(true);
 		_reverseFlipAnimation = new RotateAnimation(-180, 0,
-				RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+				Animation.RELATIVE_TO_SELF, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f);
 		_reverseFlipAnimation.setInterpolator(new LinearInterpolator());
 		_reverseFlipAnimation.setDuration(250);
 		_reverseFlipAnimation.setFillAfter(true);

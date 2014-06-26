@@ -1,8 +1,5 @@
 package com.fieldnation;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * <P>
  * An enum that provides data selection abilities. Used primarily in

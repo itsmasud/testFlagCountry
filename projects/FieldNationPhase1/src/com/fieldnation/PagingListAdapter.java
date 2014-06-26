@@ -48,6 +48,10 @@ public abstract class PagingListAdapter extends BaseAdapter {
 	/*-*********************************-*/
 	/*-			Getters/Setters			-*/
 	/*-*********************************-*/
+	public Context getContext() {
+		return _context;
+	}
+
 	public boolean isViable() {
 		return _isViable;
 	}
@@ -93,9 +97,6 @@ public abstract class PagingListAdapter extends BaseAdapter {
 					parent);
 		}
 	}
-
-	public abstract View getView(JsonObject obj, View convertView,
-			ViewGroup parent);
 
 	/*-*****************************-*/
 	/*-			Dispatchers			-*/
@@ -258,20 +259,67 @@ public abstract class PagingListAdapter extends BaseAdapter {
 		} else {
 			Log.v(TAG, "Have accessToken");
 			getWebService(_context, _username, _authToken, _resultReciever);
-			executeWebService(_nextPage, _allowCache);
+			executeWebService(0, _nextPage, _allowCache);
 		}
 	}
 
+	/*-*************************************-*/
+	/*-			Abstract Methods			-*/
+	/*-*************************************-*/
+
+	/**
+	 * Called when a new view is needed by the listview
+	 * 
+	 * @param obj
+	 * @param convertView
+	 * @param parent
+	 * @return
+	 */
+	public abstract View getView(JsonObject obj, View convertView,
+			ViewGroup parent);
+
+	/**
+	 * When authenticatino fails, or some other error happens that requires that
+	 * the web sevice be restarted
+	 */
 	public abstract void invalidateWebervice();
 
+	/**
+	 * This should create a new webservice if one doesn't already exist. If one
+	 * exists, then this can be ignored.
+	 * 
+	 * @param context
+	 * @param username
+	 * @param authToken
+	 * @param resultReceiver
+	 */
 	public abstract void getWebService(Context context, String username,
-			String authToken, ResultReceiver resultReciever);
+			String authToken, ResultReceiver resultReceiver);
 
+	/**
+	 * rebuild the web service with the new information
+	 * 
+	 * @param context
+	 * @param username
+	 * @param authToken
+	 * @param resultReceiver
+	 */
 	public abstract void rebuildWebService(Context context, String username,
-			String authToken, ResultReceiver resultReciever);
+			String authToken, ResultReceiver resultReceiver);
 
-	public abstract void executeWebService(int page, boolean allowCache);
+	/**
+	 * Execute the web service
+	 * 
+	 * @param resultCode
+	 * @param page
+	 * @param allowCache
+	 */
+	public abstract void executeWebService(int resultCode, int page,
+			boolean allowCache);
 
+	/*-*****************************-*/
+	/*-			Listener			-*/
+	/*-*****************************-*/
 	public interface Listener {
 		/**
 		 * Called when loading a page has started

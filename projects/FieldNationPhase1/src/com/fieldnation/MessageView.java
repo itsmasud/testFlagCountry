@@ -1,7 +1,5 @@
 package com.fieldnation;
 
-import java.text.ParseException;
-
 import com.fieldnation.json.JsonObject;
 
 import android.content.Context;
