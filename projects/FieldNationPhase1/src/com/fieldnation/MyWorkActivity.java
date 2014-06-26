@@ -57,10 +57,10 @@ public class MyWorkActivity extends DrawerActivity {
 
 		_fragments = new MyWorkListFragment[4];
 
-		_fragments[0] = new MyWorkListFragment().setDisplayType(DataSelector.IN_PROGRESS);
-		_fragments[1] = new MyWorkListFragment().setDisplayType(DataSelector.ASSIGNED);
-		_fragments[2] = new MyWorkListFragment().setDisplayType(DataSelector.COMPLETED);
-		_fragments[3] = new MyWorkListFragment().setDisplayType(DataSelector.CANCELLED);
+		_fragments[0] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.IN_PROGRESS);
+		_fragments[1] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.ASSIGNED);
+		_fragments[2] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.COMPLETED);
+		_fragments[3] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.CANCELLED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

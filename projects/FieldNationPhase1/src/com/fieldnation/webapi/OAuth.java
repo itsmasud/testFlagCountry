@@ -14,11 +14,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.fieldnation.R;
+import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
 /**
- * Represents an oauth token. This class is designed to be immutable.
+ * Represents an oauth token. This class should be an immutable class.
  * 
  * @author michael.carver
  * 
@@ -49,6 +50,9 @@ public class OAuth {
 
 	private JsonObject _oauth = new JsonObject(_defaults);
 
+	/*-*********************************-*/
+	/*-			Constructors			-*/
+	/*-*********************************-*/
 	private OAuth(JsonObject json) throws ParseException {
 		_oauth.merge(json, true, true);
 
@@ -67,10 +71,36 @@ public class OAuth {
 		this(new JsonObject(jsonString));
 	}
 
+	/*-*********************************-*/
+	/*-			Instantiators			-*/
+	/*-*********************************-*/
+	/**
+	 * Create an oauth from a cached oAuthBlob.
+	 * 
+	 * @see AuthCache
+	 * 
+	 * @param oauthBlob
+	 * @return
+	 * @throws ParseException
+	 */
 	public static OAuth fromCache(String oauthBlob) throws ParseException {
 		return new OAuth(oauthBlob);
 	}
 
+	/**
+	 * Authenticates the user against the Field Nation servers
+	 * 
+	 * @param hostname
+	 * @param grantType
+	 * @param clientId
+	 * @param clientSecret
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public static OAuth authServer(String hostname, String grantType,
 			String clientId, String clientSecret, String username,
 			String password) throws MalformedURLException, IOException, ParseException {
@@ -78,6 +108,21 @@ public class OAuth {
 				grantType, clientId, clientSecret, username, password);
 	}
 
+	/**
+	 * Authenticates the user against the Field Nation servers
+	 * 
+	 * @param hostname
+	 * @param path
+	 * @param grantType
+	 * @param clientId
+	 * @param clientSecret
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public static OAuth authServer(String hostname, String path,
 			String grantType, String clientId, String clientSecret,
 			String username, String password) throws MalformedURLException, IOException, ParseException {
@@ -124,6 +169,11 @@ public class OAuth {
 		return new OAuth(token);
 	}
 
+	/**
+	 * Invalidates the authtoken for this oauth with the {@link AccountManager}
+	 * 
+	 * @param context
+	 */
 	public void invalidate(Context context) {
 		AccountManager am = AccountManager.get(context);
 		am.invalidateAuthToken(context.getString(R.string.accounttype),
@@ -200,6 +250,13 @@ public class OAuth {
 		return null;
 	}
 
+	/**
+	 * Parses a URL option string and adds the access_token to it.
+	 * 
+	 * @param options
+	 * @return
+	 * @throws ParseException
+	 */
 	public String applyToUrlOptions(String options) throws ParseException {
 		if (options == null || options.equals("")) {
 			return "?access_token=" + getAccessToken();

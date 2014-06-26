@@ -81,6 +81,13 @@ public class WorkorderActivity extends BaseActivity {
 
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
 		}
+
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			// TODO Method Stub: onAuthenticationFailed()
+			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
+
+		}
 	}
 
 	private WebServiceResultReciever _rpcReciever = new WebServiceResultReciever(

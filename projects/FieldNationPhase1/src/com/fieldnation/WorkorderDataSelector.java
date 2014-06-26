@@ -13,7 +13,7 @@ import java.util.Set;
  * @author michael.carver
  * 
  */
-public enum DataSelector {
+public enum WorkorderDataSelector {
 	AVAILABLE("getAvailable"),
 	ASSIGNED("getAssigned"),
 	IN_PROGRESS("getAssigned"),
@@ -22,7 +22,7 @@ public enum DataSelector {
 
 	private String _call;
 
-	private DataSelector(String call) {
+	private WorkorderDataSelector(String call) {
 		_call = call;
 	}
 
@@ -30,8 +30,8 @@ public enum DataSelector {
 		return _call;
 	}
 
-	public static DataSelector fromName(String name) {
-		DataSelector[] vs = values();
+	public static WorkorderDataSelector fromName(String name) {
+		WorkorderDataSelector[] vs = values();
 		for (int i = 0; i < vs.length; i++) {
 			if (vs[i].name().equals(name)) {
 				return vs[i];

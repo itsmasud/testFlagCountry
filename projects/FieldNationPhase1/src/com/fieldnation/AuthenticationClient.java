@@ -11,11 +11,6 @@ import android.util.Log;
  * service authentication.
  * </p>
  * 
- * <p>
- * TODO, this class will fail silently. It needs to be updated to do something
- * intelligent on failure
- * </p>
- * 
  * @see GlobalState
  * @see AuthenticationServer
  * 
@@ -59,14 +54,11 @@ public abstract class AuthenticationClient {
 		@Override
 		public void onSuccess(Object value) {
 			_gs.requestAuthentication(AuthenticationClient.this);
-			// TODO Method Stub: onSuccess()
-			Log.v(TAG, "Method Stub: onSuccess()");
 		}
 
 		@Override
 		public void onFail(Exception ex) {
-			// TODO Method Stub: onFail()
-			Log.v(TAG, "Method Stub: onFail()");
+			onAuthenticationFailed(ex);
 		}
 	};
 
@@ -91,5 +83,7 @@ public abstract class AuthenticationClient {
 	};
 
 	public abstract void onAuthentication(String username, String authToken);
+
+	public abstract void onAuthenticationFailed(Exception ex);
 
 }

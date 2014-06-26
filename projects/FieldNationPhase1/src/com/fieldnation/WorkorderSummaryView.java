@@ -55,7 +55,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 	// Data
 	private GlobalState _gs;
-	private DataSelector _dataView = null;
+	private WorkorderDataSelector _dataView = null;
 
 	private JsonObject _workorder;
 
@@ -172,9 +172,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 	/*-*********************************-*/
 	/*-				Data				-*/
 	/*-*********************************-*/
-	public void setWorkorder(DataSelector dataSelector, JsonObject workorder) {
+	public void setWorkorder(WorkorderDataSelector workorderDataSelector, JsonObject workorder) {
 		_workorder = workorder;
-		_dataView = dataSelector;
+		_dataView = workorderDataSelector;
 		refresh();
 	}
 

@@ -2,8 +2,6 @@
 <resources>
 
     <color name="wosumBackground">#00000000</color>
-    <color name="wosumInsideBg">#FFFCFCFC</color>
-    <color name="wosumInsideBevel">#FFe0e0e0</color>
     <color name="wosumOptionsBackground">#FF383f49</color>
 
     <!-- status colors -->

@@ -18,10 +18,23 @@ import javax.net.ssl.X509TrustManager;
 
 import android.util.Log;
 
+/**
+ * Provides a simple Http wrapper
+ * 
+ * @author michael.carver
+ * 
+ */
 public class Ws {
 	private static final String TAG = "webapi.Ws";
-	public static boolean USE_HTTPS = true;
 
+	/**
+	 * Set to true to enable HTTPS, set to false to disable HTTPS. Default =
+	 * True
+	 */
+	public static boolean USE_HTTPS = true;
+	/**
+	 * Set to true to enable debug mode, set to false to disable it.
+	 */
 	public static final boolean DEBUG = true;
 
 	private OAuth _accessToken = null;

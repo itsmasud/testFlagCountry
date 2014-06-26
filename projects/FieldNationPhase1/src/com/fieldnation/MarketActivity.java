@@ -88,13 +88,13 @@ public class MarketActivity extends DrawerActivity {
 		try {
 			if (_listAdapter == null) {
 				_listAdapter = new WorkorderListAdapter(this,
-						DataSelector.AVAILABLE);
+						WorkorderDataSelector.AVAILABLE);
 				_listAdapter.setLoadingListener(_workorderAdapter_listener);
 			}
 
 			if (!_listAdapter.isViable()) {
 				_listAdapter = new WorkorderListAdapter(this,
-						DataSelector.AVAILABLE);
+						WorkorderDataSelector.AVAILABLE);
 				_listAdapter.setLoadingListener(_workorderAdapter_listener);
 			}
 

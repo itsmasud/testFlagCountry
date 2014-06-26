@@ -107,7 +107,8 @@ public class DrawerView extends RelativeLayout {
 	private void attachAnimations() {
 		Context context = getContext();
 		if (context instanceof Activity) {
-			((Activity) context).overridePendingTransition(-1, -1);
+			((Activity) context).overridePendingTransition(
+					R.anim.activity_slide_in, 0);
 		}
 
 	}

@@ -43,7 +43,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	private MyAuthenticationClient _authClient;
 	private String _authToken;
 	private String _username;
-	private DataSelector _dataSelection;
+	private WorkorderDataSelector _dataSelection;
 	private int _nextPage;
 	private boolean _atEndOfList;
 	private Listener _listener = null;
@@ -52,7 +52,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 	/*-			Lifecycle			-*/
 	/*-*****************************-*/
 
-	public WorkorderListAdapter(Context context, DataSelector selection) throws NoSuchMethodException {
+	public WorkorderListAdapter(Context context, WorkorderDataSelector selection) throws NoSuchMethodException {
 		// Log.v(TAG, "WorkorderListAdapter");
 		_context = context;
 		_gs = (GlobalState) context.getApplicationContext();
@@ -186,6 +186,13 @@ public class WorkorderListAdapter extends BaseAdapter {
 			Log.v(TAG,
 					"onAuthentication(" + username + ", " + accessToken + ")");
 			update(false);
+		}
+
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			// TODO Method Stub: onAuthenticationFailed()
+			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
+
 		}
 	}
 

@@ -4,18 +4,18 @@
     <item>
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="@dimen/wosum_corner_radius"
-                android:topLeftRadius="@dimen/wosum_corner_radius" />
+                android:bottomLeftRadius="@dimen/card_corner_radius"
+                android:topLeftRadius="@dimen/card_corner_radius" />
 
             <solid android:color="@color/wosumStatus4Bevel" >
             </solid>
         </shape>
     </item>
-    <item android:bottom="@dimen/wosum_bevel_size">
+    <item android:bottom="@dimen/card_bevel_height">
         <shape android:shape="rectangle" >
             <corners
-                android:bottomLeftRadius="@dimen/wosum_corner_radius"
-                android:topLeftRadius="@dimen/wosum_corner_radius" />
+                android:bottomLeftRadius="@dimen/card_corner_radius"
+                android:topLeftRadius="@dimen/card_corner_radius" />
 
             <solid android:color="@color/wosumStatus4" />
         </shape>

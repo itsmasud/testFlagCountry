@@ -9,12 +9,14 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
+/**
+ * Represents an HTTP response with some extra parsing.
+ * 
+ * @author michael.carver
+ * 
+ */
 public class Result {
 
-	/*
-	 * note, we use cacheing here to prevent multiple interpretations of the
-	 * same data
-	 */
 	private byte[] _baResults = null;
 	private String _sResults = null;
 	private JsonObject _jsonResults = null;
