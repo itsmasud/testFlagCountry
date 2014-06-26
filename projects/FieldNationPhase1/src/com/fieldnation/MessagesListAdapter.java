@@ -2,8 +2,10 @@ package com.fieldnation;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
+
 import android.content.Context;
 import android.os.ResultReceiver;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,7 +43,6 @@ public class MessagesListAdapter extends PagingListAdapter {
 	@Override
 	public void getWebService(Context context, String username,
 			String authToken, ResultReceiver resultReceiver) {
-
 		if (_profileService == null) {
 			_profileService = new ProfileService(context, username, authToken,
 					resultReceiver);
@@ -51,14 +52,13 @@ public class MessagesListAdapter extends PagingListAdapter {
 	@Override
 	public void rebuildWebService(Context context, String username,
 			String authToken, ResultReceiver resultReceiver) {
-		if (_profileService == null) {
-			_profileService = new ProfileService(context, username, authToken,
-					resultReceiver);
-		}
+		_profileService = new ProfileService(context, username, authToken,
+				resultReceiver);
 	}
 
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
-		_profileService.getAllMessages(resultCode, 1, page, allowCache);
+		getContext().startService(
+				_profileService.getAllMessages(resultCode, 1, page, allowCache));
 	}
 }

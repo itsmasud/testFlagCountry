@@ -78,7 +78,7 @@ public class MessagesActionBarView extends RelativeLayout {
 			_profileService = new ProfileService(getContext(), username,
 					authToken, _resultReciever);
 			getContext().startService(
-					_profileService.getAllMessages(0, 1, _nextPage, false));
+					_profileService.getAllMessages(0, 1, _nextPage, true));
 			_nextPage++;
 
 		}
@@ -97,7 +97,7 @@ public class MessagesActionBarView extends RelativeLayout {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			// TODO Method Stub: onSuccess()
+			Log.v(TAG, "WebServiceResultReceiver.onSuccess");
 			try {
 				JsonArray ja = new JsonArray(
 						new String(
@@ -105,18 +105,18 @@ public class MessagesActionBarView extends RelativeLayout {
 				int count = ja.size();
 
 				_messageCount += count;
-
-				if (count == 25) {
+				if (_messageCount >= 99) {
+					setCount(_messageCount, false);
+				} else if (count == 25) {
 					setCount(_messageCount, true);
 					getContext().startService(
 							_profileService.getAllMessages(0, 1, _nextPage,
-									false));
+									true));
 					_nextPage++;
 				} else {
 					setCount(_messageCount, false);
 				}
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 
 			}
@@ -135,10 +135,16 @@ public class MessagesActionBarView extends RelativeLayout {
 			_countTextView.setVisibility(GONE);
 		} else {
 			_countTextView.setVisibility(VISIBLE);
-			if (stillLoading)
-				_countTextView.setText(count + "+");
-			else
-				_countTextView.setText(count + "");
+			if (count >= 99) {
+				_countTextView.setText("!!");
+			} else {
+				if (stillLoading) {
+					// TODO figure out why "+" is not showing up
+					_countTextView.setText(count + "+");
+				} else {
+					_countTextView.setText(count + "");
+				}
+			}
 		}
 	}
 }

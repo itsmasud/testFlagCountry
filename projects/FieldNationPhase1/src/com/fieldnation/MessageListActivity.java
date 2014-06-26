@@ -3,7 +3,7 @@ package com.fieldnation;
 import android.util.Log;
 import android.os.Bundle;
 
-public class MessageListActivity extends DrawerActivity {
+public class MessageListActivity extends BaseActivity {
 	private static final String TAG = "MessageListActivity";
 
 	// UI
@@ -24,7 +24,7 @@ public class MessageListActivity extends DrawerActivity {
 		_messageListView = (ListViewEx) findViewById(R.id.messages_listview);
 		_messageListView.setOnRefreshListener(_listView_onRefreshListener);
 
-		addActionBarAndDrawer(R.id.container);
+		// addActionBarAndDrawer(R.id.container);
 
 		_messageListView.setAdapter(getListAdapter());
 	}
