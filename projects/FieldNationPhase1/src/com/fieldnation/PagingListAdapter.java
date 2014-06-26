@@ -1,18 +1,14 @@
 package com.fieldnation;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,95 +16,61 @@ import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-/**
- * A list adapter that loads work order lists.
- * 
- * @author michael.carver
- * 
- */
-public class WorkorderListAdapter extends BaseAdapter {
-	private static final String TAG = "WorkorderListAdapter";
+public abstract class PagingListAdapter extends BaseAdapter {
+	private static final String TAG = "PagingListAdapter";
 
 	private GlobalState _gs;
 	private Context _context;
-	private JsonArray _workorders = null;
-	private WorkorderService _workorderRpc;
-	private Method _rpcMethod;
-	private boolean _viable;
+	private boolean _isViable;
+	private int _nextPage = 0;
+	private boolean _atEndOfList;
+	private JsonArray _objects = null;
 	private boolean _allowCache = true;
-	private MyAuthenticationClient _authClient;
 	private String _authToken;
 	private String _username;
-	private WorkorderDataSelector _dataSelection;
-	private int _nextPage;
-	private boolean _atEndOfList;
+	private ProgressBar _progressBar;
+	private MyAuthClient _authClient;
 	private Listener _listener = null;
 
-	/*-*****************************-*/
-	/*-			Lifecycle			-*/
-	/*-*****************************-*/
-
-	public WorkorderListAdapter(Context context, WorkorderDataSelector selection) throws NoSuchMethodException {
-		// Log.v(TAG, "WorkorderListAdapter");
+	public PagingListAdapter(Context context) {
 		_context = context;
+
+		_progressBar = new ProgressBar(context);
+		_authClient = new MyAuthClient(context);
 		_gs = (GlobalState) context.getApplicationContext();
-		_authClient = new MyAuthenticationClient(context);
 		_gs.requestAuthentication(_authClient);
-		_dataSelection = selection;
 
-		_viable = true;
-
-		_rpcMethod = WorkorderService.class.getDeclaredMethod(
-				selection.getCall(),
-				new Class<?>[] { int.class, int.class, boolean.class });
-		_rpcMethod.setAccessible(true);
+		_isViable = true;
 		_nextPage = 0;
 		_atEndOfList = false;
-
-	}
-
-	/**
-	 * Will stop the task from looking up work orders
-	 */
-	public void onStop() {
-		// Log.v(TAG, "onStop");
-		notifyDataSetInvalidated();
-		_viable = false;
 	}
 
 	/*-*********************************-*/
 	/*-			Getters/Setters			-*/
 	/*-*********************************-*/
 	public boolean isViable() {
-		// Log.v(TAG, "isViable");
-		return _viable;
+		return _isViable;
 	}
 
 	@Override
 	public int getCount() {
-		if (_workorders == null || _workorders.size() == 0) {
-			// Log.v(TAG, "getCount=0");
+		if (_objects == null || _objects.size() == 0) {
 			return 0;
 		}
 
 		if (_atEndOfList) {
-			// Log.v(TAG, "getCount=_workorders.size()");
-			return _workorders.size();
+			return _objects.size();
 		} else {
-			// Log.v(TAG, "getCount=_workorders.size() + 1");
-			return _workorders.size() + 1;
+			return _objects.size() + 1;
 		}
 	}
 
 	@Override
 	public Object getItem(int position) {
-		if (position >= _workorders.size()) {
-			// Log.v(TAG, "getItem(" + position + ")=null");
+		if (position >= _objects.size()) {
 			return null;
 		} else {
-			// Log.v(TAG, "getItem(" + position +
-			// ")=_workorders.get(position)");
-			return _workorders.get(position);
+			return _objects.get(position);
 		}
 	}
 
@@ -117,30 +79,23 @@ public class WorkorderListAdapter extends BaseAdapter {
 		return position;
 	}
 
+	protected View getProgressBar() {
+		return _progressBar;
+	}
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if (position >= _workorders.size()) {
-			// Log.v(TAG, "getView(), next page");
+		if (position >= _objects.size()) {
 			getNextPage();
-			return new ProgressBar(_context);
+			return getProgressBar();
 		} else {
-			// Log.v(TAG, "getView(), make view");
-			WorkorderSummaryView wosum = null;
-
-			if (convertView == null) {
-				wosum = new WorkorderSummaryView(parent.getContext());
-			} else if (convertView instanceof WorkorderSummaryView) {
-				wosum = (WorkorderSummaryView) convertView;
-			} else {
-				wosum = new WorkorderSummaryView(parent.getContext());
-			}
-
-			wosum.setWorkorder(_dataSelection,
-					_workorders.getJsonObject(position));
-
-			return wosum;
+			return getView(_objects.getJsonObject(position), convertView,
+					parent);
 		}
 	}
+
+	public abstract View getView(JsonObject obj, View convertView,
+			ViewGroup parent);
 
 	/*-*****************************-*/
 	/*-			Dispatchers			-*/
@@ -162,24 +117,32 @@ public class WorkorderListAdapter extends BaseAdapter {
 	/*-*********************************-*/
 	/*-			Event Handlers			-*/
 	/*-*********************************-*/
-	private class MyAuthenticationClient extends AuthenticationClient {
 
-		public MyAuthenticationClient(Context context) {
+	/**
+	 * Will stop the task from looking up work orders
+	 */
+	public void onStop() {
+		// Log.v(TAG, "onStop");
+		notifyDataSetInvalidated();
+		_isViable = false;
+	}
+
+	private class MyAuthClient extends AuthenticationClient {
+
+		public MyAuthClient(Context context) {
 			super(context);
 		}
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			if (!_viable) {
+			if (!_isViable) {
 				Log.v(TAG,
 						"MyAuthenticationClient.onAuthentication(), not viable");
 				return;
 			}
 			_username = username;
 			_authToken = authToken;
-			_workorderRpc = new WorkorderService(_context, _username,
-					_authToken, _webRpcReceiver);
-			Log.v(TAG, "onAuthentication(" + username + ", " + authToken + ")");
+			rebuildWebService(_context, _username, _authToken, _resultReciever);
 			update(false);
 		}
 
@@ -189,40 +152,40 @@ public class WorkorderListAdapter extends BaseAdapter {
 			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
 
 		}
+
 	}
 
-	private WebServiceResultReceiver _webRpcReceiver = new WebServiceResultReceiver(
+	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(
 			new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			Log.v(TAG, "WebServiceResultReciever.onSuccess");
-			if (!_viable) {
+			if (!_isViable) {
 				Log.v(TAG, "WebServiceResultReciever.onSuccess(), not viable");
 				return;
 			}
 			_nextPage++;
-			// int page = resultData.getInt(KEY_PARAM_PAGE);
 			String data = new String(
 					resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 
-			JsonArray orders = null;
+			JsonArray objects = null;
 			try {
-				orders = new JsonArray(data);
+				objects = new JsonArray(data);
 			} catch (Exception ex) {
 				// TODO report problem?
 				Log.v(TAG, data);
 				ex.printStackTrace();
 			}
-			if (orders == null) {
-				Log.v(TAG, "orders is null");
+			if (objects == null) {
+				Log.v(TAG, "objects is null");
 				notifyDataSetChanged();
 				return;
 			}
 
-			_workorders.merge(orders);
+			_objects.merge(objects);
 
-			if (orders.size() < 25) {
+			if (objects.size() < 25) {
 				Log.v(TAG, "_atEndOfList");
 				_atEndOfList = true;
 			}
@@ -232,7 +195,7 @@ public class WorkorderListAdapter extends BaseAdapter {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			if (!_viable) {
+			if (!_isViable) {
 				Log.v(TAG, "WebServiceResultReciever.onError(), not viable");
 				return;
 			}
@@ -267,22 +230,22 @@ public class WorkorderListAdapter extends BaseAdapter {
 	 */
 	public void update(boolean allowCache) {
 		Log.v(TAG, "update()");
-		if (!_viable) {
+		if (!_isViable) {
 			Log.v(TAG, "not running!");
 			return;
 		}
 
-		Log.v(TAG, "Starting query: " + _rpcMethod.getName());
+		Log.v(TAG, "Starting query ");
 		_allowCache = allowCache;
 
 		_nextPage = 0;
 		_atEndOfList = false;
-		_workorders = new JsonArray();
+		_objects = new JsonArray();
 		getNextPage();
 	}
 
 	public void getNextPage() {
-		if (!_viable) {
+		if (!_isViable) {
 			Log.v(TAG, "not running![2]");
 			return;
 		}
@@ -290,35 +253,24 @@ public class WorkorderListAdapter extends BaseAdapter {
 		dispatchOnLoading();
 		if (_authToken == null) {
 			Log.v(TAG, "Waiting for accessToken");
-			_workorderRpc = null;
+			invalidateWebervice();
 			_gs.requestAuthentication(_authClient);
 		} else {
 			Log.v(TAG, "Have accessToken");
-			if (_workorderRpc == null) {
-				_workorderRpc = new WorkorderService(_context, _username,
-						_authToken, _webRpcReceiver);
-			}
-			try {
-				_context.startService(callRpc(0, _nextPage, _allowCache));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			getWebService(_context, _username, _authToken, _resultReciever);
+			executeWebService(_nextPage, _allowCache);
 		}
 	}
 
-	private Intent callRpc(int resultCode, int page, boolean allowCache) {
-		try {
-			return (Intent) _rpcMethod.invoke(_workorderRpc, resultCode, page,
-					allowCache);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	public abstract void invalidateWebervice();
+
+	public abstract void getWebService(Context context, String username,
+			String authToken, ResultReceiver resultReciever);
+
+	public abstract void rebuildWebService(Context context, String username,
+			String authToken, ResultReceiver resultReciever);
+
+	public abstract void executeWebService(int page, boolean allowCache);
 
 	public interface Listener {
 		/**

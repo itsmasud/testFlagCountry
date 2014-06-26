@@ -11,9 +11,9 @@ import android.os.ResultReceiver;
  * @author michael.carver
  * 
  */
-public abstract class WebServiceResultReciever extends ResultReceiver implements WebServiceConstants {
+public abstract class WebServiceResultReceiver extends ResultReceiver implements WebServiceConstants {
 
-	public WebServiceResultReciever(Handler handler) {
+	public WebServiceResultReceiver(Handler handler) {
 		super(handler);
 	}
 

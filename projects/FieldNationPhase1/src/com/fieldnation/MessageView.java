@@ -1,5 +1,9 @@
 package com.fieldnation;
 
+import java.text.ParseException;
+
+import com.fieldnation.json.JsonObject;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -32,6 +36,25 @@ public class MessageView extends RelativeLayout {
 
 		if (isInEditMode())
 			return;
+
+		_titleTextView = (TextView) findViewById(R.id.title_textview);
+		_messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
+		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
+	}
+
+	public void setMessage(JsonObject message) {
+		try {
+			_titleTextView.setText(message.getString("workorderId"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			_messageBodyTextView.setText(message.getString("message"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

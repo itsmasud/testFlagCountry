@@ -1,7 +1,7 @@
 package com.fieldnation.rpc.client;
 
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReciever;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.content.Intent;
 
 public class WorkorderService extends WebService implements WebServiceConstants {
 
-	public WorkorderService(Context conetxt, String username, String authToken, WebServiceResultReciever callback) {
+	public WorkorderService(Context conetxt, String username, String authToken, WebServiceResultReceiver callback) {
 		super(conetxt, username, authToken, callback);
 	}
 

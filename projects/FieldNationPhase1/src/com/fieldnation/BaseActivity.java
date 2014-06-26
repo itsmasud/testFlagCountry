@@ -65,7 +65,6 @@ public abstract class BaseActivity extends ActionBarActivity {
 		_notificationsView.setCount(10);
 
 		_messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
-		_messagesView.setCount(100);
 
 		return true;
 

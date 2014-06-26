@@ -3,7 +3,7 @@ package com.fieldnation;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReciever;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
 import android.content.Intent;
@@ -90,7 +90,7 @@ public class WorkorderActivity extends BaseActivity {
 		}
 	}
 
-	private WebServiceResultReciever _rpcReciever = new WebServiceResultReciever(
+	private WebServiceResultReceiver _rpcReciever = new WebServiceResultReceiver(
 			new Handler()) {
 
 		@Override

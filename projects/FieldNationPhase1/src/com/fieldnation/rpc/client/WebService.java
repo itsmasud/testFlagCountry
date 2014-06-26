@@ -6,7 +6,7 @@ import android.os.ResultReceiver;
 
 import com.fieldnation.rpc.common.DataServiceConstants;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReciever;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.rpc.server.DataService;
 
 /**
@@ -32,7 +32,7 @@ public class WebService implements WebServiceConstants {
 	 * @param username
 	 * @param authToken
 	 * @param callback
-	 *            Recommend using {@link WebServiceResultReciever}, however any
+	 *            Recommend using {@link WebServiceResultReceiver}, however any
 	 *            {@link ResultReceiver} will do.
 	 */
 	public WebService(Context context, String username, String authToken, ResultReceiver callback) {
