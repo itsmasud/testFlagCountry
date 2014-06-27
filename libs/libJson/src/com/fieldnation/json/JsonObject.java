@@ -54,7 +54,8 @@ public class JsonObject {
 			String key = tokenizer.nextToken();
 
 			if (!tokenizer.nextToken().equals(":")) {
-				throw new ParseException("token must be ':' (" + tokenizer.getTemp() + ")", 1);
+				throw new ParseException(
+						"token must be ':' (" + tokenizer.getTemp() + ")", 1);
 			}
 
 			_fields.put(key, tokenizer.parseValue());
@@ -91,7 +92,7 @@ public class JsonObject {
 		if (directions.size() == 0) {
 			// goes in this object
 			if (value == null)
-				_fields.put(item, "");
+				_fields.put(item, JsonNULL);
 			else
 				_fields.put(item, value);
 		} else {
@@ -155,8 +156,12 @@ public class JsonObject {
 	}
 
 	protected Object get(List<String> directions) {
-		if (directions.size() == 0)
-			return this;
+		if (directions.size() == 0) {
+			if (this == JsonNULL)
+				return null;
+			else
+				return this;
+		}
 
 		String item = directions.remove(0);
 

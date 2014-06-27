@@ -84,8 +84,9 @@ public class DrawerView extends RelativeLayout {
 	private View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			Intent intent = new Intent(getContext(), PaymentListActivity.class);
+			getContext().startActivity(intent);
+			attachAnimations();
 		}
 	};
 	private View.OnClickListener _settingsView_onClick = new View.OnClickListener() {

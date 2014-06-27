@@ -15,6 +15,8 @@ public class GlobalState extends Application {
 
 	private AuthenticationServer _authServer = null;
 
+	public static final int USER_ID = 375;
+
 	public String authority;
 	public String accountType;
 

@@ -29,16 +29,13 @@ public class ProfileService extends WebService {
 				"?page=" + page, allowCache);
 	}
 
-	public Intent getAllMessages(int resultCode, long userId, int page,
-			boolean allowCache) {
-		return httpGet(resultCode,
-				"/api/rest/v1/profile/messages/unread/" + userId,
+	public Intent getAllMessages(int resultCode, int page, boolean allowCache) {
+		return httpGet(resultCode, "/api/rest/v1/profile/messages/unread",
 				"?page=" + page, allowCache);
 	}
 
-	public Intent getNewMessages(int resultCode, long userId, int page,
-			boolean allowCache) {
-		return httpGet(resultCode, "/api/rest/v1/profile/messages/" + userId,
+	public Intent getNewMessages(int resultCode, int page, boolean allowCache) {
+		return httpGet(resultCode, "/api/rest/v1/profile/messages/",
 				"?page=" + page, allowCache);
 	}
 }

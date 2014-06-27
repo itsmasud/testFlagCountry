@@ -1,12 +1,9 @@
-package com.fieldnation.json;
+package com.fieldnation.json.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JsonField {
-
+public @interface Json {
 	String name() default "";
-
-	JsonTypes jsonType() default JsonTypes.STRING;
 }

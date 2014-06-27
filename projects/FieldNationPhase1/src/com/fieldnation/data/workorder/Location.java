@@ -1,4 +1,4 @@
-package com.fieldnation.workorder;
+package com.fieldnation.data.workorder;
 
 import java.text.ParseException;
 

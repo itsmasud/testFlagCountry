@@ -25,15 +25,19 @@
     <string name="settings">Settings</string>
     <string name="fieldnation_provider_name">Field Nation</string>
     <string name="refresh">Refresh</string>
+    <string name="money">$</string>
     <!-- /general strings -->
 
 
     <!-- main activity strings -->
     <string name="launcher_open">I am Open</string>
     <string name="work_order_detail_title">Work Order</string>
-    
+
     <!-- message list activity -->
     <string name="activity_message_list_title">Messages</string>
+
+    <!-- payments list activity -->
+    <string name="activity_payments_list_title">Payments</string>
 
     <!-- Drawer strings -->
     <string name="mywork_title">Work Orders</string>
