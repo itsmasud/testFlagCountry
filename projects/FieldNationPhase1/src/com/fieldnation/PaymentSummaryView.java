@@ -1,16 +1,24 @@
 package com.fieldnation;
 
+import java.util.Calendar;
+
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.misc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PaymentSummaryView extends RelativeLayout {
 	private static final String TAG = "PaymentSummaryView";
+
+	private static final int[] _HEADER_BG = new int[] { R.drawable.payment_summary_header_bg, R.drawable.payment_summary_header_paid_bg };
 
 	private TextView _titleTextView;
 	private TextView _idTextView;
@@ -18,6 +26,7 @@ public class PaymentSummaryView extends RelativeLayout {
 	private TextView _dateTextView;
 	private TextView _amountTextView;
 	private TextView _paymentTypeTextView;
+	private LinearLayout _paymentHeaderLayout;
 
 	private JsonObject _paymentInfo;
 
@@ -46,17 +55,88 @@ public class PaymentSummaryView extends RelativeLayout {
 		_dateTextView = (TextView) findViewById(R.id.date_textview);
 		_amountTextView = (TextView) findViewById(R.id.amount_textview);
 		_paymentTypeTextView = (TextView) findViewById(R.id.paymenttype_textview);
+		_paymentHeaderLayout = (LinearLayout) findViewById(R.id.paymentheader_layout);
+
+		setOnClickListener(_this_onClick);
 	}
+
+	private View.OnClickListener _this_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent(getContext(),
+					PaymentDetailActivity.class);
+			intent.putExtra("PAYMENT_INFO", _paymentInfo.toString());
+			getContext().startActivity(intent);
+		}
+	};
 
 	public void setData(JsonObject paymentInfo) {
 		_paymentInfo = paymentInfo;
-
 		Log.v(TAG, paymentInfo.display());
+		refresh();
 	}
 
 	/**
 	 * repopulates the ui
 	 */
 	private void refresh() {
+		// amount
+		try {
+			_amountTextView.setText(misc.toCurrency(
+					_paymentInfo.getDouble("amount")).substring(1));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_amountTextView.setText("NA");
+		}
+		// workorders.size()
+		try {
+			_descriptionTextView.setText(_paymentInfo.getJsonArray("workorders").size() + " Work Orders");
+			// TODO figure out where to get the fees
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_descriptionTextView.setText("");
+		}
+		// pay_method
+		try {
+			String method = _paymentInfo.getString("pay_method").toLowerCase();
+			method = method.substring(0, 1).toUpperCase() + method.substring(1);
+			_paymentTypeTextView.setText(method);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_paymentTypeTextView.setText("");
+		}
+		// payment_id
+		try {
+			_idTextView.setText("ID " + _paymentInfo.getInt("payment_id"));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_idTextView.setText("ID ???");
+		}
+		// status
+		try {
+			// TODO, parse status and change bar color
+			String status = misc.capitalize(_paymentInfo.getString("status"));
+
+			if (status.toLowerCase().equals("paid")) {
+				_paymentHeaderLayout.setBackgroundResource(_HEADER_BG[1]);
+			} else {
+				_paymentHeaderLayout.setBackgroundResource(_HEADER_BG[0]);
+			}
+			_titleTextView.setText(status);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		// date_paid
+		try {
+			String d = _paymentInfo.getString("date_paid");
+			String[] datetime = d.split(" ");
+
+			String[] dateSplit = datetime[0].split("-");
+
+			_dateTextView.setText("Estimated " + dateSplit[1] + "/" + dateSplit[2] + "/" + dateSplit[0]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_dateTextView.setText("");
+		}
 	}
 }

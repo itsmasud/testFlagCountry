@@ -13,10 +13,10 @@ public class MarketActivity extends DrawerActivity {
 	private static final String TAG = "MarketActivity";
 
 	// UI
-	private ListViewEx _workordersListView;
+	private ListViewEx _listView;
 
 	// Data
-	private WorkorderListAdapter _listAdapter;
+	private WorkorderListAdapter _adapter;
 
 	// Services
 
@@ -26,23 +26,23 @@ public class MarketActivity extends DrawerActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_market);
+		setContentView(R.layout.activity_itemlist);
 		setTitle(R.string.market_title);
 
-		_workordersListView = (ListViewEx) findViewById(R.id.workorder_listview);
-		_workordersListView.setOnRefreshListener(_listView_onRefreshListener);
+		_listView = (ListViewEx) findViewById(R.id.items_listview);
+		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
 		addActionBarAndDrawer(R.id.container);
 
-		_workordersListView.setAdapter(getListAdapter());
+		_listView.setAdapter(getListAdapter());
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 
-		if (_listAdapter != null) {
-			_listAdapter.onStop();
+		if (_adapter != null) {
+			_adapter.onStop();
 		}
 	}
 
@@ -60,7 +60,7 @@ public class MarketActivity extends DrawerActivity {
 
 		@Override
 		public void onLoadComplete() {
-			_workordersListView.onRefreshComplete();
+			_listView.onRefreshComplete();
 		}
 	};
 
@@ -77,16 +77,16 @@ public class MarketActivity extends DrawerActivity {
 	/*-*********************************-*/
 	private WorkorderListAdapter getListAdapter() {
 		try {
-			if (_listAdapter == null) {
-				_listAdapter = new WorkorderListAdapter(this,
+			if (_adapter == null) {
+				_adapter = new WorkorderListAdapter(this,
 						WorkorderDataSelector.AVAILABLE);
-				_listAdapter.setLoadingListener(_workorderAdapter_listener);
+				_adapter.setLoadingListener(_workorderAdapter_listener);
 			}
 
-			if (!_listAdapter.isViable()) {
-				_listAdapter = new WorkorderListAdapter(this,
+			if (!_adapter.isViable()) {
+				_adapter = new WorkorderListAdapter(this,
 						WorkorderDataSelector.AVAILABLE);
-				_listAdapter.setLoadingListener(_workorderAdapter_listener);
+				_adapter.setLoadingListener(_workorderAdapter_listener);
 			}
 
 		} catch (Exception ex) {
@@ -94,7 +94,7 @@ public class MarketActivity extends DrawerActivity {
 			return null;
 		}
 
-		return _listAdapter;
+		return _adapter;
 
 	}
 }

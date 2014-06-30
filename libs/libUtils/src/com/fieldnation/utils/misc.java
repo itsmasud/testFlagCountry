@@ -47,7 +47,7 @@ public class misc {
 	}
 
 	public static String toCurrency(double money) {
-		return "$" + _normalNumber.format(money);
+		return _currencyFormat.format(money);
 	}
 
 	public static boolean isEmptyOrNull(String str) {
@@ -58,6 +58,10 @@ public class misc {
 			return true;
 
 		return false;
+	}
+
+	public static String capitalize(String src) {
+		return src.substring(0, 1).toUpperCase() + src.substring(1);
 	}
 
 	// public static JsonObject getNetworkInformation() throws ParseException {

@@ -7,7 +7,6 @@
     </style>
 
     <style name="Payment_Header">
-        <item name="android:padding">3dp</item>
         <item name="android:background">@drawable/payment_summary_header_bg</item>
     </style>
 

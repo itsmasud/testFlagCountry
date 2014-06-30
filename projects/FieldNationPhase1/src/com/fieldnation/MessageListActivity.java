@@ -7,10 +7,10 @@ public class MessageListActivity extends BaseActivity {
 	private static final String TAG = "MessageListActivity";
 
 	// UI
-	private ListViewEx _messageListView;
+	private ListViewEx _listView;
 
 	// Data
-	private MessagesListAdapter _listAdapter;
+	private MessagesListAdapter _adapter;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -19,22 +19,22 @@ public class MessageListActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_message_list);
+		setContentView(R.layout.activity_itemlist);
 
-		_messageListView = (ListViewEx) findViewById(R.id.messages_listview);
-		_messageListView.setOnRefreshListener(_listView_onRefreshListener);
+		_listView = (ListViewEx) findViewById(R.id.items_listview);
+		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
 		// addActionBarAndDrawer(R.id.container);
 
-		_messageListView.setAdapter(getListAdapter());
+		_listView.setAdapter(getListAdapter());
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 
-		if (_listAdapter != null) {
-			_listAdapter.onStop();
+		if (_adapter != null) {
+			_adapter.onStop();
 		}
 	}
 
@@ -52,7 +52,7 @@ public class MessageListActivity extends BaseActivity {
 
 		@Override
 		public void onLoadComplete() {
-			_messageListView.onRefreshComplete();
+			_listView.onRefreshComplete();
 		}
 	};
 
@@ -70,14 +70,14 @@ public class MessageListActivity extends BaseActivity {
 
 	private MessagesListAdapter getListAdapter() {
 		try {
-			if (_listAdapter == null) {
-				_listAdapter = new MessagesListAdapter(this);
-				_listAdapter.setLoadingListener(_adapter_listener);
+			if (_adapter == null) {
+				_adapter = new MessagesListAdapter(this);
+				_adapter.setLoadingListener(_adapter_listener);
 			}
 
-			if (!_listAdapter.isViable()) {
-				_listAdapter = new MessagesListAdapter(this);
-				_listAdapter.setLoadingListener(_adapter_listener);
+			if (!_adapter.isViable()) {
+				_adapter = new MessagesListAdapter(this);
+				_adapter.setLoadingListener(_adapter_listener);
 			}
 
 		} catch (Exception ex) {
@@ -85,7 +85,7 @@ public class MessageListActivity extends BaseActivity {
 			return null;
 		}
 
-		return _listAdapter;
+		return _adapter;
 
 	}
 

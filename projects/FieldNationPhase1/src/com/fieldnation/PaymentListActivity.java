@@ -19,9 +19,9 @@ public class PaymentListActivity extends DrawerActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_payment_list);
+		setContentView(R.layout.activity_itemlist);
 
-		_listView = (ListViewEx) findViewById(R.id.listview);
+		_listView = (ListViewEx) findViewById(R.id.items_listview);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
 		addActionBarAndDrawer(R.id.container);

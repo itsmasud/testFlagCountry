@@ -26,24 +26,26 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_todo" />
 
-            <TextView
-                android:id="@+id/mywork_title_textView"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/mywork_imageview"
                 android:layout_toRightOf="@+id/mywork_imageview"
-                android:text="@string/mywork_title"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/workorder_subtext_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/mywork_title_textView"
-                android:layout_toRightOf="@+id/mywork_imageview"
-                android:text="@string/mywork_subtitle"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TextView
+                    android:id="@+id/mywork_title_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mywork_title"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/workorder_subtext_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mywork_subtitle"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
         </RelativeLayout>
 
         <View
@@ -68,24 +70,26 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_hiring" />
 
-            <TextView
-                android:id="@+id/market_title_textview"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/market_imageview"
                 android:layout_toRightOf="@+id/market_imageview"
-                android:text="@string/market_title"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/market_subtext_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/market_title_textview"
-                android:layout_toRightOf="@+id/market_imageview"
-                android:text="@string/market_subtitle"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TextView
+                    android:id="@+id/market_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/market_title"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/market_subtext_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/market_subtitle"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
         </RelativeLayout>
 
         <View
@@ -110,31 +114,32 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_payment" />
 
-            <TextView
-                android:id="@+id/payment_title_textview"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/payment_imageview"
                 android:layout_toRightOf="@+id/payment_imageview"
-                android:text="@string/payment_title"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/payment_subtext_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/payment_title_textview"
-                android:layout_toRightOf="@+id/payment_imageview"
-                android:text="@string/payment_subtitle"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TextView
+                    android:id="@+id/payment_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payment_title"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/payment_subtext_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payment_subtitle"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/payment_amount_textview"
                 style="@style/DrawerPaymentAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/payment_title_textview"
                 android:layout_alignParentRight="true"
                 android:text="$2,500" />
         </RelativeLayout>
@@ -161,24 +166,26 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_settings" />
 
-            <TextView
-                android:id="@+id/settings_title_textview"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/settings_imageview"
                 android:layout_toRightOf="@+id/settings_imageview"
-                android:text="@string/settings_title"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/settings_subtext_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/settings_title_textview"
-                android:layout_toRightOf="@+id/settings_imageview"
-                android:text="@string/settings_subtitle"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TextView
+                    android:id="@+id/settings_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_title"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/settings_subtext_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_subtitle"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
         </RelativeLayout>
 
         <View

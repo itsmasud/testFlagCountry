@@ -37,7 +37,7 @@ public class MyWorkActivity extends DrawerActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_mywork);
+		setContentView(R.layout.activity_tabs);
 		Log.v(TAG, "onCreate()");
 
 		_gs = (GlobalState) getApplicationContext();

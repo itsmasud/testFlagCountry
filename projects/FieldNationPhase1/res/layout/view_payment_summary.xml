@@ -6,6 +6,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/paymentheader_layout"
         style="@style/Payment_Header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,6 +17,7 @@
             style="@style/Payment_Header_Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="3dp"
             android:layout_weight="1"
             android:gravity="left"
             android:text="Processing"
@@ -27,6 +29,7 @@
             style="@style/Payment_Header_Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="3dp"
             android:layout_weight="1"
             android:gravity="right"
             android:text="ID 425"
@@ -87,7 +90,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/moneysymbol_textview"
                 android:text="1,748.00"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/paymenttype_textview"

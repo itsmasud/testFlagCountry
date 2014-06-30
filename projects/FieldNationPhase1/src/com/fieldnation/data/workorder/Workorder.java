@@ -30,9 +30,9 @@ public class Workorder {
 	@Json(name = "standard_instructions")
 	private String _standardInstructions;
 	@Json(name = "scheduledTimeStart")
-	private int _scheduledTimeStart;
+	private long _scheduledTimeStart;
 	@Json(name = "scheduledTimeEnd")
-	private int _scheduledTimeEnd;
+	private long _scheduledTimeEnd;
 	@Json(name = "status")
 	private String _status;
 	@Json(name = "declinedWo")
@@ -101,11 +101,11 @@ public class Workorder {
 		return _standardInstructions;
 	}
 
-	public int getScheduledTimeStart() {
+	public long getScheduledTimeStart() {
 		return _scheduledTimeStart;
 	}
 
-	public int getScheduledTimeEnd() {
+	public long getScheduledTimeEnd() {
 		return _scheduledTimeEnd;
 	}
 
