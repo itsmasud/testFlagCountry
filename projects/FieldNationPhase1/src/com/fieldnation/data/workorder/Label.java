@@ -1,42 +1,39 @@
 package com.fieldnation.data.workorder;
 
-import java.text.ParseException;
+import com.fieldnation.json.annotations.Json;
 
-import com.fieldnation.json.JsonObject;
-
-public class Label {
+public class Label{
+	@Json(name="name")
 	private String _name;
+	@Json(name="type")
+	private String _type;
+	@Json(name="label_id")
 	private int _labelId;
+	@Json(name="description")
 	private String _description;
+	@Json(name="action")
 	private String _action;
 
-	public Label(JsonObject label) throws ParseException {
-		_name = label.getString("name");
-		_labelId = label.getInt("label_id");
-
-		if (label.has("description")) {
-			_description = label.getString("description");
-		}
-
-		if (label.has("action")) {
-			_action = label.getString("action");
-		}
+	public Label(){
+	}
+	public String getName(){
+		return _name;
 	}
 
-	public String getAction() {
-		return _action;
+	public String getType(){
+		return _type;
 	}
 
-	public String getDescription() {
-		return _description;
-	}
-
-	public int getLabelId() {
+	public int getLabelId(){
 		return _labelId;
 	}
 
-	public String getName() {
-		return _name;
+	public String getDescription(){
+		return _description;
+	}
+
+	public String getAction(){
+		return _action;
 	}
 
 }

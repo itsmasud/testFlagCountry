@@ -444,6 +444,31 @@ public class JsonObject {
 		}
 	}
 
+	public void deepmerge(JsonObject src) throws ParseException {
+		Enumeration<String> e = src.keys();
+
+		while (e.hasMoreElements()) {
+			String key = e.nextElement();
+			Object value = src.get(key);
+
+			if (has(key)) {
+				if (value instanceof JsonObject && get(key) instanceof JsonObject) {
+					JsonObject json = getJsonObject(key);
+					json.deepmerge((JsonObject) value);
+					put(key, json);
+				} else if (value instanceof JsonArray && get(key) instanceof JsonArray) {
+					JsonArray json = getJsonArray(key);
+					json.merge((JsonArray) value);
+					put(key, json);
+				} else {
+					put(key, value);
+				}
+			} else {
+				put(key, value);
+			}
+
+		}
+	}
 
 	@Override
 	public String toString() {

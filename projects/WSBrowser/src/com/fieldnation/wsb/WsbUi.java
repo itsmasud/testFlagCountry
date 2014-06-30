@@ -204,6 +204,7 @@ public abstract class WsbUi extends JFrame {
 		getContentPane().add(tabbedPane, gbc_tabbedPane);
 
 		j2jPanel = new JPanel();
+		j2jPanel.setVisible(false);
 		GridBagConstraints gbc_exportToJavaPanel = new GridBagConstraints();
 		gbc_exportToJavaPanel.fill = GridBagConstraints.BOTH;
 		gbc_exportToJavaPanel.gridx = 0;
@@ -322,7 +323,7 @@ public abstract class WsbUi extends JFrame {
 		} catch (Exception e) {
 			try {
 				JsonArray ja = new JsonArray(msg);
-				log(ja.display());
+				logTextArea.append(ja.display());
 			} catch (Exception ex2) {
 				logTextArea.append(msg + "\n");
 			}

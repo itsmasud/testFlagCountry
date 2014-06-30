@@ -12,6 +12,9 @@ public class TestJson {
 	}
 
 	public TestJson() {
+		
+		System.out.println( Integer.parseInt("1.1"));
+		
 		TC tc = new TC();
 
 		tc._list.add(new TC2(123));

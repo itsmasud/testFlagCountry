@@ -1,40 +1,33 @@
 package com.fieldnation.data.workorder;
 
-import java.text.ParseException;
+import com.fieldnation.json.annotations.Json;
 
-import com.fieldnation.json.JsonObject;
-
-public class Location {
-	private String _state;
-	private String _address2;
-	private String _address1;
-	private String _contactPhoneExt;
+public class Location{
+	@Json(name="zip")
 	private int _zip;
+	@Json(name="state")
+	private String _state;
+	@Json(name="country")
 	private String _country;
+	@Json(name="city")
 	private String _city;
-	private String _contactName;
-	private String _contactPhone;
-	private String _contactEmail;
 
-	public Location(JsonObject json) throws ParseException {
-		if (json.has("state")) {
-			_state = json.getString("state");
-		}
-		if (json.has("address2")) {
-			_address2 = json.getString("address2");
-		}
-		if (json.has("address1")) {
-			_address1 = json.getString("address1");
-		}
-		if (json.has("contact_phone_ext")) {
-			_contactPhoneExt = json.getString("contact_phone_ext");
-		}
-		if (json.has("zip")) {
-			_zip = json.getInt("zip");
-		}
-		if (json.has("state")) {
-			_state = json.getString("state");
-		}
-
+	public Location(){
 	}
+	public int getZip(){
+		return _zip;
+	}
+
+	public String getState(){
+		return _state;
+	}
+
+	public String getCountry(){
+		return _country;
+	}
+
+	public String getCity(){
+		return _city;
+	}
+
 }
