@@ -1,141 +1,166 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.json.JsonObject;
+import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Workorder{
-	@Json(name="workorder_id")
+public class Workorder {
+	@Json(name = "workorder_id")
 	private int _workorderId;
-	@Json(name="location")
+	@Json(name = "location")
 	private Location _location;
-	@Json(name="statusId")
+	@Json(name = "statusId")
 	private int _statusId;
-	@Json(name="identifier")
+	@Json(name = "identifier")
 	private String _identifier;
-	@Json(name="distance")
+	@Json(name = "distance")
 	private double _distance;
-	@Json(name="providersPhoto")
+	@Json(name = "providersPhoto")
 	private ProvidersPhoto[] _providersPhoto;
-	@Json(name="bundleId")
+	@Json(name = "bundleId")
 	private String _bundleId;
-	@Json(name="industry")
+	@Json(name = "industry")
 	private String _industry;
-	@Json(name="label")
+	@Json(name = "label")
 	private Label[] _label;
-	@Json(name="skillsets")
+	@Json(name = "skillsets")
 	private Skillsets[] _skillsets;
-	@Json(name="pay")
+	@Json(name = "pay")
 	private Pay _pay;
-	@Json(name="standard_instructions")
+	@Json(name = "standard_instructions")
 	private String _standardInstructions;
-	@Json(name="scheduledTimeStart")
+	@Json(name = "scheduledTimeStart")
 	private int _scheduledTimeStart;
-	@Json(name="scheduledTimeEnd")
+	@Json(name = "scheduledTimeEnd")
 	private int _scheduledTimeEnd;
-	@Json(name="status")
+	@Json(name = "status")
 	private String _status;
-	@Json(name="declinedWo")
+	@Json(name = "declinedWo")
 	private int _declinedWo;
-	@Json(name="schedule")
+	@Json(name = "schedule")
 	private Schedule _schedule;
-	@Json(name="isRemoteWork")
+	@Json(name = "isRemoteWork")
 	private int _isRemoteWork;
-	@Json(name="provider")
+	@Json(name = "provider")
 	private Provider[] _provider;
-	@Json(name="providersMore")
+	@Json(name = "providersMore")
 	private ProvidersMore[] _providersMore;
-	@Json(name="typeOfWork")
+	@Json(name = "typeOfWork")
 	private String _typeOfWork;
-	@Json(name="title")
+	@Json(name = "title")
 	private String _title;
 
-	public Workorder(){
+	public Workorder() {
 	}
-	public int getWorkorderId(){
+
+	public int getWorkorderId() {
 		return _workorderId;
 	}
 
-	public Location getLocation(){
+	public Location getLocation() {
 		return _location;
 	}
 
-	public int getStatusId(){
+	public int getStatusId() {
 		return _statusId;
 	}
 
-	public String getIdentifier(){
+	public String getIdentifier() {
 		return _identifier;
 	}
 
-	public double getDistance(){
+	public double getDistance() {
 		return _distance;
 	}
 
-	public ProvidersPhoto[] getProvidersPhoto(){
+	public ProvidersPhoto[] getProvidersPhoto() {
 		return _providersPhoto;
 	}
 
-	public String getBundleId(){
+	public String getBundleId() {
 		return _bundleId;
 	}
 
-	public String getIndustry(){
+	public String getIndustry() {
 		return _industry;
 	}
 
-	public Label[] getLabel(){
+	public Label[] getLabel() {
 		return _label;
 	}
 
-	public Skillsets[] getSkillsets(){
+	public Skillsets[] getSkillsets() {
 		return _skillsets;
 	}
 
-	public Pay getPay(){
+	public Pay getPay() {
 		return _pay;
 	}
 
-	public String getStandardInstructions(){
+	public String getStandardInstructions() {
 		return _standardInstructions;
 	}
 
-	public int getScheduledTimeStart(){
+	public int getScheduledTimeStart() {
 		return _scheduledTimeStart;
 	}
 
-	public int getScheduledTimeEnd(){
+	public int getScheduledTimeEnd() {
 		return _scheduledTimeEnd;
 	}
 
-	public String getStatus(){
+	public String getStatus() {
 		return _status;
 	}
 
-	public int getDeclinedWo(){
+	public int getDeclinedWo() {
 		return _declinedWo;
 	}
 
-	public Schedule getSchedule(){
+	public Schedule getSchedule() {
 		return _schedule;
 	}
 
-	public int getIsRemoteWork(){
+	public int getIsRemoteWork() {
 		return _isRemoteWork;
 	}
 
-	public Provider[] getProvider(){
+	public Provider[] getProvider() {
 		return _provider;
 	}
 
-	public ProvidersMore[] getProvidersMore(){
+	public ProvidersMore[] getProvidersMore() {
 		return _providersMore;
 	}
 
-	public String getTypeOfWork(){
+	public String getTypeOfWork() {
 		return _typeOfWork;
 	}
 
-	public String getTitle(){
+	public String getTitle() {
 		return _title;
+	}
+
+	public JsonObject toJson() {
+		return toJson(this);
+	}
+
+	public static JsonObject toJson(Workorder workorder) {
+		try {
+			return Serializer.serializeObject(workorder);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Workorder fromJson(JsonObject json) {
+		try {
+			return Serializer.unserializeObject(Workorder.class, json);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 }
