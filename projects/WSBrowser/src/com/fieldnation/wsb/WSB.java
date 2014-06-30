@@ -52,12 +52,12 @@ public class WSB extends WsbUi {
 	@Override
 	public void goButton_onClick(ActionEvent e) {
 		try {
-			String method = ((String) methodComboBox.getSelectedItem()).toUpperCase();
-			String url = urlTextField.getText();
-			String username = usernameTextField.getText();
-			String password = new String(passwordTextField.getPassword());
-			String mime = (String) mimeContentType.getSelectedItem();
-			String payload = postDataTextArea.getText();
+			String method = getHttpMethod();
+			String url = getUrl();
+			String username = getUsername();
+			String password = getPassword();
+			String mime = getMIME();
+			String payload = getPostData();
 
 			if (username.equals("")) {
 				username = null;
@@ -72,17 +72,6 @@ public class WSB extends WsbUi {
 			log(ex);
 		}
 
-	}
-
-	public void log(String logging) {
-		try {
-			JsonObject jobj = new JsonObject(logging);
-			logTextArea.append(jobj.display() + "\n");
-		} catch (Exception e) {
-			logTextArea.append(logging + "\n");
-		}
-
-		logTextArea.setCaretPosition(logTextArea.getText().length());
 	}
 
 	public void log(Exception e) {
@@ -127,16 +116,10 @@ public class WSB extends WsbUi {
 			log("*******************************************");
 			dumpConnectionResponse(conn);
 			String strData = new String(rawData);
-			try {
-				JsonObject jo = new JsonObject(strData);
-				log(jo.display());
-			} catch (Exception ex) {
-				try {
-					JsonArray ja = new JsonArray(strData);
-					log(ja.display());
-				} catch (Exception ex2) {
-					log(strData);
-				}
+			log(strData);
+
+			if (isJ2JChecked()) {
+				performJ2J(strData);
 			}
 
 			return new WebResult(conn.getResponseCode(), rawData);
@@ -202,16 +185,10 @@ public class WSB extends WsbUi {
 			log("*******************************************");
 			dumpConnectionResponse(conn);
 			String strData = new String(rawData);
-			try {
-				JsonObject jo = new JsonObject(strData);
-				log(jo.display());
-			} catch (Exception ex) {
-				try {
-					JsonArray ja = new JsonArray(strData);
-					log(ja.display());
-				} catch (Exception ex2) {
-					log(strData);
-				}
+			log(strData);
+
+			if (isJ2JChecked()) {
+				performJ2J(strData);
 			}
 
 			return new WebResult(conn.getResponseCode(), rawData);
@@ -226,6 +203,24 @@ public class WSB extends WsbUi {
 		}
 
 		return null;
+	}
+
+	public void performJ2J(String data) {
+		try {
+			JsonObject json = new JsonObject(data);
+
+		} catch (Exception ex) {
+			try {
+				JsonArray ja = new JsonArray(data);
+				performJ2J(ja);
+			} catch (Exception ex1) {
+				ex1.printStackTrace();
+			}
+		}
+	}
+
+	private void performJ2J(JsonArray jsonSource) {
+
 	}
 
 	public void dumpConnectionRequest(HttpURLConnection conn) {

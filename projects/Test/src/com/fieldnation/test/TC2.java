@@ -10,4 +10,8 @@ public class TC2 {
 	public TC2() {
 
 	}
+
+	public TC2(double val) {
+		_myDouble = val;
+	}
 }

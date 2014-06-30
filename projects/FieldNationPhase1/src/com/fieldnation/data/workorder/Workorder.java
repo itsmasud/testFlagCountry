@@ -1,25 +1,39 @@
 package com.fieldnation.data.workorder;
 
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.annotations.ToJsonFloat;
-import com.fieldnation.json.annotations.ToJsonInt;
-import com.fieldnation.json.annotations.ToJsonObject;
+import com.fieldnation.json.Serializer;
+import com.fieldnation.json.UnsupportedDataTypeException;
+import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
-	@ToJsonInt(name = "workorder_id")
+	@Json(name = "workorder_id")
 	private int _workorderId;
-	@ToJsonObject(name = "location")
+
+	@Json(name = "location")
 	private Location _location;
-	@ToJsonInt(name = "statusId")
+
+	@Json(name = "statusId")
 	private int _statusId;
-	@ToJsonFloat(name = "distance")
+
+	@Json(name = "distance")
 	private float _distance;
-	@ToJsonObject(name = "providersPhoto")
+
+	@Json(name = "providersPhoto")
 	private ProviderPhoto _providersPhoto;
-	
+
+	@Json(name = "label")
 	private Label[] _labels;
+
+	@Json(name = "pay")
 	private Pay _pay;
-	private Provider[] _provider;
+
+	@Json(name = "provider")
+	private Provider[] _providers;
+
+	@Json(name = "title")
 	private String _title;
 
 	/**
@@ -28,7 +42,25 @@ public class Workorder {
 	public Workorder() {
 	}
 
+	public JsonObject toJson() {
+		return toJson(this);
+	}
+
+	public static JsonObject toJson(Workorder wo) {
+		try {
+			return Serializer.serializeObject(wo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static Workorder fromJson(JsonObject json) {
-		return null;
+		try {
+			return Serializer.unserializeObject(Workorder.class, json);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

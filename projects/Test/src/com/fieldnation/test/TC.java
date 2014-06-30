@@ -6,32 +6,34 @@ import java.util.List;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.json.annotations.CollectionParameterType;
 
 public class TC {
 
 	@Json(name = "myDouble")
-	private double _myDouble = 684185.5687;
+	public double _myDouble = 684185.5687;
 
 	@Json
-	private float _myFloat = 54.1F;
+	public float _myFloat = 54.1F;
 
 	@Json
-	private int _myInt = 684;
+	public int _myInt = 684;
 
 	@Json
-	private long _myLong = 12;
+	public long _myLong = 12;
 
 	@Json
-	private JsonObject _literal = null;
+	public JsonObject _literal = null;
 
 	@Json
-	private TC2 _tc2 = new TC2();
+	public TC2 _tc2 = new TC2();
 
 	@Json
-	private List<TC2> _list;
+	@CollectionParameterType(param = TC2.class)
+	public List<TC2> _list;
 
 	@Json
-	private TC2[] _myArray;
+	public TC2[] _myArray;
 
 	public TC() {
 		try {

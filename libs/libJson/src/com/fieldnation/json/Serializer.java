@@ -1,6 +1,7 @@
 package com.fieldnation.json;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,14 +11,13 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 
-import javax.activation.UnsupportedDataTypeException;
-
 import com.fieldnation.json.annotations.Json;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.fieldnation.json.annotations.CollectionParameterType;
 
 public class Serializer {
 
@@ -90,7 +90,7 @@ public class Serializer {
 
 	/*-			From JsonStuff			-*/
 	private static Object unserialize(Class<?> destClass, Object source,
-			Object init) throws UnsupportedDataTypeException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException {
+			Object init, Class<?> paramType) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException, UnsupportedDataTypeException {
 		if (isPrimitive(destClass)) {
 			return unserializePrimitive(destClass, source.toString());
 		}
@@ -99,7 +99,7 @@ public class Serializer {
 		}
 		if (isCollection(destClass)) {
 			return unserializeCollection(destClass, (JsonArray) source,
-					(Collection<Object>) init);
+					(Collection<Object>) init, paramType);
 		}
 		return unserializeObject(destClass, (JsonObject) source);
 
@@ -139,20 +139,27 @@ public class Serializer {
 
 	private static Object unserializeArray(Class<?> destClass, JsonArray source) throws UnsupportedDataTypeException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException {
 		Class<?> compType = destClass.getComponentType();
-		Object[] dest = new Object[source.size()];
+
+		// Object[] dest = new Object[source.size()];
+		Object[] dest = (Object[]) Array.newInstance(compType, source.size());
 		for (int i = 0; i < source.size(); i++) {
-			dest[i] = unserialize(compType, source.get(i), null);
+			// dest.add(unserialize(compType, source.get(i), null, null));
+			dest[i] = unserialize(compType, source.get(i), null, null);
 		}
 		return dest;
 	}
 
 	private static Object unserializeCollection(Class<?> destClass,
-			JsonArray source, Collection<Object> init) throws UnsupportedDataTypeException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException {
+			JsonArray source, Collection<Object> init, Class<?> paramType) throws UnsupportedDataTypeException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException {
 
-		Type param = getCollectionTemplateType(init.getClass());
+		if (paramType == null) {
+			throw new IllegalArgumentException(
+					"paramType must be a class. Check that CollectionParameterType annotation is set for any collections you may have.");
+		}
+		// Type param = getCollectionTemplateType(init.getClass());
 
 		for (int i = 0; i < source.size(); i++) {
-			init.add(unserialize(param.getClass(), source.get(i), null));
+			init.add(unserialize(paramType, source.get(i), null, null));
 		}
 		return init;
 	}
@@ -176,15 +183,25 @@ public class Serializer {
 			Class<?> fieldclass = field.getType();
 
 			System.out.println("Field: " + jname);
-			if ("_myArray".equals(jname)) {
+			if ("_myDouble".equals(jname)) {
 				System.out.println("BP");
 			}
 
+			CollectionParameterType collectionParameterType = field.getAnnotation(CollectionParameterType.class);
 			if (source.has(jname) && source.get(jname) != null) {
-				field.set(
-						dest,
-						unserialize(fieldclass, source.get(jname),
-								field.get(dest)));
+				if (collectionParameterType != null) {
+					field.set(
+							dest,
+							unserialize(fieldclass, source.get(jname),
+									field.get(dest),
+									collectionParameterType.param()));
+
+				} else {
+					field.set(
+							dest,
+							unserialize(fieldclass, source.get(jname),
+									field.get(dest), null));
+				}
 			}
 
 		}
@@ -223,7 +240,8 @@ public class Serializer {
 	}
 
 	private static Type getCollectionTemplateType(Class<?> clazz) {
-		return ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+		ParameterizedType superclass = (ParameterizedType) clazz.getGenericSuperclass();
+		return superclass.getActualTypeArguments()[0];
 
 	}
 

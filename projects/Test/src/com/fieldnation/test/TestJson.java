@@ -14,9 +14,22 @@ public class TestJson {
 	public TestJson() {
 		TC tc = new TC();
 
+		tc._list.add(new TC2(123));
+		tc._list.add(new TC2(456));
+		tc._list.add(new TC2(789));
+		tc._list.add(new TC2(0));
+		
+		tc._myArray = new TC2[4];
+		tc._myArray[0] = new TC2(12);
+		tc._myArray[1] = new TC2(23);
+		tc._myArray[2] = new TC2(34);
+		tc._myArray[3] = new TC2(45);
+
+		String jsonString = "";
 		try {
 			JsonObject json = Serializer.serializeObject(tc);
 			System.out.println(json.display());
+			jsonString = json.toString();
 		} catch (IllegalArgumentException | IllegalAccessException
 				| ParseException e) {
 			// TODO Auto-generated catch block
@@ -24,9 +37,13 @@ public class TestJson {
 		}
 
 		try {
-			JsonObject json = new JsonObject(
-					"{ \"_myLong\":12, \"_literal\":{ \"test\":\"this is a test\" }, \"_tc2\":{ \"_myDouble\":23.584 }, \"_myFloat\":54.1, \"_myArray\":null, \"_list\":[ ], \"myDouble\":684185.5687, \"_myInt\":684}");
+			JsonObject json = new JsonObject(jsonString);
 			tc = Serializer.unserializeObject(TC.class, json);
+
+			System.out.println(Serializer.serializeObject(tc).toString());
+
+			System.out.println(jsonString.equals(Serializer.serializeObject(
+					tc).toString()));
 
 			System.out.println("BP");
 		} catch (Exception ex) {
