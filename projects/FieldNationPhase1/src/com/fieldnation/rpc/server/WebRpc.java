@@ -62,9 +62,11 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 
 		if (auth != null) {
 			if (METHOD_HTTP_READ.equals(method)) {
-				doHttpRead(context, intent, auth);
+				new Thread(new HttpReadRunnable(context, intent, auth)).start();
+				// doHttpRead(context, intent, auth);
 			} else if (METHOD_HTTP_WRITE.equals(method)) {
-				doHttpWrite(context, intent, auth);
+				new Thread(new HttpWriteRunnable(context, intent, auth)).start();
+				// doHttpWrite(context, intent, auth);
 			}
 		} else {
 			doHttpError(context, intent, errorType, errorMessage);

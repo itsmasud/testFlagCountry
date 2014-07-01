@@ -21,12 +21,12 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 			return;
 		}
 
-		try {
-			// TODO, need to figure out how to get bundles
-		} catch (ParseException e) {
-			e.printStackTrace();
-			finish();
-		}
+//		try {
+//			// TODO, need to figure out how to get bundles
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//			finish();
+//		}
 	}
 
 }

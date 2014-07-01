@@ -4,24 +4,23 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Skillsets {
-	@Json(name = "name")
+public class Skillsets{
+	@Json(name="name")
 	private String _name;
-	@Json(name = "dynamic_term_id")
+	@Json(name="dynamic_term_id")
 	private int _dynamicTermId;
 
-	public Skillsets() {
+	public Skillsets(){
 	}
-
-	public String getName() {
+	public String getName(){
 		return _name;
 	}
 
-	public int getDynamicTermId() {
+	public int getDynamicTermId(){
 		return _dynamicTermId;
 	}
 
-	public JsonObject toJson() {
+	public JsonObject toJson(){
 		return toJson(this);
 	}
 

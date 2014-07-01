@@ -172,7 +172,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 	/*-*********************************-*/
 	/*-				Data				-*/
 	/*-*********************************-*/
-	public void setWorkorder(WorkorderDataSelector workorderDataSelector, JsonObject workorder) {
+	public void setWorkorder(WorkorderDataSelector workorderDataSelector,
+			JsonObject workorder) {
 		_workorder = workorder;
 		_dataView = workorderDataSelector;
 		refresh();
@@ -347,6 +348,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			buildStatusInProgress();
 			break;
 		}
+		updateStatusUi();
 	}
 
 	private void buildStatusAssigned() throws ParseException {

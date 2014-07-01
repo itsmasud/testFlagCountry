@@ -5,15 +5,33 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Schedule {
+	// @Json(name="endTime")
+	// private String _endTime;
+	@Json(name = "end_time")
+	private String _endTime;
+	// @Json(name="startTime")
+	// private String _startTime;
 	@Json(name = "start_time")
 	private String _startTime;
 
 	public Schedule() {
 	}
 
+	public String getEndTime() {
+		return _endTime;
+	}
+
+	// public String getEndTime(){
+	// return _endTime;
+	// }
+
 	public String getStartTime() {
 		return _startTime;
 	}
+
+	// public String getStartTime(){
+	// return _startTime;
+	// }
 
 	public JsonObject toJson() {
 		return toJson(this);

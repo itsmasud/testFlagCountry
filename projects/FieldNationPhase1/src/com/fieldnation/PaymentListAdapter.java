@@ -62,6 +62,6 @@ public class PaymentListAdapter extends PagingListAdapter {
 		// getContext().startService(
 		// _service.getPending(resultCode, page + 1, allowCache));
 		getContext().startService(
-				_service.getPaid(resultCode, page + 1, allowCache));
+				_service.getAll(resultCode, page + 1, allowCache));
 	}
 }

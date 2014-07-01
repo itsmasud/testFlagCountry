@@ -74,7 +74,7 @@
         <service
             android:name="com.fieldnation.auth.server.AuthService"
             android:exported="true"
-            android:process=":auth" >
+            android:process="" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -86,28 +86,26 @@
 
         <receiver
             android:name="com.fieldnation.rpc.server.BootReciever"
-            android:process=":remote" >
+            android:process="" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.fieldnation.rpc.server.ClockReceiver"
-            android:process=":remote" >
+            android:process="" >
         </receiver>
 
         <service
             android:name="com.fieldnation.rpc.server.DataService"
             android:exported="false"
-            android:process=":remote" >
+            android:process="" >
         </service>
         <service
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>
-com.fieldnation.service
-                <action android:name="android.content.SyncAdapter" />
+            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data

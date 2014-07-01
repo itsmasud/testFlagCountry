@@ -4,144 +4,209 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Workorder {
-	@Json(name = "workorder_id")
+public class Workorder{
+	@Json(name="workorder_id")
 	private int _workorderId;
-	@Json(name = "location")
+	@Json(name="location")
 	private Location _location;
-	@Json(name = "statusId")
+	@Json(name="statusId")
 	private int _statusId;
-	@Json(name = "identifier")
+	@Json(name="identifier")
 	private String _identifier;
-	@Json(name = "distance")
+	@Json(name="distance")
 	private double _distance;
-	@Json(name = "providersPhoto")
-	private ProvidersPhoto[] _providersPhoto;
-	@Json(name = "bundleId")
+	@Json(name="customFields")
+	private CustomFields[] _customFields;
+	@Json(name="fullWorkDescription")
+	private String _fullWorkDescription;
+	@Json(name="bundleId")
 	private String _bundleId;
-	@Json(name = "industry")
+	@Json(name="industry")
 	private String _industry;
-	@Json(name = "label")
+	@Json(name="closing_notes")
+	private String _closingNotes;
+	@Json(name="label")
 	private Label[] _label;
-	@Json(name = "skillsets")
+	@Json(name="estimatedSchedule")
+	private EstimatedSchedule _estimatedSchedule;
+	@Json(name="skillsets")
 	private Skillsets[] _skillsets;
-	@Json(name = "pay")
+	@Json(name="isCounter")
+	private boolean _isCounter;
+	@Json(name="pay")
 	private Pay _pay;
-	@Json(name = "standard_instructions")
+	@Json(name="standard_instructions")
 	private String _standardInstructions;
-	@Json(name = "scheduledTimeStart")
-	private long _scheduledTimeStart;
-	@Json(name = "scheduledTimeEnd")
-	private long _scheduledTimeEnd;
-	@Json(name = "status")
+	@Json(name="discounts")
+	private Discounts[] _discounts;
+	@Json(name="customerPoliciesProcedures")
+	private String _customerPoliciesProcedures;
+	@Json(name="scheduledTimeStart")
+	private int _scheduledTimeStart;
+	@Json(name="tasks")
+	private Tasks[] _tasks;
+	@Json(name="scheduledTimeEnd")
+	private String _scheduledTimeEnd;
+	@Json(name="company_name")
+	private String _companyName;
+	@Json(name="additionalExpenses")
+	private AdditionalExpenses[] _additionalExpenses;
+	@Json(name="documents")
+	private Documents[] _documents;
+	@Json(name="status")
 	private String _status;
-	@Json(name = "declinedWo")
+	@Json(name="declinedWo")
 	private int _declinedWo;
-	@Json(name = "schedule")
+	@Json(name="schedule")
 	private Schedule _schedule;
-	@Json(name = "isRemoteWork")
-	private int _isRemoteWork;
-	@Json(name = "provider")
+	@Json(name="deliverables")
+	private Deliverables[] _deliverables;
+	@Json(name="messages")
+	private int _messages;
+	@Json(name="provider")
 	private Provider[] _provider;
-	@Json(name = "providersMore")
-	private ProvidersMore[] _providersMore;
-	@Json(name = "typeOfWork")
+	@Json(name="isRemoteWork")
+	private int _isRemoteWork;
+	@Json(name="typeOfWork")
 	private String _typeOfWork;
-	@Json(name = "title")
+	@Json(name="title")
 	private String _title;
 
-	public Workorder() {
+	public Workorder(){
 	}
-
-	public int getWorkorderId() {
+	public int getWorkorderId(){
 		return _workorderId;
 	}
 
-	public Location getLocation() {
+	public Location getLocation(){
 		return _location;
 	}
 
-	public int getStatusId() {
+	public int getStatusId(){
 		return _statusId;
 	}
 
-	public String getIdentifier() {
+	public String getIdentifier(){
 		return _identifier;
 	}
 
-	public double getDistance() {
+	public double getDistance(){
 		return _distance;
 	}
 
-	public ProvidersPhoto[] getProvidersPhoto() {
-		return _providersPhoto;
+	public CustomFields[] getCustomFields(){
+		return _customFields;
 	}
 
-	public String getBundleId() {
+	public String getFullWorkDescription(){
+		return _fullWorkDescription;
+	}
+
+	public String getBundleId(){
 		return _bundleId;
 	}
 
-	public String getIndustry() {
+	public String getIndustry(){
 		return _industry;
 	}
 
-	public Label[] getLabel() {
+	public String getClosingNotes(){
+		return _closingNotes;
+	}
+
+	public Label[] getLabel(){
 		return _label;
 	}
 
-	public Skillsets[] getSkillsets() {
+	public EstimatedSchedule getEstimatedSchedule(){
+		return _estimatedSchedule;
+	}
+
+	public Skillsets[] getSkillsets(){
 		return _skillsets;
 	}
 
-	public Pay getPay() {
+	public boolean getIsCounter(){
+		return _isCounter;
+	}
+
+	public Pay getPay(){
 		return _pay;
 	}
 
-	public String getStandardInstructions() {
+	public String getStandardInstructions(){
 		return _standardInstructions;
 	}
 
-	public long getScheduledTimeStart() {
+	public Discounts[] getDiscounts(){
+		return _discounts;
+	}
+
+	public String getCustomerPoliciesProcedures(){
+		return _customerPoliciesProcedures;
+	}
+
+	public int getScheduledTimeStart(){
 		return _scheduledTimeStart;
 	}
 
-	public long getScheduledTimeEnd() {
+	public Tasks[] getTasks(){
+		return _tasks;
+	}
+
+	public String getScheduledTimeEnd(){
 		return _scheduledTimeEnd;
 	}
 
-	public String getStatus() {
+	public String getCompanyName(){
+		return _companyName;
+	}
+
+	public AdditionalExpenses[] getAdditionalExpenses(){
+		return _additionalExpenses;
+	}
+
+	public Documents[] getDocuments(){
+		return _documents;
+	}
+
+	public String getStatus(){
 		return _status;
 	}
 
-	public int getDeclinedWo() {
+	public int getDeclinedWo(){
 		return _declinedWo;
 	}
 
-	public Schedule getSchedule() {
+	public Schedule getSchedule(){
 		return _schedule;
 	}
 
-	public int getIsRemoteWork() {
-		return _isRemoteWork;
+	public Deliverables[] getDeliverables(){
+		return _deliverables;
 	}
 
-	public Provider[] getProvider() {
+	public int getMessages(){
+		return _messages;
+	}
+
+	public Provider[] getProvider(){
 		return _provider;
 	}
 
-	public ProvidersMore[] getProvidersMore() {
-		return _providersMore;
+	public int getIsRemoteWork(){
+		return _isRemoteWork;
 	}
 
-	public String getTypeOfWork() {
+	public String getTypeOfWork(){
 		return _typeOfWork;
 	}
 
-	public String getTitle() {
+	public String getTitle(){
 		return _title;
 	}
 
-	public JsonObject toJson() {
+	public JsonObject toJson(){
 		return toJson(this);
 	}
 
