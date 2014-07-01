@@ -12,7 +12,7 @@ public class CustomFields{
 	@Json(name="value")
 	private String _value;
 	@Json(name="custom_label_id")
-	private int _customLabelId;
+	private Integer _customLabelId;
 
 	public CustomFields(){
 	}
@@ -28,7 +28,7 @@ public class CustomFields{
 		return _value;
 	}
 
-	public int getCustomLabelId(){
+	public Integer getCustomLabelId(){
 		return _customLabelId;
 	}
 

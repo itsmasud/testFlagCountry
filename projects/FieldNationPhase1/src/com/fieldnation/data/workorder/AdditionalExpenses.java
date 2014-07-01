@@ -6,21 +6,21 @@ import com.fieldnation.json.annotations.Json;
 
 public class AdditionalExpenses{
 	@Json(name="category_id")
-	private int _categoryId;
+	private Integer _categoryId;
 	@Json(name="price")
-	private double _price;
+	private Double _price;
 	@Json(name="description")
 	private String _description;
 	@Json(name="approved")
-	private boolean _approved;
+	private Boolean _approved;
 
 	public AdditionalExpenses(){
 	}
-	public int getCategoryId(){
+	public Integer getCategoryId(){
 		return _categoryId;
 	}
 
-	public double getPrice(){
+	public Double getPrice(){
 		return _price;
 	}
 
@@ -28,7 +28,7 @@ public class AdditionalExpenses{
 		return _description;
 	}
 
-	public boolean getApproved(){
+	public Boolean getApproved(){
 		return _approved;
 	}
 

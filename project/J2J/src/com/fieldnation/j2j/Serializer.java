@@ -52,16 +52,16 @@ public class Serializer {
 			} else {
 				try {
 					int par = jsonSource.getInt(key);
-					field = new JavaField(key, "int", false);
+					field = new JavaField(key, "Integer", false);
 				} catch (Exception ex) {
 					try {
 						double par = jsonSource.getDouble(key);
-						field = new JavaField(key, "double", false);
+						field = new JavaField(key, "Double", false);
 					} catch (Exception ex1) {
 						try {
 							String str = jsonSource.getString(key);
 							if ("true".equals(str) || "false".equals(str)) {
-								field = new JavaField(key, "boolean", false);
+								field = new JavaField(key, "Boolean", false);
 							} else {
 								field = new JavaField(key, "String", false);
 							}

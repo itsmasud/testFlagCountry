@@ -6,13 +6,13 @@ import com.fieldnation.json.annotations.Json;
 
 public class Discounts{
 	@Json(name="amount")
-	private double _amount;
+	private Double _amount;
 	@Json(name="description")
 	private String _description;
 
 	public Discounts(){
 	}
-	public double getAmount(){
+	public Double getAmount(){
 		return _amount;
 	}
 

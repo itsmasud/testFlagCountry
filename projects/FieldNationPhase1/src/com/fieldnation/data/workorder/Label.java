@@ -12,7 +12,7 @@ public class Label{
 	@Json(name="description")
 	private String _description;
 	@Json(name="label_id")
-	private int _labelId;
+	private Integer _labelId;
 	@Json(name="action")
 	private String _action;
 
@@ -30,7 +30,7 @@ public class Label{
 		return _description;
 	}
 
-	public int getLabelId(){
+	public Integer getLabelId(){
 		return _labelId;
 	}
 

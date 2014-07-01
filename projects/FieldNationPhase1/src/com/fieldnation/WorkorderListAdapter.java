@@ -3,8 +3,10 @@ package com.fieldnation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
@@ -33,8 +35,10 @@ public class WorkorderListAdapter extends PagingListAdapter {
 		_dataSelection = selection;
 
 		_rpcMethod = WorkorderService.class.getDeclaredMethod(
-				selection.getCall(),
-				new Class<?>[] { int.class, int.class, boolean.class });
+				selection.getCall(), new Class<?>[] {
+						int.class,
+						int.class,
+						boolean.class });
 		_rpcMethod.setAccessible(true);
 	}
 
@@ -50,7 +54,7 @@ public class WorkorderListAdapter extends PagingListAdapter {
 			wosum = new WorkorderSummaryView(parent.getContext());
 		}
 
-		wosum.setWorkorder(_dataSelection, object);
+		wosum.setWorkorder(_dataSelection, Workorder.fromJson(object));
 
 		return wosum;
 

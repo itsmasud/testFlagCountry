@@ -6,7 +6,7 @@ import com.fieldnation.json.annotations.Json;
 
 public class Deliverables{
 	@Json(name="fileSize")
-	private int _fileSize;
+	private Integer _fileSize;
 	@Json(name="fileType")
 	private String _fileType;
 	@Json(name="dateUploaded")
@@ -20,7 +20,7 @@ public class Deliverables{
 
 	public Deliverables(){
 	}
-	public int getFileSize(){
+	public Integer getFileSize(){
 		return _fileSize;
 	}
 

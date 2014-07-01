@@ -5,8 +5,13 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fieldnation.data.workorder.Label;
+import com.fieldnation.data.workorder.Location;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -57,14 +62,30 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private GlobalState _gs;
 	private WorkorderDataSelector _dataView = null;
 
-	private JsonObject _workorder;
+	private Workorder _workorder;
 
 	// status lookuptable
 	private int _statusDisplayState = 0;
-	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.wosum_status_1, R.drawable.wosum_status_2, R.drawable.wosum_status_3, R.drawable.wosum_status_4 };
-	private static final int[] _STATUS_TEXT_TABLE = { R.color.wosumStatusLabel1, R.color.wosumStatusLabel2, R.color.wosumStatusLabel3, R.color.wosumStatusLabel4 };
-	private static final int[] _STATUS_BUTTON_FG = { R.color.wosumButton1Foreground, R.color.wosumButton2Foreground, R.color.wosumButton3Foreground, R.color.wosumButton1Foreground };
-	private static final int[] _STATUS_BUTTON_BG = { R.drawable.wosum_button1_bg, R.drawable.wosum_button2_bg, R.drawable.wosum_button3_bg, R.drawable.wosum_button1_bg };
+	private static final int[] _STATUS_LOOKUP_TABLE = {
+			R.drawable.wosum_status_1,
+			R.drawable.wosum_status_2,
+			R.drawable.wosum_status_3,
+			R.drawable.wosum_status_4 };
+	private static final int[] _STATUS_TEXT_TABLE = {
+			R.color.wosumStatusLabel1,
+			R.color.wosumStatusLabel2,
+			R.color.wosumStatusLabel3,
+			R.color.wosumStatusLabel4 };
+	private static final int[] _STATUS_BUTTON_FG = {
+			R.color.wosumButton1Foreground,
+			R.color.wosumButton2Foreground,
+			R.color.wosumButton3Foreground,
+			R.color.wosumButton1Foreground };
+	private static final int[] _STATUS_BUTTON_BG = {
+			R.drawable.wosum_button1_bg,
+			R.drawable.wosum_button2_bg,
+			R.drawable.wosum_button3_bg,
+			R.drawable.wosum_button1_bg };
 
 	public WorkorderSummaryView(Context context) {
 		this(context, null, -1);
@@ -138,15 +159,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			try {
-				Intent intent = new Intent(getContext(),
-						WorkorderActivity.class);
-				intent.putExtra("workorder_id",
-						_workorder.getLong("workorder_id"));
-				getContext().startActivity(intent);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+			Intent intent = new Intent(getContext(), WorkorderActivity.class);
+			intent.putExtra("workorder_id", _workorder.getWorkorderId());
+			getContext().startActivity(intent);
 		}
 	};
 	private View.OnLongClickListener _this_onLongClickListener = new View.OnLongClickListener() {
@@ -173,7 +188,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	/*-				Data				-*/
 	/*-*********************************-*/
 	public void setWorkorder(WorkorderDataSelector workorderDataSelector,
-			JsonObject workorder) {
+			Workorder workorder) {
 		_workorder = workorder;
 		_dataView = workorderDataSelector;
 		refresh();
@@ -209,16 +224,14 @@ public class WorkorderSummaryView extends RelativeLayout {
 	}
 
 	private void refresh() {
-		try {
-			// title
-			_titleTextView.setText(_workorder.getString("title") + _workorder.getInt("workorder_id"));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		try {
-			// client name location.contact_name
-			if (_workorder.has("location.contact_name")) {
-				String t = _workorder.getString("location.contact_name");
+		// title
+		_titleTextView.setText(_workorder.getTitle() + _workorder.getWorkorderId());
+
+		// client name location.contact_name
+		Location location = _workorder.getLocation();
+		if (location != null) {
+			if (location.getContactName() != null) {
+				String t = location.getContactName();
 				if (t == null) {
 					_clientNameTextView.setVisibility(GONE);
 				} else if (t.trim().equals("")) {
@@ -230,50 +243,38 @@ public class WorkorderSummaryView extends RelativeLayout {
 			} else {
 				_clientNameTextView.setVisibility(GONE);
 			}
-		} catch (Exception ex) {
-			_clientNameTextView.setVisibility(GONE);
-			ex.printStackTrace();
-		}
-		try {
-
 			// distance/address? location.state, location.zip, location.city,
 			// location.country,
-			if (_workorder.has("location.address1") || _workorder.has("location.address2")) {
+			if (location.getAddress1() != null || location.getAddress2() != null) {
 				String address1 = null;
 				String address2 = null;
 
-				if (_workorder.has("location.address1"))
-					address1 = _workorder.getString("location.address1");
-				if (_workorder.has("location.address2"))
-					address2 = _workorder.getString("location.address2");
+				if (location.getAddress1() != null)
+					address1 = location.getAddress1();
+				if (location.getAddress2() != null)
+					address2 = location.getAddress2();
 
 				if (misc.isEmptyOrNull(address1))
 					address1 = null;
 				if (misc.isEmptyOrNull(address2))
 					address2 = null;
 
-			} else if (_workorder.has("location.distance")) {
-				_distanceTextView.setText(_workorder.getString("location.distance") + " mi");
+			} else if (location.getDistance() != null) {
+				_distanceTextView.setText(location.getDistance() + " mi");
 			} else {
 				_distanceTextView.setText("NA");
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
 		}
+		// when scheduledTimeStart/scheduledTimeEnd
 		try {
-
-			// when scheduledTimeStart/scheduledTimeEnd
-			if (_workorder.has("scheduledTimeStart") && _workorder.has("scheduledTimeEnd")) {
-				long scheduledTimeStart = _workorder.getLong("scheduledTimeStart") * 1000;
-				long scheduledTimeEnd = _workorder.getLong("scheduledTimeEnd") * 1000;
+			if (_workorder.getScheduledTimeStart() != null) {
 				String when = "";
-				Calendar cal = Calendar.getInstance();
-				cal.setTimeInMillis(scheduledTimeStart);
+				Calendar cal = ISO8601.toCalendar(_workorder.getScheduledTimeStart());
 
 				when = (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR);
 
-				if (scheduledTimeEnd > 0) {
-					cal.setTimeInMillis(scheduledTimeEnd);
+				if (!misc.isEmptyOrNull(_workorder.getScheduledTimeEnd())) {
+					cal = ISO8601.toCalendar(_workorder.getScheduledTimeEnd());
 
 					when += " - ";
 					when += (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR);
@@ -289,24 +290,21 @@ public class WorkorderSummaryView extends RelativeLayout {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		try {
 
-			// pay.basis
-			// basis/ pay : pay.basis
-			// if Fixed, then use pay.fixedAmount
-			// if Hourly, then use pay.fixedAmount
-			// if Blended, then use payblendedAdditionalRate
-			if (_workorder.has("pay.basis")) {
-				String basis = _workorder.getString("pay.basis");
-				_basisTextView.setText(basis);
-				if (_workorder.has("pay.fixedAmount")) {
-					_cashTextView.setText(misc.toCurrency(_workorder.getFloat("pay.fixedAmount")));
-				} else if (_workorder.has("pay.blendedAdditionalRate")) {
-					_cashTextView.setText(misc.toCurrency(_workorder.getFloat("pay.blendedAdditionalRate")));
-				}
+		// pay.basis
+		// basis/ pay : pay.basis
+		// if Fixed, then use pay.fixedAmount
+		// if Hourly, then use pay.fixedAmount
+		// if Blended, then use payblendedAdditionalRate
+		Pay pay = _workorder.getPay();
+		if (pay.getBasis() != null) {
+			String basis = pay.getBasis();
+			_basisTextView.setText(basis);
+			if (pay.getFixedAmount() != null) {
+				_cashTextView.setText(misc.toCurrency(pay.getFixedAmount()));
+			} else if (pay.getBlendedAdditionalRate() != null) {
+				_cashTextView.setText(misc.toCurrency(pay.getBlendedAdditionalRate()));
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
 		}
 
 		try {
@@ -320,15 +318,10 @@ public class WorkorderSummaryView extends RelativeLayout {
 	}
 
 	private void buildStatus() throws ParseException {
-		try {
-			if (_workorder.has("status")) {
-				String status = _workorder.getString("status");
-				_statusTextView.setText(status);
-			} else {
-				_statusTextView.setText("");
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if (_workorder.getStatus() != null) {
+			_statusTextView.setText(_workorder.getStatus());
+		} else {
+			_statusTextView.setText("");
 		}
 
 		switch (_dataView) {
@@ -358,21 +351,21 @@ public class WorkorderSummaryView extends RelativeLayout {
 		boolean has16 = false;
 
 		// get on-hold value
-		JsonArray jsonLabels = _workorder.getJsonArray("label");
+		Label[] labels = _workorder.getLabels();
 
-		for (int i = 0; i < jsonLabels.size(); i++) {
-			JsonObject label = jsonLabels.getJsonObject(i);
-			if (label.has("type")) {
-				if (label.getString("type").equals("on-hold"))
+		for (int i = 0; i < labels.length; i++) {
+			Label label = labels[i];
+			if (label.getType() != null) {
+				if (label.getType().equals("on-hold"))
 					isOnHold = true;
 
-				if (!label.has("action") || !label.getString("action").equals(
+				if (label.getAction() == null || label.getAction().equals(
 						"acknowledge")) {
 					isAcked = true;
 				}
 			}
 
-			if (label.getInt("label_id") == 16) {
+			if (label.getLabelId() == 16) {
 				has16 = true;
 			}
 		}
@@ -401,7 +394,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	}
 
 	private void buildStatusAvailable() throws ParseException {
-		int statusId = _workorder.getInt("workorder_id");
+		long statusId = _workorder.getWorkorderId();
 		if (statusId == 9) {
 			_statusDisplayState = 1;
 			_statusTextView.setText("Routed");
@@ -412,17 +405,17 @@ public class WorkorderSummaryView extends RelativeLayout {
 			boolean has12 = false;
 			boolean has13 = false;
 
-			JsonArray jsonLabels = _workorder.getJsonArray("label");
+			Label[] labels = _workorder.getLabels();
 
-			for (int i = 0; i < jsonLabels.size(); i++) {
-				JsonObject label = jsonLabels.getJsonObject(i);
-				if (label.getInt("label_id") == 11) {
+			for (int i = 0; i < labels.length; i++) {
+				Label label = labels[i];
+				if (label.getLabelId() == 11) {
 					has11 = true;
 				}
-				if (label.getInt("label_id") == 12) {
+				if (label.getLabelId() == 12) {
 					has12 = true;
 				}
-				if (label.getInt("label_id") == 12) {
+				if (label.getLabelId() == 12) {
 					has12 = true;
 				}
 			}
@@ -452,21 +445,21 @@ public class WorkorderSummaryView extends RelativeLayout {
 		boolean has1 = false;
 
 		// get on-hold value
-		JsonArray jsonLabels = _workorder.getJsonArray("label");
+		Label[] labels = _workorder.getLabels();
 
-		for (int i = 0; i < jsonLabels.size(); i++) {
-			JsonObject label = jsonLabels.getJsonObject(i);
-			if (label.has("type")) {
-				if (label.getString("type").equals("on-hold"))
+		for (int i = 0; i < labels.length; i++) {
+			Label label = labels[i];
+			if (label.getType() != null) {
+				if (label.getType().equals("on-hold"))
 					isOnHold = true;
 
-				if (!label.has("action") || !label.getString("action").equals(
+				if (label.getAction() == null || label.getAction().equals(
 						"acknowledge")) {
 					isAcked = true;
 				}
 			}
 
-			if (label.getInt("label_id") == 1) {
+			if (label.getLabelId() == 1) {
 				has1 = true;
 			}
 		}
@@ -497,9 +490,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private void buildStatusCompleted() throws ParseException {
 		Set<Integer> labels = new HashSet<Integer>();
 
-		JsonArray jsonlabels = _workorder.getJsonArray("label");
-		for (int i = 0; i < jsonlabels.size(); i++) {
-			int labelid = jsonlabels.getJsonObject(i).getInt("label_id");
+		Label[] slabels = _workorder.getLabels();
+		for (int i = 0; i < slabels.length; i++) {
+			int labelid = slabels[i].getLabelId();
 			labels.add(labelid);
 		}
 
@@ -517,7 +510,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_statusTextView.setText("Processing");
 			_detailButton.setVisibility(VISIBLE);
 			_detailButton.setText("Payments");
-		} else if (_workorder.has("status") && _workorder.getString("status").equals(
+		} else if (_workorder.getStatus() != null && _workorder.getStatus().equals(
 				"Paid")) {
 			_statusDisplayState = 3;
 			_statusTextView.setText("Paid");

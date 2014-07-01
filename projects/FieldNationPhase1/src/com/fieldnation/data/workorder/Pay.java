@@ -4,95 +4,96 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Pay{
-	@Json(name="maxDevice")
-	private int _maxDevice;
-	@Json(name="fixedAmount")
-	private int _fixedAmount;
-	@Json(name="bonuses")
-	private int _bonuses;
-	@Json(name="maxHour")
-	private int _maxHour;
-	@Json(name="blendedAdditionalHours")
-	private int _blendedAdditionalHours;
-	@Json(name="perDevice")
-	private int _perDevice;
-	@Json(name="blendedFirstHours")
-	private int _blendedFirstHours;
-	@Json(name="perHour")
-	private int _perHour;
-	@Json(name="basis")
+public class Pay {
+	@Json(name = "maxDevice")
+	private Integer _maxDevice;
+	@Json(name = "fixedAmount")
+	private Double _fixedAmount;
+	@Json(name = "bonuses")
+	private Integer _bonuses;
+	@Json(name = "maxHour")
+	private Integer _maxHour;
+	@Json(name = "blendedAdditionalHours")
+	private Integer _blendedAdditionalHours;
+	@Json(name = "perDevice")
+	private Integer _perDevice;
+	@Json(name = "blendedFirstHours")
+	private Integer _blendedFirstHours;
+	@Json(name = "perHour")
+	private Integer _perHour;
+	@Json(name = "basis")
 	private String _basis;
-	@Json(name="blendedStartRate")
-	private int _blendedStartRate;
-	@Json(name="maximumAmount")
-	private int _maximumAmount;
-	@Json(name="expenses")
-	private int _expenses;
-	@Json(name="payRateBasis")
+	@Json(name = "blendedStartRate")
+	private Integer _blendedStartRate;
+	@Json(name = "maximumAmount")
+	private Integer _maximumAmount;
+	@Json(name = "expenses")
+	private Integer _expenses;
+	@Json(name = "payRateBasis")
 	private String _payRateBasis;
-	@Json(name="blendedAdditionalRate")
-	private int _blendedAdditionalRate;
+	@Json(name = "blendedAdditionalRate")
+	private Double _blendedAdditionalRate;
 
-	public Pay(){
+	public Pay() {
 	}
-	public int getMaxDevice(){
+
+	public Integer getMaxDevice() {
 		return _maxDevice;
 	}
 
-	public int getFixedAmount(){
+	public Double getFixedAmount() {
 		return _fixedAmount;
 	}
 
-	public int getBonuses(){
+	public Integer getBonuses() {
 		return _bonuses;
 	}
 
-	public int getMaxHour(){
+	public Integer getMaxHour() {
 		return _maxHour;
 	}
 
-	public int getBlendedAdditionalHours(){
+	public Integer getBlendedAdditionalHours() {
 		return _blendedAdditionalHours;
 	}
 
-	public int getPerDevice(){
+	public Integer getPerDevice() {
 		return _perDevice;
 	}
 
-	public int getBlendedFirstHours(){
+	public Integer getBlendedFirstHours() {
 		return _blendedFirstHours;
 	}
 
-	public int getPerHour(){
+	public Integer getPerHour() {
 		return _perHour;
 	}
 
-	public String getBasis(){
+	public String getBasis() {
 		return _basis;
 	}
 
-	public int getBlendedStartRate(){
+	public Integer getBlendedStartRate() {
 		return _blendedStartRate;
 	}
 
-	public int getMaximumAmount(){
+	public Integer getMaximumAmount() {
 		return _maximumAmount;
 	}
 
-	public int getExpenses(){
+	public Integer getExpenses() {
 		return _expenses;
 	}
 
-	public String getPayRateBasis(){
+	public String getPayRateBasis() {
 		return _payRateBasis;
 	}
 
-	public int getBlendedAdditionalRate(){
+	public Double getBlendedAdditionalRate() {
 		return _blendedAdditionalRate;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

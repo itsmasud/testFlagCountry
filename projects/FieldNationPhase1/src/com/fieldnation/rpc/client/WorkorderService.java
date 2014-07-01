@@ -1,6 +1,7 @@
 package com.fieldnation.rpc.client;
 
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -83,7 +84,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/assignment",
 				null,
-				"start_time=" + misc.utcTo8601(startTime) + "&end_time=" + misc.utcTo8601(endTime),
+				"start_time=" + ISO8601.fromUTC(startTime) + "&end_time=" + ISO8601.fromUTC(endTime),
 				"application/x-www-form-urlencoded", allowCache);
 	}
 
@@ -109,7 +110,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 			boolean allowCache) {
 		return httpPost(resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/checkin", null,
-				"checkin_time=" + misc.utcTo8601(checkinTime),
+				"checkin_time=" + ISO8601.fromUTC(checkinTime),
 				"application/x-www-form-urlencoded", allowCache);
 	}
 
@@ -117,7 +118,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 			boolean allowCache) {
 		return httpPost(resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/checkin", null,
-				"checkout_time=" + misc.utcTo8601(checkoutTime),
+				"checkout_time=" + ISO8601.fromUTC(checkoutTime),
 				"application/x-www-form-urlencoded", allowCache);
 	}
 

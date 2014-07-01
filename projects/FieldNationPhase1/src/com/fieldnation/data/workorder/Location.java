@@ -6,7 +6,7 @@ import com.fieldnation.json.annotations.Json;
 
 public class Location{
 	@Json(name="distance")
-	private double _distance;
+	private Double _distance;
 	@Json(name="state")
 	private String _state;
 	@Json(name="address2")
@@ -16,7 +16,7 @@ public class Location{
 	@Json(name="address1")
 	private String _address1;
 	@Json(name="zip")
-	private int _zip;
+	private Integer _zip;
 	@Json(name="country")
 	private String _country;
 	@Json(name="city")
@@ -24,13 +24,13 @@ public class Location{
 	@Json(name="contact_name")
 	private String _contactName;
 	@Json(name="contact_phone")
-	private double _contactPhone;
+	private Double _contactPhone;
 	@Json(name="contact_email")
 	private String _contactEmail;
 
 	public Location(){
 	}
-	public double getDistance(){
+	public Double getDistance(){
 		return _distance;
 	}
 
@@ -50,7 +50,7 @@ public class Location{
 		return _address1;
 	}
 
-	public int getZip(){
+	public Integer getZip(){
 		return _zip;
 	}
 
@@ -66,7 +66,7 @@ public class Location{
 		return _contactName;
 	}
 
-	public double getContactPhone(){
+	public Double getContactPhone(){
 		return _contactPhone;
 	}
 

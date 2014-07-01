@@ -6,9 +6,9 @@ import com.fieldnation.json.annotations.Json;
 
 public class Provider{
 	@Json(name="longitude")
-	private double _longitude;
+	private Double _longitude;
 	@Json(name="distance")
-	private double _distance;
+	private Double _distance;
 	@Json(name="state")
 	private String _state;
 	@Json(name="photo_url")
@@ -20,19 +20,19 @@ public class Provider{
 	@Json(name="lastname")
 	private String _lastname;
 	@Json(name="latitude")
-	private double _latitude;
+	private Double _latitude;
 	@Json(name="photo_thumb_url")
 	private String _photoThumbUrl;
 	@Json(name="user_id")
-	private int _userId;
+	private Integer _userId;
 
 	public Provider(){
 	}
-	public double getLongitude(){
+	public Double getLongitude(){
 		return _longitude;
 	}
 
-	public double getDistance(){
+	public Double getDistance(){
 		return _distance;
 	}
 
@@ -56,7 +56,7 @@ public class Provider{
 		return _lastname;
 	}
 
-	public double getLatitude(){
+	public Double getLatitude(){
 		return _latitude;
 	}
 
@@ -64,7 +64,7 @@ public class Provider{
 		return _photoThumbUrl;
 	}
 
-	public int getUserId(){
+	public Integer getUserId(){
 		return _userId;
 	}
 

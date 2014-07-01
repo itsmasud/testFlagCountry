@@ -6,9 +6,9 @@ import com.fieldnation.json.annotations.Json;
 
 public class Tasks{
 	@Json(name="task_id")
-	private int _taskId;
+	private Integer _taskId;
 	@Json(name="completed")
-	private boolean _completed;
+	private Boolean _completed;
 	@Json(name="type")
 	private String _type;
 	@Json(name="dateCompleted")
@@ -16,11 +16,11 @@ public class Tasks{
 
 	public Tasks(){
 	}
-	public int getTaskId(){
+	public Integer getTaskId(){
 		return _taskId;
 	}
 
-	public boolean getCompleted(){
+	public Boolean getCompleted(){
 		return _completed;
 	}
 
