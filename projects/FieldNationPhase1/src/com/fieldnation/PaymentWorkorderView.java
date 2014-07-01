@@ -1,7 +1,7 @@
 package com.fieldnation;
 
-import com.fieldnation.data.payments.paid.PaidPayment;
-import com.fieldnation.data.payments.paid.Workorder;
+import com.fieldnation.data.payments.Payment;
+import com.fieldnation.data.payments.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
@@ -109,7 +109,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 		}
 	}
 
-	public void setWorkorder(PaidPayment payment, Workorder wo) {
+	public void setWorkorder(Payment payment, Workorder wo) {
 		_titleTextView.setText(wo.getWoTitle());
 		_clientNameTextView.setText(wo.getClientName());
 

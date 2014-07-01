@@ -74,15 +74,16 @@ public abstract class WsbUi extends JFrame {
 		getContentPane().setLayout(gridBagLayout);
 
 		JPanel panel = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.weightx = 1.0;
-		gbc_panel.insets = new Insets(0, 0, 5, 0);
 		gbc_panel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 0;
 		getContentPane().add(panel, gbc_panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0 };
+		gbl_panel.rowWeights = new double[] { 0.0 };
+		panel.setLayout(gbl_panel);
 
 		methodComboBox = new JComboBox();
 		methodComboBox.addActionListener(new ActionListener() {
@@ -100,11 +101,22 @@ public abstract class WsbUi extends JFrame {
 		});
 		methodComboBox.setModel(new DefaultComboBoxModel(
 				new String[] { "GET", "POST", "PUT", "DELETE" }));
-		panel.add(methodComboBox);
+		GridBagConstraints gbc_methodComboBox = new GridBagConstraints();
+		gbc_methodComboBox.anchor = GridBagConstraints.WEST;
+		gbc_methodComboBox.insets = new Insets(5, 5, 5, 5);
+		gbc_methodComboBox.gridx = 0;
+		gbc_methodComboBox.gridy = 0;
+		panel.add(methodComboBox, gbc_methodComboBox);
 
 		urlTextField = new JTextField();
 		urlTextField.setText("http://");
-		panel.add(urlTextField);
+		GridBagConstraints gbc_urlTextField = new GridBagConstraints();
+		gbc_urlTextField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_urlTextField.anchor = GridBagConstraints.WEST;
+		gbc_urlTextField.insets = new Insets(5, 5, 5, 5);
+		gbc_urlTextField.gridx = 1;
+		gbc_urlTextField.gridy = 0;
+		panel.add(urlTextField, gbc_urlTextField);
 		urlTextField.setColumns(47);
 
 		goButton = new JButton("Go");
@@ -117,7 +129,12 @@ public abstract class WsbUi extends JFrame {
 				goButton_onClick(e);
 			}
 		});
-		panel.add(goButton);
+		GridBagConstraints gbc_goButton = new GridBagConstraints();
+		gbc_goButton.anchor = GridBagConstraints.NORTHWEST;
+		gbc_goButton.insets = new Insets(5, 5, 5, 5);
+		gbc_goButton.gridx = 2;
+		gbc_goButton.gridy = 0;
+		panel.add(goButton, gbc_goButton);
 
 		moreChkBox = new JCheckBox("More");
 		moreChkBox.setSelected(true);
@@ -131,10 +148,20 @@ public abstract class WsbUi extends JFrame {
 				}
 			}
 		});
-		panel.add(moreChkBox);
+		GridBagConstraints gbc_moreChkBox = new GridBagConstraints();
+		gbc_moreChkBox.anchor = GridBagConstraints.NORTHWEST;
+		gbc_moreChkBox.insets = new Insets(5, 5, 5, 5);
+		gbc_moreChkBox.gridx = 3;
+		gbc_moreChkBox.gridy = 0;
+		panel.add(moreChkBox, gbc_moreChkBox);
 
 		j2jChkBox = new JCheckBox("J2J");
-		panel.add(j2jChkBox);
+		GridBagConstraints gbc_j2jChkBox = new GridBagConstraints();
+		gbc_j2jChkBox.insets = new Insets(5, 5, 5, 5);
+		gbc_j2jChkBox.anchor = GridBagConstraints.NORTHWEST;
+		gbc_j2jChkBox.gridx = 4;
+		gbc_j2jChkBox.gridy = 0;
+		panel.add(j2jChkBox, gbc_j2jChkBox);
 		j2jChkBox.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
@@ -150,7 +177,6 @@ public abstract class WsbUi extends JFrame {
 		FlowLayout flowLayout_1 = (FlowLayout) morePanel.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		GridBagConstraints gbc_morePanel = new GridBagConstraints();
-		gbc_morePanel.insets = new Insets(0, 0, 5, 0);
 		gbc_morePanel.weightx = 1.0;
 		gbc_morePanel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_morePanel.gridx = 0;
@@ -192,7 +218,7 @@ public abstract class WsbUi extends JFrame {
 		gbc_btnClear.insets = new Insets(0, 0, 5, 0);
 		gbc_btnClear.anchor = GridBagConstraints.NORTHEAST;
 		gbc_btnClear.gridx = 0;
-		gbc_btnClear.gridy = 2;
+		gbc_btnClear.gridy = 3;
 		getContentPane().add(btnClear, gbc_btnClear);
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);

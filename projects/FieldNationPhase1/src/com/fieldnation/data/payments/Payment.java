@@ -1,10 +1,10 @@
-package com.fieldnation.data.payments.paid;
+package com.fieldnation.data.payments;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class PaidPayment {
+public class Payment {
 	@Json(name = "status")
 	private String _status;
 	@Json(name = "date_paid")
@@ -18,7 +18,7 @@ public class PaidPayment {
 	@Json(name = "workorders")
 	private Workorder[] _workorders;
 
-	public PaidPayment() {
+	public Payment() {
 	}
 
 	public String getStatus() {
@@ -49,18 +49,18 @@ public class PaidPayment {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(PaidPayment paidPayment) {
+	public static JsonObject toJson(Payment payment) {
 		try {
-			return Serializer.serializeObject(paidPayment);
+			return Serializer.serializeObject(payment);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
 	}
 
-	public static PaidPayment fromJson(JsonObject json) {
+	public static Payment fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(PaidPayment.class, json);
+			return Serializer.unserializeObject(Payment.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

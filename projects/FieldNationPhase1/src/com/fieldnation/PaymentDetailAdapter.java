@@ -2,8 +2,8 @@ package com.fieldnation;
 
 import java.text.ParseException;
 
-import com.fieldnation.data.payments.paid.PaidPayment;
-import com.fieldnation.data.payments.paid.Workorder;
+import com.fieldnation.data.payments.Payment;
+import com.fieldnation.data.payments.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 
@@ -14,10 +14,10 @@ import android.widget.BaseAdapter;
 
 public class PaymentDetailAdapter extends BaseAdapter {
 	private static final String TAG = "PaymentDetailAdapter";
-	private PaidPayment _payment;
+	private Payment _payment;
 	private Workorder[] _workorders;
 
-	public PaymentDetailAdapter(PaidPayment payment) {
+	public PaymentDetailAdapter(Payment payment) {
 		super();
 		_payment = payment;
 		_workorders = payment.getWorkorders();

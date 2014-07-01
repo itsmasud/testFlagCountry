@@ -3,8 +3,9 @@ package com.fieldnation;
 import java.text.ParseException;
 import java.util.List;
 
-import com.fieldnation.data.payments.paid.PaidPayment;
+import com.fieldnation.data.payments.Payment;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.misc;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ public class PaymentDetailActivity extends BaseActivity {
 
 	// Data
 	private JsonObject _paymentInfo;
-	private PaidPayment _paid;
+	private Payment _paid;
 	private PaymentDetailAdapter _adapter;
 
 	@Override
@@ -43,7 +44,7 @@ public class PaymentDetailActivity extends BaseActivity {
 
 		try {
 			_paymentInfo = new JsonObject(intent.getStringExtra("PAYMENT_INFO"));
-			_paid = PaidPayment.fromJson(_paymentInfo);
+			_paid = Payment.fromJson(_paymentInfo);
 		} catch (ParseException e) {
 			e.printStackTrace();
 			finish();
@@ -59,6 +60,13 @@ public class PaymentDetailActivity extends BaseActivity {
 		_listView = (ListView) findViewById(R.id.items_listview);
 		_adapter = new PaymentDetailAdapter(_paid);
 		_listView.setAdapter(_adapter);
+
+		_idTextView.setText(_paid.getPaymentId() + "");
+		_paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
+		_paymentTypeTextView.setText(misc.capitalize(_paid.getPayMethod()));
+		_dateTextView.setText("Estimated" + _paid.getDatePaid());
+		_workorderCountTextView.setText(_paid.getWorkorders().length + " Work Orders");
+		// TODO add fees lookup here
 
 	}
 

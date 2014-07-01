@@ -1,4 +1,4 @@
-package com.fieldnation.data.payments.paid;
+package com.fieldnation.data.payments;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
