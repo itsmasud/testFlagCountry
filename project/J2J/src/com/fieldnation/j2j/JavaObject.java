@@ -1,16 +1,58 @@
 package com.fieldnation.j2j;
 
+import java.text.ParseException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
+
 public class JavaObject {
+	private static final Hashtable<String, JavaObject> _objectRegistry = new Hashtable<String, JavaObject>();
+
 	public String name;
 	public String packageName;
-	public List<JavaField> _fields = new LinkedList<JavaField>();
+	public Hashtable<String, JavaField> _fields = new Hashtable<String, JavaField>();
 
-	public JavaObject(String name, String packageName) {
+	public static JavaObject getInstance(String name, String packageName) {
+		String classname = formatClassName(name);
+		if (!_objectRegistry.containsKey(classname)) {
+			_objectRegistry.put(classname, new JavaObject(classname,
+					packageName));
+		}
+
+		System.out.println("Class: " + classname);
+
+		return _objectRegistry.get(classname);
+	}
+
+	public static Enumeration<JavaObject> getJavaObjects() {
+		return _objectRegistry.elements();
+	}
+
+	private JavaObject(String name, String packageName) {
 		this.name = name;
 		this.packageName = packageName;
+	}
+
+	public void addData(JsonObject source) throws ParseException {
+		Enumeration<String> keys = source.keys();
+
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			Object value = source.get(key);
+
+			JavaField newField = new JavaField(key, value, packageName);
+
+			if (_fields.containsKey(key)) {
+				newField = JavaField.pickBest(newField, _fields.get(key));
+			}
+
+			_fields.put(key, newField);
+		}
+
 	}
 
 	private String getFieldName() {
@@ -29,16 +71,18 @@ public class JavaObject {
 
 		sb.append("public class " + name + "{\r\n");
 
-		for (int i = 0; i < _fields.size(); i++) {
-			sb.append(_fields.get(i).toString());
+		Enumeration<String> keys = _fields.keys();
+		while (keys.hasMoreElements()) {
+			sb.append(_fields.get(keys.nextElement()).toString());
 		}
 
 		sb.append("\r\n");
 
 		sb.append("	public " + name + "(){\r\n	}\r\n");
 
-		for (int i = 0; i < _fields.size(); i++) {
-			sb.append(_fields.get(i).toGetter());
+		keys = _fields.keys();
+		while (keys.hasMoreElements()) {
+			sb.append(_fields.get(keys.nextElement()).toGetter());
 		}
 
 		sb.append("	public JsonObject toJson(){\r\n");
@@ -66,5 +110,21 @@ public class JavaObject {
 		sb.append("}\r\n");
 
 		return sb.toString();
+	}
+
+	public String getClassName() {
+		return formatClassName(name);
+	}
+
+	public static String formatClassName(String value) {
+		String[] splitted = value.split("_");
+
+		String result = "";
+
+		for (int i = 0; i < splitted.length; i++) {
+			result += splitted[i].substring(0, 1).toUpperCase() + splitted[i].substring(1);
+		}
+
+		return result;
 	}
 }

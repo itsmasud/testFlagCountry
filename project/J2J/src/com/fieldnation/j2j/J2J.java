@@ -1,17 +1,44 @@
 package com.fieldnation.j2j;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Enumeration;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "275406312a7f0b4ae4f9229114e29b4b36c42e1f";
+	private static String authToken = "89973b987f1b237f189a9ce2b465480e9a46ea7b";
 
 	public static void main(String[] args) {
-		// getWorkorders();
-		getMessages();
+		getWorkorders();
+		// getMessages();
+	}
+
+	private static void dumpClasses(JsonArray objects, String path,
+			String packageName, String rootName) throws ParseException, IOException {
+		new File(path).mkdirs();
+
+		JavaObject object = JavaObject.getInstance(rootName, packageName);
+		for (int i = 0; i < objects.size(); i++) {
+			object.addData(objects.getJsonObject(i));
+		}
+
+		Enumeration<JavaObject> javaObjects = JavaObject.getJavaObjects();
+		while (javaObjects.hasMoreElements()) {
+			JavaObject obj = javaObjects.nextElement();
+
+			FileOutputStream fout = new FileOutputStream(
+					path + "/" + obj.getClassName() + ".java");
+
+			fout.write(obj.toString().getBytes());
+			fout.close();
+		}
+
 	}
 
 	private static void getMessages() {
@@ -32,11 +59,9 @@ public class J2J {
 			}
 
 			System.out.println("Building Class Structure");
-			new File("c:/j2j/messages").mkdirs();
-			Serializer s = new Serializer("com.fieldnation.data.messages",
-					"c:/j2j/messages");
+			dumpClasses(objects, "c:/j2j/messages",
+					"com.fieldnation.data.messages", "Message");
 
-			s.performJ2J(objects.toString(), "Message");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -45,18 +70,8 @@ public class J2J {
 
 	private static void getWorkorders() {
 		String[] urls = new String[] {
-				"/api/rest/v1/workorder/requested?access_token=" + authToken + "&page=0",
-				"/api/rest/v1/workorder/requested?access_token=" + authToken + "&page=1",
-				"/api/rest/v1/workorder/requested?access_token=" + authToken + "&page=2",
-				"/api/rest/v1/workorder/requested?access_token=" + authToken + "&page=3",
-				"/api/rest/v1/workorder/requested?access_token=" + authToken + "&page=4",
-				"/api/rest/v1/workorder/requested?access_token=" + authToken + "&page=5",
-				"/api/rest/v1/workorder/available?access_token=" + authToken + "&page=0",
-				"/api/rest/v1/workorder/available?access_token=" + authToken + "&page=1",
-				"/api/rest/v1/workorder/available?access_token=" + authToken + "&page=2",
-				"/api/rest/v1/workorder/available?access_token=" + authToken + "&page=3",
-				"/api/rest/v1/workorder/available?access_token=" + authToken + "&page=4",
-				"/api/rest/v1/workorder/available?access_token=" + authToken + "&page=5",
+				"/api/rest/v1/workorder/requested?access_token=" + authToken + "&page=",
+				"/api/rest/v1/workorder/available?access_token=" + authToken + "&page=",
 				// "/api/rest/v1/workorder/pending_approval?access_token=" +
 				// authToken + "",
 				// "/api/rest/v1/workorder/pending_approval?access_token=" +
@@ -69,34 +84,25 @@ public class J2J {
 				// authToken + "&page=4",
 				// "/api/rest/v1/workorder/pending_approval?access_token=" +
 				// authToken + "&page=5",
-				"/api/rest/v1/workorder/assigned?access_token=" + authToken + "&page=0",
-				"/api/rest/v1/workorder/assigned?access_token=" + authToken + "&page=1",
-				"/api/rest/v1/workorder/assigned?access_token=" + authToken + "&page=2",
-				"/api/rest/v1/workorder/assigned?access_token=" + authToken + "&page=3",
-				"/api/rest/v1/workorder/assigned?access_token=" + authToken + "&page=4",
-				"/api/rest/v1/workorder/assigned?access_token=" + authToken + "&page=5",
-				"/api/rest/v1/workorder/completed?access_token=" + authToken + "&page=0",
-				"/api/rest/v1/workorder/completed?access_token=" + authToken + "&page=1",
-				"/api/rest/v1/workorder/completed?access_token=" + authToken + "&page=2",
-				"/api/rest/v1/workorder/completed?access_token=" + authToken + "&page=3",
-				"/api/rest/v1/workorder/completed?access_token=" + authToken + "&page=4",
-				"/api/rest/v1/workorder/completed?access_token=" + authToken + "&page=5",
-				"/api/rest/v1/workorder/canceled?access_token=" + authToken + "&page=0",
-				"/api/rest/v1/workorder/canceled?access_token=" + authToken + "&page=1",
-				"/api/rest/v1/workorder/canceled?access_token=" + authToken + "&page=2",
-				"/api/rest/v1/workorder/canceled?access_token=" + authToken + "&page=3",
-				"/api/rest/v1/workorder/canceled?access_token=" + authToken + "&page=4",
-				"/api/rest/v1/workorder/canceled?access_token=" + authToken + "&page=5",
+				"/api/rest/v1/workorder/assigned?access_token=" + authToken + "&page=",
+				"/api/rest/v1/workorder/completed?access_token=" + authToken + "&page=",
+				"/api/rest/v1/workorder/canceled?access_token=" + authToken + "&page=",
 
 		};
 		try {
 			JsonArray objects = new JsonArray();
 
 			for (int i = 0; i < urls.length; i++) {
-				System.out.println(urls[i]);
-				Result result = Ws.httpGet(hostname, urls[i]);
+				for (int j = 0; true; j++) {
+					System.out.println(urls[i] + j);
+					Result result = Ws.httpGet(hostname, urls[i] + j);
 
-				objects.merge(result.getResultsAsJsonArray());
+					JsonArray res = result.getResultsAsJsonArray();
+					if (res.size() == 0)
+						break;
+
+					objects.merge(res);
+				}
 			}
 
 			System.out.println("Have " + objects.size() + " workorders.");
@@ -114,11 +120,9 @@ public class J2J {
 			objects.merge(details);
 
 			System.out.println("Building Class Structure");
-			new File("c:/j2j/workorder").mkdirs();
-			Serializer s = new Serializer("com.fieldnation.data.workorder",
-					"c:/j2j/workorder");
+			dumpClasses(objects, "c:/j2j/workorder",
+					"com.fieldnation.data.workorder", "Workorder");
 
-			s.performJ2J(objects.toString(), "Workorder");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

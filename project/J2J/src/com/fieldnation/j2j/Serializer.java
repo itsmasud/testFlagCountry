@@ -76,7 +76,6 @@ public class Serializer {
 
 		fout.write(obj.toString().getBytes());
 		fout.close();
-
 	}
 
 	private String formatForClassName(String value) {
