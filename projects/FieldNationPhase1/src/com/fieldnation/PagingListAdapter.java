@@ -1,7 +1,11 @@
 package com.fieldnation;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.json.Serializer;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
@@ -16,7 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public abstract class PagingListAdapter extends BaseAdapter {
+public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private static final String TAG = "PagingListAdapter";
 
 	private GlobalState _gs;
@@ -24,7 +28,8 @@ public abstract class PagingListAdapter extends BaseAdapter {
 	private boolean _isViable;
 	private int _nextPage = 0;
 	private boolean _atEndOfList;
-	private JsonArray _objects = null;
+	private List<T> _objects = null;
+	private Class<T> _clazz = null;
 	private boolean _allowCache = true;
 	private String _authToken;
 	private String _username;
@@ -32,9 +37,9 @@ public abstract class PagingListAdapter extends BaseAdapter {
 	private MyAuthClient _authClient;
 	private Listener _listener = null;
 
-	public PagingListAdapter(Context context) {
+	public PagingListAdapter(Context context, Class<T> clazz) {
 		_context = context;
-
+		_clazz = clazz;
 		_progressBar = new ProgressBar(context);
 		_authClient = new MyAuthClient(context);
 		_gs = (GlobalState) context.getApplicationContext();
@@ -93,8 +98,7 @@ public abstract class PagingListAdapter extends BaseAdapter {
 			getNextPage();
 			return getProgressBar();
 		} else {
-			return getView(_objects.getJsonObject(position), convertView,
-					parent);
+			return getView(_objects.get(position), convertView, parent);
 		}
 	}
 
@@ -183,8 +187,15 @@ public abstract class PagingListAdapter extends BaseAdapter {
 				notifyDataSetChanged();
 				return;
 			}
-
-			_objects.merge(objects);
+			for (int i = 0; i < objects.size(); i++) {
+				try {
+					_objects.add(Serializer.unserializeObject(_clazz,
+							objects.getJsonObject(i)));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
 			if (objects.size() < 25) {
 				Log.v(TAG, "_atEndOfList");
@@ -241,7 +252,7 @@ public abstract class PagingListAdapter extends BaseAdapter {
 
 		_nextPage = 0;
 		_atEndOfList = false;
-		_objects = new JsonArray();
+		_objects = new LinkedList<T>();
 		getNextPage();
 	}
 
@@ -275,8 +286,7 @@ public abstract class PagingListAdapter extends BaseAdapter {
 	 * @param parent
 	 * @return
 	 */
-	public abstract View getView(JsonObject obj, View convertView,
-			ViewGroup parent);
+	public abstract View getView(T obj, View convertView, ViewGroup parent);
 
 	/**
 	 * When authenticatino fails, or some other error happens that requires that

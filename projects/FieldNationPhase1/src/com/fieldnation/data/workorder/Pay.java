@@ -10,25 +10,25 @@ public class Pay {
 	@Json(name = "fixedAmount")
 	private Double _fixedAmount;
 	@Json(name = "bonuses")
-	private Integer _bonuses;
+	private Double _bonuses;
 	@Json(name = "maxHour")
-	private Integer _maxHour;
+	private Double _maxHour;
 	@Json(name = "blendedAdditionalHours")
-	private Integer _blendedAdditionalHours;
+	private Double _blendedAdditionalHours;
 	@Json(name = "perDevice")
-	private Integer _perDevice;
+	private Double _perDevice;
 	@Json(name = "blendedFirstHours")
-	private Integer _blendedFirstHours;
+	private Double _blendedFirstHours;
 	@Json(name = "perHour")
-	private Integer _perHour;
+	private Double _perHour;
 	@Json(name = "basis")
 	private String _basis;
 	@Json(name = "blendedStartRate")
-	private Integer _blendedStartRate;
+	private Double _blendedStartRate;
 	@Json(name = "maximumAmount")
-	private Integer _maximumAmount;
+	private Double _maximumAmount;
 	@Json(name = "expenses")
-	private Integer _expenses;
+	private Double _expenses;
 	@Json(name = "payRateBasis")
 	private String _payRateBasis;
 	@Json(name = "blendedAdditionalRate")
@@ -45,27 +45,27 @@ public class Pay {
 		return _fixedAmount;
 	}
 
-	public Integer getBonuses() {
+	public Double getBonuses() {
 		return _bonuses;
 	}
 
-	public Integer getMaxHour() {
+	public Double getMaxHour() {
 		return _maxHour;
 	}
 
-	public Integer getBlendedAdditionalHours() {
+	public Double getBlendedAdditionalHours() {
 		return _blendedAdditionalHours;
 	}
 
-	public Integer getPerDevice() {
+	public Double getPerDevice() {
 		return _perDevice;
 	}
 
-	public Integer getBlendedFirstHours() {
+	public Double getBlendedFirstHours() {
 		return _blendedFirstHours;
 	}
 
-	public Integer getPerHour() {
+	public Double getPerHour() {
 		return _perHour;
 	}
 
@@ -73,15 +73,15 @@ public class Pay {
 		return _basis;
 	}
 
-	public Integer getBlendedStartRate() {
+	public Double getBlendedStartRate() {
 		return _blendedStartRate;
 	}
 
-	public Integer getMaximumAmount() {
+	public Double getMaximumAmount() {
 		return _maximumAmount;
 	}
 
-	public Integer getExpenses() {
+	public Double getExpenses() {
 		return _expenses;
 	}
 

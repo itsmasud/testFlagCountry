@@ -225,8 +225,10 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 	private void refresh() {
 		// title
-		_titleTextView.setText(_workorder.getTitle() + _workorder.getWorkorderId());
-
+		if (_workorder.getTitle() != null)
+			_titleTextView.setText(_workorder.getTitle() + _workorder.getWorkorderId());
+		else
+			_titleTextView.setText(_workorder.getWorkorderId() + "");
 		// client name location.contact_name
 		Location location = _workorder.getLocation();
 		if (location != null) {
@@ -289,6 +291,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			_whenTextView.setText("NA");
 		}
 
 		// pay.basis

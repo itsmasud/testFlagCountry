@@ -19,7 +19,7 @@ import android.view.ViewGroup;
  * @author michael.carver
  * 
  */
-public class WorkorderListAdapter extends PagingListAdapter {
+public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	private static final String TAG = "WorkorderListAdapter";
 
 	private WorkorderService _workorderService = null;
@@ -31,7 +31,7 @@ public class WorkorderListAdapter extends PagingListAdapter {
 	/*-*****************************-*/
 
 	public WorkorderListAdapter(Context context, WorkorderDataSelector selection) throws NoSuchMethodException {
-		super(context);
+		super(context, Workorder.class);
 		_dataSelection = selection;
 
 		_rpcMethod = WorkorderService.class.getDeclaredMethod(
@@ -43,7 +43,7 @@ public class WorkorderListAdapter extends PagingListAdapter {
 	}
 
 	@Override
-	public View getView(JsonObject object, View convertView, ViewGroup parent) {
+	public View getView(Workorder object, View convertView, ViewGroup parent) {
 		WorkorderSummaryView wosum = null;
 
 		if (convertView == null) {
@@ -54,7 +54,7 @@ public class WorkorderListAdapter extends PagingListAdapter {
 			wosum = new WorkorderSummaryView(parent.getContext());
 		}
 
-		wosum.setWorkorder(_dataSelection, Workorder.fromJson(object));
+		wosum.setWorkorder(_dataSelection, object);
 
 		return wosum;
 

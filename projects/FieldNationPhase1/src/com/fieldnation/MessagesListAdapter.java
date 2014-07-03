@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 
@@ -9,17 +10,17 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class MessagesListAdapter extends PagingListAdapter {
+public class MessagesListAdapter extends PagingListAdapter<Workorder> {
 	private static final String TAG = "MessagesListAdapter";
 
 	private ProfileService _profileService = null;
 
 	public MessagesListAdapter(Context context) {
-		super(context);
+		super(context, Workorder.class);
 	}
 
 	@Override
-	public View getView(JsonObject obj, View convertView, ViewGroup parent) {
+	public View getView(Workorder obj, View convertView, ViewGroup parent) {
 		MessageView mv = null;
 
 		if (convertView == null) {
@@ -30,7 +31,8 @@ public class MessagesListAdapter extends PagingListAdapter {
 			mv = new MessageView(getContext());
 		}
 
-		mv.setMessage(obj);
+		// TODO fix asap!
+		// mv.setMessage(obj);
 
 		return mv;
 	}

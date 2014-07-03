@@ -24,7 +24,7 @@ public class Location{
 	@Json(name="contact_name")
 	private String _contactName;
 	@Json(name="contact_phone")
-	private Double _contactPhone;
+	private String _contactPhone;
 	@Json(name="contact_email")
 	private String _contactEmail;
 
@@ -66,7 +66,7 @@ public class Location{
 		return _contactName;
 	}
 
-	public Double getContactPhone(){
+	public String getContactPhone(){
 		return _contactPhone;
 	}
 

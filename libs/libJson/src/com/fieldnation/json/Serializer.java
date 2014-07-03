@@ -90,7 +90,7 @@ public class Serializer {
 
 	/*-			From JsonStuff			-*/
 	private static Object unserialize(Class<?> destClass, Object source,
-			Object init, Class<?> paramType) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException, UnsupportedDataTypeException {
+			Object init, Class<?> paramType) throws Exception {
 		if (isPrimitive(destClass)) {
 			return unserializePrimitive(destClass, source.toString());
 		}
@@ -106,6 +106,14 @@ public class Serializer {
 	}
 
 	private static Object unserializePrimitive(Class<?> clazz, String source) throws UnsupportedDataTypeException {
+		if (source == null) {
+			return null;
+		}
+
+		if (source.equals("")) {
+			return null;
+		}
+
 		if (clazz == Float.class || clazz == float.class) {
 			return Float.parseFloat(source);
 		}
@@ -137,7 +145,7 @@ public class Serializer {
 		throw new UnsupportedDataTypeException(clazz.getName());
 	}
 
-	private static Object unserializeArray(Class<?> destClass, JsonArray source) throws UnsupportedDataTypeException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException {
+	private static Object unserializeArray(Class<?> destClass, JsonArray source) throws Exception {
 		Class<?> compType = destClass.getComponentType();
 
 		// Object[] dest = new Object[source.size()];
@@ -150,7 +158,7 @@ public class Serializer {
 	}
 
 	private static Object unserializeCollection(Class<?> destClass,
-			JsonArray source, Collection<Object> init, Class<?> paramType) throws UnsupportedDataTypeException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException {
+			JsonArray source, Collection<Object> init, Class<?> paramType) throws Exception {
 
 		if (paramType == null) {
 			throw new IllegalArgumentException(
@@ -164,9 +172,9 @@ public class Serializer {
 		return init;
 	}
 
-	public static <T> T unserializeObject(Class<T> clazz, JsonObject source) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ParseException, UnsupportedDataTypeException {
+	public static <T> T unserializeObject(Class<T> clazz, JsonObject source) throws Exception {
 		Constructor<T> c = clazz.getConstructor((Class<?>[]) null);
-		System.out.println("Class: " + clazz.getName());
+		//System.out.println("Class: " + clazz.getName());
 		T dest = c.newInstance();
 
 		Field[] fields = clazz.getDeclaredFields();
@@ -182,26 +190,27 @@ public class Serializer {
 			String jname = getFieldName(field, anno.name());
 			Class<?> fieldclass = field.getType();
 
-			System.out.println("Field: " + jname);
-			if ("_myDouble".equals(jname)) {
-				System.out.println("BP");
-			}
-
 			CollectionParameterType collectionParameterType = field.getAnnotation(CollectionParameterType.class);
-			if (source.has(jname) && source.get(jname) != null) {
-				if (collectionParameterType != null) {
-					field.set(
-							dest,
-							unserialize(fieldclass, source.get(jname),
-									field.get(dest),
-									collectionParameterType.param()));
+			try {
+				if (source.has(jname) && source.get(jname) != null) {
+					if (collectionParameterType != null) {
+						field.set(
+								dest,
+								unserialize(fieldclass, source.get(jname),
+										field.get(dest),
+										collectionParameterType.param()));
 
-				} else {
-					field.set(
-							dest,
-							unserialize(fieldclass, source.get(jname),
-									field.get(dest), null));
+					} else {
+						field.set(
+								dest,
+								unserialize(fieldclass, source.get(jname),
+										field.get(dest), null));
+					}
 				}
+			} catch (Exception ex) {
+				System.out.println("Failure parsing " + clazz.getName() + "." + jname);
+				throw new Exception(
+						"Failure parsing " + clazz.getName() + ":" + jname, ex);
 			}
 
 		}

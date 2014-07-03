@@ -5,21 +5,22 @@ import android.os.ResultReceiver;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.data.payments.Payment;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.client.ProfileService;
 
-public class PaymentListAdapter extends PagingListAdapter {
+public class PaymentListAdapter extends PagingListAdapter<Payment> {
 	private static final String TAG = "PaymentListAdapter";
 
 	private PaymentService _service = null;
 
 	public PaymentListAdapter(Context context) {
-		super(context);
+		super(context, Payment.class);
 	}
 
 	@Override
-	public View getView(JsonObject obj, View convertView, ViewGroup parent) {
+	public View getView(Payment obj, View convertView, ViewGroup parent) {
 		PaymentSummaryView view = null;
 
 		if (convertView == null) {
@@ -30,7 +31,8 @@ public class PaymentListAdapter extends PagingListAdapter {
 			view = new PaymentSummaryView(getContext());
 		}
 
-		view.setData(obj);
+		// TODO fix ASAP
+		// view.setData(obj);
 
 		return view;
 	}
