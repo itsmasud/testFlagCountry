@@ -34,6 +34,12 @@ public final class ISO8601 {
 		return fromCalendar(GregorianCalendar.getInstance());
 	}
 
+	public static Calendar toCalendar(final long utcMilliseconds) {
+		final Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(utcMilliseconds);
+		return cal;
+	}
+
 	/** Transform ISO 8601 string to Calendar. */
 	public static Calendar toCalendar(final String iso8601string) throws ParseException {
 		Calendar calendar = GregorianCalendar.getInstance();

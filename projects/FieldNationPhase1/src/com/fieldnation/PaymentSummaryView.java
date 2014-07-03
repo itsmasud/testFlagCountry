@@ -3,14 +3,12 @@ package com.fieldnation;
 import java.util.Calendar;
 
 import com.fieldnation.data.payments.Payment;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -134,7 +132,7 @@ public class PaymentSummaryView extends RelativeLayout {
 			String d = _paymentInfo.getDatePaid();
 			Calendar cal = ISO8601.toCalendar(d);
 
-			_dateTextView.setText("Estimated " + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR));
+			_dateTextView.setText("Estimated " + misc.formatDate(cal));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_dateTextView.setText("");

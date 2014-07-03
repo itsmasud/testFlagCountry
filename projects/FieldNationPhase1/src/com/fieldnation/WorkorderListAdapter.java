@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 
 import android.content.Context;

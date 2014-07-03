@@ -1,13 +1,10 @@
 package com.fieldnation;
 
 import com.fieldnation.data.messages.Message;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 
 import android.content.Context;
 import android.os.ResultReceiver;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 

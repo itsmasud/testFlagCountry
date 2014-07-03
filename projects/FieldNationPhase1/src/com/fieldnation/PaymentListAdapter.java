@@ -6,9 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.data.payments.Payment;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
-import com.fieldnation.rpc.client.ProfileService;
 
 public class PaymentListAdapter extends PagingListAdapter<Payment> {
 	private static final String TAG = "PaymentListAdapter";
@@ -59,9 +57,6 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
-		// TODO replace with getAll when we have the rest call
-		// getContext().startService(
-		// _service.getPending(resultCode, page + 1, allowCache));
 		getContext().startService(
 				_service.getAll(resultCode, page + 1, allowCache));
 	}

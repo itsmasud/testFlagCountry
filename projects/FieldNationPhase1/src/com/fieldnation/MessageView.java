@@ -4,8 +4,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import com.fieldnation.data.messages.Message;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -63,8 +63,7 @@ public class MessageView extends RelativeLayout {
 		try {
 			Calendar cal = ISO8601.toCalendar(message.getDate());
 
-			String date = String.format(Locale.US, "%tB", cal);
-			date += " " + cal.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR);
+			String date = misc.formatDateLong(cal);
 
 			_timeTextView.setText(date);
 

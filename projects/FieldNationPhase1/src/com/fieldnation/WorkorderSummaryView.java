@@ -9,15 +9,12 @@ import com.fieldnation.data.workorder.Label;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Debug;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -233,7 +230,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 	private void refresh() {
 		if (Debug.isDebuggerConnected()) {
-			_idTextView.setText(_workorder.getWorkorderId() + "");
+			_idTextView.setText("[ID " + _workorder.getWorkorderId() + "]");
 			_idTextView.setVisibility(VISIBLE);
 		} else {
 			_idTextView.setVisibility(GONE);
@@ -242,9 +239,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 		// title
 		String title = _workorder.getTitle();
 		if (title != null) {
-			if (Debug.isDebuggerConnected()) {
-				title += "[" + _workorder.getWorkorderId() + "]";
-			}
 			_titleTextView.setText(title);
 		}
 
@@ -306,19 +300,31 @@ public class WorkorderSummaryView extends RelativeLayout {
 		try {
 			if (_workorder.getScheduledTimeStart() != null) {
 				String when = "";
-				Calendar cal = ISO8601.toCalendar(_workorder.getScheduledTimeStart());
-
-				when = (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR);
+				Calendar cal = null;
+				try {
+					// TODO remove when workorders are fixed FN-710
+					cal = ISO8601.toCalendar(Long.parseLong(_workorder.getScheduledTimeStart()) * 1000);
+				} catch (Exception ex) {
+					cal = ISO8601.toCalendar(_workorder.getScheduledTimeStart());
+				}
+				when = misc.formatDate(cal);
 
 				if (!misc.isEmptyOrNull(_workorder.getScheduledTimeEnd())) {
-					cal = ISO8601.toCalendar(_workorder.getScheduledTimeEnd());
+					try {
+						// TODO remove when workorders are fixed FN-710
+						cal = ISO8601.toCalendar(Long.parseLong(_workorder.getScheduledTimeEnd()) * 1000);
+					} catch (Exception ex) {
+						cal = ISO8601.toCalendar(_workorder.getScheduledTimeEnd());
+					}
 
-					when += " - ";
-					when += (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR);
+					if (cal.get(Calendar.YEAR) > 2000) {
+						when += " - ";
+						when += misc.formatDate(cal);
+					}
 				}
 				when += " @ ";
 
-				when += cal.get(Calendar.HOUR) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
+				when += (cal.get(Calendar.HOUR) + 1) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
 
 				_whenTextView.setVisibility(VISIBLE);
 				_whenTextView.setText(when);

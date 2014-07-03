@@ -1,13 +1,7 @@
 package com.fieldnation;
 
-import java.text.ParseException;
-
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.data.payments.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;

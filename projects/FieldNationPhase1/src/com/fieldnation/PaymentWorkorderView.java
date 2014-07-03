@@ -1,15 +1,16 @@
 package com.fieldnation;
 
+import java.util.Calendar;
+
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.data.payments.Workorder;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -113,11 +114,24 @@ public class PaymentWorkorderView extends RelativeLayout {
 		_titleTextView.setText(wo.getWoTitle());
 		_clientNameTextView.setText(wo.getClientName());
 
-		// TODO when (waiting on FN-701)
-		// _whenTextView.setText(wo.);
+		try {
+			if (wo.getWoEndDate() != null) {
+				String when = "";
+				Calendar cal = ISO8601.toCalendar(wo.getWoEndDate());
 
+				when = misc.formatDate(cal);
+
+				_whenTextView.setVisibility(VISIBLE);
+				_whenTextView.setText(when);
+			} else {
+				_whenTextView.setVisibility(GONE);
+			}
+		} catch (Exception ex) {
+			// ex.printStackTrace();
+			_whenTextView.setVisibility(GONE);
+		}
 		_basisTextView.setText(misc.capitalize(payment.getPayMethod()));
-		_cashTextView.setText(misc.toCurrency(wo.getAmount()));
+		_cashTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));
 		_statusTextView.setText("Processing");
 
 	}

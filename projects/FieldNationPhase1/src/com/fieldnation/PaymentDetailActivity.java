@@ -1,15 +1,16 @@
 package com.fieldnation;
 
 import java.text.ParseException;
-import java.util.List;
+import java.util.Calendar;
 
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -61,10 +62,27 @@ public class PaymentDetailActivity extends BaseActivity {
 		_adapter = new PaymentDetailAdapter(_paid);
 		_listView.setAdapter(_adapter);
 
-		_idTextView.setText(_paid.getPaymentId() + "");
+		_idTextView.setText("ID " + _paid.getPaymentId());
 		_paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
 		_paymentTypeTextView.setText(misc.capitalize(_paid.getPayMethod()));
-		_dateTextView.setText("Estimated" + _paid.getDatePaid());
+
+		try {
+			if (_paid.getDatePaid() != null) {
+				String when = "";
+				Calendar cal = ISO8601.toCalendar(_paid.getDatePaid());
+
+				when = misc.formatDate(cal);
+
+				_dateTextView.setVisibility(View.VISIBLE);
+				_dateTextView.setText("Estimated " + when);
+			} else {
+				_dateTextView.setVisibility(View.GONE);
+			}
+		} catch (Exception ex) {
+			// ex.printStackTrace();
+			_dateTextView.setVisibility(View.GONE);
+		}
+
 		_workorderCountTextView.setText(_paid.getWorkorders().length + " Work Orders");
 		// TODO add fees lookup here
 

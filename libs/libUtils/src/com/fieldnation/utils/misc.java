@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
@@ -109,10 +110,28 @@ public class misc {
 		return requestPath;
 	}
 
+	/**
+	 * 
+	 * @param calendar
+	 * @return June 3, 2014
+	 */
+	public static String formatDateLong(Calendar calendar) {
+		return String.format(Locale.US, "%tB", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+	}
+
+	/**
+	 * @param calendar
+	 * @param seconds
+	 * @return MM/DD/YYYY HH:MM:SS am/pm
+	 */
 	public static String formatDateTime(Calendar calendar, boolean seconds) {
 		return formatDate(calendar) + " " + formatTime(calendar, seconds);
 	}
 
+	/**
+	 * @param calendar
+	 * @return in the form MM/DD/YYYY
+	 */
 	public static String formatDate(Calendar calendar) {
 		int months = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -121,6 +140,12 @@ public class misc {
 		return months + "/" + day + "/" + year;
 	}
 
+	/**
+	 * @param calendar
+	 * @param seconds
+	 *            if true, then seconds are displayed.
+	 * @return HH:MM:SS am/pm
+	 */
 	public static String formatTime(Calendar calendar, boolean seconds) {
 		String time = "";
 
