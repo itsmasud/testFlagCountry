@@ -1,21 +1,15 @@
 package com.fieldnation.json;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.jar.JarEntry;
-
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.json.annotations.CollectionParameterType;
 

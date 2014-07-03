@@ -9,25 +9,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.Locale;
-import java.util.TimeZone;
-import java.util.regex.Pattern;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import com.fieldnation.json.JsonObject;
 
 public class misc {
 	private static final String HEXES = "0123456789ABCDEF";

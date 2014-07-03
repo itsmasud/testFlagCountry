@@ -1,12 +1,7 @@
 package com.fieldnation.j2j;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
 
 public class JavaObject {
 	public String name;

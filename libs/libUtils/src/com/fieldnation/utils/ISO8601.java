@@ -31,7 +31,7 @@ public final class ISO8601 {
 
 	/** Get current date and time formatted as ISO 8601 string. */
 	public static String now() {
-		return fromCalendar(GregorianCalendar.getInstance());
+		return fromCalendar(Calendar.getInstance());
 	}
 
 	public static Calendar toCalendar(final long utcMilliseconds) {
@@ -42,7 +42,7 @@ public final class ISO8601 {
 
 	/** Transform ISO 8601 string to Calendar. */
 	public static Calendar toCalendar(final String iso8601string) throws ParseException {
-		Calendar calendar = GregorianCalendar.getInstance();
+		Calendar calendar = Calendar.getInstance();
 		String s = iso8601string.replace("Z", "+00:00");
 		try {
 			s = s.substring(0, 22) + s.substring(23); // to get rid of the ":"
