@@ -1,6 +1,11 @@
 package com.fieldnation;
 
+import java.util.Calendar;
+import java.util.Locale;
+
+import com.fieldnation.data.messages.Message;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.ISO8601;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -38,17 +43,31 @@ public class MessageView extends RelativeLayout {
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
 		_messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
 		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
+		_timeTextView = (TextView) findViewById(R.id.time_textview);
 	}
 
-	public void setMessage(JsonObject message) {
+	public void setMessage(Message message) {
 		try {
-			_titleTextView.setText(message.getString("workorderId"));
+			_titleTextView.setText(message.getMessageId() + "");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
-			_messageBodyTextView.setText(message.getString("message"));
+			_messageBodyTextView.setText(message.getMessage());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			Calendar cal = ISO8601.toCalendar(message.getDate());
+
+			String date = String.format(Locale.US, "%tB", cal);
+			date += " " + cal.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR);
+
+			_timeTextView.setText(date);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

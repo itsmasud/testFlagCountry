@@ -16,9 +16,12 @@ import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Debug;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -53,6 +56,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private ImageView _bundleImageView;
 	private TextView _bundleTextView;
 	private View _bundleSeparator;
+	private TextView _idTextView;
+	private ViewGroup _paymentLayout;
 
 	// animations
 	private Animation _slideAnimation;
@@ -129,6 +134,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		_cashTextView = (TextView) findViewById(R.id.payment_textview);
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
+
+		_idTextView = (TextView) findViewById(R.id.workorderid_textview);
+		_paymentLayout = (ViewGroup) findViewById(R.id.payment_layout);
 
 		// _detailButton.setVisibility(GONE);
 		// _cashLinearLayout.setVisibility(GONE);
@@ -224,11 +232,22 @@ public class WorkorderSummaryView extends RelativeLayout {
 	}
 
 	private void refresh() {
+		if (Debug.isDebuggerConnected()) {
+			_idTextView.setText(_workorder.getWorkorderId() + "");
+			_idTextView.setVisibility(VISIBLE);
+		} else {
+			_idTextView.setVisibility(GONE);
+		}
+
 		// title
-		if (_workorder.getTitle() != null)
-			_titleTextView.setText(_workorder.getTitle() + _workorder.getWorkorderId());
-		else
-			_titleTextView.setText(_workorder.getWorkorderId() + "");
+		String title = _workorder.getTitle();
+		if (title != null) {
+			if (Debug.isDebuggerConnected()) {
+				title += "[" + _workorder.getWorkorderId() + "]";
+			}
+			_titleTextView.setText(title);
+		}
+
 		// client name location.contact_name
 		Location location = _workorder.getLocation();
 		if (location != null) {
@@ -261,11 +280,27 @@ public class WorkorderSummaryView extends RelativeLayout {
 				if (misc.isEmptyOrNull(address2))
 					address2 = null;
 
+				if (address1 == null)
+					address1 = address2;
+				else if (address2 != null) {
+					address1 += address2;
+				}
+
+				if (address1 != null) {
+					_distanceTextView.setText(address1);
+					_distanceTextView.setVisibility(VISIBLE);
+				} else {
+					_distanceTextView.setVisibility(GONE);
+				}
+
 			} else if (location.getDistance() != null) {
 				_distanceTextView.setText(location.getDistance() + " mi");
 			} else {
-				_distanceTextView.setText("NA");
+				_distanceTextView.setVisibility(GONE);
 			}
+		} else {
+			_distanceTextView.setVisibility(GONE);
+			_clientNameTextView.setVisibility(GONE);
 		}
 		// when scheduledTimeStart/scheduledTimeEnd
 		try {
@@ -285,13 +320,14 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 				when += cal.get(Calendar.HOUR) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
 
+				_whenTextView.setVisibility(VISIBLE);
 				_whenTextView.setText(when);
 			} else {
-				_whenTextView.setText("NA");
+				_whenTextView.setVisibility(GONE);
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			_whenTextView.setText("NA");
+			// ex.printStackTrace();
+			_whenTextView.setVisibility(GONE);
 		}
 
 		// pay.basis
@@ -300,14 +336,25 @@ public class WorkorderSummaryView extends RelativeLayout {
 		// if Hourly, then use pay.fixedAmount
 		// if Blended, then use payblendedAdditionalRate
 		Pay pay = _workorder.getPay();
-		if (pay.getBasis() != null) {
-			String basis = pay.getBasis();
-			_basisTextView.setText(basis);
-			if (pay.getFixedAmount() != null) {
-				_cashTextView.setText(misc.toCurrency(pay.getFixedAmount()));
-			} else if (pay.getBlendedAdditionalRate() != null) {
-				_cashTextView.setText(misc.toCurrency(pay.getBlendedAdditionalRate()));
+		if (pay != null) {
+			if (pay.getBasis() != null) {
+				String basis = pay.getBasis();
+				_paymentLayout.setVisibility(VISIBLE);
+				_basisTextView.setText(basis);
+				if (pay.getFixedAmount() != null) {
+					_cashTextView.setText(misc.toCurrency(pay.getFixedAmount()).substring(
+							1));
+				} else if (pay.getBlendedAdditionalRate() != null) {
+					_cashTextView.setText(misc.toCurrency(
+							pay.getBlendedAdditionalRate()).substring(1));
+				} else {
+					_paymentLayout.setVisibility(GONE);
+				}
+			} else {
+				_paymentLayout.setVisibility(GONE);
 			}
+		} else {
+			_paymentLayout.setVisibility(GONE);
 		}
 
 		try {

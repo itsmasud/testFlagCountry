@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="Tesssst" />
+                android:text="@string/error" />
 
             <View
                 style="@style/WorkorderSummary_Separator"
@@ -90,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:maxLines="1"
-                    android:text="5 Work Orders"
+                    android:text="@string/error"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
 
@@ -121,29 +121,37 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Project Title"
+                        android:text="@string/error"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
                         android:id="@+id/clientname_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Client Name"
+                        android:text="@string/error"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <TextView
                         android:id="@+id/distance_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="3.5 mi"
+                        android:text="@string/error"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <TextView
                         android:id="@+id/when_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="04/12/14 2pm"
+                        android:text="@string/error"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/workorderid_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <RelativeLayout
@@ -153,34 +161,48 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true" >
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:id="@+id/payment_layout"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
                         android:orientation="vertical" >
 
                         <TextView
+                            android:id="@+id/moneysymbol_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true"
+                            android:text="@string/money"
+                            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                        <TextView
                             android:id="@+id/payment_textview"
                             style="@style/WorkorderSummary_PaymentLabel"
-                            android:layout_width="fill_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_toRightOf="@+id/moneysymbol_textview"
                             android:gravity="right"
                             android:maxLines="1"
-                            android:text="$5,000"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                            android:text="@string/error"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textSize="24sp" />
 
                         <TextView
                             android:id="@+id/basis_textview"
-                            android:layout_width="fill_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignRight="@+id/payment_textview"
+                            android:layout_below="@+id/payment_textview"
                             android:gravity="right"
                             android:maxLines="1"
-                            android:text="fixed"
+                            android:text="@string/error"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textSize="12sp" />
-                    </LinearLayout>
+                    </RelativeLayout>
 
                     <Button
                         android:id="@+id/detail_button"
@@ -189,7 +211,7 @@
                         android:layout_height="48dp"
                         android:layout_below="@+id/payment_layout"
                         android:maxLines="1"
-                        android:text="Check In" />
+                        android:text="@string/error" />
                 </RelativeLayout>
             </RelativeLayout>
         </LinearLayout>

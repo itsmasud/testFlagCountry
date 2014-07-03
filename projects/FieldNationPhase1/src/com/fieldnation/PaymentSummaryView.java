@@ -2,7 +2,9 @@ package com.fieldnation;
 
 import java.util.Calendar;
 
+import com.fieldnation.data.payments.Payment;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -18,7 +20,9 @@ import android.widget.TextView;
 public class PaymentSummaryView extends RelativeLayout {
 	private static final String TAG = "PaymentSummaryView";
 
-	private static final int[] _HEADER_BG = new int[] { R.drawable.payment_summary_header_bg, R.drawable.payment_summary_header_paid_bg };
+	private static final int[] _HEADER_BG = new int[] {
+			R.drawable.payment_summary_header_bg,
+			R.drawable.payment_summary_header_paid_bg };
 
 	private TextView _titleTextView;
 	private TextView _idTextView;
@@ -28,7 +32,7 @@ public class PaymentSummaryView extends RelativeLayout {
 	private TextView _paymentTypeTextView;
 	private LinearLayout _paymentHeaderLayout;
 
-	private JsonObject _paymentInfo;
+	private Payment _paymentInfo;
 
 	/*-*****************************-*/
 	/*-			Life cycle			-*/
@@ -65,14 +69,13 @@ public class PaymentSummaryView extends RelativeLayout {
 		public void onClick(View v) {
 			Intent intent = new Intent(getContext(),
 					PaymentDetailActivity.class);
-			intent.putExtra("PAYMENT_INFO", _paymentInfo.toString());
+			intent.putExtra("PAYMENT_INFO", _paymentInfo.toJson().toString());
 			getContext().startActivity(intent);
 		}
 	};
 
-	public void setData(JsonObject paymentInfo) {
+	public void setData(Payment paymentInfo) {
 		_paymentInfo = paymentInfo;
-		Log.v(TAG, paymentInfo.display());
 		refresh();
 	}
 
@@ -82,15 +85,15 @@ public class PaymentSummaryView extends RelativeLayout {
 	private void refresh() {
 		// amount
 		try {
-			_amountTextView.setText(misc.toCurrency(
-					_paymentInfo.getDouble("amount")).substring(1));
+			_amountTextView.setText(misc.toCurrency(_paymentInfo.getAmount()).substring(
+					1));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_amountTextView.setText("NA");
 		}
 		// workorders.size()
 		try {
-			_descriptionTextView.setText(_paymentInfo.getJsonArray("workorders").size() + " Work Orders");
+			_descriptionTextView.setText(_paymentInfo.getWorkorders().length + " Work Orders");
 			// TODO figure out where to get the fees
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -98,8 +101,8 @@ public class PaymentSummaryView extends RelativeLayout {
 		}
 		// pay_method
 		try {
-			String method = _paymentInfo.getString("pay_method").toLowerCase();
-			method = method.substring(0, 1).toUpperCase() + method.substring(1);
+			String method = _paymentInfo.getPayMethod().toLowerCase();
+			method = misc.capitalize(method);
 			_paymentTypeTextView.setText(method);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -107,7 +110,7 @@ public class PaymentSummaryView extends RelativeLayout {
 		}
 		// payment_id
 		try {
-			_idTextView.setText("ID " + _paymentInfo.getInt("payment_id"));
+			_idTextView.setText("ID " + _paymentInfo.getPaymentId());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_idTextView.setText("ID ???");
@@ -115,7 +118,7 @@ public class PaymentSummaryView extends RelativeLayout {
 		// status
 		try {
 			// TODO, parse status and change bar color
-			String status = misc.capitalize(_paymentInfo.getString("status"));
+			String status = misc.capitalize(_paymentInfo.getStatus());
 
 			if (status.toLowerCase().equals("paid")) {
 				_paymentHeaderLayout.setBackgroundResource(_HEADER_BG[1]);
@@ -128,12 +131,10 @@ public class PaymentSummaryView extends RelativeLayout {
 		}
 		// date_paid
 		try {
-			String d = _paymentInfo.getString("date_paid");
-			String[] datetime = d.split(" ");
+			String d = _paymentInfo.getDatePaid();
+			Calendar cal = ISO8601.toCalendar(d);
 
-			String[] dateSplit = datetime[0].split("-");
-
-			_dateTextView.setText("Estimated " + dateSplit[1] + "/" + dateSplit[2] + "/" + dateSplit[0]);
+			_dateTextView.setText("Estimated " + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.YEAR));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_dateTextView.setText("");

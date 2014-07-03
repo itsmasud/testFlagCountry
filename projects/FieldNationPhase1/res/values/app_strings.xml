@@ -26,6 +26,7 @@
     <string name="fieldnation_provider_name">Field Nation</string>
     <string name="refresh">Refresh</string>
     <string name="money">$</string>
+    <string name="error">ERROR!</string>
     <!-- /general strings -->
 
 

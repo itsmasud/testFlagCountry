@@ -31,8 +31,7 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 			view = new PaymentSummaryView(getContext());
 		}
 
-		// TODO fix ASAP
-		// view.setData(obj);
+		view.setData(obj);
 
 		return view;
 	}
