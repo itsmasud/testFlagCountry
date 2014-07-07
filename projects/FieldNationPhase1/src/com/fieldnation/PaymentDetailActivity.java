@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.json.Serializer;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -27,7 +28,6 @@ public class PaymentDetailActivity extends BaseActivity {
 	private ListView _listView;
 
 	// Data
-	private JsonObject _paymentInfo;
 	private Payment _paid;
 	private PaymentDetailAdapter _adapter;
 
@@ -44,9 +44,9 @@ public class PaymentDetailActivity extends BaseActivity {
 		}
 
 		try {
-			_paymentInfo = new JsonObject(intent.getStringExtra("PAYMENT_INFO"));
-			_paid = Payment.fromJson(_paymentInfo);
-		} catch (ParseException e) {
+			_paid = Serializer.unserializeObject(Payment.class, new JsonObject(
+					intent.getStringExtra("PAYMENT_INFO")));
+		} catch (Exception e) {
 			e.printStackTrace();
 			finish();
 		}
@@ -87,5 +87,4 @@ public class PaymentDetailActivity extends BaseActivity {
 		// TODO add fees lookup here
 
 	}
-
 }

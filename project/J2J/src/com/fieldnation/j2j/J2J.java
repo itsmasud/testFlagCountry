@@ -12,16 +12,19 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "9d6f58bb7755b4d932d1d1cd1f328732a32177b5";
+	private static String authToken = "81aab86ff298860734e76713f30363a53edcde14";
 
 	public static void main(String[] args) {
-		// getWorkorders();
+		getWorkorders();
 		getMessages();
+		getPayments();
 	}
 
 	private static void dumpClasses(JsonArray objects, String path,
 			String packageName, String rootName) throws ParseException, IOException {
 		new File(path).mkdirs();
+
+		JavaObject.cleanup();
 
 		JavaObject object = JavaObject.getInstance(rootName, packageName);
 		for (int i = 0; i < objects.size(); i++) {
@@ -37,6 +40,37 @@ public class J2J {
 
 			fout.write(obj.toString().getBytes());
 			fout.close();
+		}
+
+	}
+
+	private static void getPayments() {
+		String[] urls = new String[] {
+				"/api/rest/v1/accounting/payment-queue/pending?access_token=" + authToken + "&page=",
+				"/api/rest/v1/accounting/payment-queue/paid?access_token=" + authToken + "&page=",
+				"/api/rest/v1/accounting/payment-queue/all?access_token=" + authToken + "&page=" };
+		try {
+			JsonArray objects = new JsonArray();
+
+			for (int i = 0; i < urls.length; i++) {
+				for (int j = 1; true; j++) {
+					System.out.println(urls[i] + j);
+					Result result = Ws.httpGet(hostname, urls[i] + j);
+
+					JsonArray ja = result.getResultsAsJsonArray();
+					if (ja.size() == 0)
+						break;
+
+					objects.merge(result.getResultsAsJsonArray());
+				}
+			}
+
+			System.out.println("Building Class Structure");
+			dumpClasses(objects, "c:/j2j/payments",
+					"com.fieldnation.data.payments", "Payment");
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 
 	}

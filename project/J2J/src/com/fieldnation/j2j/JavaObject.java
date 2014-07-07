@@ -28,6 +28,10 @@ public class JavaObject {
 		return _objectRegistry.get(classname);
 	}
 
+	public static void cleanup() {
+		_objectRegistry.clear();
+	}
+
 	public static Enumeration<JavaObject> getJavaObjects() {
 		return _objectRegistry.elements();
 	}
@@ -66,19 +70,48 @@ public class JavaObject {
 		sb.append("package " + packageName + ";\r\n\r\n");
 
 		sb.append("import com.fieldnation.json.JsonObject;\r\n");
-		sb.append("import com.fieldnation.json.Serializer;\r\n");
-		sb.append("import com.fieldnation.json.annotations.Json;\r\n\r\n");
+		sb.append("import com.fieldnation.json.JsonArray;\r\n");
 
 		sb.append("public class " + name + "{\r\n");
 
 		Enumeration<String> keys = _fields.keys();
 		while (keys.hasMoreElements()) {
-			sb.append(_fields.get(keys.nextElement()).toString());
+			JavaField field = _fields.get(keys.nextElement());
+			if (field.isArray)
+				sb.append(field.toDeclaration());
 		}
 
 		sb.append("\r\n");
 
-		sb.append("	public " + name + "(){\r\n	}\r\n");
+		sb.append("	private JsonObject _json;\r\n");
+
+		sb.append("\r\n");
+
+		sb.append("	public " + name + "(JsonObject " + getFieldName() + "){\r\n");
+		sb.append("		_json = " + getFieldName() + ";\r\n\r\n");
+		sb.append("		JsonArray ja;\r\n");
+
+		keys = _fields.keys();
+		while (keys.hasMoreElements()) {
+			JavaField field = _fields.get(keys.nextElement());
+			if (field.isArray) {
+				sb.append("		try{\r\n");
+				sb.append("			ja = _json.getJsonArray(\"" + field.name + "\");\r\n");
+				sb.append("			" + field.getFieldName() + " = new " + field.dataTypeName + "[ja.size()];\r\n");
+				sb.append("			for(int i=0; i < ja.size(); i++){\r\n");
+				sb.append("				try{\r\n");
+				sb.append("					" + field.getFieldName() + "[i] = new " + formatClassName(field.dataTypeName) + "(ja.getJsonObject(i));\r\n");
+				sb.append("				} catch(Exception ex){\r\n");
+				sb.append("					ex.printStackTrace();\r\n");
+				sb.append("				}\r\n");
+				sb.append("			}\r\n");
+				sb.append("		} catch(Exception ex){\r\n");
+				sb.append("			ex.printStackTrace();\r\n");
+				sb.append("		}");
+			}
+		}
+
+		sb.append("	}\r\n");
 
 		keys = _fields.keys();
 		while (keys.hasMoreElements()) {
@@ -86,26 +119,30 @@ public class JavaObject {
 		}
 
 		sb.append("	public JsonObject toJson(){\r\n");
-		sb.append("		return toJson(this);\r\n");
+		sb.append("		return _json;\r\n");
 		sb.append("	}\r\n\r\n");
 
-		sb.append("	public static JsonObject toJson(" + name + " " + getFieldName() + ") {\r\n");
-		sb.append("		try {\r\n");
-		sb.append("			return Serializer.serializeObject(" + getFieldName() + ");\r\n");
-		sb.append("		} catch (Exception ex) {\r\n");
-		sb.append("			ex.printStackTrace();\r\n");
-		sb.append("			return null;\r\n");
-		sb.append("		}\r\n");
-		sb.append("	}\r\n\r\n");
-
-		sb.append("	public static " + name + " fromJson(JsonObject json) {\r\n");
-		sb.append("		try {\r\n");
-		sb.append("			return Serializer.unserializeObject(" + name + ".class, json);\r\n");
-		sb.append("		} catch (Exception ex) {\r\n");
-		sb.append("			ex.printStackTrace();\r\n");
-		sb.append("			return null;\r\n");
-		sb.append("		}\r\n");
-		sb.append("	}\r\n\r\n");
+		// sb.append("	public static JsonObject toJson(" + name + " " +
+		// getFieldName() + ") {\r\n");
+		// sb.append("		try {\r\n");
+		// sb.append("			return Serializer.serializeObject(" + getFieldName() +
+		// ");\r\n");
+		// sb.append("		} catch (Exception ex) {\r\n");
+		// sb.append("			ex.printStackTrace();\r\n");
+		// sb.append("			return null;\r\n");
+		// sb.append("		}\r\n");
+		// sb.append("	}\r\n\r\n");
+		//
+		// sb.append("	public static " + name +
+		// " fromJson(JsonObject json) {\r\n");
+		// sb.append("		try {\r\n");
+		// sb.append("			return Serializer.unserializeObject(" + name +
+		// ".class, json);\r\n");
+		// sb.append("		} catch (Exception ex) {\r\n");
+		// sb.append("			ex.printStackTrace();\r\n");
+		// sb.append("			return null;\r\n");
+		// sb.append("		}\r\n");
+		// sb.append("	}\r\n\r\n");
 
 		sb.append("}\r\n");
 

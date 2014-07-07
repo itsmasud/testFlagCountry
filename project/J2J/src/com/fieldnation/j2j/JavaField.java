@@ -230,26 +230,78 @@ public class JavaField {
 	public String toGetter() {
 		String res = "";
 		if (isArray) {
-			res = "\tpublic " + dataTypeName + "[] " + getGetterName() + "(){\r\n";
-			res += "\t\treturn " + getFieldName() + ";\r\n";
-			res += "\t}\r\n\r\n";
+			res = "	public " + dataTypeName + "[] " + getGetterName() + "(){\r\n";
+			res += "		try{\r\n";
+			res += "			return " + getFieldName() + ";\r\n";
+			res += "		} catch(Exception ex){\r\n";
+			res += "			ex.printStackTrace();\r\n";
+			res += "		}\r\n";
+			res += "		return null;\r\n";
+			res += "	}\r\n\r\n";
 		} else {
-			res = "\tpublic " + dataTypeName + " " + getGetterName() + "(){\r\n";
-			res += "\t\treturn " + getFieldName() + ";\r\n";
-			res += "\t}\r\n\r\n";
+			if (dataType == TYPE_BOOLEAN) {
+				res = "	public Boolean " + getGetterName() + "(){\r\n";
+				res += "		try{\r\n";
+				res += "			return _json.getBoolean(\"" + name + "\");\r\n";
+				res += "		} catch(Exception ex){\r\n";
+				res += "			ex.printStackTrace();\r\n";
+				res += "		}\r\n";
+				res += "		return null;\r\n";
+				res += "	}\r\n\r\n";
+			} else if (dataType == TYPE_DOUBLE) {
+				res = "	public Double " + getGetterName() + "(){\r\n";
+				res += "		try{\r\n";
+				res += "			return _json.getDouble(\"" + name + "\");\r\n";
+				res += "		} catch(Exception ex){\r\n";
+				res += "			ex.printStackTrace();\r\n";
+				res += "		}\r\n";
+				res += "		return null;\r\n";
+				res += "	}\r\n\r\n";
+			} else if (dataType == TYPE_INTEGER) {
+				res = "	public Integer " + getGetterName() + "(){\r\n";
+				res += "		try{\r\n";
+				res += "			return _json.getInt(\"" + name + "\");\r\n";
+				res += "		} catch(Exception ex){\r\n";
+				res += "			ex.printStackTrace();\r\n";
+				res += "		}\r\n";
+				res += "		return null;\r\n";
+				res += "	}\r\n\r\n";
+			} else if (dataType == TYPE_STRING) {
+				res = "	public String " + getGetterName() + "(){\r\n";
+				res += "		try{\r\n";
+				res += "			return _json.getString(\"" + name + "\");\r\n";
+				res += "		} catch(Exception ex){\r\n";
+				res += "			ex.printStackTrace();\r\n";
+				res += "		}\r\n";
+				res += "		return null;\r\n";
+				res += "	}\r\n\r\n";
+			} else if (dataType == TYPE_OBJECT) {
+				res = "	public Object " + getGetterName() + "(){\r\n";
+				res += "		try{\r\n";
+				res += "			return _json.get(\"" + name + "\");\r\n";
+				res += "		} catch(Exception ex){\r\n";
+				res += "			ex.printStackTrace();\r\n";
+				res += "		}\r\n";
+				res += "		return null;\r\n";
+				res += "	}\r\n\r\n";
+			}
 		}
 		return res;
+	}
+
+	public String toDeclaration() {
+		return "	private " + dataTypeName + "[] " + getFieldName() + ";\r\n";
 	}
 
 	@Override
 	public String toString() {
 		String res = "";
 		if (isArray) {
-			res = "\t@Json(name=\"" + name + "\")\r\n";
-			res += "\tprivate " + dataTypeName + "[] " + getFieldName() + ";\r\n";
+			res = "	@Json(name=\"" + name + "\")\r\n";
+			res += "	private " + dataTypeName + "[] " + getFieldName() + ";\r\n";
 		} else {
-			res = "\t@Json(name=\"" + name + "\")\r\n";
-			res += "\tprivate " + dataTypeName + " " + getFieldName() + ";\r\n";
+			res = "	@Json(name=\"" + name + "\")\r\n";
+			res += "	private " + dataTypeName + " " + getFieldName() + ";\r\n";
 		}
 		return res;
 	}
