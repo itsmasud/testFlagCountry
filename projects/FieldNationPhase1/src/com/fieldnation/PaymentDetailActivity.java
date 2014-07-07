@@ -1,6 +1,5 @@
 package com.fieldnation;
 
-import java.text.ParseException;
 import java.util.Calendar;
 
 import com.fieldnation.data.payments.Payment;

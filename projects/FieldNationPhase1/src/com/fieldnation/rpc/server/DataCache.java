@@ -1,20 +1,9 @@
 package com.fieldnation.rpc.server;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import com.fieldnation.utils.Base64;
-import com.fieldnation.utils.misc;
 import com.fieldnation.webapi.OAuth;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.util.Log;
 
 /**

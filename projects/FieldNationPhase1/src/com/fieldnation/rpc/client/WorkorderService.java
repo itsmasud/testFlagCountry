@@ -95,7 +95,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/cancel-assignment",
 				null,
-				"cancel_category=" + cancelCategory + "&cancel_reason=" + cancelReason,
+				"cancel_category=" + cancelCategory + "&cancel_reason=" + misc.escapeForURL(cancelReason),
 				"application/x-www-form-urlencoded", allowCache);
 	}
 

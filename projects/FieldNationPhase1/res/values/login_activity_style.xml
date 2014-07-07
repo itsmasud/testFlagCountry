@@ -2,8 +2,7 @@
 
     <!-- Application theme. -->
     <style name="ActivityLogin" parent="AppTheme">
-        <item name="android:paddingLeft">20dp</item>
-        <item name="android:paddingRight">20dp</item>
+        <item name="android:background">@drawable/loginscreen</item>
     </style>
 
 </resources>

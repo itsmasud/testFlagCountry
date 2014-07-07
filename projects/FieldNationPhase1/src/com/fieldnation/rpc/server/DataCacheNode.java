@@ -1,7 +1,5 @@
 package com.fieldnation.rpc.server;
 
-import com.fieldnation.GlobalState;
-import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.rpc.server.DataCacheSqlHelper.Column;
 
 import android.content.ContentValues;
