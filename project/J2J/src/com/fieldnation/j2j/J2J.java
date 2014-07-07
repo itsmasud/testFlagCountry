@@ -12,7 +12,7 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "81aab86ff298860734e76713f30363a53edcde14";
+	private static String authToken = "9d6f58bb7755b4d932d1d1cd1f328732a32177b5";
 
 	public static void main(String[] args) {
 		getWorkorders();
@@ -25,7 +25,6 @@ public class J2J {
 		new File(path).mkdirs();
 
 		JavaObject.cleanup();
-
 		JavaObject object = JavaObject.getInstance(rootName, packageName);
 		for (int i = 0; i < objects.size(); i++) {
 			object.addData(objects.getJsonObject(i));
