@@ -1,8 +1,6 @@
 package com.fieldnation;
 
 import java.util.Calendar;
-import java.util.Locale;
-
 import com.fieldnation.data.messages.Message;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;

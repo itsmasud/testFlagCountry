@@ -120,7 +120,7 @@ public class Workorder {
 		return _closingNotes;
 	}
 
-	public Label[] getLabel(){
+	public Label[] getLabels(){
 		return _label;
 	}
 
