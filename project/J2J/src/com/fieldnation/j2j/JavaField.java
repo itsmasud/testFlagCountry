@@ -26,7 +26,7 @@ public class JavaField {
 
 		System.out.println("Field: " + name);
 
-		if (name.equals("skillsets")) {
+		if (name.equals("dateEntered") && !"".equals(data)) {
 			System.out.println("BP");
 		}
 

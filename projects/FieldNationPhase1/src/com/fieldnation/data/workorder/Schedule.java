@@ -5,16 +5,13 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Schedule {
-
 	@Json(name = "end_time")
 	private String _endTime;
-
 	@Json(name = "start_time")
 	private String _startTime;
 
 	public Schedule() {
 	}
-
 	public String getEndTime() {
 		return _endTime;
 	}

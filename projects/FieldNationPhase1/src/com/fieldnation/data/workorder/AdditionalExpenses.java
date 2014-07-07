@@ -5,27 +5,27 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class AdditionalExpenses{
-	@Json(name="category_id")
-	private Integer _categoryId;
-	@Json(name="price")
-	private Double _price;
 	@Json(name="description")
 	private String _description;
+	@Json(name="price")
+	private Double _price;
+	@Json(name="category_id")
+	private Integer _categoryId;
 	@Json(name="approved")
 	private Boolean _approved;
 
 	public AdditionalExpenses(){
 	}
-	public Integer getCategoryId(){
-		return _categoryId;
+	public String getDescription(){
+		return _description;
 	}
 
 	public Double getPrice(){
 		return _price;
 	}
 
-	public String getDescription(){
-		return _description;
+	public Integer getCategoryId(){
+		return _categoryId;
 	}
 
 	public Boolean getApproved(){

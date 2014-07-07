@@ -12,11 +12,11 @@ public class Location{
 	@Json(name="address2")
 	private String _address2;
 	@Json(name="contact_phone_ext")
-	private String _contactPhoneExt;
+	private Integer _contactPhoneExt;
 	@Json(name="address1")
 	private String _address1;
 	@Json(name="zip")
-	private Integer _zip;
+	private String _zip;
 	@Json(name="country")
 	private String _country;
 	@Json(name="city")
@@ -42,7 +42,7 @@ public class Location{
 		return _address2;
 	}
 
-	public String getContactPhoneExt(){
+	public Integer getContactPhoneExt(){
 		return _contactPhoneExt;
 	}
 
@@ -50,7 +50,7 @@ public class Location{
 		return _address1;
 	}
 
-	public Integer getZip(){
+	public String getZip(){
 		return _zip;
 	}
 

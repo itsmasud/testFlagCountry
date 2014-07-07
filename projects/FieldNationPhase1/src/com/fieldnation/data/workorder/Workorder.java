@@ -6,13 +6,15 @@ import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
 	@Json(name = "workorder_id")
-	private Long _workorderId;
+	private Integer _workorderId;
 	@Json(name = "location")
 	private Location _location;
 	@Json(name = "statusId")
 	private Integer _statusId;
 	@Json(name = "identifier")
 	private String _identifier;
+	@Json(name="isRequest")
+	private Boolean _isRequest;
 	@Json(name = "distance")
 	private Double _distance;
 	@Json(name = "customFields")
@@ -20,7 +22,7 @@ public class Workorder {
 	@Json(name = "fullWorkDescription")
 	private String _fullWorkDescription;
 	@Json(name = "bundleId")
-	private String _bundleId;
+	private Integer _bundleId;
 	@Json(name = "industry")
 	private String _industry;
 	@Json(name = "closing_notes")
@@ -63,10 +65,10 @@ public class Workorder {
 	private Deliverables[] _deliverables;
 	@Json(name = "messages")
 	private Integer _messages;
+	@Json(name="isRemoteWork")
+	private Integer _isRemoteWork;
 	@Json(name = "provider")
 	private Provider[] _provider;
-	@Json(name = "isRemoteWork")
-	private Integer _isRemoteWork;
 	@Json(name = "typeOfWork")
 	private String _typeOfWork;
 	@Json(name = "title")
@@ -74,8 +76,7 @@ public class Workorder {
 
 	public Workorder() {
 	}
-
-	public Long getWorkorderId() {
+	public Integer getWorkorderId(){
 		return _workorderId;
 	}
 
@@ -91,6 +92,10 @@ public class Workorder {
 		return _identifier;
 	}
 
+	public Boolean getIsRequest(){
+		return _isRequest;
+	}
+
 	public Double getDistance() {
 		return _distance;
 	}
@@ -103,7 +108,7 @@ public class Workorder {
 		return _fullWorkDescription;
 	}
 
-	public String getBundleId() {
+	public Integer getBundleId(){
 		return _bundleId;
 	}
 
@@ -115,7 +120,7 @@ public class Workorder {
 		return _closingNotes;
 	}
 
-	public Label[] getLabels() {
+	public Label[] getLabel(){
 		return _label;
 	}
 
@@ -191,12 +196,12 @@ public class Workorder {
 		return _messages;
 	}
 
-	public Provider[] getProvider() {
-		return _provider;
+	public Integer getIsRemoteWork(){
+		return _isRemoteWork;
 	}
 
-	public Integer getIsRemoteWork() {
-		return _isRemoteWork;
+	public Provider[] getProvider() {
+		return _provider;
 	}
 
 	public String getTypeOfWork() {
