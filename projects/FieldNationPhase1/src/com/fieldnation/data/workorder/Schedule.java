@@ -12,6 +12,7 @@ public class Schedule {
 
 	public Schedule() {
 	}
+
 	public String getEndTime() {
 		return _endTime;
 	}

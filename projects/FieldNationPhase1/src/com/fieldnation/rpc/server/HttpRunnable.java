@@ -15,4 +15,5 @@ abstract class HttpRunnable implements Runnable {
 		_intent = intent;
 		_auth = at;
 	}
+
 }

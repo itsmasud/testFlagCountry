@@ -4,35 +4,36 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Tasks{
-	@Json(name="task_id")
+public class Tasks {
+	@Json(name = "task_id")
 	private Integer _taskId;
-	@Json(name="completed")
+	@Json(name = "completed")
 	private Boolean _completed;
-	@Json(name="type")
+	@Json(name = "type")
 	private String _type;
-	@Json(name="dateCompleted")
+	@Json(name = "dateCompleted")
 	private String _dateCompleted;
 
-	public Tasks(){
+	public Tasks() {
 	}
-	public Integer getTaskId(){
+
+	public Integer getTaskId() {
 		return _taskId;
 	}
 
-	public Boolean getCompleted(){
+	public Boolean getCompleted() {
 		return _completed;
 	}
 
-	public String getType(){
+	public String getType() {
 		return _type;
 	}
 
-	public String getDateCompleted(){
+	public String getDateCompleted() {
 		return _dateCompleted;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

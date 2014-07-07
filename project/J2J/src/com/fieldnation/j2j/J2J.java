@@ -12,11 +12,11 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "99174df7fecc1b2b3709d31531a11b0a3f8f47e9";
+	private static String authToken = "9d6f58bb7755b4d932d1d1cd1f328732a32177b5";
 
 	public static void main(String[] args) {
-		getWorkorders();
-		// getMessages();
+		// getWorkorders();
+		getMessages();
 	}
 
 	private static void dumpClasses(JsonArray objects, String path,
@@ -42,20 +42,21 @@ public class J2J {
 	}
 
 	private static void getMessages() {
-		String[] urls = new String[] {
-				"/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=0",
-				"/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=1",
-				"/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=2",
-				"/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=3",
-				"/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=4" };
+		String[] urls = new String[] { "/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=" };
 		try {
 			JsonArray objects = new JsonArray();
 
 			for (int i = 0; i < urls.length; i++) {
-				System.out.println(urls[i]);
-				Result result = Ws.httpGet(hostname, urls[i]);
+				for (int j = 0; true; j++) {
+					System.out.println(urls[i] + j);
+					Result result = Ws.httpGet(hostname, urls[i] + j);
 
-				objects.merge(result.getResultsAsJsonArray());
+					JsonArray ja = result.getResultsAsJsonArray();
+					if (ja.size() == 0)
+						break;
+
+					objects.merge(result.getResultsAsJsonArray());
+				}
 			}
 
 			System.out.println("Building Class Structure");

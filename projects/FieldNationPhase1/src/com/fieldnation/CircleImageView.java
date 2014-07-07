@@ -29,7 +29,6 @@ public class CircleImageView extends ImageView {
 
 		if (drawable == null)
 			return;
-		
 
 	}
 

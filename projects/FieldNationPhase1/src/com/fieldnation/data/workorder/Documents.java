@@ -4,41 +4,42 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Documents{
-	@Json(name="fileSize")
+public class Documents {
+	@Json(name = "fileSize")
 	private Integer _fileSize;
-	@Json(name="fileType")
+	@Json(name = "fileType")
 	private String _fileType;
-	@Json(name="filePath")
+	@Json(name = "filePath")
 	private String _filePath;
-	@Json(name="thumbNail")
+	@Json(name = "thumbNail")
 	private String _thumbNail;
-	@Json(name="fileName")
+	@Json(name = "fileName")
 	private String _fileName;
 
-	public Documents(){
+	public Documents() {
 	}
-	public Integer getFileSize(){
+
+	public Integer getFileSize() {
 		return _fileSize;
 	}
 
-	public String getFileType(){
+	public String getFileType() {
 		return _fileType;
 	}
 
-	public String getFilePath(){
+	public String getFilePath() {
 		return _filePath;
 	}
 
-	public String getThumbNail(){
+	public String getThumbNail() {
 		return _thumbNail;
 	}
 
-	public String getFileName(){
+	public String getFileName() {
 		return _fileName;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

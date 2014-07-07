@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.fieldnation.auth.server.AuthCacheSqlHelper.Column;
 import com.fieldnation.utils.misc;
 
 /**
@@ -31,13 +32,13 @@ public class AuthCache {
 
 	private AuthCache(Context context, Cursor src) {
 		_context = context;
-		_id = src.getLong(0);
-		_username = src.getString(AuthCacheSqlHelper.Column.USERNAME.getIndex());
-		_passwordHash = src.getString(AuthCacheSqlHelper.Column.PASSWORD_HASH.getIndex());
-		_sessionHash = src.getString(AuthCacheSqlHelper.Column.SESSION_HASH.getIndex());
-		_oAuthBlob = src.getString(AuthCacheSqlHelper.Column.OAUTH_BLOB.getIndex());
-		_requestBlob = src.getString(AuthCacheSqlHelper.Column.REQUEST_BLOB.getIndex());
-		_sessionExpiry = src.getLong(AuthCacheSqlHelper.Column.SESSION_EXPIRY.getIndex());
+		_id = src.getLong(Column.ID.getIndex());
+		_username = src.getString(Column.USERNAME.getIndex());
+		_passwordHash = src.getString(Column.PASSWORD_HASH.getIndex());
+		_sessionHash = src.getString(Column.SESSION_HASH.getIndex());
+		_oAuthBlob = src.getString(Column.OAUTH_BLOB.getIndex());
+		_requestBlob = src.getString(Column.REQUEST_BLOB.getIndex());
+		_sessionExpiry = src.getLong(Column.SESSION_EXPIRY.getIndex());
 	}
 
 	private AuthCache(Context context, String username, String password) {
@@ -157,8 +158,8 @@ public class AuthCache {
 		try {
 			Cursor cursor = db.query(AuthCacheSqlHelper.TABLE_NAME,
 					AuthCacheSqlHelper.getColumnNames(),
-					AuthCacheSqlHelper.Column.USERNAME + "=?",
-					new String[] { username }, null, null, null);
+					Column.USERNAME + "=?", new String[] { username }, null,
+					null, null);
 
 			try {
 				if (cursor.moveToFirst()) {
@@ -176,8 +177,8 @@ public class AuthCache {
 
 	private static AuthCache get(Context context, SQLiteDatabase db, long id) {
 		Cursor cursor = db.query(AuthCacheSqlHelper.TABLE_NAME,
-				AuthCacheSqlHelper.getColumnNames(),
-				AuthCacheSqlHelper.Column.ID + "=" + id, null, null, null, null);
+				AuthCacheSqlHelper.getColumnNames(), Column.ID + "=" + id,
+				null, null, null, null);
 
 		try {
 			if (cursor.moveToFirst()) {
@@ -206,17 +207,12 @@ public class AuthCache {
 			authCache = new AuthCache(context, username, password);
 
 			ContentValues values = new ContentValues();
-			values.put(AuthCacheSqlHelper.Column.USERNAME.getName(),
-					authCache._username);
-			values.put(AuthCacheSqlHelper.Column.PASSWORD_HASH.getName(),
-					authCache._passwordHash);
-			values.put(AuthCacheSqlHelper.Column.OAUTH_BLOB.getName(),
-					authCache._oAuthBlob);
-			values.put(AuthCacheSqlHelper.Column.SESSION_HASH.getName(),
-					authCache._sessionHash);
-			values.put(AuthCacheSqlHelper.Column.REQUEST_BLOB.getName(),
-					authCache._requestBlob);
-			values.put(AuthCacheSqlHelper.Column.SESSION_EXPIRY.getName(),
+			values.put(Column.USERNAME.getName(), authCache._username);
+			values.put(Column.PASSWORD_HASH.getName(), authCache._passwordHash);
+			values.put(Column.OAUTH_BLOB.getName(), authCache._oAuthBlob);
+			values.put(Column.SESSION_HASH.getName(), authCache._sessionHash);
+			values.put(Column.REQUEST_BLOB.getName(), authCache._requestBlob);
+			values.put(Column.SESSION_EXPIRY.getName(),
 					authCache._sessionExpiry);
 
 			return get(context, db,
@@ -231,21 +227,16 @@ public class AuthCache {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		try {
 			ContentValues values = new ContentValues();
-			values.put(AuthCacheSqlHelper.Column.USERNAME.getName(),
-					authCache._username);
-			values.put(AuthCacheSqlHelper.Column.PASSWORD_HASH.getName(),
-					authCache._passwordHash);
-			values.put(AuthCacheSqlHelper.Column.OAUTH_BLOB.getName(),
-					authCache._oAuthBlob);
-			values.put(AuthCacheSqlHelper.Column.SESSION_HASH.getName(),
-					authCache._sessionHash);
-			values.put(AuthCacheSqlHelper.Column.REQUEST_BLOB.getName(),
-					authCache._requestBlob);
-			values.put(AuthCacheSqlHelper.Column.SESSION_EXPIRY.getName(),
+			values.put(Column.USERNAME.getName(), authCache._username);
+			values.put(Column.PASSWORD_HASH.getName(), authCache._passwordHash);
+			values.put(Column.OAUTH_BLOB.getName(), authCache._oAuthBlob);
+			values.put(Column.SESSION_HASH.getName(), authCache._sessionHash);
+			values.put(Column.REQUEST_BLOB.getName(), authCache._requestBlob);
+			values.put(Column.SESSION_EXPIRY.getName(),
 					authCache._sessionExpiry);
 
 			db.update(AuthCacheSqlHelper.TABLE_NAME, values,
-					AuthCacheSqlHelper.Column.ID + "=" + authCache._id, null);
+					Column.ID + "=" + authCache._id, null);
 		} finally {
 			helper.close();
 		}

@@ -13,7 +13,7 @@ public class Workorder {
 	private Integer _statusId;
 	@Json(name = "identifier")
 	private String _identifier;
-	@Json(name="isRequest")
+	@Json(name = "isRequest")
 	private Boolean _isRequest;
 	@Json(name = "distance")
 	private Double _distance;
@@ -65,7 +65,7 @@ public class Workorder {
 	private Deliverables[] _deliverables;
 	@Json(name = "messages")
 	private Integer _messages;
-	@Json(name="isRemoteWork")
+	@Json(name = "isRemoteWork")
 	private Integer _isRemoteWork;
 	@Json(name = "provider")
 	private Provider[] _provider;
@@ -76,7 +76,8 @@ public class Workorder {
 
 	public Workorder() {
 	}
-	public Integer getWorkorderId(){
+
+	public Integer getWorkorderId() {
 		return _workorderId;
 	}
 
@@ -92,7 +93,7 @@ public class Workorder {
 		return _identifier;
 	}
 
-	public Boolean getIsRequest(){
+	public Boolean getIsRequest() {
 		return _isRequest;
 	}
 
@@ -108,7 +109,7 @@ public class Workorder {
 		return _fullWorkDescription;
 	}
 
-	public Integer getBundleId(){
+	public Integer getBundleId() {
 		return _bundleId;
 	}
 
@@ -120,7 +121,7 @@ public class Workorder {
 		return _closingNotes;
 	}
 
-	public Label[] getLabels(){
+	public Label[] getLabels() {
 		return _label;
 	}
 
@@ -196,7 +197,7 @@ public class Workorder {
 		return _messages;
 	}
 
-	public Integer getIsRemoteWork(){
+	public Integer getIsRemoteWork() {
 		return _isRemoteWork;
 	}
 

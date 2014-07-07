@@ -72,14 +72,14 @@ public class ListViewEx extends ListView {
 
 		// Load all of the animations we need in code rather than through XML
 		_flipAnimation = new RotateAnimation(0, -180,
-				Animation.RELATIVE_TO_SELF, 0.5f,
-				Animation.RELATIVE_TO_SELF, 0.5f);
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
 		_flipAnimation.setInterpolator(new LinearInterpolator());
 		_flipAnimation.setDuration(250);
 		_flipAnimation.setFillAfter(true);
 		_reverseFlipAnimation = new RotateAnimation(-180, 0,
-				Animation.RELATIVE_TO_SELF, 0.5f,
-				Animation.RELATIVE_TO_SELF, 0.5f);
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
 		_reverseFlipAnimation.setInterpolator(new LinearInterpolator());
 		_reverseFlipAnimation.setDuration(250);
 		_reverseFlipAnimation.setFillAfter(true);

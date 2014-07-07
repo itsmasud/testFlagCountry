@@ -4,23 +4,24 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Discounts{
-	@Json(name="amount")
+public class Discounts {
+	@Json(name = "amount")
 	private Double _amount;
-	@Json(name="description")
+	@Json(name = "description")
 	private String _description;
 
-	public Discounts(){
+	public Discounts() {
 	}
-	public Double getAmount(){
+
+	public Double getAmount() {
 		return _amount;
 	}
 
-	public String getDescription(){
+	public String getDescription() {
 		return _description;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

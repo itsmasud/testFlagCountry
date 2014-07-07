@@ -4,77 +4,78 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Location{
-	@Json(name="distance")
+public class Location {
+	@Json(name = "distance")
 	private Double _distance;
-	@Json(name="state")
+	@Json(name = "state")
 	private String _state;
-	@Json(name="address2")
+	@Json(name = "address2")
 	private String _address2;
-	@Json(name="contact_phone_ext")
+	@Json(name = "contact_phone_ext")
 	private Integer _contactPhoneExt;
-	@Json(name="address1")
+	@Json(name = "address1")
 	private String _address1;
-	@Json(name="zip")
+	@Json(name = "zip")
 	private String _zip;
-	@Json(name="country")
+	@Json(name = "country")
 	private String _country;
-	@Json(name="city")
+	@Json(name = "city")
 	private String _city;
-	@Json(name="contact_name")
+	@Json(name = "contact_name")
 	private String _contactName;
-	@Json(name="contact_phone")
+	@Json(name = "contact_phone")
 	private String _contactPhone;
-	@Json(name="contact_email")
+	@Json(name = "contact_email")
 	private String _contactEmail;
 
-	public Location(){
+	public Location() {
 	}
-	public Double getDistance(){
+
+	public Double getDistance() {
 		return _distance;
 	}
 
-	public String getState(){
+	public String getState() {
 		return _state;
 	}
 
-	public String getAddress2(){
+	public String getAddress2() {
 		return _address2;
 	}
 
-	public Integer getContactPhoneExt(){
+	public Integer getContactPhoneExt() {
 		return _contactPhoneExt;
 	}
 
-	public String getAddress1(){
+	public String getAddress1() {
 		return _address1;
 	}
 
-	public String getZip(){
+	public String getZip() {
 		return _zip;
 	}
 
-	public String getCountry(){
+	public String getCountry() {
 		return _country;
 	}
 
-	public String getCity(){
+	public String getCity() {
 		return _city;
 	}
 
-	public String getContactName(){
+	public String getContactName() {
 		return _contactName;
 	}
 
-	public String getContactPhone(){
+	public String getContactPhone() {
 		return _contactPhone;
 	}
 
-	public String getContactEmail(){
+	public String getContactEmail() {
 		return _contactEmail;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

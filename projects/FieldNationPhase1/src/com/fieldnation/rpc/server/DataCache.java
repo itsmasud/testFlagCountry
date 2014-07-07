@@ -1,10 +1,20 @@
 package com.fieldnation.rpc.server;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Hashtable;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
+import com.fieldnation.utils.Base64;
+import com.fieldnation.utils.misc;
 import com.fieldnation.webapi.OAuth;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
 
 /**
@@ -16,27 +26,28 @@ import android.util.Log;
 public class DataCache {
 	private static final String TAG = "rpc.server.DataCache";
 
-	private static Hashtable<String, Bundle> _cache = new Hashtable<String, Bundle>();
-
-	public static Bundle query(OAuth at, Bundle bundle) {
+	public static DataCacheNode query(Context context, OAuth at, Bundle bundle) {
 		String hashdata = hashBundle(at, bundle);
-		if (_cache.containsKey(hashdata)) {
+		DataCacheNode node = DataCacheNode.get(context, hashdata);
+		if (node != null) {
 			Log.v(TAG, "hit!");
-			return _cache.get(hashdata);
+			return node;
 		}
 		Log.v(TAG, "miss!");
 		return null;
 	}
 
-	public static void store(OAuth at, Bundle source, Bundle result) {
+	public static void store(Context context, OAuth at, Bundle source,
+			byte[] responseData, int responseCode) {
 		String hashdata = hashBundle(at, source);
 
-		_cache.put(hashdata, result);
+		DataCacheNode.put(context, hashdata, responseData, responseCode);
 	}
 
 	private static String hashBundle(OAuth at, Bundle bundle) {
-		String hashdata = bundle.getString("METHOD");
+		String hashdata = "";
 
+		hashdata = bundle.getString("METHOD");
 		hashdata += "." + at.getAccessToken();
 		hashdata += "." + getIfThere(bundle, "PARAM_METHOD");
 		hashdata += "." + getIfThere(bundle, "PARAM_PATH");
@@ -55,4 +66,5 @@ public class DataCache {
 			return bundle.getString(param);
 		return "";
 	}
+
 }

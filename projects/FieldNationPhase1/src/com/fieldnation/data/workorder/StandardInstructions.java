@@ -4,23 +4,24 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class StandardInstructions{
-	@Json(name="errorBuffer")
+public class StandardInstructions {
+	@Json(name = "errorBuffer")
 	private String _errorBuffer;
-	@Json(name="value")
+	@Json(name = "value")
 	private String _value;
 
-	public StandardInstructions(){
+	public StandardInstructions() {
 	}
-	public String getErrorBuffer(){
+
+	public String getErrorBuffer() {
 		return _errorBuffer;
 	}
 
-	public String getValue(){
+	public String getValue() {
 		return _value;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 
@@ -35,7 +36,8 @@ public class StandardInstructions{
 
 	public static StandardInstructions fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(StandardInstructions.class, json);
+			return Serializer.unserializeObject(StandardInstructions.class,
+					json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

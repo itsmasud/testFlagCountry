@@ -4,23 +4,24 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class EstimatedSchedule{
-	@Json(name="endTime")
+public class EstimatedSchedule {
+	@Json(name = "endTime")
 	private String _endTime;
-	@Json(name="startTime")
+	@Json(name = "startTime")
 	private String _startTime;
 
-	public EstimatedSchedule(){
+	public EstimatedSchedule() {
 	}
-	public String getEndTime(){
+
+	public String getEndTime() {
 		return _endTime;
 	}
 
-	public String getStartTime(){
+	public String getStartTime() {
 		return _startTime;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import com.fieldnation.rpc.server.DataCacheNode;
 import com.fieldnation.webapi.Ws;
 
 import android.app.Application;
@@ -31,6 +32,7 @@ public class GlobalState extends Application {
 
 		accountType = getString(R.string.accounttype);
 		authority = getString(R.string.authority);
+		DataCacheNode.flush(this);
 	}
 
 	/**

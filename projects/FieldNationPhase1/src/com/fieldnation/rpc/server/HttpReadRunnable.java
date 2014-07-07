@@ -31,16 +31,15 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
 		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
 			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-			Bundle cachedData = null;
+			DataCacheNode cachedData = null;
 
-			cachedData = DataCache.query(_auth, bundle);
+			cachedData = DataCache.query(_context, _auth, bundle);
 
 			if (allowCache && cachedData != null) {
 				Log.v(TAG, "Cached Response");
 				bundle.putByteArray(KEY_RESPONSE_DATA,
-						cachedData.getByteArray(KEY_RESPONSE_DATA));
-				bundle.putInt(KEY_RESPONSE_CODE,
-						cachedData.getInt(KEY_RESPONSE_CODE));
+						cachedData.getResponseData());
+				bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
 				bundle.putBoolean(KEY_RESPONSE_CACHED, true);
 				bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
 			} else {
@@ -58,7 +57,9 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
 								result.getResponseCode());
 						bundle.putBoolean(KEY_RESPONSE_CACHED, false);
 						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-						DataCache.store(_auth, bundle, bundle);
+						DataCache.store(_context, _auth, bundle,
+								bundle.getByteArray(KEY_RESPONSE_DATA),
+								bundle.getInt(KEY_RESPONSE_CODE));
 						Log.v(TAG, "web request success");
 					} catch (Exception ex) {
 						try {

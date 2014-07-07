@@ -98,16 +98,15 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
 			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-			Bundle cachedData = null;
+			DataCacheNode cachedData = null;
 
-			cachedData = DataCache.query(at, bundle);
+			cachedData = DataCache.query(context, at, bundle);
 
 			if (allowCache && cachedData != null) {
 				Log.v(TAG, "Cached Response");
 				bundle.putByteArray(KEY_RESPONSE_DATA,
-						cachedData.getByteArray(KEY_RESPONSE_DATA));
-				bundle.putInt(KEY_RESPONSE_CODE,
-						cachedData.getInt(KEY_RESPONSE_CODE));
+						cachedData.getResponseData());
+				bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
 				bundle.putBoolean(KEY_RESPONSE_CACHED, true);
 				bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
 			} else {
@@ -125,7 +124,9 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 								result.getResponseCode());
 						bundle.putBoolean(KEY_RESPONSE_CACHED, false);
 						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-						DataCache.store(at, bundle, bundle);
+						DataCache.store(context, at, bundle,
+								bundle.getByteArray(KEY_RESPONSE_DATA),
+								bundle.getInt(KEY_RESPONSE_CODE));
 						Log.v(TAG, "web request success");
 					} catch (Exception ex) {
 						try {
@@ -170,16 +171,15 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
 			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-			Bundle cachedData = null;
+			DataCacheNode cachedData = null;
 
 			if (allowCache)
-				cachedData = DataCache.query(at, bundle);
+				cachedData = DataCache.query(context, at, bundle);
 
 			if (cachedData != null) {
 				bundle.putByteArray(KEY_RESPONSE_DATA,
-						cachedData.getByteArray(KEY_RESPONSE_DATA));
-				bundle.putInt(KEY_RESPONSE_CODE,
-						cachedData.getInt(KEY_RESPONSE_CODE));
+						cachedData.getResponseData());
+				bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
 				bundle.putBoolean(KEY_RESPONSE_CACHED, true);
 			} else {
 				Ws ws = new Ws(at);
@@ -196,7 +196,9 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 								result.getResponseCode());
 						bundle.putBoolean(KEY_RESPONSE_CACHED, false);
 						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-						DataCache.store(at, bundle, bundle);
+						DataCache.store(context, at, bundle,
+								bundle.getByteArray(KEY_RESPONSE_DATA),
+								bundle.getInt(KEY_RESPONSE_CODE));
 						Log.v(TAG, "web request success");
 					} catch (Exception ex) {
 						try {

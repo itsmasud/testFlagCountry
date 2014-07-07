@@ -301,22 +301,11 @@ public class WorkorderSummaryView extends RelativeLayout {
 			if (_workorder.getScheduledTimeStart() != null) {
 				String when = "";
 				Calendar cal = null;
-				try {
-					// TODO remove when workorders are fixed FN-710
-					cal = ISO8601.toCalendar(Long.parseLong(_workorder.getScheduledTimeStart()) * 1000);
-				} catch (Exception ex) {
-					cal = ISO8601.toCalendar(_workorder.getScheduledTimeStart());
-				}
+				cal = ISO8601.toCalendar(_workorder.getScheduledTimeStart());
 				when = misc.formatDate(cal);
 
 				if (!misc.isEmptyOrNull(_workorder.getScheduledTimeEnd())) {
-					try {
-						// TODO remove when workorders are fixed FN-710
-						cal = ISO8601.toCalendar(Long.parseLong(_workorder.getScheduledTimeEnd()) * 1000);
-					} catch (Exception ex) {
-						cal = ISO8601.toCalendar(_workorder.getScheduledTimeEnd());
-					}
-
+					cal = ISO8601.toCalendar(_workorder.getScheduledTimeEnd());
 					if (cal.get(Calendar.YEAR) > 2000) {
 						when += " - ";
 						when += misc.formatDate(cal);

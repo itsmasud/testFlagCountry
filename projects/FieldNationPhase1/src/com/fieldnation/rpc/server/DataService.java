@@ -26,12 +26,6 @@ public class DataService extends IntentService implements DataServiceConstants {
 	}
 
 	@Override
-	public void onCreate() {
-		super.onCreate();
-		Log.v(TAG, "onCreate()");
-	}
-
-	@Override
 	protected void onHandleIntent(Intent intent) {
 		String action = intent.getAction();
 
