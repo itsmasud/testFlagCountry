@@ -10,13 +10,21 @@ import com.fieldnation.data.workorder.Label;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonArray;
+import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Debug;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +46,16 @@ import android.widget.TextView;
 public class WorkorderSummaryView extends RelativeLayout {
 	private static final String TAG = "WorkorderSummaryView";
 
+	private static final int BUTTON_ACTION_NONE = 0;
+	private static final int BUTTON_ACTION_REQUEST = 1;
+	private static final int BUTTON_ACTION_ACCEPT = 2;
+	private static final int BUTTON_ACTION_VIEW_COUNTER = 3;
+	private static final int BUTTON_ACTION_CONFIRM = 4;
+	private static final int BUTTON_ACTION_CHECK_IN = 5;
+	private static final int BUTTON_ACTION_ACKNOWLEDGE = 6;
+	private static final int BUTTON_ACTION_CHECK_OUT = 7;
+	private static final int BUTTON_ACTION_PAYMENTS = 8;
+
 	// UI
 	private RelativeLayout _statusLayout;
 	private TextView _titleTextView;
@@ -56,6 +74,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private View _bundleSeparator;
 	private TextView _idTextView;
 	private ViewGroup _paymentLayout;
+	private LinearLayout _notInterestedLayout;
 
 	// animations
 	private Animation _slideAnimation;
@@ -64,8 +83,10 @@ public class WorkorderSummaryView extends RelativeLayout {
 	// Data
 	private GlobalState _gs;
 	private WorkorderDataSelector _dataView = null;
-
 	private Workorder _workorder;
+	private int _buttonAction = BUTTON_ACTION_NONE;
+	private WorkorderService _dataService;
+	private MyAuthClient _authClient;
 
 	// status lookuptable
 	private int _statusDisplayState = 0;
@@ -112,6 +133,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_optionsLayout = (RelativeLayout) findViewById(R.id.options_layout);
 		_optionsLayout.setOnClickListener(_options_onClick);
 		_optionsLayout.setClickable(false);
+		_notInterestedLayout = (LinearLayout) findViewById(R.id.notinterested_layout);
+		_notInterestedLayout.setOnClickListener(_notInterested_onClick);
+		_notInterestedLayout.setClickable(false);
 
 		_statusTextView = (TextView) findViewById(R.id.status_textview);
 
@@ -149,15 +173,24 @@ public class WorkorderSummaryView extends RelativeLayout {
 				R.anim.wosum_slide_back);
 
 		setIsBundle(false);
+
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: _notInterested_onClick()");
+		}
+	};
 	private View.OnClickListener _options_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			_optionsLayout.setClickable(false);
+			_notInterestedLayout.setClickable(false);
 			_contentLayout.startAnimation(_slideBackAnimation);
 		}
 	};
@@ -175,6 +208,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		@Override
 		public boolean onLongClick(View v) {
 			_optionsLayout.setClickable(true);
+			_notInterestedLayout.setClickable(true);
 			_contentLayout.startAnimation(_slideAnimation);
 			return true;
 		}
@@ -184,9 +218,98 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		@Override
 		public void onClick(View v) {
-			_statusDisplayState = (_statusDisplayState + 1) % 4;
+			switch (_buttonAction) {
+			case BUTTON_ACTION_ACCEPT:
+				// TODO BUTTON_ACTION_ACCEPT
+				break;
+			case BUTTON_ACTION_ACKNOWLEDGE:
+				break;
+			case BUTTON_ACTION_CHECK_IN:
+				getContext().startService(
+						_dataService.checkin(BUTTON_ACTION_CHECK_IN,
+								_workorder.getWorkorderId(),
+								System.currentTimeMillis(), false));
+				break;
+			case BUTTON_ACTION_CHECK_OUT:
+				getContext().startService(
+						_dataService.checkout(BUTTON_ACTION_CHECK_IN,
+								_workorder.getWorkorderId(),
+								System.currentTimeMillis(), false));
+				break;
+			case BUTTON_ACTION_CONFIRM:
+				// TODO BUTTON_ACTION_CONFIRM
+				break;
+			case BUTTON_ACTION_NONE:
+				// TODO BUTTON_ACTION_NONE
+				break;
+			case BUTTON_ACTION_PAYMENTS:
+				// TODO BUTTON_ACTION_PAYMENTS
+				break;
+			case BUTTON_ACTION_REQUEST:
+				// TODO, set a time for expiration
+				getContext().startService(
+						_dataService.request(BUTTON_ACTION_REQUEST,
+								_workorder.getWorkorderId(), 0, false));
+				break;
+			case BUTTON_ACTION_VIEW_COUNTER:
+				// TODO BUTTON_ACTION_VIEW_COUNTER
+				break;
+			}
+		}
+	};
 
-			updateStatusUi();
+	private class MyAuthClient extends AuthenticationClient {
+
+		public MyAuthClient(Context context) {
+			super(context);
+		}
+
+		@Override
+		public void onAuthentication(String username, String authToken) {
+			_dataService = new WorkorderService(getContext(), username,
+					authToken, _resultReciever);
+		}
+
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authClient);
+		}
+	}
+
+	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(
+			new Handler()) {
+
+		@Override
+		public void onSuccess(int resultCode, Bundle resultData) {
+			Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+			switch (resultCode) {
+			case BUTTON_ACTION_ACCEPT:
+				break;
+			case BUTTON_ACTION_ACKNOWLEDGE:
+				break;
+			case BUTTON_ACTION_CHECK_IN:
+				break;
+			case BUTTON_ACTION_CHECK_OUT:
+				break;
+			case BUTTON_ACTION_CONFIRM:
+				break;
+			case BUTTON_ACTION_NONE:
+				break;
+			case BUTTON_ACTION_PAYMENTS:
+				break;
+			case BUTTON_ACTION_REQUEST:
+				break;
+			case BUTTON_ACTION_VIEW_COUNTER:
+				break;
+			}
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			// TODO Method Stub: onError()
+			Log.v(TAG, "Method Stub: onError()");
+
 		}
 	};
 
@@ -230,6 +353,12 @@ public class WorkorderSummaryView extends RelativeLayout {
 	}
 
 	private void refresh() {
+		try {
+			buildStatus();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		if (Debug.isDebuggerConnected()) {
 			_idTextView.setText("[ID " + _workorder.getWorkorderId() + "]");
 			_idTextView.setVisibility(VISIBLE);
@@ -353,14 +482,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_paymentLayout.setVisibility(GONE);
 		}
 
-		try {
-			buildStatus();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
 		_contentLayout.clearAnimation();
 		_optionsLayout.setClickable(false);
+		_notInterestedLayout.setClickable(false);
 	}
 
 	private void buildStatus() throws ParseException {
@@ -424,6 +548,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			} else {
 				_detailButton.setText("Acknowledge");
 				_detailButton.setVisibility(VISIBLE);
+				_buttonAction = BUTTON_ACTION_ACKNOWLEDGE;
 				_statusDisplayState = 1;
 			}
 		} else if (has16) {
@@ -431,10 +556,12 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_statusTextView.setText("Unconfirmed");
 			_detailButton.setText("Check In");
 			_detailButton.setVisibility(VISIBLE);
+			_buttonAction = BUTTON_ACTION_CHECK_IN;
 		} else {
 			_statusDisplayState = 0;
 			_statusTextView.setText("Confirmed");
 			_detailButton.setText("Check In");
+			_buttonAction = BUTTON_ACTION_CHECK_IN;
 			_detailButton.setVisibility(VISIBLE);
 		}
 	}
@@ -445,6 +572,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_statusDisplayState = 1;
 			_statusTextView.setText("Routed");
 			_detailButton.setText("Accept");
+			_buttonAction = BUTTON_ACTION_ACCEPT;
 			_detailButton.setVisibility(VISIBLE);
 		} else {
 			boolean has11 = false;
@@ -471,6 +599,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 				_statusTextView.setText("Available");
 				_detailButton.setText("Request");
 				_detailButton.setVisibility(VISIBLE);
+				_buttonAction = BUTTON_ACTION_REQUEST;
 			} else if (has12) {
 				_statusDisplayState = 2;
 				_statusTextView.setText("Requested");
@@ -480,6 +609,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 				_statusTextView.setText("Sent Counter");
 				_detailButton.setVisibility(VISIBLE);
 				_detailButton.setText("View Counter");
+				_buttonAction = BUTTON_ACTION_VIEW_COUNTER;
 			}
 		}
 	}
@@ -519,17 +649,20 @@ public class WorkorderSummaryView extends RelativeLayout {
 				_statusDisplayState = 1;
 				_detailButton.setText("Acknowledge");
 				_detailButton.setVisibility(VISIBLE);
+				_buttonAction = BUTTON_ACTION_ACKNOWLEDGE;
 			}
 		} else if (has1) {
 			_statusDisplayState = 2;
 			_statusTextView.setText("Checked In");
 			_detailButton.setText("Check Out");
 			_detailButton.setVisibility(VISIBLE);
+			_buttonAction = BUTTON_ACTION_CHECK_OUT;
 		} else {
 			_statusDisplayState = 0;
 			_statusTextView.setText("Checked Out");
 			_detailButton.setText("Check In");
 			_detailButton.setVisibility(VISIBLE);
+			_buttonAction = BUTTON_ACTION_CHECK_IN;
 		}
 	}
 
@@ -546,7 +679,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_statusDisplayState = 0;
 			_statusTextView.setText("Pending");
 			_detailButton.setVisibility(GONE);
-			_detailButton.setText("Payments");
 		} else if (labels.contains(20)) {
 			_statusDisplayState = 0;
 			_statusTextView.setText("In Review");
@@ -556,6 +688,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_statusTextView.setText("Processing");
 			_detailButton.setVisibility(VISIBLE);
 			_detailButton.setText("Payments");
+			_buttonAction = BUTTON_ACTION_PAYMENTS;
 		} else if (_workorder.getStatus() != null && _workorder.getStatus().equals(
 				"Paid")) {
 			_statusDisplayState = 3;

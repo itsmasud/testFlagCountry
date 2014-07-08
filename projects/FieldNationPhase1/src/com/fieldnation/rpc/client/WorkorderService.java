@@ -58,7 +58,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"application/x-www-form-urlencoded", allowCache);
 	}
 
-	public Intent addRequest(int resultCode, long workorderId,
+	public Intent request(int resultCode, long workorderId,
 			int expireInSeconds, boolean allowCache) {
 		if (expireInSeconds == -1)
 			return httpPost(resultCode,

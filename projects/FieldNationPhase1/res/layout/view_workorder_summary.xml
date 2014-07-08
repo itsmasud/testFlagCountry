@@ -17,11 +17,37 @@
 
         <ImageView
             android:id="@+id/back_imageview"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/right_arrow" />
+            android:src="@drawable/grabbar" />
+
+        <LinearLayout
+            android:id="@+id/notinterested_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_cancel" />
+
+            <TextView
+                style="@style/WorkorderSummary_Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingLeft="5dp"
+                android:text="Not Interested"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFFFF" />
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
