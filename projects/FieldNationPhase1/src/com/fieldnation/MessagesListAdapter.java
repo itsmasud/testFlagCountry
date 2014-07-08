@@ -3,6 +3,7 @@ package com.fieldnation;
 import com.fieldnation.data.messages.Message;
 import com.fieldnation.rpc.client.ProfileService;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.ResultReceiver;
 import android.view.View;
@@ -13,8 +14,8 @@ public class MessagesListAdapter extends PagingListAdapter<Message> {
 
 	private ProfileService _profileService = null;
 
-	public MessagesListAdapter(Context context) {
-		super(context, Message.class);
+	public MessagesListAdapter(Activity activity) {
+		super(activity, Message.class);
 	}
 
 	@Override

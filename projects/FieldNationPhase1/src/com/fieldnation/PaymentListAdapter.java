@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.ResultReceiver;
 import android.view.View;
@@ -13,8 +14,8 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 
 	private PaymentService _service = null;
 
-	public PaymentListAdapter(Context context) {
-		super(context, Payment.class);
+	public PaymentListAdapter(Activity activity) {
+		super(activity, Payment.class);
 	}
 
 	@Override
@@ -57,7 +58,6 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
-		getContext().startService(
-				_service.getAll(resultCode, page, allowCache));
+		getContext().startService(_service.getAll(resultCode, page, allowCache));
 	}
 }

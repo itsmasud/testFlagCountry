@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
@@ -29,8 +30,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	/*-			Lifecycle			-*/
 	/*-*****************************-*/
 
-	public WorkorderListAdapter(Context context, WorkorderDataSelector selection) throws NoSuchMethodException {
-		super(context, Workorder.class);
+	public WorkorderListAdapter(Activity activity, WorkorderDataSelector selection) throws NoSuchMethodException {
+		super(activity, Workorder.class);
 		_dataSelection = selection;
 
 		_rpcMethod = WorkorderService.class.getDeclaredMethod(

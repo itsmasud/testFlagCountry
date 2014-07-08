@@ -3,11 +3,13 @@ package com.fieldnation;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,7 +26,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private static final String TAG = "PagingListAdapter";
 
 	private GlobalState _gs;
-	private Context _context;
+	private Activity _activity;
 	private boolean _isViable;
 	private int _nextPage = 0;
 	private boolean _atEndOfList;
@@ -37,12 +39,12 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private MyAuthClient _authClient;
 	private Listener _listener = null;
 
-	public PagingListAdapter(Context context, Class<T> clazz) {
-		_context = context;
+	public PagingListAdapter(Activity activity, Class<T> clazz) {
+		_activity = activity;
 		_clazz = clazz;
-		_progressBar = new ProgressBar(context);
-		_authClient = new MyAuthClient(context);
-		_gs = (GlobalState) context.getApplicationContext();
+		_progressBar = new ProgressBar(_activity);
+		_authClient = new MyAuthClient(_activity);
+		_gs = (GlobalState) _activity.getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
 		_isViable = true;
@@ -54,7 +56,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	/*-			Getters/Setters			-*/
 	/*-*********************************-*/
 	public Context getContext() {
-		return _context;
+		return _activity;
 	}
 
 	public boolean isViable() {
@@ -147,7 +149,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 			}
 			_username = username;
 			_authToken = authToken;
-			rebuildWebService(_context, _username, _authToken, _resultReciever);
+			rebuildWebService(_activity, _username, _authToken, _resultReciever);
 			update(false);
 		}
 
@@ -221,10 +223,8 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 				_gs.requestAuthentication(_authClient);
 			} else {
 				// TODO, this is a bit dumb, but it works
-				Toast.makeText(
-						_context,
-						"Could not get data. Please check your network and try again.",
-						Toast.LENGTH_LONG).show();
+				UndoBarController.show(_activity,
+						"Could not get data. Please check your network and try again.");
 			}
 			notifyDataSetChanged();
 		}
@@ -268,7 +268,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 			_gs.requestAuthentication(_authClient);
 		} else {
 			Log.v(TAG, "Have accessToken");
-			getWebService(_context, _username, _authToken, _resultReciever);
+			getWebService(_activity, _username, _authToken, _resultReciever);
 			executeWebService(0, _nextPage, _allowCache);
 		}
 	}

@@ -120,6 +120,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 					_loadingProgressBar.setVisibility(View.GONE);
 					_contentLayout.setVisibility(View.VISIBLE);
 				}
+
 				Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
 
 			} catch (Exception e) {
