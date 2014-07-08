@@ -1,15 +1,29 @@
 package com.fieldnation;
 
+import java.text.ParseException;
+import java.util.Calendar;
+
 import com.fieldnation.R;
+import com.fieldnation.data.payments.Payment;
+import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
+import com.fieldnation.json.Serializer;
+import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 /**
  * This view defines what is in the pull out drawer, and what the buttons do.
@@ -20,11 +34,30 @@ import android.widget.RelativeLayout;
 public class DrawerView extends RelativeLayout {
 	private static final String TAG = "DrawerView";
 
+	// UI
 	private RelativeLayout _myworkView;
 	private RelativeLayout _marketView;
 	private RelativeLayout _paymentView;
 	private RelativeLayout _settingsView;
 	private RelativeLayout _logoutView;
+	private TextView _paidAmountTextView;
+	private TextView _paidDateTextView;
+	private TextView _estimatedAmountTextView;
+	private TextView _estimatedDateTextView;
+	private RelativeLayout _estimatedLayout;
+	private RelativeLayout _paidLayout;
+
+	// Data
+	private GlobalState _gs;
+	private MyAuthClient _authClient;
+	private PaymentService _dataService;
+	private boolean _hasPaid = false;
+	private boolean _hasEstimated = false;
+	private double _paidAmount = 0;
+	private long _lastPaidDate = Long.MIN_VALUE;
+	private double _estimatedAmount = 0;
+	private long _lastEstimatedDate = Long.MIN_VALUE;
+	private int _nextPage = 0;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -45,6 +78,10 @@ public class DrawerView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
+		_gs = (GlobalState) context.getApplicationContext();
+		_authClient = new MyAuthClient(context);
+		_gs.requestAuthentication(_authClient);
+
 		_myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
 		_myworkView.setOnClickListener(_myworkView_onClick);
 
@@ -59,6 +96,15 @@ public class DrawerView extends RelativeLayout {
 
 		_logoutView = (RelativeLayout) findViewById(R.id.logout_view);
 		_logoutView.setOnClickListener(_logoutView_onClick);
+
+		_paidLayout = (RelativeLayout) findViewById(R.id.paid_layout);
+		_paidAmountTextView = (TextView) findViewById(R.id.paidamount_textview);
+		_paidDateTextView = (TextView) findViewById(R.id.paiddate_textview);
+
+		_estimatedLayout = (RelativeLayout) findViewById(R.id.estimated_layout);
+		_estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
+		_estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
+
 	}
 
 	/*-*********************************-*/
@@ -102,6 +148,103 @@ public class DrawerView extends RelativeLayout {
 		public void onClick(View v) {
 			// TODO Method Stub: onClick()
 			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
+
+	private class MyAuthClient extends AuthenticationClient {
+
+		public MyAuthClient(Context context) {
+			super(context);
+		}
+
+		@Override
+		public void onAuthentication(String username, String authToken) {
+			_dataService = new PaymentService(getContext(), username,
+					authToken, _resultReciever);
+
+			getContext().startService(_dataService.getAll(1, 0, true));
+			_nextPage = 1;
+		}
+
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authClient);
+		}
+	}
+
+	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(
+			new Handler()) {
+
+		@Override
+		public void onSuccess(int resultCode, Bundle resultData) {
+			try {
+				JsonArray ja = new JsonArray(
+						new String(
+								resultData.getByteArray(PaymentService.KEY_RESPONSE_DATA)));
+
+				for (int i = 0; i < ja.size(); i++) {
+					try {
+						Payment payment = Serializer.unserializeObject(
+								Payment.class, ja.getJsonObject(i));
+
+						long date = ISO8601.toUtc(payment.getDatePaid());
+
+						if ("paid".equals(payment.getStatus())) {
+							if (date >= _lastPaidDate) {
+								_lastPaidDate = date;
+								_paidAmount = payment.getAmount();
+								_hasPaid = true;
+							}
+						} else {
+							if (date >= _lastEstimatedDate) {
+								_lastEstimatedDate = date;
+								_estimatedAmount = payment.getAmount();
+								_hasEstimated = true;
+							}
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				if (ja.size() == 0) {
+					if (_hasEstimated) {
+						_estimatedLayout.setVisibility(VISIBLE);
+						_estimatedAmountTextView.setText(misc.toCurrency(_estimatedAmount));
+						Calendar cal = Calendar.getInstance();
+						cal.setTimeInMillis(_lastEstimatedDate);
+						_estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
+					} else {
+						_estimatedLayout.setVisibility(GONE);
+					}
+
+					if (_hasPaid) {
+						_paidLayout.setVisibility(VISIBLE);
+						_paidAmountTextView.setText(misc.toCurrency(_paidAmount));
+						Calendar cal = Calendar.getInstance();
+						cal.setTimeInMillis(_lastPaidDate);
+						_paidDateTextView.setText("Paid " + misc.formatDate(cal));
+					} else {
+						_paidLayout.setVisibility(GONE);
+					}
+				} else {
+					getContext().startService(
+							_dataService.getAll(1, _nextPage, true));
+					_nextPage++;
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			// TODO Method Stub: onError()
+			Log.v(TAG, "Method Stub: onError()");
 		}
 	};
 

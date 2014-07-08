@@ -13,8 +13,13 @@
         <item name="android:background">@color/drawer_item_background</item>
     </style>
 
-    <style name="DrawerPaymentAmount">
-        <item name="android:background">@drawable/drawer_payment_amount</item>
+    <style name="DrawerEsitmatedAmount">
+        <item name="android:background">@drawable/drawer_estimated_amount</item>
+        <item name="android:textColor">@color/drawerPaymentAmountForeground</item>
+    </style>
+
+    <style name="DrawerPaidAmount">
+        <item name="android:background">@drawable/drawer_paid_amount</item>
         <item name="android:textColor">@color/drawerPaymentAmountForeground</item>
     </style>
 

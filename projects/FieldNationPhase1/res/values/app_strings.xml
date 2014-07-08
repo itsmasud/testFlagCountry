@@ -46,7 +46,7 @@
     <string name="market_title">Market</string>
     <string name="market_subtitle">Available, Requested and Recruitment</string>
     <string name="payment_title">Payment</string>
-    <string name="payment_subtitle">Pending, lorem ipsum and Ipsom Lorem</string>
+    <string name="payment_subtitle">Processing and Paid</string>
     <string name="settings_title">Settings</string>
     <string name="settings_subtitle">Preferences and Switch Account</string>
     <string name="logout_title">Log Out</string>

@@ -4,7 +4,7 @@
 
     <corners android:radius="30dp" />
 
-    <solid android:color="@color/drawerPaymentAmountBackground" />
+    <solid android:color="@color/drawerPaymentPaidAmountBackground" />
 
     <padding
         android:bottom="2dp"

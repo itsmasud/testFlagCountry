@@ -115,7 +115,7 @@
                 android:src="@drawable/ic_payment" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/payment_imageview"
                 android:orientation="vertical" >
@@ -133,15 +133,57 @@
                     android:layout_height="wrap_content"
                     android:text="@string/payment_subtitle"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
 
-            <TextView
-                android:id="@+id/payment_amount_textview"
-                style="@style/DrawerPaymentAmount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="$2,500" />
+                <RelativeLayout
+                    android:id="@+id/estimated_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp" >
+
+                    <TextView
+                        android:id="@+id/estimateddate_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="Estimated 5/16/14"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/estimatedamount_textview"
+                        style="@style/DrawerEsitmatedAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right"
+                        android:text="$2,500" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/paid_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp" >
+
+                    <TextView
+                        android:id="@+id/paiddate_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="Paid 5/20/14"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/paidamount_textview"
+                        style="@style/DrawerPaidAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right"
+                        android:text="$2,500" />
+                </RelativeLayout>
+            </LinearLayout>
         </RelativeLayout>
 
         <View

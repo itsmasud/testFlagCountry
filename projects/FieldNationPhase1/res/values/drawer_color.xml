@@ -5,7 +5,8 @@
     <color name="drawerHighlightBackground">#FFc0e4bc</color>
     <color name="drawerHighlightBorder">#FF5cc087</color>
     <color name="drawerForeground">#FFcecfc0</color>
-    <color name="drawerPaymentAmountBackground">#FF3bc89e</color>
+    <color name="drawerPaymentEstimatedAmountBackground">#FF3bc89e</color>
+    <color name="drawerPaymentPaidAmountBackground">#FF69695d</color>
     <color name="drawerPaymentAmountForeground">#FFFFFFFF</color>
 
 </resources>
