@@ -12,12 +12,12 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "a167bf49b4ec25ae3bcea15658cc50d85c31c968";
+	private static String authToken = "042278ec1147936ac5efaef9e553b588d34698af";
 
 	public static void main(String[] args) {
-		getWorkorders();
-		getMessages();
-		getPayments();
+		// getWorkorders();
+		// getMessages();
+		// getPayments();
 	}
 
 	private static void dumpClasses(JsonArray objects, String path,
@@ -41,6 +41,13 @@ public class J2J {
 			fout.close();
 		}
 
+		System.out.println("***********************************");
+		javaObjects = JavaObject.getJavaObjects();
+		while (javaObjects.hasMoreElements()) {
+			JavaObject obj = javaObjects.nextElement();
+
+			System.out.println(obj.getUnderscoreFields());
+		}
 	}
 
 	private static void getPayments() {
@@ -52,7 +59,7 @@ public class J2J {
 			JsonArray objects = new JsonArray();
 
 			for (int i = 0; i < urls.length; i++) {
-				for (int j = 1; true; j++) {
+				for (int j = 0; true; j++) {
 					System.out.println(urls[i] + j);
 					Result result = Ws.httpGet(hostname, urls[i] + j);
 

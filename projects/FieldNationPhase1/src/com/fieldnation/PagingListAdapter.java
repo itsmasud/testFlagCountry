@@ -9,6 +9,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -152,9 +153,8 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			// TODO Method Stub: onAuthenticationFailed()
-			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
-
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 
 	}

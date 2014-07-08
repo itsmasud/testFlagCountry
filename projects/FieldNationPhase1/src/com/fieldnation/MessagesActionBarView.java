@@ -85,8 +85,8 @@ public class MessagesActionBarView extends RelativeLayout {
 
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			// TODO Method Stub: onAuthenticationFailed()
-			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authclient);
 
 		}
 

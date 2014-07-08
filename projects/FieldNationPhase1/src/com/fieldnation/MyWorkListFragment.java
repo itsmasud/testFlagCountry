@@ -13,10 +13,10 @@ public class MyWorkListFragment extends Fragment {
 	private static final String TAG = "MyWorkListFragment";
 
 	// UI
-	private ListViewEx _workordersListView;
+	private ListViewEx _listView;
 
 	// Data
-	private WorkorderListAdapter _listAdapter;
+	private WorkorderListAdapter _adapter;
 	private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
 
 	/*-*************************************-*/
@@ -54,10 +54,9 @@ public class MyWorkListFragment extends Fragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		_workordersListView = (ListViewEx) view.findViewById(R.id.workorders_listview);
-		_workordersListView.setDivider(null);
-		_workordersListView.setOnRefreshListener(_listView_onRefreshListener);
-		_workordersListView.setAdapter(getListAdapter());
+		_listView = (ListViewEx) view.findViewById(R.id.workorders_listview);
+		_listView.setDivider(null);
+		_listView.setOnRefreshListener(_listView_onRefreshListener);
 	}
 
 	@Override
@@ -67,14 +66,18 @@ public class MyWorkListFragment extends Fragment {
 	}
 
 	@Override
+	public void onResume() {
+		_listView.setAdapter(getAdapter());
+		super.onResume();
+	}
+
+	@Override
 	public void onPause() {
 		super.onPause();
 
-		WorkorderListAdapter adapter = getListAdapter();
-		if (adapter != null) {
-			Log.v(TAG, "onPause");
-			adapter.onStop();
-			adapter = null;
+		if (_adapter != null) {
+			_adapter.onStop();
+			_adapter = null;
 		}
 	}
 
@@ -97,7 +100,7 @@ public class MyWorkListFragment extends Fragment {
 
 		@Override
 		public void onLoadComplete() {
-			_workordersListView.onRefreshComplete();
+			_listView.onRefreshComplete();
 		}
 	};
 
@@ -105,7 +108,7 @@ public class MyWorkListFragment extends Fragment {
 
 		@Override
 		public void onRefresh() {
-			_listAdapter.update(false);
+			_adapter.update(false);
 		}
 	};
 
@@ -117,20 +120,20 @@ public class MyWorkListFragment extends Fragment {
 		Log.v(TAG, "update() stub");
 	}
 
-	private WorkorderListAdapter getListAdapter() {
+	private WorkorderListAdapter getAdapter() {
 		if (this.getActivity() == null)
 			return null;
 		try {
-			if (_listAdapter == null) {
-				_listAdapter = new WorkorderListAdapter(this.getActivity(),
+			if (_adapter == null) {
+				_adapter = new WorkorderListAdapter(this.getActivity(),
 						_displayView);
-				_listAdapter.setLoadingListener(_workorderAdapter_listener);
+				_adapter.setLoadingListener(_workorderAdapter_listener);
 			}
 
-			if (!_listAdapter.isViable()) {
-				_listAdapter = new WorkorderListAdapter(this.getActivity(),
+			if (!_adapter.isViable()) {
+				_adapter = new WorkorderListAdapter(this.getActivity(),
 						_displayView);
-				_listAdapter.setLoadingListener(_workorderAdapter_listener);
+				_adapter.setLoadingListener(_workorderAdapter_listener);
 			}
 
 		} catch (Exception ex) {
@@ -138,6 +141,6 @@ public class MyWorkListFragment extends Fragment {
 			return null;
 		}
 
-		return _listAdapter;
+		return _adapter;
 	}
 }

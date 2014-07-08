@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Waits for an {@link AccountManagerFuture} to resolve.
@@ -39,6 +40,7 @@ public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
 	protected Object doInBackground(Object... params) {
 		@SuppressWarnings("unchecked")
 		AccountManagerFuture<Bundle> future = (AccountManagerFuture<Bundle>) params[0];
+		Log.v(TAG, "Waiting for result.");
 		try {
 			return future.getResult();
 		} catch (Exception ex) {

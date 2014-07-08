@@ -1,5 +1,7 @@
 package com.fieldnation;
 
+import com.cocosw.undobar.UndoBarController;
+
 import android.os.Bundle;
 import android.util.Log;
 
@@ -34,7 +36,12 @@ public class MarketActivity extends DrawerActivity {
 
 		addActionBarAndDrawer(R.id.container);
 
+	}
+
+	@Override
+	protected void onResume() {
 		_listView.setAdapter(getListAdapter());
+		super.onResume();
 	}
 
 	@Override
@@ -43,6 +50,7 @@ public class MarketActivity extends DrawerActivity {
 
 		if (_adapter != null) {
 			_adapter.onStop();
+			_adapter = null;
 		}
 	}
 
@@ -61,6 +69,8 @@ public class MarketActivity extends DrawerActivity {
 		@Override
 		public void onLoadComplete() {
 			_listView.onRefreshComplete();
+
+			UndoBarController.show(MarketActivity.this, "This is a test");
 		}
 	};
 

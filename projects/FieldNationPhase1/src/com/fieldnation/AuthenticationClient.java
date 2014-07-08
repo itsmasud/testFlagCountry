@@ -2,6 +2,7 @@ package com.fieldnation;
 
 import android.accounts.AccountManagerFuture;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -48,6 +49,25 @@ public abstract class AuthenticationClient {
 	public void waitForObject(Object obj, String fieldname) {
 		new WaitForFieldAsyncTask(_waitForAccessToken_listener).execute(obj,
 				fieldname);
+	}
+
+	/**
+	 * Waits for teimtouInMilliseconds time to make an authentication request
+	 * 
+	 * @param timeoutInMilliseconds
+	 */
+	public void waitForTime(long timeoutInMilliseconds) {
+		new AsyncTask<Long, Object, Object>() {
+			@Override
+			protected Object doInBackground(Long... params) {
+				try {
+					Thread.sleep(params[0]);
+				} catch (InterruptedException e) {
+				}
+				_gs.requestAuthentication(AuthenticationClient.this);
+				return null;
+			}
+		}.execute(timeoutInMilliseconds);
 	}
 
 	private WaitForFieldAsyncTask.Listener _waitForAccessToken_listener = new WaitForFieldAsyncTask.Listener() {

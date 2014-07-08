@@ -26,7 +26,13 @@ public class MessageListActivity extends BaseActivity {
 
 		// addActionBarAndDrawer(R.id.container);
 
+	}
+
+	@Override
+	protected void onResume() {
 		_listView.setAdapter(getListAdapter());
+
+		super.onResume();
 	}
 
 	@Override
@@ -35,6 +41,7 @@ public class MessageListActivity extends BaseActivity {
 
 		if (_adapter != null) {
 			_adapter.onStop();
+			_adapter = null;
 		}
 	}
 

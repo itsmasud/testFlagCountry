@@ -53,6 +53,14 @@ public class GlobalState extends Application {
 		}
 	}
 
+	public void requestAuthenticationDelayed(AuthenticationClient client) {
+		if (_authServer == null) {
+			client.waitForObject(this, "_authServer");
+		} else {
+			client.waitForTime(5000);
+		}
+	}
+
 	public void invalidateAuthToken(String token) {
 		_authServer.invalidateToken(token);
 	}

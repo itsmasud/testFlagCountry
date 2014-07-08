@@ -12,19 +12,29 @@ package com.fieldnation;
  */
 public enum WorkorderDataSelector {
 	AVAILABLE("getAvailable"),
-	ASSIGNED("getAssigned"),
-	IN_PROGRESS("getAssigned"),
+	ASSIGNED("getAssigned", true),
+	IN_PROGRESS("getAssigned", true),
 	COMPLETED("getCompleted"),
 	CANCELLED("getCanceled");
 
 	private String _call;
+	private boolean _allowCache = false;
 
 	private WorkorderDataSelector(String call) {
 		_call = call;
 	}
 
+	private WorkorderDataSelector(String call, boolean allowCache) {
+		_call = call;
+		_allowCache = allowCache;
+	}
+
 	public String getCall() {
 		return _call;
+	}
+
+	public boolean allowCache() {
+		return _allowCache;
 	}
 
 	public static WorkorderDataSelector fromName(String name) {

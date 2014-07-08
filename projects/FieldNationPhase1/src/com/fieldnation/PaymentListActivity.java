@@ -26,16 +26,23 @@ public class PaymentListActivity extends DrawerActivity {
 
 		addActionBarAndDrawer(R.id.container);
 
-		_listView.setAdapter(getAdapter());
+	}
 
+	@Override
+	protected void onResume() {
+		_listView.setAdapter(getAdapter());
+		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 
-		if (_adapter != null)
+		if (_adapter != null) {
 			_adapter.onStop();
+			_adapter = null;
+		}
+
 	}
 
 	/*-*********************************-*/

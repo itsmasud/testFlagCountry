@@ -83,6 +83,9 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
 		try {
+			if (!_dataSelection.allowCache())
+				allowCache = false;
+
 			getContext().startService(
 					(Intent) _rpcMethod.invoke(_workorderService, resultCode,
 							page, allowCache));

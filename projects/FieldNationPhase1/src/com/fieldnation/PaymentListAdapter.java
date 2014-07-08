@@ -58,6 +58,6 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
 		getContext().startService(
-				_service.getAll(resultCode, page + 1, allowCache));
+				_service.getAll(resultCode, page, allowCache));
 	}
 }

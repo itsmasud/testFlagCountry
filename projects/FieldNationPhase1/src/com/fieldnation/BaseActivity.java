@@ -31,11 +31,12 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	// Data
 	GlobalState _gs;
-	private Account _account;
+	private Account _account = null;
 	private boolean _authenticating = false;
 
 	// Services
 	private AccountManager _accountManager;
+	private Handler _handler = new Handler();
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -89,7 +90,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 				Log.v(TAG, "requestAuthentication() asking for account token");
 				AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
 						_account, _gs.accountType, null, BaseActivity.this,
-						null, new Handler());
+						null, _handler);
 				client.waitForFuture(future);
 			}
 		}
@@ -122,11 +123,15 @@ public abstract class BaseActivity extends ActionBarActivity {
 		public void onFail(Exception ex) {
 			// TODO stub onFail()
 			Log.v(TAG, "_futureWaitAsyncTaskListener.onFail()");
+			_authenticating = false;
 		}
 
 		@Override
 		public void onComplete(Bundle bundle) {
+			Log.v(TAG, "_futureWaitAsyncTaskListener.onComplete()");
 			String tokenString = bundle.getString("authtoken");
+
+			_authenticating = false;
 
 			if (tokenString == null) {
 				if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
@@ -137,8 +142,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 	};
 
 	private void getAccount() {
+		Log.v(TAG, "getAccount()");
 		if (_authenticating)
 			return;
+		Log.v(TAG, "getAccount() not authenticating");
 
 		_authenticating = true;
 		if (_accountManager == null)

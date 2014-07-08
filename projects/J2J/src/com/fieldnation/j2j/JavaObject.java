@@ -131,4 +131,20 @@ public class JavaObject {
 
 		return result;
 	}
+
+	public String getUnderscoreFields() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Object: " + name + "\r\n");
+		Enumeration<String> keys = _fields.keys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			JavaField field = _fields.get(key);
+			if (field.name.contains("_")) {
+				sb.append("\t" + field.name + "\r\n");
+			}
+		}
+
+		return sb.toString();
+	}
 }
