@@ -12,11 +12,11 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "042278ec1147936ac5efaef9e553b588d34698af";
+	private static String authToken = "c1d4237183a4696a638dfe92ac469df19f7aa227";
 
 	public static void main(String[] args) {
 		// getWorkorders();
-		// getMessages();
+		getMessages();
 		// getPayments();
 	}
 
@@ -82,7 +82,9 @@ public class J2J {
 	}
 
 	private static void getMessages() {
-		String[] urls = new String[] { "/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=" };
+		String[] urls = new String[] {
+				"/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=",
+				"/api/rest/v1/profile/messages?access_token=" + authToken + "&page=" };
 		try {
 			JsonArray objects = new JsonArray();
 
