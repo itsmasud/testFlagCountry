@@ -740,6 +740,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 	}
 
 	public interface Listener {
-
+		
 	}
 }
