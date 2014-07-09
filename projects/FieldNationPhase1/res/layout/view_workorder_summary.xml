@@ -165,6 +165,13 @@
                         android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <TextView
+                        android:id="@+id/location_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/error"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
                         android:id="@+id/when_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -211,9 +218,10 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
                             android:layout_toRightOf="@+id/moneysymbol_textview"
+                            android:ellipsize="none"
                             android:gravity="right"
                             android:maxLines="1"
-                            android:text="@string/error"
+                            android:text="000000000"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textSize="24sp" />
 

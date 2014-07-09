@@ -46,8 +46,7 @@ public class Ws {
 	protected Ws() {
 	}
 
-	public Result httpRead(String method, String path, String options,
-			String contentType) throws MalformedURLException, IOException, ParseException {
+	public Result httpRead(String method, String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
 		if (!path.startsWith("/"))
 			path = "/" + path;
 
@@ -62,15 +61,13 @@ public class Ws {
 			if (DEBUG)
 				trustAllHosts();
 
-			conn = (HttpURLConnection) new URL(
-					"https://" + _accessToken.getHostname() + path + options).openConnection();
+			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
 			if (DEBUG)
 				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 
 		} else {
-			conn = (HttpURLConnection) new URL(
-					"http://" + _accessToken.getHostname() + path + options).openConnection();
+			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
 		}
 
 		conn.setRequestMethod(method);
@@ -98,8 +95,7 @@ public class Ws {
 		return httpRead("DELETE", path, options, contentType);
 	}
 
-	public Result httpWrite(String method, String path, String options,
-			byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
+	public Result httpWrite(String method, String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
 
 		if (!path.startsWith("/"))
 			path = "/" + path;
@@ -115,27 +111,29 @@ public class Ws {
 			if (DEBUG)
 				trustAllHosts();
 
-			conn = (HttpURLConnection) new URL(
-					"https://" + _accessToken.getHostname() + path + options).openConnection();
+			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
 			if (DEBUG)
 				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 		} else {
-			conn = (HttpURLConnection) new URL(
-					"http://" + _accessToken.getHostname() + path + options).openConnection();
+			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
 		}
 
 		conn.setRequestMethod(method);
 		conn.setRequestProperty("ContentType", contentType);
 
 		conn.setDoInput(true);
-		conn.setDoOutput(true);
+
+		if (data != null)
+			conn.setDoOutput(true);
 		conn.setReadTimeout(10000);
 
-		OutputStream out = conn.getOutputStream();
-		out.write(data);
-		out.flush();
-		out.close();
+		if (data != null) {
+			OutputStream out = conn.getOutputStream();
+			out.write(data);
+			out.flush();
+			out.close();
+		}
 
 		try {
 			return new Result(conn);
@@ -144,18 +142,15 @@ public class Ws {
 		}
 	}
 
-	public Result httpPost(String path, String options, String data,
-			String contentType) throws MalformedURLException, IOException, ParseException {
+	public Result httpPost(String path, String options, String data, String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpPost(path, options, data.getBytes(), contentType);
 	}
 
-	public Result httpPost(String path, String options, byte[] data,
-			String contentType) throws MalformedURLException, IOException, ParseException {
+	public Result httpPost(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpWrite("POST", path, options, data, contentType);
 	}
 
-	public Result httpPut(String path, String options, byte[] data,
-			String contentType) throws MalformedURLException, IOException, ParseException {
+	public Result httpPut(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpWrite("PUT", path, options, data, contentType);
 	}
 

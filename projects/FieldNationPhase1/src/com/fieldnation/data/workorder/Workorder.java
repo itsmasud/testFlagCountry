@@ -6,7 +6,7 @@ import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
 	@Json(name = "workorder_id")
-	private Integer _workorderId;
+	private Long _workorderId;
 	@Json(name = "location")
 	private Location _location;
 	@Json(name = "statusId")
@@ -77,7 +77,7 @@ public class Workorder {
 	public Workorder() {
 	}
 
-	public Integer getWorkorderId() {
+	public Long getWorkorderId() {
 		return _workorderId;
 	}
 

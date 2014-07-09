@@ -220,7 +220,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 			if (WebServiceConstants.ERROR_SESSION_INVALID.equals(errorType)) {
 				_gs.requestAuthentication(_authClient);
 			} else {
-				// TODO, this is a bit dumb, but it works
+				// TODO, convert to string resource
 				UndoBarController.show(_activity,
 						"Could not get data. Please check your network and try again.");
 				dispatchOnLoadComplete();
