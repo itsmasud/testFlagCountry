@@ -52,23 +52,28 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				allowCache);
 	}
 
-	public Intent decline(int resultCode, long workorderId, boolean allowCache) {
+	public Intent decline(int resultCode, long workorderId) {
 		return httpPost(resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/decline", null, "",
-				"application/x-www-form-urlencoded", allowCache);
+				"application/x-www-form-urlencoded", false);
 	}
 
-	public Intent request(int resultCode, long workorderId,
-			int expireInSeconds, boolean allowCache) {
+	public Intent request(int resultCode, long workorderId, int expireInSeconds) {
 		if (expireInSeconds == -1)
 			return httpPost(resultCode,
 					"/api/rest/v1/workorder/" + workorderId + "/request", null,
-					"", "application/x-www-form-urlencoded", allowCache);
+					"", "application/x-www-form-urlencoded", false);
 
 		return httpPost(resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/request", null,
 				"expiration=" + expireInSeconds,
-				"application/x-www-form-urlencoded", allowCache);
+				"application/x-www-form-urlencoded", false);
+	}
+
+	public Intent withdrawRequest(int resultCode, long workorderId) {
+		return httpGet(resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/withdraw-request",
+				false);
 	}
 
 	public Intent removeRequest(int resultCode, long workorderId,
@@ -79,24 +84,24 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	}
 
 	public Intent confirmAssignment(int resultCode, long workorderId,
-			long startTime, long endTime, boolean allowCache) {
+			long startTime, long endTime) {
 		return httpPost(
 				resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/assignment",
 				null,
 				"start_time=" + ISO8601.fromUTC(startTime) + "&end_time=" + ISO8601.fromUTC(endTime),
-				"application/x-www-form-urlencoded", allowCache);
+				"application/x-www-form-urlencoded", false);
 	}
 
 	// TODO look up viable reasons and categories
 	public Intent cancelAssignment(int resultCode, long workorderId,
-			String cancelCategory, String cancelReason, boolean allowCache) {
+			int cancelCategory, String cancelReason) {
 		return httpPost(
 				resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/cancel-assignment",
 				null,
 				"cancel_category=" + cancelCategory + "&cancel_reason=" + misc.escapeForURL(cancelReason),
-				"application/x-www-form-urlencoded", allowCache);
+				"application/x-www-form-urlencoded", false);
 	}
 
 	public Intent ready(int resultCode, long workorderId,
@@ -106,20 +111,18 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"application/x-www-form-urlencoded", allowCache);
 	}
 
-	public Intent checkin(int resultCode, long workorderId, long checkinTime,
-			boolean allowCache) {
+	public Intent checkin(int resultCode, long workorderId, long checkinTime) {
 		return httpPost(resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/checkin", null,
 				"checkin_time=" + ISO8601.fromUTC(checkinTime),
-				"application/x-www-form-urlencoded", allowCache);
+				"application/x-www-form-urlencoded", false);
 	}
 
-	public Intent checkout(int resultCode, long workorderId, long checkoutTime,
-			boolean allowCache) {
+	public Intent checkout(int resultCode, long workorderId, long checkoutTime) {
 		return httpPost(resultCode,
 				"/api/rest/v1/workorder/" + workorderId + "/checkin", null,
 				"checkout_time=" + ISO8601.fromUTC(checkoutTime),
-				"application/x-www-form-urlencoded", allowCache);
+				"application/x-www-form-urlencoded", false);
 	}
 
 	public Intent closingNotes(int resultCode, long workorderId, String notes,
