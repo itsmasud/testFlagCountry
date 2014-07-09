@@ -61,16 +61,11 @@ public class MarketActivity extends DrawerActivity {
 
 		@Override
 		public void onLoading() {
-			// TODO Method Stub: onLoading()
-			Log.v(TAG, "Method Stub: onLoading()");
-
 		}
 
 		@Override
 		public void onLoadComplete() {
 			_listView.onRefreshComplete();
-
-			UndoBarController.show(MarketActivity.this, "This is a test");
 		}
 	};
 

@@ -11,7 +11,6 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -20,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private static final String TAG = "PagingListAdapter";
@@ -225,6 +223,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 				// TODO, this is a bit dumb, but it works
 				UndoBarController.show(_activity,
 						"Could not get data. Please check your network and try again.");
+				dispatchOnLoadComplete();
 			}
 			notifyDataSetChanged();
 		}

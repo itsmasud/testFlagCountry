@@ -1,10 +1,10 @@
 package com.fieldnation;
 
+import java.text.ParseException;
 import java.util.Calendar;
 
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PaymentDetailActivity extends BaseActivity {
 	private static final String TAG = "PaymentDetailActivity";
@@ -43,10 +44,13 @@ public class PaymentDetailActivity extends BaseActivity {
 		}
 
 		try {
-			_paid = Serializer.unserializeObject(Payment.class, new JsonObject(
+			_paid = Payment.fromJson(new JsonObject(
 					intent.getStringExtra("PAYMENT_INFO")));
-		} catch (Exception e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
+		}
+		if (_paid == null) {
+			Toast.makeText(this, "Could not load payment!", Toast.LENGTH_LONG).show();
 			finish();
 		}
 

@@ -52,8 +52,6 @@ public class PaymentListActivity extends DrawerActivity {
 
 		@Override
 		public void onLoading() {
-			// TODO Method Stub: onLoading()
-			Log.v(TAG, "Method Stub: onLoading()");
 		}
 
 		@Override

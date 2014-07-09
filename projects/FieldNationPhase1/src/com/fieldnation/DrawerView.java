@@ -6,9 +6,8 @@ import java.util.Calendar;
 import com.fieldnation.R;
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
 import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -181,31 +180,29 @@ public class DrawerView extends RelativeLayout {
 			try {
 				JsonArray ja = new JsonArray(
 						new String(
-								resultData.getByteArray(PaymentService.KEY_RESPONSE_DATA)));
+								resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
 
 				for (int i = 0; i < ja.size(); i++) {
-					try {
-						Payment payment = Serializer.unserializeObject(
-								Payment.class, ja.getJsonObject(i));
+					Payment payment = Payment.fromJson(ja.getJsonObject(i));
 
-						long date = ISO8601.toUtc(payment.getDatePaid());
+					if (payment == null) {
+						continue;
+					}
 
-						if ("paid".equals(payment.getStatus())) {
-							if (date >= _lastPaidDate) {
-								_lastPaidDate = date;
-								_paidAmount = payment.getAmount();
-								_hasPaid = true;
-							}
-						} else {
-							if (date >= _lastEstimatedDate) {
-								_lastEstimatedDate = date;
-								_estimatedAmount = payment.getAmount();
-								_hasEstimated = true;
-							}
+					long date = ISO8601.toUtc(payment.getDatePaid());
+
+					if ("paid".equals(payment.getStatus())) {
+						if (date >= _lastPaidDate) {
+							_lastPaidDate = date;
+							_paidAmount = payment.getAmount();
+							_hasPaid = true;
 						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} else {
+						if (date >= _lastEstimatedDate) {
+							_lastEstimatedDate = date;
+							_estimatedAmount = payment.getAmount();
+							_hasEstimated = true;
+						}
 					}
 				}
 
