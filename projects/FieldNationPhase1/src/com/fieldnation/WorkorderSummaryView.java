@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.cocosw.undobar.UndoBarController;
+import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
 import com.fieldnation.data.workorder.Label;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
@@ -15,11 +17,13 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -90,6 +94,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private WorkorderService _dataService;
 	private MyAuthClient _authClient;
 	private int _statusDisplayState = 0;
+	private Listener _listener = null;
 
 	// status colors lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = {
@@ -183,6 +188,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+
 	private View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -192,25 +198,49 @@ public class WorkorderSummaryView extends RelativeLayout {
 				return;
 			}
 
-			switch (_notInterestedAction) {
-			case NOT_INTERESTED_ACTION_DECLINE:
-				getContext().startService(
-						_dataService.decline(NOT_INTERESTED_ACTION_DECLINE, _workorder.getWorkorderId()));
-
-				break;
-			case NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
-				getContext().startService(
-						_dataService.withdrawRequest(NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
-								_workorder.getWorkorderId()));
-
-				break;
-			case NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
-				// TODO, get reason input from user
-				getContext().startService(
-						_dataService.cancelAssignment(NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
-								_workorder.getWorkorderId(), 1, "Cause I said So"));
-				break;
+			if (_listener != null) {
+				// TODO trigger animation before removing
+				_listener.startRemove(_workorder);
 			}
+
+			UndoBarController.show((Activity) getContext(), "Tap to Undo", new AdvancedUndoListener() {
+				Workorder workorder = _workorder;
+
+				@Override
+				public void onUndo(Parcelable token) {
+					if (_listener != null) {
+						_listener.cancelRemove(workorder);
+					}
+				}
+
+				@Override
+				public void onHide(Parcelable token) {
+
+					switch (_notInterestedAction) {
+					case NOT_INTERESTED_ACTION_DECLINE:
+						getContext().startService(
+								_dataService.decline(NOT_INTERESTED_ACTION_DECLINE, _workorder.getWorkorderId()));
+
+						break;
+					case NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
+						getContext().startService(
+								_dataService.withdrawRequest(NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
+										_workorder.getWorkorderId()));
+
+						break;
+					case NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
+						// TODO, get reason input from user
+						getContext().startService(
+								_dataService.cancelAssignment(NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
+										_workorder.getWorkorderId(), 1, "Cause I said So"));
+						break;
+					}
+				}
+
+				@Override
+				public void onClear() {
+				}
+			});
 		}
 	};
 
@@ -316,15 +346,14 @@ public class WorkorderSummaryView extends RelativeLayout {
 				// TODO BUTTON_ACTION_REQUEST
 				break;
 			case NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
-				// TODO NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT
 				break;
 			case NOT_INTERESTED_ACTION_DECLINE:
-				// TODO NOT_INTERESTED_ACTION_DECLINE
 				break;
 			case NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
-				// TODO NOT_INTERESTED_ACTION_WITHDRAW_REQUEST
 				break;
 			}
+			if (_listener != null)
+				_listener.notifyDataSetChanged();
 			Toast.makeText(getContext(), "Success!", Toast.LENGTH_LONG).show();
 
 		}
@@ -344,6 +373,10 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_workorder = workorder;
 		_dataView = workorderDataSelector;
 		refresh();
+	}
+
+	public Workorder getWorkorder() {
+		return _workorder;
 	}
 
 	/*-*****************************************-*/
@@ -369,6 +402,10 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 	public void setNotInterestedEnabled(boolean enabled) {
 		this.setLongClickable(enabled);
+	}
+
+	public void setWorkorderSummaryListener(Listener listener) {
+		_listener = listener;
 	}
 
 	/*-*********************************-*/
@@ -670,8 +707,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 				if (label.getLabelId() == 12) {
 					has12 = true;
 				}
-				if (label.getLabelId() == 12) {
-					has12 = true;
+				if (label.getLabelId() == 13) {
+					has13 = true;
 				}
 			}
 
@@ -843,6 +880,12 @@ public class WorkorderSummaryView extends RelativeLayout {
 	}
 
 	public interface Listener {
+		public void startRemove(Workorder wo);
 
+		public void cancelRemove(Workorder wo);
+
+		public void finishRemove(Workorder wo);
+
+		public void notifyDataSetChanged();
 	}
 }
