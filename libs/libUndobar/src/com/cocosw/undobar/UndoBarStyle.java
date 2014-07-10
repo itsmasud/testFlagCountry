@@ -118,11 +118,13 @@ public class UndoBarStyle implements Parcelable {
     }
 
     public static final Parcelable.Creator<UndoBarStyle> CREATOR = new Parcelable.Creator<UndoBarStyle>() {
-        public UndoBarStyle createFromParcel(Parcel source) {
+        @Override
+		public UndoBarStyle createFromParcel(Parcel source) {
             return new UndoBarStyle(source);
         }
 
-        public UndoBarStyle[] newArray(int size) {
+        @Override
+		public UndoBarStyle[] newArray(int size) {
             return new UndoBarStyle[size];
         }
     };

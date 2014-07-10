@@ -2,7 +2,6 @@ package com.fieldnation.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,22 +13,19 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.os.Parcel;
 
 public class misc {
 	private static final String HEXES = "0123456789ABCDEF";
 	private static NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
-	private static NumberFormat _normalNumber = NumberFormat.getIntegerInstance();
+
+	// private static NumberFormat _normalNumber =
+	// NumberFormat.getIntegerInstance();
 
 	public static String toCurrency(double money) {
 		return _currencyFormat.format(money);
