@@ -65,14 +65,10 @@ public class MyWorkActivity extends DrawerActivity {
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		ActionBar.Tab tab1 = actionbar.newTab().setText(
-				getString(R.string.my_work_category1));
-		ActionBar.Tab tab2 = actionbar.newTab().setText(
-				getString(R.string.my_work_category2));
-		ActionBar.Tab tab3 = actionbar.newTab().setText(
-				getString(R.string.my_work_category3));
-		ActionBar.Tab tab4 = actionbar.newTab().setText(
-				getString(R.string.my_work_category4));
+		ActionBar.Tab tab1 = actionbar.newTab().setText(R.string.my_work_category1);
+		ActionBar.Tab tab2 = actionbar.newTab().setText(R.string.my_work_category2);
+		ActionBar.Tab tab3 = actionbar.newTab().setText(R.string.my_work_category3);
+		ActionBar.Tab tab4 = actionbar.newTab().setText(R.string.my_work_category4);
 
 		tab1.setTabListener(_tabListener);
 		tab2.setTabListener(_tabListener);
@@ -91,17 +87,14 @@ public class MyWorkActivity extends DrawerActivity {
 	}
 
 	@Override
-	public ActionBarDrawerToggle createActionBarDrawerToggle(
-			DrawerLayout drawerLayout) {
-		return new ActionBarDrawerToggle(this, drawerLayout,
-				R.drawable.ic_drawer, R.string.launcher_open,
+	public ActionBarDrawerToggle createActionBarDrawerToggle(DrawerLayout drawerLayout) {
+		return new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.launcher_open,
 				R.string.launcher_open) {
 
 			@Override
 			public void onDrawerStateChanged(int newState) {
 				if (newState != 0) {
-					getSupportActionBar().setNavigationMode(
-							ActionBar.NAVIGATION_MODE_STANDARD);
+					getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 					supportInvalidateOptionsMenu();
 				}
 				super.onDrawerStateChanged(newState);
@@ -110,8 +103,7 @@ public class MyWorkActivity extends DrawerActivity {
 			@Override
 			public void onDrawerSlide(View drawerView, float slideOffset) {
 				if (slideOffset == 0.0) {
-					getSupportActionBar().setNavigationMode(
-							ActionBar.NAVIGATION_MODE_TABS);
+					getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 					supportInvalidateOptionsMenu();
 				}
 				super.onDrawerSlide(drawerView, slideOffset);

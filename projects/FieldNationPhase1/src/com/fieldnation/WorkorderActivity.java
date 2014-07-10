@@ -4,13 +4,19 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 public class WorkorderActivity extends BaseActivity {
 	private static final String TAG = "WorkorderActivity";
@@ -72,8 +78,7 @@ public class WorkorderActivity extends BaseActivity {
 			_username = username;
 			_authToken = authToken;
 
-			_woRpc = new WorkorderService(WorkorderActivity.this, username,
-					authToken, _rpcReciever);
+			_woRpc = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReciever);
 
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
 		}
@@ -86,8 +91,7 @@ public class WorkorderActivity extends BaseActivity {
 		}
 	}
 
-	private WebServiceResultReceiver _rpcReciever = new WebServiceResultReceiver(
-			new Handler()) {
+	private WebServiceResultReceiver _rpcReciever = new WebServiceResultReceiver(new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
@@ -95,9 +99,8 @@ public class WorkorderActivity extends BaseActivity {
 			Log.v(TAG, resultData.toString());
 
 			try {
-				_detailEditText.setText(new JsonObject(
-						new String(
-								resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))).display());
+				_detailEditText.setText(new JsonObject(new String(
+						resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))).display());
 
 			} catch (Exception ex) {
 				ex.printStackTrace();

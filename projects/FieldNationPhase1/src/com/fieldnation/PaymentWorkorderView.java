@@ -130,7 +130,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 		}
 		_basisTextView.setText(misc.capitalize(payment.getPayMethod()));
 		_cashTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));
-		_statusTextView.setText(getContext().getString(R.string.processing));
+		_statusTextView.setText(R.string.processing);
 
 	}
 }

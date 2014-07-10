@@ -226,6 +226,10 @@ public class UndoBarController extends LinearLayout {
 		return UndoBarController.show(activity, message, listener, null, false, UndoBarController.UNDOSTYLE);
 	}
 
+	public static UndoBarController show(final Activity activity, final int resId, final UndoListener listener) {
+		return UndoBarController.show(activity, activity.getString(resId), listener);
+	}
+
 	public static UndoBarController show(final Activity activity, final CharSequence message) {
 		return UndoBarController.show(activity, message, null, null, false, UndoBarController.MESSAGESTYLE);
 	}

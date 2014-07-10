@@ -74,7 +74,6 @@ public class DataCacheSqlHelper extends SQLiteOpenHelper {
 
 	public DataCacheSqlHelper(Context context) {
 		super(context, TABLE_NAME + ".db", null, TABLE_VER);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

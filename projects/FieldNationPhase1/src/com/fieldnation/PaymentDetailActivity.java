@@ -49,7 +49,7 @@ public class PaymentDetailActivity extends BaseActivity {
 			e.printStackTrace();
 		}
 		if (_paid == null) {
-			Toast.makeText(this, this.getString(R.string.could_not_load_payment), Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.could_not_load_payment, Toast.LENGTH_LONG).show();
 			finish();
 		}
 

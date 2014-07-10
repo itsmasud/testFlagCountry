@@ -192,7 +192,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO present undo toast before calling these
 			if (_dataService == null) {
 				Toast.makeText(getContext(), getContext().getString(R.string.network_not_ready), Toast.LENGTH_LONG).show();
 				return;
@@ -203,45 +202,44 @@ public class WorkorderSummaryView extends RelativeLayout {
 				_listener.startRemove(_workorder);
 			}
 
-			UndoBarController.show((Activity) getContext(), getContext().getString(R.string.tap_to_undo),
-					new AdvancedUndoListener() {
-						Workorder workorder = _workorder;
+			UndoBarController.show((Activity) getContext(), R.string.tap_to_undo, new AdvancedUndoListener() {
+				Workorder workorder = _workorder;
 
-						@Override
-						public void onUndo(Parcelable token) {
-							if (_listener != null) {
-								_listener.cancelRemove(workorder);
-							}
-						}
+				@Override
+				public void onUndo(Parcelable token) {
+					if (_listener != null) {
+						_listener.cancelRemove(workorder);
+					}
+				}
 
-						@Override
-						public void onHide(Parcelable token) {
+				@Override
+				public void onHide(Parcelable token) {
 
-							switch (_notInterestedAction) {
-							case NOT_INTERESTED_ACTION_DECLINE:
-								getContext().startService(
-										_dataService.decline(NOT_INTERESTED_ACTION_DECLINE, _workorder.getWorkorderId()));
+					switch (_notInterestedAction) {
+					case NOT_INTERESTED_ACTION_DECLINE:
+						getContext().startService(
+								_dataService.decline(NOT_INTERESTED_ACTION_DECLINE, _workorder.getWorkorderId()));
 
-								break;
-							case NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
-								getContext().startService(
-										_dataService.withdrawRequest(NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
-												_workorder.getWorkorderId()));
+						break;
+					case NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
+						getContext().startService(
+								_dataService.withdrawRequest(NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
+										_workorder.getWorkorderId()));
 
-								break;
-							case NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
-								// TODO, get reason input from user
-								getContext().startService(
-										_dataService.cancelAssignment(NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
-												_workorder.getWorkorderId(), 1, "Cause I said So"));
-								break;
-							}
-						}
+						break;
+					case NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
+						// TODO, get reason input from user
+						getContext().startService(
+								_dataService.cancelAssignment(NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
+										_workorder.getWorkorderId(), 1, "Cause I said So"));
+						break;
+					}
+				}
 
-						@Override
-						public void onClear() {
-						}
-					});
+				@Override
+				public void onClear() {
+				}
+			});
 		}
 	};
 
@@ -278,7 +276,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		@Override
 		public void onClick(View v) {
 			if (_dataService == null) {
-				Toast.makeText(getContext(), getContext().getString(R.string.network_not_ready), Toast.LENGTH_LONG).show();
+				Toast.makeText(getContext(), R.string.network_not_ready, Toast.LENGTH_LONG).show();
 				return;
 			}
 
@@ -355,7 +353,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			}
 			if (_listener != null)
 				_listener.notifyDataSetChanged();
-			Toast.makeText(getContext(), getContext().getString(R.string.success), Toast.LENGTH_LONG).show();
+			Toast.makeText(getContext(), R.string.success, Toast.LENGTH_LONG).show();
 
 		}
 
@@ -363,7 +361,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, errorType);
 			Log.v(TAG, resultData.toString());
-			Toast.makeText(getContext(), getContext.getString(R.string.try_again), Toast.LENGTH_LONG).show();
+			Toast.makeText(getContext(), R.string.try_again, Toast.LENGTH_LONG).show();
 		}
 	};
 

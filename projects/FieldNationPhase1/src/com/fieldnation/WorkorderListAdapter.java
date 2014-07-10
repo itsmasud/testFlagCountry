@@ -91,6 +91,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 		@Override
 		public void notifyDataSetChanged() {
+			_startRemoveTable.clear();
 			WorkorderListAdapter.this.notifyDataSetChanged();
 		}
 	};

@@ -20,6 +20,9 @@ import java.util.zip.GZIPOutputStream;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcel;
 
@@ -30,6 +33,44 @@ public class misc {
 
 	public static String toCurrency(double money) {
 		return _currencyFormat.format(money);
+	}
+
+	/**
+	 * removes a circle from the source bitmap that is exactly centered
+	 * 
+	 * @param source
+	 * @return
+	 */
+	public static Bitmap extractCircle(Bitmap source) {
+		int[] pixels = new int[source.getWidth() * source.getHeight()];
+
+		source.getPixels(pixels, 0, source.getWidth(), 0, 0, source.getWidth(), source.getHeight());
+
+		int size = Math.min(source.getWidth(), source.getHeight());
+		int cx = source.getWidth() / 2;
+		int cy = source.getHeight() / 2;
+		int xoff = (source.getWidth() - size) / 2;
+		int yoff = (source.getHeight() - size) / 2;
+
+		int[] destpix = new int[size * size];
+
+		int dist2 = Math.min(cx, cy);
+		dist2 = dist2 * dist2;
+
+		int dx = 0;
+		int dy = 0;
+
+		for (int x = xoff; x < source.getWidth() - xoff; x++) {
+			for (int y = yoff; y < source.getHeight() - yoff; y++) {
+				dx = cx - x;
+				dy = cy - y;
+				if (dx * dx + dy * dy < dist2) {
+					destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
+				}
+			}
+		}
+
+		return Bitmap.createBitmap(destpix, size, size, Config.ARGB_8888);
 	}
 
 	public static boolean isEmptyOrNull(String str) {
@@ -95,8 +136,7 @@ public class misc {
 	// return obj;
 	// }
 
-	public static String cleanRequestPath(String applicationPath,
-			String requestPath) {
+	public static String cleanRequestPath(String applicationPath, String requestPath) {
 		if (requestPath.startsWith(applicationPath)) {
 			requestPath = requestPath.replace(applicationPath, "");
 		}
@@ -360,8 +400,7 @@ public class misc {
 		final StringBuilder hex = new StringBuilder(2 * length);
 		for (int i = 0; i < length; i++) {
 			byte b = raw[i + start];
-			hex.append(HEXES.charAt((b & 0xF0) >> 4)).append(
-					HEXES.charAt((b & 0x0F)));
+			hex.append(HEXES.charAt((b & 0xF0) >> 4)).append(HEXES.charAt((b & 0x0F)));
 		}
 		return hex.toString();
 	}
@@ -378,8 +417,7 @@ public class misc {
 		for (int i = 0; i < length; i++) {
 			byte b = raw[i];
 			hex.append("0x");
-			hex.append(HEXES.charAt((b & 0xF0) >> 4)).append(
-					HEXES.charAt((b & 0x0F)));
+			hex.append(HEXES.charAt((b & 0xF0) >> 4)).append(HEXES.charAt((b & 0x0F)));
 			hex.append(",");
 		}
 		return hex.toString();
@@ -570,8 +608,7 @@ public class misc {
 		return Data;
 	}
 
-	public static byte[] readAllFromStream(InputStream in, int packetSize,
-			int expectedSize, long timeoutInMilli) throws IOException {
+	public static byte[] readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli) throws IOException {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
 		int read = 0;
@@ -648,8 +685,8 @@ public class misc {
 		return null;
 	}
 
-	public static void copyStream(InputStream source, OutputStream dest,
-			int packetSize, int expectedSize, long timeoutInMilli) throws IOException {
+	public static void copyStream(InputStream source, OutputStream dest, int packetSize, int expectedSize,
+			long timeoutInMilli) throws IOException {
 		int read = 0;
 		int pos = 0;
 		int size = expectedSize;
@@ -746,8 +783,7 @@ public class misc {
 		}
 		final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
 		int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-		return new DecimalFormat("#,##0.##").format(size / Math.pow(1024,
-				digitGroups)) + " " + units[digitGroups];
+		return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
 	public static String getStackTrace(Exception e) {
@@ -763,18 +799,15 @@ public class misc {
 	}
 
 	// Return a substring between the bedingString and endString
-	public static String sliceOut(String beginString, String endString,
-			String sliceMe) throws Exception {
+	public static String sliceOut(String beginString, String endString, String sliceMe) throws Exception {
 		int start = sliceMe.indexOf(beginString);
 		int stop = sliceMe.indexOf(endString, (start + 1));
 
 		if (-1 == start) {
-			throw new Exception(
-					"Could not find beginString(" + beginString + ") in " + sliceMe);
+			throw new Exception("Could not find beginString(" + beginString + ") in " + sliceMe);
 		}
 		if (-1 == stop) {
-			throw new Exception(
-					"Could not find endString(" + endString + ") in " + sliceMe);
+			throw new Exception("Could not find endString(" + endString + ") in " + sliceMe);
 		}
 
 		return sliceMe.substring((start + beginString.length()), stop);
@@ -784,8 +817,7 @@ public class misc {
 		return convertSecondsToDHMS(milliseconds / 1000, false);
 	}
 
-	public static String convertMSToDHMS(long milliseconds,
-			boolean only_available) {
+	public static String convertMSToDHMS(long milliseconds, boolean only_available) {
 		return convertSecondsToDHMS(milliseconds / 1000, only_available);
 	}
 
@@ -793,8 +825,7 @@ public class misc {
 		return convertSecondsToDHMS(Seconds, false);
 	}
 
-	public static String convertSecondsToDHMS(long Seconds,
-			boolean only_available) {
+	public static String convertSecondsToDHMS(long Seconds, boolean only_available) {
 		String result = "";
 
 		String days = String.valueOf(Seconds / 86400);
