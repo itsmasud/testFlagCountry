@@ -355,6 +355,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_titleTextView.setVisibility(GONE);
 			_basisTextView.setVisibility(GONE);
 			_cashTextView.setVisibility(GONE);
+			_paymentLayout.setVisibility(GONE);
 			_bundleSeparator.setVisibility(VISIBLE);
 		} else {
 			_bundleLayout.setVisibility(GONE);
@@ -362,6 +363,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_titleTextView.setVisibility(VISIBLE);
 			_basisTextView.setVisibility(VISIBLE);
 			_cashTextView.setVisibility(VISIBLE);
+			_paymentLayout.setVisibility(VISIBLE);
 		}
 	}
 
