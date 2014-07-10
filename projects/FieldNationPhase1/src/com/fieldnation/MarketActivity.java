@@ -1,9 +1,6 @@
 package com.fieldnation;
 
-import com.cocosw.undobar.UndoBarController;
-
 import android.os.Bundle;
-import android.util.Log;
 
 /**
  * Displays all the work orders in the market that are available to this user

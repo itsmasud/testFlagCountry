@@ -1,6 +1,5 @@
 package com.fieldnation;
 
-import android.util.Log;
 import android.os.Bundle;
 
 public class MessageListActivity extends BaseActivity {

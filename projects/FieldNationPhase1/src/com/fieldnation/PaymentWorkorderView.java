@@ -49,8 +49,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 
 	public PaymentWorkorderView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(getContext()).inflate(
-				R.layout.view_workorder_summary, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_summary, this);
 
 		if (isInEditMode())
 			return;
@@ -89,8 +88,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 		setIsBundle(false);
 
 		_statusLayout.setBackgroundResource(R.drawable.wosum_status_3);
-		_statusTextView.setTextColor(getContext().getResources().getColor(
-				R.color.wosumStatusLabel3));
+		_statusTextView.setTextColor(getContext().getResources().getColor(R.color.wosumStatusLabel3));
 
 	}
 
@@ -132,7 +130,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 		}
 		_basisTextView.setText(misc.capitalize(payment.getPayMethod()));
 		_cashTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));
-		_statusTextView.setText("Processing");
+		_statusTextView.setText(getContext().getString(R.string.processing));
 
 	}
 }

@@ -44,13 +44,12 @@ public class PaymentDetailActivity extends BaseActivity {
 		}
 
 		try {
-			_paid = Payment.fromJson(new JsonObject(
-					intent.getStringExtra("PAYMENT_INFO")));
+			_paid = Payment.fromJson(new JsonObject(intent.getStringExtra("PAYMENT_INFO")));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		if (_paid == null) {
-			Toast.makeText(this, "Could not load payment!", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, this.getString(R.string.could_not_load_payment), Toast.LENGTH_LONG).show();
 			finish();
 		}
 
@@ -77,7 +76,7 @@ public class PaymentDetailActivity extends BaseActivity {
 				when = misc.formatDate(cal);
 
 				_dateTextView.setVisibility(View.VISIBLE);
-				_dateTextView.setText("Estimated " + when);
+				_dateTextView.setText(this.getString(R.string.estimated) + " " + when);
 			} else {
 				_dateTextView.setVisibility(View.GONE);
 			}
@@ -86,7 +85,7 @@ public class PaymentDetailActivity extends BaseActivity {
 			_dateTextView.setVisibility(View.GONE);
 		}
 
-		_workorderCountTextView.setText(_paid.getWorkorders().length + " Work Orders");
+		_workorderCountTextView.setText(_paid.getWorkorders().length + " " + this.getString(R.string.work_orders));
 		// TODO add fees lookup here
 
 	}

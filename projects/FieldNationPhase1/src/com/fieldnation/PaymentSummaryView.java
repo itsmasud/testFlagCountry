@@ -45,8 +45,7 @@ public class PaymentSummaryView extends RelativeLayout {
 
 	public PaymentSummaryView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_payment_summary,
-				this);
+		LayoutInflater.from(context).inflate(R.layout.view_payment_summary, this);
 
 		if (isInEditMode())
 			return;
@@ -65,8 +64,7 @@ public class PaymentSummaryView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent(getContext(),
-					PaymentDetailActivity.class);
+			Intent intent = new Intent(getContext(), PaymentDetailActivity.class);
 			intent.putExtra("PAYMENT_INFO", _paymentInfo.toJson().toString());
 			getContext().startActivity(intent);
 		}
@@ -83,15 +81,15 @@ public class PaymentSummaryView extends RelativeLayout {
 	private void refresh() {
 		// amount
 		try {
-			_amountTextView.setText(misc.toCurrency(_paymentInfo.getAmount()).substring(
-					1));
+			_amountTextView.setText(misc.toCurrency(_paymentInfo.getAmount()).substring(1));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_amountTextView.setText("NA");
 		}
 		// workorders.size()
 		try {
-			_descriptionTextView.setText(_paymentInfo.getWorkorders().length + " Work Orders");
+			_descriptionTextView.setText(_paymentInfo.getWorkorders().length + " " + getContext().getString(
+					R.string.work_orders));
 			// TODO figure out where to get the fees
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -132,7 +130,7 @@ public class PaymentSummaryView extends RelativeLayout {
 			String d = _paymentInfo.getDatePaid();
 			Calendar cal = ISO8601.toCalendar(d);
 
-			_dateTextView.setText("Estimated " + misc.formatDate(cal));
+			_dateTextView.setText(getContext().getString(R.string.estimated) + " " + misc.formatDate(cal));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_dateTextView.setText("");

@@ -27,6 +27,14 @@
     <string name="refresh">Refresh</string>
     <string name="money">$</string>
     <string name="error">ERROR!</string>
+    <string name="could_not_load_payment">Could not load payment!</string>
+    <string name="estimated">Estimated</string>
+    <string name="work_orders">Work Orders</string>
+    <string name="processing">Processing</string>
+    <string name="network_not_ready">Cannot yet make request, please wait.</string>
+    <string name="tap_to_undo">Tap to Undo</string>
+    <string name="success">Success!</string>
+    <string name="try_again">Action failed, please try again</string>
     <!-- /general strings -->
 
 

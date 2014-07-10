@@ -1,7 +1,6 @@
 package com.fieldnation;
 
 import android.os.Bundle;
-import android.util.Log;
 
 public class PaymentListActivity extends DrawerActivity {
 	private static final String TAG = "PaymentListActivity";
