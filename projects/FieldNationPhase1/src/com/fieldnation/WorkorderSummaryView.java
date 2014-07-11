@@ -10,6 +10,7 @@ import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
 import com.fieldnation.data.workorder.Label;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
@@ -514,26 +515,29 @@ public class WorkorderSummaryView extends RelativeLayout {
 		}
 		// when scheduledTimeStart/scheduledTimeEnd
 		try {
-			if (_workorder.getScheduledTimeStart() != null) {
-				String when = "";
-				Calendar cal = null;
-				cal = ISO8601.toCalendar(_workorder.getScheduledTimeStart());
-				when = misc.formatDate(cal);
+			if (_workorder.getSchedule() != null) {
+				Schedule schedule = _workorder.getSchedule();
+				if (!misc.isEmptyOrNull(schedule.getStartTime())) {
+					String when = "";
+					Calendar cal = null;
+					cal = ISO8601.toCalendar(schedule.getStartTime());
+					when = misc.formatDate(cal);
 
-				if (!misc.isEmptyOrNull(_workorder.getScheduledTimeEnd())) {
-					cal = ISO8601.toCalendar(_workorder.getScheduledTimeEnd());
-					if (cal.get(Calendar.YEAR) > 2000) {
-						when += " - ";
-						when += misc.formatDate(cal);
+					if (!misc.isEmptyOrNull(schedule.getEndTime())) {
+						cal = ISO8601.toCalendar(schedule.getEndTime());
+						if (cal.get(Calendar.YEAR) > 2000) {
+							when += " - ";
+							when += misc.formatDate(cal);
+						}
 					}
+					when += " @ ";
+
+					when += (cal.get(Calendar.HOUR) + 1) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
+
+					_whenTextView.setText(when);
+				} else {
+					_whenTextView.setVisibility(GONE);
 				}
-				when += " @ ";
-
-				when += (cal.get(Calendar.HOUR) + 1) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
-
-				_whenTextView.setText(when);
-			} else {
-				_whenTextView.setVisibility(GONE);
 			}
 		} catch (Exception ex) {
 			// ex.printStackTrace();

@@ -7,10 +7,10 @@ import com.fieldnation.json.annotations.Json;
 public class Tasks {
 	@Json(name = "task_id")
 	private Integer _taskId;
+	@Json(name="type")
+	private String _type;
 	@Json(name = "completed")
 	private Boolean _completed;
-	@Json(name = "type")
-	private String _type;
 	@Json(name = "dateCompleted")
 	private String _dateCompleted;
 
@@ -21,12 +21,12 @@ public class Tasks {
 		return _taskId;
 	}
 
-	public Boolean getCompleted() {
-		return _completed;
+	public String getType(){
+		return _type;
 	}
 
-	public String getType() {
-		return _type;
+	public Boolean getCompleted() {
+		return _completed;
 	}
 
 	public String getDateCompleted() {

@@ -12,16 +12,15 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "c1d4237183a4696a638dfe92ac469df19f7aa227";
+	private static String authToken = "3d03292b8d66e9dec171268341e6ae3bdd47d176";
 
 	public static void main(String[] args) {
-		// getWorkorders();
-		getMessages();
+		getWorkorders();
+		// getMessages();
 		// getPayments();
 	}
 
-	private static void dumpClasses(JsonArray objects, String path,
-			String packageName, String rootName) throws ParseException, IOException {
+	private static void dumpClasses(JsonArray objects, String path, String packageName, String rootName) throws ParseException, IOException {
 		new File(path).mkdirs();
 
 		JavaObject.cleanup();
@@ -34,8 +33,7 @@ public class J2J {
 		while (javaObjects.hasMoreElements()) {
 			JavaObject obj = javaObjects.nextElement();
 
-			FileOutputStream fout = new FileOutputStream(
-					path + "/" + obj.getClassName() + ".java");
+			FileOutputStream fout = new FileOutputStream(path + "/" + obj.getClassName() + ".java");
 
 			fout.write(obj.toString().getBytes());
 			fout.close();
@@ -72,8 +70,7 @@ public class J2J {
 			}
 
 			System.out.println("Building Class Structure");
-			dumpClasses(objects, "c:/j2j/payments",
-					"com.fieldnation.data.payments", "Payment");
+			dumpClasses(objects, "c:/j2j/payments", "com.fieldnation.data.payments", "Payment");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -102,8 +99,7 @@ public class J2J {
 			}
 
 			System.out.println("Building Class Structure");
-			dumpClasses(objects, "c:/j2j/messages",
-					"com.fieldnation.data.messages", "Message");
+			dumpClasses(objects, "c:/j2j/messages", "com.fieldnation.data.messages", "Message");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -163,8 +159,7 @@ public class J2J {
 			objects.merge(details);
 
 			System.out.println("Building Class Structure");
-			dumpClasses(objects, "c:/j2j/workorder",
-					"com.fieldnation.data.workorder", "Workorder");
+			dumpClasses(objects, "c:/j2j/workorder", "com.fieldnation.data.workorder", "Workorder");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

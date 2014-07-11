@@ -43,12 +43,8 @@ public class Workorder {
 	private Discounts[] _discounts;
 	@Json(name = "customerPoliciesProcedures")
 	private String _customerPoliciesProcedures;
-	@Json(name = "scheduledTimeStart")
-	private String _scheduledTimeStart;
 	@Json(name = "tasks")
 	private Tasks[] _tasks;
-	@Json(name = "scheduledTimeEnd")
-	private String _scheduledTimeEnd;
 	@Json(name = "company_name")
 	private String _companyName;
 	@Json(name = "additionalExpenses")
@@ -153,16 +149,8 @@ public class Workorder {
 		return _customerPoliciesProcedures;
 	}
 
-	public String getScheduledTimeStart() {
-		return _scheduledTimeStart;
-	}
-
 	public Tasks[] getTasks() {
 		return _tasks;
-	}
-
-	public String getScheduledTimeEnd() {
-		return _scheduledTimeEnd;
 	}
 
 	public String getCompanyName() {
