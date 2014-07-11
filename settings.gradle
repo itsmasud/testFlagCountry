@@ -1,4 +1,3 @@
-include ':libs:appcompat'
 include ':libs:libUndobar'
 include ':libs:libJson'
 include ':libs:libUtils'
