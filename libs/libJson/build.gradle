@@ -1,13 +1,7 @@
 apply plugin: 'java'
 
-repositories{
-	flatDir {
-		dirs 'jars'
-	}
-}
-
 dependencies {
-   compile name: 'android-v7'
+   compile files: 'jars/android-v7.jar'
 }
 
 sourceSets {
