@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.os.ResultReceiver;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebResourceResponse;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,18 +49,18 @@ import android.widget.Toast;
  * 
  */
 public class WorkorderSummaryView extends RelativeLayout {
-	private static final String TAG = "WorkorderSummaryView";
+	static final String TAG = "WorkorderSummaryView";
 
-	private static final int BUTTON_ACTION_NONE = 0;
-	private static final int BUTTON_ACTION_REQUEST = 1;
-	private static final int BUTTON_ACTION_ASSIGNMENT = 2;
-	private static final int BUTTON_ACTION_CHECKIN = 3;
-	private static final int BUTTON_ACTION_CHECKOUT = 4;
+	public static final int BUTTON_ACTION_NONE = 0;
+	public static final int BUTTON_ACTION_REQUEST = 1;
+	public static final int BUTTON_ACTION_ASSIGNMENT = 2;
+	public static final int BUTTON_ACTION_CHECKIN = 3;
+	public static final int BUTTON_ACTION_CHECKOUT = 4;
 
-	private static final int NOT_INTERESTED_ACTION_NONE = 0;
-	private static final int NOT_INTERESTED_ACTION_DECLINE = 101;
-	private static final int NOT_INTERESTED_ACTION_WITHDRAW_REQUEST = 102;
-	private static final int NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT = 103;
+	public static final int NOT_INTERESTED_ACTION_NONE = 0;
+	public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
+	public static final int NOT_INTERESTED_ACTION_WITHDRAW_REQUEST = 102;
+	public static final int NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT = 103;
 
 	// UI
 	private RelativeLayout _statusLayout;
@@ -93,11 +95,13 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private WorkorderDataSelector _dataView = null;
 	private Workorder _workorder;
 	private int _buttonAction = 0;
-	private int _notInterestedAction = 0;
-	private WorkorderService _dataService;
+	int _notInterestedAction = 0;
+	WorkorderService _dataService;
 	private MyAuthClient _authClient;
 	private int _statusDisplayState = 0;
 	private Listener _listener = null;
+	private String _username;
+	private String _authToken;
 
 	// status colors lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = {
@@ -222,44 +226,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 				_listener.startRemove(_workorder);
 			}
 
-			UndoBarController.show((Activity) getContext(), R.string.tap_to_undo, new AdvancedUndoListener() {
-				Workorder workorder = _workorder;
-
-				@Override
-				public void onUndo(Parcelable token) {
-					if (_listener != null) {
-						_listener.cancelRemove(workorder);
-					}
-				}
-
-				@Override
-				public void onHide(Parcelable token) {
-
-					switch (_notInterestedAction) {
-					case NOT_INTERESTED_ACTION_DECLINE:
-						getContext().startService(
-								_dataService.decline(NOT_INTERESTED_ACTION_DECLINE, _workorder.getWorkorderId()));
-
-						break;
-					case NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
-						getContext().startService(
-								_dataService.withdrawRequest(NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
-										_workorder.getWorkorderId()));
-
-						break;
-					case NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
-						// TODO, get reason input from user
-						getContext().startService(
-								_dataService.cancelAssignment(NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
-										_workorder.getWorkorderId(), 1, "Cause I said So"));
-						break;
-					}
-				}
-
-				@Override
-				public void onClear() {
-				}
-			});
+			UndoBarController.show((Activity) getContext(), R.string.tap_to_undo,
+					new WorkorderSummaryAdvancedUndoListener(_workorder, getContext(), _username, _authToken,
+							_listener, _notInterestedAction));
 		}
 	};
 
@@ -332,7 +301,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_dataService = new WorkorderService(getContext(), username, authToken, _resultReciever);
+			_authToken = authToken;
+			_username = username;
+			_dataService = new WorkorderService(getContext(), _username, _authToken, _resultReciever);
 			Log.v(TAG, "got data service!");
 		}
 
