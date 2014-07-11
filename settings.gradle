@@ -1,4 +1,0 @@
-include ':libs:libUndobar'
-include ':libs:libJson'
-include ':libs:libUtils'
-include ':projects:FieldNationPhase1'
