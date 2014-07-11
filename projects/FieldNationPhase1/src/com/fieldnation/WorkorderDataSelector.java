@@ -11,8 +11,11 @@ package com.fieldnation;
  * 
  */
 public enum WorkorderDataSelector {
-	AVAILABLE("getAvailable"), ASSIGNED("getAssigned", true), IN_PROGRESS("getAssigned", true), COMPLETED(
-			"getCompleted"), CANCELLED("getCanceled");
+	AVAILABLE("getAvailable"),
+	ASSIGNED("getAssigned", true),
+	IN_PROGRESS("getAssigned", true),
+	COMPLETED("getCompleted"),
+	CANCELLED("getCanceled");
 
 	private String _call;
 	private boolean _allowCache = false;

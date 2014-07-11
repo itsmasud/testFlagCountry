@@ -13,9 +13,11 @@ public class DataCacheSqlHelper extends SQLiteOpenHelper {
 	public static final String TABLE_NAME = "data_cache";
 
 	public enum Column {
-		ID(0, "_id", "integer primary key autoincrement"), EXIPES_ON(1, "exipres_on", "integer not null", true), KEY(2,
-				"key", "text not null", true), RESPONSE_DATA(3, "response_data", "text not null"), RESPONSE_CODE(4,
-				"response_code", "integer not null");
+		ID(0, "_id", "integer primary key autoincrement"),
+		EXIPES_ON(1, "exipres_on", "integer not null", true),
+		KEY(2, "key", "text not null", true),
+		RESPONSE_DATA(3, "response_data", "text not null"),
+		RESPONSE_CODE(4, "response_code", "integer not null");
 
 		private int _index;
 		private String _name;
