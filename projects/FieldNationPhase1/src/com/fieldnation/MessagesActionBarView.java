@@ -78,7 +78,7 @@ public class MessagesActionBarView extends RelativeLayout {
 			_profileService = new ProfileService(getContext(), username,
 					authToken, _resultReciever);
 			getContext().startService(
-					_profileService.getAllMessages(0, _nextPage, true));
+					_profileService.getUnreadMessages(0, _nextPage, true));
 			_nextPage++;
 
 		}
@@ -110,7 +110,7 @@ public class MessagesActionBarView extends RelativeLayout {
 				} else if (count == 25) {
 					setCount(_messageCount, true);
 					getContext().startService(
-							_profileService.getAllMessages(0, _nextPage, true));
+							_profileService.getUnreadMessages(0, _nextPage, true));
 					_nextPage++;
 				} else {
 					setCount(_messageCount, false);

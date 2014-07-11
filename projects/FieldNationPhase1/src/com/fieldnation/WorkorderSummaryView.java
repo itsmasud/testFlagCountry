@@ -82,7 +82,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private TextView _locationTextView;
 	private ImageView _messageAlertImageView;
 	private ImageView _notificationAlertImageView;
-	
+
 	// animations
 	private Animation _slideAnimation;
 	private Animation _slideBackAnimation;
@@ -97,7 +97,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private MyAuthClient _authClient;
 	private int _statusDisplayState = 0;
 	private Listener _listener = null;
-	
+
 	// status colors lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = {
 			R.drawable.wosum_status_1,
@@ -119,11 +119,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 			R.drawable.wosum_button2_bg,
 			R.drawable.wosum_button3_bg,
 			R.drawable.wosum_button1_bg };
-	
+
 	// messages/notifications warnings icon
-	private static final int[] _WARNING_ICON = {
-		R.drawable.ic_alert_thumb,
-		R.drawable.ic_message_thumb };
+	private static final int[] _WARNING_ICON = { R.drawable.ic_alert_thumb, R.drawable.ic_message_thumb };
 	private static final int _WARNING_ICON_NOTIFICATION = 0;
 	private static final int _WARNING_ICON_MESSAGE = 1;
 
@@ -194,6 +192,16 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_slideBackAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.wosum_slide_back);
 
 		setIsBundle(false);
+
+		// TODO logic apply here for add icon message or notification
+		// work order message icon with work order title
+		_notificationAlertImageView.setImageResource(_WARNING_ICON[_WARNING_ICON_NOTIFICATION]);
+		_messageAlertImageView.setImageResource(_WARNING_ICON[_WARNING_ICON_MESSAGE]);
+
+		_messageAlertImageView.setVisibility(GONE);
+		// work order notification icon with work order title
+		_notificationAlertImageView.setVisibility(VISIBLE);
+
 	}
 
 	/*-*********************************-*/
@@ -634,14 +642,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 				has16 = true;
 			}
 		}
-		
-		// TODO logic apply here for add icon message or notification		
-		//work order message icon with work order title
-		_messageAlertImageView.setImageResource(_WARNING_ICON[_WARNING_ICON_MESSAGE]);
-		_messageAlertImageView.setVisibility(VISIBLE);		
-		//work order notification icon with work order title
-		_notificationAlertImageView.setImageResource(_WARNING_ICON[_WARNING_ICON_NOTIFICATION]);
-		_notificationAlertImageView.setVisibility(VISIBLE);
 
 		if (isOnHold) {
 			_statusTextView.setText("On Hold");

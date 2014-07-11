@@ -29,7 +29,7 @@ public class ProfileService extends WebService {
 				"?page=" + page, allowCache);
 	}
 
-	public Intent getAllMessages(int resultCode, int page, boolean allowCache) {
+	public Intent getUnreadMessages(int resultCode, int page, boolean allowCache) {
 		return httpGet(resultCode, "/api/rest/v1/profile/messages/unread",
 				"?page=" + page, allowCache);
 	}
