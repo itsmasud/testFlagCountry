@@ -1,8 +1,13 @@
-apply plugin: 'android'
+apply plugin: 'java'
 
-android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+repositories{
+	flatDir {
+		dirs '../../jars'
+	}
+}
+
+dependencies {
+   compile name: 'android-v7'
 }
 
 sourceSets {
