@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 dependencies {
-   compileOnly files('../../jars/android-v7.jar')
+   compile files('../../jars/android-v7.jar')
 }
 
 sourceSets {
