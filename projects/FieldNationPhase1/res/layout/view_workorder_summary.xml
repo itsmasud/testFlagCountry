@@ -192,6 +192,7 @@
                     style="@style/WorkorderSummary_ActionsLayout"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true" >
 
                     <RelativeLayout
@@ -243,6 +244,8 @@
                         style="@style/WorkorderSummary_Button"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
                         android:layout_below="@+id/payment_layout"
                         android:maxLines="1"
                         android:text="@string/error" />
