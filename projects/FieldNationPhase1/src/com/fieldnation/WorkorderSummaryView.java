@@ -80,7 +80,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private LinearLayout _notInterestedLayout;
 	private ImageView _backImageView;
 	private TextView _locationTextView;
-
+	private ImageView _messageAlertImageView;
+	private ImageView _notificationAlertImageView;
+	
 	// animations
 	private Animation _slideAnimation;
 	private Animation _slideBackAnimation;
@@ -95,7 +97,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 	private MyAuthClient _authClient;
 	private int _statusDisplayState = 0;
 	private Listener _listener = null;
-
+	
 	// status colors lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = {
 			R.drawable.wosum_status_1,
@@ -117,6 +119,13 @@ public class WorkorderSummaryView extends RelativeLayout {
 			R.drawable.wosum_button2_bg,
 			R.drawable.wosum_button3_bg,
 			R.drawable.wosum_button1_bg };
+	
+	// messages/notifications warnings icon
+	private static final int[] _WARNING_ICON = {
+		R.drawable.ic_alert_thumb,
+		R.drawable.ic_message_thumb };
+	private static final int _WARNING_ICON_NOTIFICATION = 0;
+	private static final int _WARNING_ICON_MESSAGE = 1;
 
 	public WorkorderSummaryView(Context context) {
 		this(context, null, -1);
@@ -160,6 +169,8 @@ public class WorkorderSummaryView extends RelativeLayout {
 		_clientNameTextView = (TextView) findViewById(R.id.clientname_textview);
 		_distanceTextView = (TextView) findViewById(R.id.distance_textview);
 		_whenTextView = (TextView) findViewById(R.id.when_textview);
+		_messageAlertImageView = (ImageView) findViewById(R.id.message_alert_imageview);
+		_notificationAlertImageView = (ImageView) findViewById(R.id.notification_alert_imageview);
 
 		_detailButton = (Button) findViewById(R.id.detail_button);
 		_detailButton.setOnClickListener(_detailButton_onClick);
@@ -623,6 +634,14 @@ public class WorkorderSummaryView extends RelativeLayout {
 				has16 = true;
 			}
 		}
+		
+		// TODO logic apply here for add icon message or notification		
+		//work order message icon with work order title
+		_messageAlertImageView.setImageResource(_WARNING_ICON[_WARNING_ICON_MESSAGE]);
+		_messageAlertImageView.setVisibility(VISIBLE);		
+		//work order notification icon with work order title
+		_notificationAlertImageView.setImageResource(_WARNING_ICON[_WARNING_ICON_NOTIFICATION]);
+		_notificationAlertImageView.setVisibility(VISIBLE);
 
 		if (isOnHold) {
 			_statusTextView.setText("On Hold");
