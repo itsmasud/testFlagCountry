@@ -26,8 +26,7 @@ public class DataCache {
 		return null;
 	}
 
-	public static void store(Context context, OAuth at, Bundle source,
-			byte[] responseData, int responseCode) {
+	public static void store(Context context, OAuth at, Bundle source, byte[] responseData, int responseCode) {
 		String hashdata = hashBundle(at, source);
 
 		DataCacheNode.put(context, hashdata, responseData, responseCode);

@@ -36,8 +36,7 @@ public class StandardInstructions {
 
 	public static StandardInstructions fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(StandardInstructions.class,
-					json);
+			return Serializer.unserializeObject(StandardInstructions.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

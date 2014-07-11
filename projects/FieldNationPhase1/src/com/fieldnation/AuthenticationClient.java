@@ -47,8 +47,7 @@ public abstract class AuthenticationClient {
 	 *            the name of the field to monitor.
 	 */
 	public void waitForObject(Object obj, String fieldname) {
-		new WaitForFieldAsyncTask(_waitForAccessToken_listener).execute(obj,
-				fieldname);
+		new WaitForFieldAsyncTask(_waitForAccessToken_listener).execute(obj, fieldname);
 	}
 
 	/**

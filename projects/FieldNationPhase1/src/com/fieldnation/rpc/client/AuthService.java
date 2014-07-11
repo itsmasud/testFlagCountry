@@ -43,9 +43,8 @@ public class AuthService implements AuthServiceConstants {
 	 * @param password
 	 * @return
 	 */
-	public Intent authenticateWeb(AccountAuthenticatorResponse response,
-			String hostname, String grantType, String clientId,
-			String clientSecret, String username, String password) {
+	public Intent authenticateWeb(AccountAuthenticatorResponse response, String hostname, String grantType,
+			String clientId, String clientSecret, String username, String password) {
 
 		Intent intent = new Intent(_context, DataService.class);
 		intent.setAction(DataServiceConstants.ACTION_RPC);
@@ -77,9 +76,8 @@ public class AuthService implements AuthServiceConstants {
 	 * @param password
 	 * @return
 	 */
-	public Intent authenticateWeb(ResultReceiver callback, int resultCode,
-			String hostname, String grantType, String clientId,
-			String clientSecret, String username, String password) {
+	public Intent authenticateWeb(ResultReceiver callback, int resultCode, String hostname, String grantType,
+			String clientId, String clientSecret, String username, String password) {
 
 		Intent intent = new Intent(_context, DataService.class);
 		intent.setAction(DataServiceConstants.ACTION_RPC);

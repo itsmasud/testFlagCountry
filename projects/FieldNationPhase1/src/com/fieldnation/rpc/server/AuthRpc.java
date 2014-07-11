@@ -112,8 +112,7 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
 		OAuth at = null;
 		String accessToken = null;
 		try {
-			at = OAuth.authServer(hostname, path, grantType, clientId,
-					clientSecret, username, password);
+			at = OAuth.authServer(hostname, path, grantType, clientId, clientSecret, username, password);
 
 			Log.v(TAG, at.toString());
 
@@ -168,15 +167,11 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
 			Bundle resultBundle = new Bundle();
 
 			if (accessToken != null) {
-				resultBundle.putString(AccountManager.KEY_AUTHTOKEN,
-						accessToken);
-				resultBundle.putString(AccountManager.KEY_ACCOUNT_NAME,
-						username);
-				resultBundle.putString(AccountManager.KEY_ACCOUNT_TYPE,
-						_gs.accountType);
+				resultBundle.putString(AccountManager.KEY_AUTHTOKEN, accessToken);
+				resultBundle.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+				resultBundle.putString(AccountManager.KEY_ACCOUNT_TYPE, _gs.accountType);
 			} else {
-				resultBundle.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE,
-						errorMessage);
+				resultBundle.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE, errorMessage);
 			}
 			aar.onResult(resultBundle);
 		}

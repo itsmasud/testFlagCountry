@@ -141,8 +141,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		@Override
 		public void onAuthentication(String username, String authToken) {
 			if (!_isViable) {
-				Log.v(TAG,
-						"MyAuthenticationClient.onAuthentication(), not viable");
+				Log.v(TAG, "MyAuthenticationClient.onAuthentication(), not viable");
 				return;
 			}
 			_username = username;
@@ -159,8 +158,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 
 	}
 
-	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(
-			new Handler()) {
+	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
@@ -170,8 +168,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 				return;
 			}
 			_nextPage++;
-			String data = new String(
-					resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+			String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 
 			JsonArray objects = null;
 			try {
@@ -188,8 +185,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 			}
 			for (int i = 0; i < objects.size(); i++) {
 				try {
-					_objects.add(Serializer.unserializeObject(_clazz,
-							objects.getJsonObject(i)));
+					_objects.add(Serializer.unserializeObject(_clazz, objects.getJsonObject(i)));
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -221,8 +217,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 				_gs.requestAuthentication(_authClient);
 			} else {
 				// TODO, convert to string resource
-				UndoBarController.show(_activity,
-						"Could not get data. Please check your network and try again.");
+				UndoBarController.show(_activity, "Could not get data. Please check your network and try again.");
 				dispatchOnLoadComplete();
 			}
 			notifyDataSetChanged();
@@ -301,8 +296,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	 * @param authToken
 	 * @param resultReceiver
 	 */
-	public abstract void getWebService(Context context, String username,
-			String authToken, ResultReceiver resultReceiver);
+	public abstract void getWebService(Context context, String username, String authToken, ResultReceiver resultReceiver);
 
 	/**
 	 * rebuild the web service with the new information
@@ -312,8 +306,8 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	 * @param authToken
 	 * @param resultReceiver
 	 */
-	public abstract void rebuildWebService(Context context, String username,
-			String authToken, ResultReceiver resultReceiver);
+	public abstract void rebuildWebService(Context context, String username, String authToken,
+			ResultReceiver resultReceiver);
 
 	/**
 	 * Execute the web service
@@ -322,8 +316,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	 * @param page
 	 * @param allowCache
 	 */
-	public abstract void executeWebService(int resultCode, int page,
-			boolean allowCache);
+	public abstract void executeWebService(int resultCode, int page, boolean allowCache);
 
 	/*-*****************************-*/
 	/*-			Listener			-*/

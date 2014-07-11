@@ -25,8 +25,7 @@ public class CustomerPoliciesProcedures {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(
-			CustomerPoliciesProcedures customerPoliciesProcedures) {
+	public static JsonObject toJson(CustomerPoliciesProcedures customerPoliciesProcedures) {
 		try {
 			return Serializer.serializeObject(customerPoliciesProcedures);
 		} catch (Exception ex) {
@@ -37,8 +36,7 @@ public class CustomerPoliciesProcedures {
 
 	public static CustomerPoliciesProcedures fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(
-					CustomerPoliciesProcedures.class, json);
+			return Serializer.unserializeObject(CustomerPoliciesProcedures.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

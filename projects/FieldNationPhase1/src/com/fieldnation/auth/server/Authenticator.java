@@ -31,14 +31,12 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	}
 
 	@Override
-	public Bundle addAccount(AccountAuthenticatorResponse response,
-			String accountType, String authTokenType,
+	public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType,
 			String[] requiredFeatures, Bundle options) throws NetworkErrorException {
 
 		Log.v(TAG, "addAccount");
 		Intent intent = new Intent(_context, AuthActivity.class);
-		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-				response);
+		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
 		Bundle result = new Bundle();
 		result.putParcelable(AccountManager.KEY_INTENT, intent);
@@ -47,8 +45,8 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	}
 
 	@Override
-	public Bundle getAuthToken(AccountAuthenticatorResponse response,
-			Account account, String authTokenType, Bundle options) throws NetworkErrorException {
+	public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType,
+			Bundle options) throws NetworkErrorException {
 		Log.v(TAG, "getAuthToken");
 		AccountManager am = AccountManager.get(_context);
 		String password = am.getPassword(account);
@@ -58,23 +56,21 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		String clientSecret = _context.getString(R.string.fn_client_secret);
 
 		AuthService authServe = new AuthService(_context);
-		Intent intent = authServe.authenticateWeb(response, hostname,
-				grantType, clientId, clientSecret, account.name, password);
+		Intent intent = authServe.authenticateWeb(response, hostname, grantType, clientId, clientSecret, account.name,
+				password);
 
 		_context.startService(intent);
 		return null;
 	}
 
 	@Override
-	public Bundle editProperties(AccountAuthenticatorResponse response,
-			String accountType) {
+	public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
 		Log.v(TAG, "Method Stub: editProperties()");
 		return null;
 	}
 
 	@Override
-	public Bundle confirmCredentials(AccountAuthenticatorResponse response,
-			Account account, Bundle options) throws NetworkErrorException {
+	public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) throws NetworkErrorException {
 		Log.v(TAG, "Method Stub: confirmCredentials()");
 		return null;
 	}
@@ -86,15 +82,14 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	}
 
 	@Override
-	public Bundle updateCredentials(AccountAuthenticatorResponse response,
-			Account account, String authTokenType, Bundle options) throws NetworkErrorException {
+	public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType,
+			Bundle options) throws NetworkErrorException {
 		Log.v(TAG, "Method Stub: updateCredentials()");
 		return null;
 	}
 
 	@Override
-	public Bundle hasFeatures(AccountAuthenticatorResponse response,
-			Account account, String[] features) throws NetworkErrorException {
+	public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
 		Log.v(TAG, "Method Stub: hasFeatures()");
 		return null;
 	}

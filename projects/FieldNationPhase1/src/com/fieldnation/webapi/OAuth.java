@@ -57,13 +57,9 @@ public class OAuth {
 		_oauth.merge(json, true, true);
 
 		if (_oauth.getLong("expires_in") == -1 && _oauth.getLong("expires_on") != -1) {
-			_oauth.put(
-					"expires_in",
-					(_oauth.getLong("expires_on") - System.currentTimeMillis()) / 1000);
+			_oauth.put("expires_in", (_oauth.getLong("expires_on") - System.currentTimeMillis()) / 1000);
 		} else if (_oauth.getLong("expires_in") != -1 && _oauth.getLong("expires_on") == -1) {
-			_oauth.put(
-					"expires_on",
-					_oauth.getLong("expires_in") * 1000 + System.currentTimeMillis());
+			_oauth.put("expires_on", _oauth.getLong("expires_in") * 1000 + System.currentTimeMillis());
 		}
 	}
 
@@ -101,11 +97,10 @@ public class OAuth {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OAuth authServer(String hostname, String grantType,
-			String clientId, String clientSecret, String username,
-			String password) throws MalformedURLException, IOException, ParseException {
-		return authServer(hostname, "/authentication/api/oauth/token",
-				grantType, clientId, clientSecret, username, password);
+	public static OAuth authServer(String hostname, String grantType, String clientId, String clientSecret,
+			String username, String password) throws MalformedURLException, IOException, ParseException {
+		return authServer(hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, username,
+				password);
 	}
 
 	/**
@@ -123,9 +118,8 @@ public class OAuth {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static OAuth authServer(String hostname, String path,
-			String grantType, String clientId, String clientSecret,
-			String username, String password) throws MalformedURLException, IOException, ParseException {
+	public static OAuth authServer(String hostname, String path, String grantType, String clientId,
+			String clientSecret, String username, String password) throws MalformedURLException, IOException, ParseException {
 
 		if (!path.startsWith("/"))
 			path = "/" + path;
@@ -145,8 +139,7 @@ public class OAuth {
 		}
 
 		conn.setRequestMethod("POST");
-		conn.setRequestProperty("ContentType",
-				"application/x-www-form-urlencoded");
+		conn.setRequestProperty("ContentType", "application/x-www-form-urlencoded");
 
 		conn.setDoInput(true);
 		conn.setDoOutput(true);
@@ -176,8 +169,7 @@ public class OAuth {
 	 */
 	public void invalidate(Context context) {
 		AccountManager am = AccountManager.get(context);
-		am.invalidateAuthToken(context.getString(R.string.accounttype),
-				toString());
+		am.invalidateAuthToken(context.getString(R.string.accounttype), toString());
 	}
 
 	/**
@@ -263,9 +255,7 @@ public class OAuth {
 		} else if (options.startsWith("?")) { // if options already specified
 			return "?access_token=" + getAccessToken() + "&" + options.substring(1);
 		}
-		throw new ParseException(
-				"Options must be nothing, or start with '?'. Got: " + options,
-				0);
+		throw new ParseException("Options must be nothing, or start with '?'. Got: " + options, 0);
 	}
 
 }

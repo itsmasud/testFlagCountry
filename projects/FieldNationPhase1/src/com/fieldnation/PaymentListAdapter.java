@@ -41,19 +41,15 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 	}
 
 	@Override
-	public void getWebService(Context context, String username,
-			String authToken, ResultReceiver resultReceiver) {
+	public void getWebService(Context context, String username, String authToken, ResultReceiver resultReceiver) {
 		if (_service == null) {
-			_service = new PaymentService(context, username, authToken,
-					resultReceiver);
+			_service = new PaymentService(context, username, authToken, resultReceiver);
 		}
 	}
 
 	@Override
-	public void rebuildWebService(Context context, String username,
-			String authToken, ResultReceiver resultReceiver) {
-		_service = new PaymentService(context, username, authToken,
-				resultReceiver);
+	public void rebuildWebService(Context context, String username, String authToken, ResultReceiver resultReceiver) {
+		_service = new PaymentService(context, username, authToken, resultReceiver);
 	}
 
 	@Override

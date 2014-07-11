@@ -32,8 +32,7 @@ public class MyWorkListFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.v(TAG,
-				"onCreate: " + MyWorkListFragment.this.toString() + "/" + _displayView.getCall());
+		Log.v(TAG, "onCreate: " + MyWorkListFragment.this.toString() + "/" + _displayView.getCall());
 
 		if (savedInstanceState != null) {
 			if (savedInstanceState.containsKey("_displayView")) {
@@ -45,8 +44,7 @@ public class MyWorkListFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_mywork_list, container, false);
 	}
 
@@ -123,14 +121,12 @@ public class MyWorkListFragment extends Fragment {
 			return null;
 		try {
 			if (_adapter == null) {
-				_adapter = new WorkorderListAdapter(this.getActivity(),
-						_displayView);
+				_adapter = new WorkorderListAdapter(this.getActivity(), _displayView);
 				_adapter.setLoadingListener(_workorderAdapter_listener);
 			}
 
 			if (!_adapter.isViable()) {
-				_adapter = new WorkorderListAdapter(this.getActivity(),
-						_displayView);
+				_adapter = new WorkorderListAdapter(this.getActivity(), _displayView);
 				_adapter.setLoadingListener(_workorderAdapter_listener);
 			}
 

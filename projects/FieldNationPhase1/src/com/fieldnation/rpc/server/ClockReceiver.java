@@ -50,8 +50,7 @@ public class ClockReceiver extends BroadcastReceiver {
 
 		alarm.cancel(pintent);
 
-		alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-				delay, pintent);
+		alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), delay, pintent);
 	}
 
 	public static void unregisterClock(Context context) {
@@ -64,8 +63,7 @@ public class ClockReceiver extends BroadcastReceiver {
 
 	private static PendingIntent getClockIntent(Context context) {
 		Intent intent = new Intent(context, ClockReceiver.class);
-		PendingIntent pintent = PendingIntent.getBroadcast(context, 0, intent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pintent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		return pintent;
 	}
@@ -77,22 +75,19 @@ public class ClockReceiver extends BroadcastReceiver {
 
 		Intent intent = new Intent(context, ClockReceiver.class);
 		intent.putExtra("IS_ONE_TIME", true);
-		PendingIntent pintent = PendingIntent.getBroadcast(context, 0, intent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pintent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
 		alarm.cancel(pintent);
 
-		alarm.set(AlarmManager.RTC_WAKEUP,
-				System.currentTimeMillis() + duration, pintent);
+		alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + duration, pintent);
 	}
 
 	public static void unregisterOneTimeAlarm(Context context) {
 		Intent intent = new Intent(context, ClockReceiver.class);
 		intent.putExtra("IS_ONE_TIME", true);
-		PendingIntent pintent = PendingIntent.getBroadcast(context, 0, intent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pintent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 

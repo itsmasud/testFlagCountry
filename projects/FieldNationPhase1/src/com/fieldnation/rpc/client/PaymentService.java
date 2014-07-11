@@ -11,19 +11,14 @@ public class PaymentService extends WebService {
 	}
 
 	public Intent getPending(int resultCode, int page, boolean allowCache) {
-		return httpGet(resultCode,
-				"/api/rest/v1/accounting/payment-queue/pending",
-				"?page=" + page, allowCache);
+		return httpGet(resultCode, "/api/rest/v1/accounting/payment-queue/pending", "?page=" + page, allowCache);
 	}
 
 	public Intent getPaid(int resultCode, int page, boolean allowCache) {
-		return httpGet(resultCode,
-				"/api/rest/v1/accounting/payment-queue/paid", "?page=" + page,
-				allowCache);
+		return httpGet(resultCode, "/api/rest/v1/accounting/payment-queue/paid", "?page=" + page, allowCache);
 	}
 
 	public Intent getAll(int resultCode, int page, boolean allowCache) {
-		return httpGet(resultCode, "/api/rest/v1/accounting/payment-queue/all",
-				"?page=" + page, allowCache);
+		return httpGet(resultCode, "/api/rest/v1/accounting/payment-queue/all", "?page=" + page, allowCache);
 	}
 }

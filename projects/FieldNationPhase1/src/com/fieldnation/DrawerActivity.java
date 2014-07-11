@@ -41,10 +41,8 @@ public class DrawerActivity extends BaseActivity {
 		return _drawerToggle;
 	}
 
-	public ActionBarDrawerToggle createActionBarDrawerToggle(
-			DrawerLayout drawerLayout) {
-		return new ActionBarDrawerToggle(this, drawerLayout,
-				R.drawable.ic_drawer, R.string.launcher_open,
+	public ActionBarDrawerToggle createActionBarDrawerToggle(DrawerLayout drawerLayout) {
+		return new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.launcher_open,
 				R.string.launcher_open);
 	}
 

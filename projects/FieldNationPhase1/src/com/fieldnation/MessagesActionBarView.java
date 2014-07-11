@@ -75,10 +75,8 @@ public class MessagesActionBarView extends RelativeLayout {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_profileService = new ProfileService(getContext(), username,
-					authToken, _resultReciever);
-			getContext().startService(
-					_profileService.getUnreadMessages(0, _nextPage, true));
+			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
+			getContext().startService(_profileService.getUnreadMessages(0, _nextPage, true));
 			_nextPage++;
 
 		}
@@ -92,16 +90,14 @@ public class MessagesActionBarView extends RelativeLayout {
 
 	}
 
-	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(
-			new Handler()) {
+	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			Log.v(TAG, "WebServiceResultReceiver.onSuccess");
 			try {
-				JsonArray ja = new JsonArray(
-						new String(
-								resultData.getByteArray((WebServiceConstants.KEY_RESPONSE_DATA))));
+				JsonArray ja = new JsonArray(new String(
+						resultData.getByteArray((WebServiceConstants.KEY_RESPONSE_DATA))));
 				int count = ja.size();
 
 				_messageCount += count;
@@ -109,8 +105,7 @@ public class MessagesActionBarView extends RelativeLayout {
 					setCount(_messageCount, false);
 				} else if (count == 25) {
 					setCount(_messageCount, true);
-					getContext().startService(
-							_profileService.getUnreadMessages(0, _nextPage, true));
+					getContext().startService(_profileService.getUnreadMessages(0, _nextPage, true));
 					_nextPage++;
 				} else {
 					setCount(_messageCount, false);

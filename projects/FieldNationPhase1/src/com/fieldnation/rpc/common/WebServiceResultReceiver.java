@@ -36,8 +36,7 @@ public abstract class WebServiceResultReceiver extends ResultReceiver implements
 	 * @param errorType
 	 *            Will be one of the following WebServiceConstants.ERROR_*
 	 */
-	public abstract void onError(int resultCode, Bundle resultData,
-			String errorType);
+	public abstract void onError(int resultCode, Bundle resultData, String errorType);
 
 	public abstract void onSuccess(int resultCode, Bundle resultData);
 }

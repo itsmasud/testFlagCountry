@@ -78,9 +78,8 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 			String clientSecret = AuthActivity.this.getString(R.string.fn_client_secret);
 
 			AuthService authserve = new AuthService(AuthActivity.this);
-			Intent intent = authserve.authenticateWeb(_rpcReceiver, 1,
-					hostname, grantType, clientId, clientSecret, _username,
-					_password);
+			Intent intent = authserve.authenticateWeb(_rpcReceiver, 1, hostname, grantType, clientId, clientSecret,
+					_username, _password);
 
 			startService(intent);
 
@@ -104,12 +103,10 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
 					Intent intent = new Intent();
 					intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-					intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
-							_gs.accountType);
+					intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, _gs.accountType);
 					// intent.putExtra(AccountManager.KEY_AUTHTOKEN,
 					// Constants.FIELD_NATION_ACCOUNT_TYPE);
-					intent.putExtra(AccountManager.KEY_AUTHTOKEN,
-							resultData.getString("authtoken"));
+					intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString("authtoken"));
 
 					AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
 					AuthActivity.this.setResult(RESULT_OK, intent);

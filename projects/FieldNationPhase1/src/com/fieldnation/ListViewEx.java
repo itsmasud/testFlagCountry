@@ -71,23 +71,20 @@ public class ListViewEx extends ListView {
 		super(context, attrs, defStyle);
 
 		// Load all of the animations we need in code rather than through XML
-		_flipAnimation = new RotateAnimation(0, -180,
-				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+		_flipAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
 		_flipAnimation.setInterpolator(new LinearInterpolator());
 		_flipAnimation.setDuration(250);
 		_flipAnimation.setFillAfter(true);
-		_reverseFlipAnimation = new RotateAnimation(-180, 0,
-				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-				0.5f);
+		_reverseFlipAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f);
 		_reverseFlipAnimation.setInterpolator(new LinearInterpolator());
 		_reverseFlipAnimation.setDuration(250);
 		_reverseFlipAnimation.setFillAfter(true);
 
 		// TODO make into custom view
 		final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		_refreshView = (RelativeLayout) inflater.inflate(
-				R.layout.view_listviewex_header, this, false);
+		_refreshView = (RelativeLayout) inflater.inflate(R.layout.view_listviewex_header, this, false);
 		_refreshTextView = (TextView) _refreshView.findViewById(R.id.pull_to_refresh_text);
 		_refreshImageView = (ImageView) _refreshView.findViewById(R.id.pull_to_refresh_image);
 		_refreshProgressView = (ProgressBar) _refreshView.findViewById(R.id.pull_to_refresh_progress);
@@ -124,8 +121,7 @@ public class ListViewEx extends ListView {
 		}
 
 		@Override
-		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
+		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 			// When the refresh view is completely visible, change the text to
 			// say
 			// "Release to refresh..." and flip the arrow drawable.
@@ -157,8 +153,7 @@ public class ListViewEx extends ListView {
 			}
 
 			if (_onScrollListener != null) {
-				_onScrollListener.onScroll(view, firstVisibleItem,
-						visibleItemCount, totalItemCount);
+				_onScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
 			}
 		}
 	};
@@ -261,8 +256,7 @@ public class ListViewEx extends ListView {
 				// simulate a more resistant effect during pull.
 				int topPadding = (int) (((historicalY - _lastMotionY) - _refreshViewHeight) / 1.7);
 
-				_refreshView.setPadding(_refreshView.getPaddingLeft(),
-						topPadding, _refreshView.getPaddingRight(),
+				_refreshView.setPadding(_refreshView.getPaddingLeft(), topPadding, _refreshView.getPaddingRight(),
 						_refreshView.getPaddingBottom());
 			}
 		}
@@ -272,9 +266,8 @@ public class ListViewEx extends ListView {
 	 * Sets the header padding back to original size.
 	 */
 	private void resetHeaderPadding() {
-		_refreshView.setPadding(_refreshView.getPaddingLeft(),
-				_refreshOriginalTopPadding, _refreshView.getPaddingRight(),
-				_refreshView.getPaddingBottom());
+		_refreshView.setPadding(_refreshView.getPaddingLeft(), _refreshOriginalTopPadding,
+				_refreshView.getPaddingRight(), _refreshView.getPaddingBottom());
 	}
 
 	/**
@@ -302,19 +295,16 @@ public class ListViewEx extends ListView {
 	private void measureView(View child) {
 		ViewGroup.LayoutParams p = child.getLayoutParams();
 		if (p == null) {
-			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
+			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		}
 
 		int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0, p.width);
 		int lpHeight = p.height;
 		int childHeightSpec;
 		if (lpHeight > 0) {
-			childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight,
-					MeasureSpec.EXACTLY);
+			childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
 		} else {
-			childHeightSpec = MeasureSpec.makeMeasureSpec(0,
-					MeasureSpec.UNSPECIFIED);
+			childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 		}
 		child.measure(childWidthSpec, childHeightSpec);
 	}

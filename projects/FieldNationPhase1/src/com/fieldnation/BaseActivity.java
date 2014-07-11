@@ -88,9 +88,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 				client.waitForObject(BaseActivity.this, "_acccount");
 			} else {
 				Log.v(TAG, "requestAuthentication() asking for account token");
-				AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
-						_account, _gs.accountType, null, BaseActivity.this,
-						null, _handler);
+				AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(_account, _gs.accountType, null,
+						BaseActivity.this, null, _handler);
 				client.waitForFuture(future);
 			}
 		}
@@ -155,8 +154,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 		Log.v(TAG, "Found accounts: " + accounts.length);
 		AccountManagerFuture<Bundle> future = null;
 		if (accounts.length == 0) {
-			future = _accountManager.addAccount(_gs.accountType, null, null,
-					null, this, null, new Handler());
+			future = _accountManager.addAccount(_gs.accountType, null, null, null, this, null, new Handler());
 
 		} else if (accounts.length == 1) {
 			_account = accounts[0];

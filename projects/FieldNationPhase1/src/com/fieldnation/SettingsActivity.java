@@ -50,8 +50,7 @@ public class SettingsActivity extends PreferenceActivity {
 		// current value.
 		_preference_onChange.onPreferenceChange(
 				preference,
-				PreferenceManager.getDefaultSharedPreferences(
-						preference.getContext()).getString(preference.getKey(),
+				PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(),
 						""));
 	}
 

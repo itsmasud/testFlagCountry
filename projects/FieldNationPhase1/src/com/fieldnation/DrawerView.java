@@ -158,8 +158,7 @@ public class DrawerView extends RelativeLayout {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_dataService = new PaymentService(getContext(), username,
-					authToken, _resultReciever);
+			_dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
 
 			getContext().startService(_dataService.getAll(1, 0, true));
 			_nextPage = 1;
@@ -172,15 +171,12 @@ public class DrawerView extends RelativeLayout {
 		}
 	}
 
-	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(
-			new Handler()) {
+	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			try {
-				JsonArray ja = new JsonArray(
-						new String(
-								resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
+				JsonArray ja = new JsonArray(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
 
 				for (int i = 0; i < ja.size(); i++) {
 					Payment payment = Payment.fromJson(ja.getJsonObject(i));
@@ -227,8 +223,7 @@ public class DrawerView extends RelativeLayout {
 						_paidLayout.setVisibility(GONE);
 					}
 				} else {
-					getContext().startService(
-							_dataService.getAll(1, _nextPage, true));
+					getContext().startService(_dataService.getAll(1, _nextPage, true));
 					_nextPage++;
 				}
 			} catch (ParseException e) {
@@ -248,8 +243,7 @@ public class DrawerView extends RelativeLayout {
 	private void attachAnimations() {
 		Context context = getContext();
 		if (context instanceof Activity) {
-			((Activity) context).overridePendingTransition(
-					R.anim.activity_slide_in, 0);
+			((Activity) context).overridePendingTransition(R.anim.activity_slide_in, 0);
 		}
 
 	}

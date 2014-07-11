@@ -10,32 +10,23 @@ public class ProfileService extends WebService {
 		super(context, username, authToken, callback);
 	}
 
-	public Intent getUserInformation(int resultCode, long userId,
-			boolean allowCache) {
+	public Intent getUserInformation(int resultCode, long userId, boolean allowCache) {
 		return httpGet(resultCode, "/api/rest/v1/profile/" + userId, allowCache);
 	}
 
-	public Intent getAllNotifications(int resultCode, long userId, int page,
-			boolean allowCache) {
-		return httpGet(resultCode,
-				"/api/rest/v1/profile/notifications/" + userId,
-				"?page=" + page, allowCache);
+	public Intent getAllNotifications(int resultCode, long userId, int page, boolean allowCache) {
+		return httpGet(resultCode, "/api/rest/v1/profile/notifications/" + userId, "?page=" + page, allowCache);
 	}
 
-	public Intent getNewNotifications(int resultCode, long userId, int page,
-			boolean allowCache) {
-		return httpGet(resultCode,
-				"/api/rest/v1/profile/notifications/new/" + userId,
-				"?page=" + page, allowCache);
+	public Intent getNewNotifications(int resultCode, long userId, int page, boolean allowCache) {
+		return httpGet(resultCode, "/api/rest/v1/profile/notifications/new/" + userId, "?page=" + page, allowCache);
 	}
 
 	public Intent getUnreadMessages(int resultCode, int page, boolean allowCache) {
-		return httpGet(resultCode, "/api/rest/v1/profile/messages/unread",
-				"?page=" + page, allowCache);
+		return httpGet(resultCode, "/api/rest/v1/profile/messages/unread", "?page=" + page, allowCache);
 	}
 
 	public Intent getNewMessages(int resultCode, int page, boolean allowCache) {
-		return httpGet(resultCode, "/api/rest/v1/profile/messages/",
-				"?page=" + page, allowCache);
+		return httpGet(resultCode, "/api/rest/v1/profile/messages/", "?page=" + page, allowCache);
 	}
 }

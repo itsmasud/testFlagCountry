@@ -41,24 +41,19 @@ public class MessagesListAdapter extends PagingListAdapter<Message> {
 	}
 
 	@Override
-	public void getWebService(Context context, String username,
-			String authToken, ResultReceiver resultReceiver) {
+	public void getWebService(Context context, String username, String authToken, ResultReceiver resultReceiver) {
 		if (_profileService == null) {
-			_profileService = new ProfileService(context, username, authToken,
-					resultReceiver);
+			_profileService = new ProfileService(context, username, authToken, resultReceiver);
 		}
 	}
 
 	@Override
-	public void rebuildWebService(Context context, String username,
-			String authToken, ResultReceiver resultReceiver) {
-		_profileService = new ProfileService(context, username, authToken,
-				resultReceiver);
+	public void rebuildWebService(Context context, String username, String authToken, ResultReceiver resultReceiver) {
+		_profileService = new ProfileService(context, username, authToken, resultReceiver);
 	}
 
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
-		getContext().startService(
-				_profileService.getUnreadMessages(resultCode, page, allowCache));
+		getContext().startService(_profileService.getUnreadMessages(resultCode, page, allowCache));
 	}
 }
