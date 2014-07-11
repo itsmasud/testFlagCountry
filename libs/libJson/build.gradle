@@ -2,7 +2,7 @@ apply plugin: 'java'
 
 repositories{
 	flatDir {
-		dirs '../../../jars'
+		dirs 'jars'
 	}
 }
 
