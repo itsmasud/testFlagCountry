@@ -61,6 +61,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 	public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
 	public static final int NOT_INTERESTED_ACTION_WITHDRAW_REQUEST = 102;
 	public static final int NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT = 103;
+	
+	public static final int HIDE_ALERT_ICON = 0;
+	public static final int SHOW_ALERT_ICON = 1;
 
 	// UI
 	private RelativeLayout _statusLayout;
@@ -124,11 +127,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 			R.drawable.wosum_button2_bg,
 			R.drawable.wosum_button3_bg,
 			R.drawable.wosum_button1_bg };
-
-	// messages/notifications warnings icon
-	private static final int[] _WARNING_ICON = { R.drawable.ic_alert_thumb, R.drawable.ic_message_thumb };
-	private static final int _WARNING_ICON_NOTIFICATION = 0;
-	private static final int _WARNING_ICON_MESSAGE = 1;
 
 	public WorkorderSummaryView(Context context) {
 		this(context, null, -1);
@@ -198,15 +196,27 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		setIsBundle(false);
 
-		// TODO logic apply here for add icon message or notification
-		// work order message icon with work order title
-		_notificationAlertImageView.setImageResource(_WARNING_ICON[_WARNING_ICON_NOTIFICATION]);
-		_messageAlertImageView.setImageResource(_WARNING_ICON[_WARNING_ICON_MESSAGE]);
+		// TODO logic apply here for add icon message or notification or both
+		int showMessageIcon = SHOW_ALERT_ICON;
+		int showNotificationIcon = HIDE_ALERT_ICON;
+		
+		setAlertIconToWO(showMessageIcon, showNotificationIcon);
 
-		_messageAlertImageView.setVisibility(GONE);
-		// work order notification icon with work order title
-		_notificationAlertImageView.setVisibility(VISIBLE);
+	}
+	
+	/*-*********************************-*/
+	/*-	set message/notification icon	-*/
+	/*-*********************************-*/
 
+	private void setAlertIconToWO(int showMessageAlertIcon, int showNotificationAlertIcon ) {
+		if( showMessageAlertIcon == SHOW_ALERT_ICON ) {
+			_messageAlertImageView.setVisibility(VISIBLE);
+		}
+		
+		if( showNotificationAlertIcon == SHOW_ALERT_ICON ) {
+			_notificationAlertImageView.setVisibility(VISIBLE);
+		}
+		
 	}
 
 	/*-*********************************-*/
