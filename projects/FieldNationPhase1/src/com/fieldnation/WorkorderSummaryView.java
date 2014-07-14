@@ -61,9 +61,6 @@ public class WorkorderSummaryView extends RelativeLayout {
 	public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
 	public static final int NOT_INTERESTED_ACTION_WITHDRAW_REQUEST = 102;
 	public static final int NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT = 103;
-	
-	public static final int HIDE_ALERT_ICON = 0;
-	public static final int SHOW_ALERT_ICON = 1;
 
 	// UI
 	private RelativeLayout _statusLayout;
@@ -196,34 +193,27 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		setIsBundle(false);
 
-		// set message/notifications/both icon with work orders title 
-		int showMessageIcon 		= HIDE_ALERT_ICON;
-		int showNotificationIcon 	= HIDE_ALERT_ICON;
-		// TODO 
-		/*if( woHasMessages == true ) {
-			showMessageIcon = SHOW_ALERT_ICON;
-		}
-		if( woHasNotifications == true ) {
-			showNotificationIcon = SHOW_ALERT_ICON;
-		}*/
-		
-		setAlertIconToWO(showMessageIcon, showNotificationIcon);
-
+		showMessageAlertIcon(true);
+		showAlertIcon(true);
 	}
-	
+
 	/*-*********************************-*/
 	/*-	set message/notification icon	-*/
 	/*-*********************************-*/
-
-	private void setAlertIconToWO(int showMessageAlertIcon, int showNotificationAlertIcon ) {
-		if( showMessageAlertIcon == SHOW_ALERT_ICON ) {
+	public void showMessageAlertIcon(boolean enabled) {
+		if (enabled) {
 			_messageAlertImageView.setVisibility(VISIBLE);
+		} else {
+			_messageAlertImageView.setVisibility(GONE);
 		}
-		
-		if( showNotificationAlertIcon == SHOW_ALERT_ICON ) {
+	}
+
+	public void showAlertIcon(boolean enabled) {
+		if (enabled) {
 			_notificationAlertImageView.setVisibility(VISIBLE);
+		} else {
+			_notificationAlertImageView.setVisibility(GONE);
 		}
-		
 	}
 
 	/*-*********************************-*/
