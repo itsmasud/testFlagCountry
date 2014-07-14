@@ -78,8 +78,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		public void finishRemove(Workorder wo) {
 			// TODO Method Stub: finishRemove()
 			Log.v(TAG, "Method Stub: finishRemove()");
-			_startRemoveTable.remove(wo.getWorkorderId());
-			WorkorderListAdapter.this.notifyDataSetChanged();
+			_startRemoveTable.clear();
+			update(false);
 		}
 
 		@Override
@@ -92,7 +92,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		@Override
 		public void notifyDataSetChanged() {
 			_startRemoveTable.clear();
-			WorkorderListAdapter.this.notifyDataSetChanged();
+			update(false);
 		}
 	};
 

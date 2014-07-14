@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
 import com.fieldnation.WorkorderSummaryView.Listener;
@@ -13,9 +14,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
-	/**
-	 * 
-	 */
+	private static final String TAG = "WorkorderSummaryAdvancedUndoListener";
 	private WorkorderService _service;
 	private Listener _listener;
 	private Workorder _workorder;
@@ -62,25 +61,23 @@ class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
 
 	@Override
 	public void onClear() {
-		// TODO Method Stub: onClear()
-		Log.v(WorkorderSummaryView.TAG, "Method Stub: onClear()");
-
 	}
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			// TODO Method Stub: onSuccess()
-			Log.v(WorkorderSummaryView.TAG, "Method Stub: onSuccess()");
+			if (_listener != null)
+				_listener.notifyDataSetChanged();
+			Toast.makeText(_context, R.string.success, Toast.LENGTH_LONG).show();
 
 		}
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			// TODO Method Stub: onError()
-			Log.v(WorkorderSummaryView.TAG, "Method Stub: onError()");
-
+			Log.v(TAG, errorType);
+			Log.v(TAG, resultData.toString());
+			Toast.makeText(_context, R.string.try_again, Toast.LENGTH_LONG).show();
 		}
 	};
 }

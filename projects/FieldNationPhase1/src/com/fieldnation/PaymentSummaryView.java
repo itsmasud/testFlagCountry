@@ -113,7 +113,6 @@ public class PaymentSummaryView extends RelativeLayout {
 		}
 		// status
 		try {
-			// TODO, parse status and change bar color
 			String status = misc.capitalize(_paymentInfo.getStatus());
 
 			if (status.toLowerCase().equals("paid")) {
