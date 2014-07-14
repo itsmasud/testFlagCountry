@@ -6,22 +6,10 @@
 
     <!-- The main content view -->
 
-    <RelativeLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/content_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <EditText
-            android:id="@+id/detail_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:ems="10"
-            android:inputType="textMultiLine" >
-
-            <requestFocus />
-        </EditText>
-    </RelativeLayout>
+        android:layout_height="match_parent" />
 
     <!-- The navigation drawer -->
 

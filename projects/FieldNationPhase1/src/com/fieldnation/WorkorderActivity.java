@@ -1,29 +1,34 @@
 package com.fieldnation;
 
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.widget.EditText;
 
-public class WorkorderActivity extends BaseActivity {
+public class WorkorderActivity extends DrawerActivity {
 	private static final String TAG = "WorkorderActivity";
 
 	private static final int RPC_GET_DETAIL = 1;
 
 	// UI
-	private EditText _detailEditText;
+	private ViewPager _viewPager;
+	private Fragment[] _fragments;
 
 	// Data
 	private GlobalState _gs;
-	private String _username;
-	private String _authToken;
 	private long _workorderId = 0;
+	private int _currentFragment = 0;
+	private boolean _created = false;
+	private PagerAdapter _pagerAdapter;
 
 	// Services
 	private MyAuthenticationClient _authClient;
@@ -50,7 +55,11 @@ public class WorkorderActivity extends BaseActivity {
 			finish();
 		}
 
-		_detailEditText = (EditText) findViewById(R.id.detail_edittext);
+		if (!_created) {
+			addActionBarAndDrawer(R.id.container);
+			buildFragments();
+			_created = true;
+		}
 
 		_authClient = new MyAuthenticationClient(this);
 		_gs = (GlobalState) getApplicationContext();
@@ -58,9 +67,57 @@ public class WorkorderActivity extends BaseActivity {
 
 	}
 
+	private void buildFragments() {
+		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
+
+		_fragments = new Fragment[2];
+		_fragments[0] = new WorkorderDetailFragment().setTabBarListener(_tabview_onChange);
+		_fragments[1] = new WorkorderMessageFragment().setTabBarListener(_tabview_onChange);
+		// TODO load fragments
+
+		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+		_viewPager.setAdapter(_pagerAdapter);
+		_viewPager.setOnPageChangeListener(_viewPager_onChange);
+
+	}
+
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/
+
+	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+		public ScreenSlidePagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int postition) {
+			return _fragments[postition];
+		}
+
+		@Override
+		public int getCount() {
+			return _fragments.length;
+		}
+	}
+
+	private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
+		public void onPageSelected(int position) {
+			try {
+				_currentFragment = position;
+			} catch (Exception ex) {
+			}
+		};
+	};
+
+	private WorkorderTabView.Listener _tabview_onChange = new WorkorderTabView.Listener() {
+		@Override
+		public void onChange(int index) {
+			_currentFragment = index;
+			_viewPager.setCurrentItem(_currentFragment, true);
+		}
+	};
+
 	private class MyAuthenticationClient extends AuthenticationClient {
 		public MyAuthenticationClient(Context context) {
 			super(context);
@@ -68,9 +125,6 @@ public class WorkorderActivity extends BaseActivity {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_username = username;
-			_authToken = authToken;
-
 			_woRpc = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReciever);
 
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
@@ -92,8 +146,6 @@ public class WorkorderActivity extends BaseActivity {
 			Log.v(TAG, resultData.toString());
 
 			try {
-				_detailEditText.setText(new JsonObject(new String(
-						resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))).display());
 
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -104,8 +156,10 @@ public class WorkorderActivity extends BaseActivity {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			// TODO Method Stub: onError()
 			Log.v(TAG, "Method Stub: onError()");
-
 		}
 	};
+	/*-*********************************-*/
+	/*-				Util				-*/
+	/*-*********************************-*/
 
 }

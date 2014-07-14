@@ -20,8 +20,8 @@
             <ImageView
                 android:id="@+id/mywork_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="@dimen/drawer_icon_width"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_todo" />
@@ -64,7 +64,7 @@
             <ImageView
                 android:id="@+id/market_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="64dp"
+                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
@@ -108,7 +108,7 @@
             <ImageView
                 android:id="@+id/payment_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="64dp"
+                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
@@ -139,7 +139,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
-                    android:paddingTop="10dp" >
+                    android:paddingTop="10dp"
+                    android:visibility="gone" >
 
                     <TextView
                         android:id="@+id/estimateddate_textview"
@@ -164,7 +165,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
-                    android:paddingTop="10dp" >
+                    android:paddingTop="10dp"
+                    android:visibility="gone" >
 
                     <TextView
                         android:id="@+id/paiddate_textview"
@@ -202,7 +204,7 @@
             <ImageView
                 android:id="@+id/settings_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="64dp"
+                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
@@ -246,7 +248,7 @@
             <ImageView
                 android:id="@+id/logout_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="64dp"
+                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"

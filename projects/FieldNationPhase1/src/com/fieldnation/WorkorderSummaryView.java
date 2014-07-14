@@ -681,8 +681,7 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_statusDisplayState = 1;
 			_statusTextView.setText("Routed");
 			_detailButton.setText("Accept");
-			// TODO BUTTON_ACTION_ACCEPT ????
-			// _buttonAction = BUTTON_ACTION_CONFIRM;
+			_buttonAction = BUTTON_ACTION_ASSIGNMENT;
 			_notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
 
 			_titleTextView.setVisibility(VISIBLE);
