@@ -151,7 +151,8 @@
 			                    android:layout_marginRight="1dp"
 			                    android:layout_centerVertical="true"
 			                    android:layout_alignBaseline="@+id/title_textview"
-						        android:visibility="visible" />
+			                    android:src="@drawable/ic_message_thumb"
+						        android:visibility="gone" />
 		                    
 				            <ImageView
 			                    android:id="@+id/notification_alert_imageview"
@@ -161,7 +162,8 @@
 			                    android:layout_centerVertical="true"
 			                    android:layout_alignBaseline="@+id/title_textview"
 			                    android:layout_toRightOf="@+id/message_alert_imageview"
-						        android:visibility="visible" />
+			                    android:src="@drawable/ic_alert_thumb"
+						        android:visibility="gone" />
 				            
 		                    <TextView
 		                        android:id="@+id/title_textview"
