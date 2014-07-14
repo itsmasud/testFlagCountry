@@ -196,9 +196,16 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 		setIsBundle(false);
 
-		// TODO logic apply here for add icon message or notification or both
-		int showMessageIcon = SHOW_ALERT_ICON;
-		int showNotificationIcon = HIDE_ALERT_ICON;
+		// set message/notifications/both icon with work orders title 
+		int showMessageIcon 		= HIDE_ALERT_ICON;
+		int showNotificationIcon 	= HIDE_ALERT_ICON;
+		// TODO 
+		/*if( woHasMessages == true ) {
+			showMessageIcon = SHOW_ALERT_ICON;
+		}
+		if( woHasNotifications == true ) {
+			showNotificationIcon = SHOW_ALERT_ICON;
+		}*/
 		
 		setAlertIconToWO(showMessageIcon, showNotificationIcon);
 
