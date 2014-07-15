@@ -20,6 +20,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:gravity="center"
-        android:text="0" />
+        android:text="0"
+        android:visibility="gone" />
 
 </RelativeLayout>

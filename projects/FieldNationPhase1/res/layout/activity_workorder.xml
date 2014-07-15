@@ -6,10 +6,22 @@
 
     <!-- The main content view -->
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/content_viewpager"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+        <com.fieldnation.WorkorderTabView
+            android:id="@+id/tabview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/content_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/tabview" />
+    </RelativeLayout>
 
     <!-- The navigation drawer -->
 

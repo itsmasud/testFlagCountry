@@ -21,7 +21,8 @@ public class WorkorderActivity extends DrawerActivity {
 
 	// UI
 	private ViewPager _viewPager;
-	private Fragment[] _fragments;
+	private WorkorderFragment[] _fragments;
+	private WorkorderTabView _tabview;
 
 	// Data
 	private GlobalState _gs;
@@ -70,15 +71,19 @@ public class WorkorderActivity extends DrawerActivity {
 	private void buildFragments() {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
-		_fragments = new Fragment[2];
-		_fragments[0] = new WorkorderDetailFragment().setTabBarListener(_tabview_onChange);
-		_fragments[1] = new WorkorderMessageFragment().setTabBarListener(_tabview_onChange);
+		_fragments = new WorkorderFragment[2];
+		_fragments[0] = new WorkorderDetailFragment();
+		_fragments[1] = new WorkorderMessageFragment();
 		// TODO load fragments
 
 		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
 		_viewPager.setAdapter(_pagerAdapter);
 		_viewPager.setOnPageChangeListener(_viewPager_onChange);
 
+		_tabview = (WorkorderTabView) findViewById(R.id.tabview);
+		_tabview.setListener(_tabview_onChange);
+
+		_viewPager.setCurrentItem(0, false);
 	}
 
 	/*-*************************-*/
@@ -91,8 +96,9 @@ public class WorkorderActivity extends DrawerActivity {
 		}
 
 		@Override
-		public Fragment getItem(int postition) {
-			return _fragments[postition];
+		public Fragment getItem(int position) {
+			_fragments[position].update();
+			return _fragments[position];
 		}
 
 		@Override
@@ -105,6 +111,8 @@ public class WorkorderActivity extends DrawerActivity {
 		public void onPageSelected(int position) {
 			try {
 				_currentFragment = position;
+				_tabview.setSelected(position);
+				_fragments[position].update();
 			} catch (Exception ex) {
 			}
 		};
@@ -114,6 +122,7 @@ public class WorkorderActivity extends DrawerActivity {
 		@Override
 		public void onChange(int index) {
 			_currentFragment = index;
+			_fragments[index].update();
 			_viewPager.setCurrentItem(_currentFragment, true);
 		}
 	};

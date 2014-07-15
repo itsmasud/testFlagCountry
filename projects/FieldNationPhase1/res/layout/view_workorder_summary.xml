@@ -139,44 +139,43 @@
                     android:layout_alignParentLeft="true"
                     android:layout_toLeftOf="@+id/actions_layout"
                     android:orientation="vertical" >
-                    
-                    <RelativeLayout                        	
-		                android:layout_width="match_parent"
-		                android:layout_height="wrap_content" >
-				            
-				            <ImageView
-			                    android:id="@+id/message_alert_imageview"
-			                    android:layout_width="15dp"
-			                    android:layout_height="15dp"
-			                    android:layout_marginRight="1dp"
-			                    android:layout_centerVertical="true"
-			                    android:layout_alignBaseline="@+id/title_textview"
-			                    android:src="@drawable/ic_message_thumb"
-						        android:visibility="gone" />
-		                    
-				            <ImageView
-			                    android:id="@+id/notification_alert_imageview"
-			                    android:layout_width="15dp"
-			                    android:layout_height="15dp"
-			                    android:layout_marginRight="2dp"
-			                    android:layout_centerVertical="true"
-			                    android:layout_alignBaseline="@+id/title_textview"
-			                    android:layout_toRightOf="@+id/message_alert_imageview"
-			                    android:src="@drawable/ic_alert_thumb"
-						        android:visibility="gone" />
-				            
-		                    <TextView
-		                        android:id="@+id/title_textview"
-		                        style="@style/WorkorderSummary_Title"
-		                        android:layout_width="wrap_content"
-		                        android:layout_height="wrap_content"
-		                        android:layout_toRightOf="@+id/notification_alert_imageview"
-		                        android:ellipsize="end"
-		                        android:maxLines="1"
-		                        android:text="@string/error"
-		                        android:textAppearance="?android:attr/textAppearanceMedium" />
-		                    
-		            </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <ImageView
+                            android:id="@+id/message_alert_imageview"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_alignBaseline="@+id/title_textview"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="1dp"
+                            android:src="@drawable/ic_message_thumb"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/notification_alert_imageview"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_alignBaseline="@+id/title_textview"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="2dp"
+                            android:layout_toRightOf="@+id/message_alert_imageview"
+                            android:src="@drawable/ic_alert_thumb"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/title_textview"
+                            style="@style/WorkorderSummary_Title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/notification_alert_imageview"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="@string/error"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/clientname_textview"
