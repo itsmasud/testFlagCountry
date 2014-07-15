@@ -63,7 +63,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 
 		_notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
-		_notificationsView.setCount(10);
+		//_notificationsView.setCount(10);
 
 		_messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
 
