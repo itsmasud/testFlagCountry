@@ -1,5 +1,7 @@
 package com.fieldnation;
 
+import com.fieldnation.data.workorder.Workorder;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.internal.widget.ScrollingTabContainerView.TabView;
@@ -49,6 +51,13 @@ public class WorkorderMessageFragment extends WorkorderFragment {
 	public void update() {
 		// TODO Method Stub: update()
 		Log.v(TAG, "Method Stub: update()");
+
+	}
+
+	@Override
+	public void setWorkorder(Workorder workorder) {
+		// TODO Method Stub: setWorkorder()
+		Log.v(TAG, "Method Stub: setWorkorder()");
 
 	}
 

@@ -1,6 +1,9 @@
 package com.fieldnation;
 
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
@@ -30,6 +33,7 @@ public class WorkorderActivity extends DrawerActivity {
 	private int _currentFragment = 0;
 	private boolean _created = false;
 	private PagerAdapter _pagerAdapter;
+	private Workorder _workorder = null;
 
 	// Services
 	private MyAuthenticationClient _authClient;
@@ -156,6 +160,14 @@ public class WorkorderActivity extends DrawerActivity {
 
 			try {
 
+				_workorder = Workorder.fromJson(new JsonObject(new String(
+						resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+
+				for (int i = 0; 0 < _fragments.length; i++) {
+					_fragments[i].setWorkorder(_workorder);
+				}
+
+				System.out.println("Have workorder");
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

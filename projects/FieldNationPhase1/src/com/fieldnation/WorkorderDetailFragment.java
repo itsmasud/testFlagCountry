@@ -1,5 +1,7 @@
 package com.fieldnation;
 
+import com.fieldnation.data.workorder.Workorder;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.internal.widget.ScrollingTabContainerView.TabView;
@@ -15,12 +17,12 @@ public class WorkorderDetailFragment extends WorkorderFragment {
 	private static final String TAG = "WorkorderDetailFragment";
 
 	// UI
-	private ListView _listview;
-	private EditText _messageEditText;
-	private Button _sendButton;
+	private WorkorderDetailSumView _sumView;
+	private WorkorderDetailLocationView _locView;
+	private WorkorderDetailScheduleView _scheduleView;
 
 	// Data
-	private WorkorderTabView.Listener _tabViewListener;
+	private Workorder _workorder;
 
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
@@ -37,11 +39,39 @@ public class WorkorderDetailFragment extends WorkorderFragment {
 		return inflater.inflate(R.layout.fragment_workorder_detail, container, false);
 	}
 
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+
+		_sumView = (WorkorderDetailSumView) view.findViewById(R.id.detailsum_view);
+		_locView = (WorkorderDetailLocationView) view.findViewById(R.id.location_view);
+		_scheduleView = (WorkorderDetailScheduleView) view.findViewById(R.id.schedule_view);
+
+		if (_workorder != null) {
+			setWorkorder(_workorder);
+		}
+	}
+
 	/*-*************************************-*/
 	/*-				Mutators				-*/
 	/*-*************************************-*/
 
 	public void update() {
+	}
+
+	@Override
+	public void setWorkorder(Workorder workorder) {
+		_workorder = workorder;
+
+		if (_sumView != null) {
+			_sumView.setWorkorder(_workorder);
+		}
+		if (_locView != null) {
+			_locView.setWorkorder(_workorder);
+		}
+		if (_scheduleView != null) {
+			_scheduleView.setWorkorder(_workorder);
+		}
 	}
 
 	/*-*********************************-*/

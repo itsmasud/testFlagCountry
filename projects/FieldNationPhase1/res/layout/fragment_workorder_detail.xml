@@ -5,6 +5,7 @@
     android:layout_height="match_parent" >
 
     <LinearLayout
+        style="@style/WorkorderDetail_Data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
@@ -26,6 +27,11 @@
         <View
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
+
+        <com.fieldnation.WorkorderDetailScheduleView
+            android:id="@+id/schedule_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <View
             style="@style/WorkorderDetail_Separator"

@@ -11,6 +11,59 @@
         android:text="Payment" />
 
     <TextView
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$5,000 Fixed for 4 hours" />
+
+    <TextView
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$75.00 per extra hour up to 5 hours" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_wo_detail_expense" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Add Expense" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_wo_detail_discount" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Add Discount" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
