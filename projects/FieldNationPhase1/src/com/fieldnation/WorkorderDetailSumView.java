@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class WorkorderDetailSumView extends LinearLayout {
+public class WorkorderDetailSumView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "WorkorderDetailSumView";
 
 	// UI

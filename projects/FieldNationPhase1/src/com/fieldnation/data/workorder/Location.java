@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.misc;
 
 public class Location {
 	@Json(name = "distance")
@@ -49,6 +50,46 @@ public class Location {
 
 	public String getAddress1() {
 		return _address1;
+	}
+
+	public String getTopAddressLine() {
+		if (getAddress1() != null || getAddress2() != null) {
+			String address1 = null;
+			String address2 = null;
+
+			if (getAddress1() != null)
+				address1 = getAddress1();
+			if (getAddress2() != null)
+				address2 = getAddress2();
+
+			if (misc.isEmptyOrNull(address1))
+				address1 = null;
+			if (misc.isEmptyOrNull(address2))
+				address2 = null;
+
+			if (address1 == null)
+				address1 = address2;
+			else if (address2 != null) {
+				address1 = (address1 + "\n" + address2).trim();
+			}
+
+			if (address1 != null) {
+				return address1;
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	public String getFullAddress() {
+		String address = getTopAddressLine() + "\n";
+
+		address += _city + ", " + _state + " " + _zip + "\n";
+		address += _country;
+
+		return address;
 	}
 
 	public String getZip() {
