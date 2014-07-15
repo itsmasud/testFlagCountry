@@ -75,7 +75,7 @@ public class NotificationActionBarView extends RelativeLayout {
 		@Override
 		public void onAuthentication(String username, String authToken) {
 			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
-			getContext().startService(_profileService.getAllNotifications(0, _gs.USER_ID, _nextPage, true));
+			getContext().startService(_profileService.getNewNotifications(0, _nextPage, true));
 			_nextPage++;
 			
 		}
@@ -104,7 +104,7 @@ public class NotificationActionBarView extends RelativeLayout {
 					setCount(_notificationCount, false);
 				} else if (count == 25) {
 					setCount(_notificationCount, true);
-					getContext().startService(_profileService.getAllNotifications(0, _gs.USER_ID, _nextPage, true));
+					getContext().startService(_profileService.getNewNotifications(0, _nextPage, true));
 					_nextPage++;
 				} else {
 					setCount(_notificationCount, false);
