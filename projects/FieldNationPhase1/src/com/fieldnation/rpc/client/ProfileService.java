@@ -14,12 +14,12 @@ public class ProfileService extends WebService {
 		return httpGet(resultCode, "/api/rest/v1/profile/" + userId, allowCache);
 	}
 
-	public Intent getAllNotifications(int resultCode, long userId, int page, boolean allowCache) {
-		return httpGet(resultCode, "/api/rest/v1/profile/notifications/" + userId, "?page=" + page, allowCache);
+	public Intent getAllNotifications(int resultCode, int page, boolean allowCache) {
+		return httpGet(resultCode, "/api/rest/v1/profile/notifications/", "?page=" + page, allowCache);
 	}
 
-	public Intent getNewNotifications(int resultCode, long userId, int page, boolean allowCache) {
-		return httpGet(resultCode, "/api/rest/v1/profile/notifications/new/" + userId, "?page=" + page, allowCache);
+	public Intent getNewNotifications(int resultCode, int page, boolean allowCache) {
+		return httpGet(resultCode, "/api/rest/v1/profile/notifications/new/", "?page=" + page, allowCache);
 	}
 
 	public Intent getUnreadMessages(int resultCode, int page, boolean allowCache) {
