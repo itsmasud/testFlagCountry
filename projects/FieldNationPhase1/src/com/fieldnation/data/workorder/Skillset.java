@@ -4,13 +4,13 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Skillsets {
+public class Skillset {
 	@Json(name = "name")
 	private String _name;
 	@Json(name = "dynamic_term_id")
 	private Integer _dynamicTermId;
 
-	public Skillsets() {
+	public Skillset() {
 	}
 
 	public String getName() {
@@ -25,7 +25,7 @@ public class Skillsets {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(Skillsets skillsets) {
+	public static JsonObject toJson(Skillset skillsets) {
 		try {
 			return Serializer.serializeObject(skillsets);
 		} catch (Exception ex) {
@@ -34,9 +34,9 @@ public class Skillsets {
 		}
 	}
 
-	public static Skillsets fromJson(JsonObject json) {
+	public static Skillset fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(Skillsets.class, json);
+			return Serializer.unserializeObject(Skillset.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

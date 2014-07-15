@@ -32,7 +32,7 @@ public class Workorder {
 	@Json(name = "estimatedSchedule")
 	private EstimatedSchedule _estimatedSchedule;
 	@Json(name = "skillsets")
-	private Skillsets[] _skillsets;
+	private Skillset[] _skillsets;
 	@Json(name = "isCounter")
 	private Boolean _isCounter;
 	@Json(name = "pay")
@@ -125,7 +125,7 @@ public class Workorder {
 		return _estimatedSchedule;
 	}
 
-	public Skillsets[] getSkillsets() {
+	public Skillset[] getSkillsets() {
 		return _skillsets;
 	}
 

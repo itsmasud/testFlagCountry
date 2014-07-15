@@ -492,34 +492,15 @@ public class WorkorderSummaryView extends RelativeLayout {
 			_clientNameTextView.setVisibility(GONE);
 		}
 		// when scheduledTimeStart/scheduledTimeEnd
-		try {
-			if (_workorder.getSchedule() != null) {
-				Schedule schedule = _workorder.getSchedule();
-				if (!misc.isEmptyOrNull(schedule.getStartTime())) {
-					String when = "";
-					Calendar cal = null;
-					cal = ISO8601.toCalendar(schedule.getStartTime());
-					when = misc.formatDate(cal);
 
-					if (!misc.isEmptyOrNull(schedule.getEndTime())) {
-						cal = ISO8601.toCalendar(schedule.getEndTime());
-						if (cal.get(Calendar.YEAR) > 2000) {
-							when += " - ";
-							when += misc.formatDate(cal);
-						}
-					}
-					when += " @ ";
+		if (_workorder.getSchedule() != null) {
+			String when = _workorder.getSchedule().getFormatedTime();
 
-					when += (cal.get(Calendar.HOUR) + 1) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
-
-					_whenTextView.setText(when);
-				} else {
-					_whenTextView.setVisibility(GONE);
-				}
+			if (when == null) {
+				_whenTextView.setVisibility(GONE);
+			} else {
+				_whenTextView.setText(when);
 			}
-		} catch (Exception ex) {
-			// ex.printStackTrace();
-			_whenTextView.setVisibility(GONE);
 		}
 
 		// pay.basis
