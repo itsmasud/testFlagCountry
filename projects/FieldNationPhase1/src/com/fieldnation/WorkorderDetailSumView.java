@@ -28,7 +28,7 @@ public class WorkorderDetailSumView extends LinearLayout implements WorkorderRen
 	// Data
 	private Workorder _workoder;
 
-	/*-*************************************-*/
+	/*-*************************************-*/ 
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 

@@ -21,6 +21,10 @@ public class WorkorderDetailLocationView extends LinearLayout implements Workord
 	// Data
 	private Workorder _workorder;
 
+	/*-*************************************-*/
+	/*-				Life Cycle				-*/
+	/*-*************************************-*/
+
 	public WorkorderDetailLocationView(Context context) {
 		this(context, null);
 	}
@@ -36,6 +40,10 @@ public class WorkorderDetailLocationView extends LinearLayout implements Workord
 		_distanceTextView = (TextView) findViewById(R.id.distance_textview);
 		_contactInfoTextView = (TextView) findViewById(R.id.contactinfo_textview);
 	}
+
+	/*-*************************************-*/
+	/*-				Mutators				-*/
+	/*-*************************************-*/
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
