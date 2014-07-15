@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="WorkorderDetail">
+        <item name="android:background">@color/workorder_detail_bg</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+    </style>
+
+    <style name="WorkorderDetail_Separator">
+        <item name="android:background">@color/workorder_detail_separator_color</item>
+        <item name="android:layout_height">2px</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <style name="WorkorderDetail_ProjectTitle">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+
+    <style name="WorkorderDetail_Field">
+        <item name="android:paddingBottom">15dp</item>
+    </style>
+
+    <style name="WorkorderDetail_FieldTitle" parent="WorkorderDetail_Field">
+        <item name="android:textColor">#FF97976e</item>
+    </style>
+
+    <style name="WorkorderDetail_FieldSubTitle" parent="WorkorderDetail_FieldTitle">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+</resources>

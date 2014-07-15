@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="workorder_detail_bg">#FFfefefe</color>
+    <color name="workorder_detail_separator_color">#FFe9e9e7</color>
+    
+</resources>

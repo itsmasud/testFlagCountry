@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/substatus_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Substatus Title" />
+
+    <View
+        android:id="@+id/substatus_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/projectname_textview"
+        style="@style/WorkorderDetail_ProjectTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name of project goes here" />
+
+    <TextView
+        android:id="@+id/clientname_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Client Name" />
+
+    <TextView
+        android:id="@+id/worktype_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type of Work" />
+
+    <TextView
+        android:id="@+id/skills_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skill 1 * Skill 2 * Skill 3" />
+
+    <TextView
+        android:id="@+id/datetime_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="04/12/14 - 04/23/14 @ 2pm" />
+
+    <TextView
+        android:id="@+id/workorderid_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Work Order ID" />
+
+</LinearLayout>
