@@ -44,12 +44,12 @@
             android:label="@string/activity_login_title" >
         </activity>
         <activity
-            andcom.fieldnation.activities.WorkorderActivityderActivity"
+            android:name="com.fieldnation.ui.workorder.WorkorderActivity"
             android:exported="false"
             android:label="@string/work_order_detail_title" >
         </activity>
         <activity
-    com.fieldnation.activities.MessageListActivityon.MessageListActivity"
+            android:name="com.fieldnation.ui.MessageListActivity"
             android:exported="false"
             android:label="@string/activity_message_list_title" >
         </activity>
@@ -59,7 +59,7 @@
             android:label="@string/activity_payments_list_title" >
         </activity>
         <activity
-            andcom.fieldnation.activities.PaymentDetailActivityailActivity"
+            android:name="com.fieldnation.ui.payment.PaymentDetailActivity"
             android:exported="false"
             android:label="@string/activity_payments_list_title" >
         </activity>
@@ -105,7 +105,9 @@
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
+            <intent-filter>
+com.fieldnation.service
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data
