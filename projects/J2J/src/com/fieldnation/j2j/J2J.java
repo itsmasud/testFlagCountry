@@ -12,7 +12,7 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "7fe0ae1b66047e4d7febc26f2db1beb91890b323";
+	private static String authToken = "00767dc7325554406e0db9cbbaee2dccc1eec9ea";
 
 	public static void main(String[] args) {
 		getWorkorders();

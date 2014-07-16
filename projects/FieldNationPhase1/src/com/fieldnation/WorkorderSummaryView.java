@@ -120,10 +120,10 @@ public class WorkorderSummaryView extends RelativeLayout {
 			R.color.wosumButton3Foreground,
 			R.color.wosumButton1Foreground };
 	private static final int[] _STATUS_BUTTON_BG = {
-			R.drawable.wosum_button1_bg,
-			R.drawable.wosum_button2_bg,
-			R.drawable.wosum_button3_bg,
-			R.drawable.wosum_button1_bg };
+			R.drawable.btn_white,
+			R.drawable.btn_orange,
+			R.drawable.btn_green,
+			R.drawable.btn_white };
 
 	public WorkorderSummaryView(Context context) {
 		this(context, null, -1);

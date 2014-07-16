@@ -43,7 +43,7 @@
     <style name="WorkorderSummary_Title"></style>
 
     <style name="WorkorderSummary_Button" parent="android:attr/buttonStyleSmall">
-        <item name="android:background">@drawable/wosum_button1_bg</item>
+        <item name="android:background">@drawable/btn_white</item>
         <item name="android:textColor">@color/wosumButton1Foreground</item>
     </style>
 

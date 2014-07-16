@@ -6,9 +6,14 @@ import com.fieldnation.data.workorder.Skillset;
 import com.fieldnation.data.workorder.Workorder;
 
 import android.content.Context;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,7 +33,7 @@ public class WorkorderDetailSumView extends LinearLayout implements WorkorderRen
 	// Data
 	private Workorder _workoder;
 
-	/*-*************************************-*/ 
+	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 
@@ -51,6 +56,7 @@ public class WorkorderDetailSumView extends LinearLayout implements WorkorderRen
 		_skillsTextView = (TextView) findViewById(R.id.skills_textview);
 		_dateTimeTextView = (TextView) findViewById(R.id.datetime_textview);
 		_workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
+
 	}
 
 	/*-*************************************-*/

@@ -53,6 +53,8 @@ public class Workorder {
 	private Documents[] _documents;
 	@Json(name = "status")
 	private String _status;
+	@Json(name="loggedWork")
+	private LoggedWork[] _loggedWork;
 	@Json(name = "declinedWo")
 	private Integer _declinedWo;
 	@Json(name = "schedule")
@@ -167,6 +169,10 @@ public class Workorder {
 
 	public String getStatus() {
 		return _status;
+	}
+
+	public LoggedWork[] getLoggedWork(){
+		return _loggedWork;
 	}
 
 	public Integer getDeclinedWo() {
