@@ -4,10 +4,10 @@ import java.text.ParseException;
 import java.util.HashMap;
 
 import com.fieldnation.auth.server.AuthCache;
+import com.fieldnation.net.OAuth;
+import com.fieldnation.net.Result;
+import com.fieldnation.net.Ws;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.webapi.OAuth;
-import com.fieldnation.webapi.Result;
-import com.fieldnation.webapi.Ws;
 
 import android.content.Context;
 import android.content.Intent;

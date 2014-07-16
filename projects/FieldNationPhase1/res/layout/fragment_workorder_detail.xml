@@ -37,14 +37,64 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <TextView
-            android:id="@+id/textView14"
-            style="@style/WorkorderDetail_FieldTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Payment" />
+        <com.fieldnation.WorkorderDetailPaymentView
+            android:id="@+id/payment_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <!-- TODO put payament detail view here -->
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.WorkorderDetailPrereqView
+            android:id="@+id/prereq_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.WorkorderDetailOnsiteWorkView
+            android:id="@+id/onsite_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.WorkorderDetailCompletionReqView
+            android:id="@+id/completion_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.WorkorderDetailShipmentView
+            android:id="@+id/shipment_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.WorkorderDetailClosingNotesView
+            android:id="@+id/closingnotes_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.WorkorderDetailExpectedPaymentView
+            android:id="@+id/expected_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </ScrollView>

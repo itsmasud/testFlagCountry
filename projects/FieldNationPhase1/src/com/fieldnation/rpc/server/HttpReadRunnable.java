@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
+import com.fieldnation.net.OAuth;
+import com.fieldnation.net.Result;
+import com.fieldnation.net.Ws;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.webapi.OAuth;
-import com.fieldnation.webapi.Result;
-import com.fieldnation.webapi.Ws;
 
 public class HttpReadRunnable extends HttpRunnable implements WebServiceConstants {
 	private static final String TAG = "HttpReadRunnable";

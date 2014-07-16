@@ -1,6 +1,6 @@
 package com.fieldnation.rpc.server;
 
-import com.fieldnation.webapi.OAuth;
+import com.fieldnation.net.OAuth;
 
 import android.content.Context;
 import android.os.Bundle;
