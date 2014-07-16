@@ -7,7 +7,7 @@
                 android:bottomLeftRadius="@dimen/card_corner_radius"
                 android:topLeftRadius="@dimen/card_corner_radius" />
 
-            <solid android:color="@color/wosumStatus9Bevel" >
+            <solid android:color="@color/woCardStatus7Bevel" >
             </solid>
         </shape>
     </item>
@@ -17,7 +17,7 @@
                 android:bottomLeftRadius="@dimen/card_corner_radius"
                 android:topLeftRadius="@dimen/card_corner_radius" />
 
-            <solid android:color="@color/wosumStatus9" />
+            <solid android:color="@color/woCardStatus7" />
         </shape>
     </item>
 

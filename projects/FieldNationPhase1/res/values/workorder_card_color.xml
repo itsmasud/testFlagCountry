@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="woCardBackground">#00000000</color>
+    <color name="woCardOptionsBackground">#FF383f49</color>
+
+    <!-- status colors -->
+    <color name="woCardStatus1">#FFFCFCFC</color>
+    <color name="woCardStatus1Bevel">#FFe0e0e0</color>
+    <color name="woCardStatus2">#FFfb7622</color>
+    <color name="woCardStatus2Bevel">#FFdd5200</color>
+    <color name="woCardStatus3">#FF3dcea9</color>
+    <color name="woCardStatus3Bevel">#FF34b696</color>
+    <color name="woCardStatus4">#FF68685b</color>
+    <color name="woCardStatus4Bevel">#FF54544b</color>
+
+    <!-- status label colors -->
+    <color name="woCardStatusLabel1">#FF000000</color>
+    <color name="woCardStatusLabel2">#FFFFFFFF</color>
+    <color name="woCardStatusLabel3">#FFFFFFFF</color>
+    <color name="woCardStatusLabel4">#FFFFFFFF</color>
+
+    <!-- not used -->
+    <color name="woCardStatus5">#FF0000FF</color>
+    <color name="woCardStatus5Bevel">#FF0000EB</color>
+    <color name="woCardStatus6">#FF00FF00</color>
+    <color name="woCardStatus6Bevel">#FF00EB00</color>
+    <color name="woCardStatus7">#FF00FFFF</color>
+    <color name="woCardStatus7Bevel">#FF00EBEB</color>
+    <color name="woCardStatus8">#FF7F7F7F</color>
+    <color name="woCardStatus8Bevel">#FF6B6B6B</color>
+    <color name="woCardStatus9">#FF7F7F00</color>
+    <color name="woCardStatus9Bevel">#FF6B6B00</color>
+    <color name="woCardStatusSeparator">#FFe0e0e0</color>
+
+    <!-- woCard button colors -->
+    <color name="woCardButtonBackground">#FF78a3f2</color>
+    <color name="woCardButtonBorder">#FFf1f1e9</color>
+    <color name="woCardButtonBevel">#FF6b90d3</color>
+    <color name="woCardButton1Foreground">#FF000000</color>
+    <color name="woCardButton1GradientTop">#FFFFFFFF</color>
+    <color name="woCardButton1GradientBot">#FFe7e7e7</color>
+    <color name="woCardButton1Bevel">#80c3c3c3</color>
+    <color name="woCardButton2Foreground">#FFFFFFFF</color>
+    <color name="woCardButton2GradientTop">#FFFD7723</color>
+    <color name="woCardButton2GradientBot">#FFE35700</color>
+    <color name="woCardButton2Bevel">#80C85207</color>
+    <color name="woCardButton3Foreground">#FFFFFFFF</color>
+    <color name="woCardButton3GradientTop">#FF5bd7b8</color>
+    <color name="woCardButton3GradientBot">#FF36bb9a</color>
+    <color name="woCardButton3Bevel">#8035a689</color>
+
+</resources>

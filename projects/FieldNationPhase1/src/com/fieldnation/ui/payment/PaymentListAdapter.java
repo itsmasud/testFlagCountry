@@ -21,14 +21,14 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 
 	@Override
 	public View getView(Payment obj, View convertView, ViewGroup parent) {
-		PaymentSummaryView view = null;
+		PaymentCardView view = null;
 
 		if (convertView == null) {
-			view = new PaymentSummaryView(getContext());
-		} else if (convertView instanceof PaymentSummaryView) {
-			view = (PaymentSummaryView) convertView;
+			view = new PaymentCardView(getContext());
+		} else if (convertView instanceof PaymentCardView) {
+			view = (PaymentCardView) convertView;
 		} else {
-			view = new PaymentSummaryView(getContext());
+			view = new PaymentCardView(getContext());
 		}
 
 		view.setData(obj);

@@ -17,7 +17,7 @@
                 android:id="@+id/status_view"
                 android:layout_width="@dimen/MessageView_StatusWidth"
                 android:layout_height="match_parent"
-                android:background="@drawable/wosum_status_1" />
+                android:background="@drawable/wocard_status_1" />
 
             <View
                 android:id="@+id/filler"

@@ -3,7 +3,7 @@
 
     <item>
         <shape android:shape="oval" >
-            <solid android:color="@color/wosumButtonBorder" >
+            <solid android:color="@color/woCardButtonBorder" >
             </solid>
         </shape>
     </item>
@@ -13,7 +13,7 @@
         android:right="5dp"
         android:top="5dp">
         <shape android:shape="oval" >
-            <solid android:color="@color/wosumButtonBevel" >
+            <solid android:color="@color/woCardButtonBevel" >
             </solid>
         </shape>
     </item>
@@ -23,7 +23,7 @@
         android:right="5dp"
         android:top="5dp">
         <shape android:shape="oval" >
-            <solid android:color="@color/wosumButtonBackground" />
+            <solid android:color="@color/woCardButtonBackground" />
         </shape>
     </item>
 

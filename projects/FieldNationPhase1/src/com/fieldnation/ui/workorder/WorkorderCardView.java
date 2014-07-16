@@ -57,7 +57,7 @@ import android.widget.Toast;
  * @author michael.carver
  * 
  */
-public class WorkorderSummaryView extends RelativeLayout {
+public class WorkorderCardView extends RelativeLayout {
 	static final String TAG = "WorkorderSummaryView";
 
 	public static final int BUTTON_ACTION_NONE = 0;
@@ -114,37 +114,37 @@ public class WorkorderSummaryView extends RelativeLayout {
 
 	// status colors lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = {
-			R.drawable.wosum_status_1,
-			R.drawable.wosum_status_2,
-			R.drawable.wosum_status_3,
-			R.drawable.wosum_status_4 };
+			R.drawable.wocard_status_1,
+			R.drawable.wocard_status_2,
+			R.drawable.wocard_status_3,
+			R.drawable.wocard_status_4 };
 	private static final int[] _STATUS_TEXT_TABLE = {
-			R.color.wosumStatusLabel1,
-			R.color.wosumStatusLabel2,
-			R.color.wosumStatusLabel3,
-			R.color.wosumStatusLabel4 };
+			R.color.woCardStatusLabel1,
+			R.color.woCardStatusLabel2,
+			R.color.woCardStatusLabel3,
+			R.color.woCardStatusLabel4 };
 	private static final int[] _STATUS_BUTTON_FG = {
-			R.color.wosumButton1Foreground,
-			R.color.wosumButton2Foreground,
-			R.color.wosumButton3Foreground,
-			R.color.wosumButton1Foreground };
+			R.color.woCardButton1Foreground,
+			R.color.woCardButton2Foreground,
+			R.color.woCardButton3Foreground,
+			R.color.woCardButton1Foreground };
 	private static final int[] _STATUS_BUTTON_BG = {
 			R.drawable.btn_white,
 			R.drawable.btn_orange,
 			R.drawable.btn_green,
 			R.drawable.btn_white };
 
-	public WorkorderSummaryView(Context context) {
+	public WorkorderCardView(Context context) {
 		this(context, null, -1);
 	}
 
-	public WorkorderSummaryView(Context context, AttributeSet attrs) {
+	public WorkorderCardView(Context context, AttributeSet attrs) {
 		this(context, attrs, -1);
 	}
 
-	public WorkorderSummaryView(Context context, AttributeSet attrs, int defStyle) {
+	public WorkorderCardView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_summary, this);
+		LayoutInflater.from(context).inflate(R.layout.view_workorder_card, this);
 
 		if (isInEditMode())
 			return;
@@ -196,9 +196,9 @@ public class WorkorderSummaryView extends RelativeLayout {
 		setOnLongClickListener(_this_onLongClickListener);
 		setOnClickListener(_this_onClick);
 
-		_slideAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.wosum_slide_away);
+		_slideAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.wocard_slide_away);
 
-		_slideBackAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.wosum_slide_back);
+		_slideBackAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.wocard_slide_back);
 
 		setIsBundle(false);
 

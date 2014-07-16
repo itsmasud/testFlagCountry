@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="WorkorderSummary">
+    <style name="WorkorderCard">
         <item name="android:background">@color/transparent</item>
     </style>
 
-    <style name="WorkorderSummary_Inside">
+    <style name="WorkorderCard_Inside">
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
     </style>
 
-    <style name="WorkorderSummary_BundleLayout">
+    <style name="WorkorderCard_BundleLayout">
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
     </style>
 
-    <style name="WorkorderSummary_DataContainer">
+    <style name="WorkorderCard_DataContainer">
         <item name="android:background">@drawable/card_right</item>
     </style>
 
-    <style name="WorkorderSummary_StatusBar">
-        <item name="android:background">@drawable/wosum_status_1</item>
+    <style name="WorkorderCard_StatusBar">
+        <item name="android:background">@drawable/wocard_status_1</item>
     </style>
 
-    <style name="WorkorderSummary_StatusText">
+    <style name="WorkorderCard_StatusText">
         <item name="android:maxLines">1</item>
         <item name="android:paddingTop">5dp</item>
         <item name="android:paddingLeft">5dp</item>
         <item name="android:paddingRight">5dp</item>
     </style>
 
-    <style name="WorkorderSummary_ActionsLayout"></style>
+    <style name="WorkorderCard_ActionsLayout"></style>
 
-    <style name="WorkorderSummary_Separator">
-        <item name="android:background">@color/wosumStatusSeparator</item>
+    <style name="WorkorderCard_Separator">
+        <item name="android:background">@color/woCardStatusSeparator</item>
     </style>
 
-    <style name="WorkorderSummary_Title"></style>
+    <style name="WorkorderCard_Title"></style>
 
-    <style name="WorkorderSummary_Button" parent="android:attr/buttonStyleSmall">
+    <style name="WorkorderCard_Button" parent="android:attr/buttonStyleSmall">
         <item name="android:background">@drawable/btn_white</item>
-        <item name="android:textColor">@color/wosumButton1Foreground</item>
+        <item name="android:textColor">@color/woCardButton1Foreground</item>
     </style>
 
-    <style name="WorkorderSummary_Label">
+    <style name="WorkorderCard_Label">
         <item name="android:textColor">#FFc1c1a9</item>
         <item name="android:paddingRight">5dp</item>
     </style>
 
-    <style name="WorkorderSummary_PaymentLabel"></style>
+    <style name="WorkorderCard_PaymentLabel"></style>
 
-    <style name="WorkorderSummary_Options">
-        <item name="android:background">@color/wosumOptionsBackground</item>
+    <style name="WorkorderCard_Options">
+        <item name="android:background">@color/woCardOptionsBackground</item>
     </style>
 
 </resources>

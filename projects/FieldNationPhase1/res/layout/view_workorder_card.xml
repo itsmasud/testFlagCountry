@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/WorkorderSummary"
+    style="@style/WorkorderCard"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
     <RelativeLayout
         android:id="@+id/options_layout"
-        style="@style/WorkorderSummary_Options"
+        style="@style/WorkorderCard_Options"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignBottom="@+id/content_layout"
@@ -37,7 +37,7 @@
                 android:src="@drawable/ic_cancel" />
 
             <TextView
-                style="@style/WorkorderSummary_Title"
+                style="@style/WorkorderCard_Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -52,7 +52,7 @@
 
     <LinearLayout
         android:id="@+id/content_layout"
-        style="@style/WorkorderSummary_Inside"
+        style="@style/WorkorderCard_Inside"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -60,34 +60,34 @@
 
         <RelativeLayout
             android:id="@+id/status_layout"
-            style="@style/WorkorderSummary_StatusBar"
+            style="@style/WorkorderCard_StatusBar"
             android:layout_width="30dp"
             android:layout_height="fill_parent" >
 
             <com.fieldnation.VerticalTextView
                 android:id="@+id/status_textview"
-                style="@style/WorkorderSummary_StatusText"
+                style="@style/WorkorderCard_StatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="@string/error" />
 
             <View
-                style="@style/WorkorderSummary_Separator"
+                style="@style/WorkorderCard_Separator"
                 android:layout_width="2px"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
 
         <LinearLayout
-            style="@style/WorkorderSummary_DataContainer"
+            style="@style/WorkorderCard_DataContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <RelativeLayout
                 android:id="@+id/bundle_layout"
-                style="@style/WorkorderSummary_BundleLayout"
+                style="@style/WorkorderCard_BundleLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" >
@@ -101,7 +101,7 @@
                     android:src="@drawable/ic_bundle" />
 
                 <TextView
-                    style="@style/WorkorderSummary_Title"
+                    style="@style/WorkorderCard_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/bundle_imageview"
@@ -111,7 +111,7 @@
 
                 <TextView
                     android:id="@+id/bundle_textview"
-                    style="@style/WorkorderSummary_Title"
+                    style="@style/WorkorderCard_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -122,13 +122,13 @@
 
             <View
                 android:id="@+id/bundle_separator"
-                style="@style/WorkorderSummary_Separator"
+                style="@style/WorkorderCard_Separator"
                 android:layout_width="fill_parent"
                 android:layout_height="2px"
                 android:visibility="gone" />
 
             <RelativeLayout
-                style="@style/WorkorderSummary_Inside"
+                style="@style/WorkorderCard_Inside"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -167,7 +167,7 @@
 
                         <TextView
                             android:id="@+id/title_textview"
-                            style="@style/WorkorderSummary_Title"
+                            style="@style/WorkorderCard_Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@+id/notification_alert_imageview"
@@ -216,7 +216,7 @@
 
                 <RelativeLayout
                     android:id="@+id/actions_layout"
-                    style="@style/WorkorderSummary_ActionsLayout"
+                    style="@style/WorkorderCard_ActionsLayout"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -241,7 +241,7 @@
 
                         <TextView
                             android:id="@+id/payment_textview"
-                            style="@style/WorkorderSummary_PaymentLabel"
+                            style="@style/WorkorderCard_PaymentLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
@@ -268,7 +268,7 @@
 
                     <Button
                         android:id="@+id/detail_button"
-                        style="@style/WorkorderSummary_Button"
+                        style="@style/WorkorderCard_Button"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_alignParentBottom="true"

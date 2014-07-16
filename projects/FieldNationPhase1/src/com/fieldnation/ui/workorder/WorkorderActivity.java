@@ -12,6 +12,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
+import com.fieldnation.ui.workorder.detail.MessageFragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -84,7 +85,7 @@ public class WorkorderActivity extends DrawerActivity {
 
 		_fragments = new WorkorderFragment[2];
 		_fragments[0] = new DetailFragment();
-		_fragments[1] = new WorkorderMessageFragment();
+		_fragments[1] = new MessageFragment();
 		// TODO load fragments
 
 		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());

@@ -13,7 +13,7 @@ import com.fieldnation.R.string;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.workorder.WorkorderSummaryView.Listener;
+import com.fieldnation.ui.workorder.WorkorderCardView.Listener;
 
 class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
 	private static final String TAG = "WorkorderSummaryAdvancedUndoListener";
@@ -42,20 +42,20 @@ class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
 	@Override
 	public void onHide(Parcelable token) {
 		switch (_notInterestedAction) {
-		case WorkorderSummaryView.NOT_INTERESTED_ACTION_DECLINE:
-			_context.startService(_service.decline(WorkorderSummaryView.NOT_INTERESTED_ACTION_DECLINE,
+		case WorkorderCardView.NOT_INTERESTED_ACTION_DECLINE:
+			_context.startService(_service.decline(WorkorderCardView.NOT_INTERESTED_ACTION_DECLINE,
 					_workorder.getWorkorderId()));
 
 			break;
-		case WorkorderSummaryView.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
-			_context.startService(_service.withdrawRequest(WorkorderSummaryView.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
+		case WorkorderCardView.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
+			_context.startService(_service.withdrawRequest(WorkorderCardView.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
 					_workorder.getWorkorderId()));
 
 			break;
-		case WorkorderSummaryView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
+		case WorkorderCardView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
 			// TODO, get reason input from user
 			_context.startService(_service.cancelAssignment(
-					WorkorderSummaryView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT, _workorder.getWorkorderId(), 1,
+					WorkorderCardView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT, _workorder.getWorkorderId(), 1,
 					"Cause I said So"));
 			break;
 		}

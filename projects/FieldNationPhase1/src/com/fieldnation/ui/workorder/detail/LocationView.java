@@ -5,7 +5,6 @@ import com.fieldnation.R.id;
 import com.fieldnation.R.layout;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.workorder.WorkorderRenderer;
 
 import android.content.Context;
 import android.util.AttributeSet;

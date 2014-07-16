@@ -52,14 +52,14 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			return new View(parent.getContext());
 		}
 
-		WorkorderSummaryView wosum = null;
+		WorkorderCardView wosum = null;
 
 		if (convertView == null) {
-			wosum = new WorkorderSummaryView(parent.getContext());
-		} else if (convertView instanceof WorkorderSummaryView) {
-			wosum = (WorkorderSummaryView) convertView;
+			wosum = new WorkorderCardView(parent.getContext());
+		} else if (convertView instanceof WorkorderCardView) {
+			wosum = (WorkorderCardView) convertView;
 		} else {
-			wosum = new WorkorderSummaryView(parent.getContext());
+			wosum = new WorkorderCardView(parent.getContext());
 		}
 
 		wosum.setWorkorder(_dataSelection, object);
@@ -68,7 +68,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		return wosum;
 	}
 
-	private WorkorderSummaryView.Listener _wosum_listener = new WorkorderSummaryView.Listener() {
+	private WorkorderCardView.Listener _wosum_listener = new WorkorderCardView.Listener() {
 
 		@Override
 		public void startRemove(Workorder wo) {

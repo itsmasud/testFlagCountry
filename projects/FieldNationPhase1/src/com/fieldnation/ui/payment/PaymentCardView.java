@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class PaymentSummaryView extends RelativeLayout {
+public class PaymentCardView extends RelativeLayout {
 	private static final String TAG = "PaymentSummaryView";
 
 	private static final int[] _HEADER_BG = new int[] {
@@ -40,17 +40,17 @@ public class PaymentSummaryView extends RelativeLayout {
 	/*-*****************************-*/
 	/*-			Life cycle			-*/
 	/*-*****************************-*/
-	public PaymentSummaryView(Context context) {
+	public PaymentCardView(Context context) {
 		this(context, null, -1);
 	}
 
-	public PaymentSummaryView(Context context, AttributeSet attrs) {
+	public PaymentCardView(Context context, AttributeSet attrs) {
 		this(context, attrs, -1);
 	}
 
-	public PaymentSummaryView(Context context, AttributeSet attrs, int defStyle) {
+	public PaymentCardView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_payment_summary, this);
+		LayoutInflater.from(context).inflate(R.layout.view_payment_card, this);
 
 		if (isInEditMode())
 			return;

@@ -7,7 +7,6 @@ import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Skillset;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.workorder.WorkorderRenderer;
 
 import android.content.Context;
 import android.text.Html;

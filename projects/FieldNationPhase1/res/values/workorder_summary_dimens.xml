@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <dimen name="wosum_button_dropshadow">2px</dimen>
-    <dimen name="wosum_button_radius">4px</dimen>
-
-</resources>
