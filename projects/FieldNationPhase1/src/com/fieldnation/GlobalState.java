@@ -2,8 +2,8 @@ package com.fieldnation;
 
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.auth.client.AuthenticationServer;
-import com.fieldnation.net.Ws;
 import com.fieldnation.rpc.server.DataCacheNode;
+import com.fieldnation.rpc.server.Ws;
 
 import android.app.Application;
 

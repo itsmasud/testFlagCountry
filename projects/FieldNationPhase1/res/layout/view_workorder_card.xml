@@ -64,7 +64,7 @@
             android:layout_width="30dp"
             android:layout_height="fill_parent" >
 
-            <com.fieldnation.VerticalTextView
+            <com.fieldnation.ui.VerticalTextView
                 android:id="@+id/status_textview"
                 style="@style/WorkorderCard_StatusText"
                 android:layout_width="wrap_content"

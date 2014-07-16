@@ -4,9 +4,6 @@ import java.text.ParseException;
 import java.util.HashMap;
 
 import com.fieldnation.auth.server.AuthCache;
-import com.fieldnation.net.OAuth;
-import com.fieldnation.net.Result;
-import com.fieldnation.net.Ws;
 import com.fieldnation.rpc.common.WebServiceConstants;
 
 import android.content.Context;

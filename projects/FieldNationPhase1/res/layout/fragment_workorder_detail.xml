@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <com.fieldnation.WorkorderDetailSumView
+        <com.fieldnation.ui.workorder.detail.SummaryView
             android:id="@+id/detailsum_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -19,7 +19,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailLocationView
+        <com.fieldnation.ui.workorder.detail.LocationView
             android:id="@+id/location_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -28,7 +28,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailScheduleView
+        <com.fieldnation.ui.workorder.detail.ScheduleView
             android:id="@+id/schedule_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -37,7 +37,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailPaymentView
+        <com.fieldnation.ui.workorder.detail.PaymentView
             android:id="@+id/payment_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -46,7 +46,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailPrereqView
+        <com.fieldnation.ui.workorder.detail.PrereqView
             android:id="@+id/prereq_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -55,7 +55,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailOnsiteWorkView
+        <com.fieldnation.ui.workorder.detail.OnsiteWorkView
             android:id="@+id/onsite_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -64,7 +64,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailCompletionReqView
+        <com.fieldnation.ui.workorder.detail.CompletionReqView
             android:id="@+id/completion_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -73,7 +73,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailShipmentView
+        <com.fieldnation.ui.workorder.detail.ShipmentView
             android:id="@+id/shipment_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -82,7 +82,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailClosingNotesView
+        <com.fieldnation.ui.workorder.detail.ClosingNotesView
             android:id="@+id/closingnotes_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -91,7 +91,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.WorkorderDetailExpectedPaymentView
+        <com.fieldnation.ui.workorder.detail.ExpectedPaymentView
             android:id="@+id/expected_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

@@ -6,9 +6,6 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-import com.fieldnation.net.OAuth;
-import com.fieldnation.net.Result;
-import com.fieldnation.net.Ws;
 import com.fieldnation.rpc.common.WebServiceConstants;
 
 public class HttpReadRunnable extends HttpRunnable implements WebServiceConstants {

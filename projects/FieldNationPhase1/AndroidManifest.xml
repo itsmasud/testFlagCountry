@@ -24,7 +24,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.fieldnation.activities.MarketActivity"
+            android:name="com.fieldnation.ui.market.MarketActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fieldnation.MyWorkActivity"
+            android:name="com.fieldnation.ui.workorder.MyWorkActivity"
             android:configChanges="orientation"
             android:exported="false"
             android:label="@string/mywork_title" >
@@ -54,7 +54,7 @@
             android:label="@string/activity_message_list_title" >
         </activity>
         <activity
-            android:name="com.fieldnation.PaymentListActivity"
+            android:name="com.fieldnation.ui.payment.PaymentListActivity"
             android:exported="false"
             android:label="@string/activity_payments_list_title" >
         </activity>
@@ -105,9 +105,7 @@
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>
-com.fieldnation.service
-                <action android:name="android.content.SyncAdapter" />
+            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data
@@ -116,7 +114,7 @@ com.fieldnation.service
         </service>
 
         <activity
-            android:name="com.fieldnation.SettingsActivity"
+            android:name="com.fieldnation.ui.SettingsActivity"
             android:exported="false"
             android:label="@string/settings" >
         </activity>

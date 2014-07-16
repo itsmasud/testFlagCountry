@@ -6,7 +6,6 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.net.OAuth;
 import com.fieldnation.rpc.common.AuthServiceConstants;
 
 import android.accounts.AccountAuthenticatorResponse;

@@ -1,4 +1,4 @@
-package com.fieldnation.net;
+package com.fieldnation.rpc.server;
 
 import java.io.IOException;
 import java.io.InputStream;
