@@ -114,10 +114,10 @@ public class WorkorderCardView extends RelativeLayout {
 
 	// status colors lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = {
-			R.drawable.wocard_status_1,
-			R.drawable.wocard_status_2,
-			R.drawable.wocard_status_3,
-			R.drawable.wocard_status_4 };
+			R.drawable.wo_card_status_white,
+			R.drawable.wo_card_status_orange,
+			R.drawable.wo_card_status_green,
+			R.drawable.wo_card_status_gray };
 	private static final int[] _STATUS_TEXT_TABLE = {
 			R.color.woCardStatusLabel1,
 			R.color.woCardStatusLabel2,

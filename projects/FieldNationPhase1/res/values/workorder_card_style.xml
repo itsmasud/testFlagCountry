@@ -20,11 +20,11 @@
     </style>
 
     <style name="WorkorderCard_DataContainer">
-        <item name="android:background">@drawable/card_right</item>
+        <item name="android:background">@drawable/wo_card_right</item>
     </style>
 
     <style name="WorkorderCard_StatusBar">
-        <item name="android:background">@drawable/wocard_status_1</item>
+        <item name="android:background">@drawable/wo_card_status_white</item>
     </style>
 
     <style name="WorkorderCard_StatusText">

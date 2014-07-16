@@ -14,13 +14,17 @@
     </style>
 
     <style name="DrawerEsitmatedAmount">
-        <item name="android:background">@drawable/drawer_estimated_amount</item>
+        <item name="android:background">@drawable/pay_nav_green</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
         <item name="android:textColor">@color/drawerPaymentAmountForeground</item>
     </style>
 
     <style name="DrawerPaidAmount">
-        <item name="android:background">@drawable/drawer_paid_amount</item>
+        <item name="android:background">@drawable/pay_nav_gray</item>
         <item name="android:textColor">@color/drawerPaymentAmountForeground</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
     </style>
 
     <style name="DrawerItemIcon">
