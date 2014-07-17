@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ScheduleView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailScheduleView";
+	private static final String TAG = "ui.workorder.detail.ScheduleView";
 
 	// UI
 

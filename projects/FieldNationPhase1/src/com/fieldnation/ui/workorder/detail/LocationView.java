@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailLocationView";
+	private static final String TAG = "ui.workorder.detail.LocationView";
 
 	// UI
 	private TextView _addressTextView;

@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
 public class ScheduleSummaryView extends RelativeLayout {
-	private static final String TAG = "ScheduleSummaryView";
+	private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/

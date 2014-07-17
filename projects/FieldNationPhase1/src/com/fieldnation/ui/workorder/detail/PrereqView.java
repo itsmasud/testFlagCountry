@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class PrereqView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailPrereqView";
+	private static final String TAG = "ui.workorder.detail.PrereqView";
 
 	// UI
 

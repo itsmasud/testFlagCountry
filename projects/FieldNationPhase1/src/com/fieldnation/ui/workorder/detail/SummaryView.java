@@ -21,7 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class SummaryView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailSumView";
+	private static final String TAG = "ui.workorder.detail.SummaryView";
 
 	// UI
 	private TextView _substatusTextView;

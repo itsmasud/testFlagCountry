@@ -23,7 +23,7 @@ import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 
 public abstract class PagingListAdapter<T> extends BaseAdapter {
-	private static final String TAG = "PagingListAdapter";
+	private static final String TAG = "ui.PagingListAdapter";
 
 	private GlobalState _gs;
 	private Activity _activity;

@@ -21,7 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PaymentCardView extends RelativeLayout {
-	private static final String TAG = "PaymentSummaryView";
+	private static final String TAG = "ui.payment.PaymentCardView";
 
 	private static final int[] _HEADER_BG = new int[] {
 			R.drawable.payment_summary_header_bg,

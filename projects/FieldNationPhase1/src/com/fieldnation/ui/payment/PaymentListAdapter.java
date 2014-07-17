@@ -11,7 +11,7 @@ import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.ui.PagingListAdapter;
 
 public class PaymentListAdapter extends PagingListAdapter<Payment> {
-	private static final String TAG = "PaymentListAdapter";
+	private static final String TAG = "ui.payment.PaymentListAdapter";
 
 	private PaymentService _service = null;
 

@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class CompletionReqView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailCompletionReqView";
+	private static final String TAG = "ui.workorder.detail.CompletionReqView";
 
 	// UI
 

@@ -12,7 +12,7 @@ import com.fieldnation.ui.PagingListAdapter.Listener;
 import android.os.Bundle;
 
 public class PaymentListActivity extends DrawerActivity {
-	private static final String TAG = "PaymentListActivity";
+	private static final String TAG = "ui.payment.PaymentListActivity";
 
 	// UI
 	private ListViewEx _listView;

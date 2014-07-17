@@ -25,7 +25,7 @@ import com.fieldnation.utils.misc;
  * 
  */
 public class OAuth {
-	private static final String TAG = "webapi.OAuth";
+	private static final String TAG = "rpc.server.OAuth";
 
 	/* creates a default string to use for all tokens */
 	private static String _defaults;

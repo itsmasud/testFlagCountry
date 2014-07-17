@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class OnsiteWorkView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailOnsiteWorkView";
+	private static final String TAG = "ui.workorder.detail.OnsiteWorkView";
 
 	// UI
 

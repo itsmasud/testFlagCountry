@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class MessagesListAdapter extends PagingListAdapter<Message> {
-	private static final String TAG = "MessagesListAdapter";
+	private static final String TAG = "ui.MessagesListAdapter";
 
 	private ProfileService _profileService = null;
 
@@ -20,14 +20,14 @@ public class MessagesListAdapter extends PagingListAdapter<Message> {
 
 	@Override
 	public View getView(Message obj, View convertView, ViewGroup parent) {
-		MessageView mv = null;
+		MessageCardView mv = null;
 
 		if (convertView == null) {
-			mv = new MessageView(getContext());
-		} else if (convertView instanceof MessageView) {
-			mv = (MessageView) convertView;
+			mv = new MessageCardView(getContext());
+		} else if (convertView instanceof MessageCardView) {
+			mv = (MessageCardView) convertView;
 		} else {
-			mv = new MessageView(getContext());
+			mv = new MessageCardView(getContext());
 		}
 
 		mv.setMessage(obj);

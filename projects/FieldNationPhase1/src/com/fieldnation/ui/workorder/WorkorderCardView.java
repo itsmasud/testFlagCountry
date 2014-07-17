@@ -58,7 +58,7 @@ import android.widget.Toast;
  * 
  */
 public class WorkorderCardView extends RelativeLayout {
-	static final String TAG = "WorkorderSummaryView";
+	static final String TAG = "ui.workorder.WorkorderCardView";
 
 	public static final int BUTTON_ACTION_NONE = 0;
 	public static final int BUTTON_ACTION_REQUEST = 1;

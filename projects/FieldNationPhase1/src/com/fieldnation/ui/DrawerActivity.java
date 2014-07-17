@@ -19,7 +19,7 @@ import android.view.MenuItem;
  * 
  */
 public class DrawerActivity extends BaseActivity {
-	private final static String TAG = "DrawerActivity";
+	private final static String TAG = "ui.DrawerActivity";
 
 	// UI
 	private ActionBarDrawerToggle _drawerToggle = null;

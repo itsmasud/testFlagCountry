@@ -16,7 +16,7 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderCardView.Listener;
 
 class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
-	private static final String TAG = "WorkorderSummaryAdvancedUndoListener";
+	private static final String TAG = "ui.workorder.WorkorderSummaryAdvancedUndoListener";
 	private WorkorderService _service;
 	private Listener _listener;
 	private Workorder _workorder;
@@ -54,9 +54,8 @@ class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
 			break;
 		case WorkorderCardView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
 			// TODO, get reason input from user
-			_context.startService(_service.cancelAssignment(
-					WorkorderCardView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT, _workorder.getWorkorderId(), 1,
-					"Cause I said So"));
+			_context.startService(_service.cancelAssignment(WorkorderCardView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
+					_workorder.getWorkorderId(), 1, "Cause I said So"));
 			break;
 		}
 	}

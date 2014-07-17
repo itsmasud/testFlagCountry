@@ -25,7 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PaymentWorkorderView extends RelativeLayout {
-	private static final String TAG = "PaymentWorkorderView";
+	private static final String TAG = "ui.payment.PaymentWorkorderView";
 	// UI
 	private RelativeLayout _statusLayout;
 	private TextView _titleTextView;

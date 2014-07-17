@@ -25,7 +25,7 @@ import android.util.Log;
  * 
  */
 public class Ws {
-	private static final String TAG = "webapi.Ws";
+	private static final String TAG = "rpc.server.Ws";
 
 	/**
 	 * Set to true to enable HTTPS, set to false to disable HTTPS. Default =

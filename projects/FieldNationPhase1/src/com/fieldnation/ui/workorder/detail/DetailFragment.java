@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 public class DetailFragment extends WorkorderFragment {
-	private static final String TAG = "WorkorderDetailFragment";
+	private static final String TAG = "ui.workorder.detail.DetailFragment";
 
 	// UI
 	private SummaryView _sumView;

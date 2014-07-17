@@ -23,15 +23,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class NotificationActionBarView extends RelativeLayout {
-	private static final String TAG = "NotificationActionBarView";
+	private static final String TAG = "ui.NotificationActionBarView";
 	private TextView _countTextView;
-	
+
 	private GlobalState _gs;
 	private MyAuthClient _authclient;
 	private ProfileService _profileService;
 	private int _nextPage = 1;
 	private int _notificationCount = 0;
-	
+
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
@@ -50,7 +50,7 @@ public class NotificationActionBarView extends RelativeLayout {
 		inflater.inflate(R.layout.view_notification_action_bar, this);
 
 		_countTextView = (TextView) findViewById(R.id.count_textview);
-		
+
 		if (isInEditMode())
 			return;
 
@@ -69,7 +69,7 @@ public class NotificationActionBarView extends RelativeLayout {
 
 		}
 	};
-	
+
 	private class MyAuthClient extends AuthenticationClient {
 
 		public MyAuthClient(Context context) {
@@ -81,7 +81,7 @@ public class NotificationActionBarView extends RelativeLayout {
 			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
 			getContext().startService(_profileService.getNewNotifications(0, _nextPage, true));
 			_nextPage++;
-			
+
 		}
 
 		@Override
@@ -92,7 +92,7 @@ public class NotificationActionBarView extends RelativeLayout {
 		}
 
 	}
-	
+
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 
 		@Override
@@ -102,7 +102,7 @@ public class NotificationActionBarView extends RelativeLayout {
 				JsonArray ja = new JsonArray(new String(
 						resultData.getByteArray((WebServiceConstants.KEY_RESPONSE_DATA))));
 				int count = ja.size();
-				
+
 				_notificationCount += count;
 				if (_notificationCount >= 99) {
 					setCount(_notificationCount, false);
@@ -126,7 +126,7 @@ public class NotificationActionBarView extends RelativeLayout {
 
 		}
 	};
-	
+
 	public void setCount(int count, boolean stillLoading) {
 		if (count == 0) {
 			_countTextView.setVisibility(GONE);

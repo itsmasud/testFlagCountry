@@ -25,7 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 public class MyWorkActivity extends DrawerActivity {
-	private static final String TAG = "MyWorkActivity";
+	private static final String TAG = "ui.workorder.MyWorkActivity";
 
 	// UI
 	private ViewPager _viewPager;

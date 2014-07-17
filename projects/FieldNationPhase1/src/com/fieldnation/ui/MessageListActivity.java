@@ -7,7 +7,7 @@ import com.fieldnation.R.layout;
 import android.os.Bundle;
 
 public class MessageListActivity extends BaseActivity {
-	private static final String TAG = "MessageListActivity";
+	private static final String TAG = "ui.MessageListActivity";
 
 	// UI
 	private ListViewEx _listView;

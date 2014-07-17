@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailClosingNotesView";
+	private static final String TAG = "ui.workorder.detail.ClosingNotesView";
 
 	// UI
 

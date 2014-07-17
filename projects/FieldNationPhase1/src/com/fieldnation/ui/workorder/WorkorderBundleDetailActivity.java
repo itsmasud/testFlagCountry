@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 public class WorkorderBundleDetailActivity extends BaseActivity {
-	private static final String TAG = "WorkorderBundleDetailActivity";
+	private static final String TAG = "ui.workorder.WorkorderBundleDetailActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

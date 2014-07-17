@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 public class ExpenseView extends LinearLayout {
+	private static final String TAG = "ui.workorder.detail.ExpenseView";
 
 	public ExpenseView(Context context) {
 		this(context, null);

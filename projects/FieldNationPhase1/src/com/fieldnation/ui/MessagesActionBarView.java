@@ -24,7 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MessagesActionBarView extends RelativeLayout {
-	private static final String TAG = "MessagesActionBarView";
+	private static final String TAG = "ui.MessagesActionBarView";
 	private TextView _countTextView;
 
 	private GlobalState _gs;

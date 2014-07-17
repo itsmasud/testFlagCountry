@@ -20,7 +20,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 public class MessageFragment extends WorkorderFragment {
-	private static final String TAG = "WorkorderMessageFragment";
+	private static final String TAG = "ui.workorder.detail.MessageFragment";
 
 	// UI
 	private ListView _listview;

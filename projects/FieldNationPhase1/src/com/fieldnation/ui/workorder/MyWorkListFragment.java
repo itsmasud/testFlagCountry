@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class MyWorkListFragment extends Fragment {
-	private static final String TAG = "MyWorkListFragment";
+	private static final String TAG = "ui.workorder.MyWorkListFragment";
 
 	// UI
 	private ListViewEx _listView;

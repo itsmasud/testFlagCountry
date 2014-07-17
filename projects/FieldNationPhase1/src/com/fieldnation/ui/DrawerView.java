@@ -39,7 +39,7 @@ import android.widget.TextView;
  * 
  */
 public class DrawerView extends RelativeLayout {
-	private static final String TAG = "DrawerView";
+	private static final String TAG = "ui.DrawerView";
 
 	// UI
 	private RelativeLayout _myworkView;

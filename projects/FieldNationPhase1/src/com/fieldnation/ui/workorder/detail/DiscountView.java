@@ -1,0 +1,29 @@
+package com.fieldnation.ui.workorder.detail;
+
+import com.fieldnation.R;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.widget.RelativeLayout;
+
+public class DiscountView extends RelativeLayout {
+	private static final String TAG = "ui.workorder.detail.DiscountView";
+
+	public DiscountView(Context context) {
+		this(context, null, -1);
+	}
+
+	public DiscountView(Context context, AttributeSet attrs) {
+		this(context, attrs, -1);
+	}
+
+	public DiscountView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		LayoutInflater.from(context).inflate(R.layout.view_discount, this);
+
+		if (isInEditMode())
+			return;
+	}
+
+}

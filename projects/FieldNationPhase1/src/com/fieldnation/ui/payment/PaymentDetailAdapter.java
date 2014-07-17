@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public class PaymentDetailAdapter extends BaseAdapter {
-	private static final String TAG = "PaymentDetailAdapter";
+	private static final String TAG = "ui.payment.PaymentDetailAdapter";
 	private Payment _payment;
 	private Workorder[] _workorders;
 

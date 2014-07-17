@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ExpectedPaymentView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailExpectedPaymentView";
+	private static final String TAG = "ui.workorder.detail.ExpectedPaymentView";
 
 	// UI
 

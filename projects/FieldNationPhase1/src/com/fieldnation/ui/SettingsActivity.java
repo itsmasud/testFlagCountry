@@ -16,7 +16,7 @@ import android.preference.PreferenceManager;
  * 
  */
 public class SettingsActivity extends PreferenceActivity {
-	private static final String TAG = "SettingsActivity";
+	private static final String TAG = "ui.SettingsActivity";
 
 	@SuppressWarnings("deprecation")
 	@Override

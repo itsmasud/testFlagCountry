@@ -16,7 +16,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class MessageView extends RelativeLayout {
+public class MessageCardView extends RelativeLayout {
+	private static final String TAG = "ui.MessageView";
 	private View _statusView;
 	private TextView _titleTextView;
 	private TextView _substatusTextView;
@@ -26,18 +27,18 @@ public class MessageView extends RelativeLayout {
 	/*-*****************************-*/
 	/*-			LifeCycle			-*/
 	/*-*****************************-*/
-	public MessageView(Context context) {
+	public MessageCardView(Context context) {
 		this(context, null, -1);
 	}
 
-	public MessageView(Context context, AttributeSet attrs) {
+	public MessageCardView(Context context, AttributeSet attrs) {
 		this(context, attrs, -1);
 	}
 
-	public MessageView(Context context, AttributeSet attrs, int defStyle) {
+	public MessageCardView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		final LayoutInflater inflater = LayoutInflater.from(getContext());
-		inflater.inflate(R.layout.view_message, this);
+		inflater.inflate(R.layout.view_message_card, this);
 
 		if (isInEditMode())
 			return;

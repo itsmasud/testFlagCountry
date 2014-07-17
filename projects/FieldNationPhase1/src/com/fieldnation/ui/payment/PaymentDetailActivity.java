@@ -21,7 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class PaymentDetailActivity extends BaseActivity {
-	private static final String TAG = "PaymentDetailActivity";
+	private static final String TAG = "ui.payment.PaymentDetailActivity";
 
 	// UI
 	private TextView _idTextView;

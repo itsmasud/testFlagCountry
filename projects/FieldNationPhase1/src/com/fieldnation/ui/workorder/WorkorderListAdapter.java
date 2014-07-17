@@ -23,7 +23,7 @@ import android.view.ViewGroup;
  * 
  */
 public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
-	private static final String TAG = "WorkorderListAdapter";
+	private static final String TAG = "ui.workorder.WorkorderListAdapter";
 
 	private WorkorderService _workorderService = null;
 	private Method _rpcMethod;

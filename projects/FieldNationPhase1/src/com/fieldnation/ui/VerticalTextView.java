@@ -16,6 +16,7 @@ import android.widget.TextView;
  * 
  */
 public class VerticalTextView extends TextView {
+	private static final String TAG = "ui.VerticalTextView";
 	private final boolean _topDown;
 
 	public VerticalTextView(Context context, AttributeSet attrs) {

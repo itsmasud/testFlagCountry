@@ -31,7 +31,7 @@ import android.widget.TextView;
  * 
  */
 public class ListViewEx extends ListView {
-	private static final String TAG = "ListViewEx";
+	private static final String TAG = "ui.ListViewEx";
 
 	private static final int _TAP_TO_REFRESH = 1;
 	private static final int _PULL_TO_REFRESH = 2;

@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
  * 
  */
 public class ProgressBarRev extends ProgressBar {
+	private static final String TAG = "ui.ProgressBarRev";
 
 	public ProgressBarRev(Context context) {
 		this(context, null, -1);

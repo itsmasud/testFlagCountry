@@ -26,7 +26,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 
 public class WorkorderActivity extends DrawerActivity {
-	private static final String TAG = "WorkorderActivity";
+	private static final String TAG = "ui.workorder.WorkorderActivity";
 
 	private static final int RPC_GET_DETAIL = 1;
 

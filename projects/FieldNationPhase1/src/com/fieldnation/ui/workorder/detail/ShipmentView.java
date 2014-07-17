@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ShipmentView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "WorkorderDetailShipmentView";
+	private static final String TAG = "ui.workorder.detail.ShipmentView";
 
 	// UI
 

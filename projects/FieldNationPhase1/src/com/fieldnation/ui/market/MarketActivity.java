@@ -21,7 +21,7 @@ import android.os.Bundle;
  * 
  */
 public class MarketActivity extends DrawerActivity {
-	private static final String TAG = "MarketActivity";
+	private static final String TAG = "ui.market.MarketActivity";
 
 	// UI
 	private ListViewEx _listView;

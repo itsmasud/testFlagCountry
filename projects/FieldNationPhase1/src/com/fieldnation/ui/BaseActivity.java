@@ -32,7 +32,7 @@ import android.view.MenuItem;
  * 
  */
 public abstract class BaseActivity extends ActionBarActivity {
-	private static final String TAG = "BaseActivity";
+	private static final String TAG = "ui.BaseActivity";
 
 	// UI
 	NotificationActionBarView _notificationsView;
