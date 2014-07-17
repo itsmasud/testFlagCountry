@@ -2,8 +2,11 @@ package com.fieldnation.ui.workorder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 
+import com.fieldnation.data.workorder.Label;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
@@ -120,7 +123,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		try {
 			if (!_dataSelection.allowCache())
 				allowCache = false;
-
+			// TODO need to query available and requested for market view
 			getContext().startService((Intent) _rpcMethod.invoke(_workorderService, resultCode, page, allowCache));
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

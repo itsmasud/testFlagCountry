@@ -40,7 +40,7 @@ public class Workorder {
 	@Json(name = "standard_instructions")
 	private String _standardInstructions;
 	@Json(name = "discounts")
-	private Discounts[] _discounts;
+	private Discount[] _discounts;
 	@Json(name = "customerPoliciesProcedures")
 	private String _customerPoliciesProcedures;
 	@Json(name = "tasks")
@@ -48,7 +48,7 @@ public class Workorder {
 	@Json(name = "company_name")
 	private String _companyName;
 	@Json(name = "additionalExpenses")
-	private AdditionalExpenses[] _additionalExpenses;
+	private AdditionalExpense[] _additionalExpenses;
 	@Json(name = "documents")
 	private Documents[] _documents;
 	@Json(name = "status")
@@ -143,7 +143,7 @@ public class Workorder {
 		return _standardInstructions;
 	}
 
-	public Discounts[] getDiscounts() {
+	public Discount[] getDiscounts() {
 		return _discounts;
 	}
 
@@ -159,7 +159,7 @@ public class Workorder {
 		return _companyName;
 	}
 
-	public AdditionalExpenses[] getAdditionalExpenses() {
+	public AdditionalExpense[] getAdditionalExpenses() {
 		return _additionalExpenses;
 	}
 

@@ -4,7 +4,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class AdditionalExpenses {
+public class AdditionalExpense {
 	@Json(name = "description")
 	private String _description;
 	@Json(name = "price")
@@ -14,7 +14,7 @@ public class AdditionalExpenses {
 	@Json(name = "approved")
 	private Boolean _approved;
 
-	public AdditionalExpenses() {
+	public AdditionalExpense() {
 	}
 
 	public String getDescription() {
@@ -37,7 +37,7 @@ public class AdditionalExpenses {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(AdditionalExpenses additionalExpenses) {
+	public static JsonObject toJson(AdditionalExpense additionalExpenses) {
 		try {
 			return Serializer.serializeObject(additionalExpenses);
 		} catch (Exception ex) {
@@ -46,9 +46,9 @@ public class AdditionalExpenses {
 		}
 	}
 
-	public static AdditionalExpenses fromJson(JsonObject json) {
+	public static AdditionalExpense fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(AdditionalExpenses.class, json);
+			return Serializer.unserializeObject(AdditionalExpense.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

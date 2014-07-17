@@ -4,13 +4,13 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Discounts {
+public class Discount {
 	@Json(name = "amount")
 	private Double _amount;
 	@Json(name = "description")
 	private String _description;
 
-	public Discounts() {
+	public Discount() {
 	}
 
 	public Double getAmount() {
@@ -25,7 +25,7 @@ public class Discounts {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(Discounts discounts) {
+	public static JsonObject toJson(Discount discounts) {
 		try {
 			return Serializer.serializeObject(discounts);
 		} catch (Exception ex) {
@@ -34,9 +34,9 @@ public class Discounts {
 		}
 	}
 
-	public static Discounts fromJson(JsonObject json) {
+	public static Discount fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(Discounts.class, json);
+			return Serializer.unserializeObject(Discount.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

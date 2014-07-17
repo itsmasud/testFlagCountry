@@ -23,9 +23,9 @@
         android:text="$75.00 per extra hour up to 5 hours" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/terms_button"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="View Field Nation Terms" />
 
@@ -34,6 +34,7 @@
         android:layout_height="wrap_content" >
 
         <LinearLayout
+            android:id="@+id/addexpense_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -52,6 +53,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/adddiscount_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -71,43 +73,31 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/expenseslabel_textview"
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Expenses:" />
 
     <LinearLayout
+        android:id="@+id/expenses_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
-        <com.fieldnation.ui.workorder.detail.ExpenseView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.fieldnation.ui.workorder.detail.ExpenseView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <TextView
+        android:id="@+id/discountslabel_textview"
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Discounts:" />
 
     <LinearLayout
+        android:id="@+id/discounts_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
-        <com.fieldnation.ui.workorder.detail.DiscountView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.fieldnation.ui.workorder.detail.DiscountView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </LinearLayout>

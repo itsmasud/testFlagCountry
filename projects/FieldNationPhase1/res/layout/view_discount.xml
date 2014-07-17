@@ -7,14 +7,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/imageButton1" >
+        android:layout_toLeftOf="@+id/delete_imagebutton" >
 
         <TextView
+            android:id="@+id/title_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Discount Title" />
 
         <TextView
+            android:id="@+id/amount_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -22,9 +24,9 @@
     </RelativeLayout>
 
     <ImageButton
-        android:id="@+id/imageButton1"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:id="@+id/delete_imagebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"

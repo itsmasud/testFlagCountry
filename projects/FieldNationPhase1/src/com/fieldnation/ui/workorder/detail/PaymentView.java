@@ -1,17 +1,31 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.PaymentView";
 
 	// UI
+	// TODO need to grab the description views at the top
+	private Button _termsButton;
+	private LinearLayout _addExpenseLayout;
+	private LinearLayout _addDiscountLayout;
+	private TextView _expensesLabelTextView;
+	private LinearLayout _expensesLinearLayout;
+	private TextView _discountsLabelTextView;
+	private LinearLayout _discountsLinearLayout;
 
 	// Data
 	private Workorder _workorder;
@@ -31,7 +45,26 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		if (isInEditMode())
 			return;
 
+		_termsButton = (Button) findViewById(R.id.terms_button);
+		_addExpenseLayout = (LinearLayout) findViewById(R.id.addexpense_layout);
+		_addDiscountLayout = (LinearLayout) findViewById(R.id.adddiscount_layout);
+		_expensesLabelTextView = (TextView) findViewById(R.id.expenseslabel_textview);
+		_expensesLinearLayout = (LinearLayout) findViewById(R.id.expenses_linearlayout);
+		_discountsLabelTextView = (TextView) findViewById(R.id.discountslabel_textview);
+		_discountsLinearLayout = (LinearLayout) findViewById(R.id.discounts_linearlayout);
+
 	}
+
+	/*-*********************************-*/
+	/*-				Events				-*/
+	/*-*********************************-*/
+	private View.OnClickListener _terms_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
 
 	/*-*************************************-*/
 	/*-				Mutators				-*/
@@ -44,6 +77,41 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void refresh() {
+
+		AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
+		if (expenses == null || expenses.length == 0) {
+			_expensesLabelTextView.setVisibility(GONE);
+			_expensesLinearLayout.setVisibility(GONE);
+		} else {
+			_expensesLabelTextView.setVisibility(VISIBLE);
+			_expensesLinearLayout.setVisibility(VISIBLE);
+			_expensesLinearLayout.removeAllViews();
+
+			for (int i = 0; i < expenses.length; i++) {
+				AdditionalExpense expense = expenses[i];
+				ExpenseView v = new ExpenseView(getContext());
+				_expensesLinearLayout.addView(v);
+				v.setAdditionalExpense(expense);
+			}
+		}
+
+		Discount[] discounts = _workorder.getDiscounts();
+		if (discounts == null || discounts.length == 0) {
+			_discountsLabelTextView.setVisibility(GONE);
+			_discountsLinearLayout.setVisibility(GONE);
+		} else {
+			_discountsLabelTextView.setVisibility(VISIBLE);
+			_discountsLinearLayout.setVisibility(VISIBLE);
+			_discountsLinearLayout.removeAllViews();
+
+			for (int i = 0; i < discounts.length; i++) {
+				Discount discount = discounts[i];
+				DiscountView v = new DiscountView(getContext());
+				_discountsLinearLayout.addView(v);
+				v.setDiscount(discount);
+			}
+		}
+
 	}
 
 }

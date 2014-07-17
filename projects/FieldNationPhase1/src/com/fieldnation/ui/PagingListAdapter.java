@@ -187,14 +187,17 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 			}
 			for (int i = 0; i < objects.size(); i++) {
 				try {
-					_objects.add(Serializer.unserializeObject(_clazz, objects.getJsonObject(i)));
+					T o = Serializer.unserializeObject(_clazz, objects.getJsonObject(i));
+					if (includeObject(o)) {
+						_objects.add(o);
+					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 
-			if (objects.size() < 25) {
+			if (objects.size() == 0) {
 				Log.v(TAG, "_atEndOfList");
 				_atEndOfList = true;
 			}
@@ -272,6 +275,9 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	/*-*************************************-*/
 	/*-			Abstract Methods			-*/
 	/*-*************************************-*/
+	public boolean includeObject(T obj) {
+		return true;
+	}
 
 	/**
 	 * Called when a new view is needed by the listview
