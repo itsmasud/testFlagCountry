@@ -1,11 +1,6 @@
 package com.fieldnation.ui;
 
 import com.fieldnation.R;
-import com.fieldnation.R.drawable;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
-import com.fieldnation.R.string;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;

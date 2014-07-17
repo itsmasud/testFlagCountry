@@ -1,7 +1,6 @@
 package com.fieldnation.ui.workorder;
 
 import com.fieldnation.R;
-import com.fieldnation.R.layout;
 import com.fieldnation.ui.BaseActivity;
 
 import android.content.Intent;

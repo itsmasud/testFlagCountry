@@ -2,8 +2,6 @@ package com.fieldnation.ui.workorder;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
@@ -120,6 +118,7 @@ public class WorkorderActivity extends DrawerActivity {
 	}
 
 	private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
+		@Override
 		public void onPageSelected(int position) {
 			try {
 				_currentFragment = position;

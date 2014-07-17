@@ -1,22 +1,15 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Skillset;
 import com.fieldnation.data.workorder.Workorder;
 
 import android.content.Context;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -52,7 +45,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 			return;
 
 		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
-		_substatusProgress = (View) findViewById(R.id.substatus_progress);
+		_substatusProgress = findViewById(R.id.substatus_progress);
 		_projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
 		_clientNameTextView = (TextView) findViewById(R.id.clientname_textview);
 		_workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
@@ -66,6 +59,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	/*-				Mutators				-*/
 	/*-*************************************-*/
 
+	@Override
 	public void setWorkorder(Workorder workorder) {
 		_workoder = workorder;
 

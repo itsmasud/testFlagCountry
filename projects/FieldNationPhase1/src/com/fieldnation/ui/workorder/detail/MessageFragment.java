@@ -1,16 +1,10 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.ui.workorder.WorkorderTabView;
-import com.fieldnation.ui.workorder.WorkorderTabView.Listener;
-
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.ScrollingTabContainerView.TabView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

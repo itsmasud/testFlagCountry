@@ -2,10 +2,6 @@ package com.fieldnation.ui.workorder;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.R.drawable;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
-import com.fieldnation.R.string;
 import com.fieldnation.ui.DrawerActivity;
 
 import android.support.v7.app.ActionBar;

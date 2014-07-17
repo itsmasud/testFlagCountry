@@ -1,8 +1,6 @@
 package com.fieldnation.ui.workorder;
 
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.ui.ListViewEx;
 
 import android.os.Bundle;

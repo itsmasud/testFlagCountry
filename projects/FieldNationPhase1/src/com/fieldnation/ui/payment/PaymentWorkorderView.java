@@ -4,11 +4,6 @@ import java.util.Calendar;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.R.color;
-import com.fieldnation.R.drawable;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
-import com.fieldnation.R.string;
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.data.payments.Workorder;
 import com.fieldnation.utils.ISO8601;

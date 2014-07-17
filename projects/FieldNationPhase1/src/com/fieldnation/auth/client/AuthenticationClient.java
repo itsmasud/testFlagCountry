@@ -3,8 +3,6 @@ package com.fieldnation.auth.client;
 import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.GlobalState;
 import com.fieldnation.WaitForFieldAsyncTask;
-import com.fieldnation.FutureWaitAsyncTask.Listener;
-
 import android.accounts.AccountManagerFuture;
 import android.content.Context;
 import android.os.AsyncTask;

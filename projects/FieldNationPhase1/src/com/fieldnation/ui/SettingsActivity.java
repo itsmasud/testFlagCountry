@@ -1,8 +1,6 @@
 package com.fieldnation.ui;
 
 import com.fieldnation.R;
-import com.fieldnation.R.xml;
-
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;

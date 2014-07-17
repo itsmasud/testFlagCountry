@@ -1,21 +1,14 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.ScrollingTabContainerView.TabView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 
 public class DetailFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.DetailFragment";
@@ -51,6 +44,8 @@ public class DetailFragment extends WorkorderFragment {
 		_locView = (LocationView) view.findViewById(R.id.location_view);
 		_scheduleView = (ScheduleView) view.findViewById(R.id.schedule_view);
 
+		_scheduleView.setFragmentManager(getFragmentManager());
+
 		if (_workorder != null) {
 			setWorkorder(_workorder);
 		}
@@ -60,6 +55,7 @@ public class DetailFragment extends WorkorderFragment {
 	/*-				Mutators				-*/
 	/*-*************************************-*/
 
+	@Override
 	public void update() {
 	}
 

@@ -3,8 +3,6 @@ package com.fieldnation.ui;
 import java.util.Calendar;
 
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.data.messages.Message;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;

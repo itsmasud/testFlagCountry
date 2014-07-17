@@ -1,16 +1,12 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
-import com.fieldnation.R.layout;
-import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class OnsiteWorkView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.OnsiteWorkView";

@@ -1,9 +1,6 @@
 package com.fieldnation.ui;
 
 import com.fieldnation.R;
-import com.fieldnation.R.drawable;
-import com.fieldnation.R.string;
-
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;

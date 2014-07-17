@@ -1,13 +1,9 @@
 package com.fieldnation.ui;
 
-import java.text.ParseException;
 import java.util.Calendar;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.R.anim;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.json.JsonArray;

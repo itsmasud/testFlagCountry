@@ -1,11 +1,7 @@
 package com.fieldnation.ui;
 
-import java.text.ParseException;
-
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.ProfileService;

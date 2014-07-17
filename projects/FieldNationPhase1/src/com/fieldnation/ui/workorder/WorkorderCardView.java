@@ -1,30 +1,20 @@
 package com.fieldnation.ui.workorder;
 
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.cocosw.undobar.UndoBarController;
-import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.R.anim;
-import com.fieldnation.R.color;
-import com.fieldnation.R.drawable;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
-import com.fieldnation.R.string;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Label;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.app.Activity;
@@ -33,8 +23,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
-import android.os.Parcelable;
-import android.os.ResultReceiver;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.webkit.WebResourceResponse;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;

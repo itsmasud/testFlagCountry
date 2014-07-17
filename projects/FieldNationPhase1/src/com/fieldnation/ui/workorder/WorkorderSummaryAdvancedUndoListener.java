@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
 import com.fieldnation.R;
-import com.fieldnation.R.string;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;

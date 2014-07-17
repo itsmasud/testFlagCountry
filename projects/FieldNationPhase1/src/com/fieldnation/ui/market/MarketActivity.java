@@ -1,14 +1,8 @@
 package com.fieldnation.ui.market;
 
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
-import com.fieldnation.R.string;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.ListViewEx;
-import com.fieldnation.ui.PagingListAdapter;
-import com.fieldnation.ui.ListViewEx.OnRefreshListener;
-import com.fieldnation.ui.PagingListAdapter.Listener;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.ui.workorder.WorkorderListAdapter;
 

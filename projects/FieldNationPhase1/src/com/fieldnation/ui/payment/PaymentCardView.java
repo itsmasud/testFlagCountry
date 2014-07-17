@@ -3,10 +3,6 @@ package com.fieldnation.ui.payment;
 import java.util.Calendar;
 
 import com.fieldnation.R;
-import com.fieldnation.R.drawable;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
-import com.fieldnation.R.string;
 import com.fieldnation.data.payments.Payment;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;

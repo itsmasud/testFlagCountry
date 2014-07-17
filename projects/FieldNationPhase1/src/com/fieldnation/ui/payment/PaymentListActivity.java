@@ -1,14 +1,9 @@
 package com.fieldnation.ui.payment;
 
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.ListViewEx;
 import com.fieldnation.ui.PagingListAdapter;
-import com.fieldnation.ui.ListViewEx.OnRefreshListener;
-import com.fieldnation.ui.PagingListAdapter.Listener;
-
 import android.os.Bundle;
 
 public class PaymentListActivity extends DrawerActivity {

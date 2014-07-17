@@ -1,9 +1,6 @@
 package com.fieldnation.ui;
 
 import com.fieldnation.R;
-import com.fieldnation.R.id;
-import com.fieldnation.R.layout;
-
 import android.os.Bundle;
 
 public class MessageListActivity extends BaseActivity {
