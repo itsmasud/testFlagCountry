@@ -12,12 +12,13 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "00767dc7325554406e0db9cbbaee2dccc1eec9ea";
+	private static String authToken = "b2685aa6682bfcaad4cd8bd1a2b1dd102e45be14";
 
 	public static void main(String[] args) {
-		getWorkorders();
-		getMessages();
-		getPayments();
+		getProfile();
+		// getWorkorders();
+		// getMessages();
+		// getPayments();
 	}
 
 	private static void dumpClasses(JsonArray objects, String path, String packageName, String rootName) throws ParseException, IOException {
@@ -45,6 +46,22 @@ public class J2J {
 			JavaObject obj = javaObjects.nextElement();
 
 			System.out.println(obj.getUnderscoreFields());
+		}
+	}
+
+	private static void dumpClass(JsonObject json, String path, String packageName, String className) throws ParseException, IOException {
+		new File(path).mkdirs();
+		JavaObject.cleanup();
+		JavaObject object = JavaObject.getInstance(className, packageName);
+		object.addData(json);
+
+		Enumeration<JavaObject> javaObjects = JavaObject.getJavaObjects();
+		while (javaObjects.hasMoreElements()) {
+			JavaObject obj = javaObjects.nextElement();
+
+			FileOutputStream fout = new FileOutputStream(path + "/" + obj.getClassName() + ".java");
+			fout.write(obj.toString().getBytes());
+			fout.close();
 		}
 	}
 
@@ -100,6 +117,22 @@ public class J2J {
 
 			System.out.println("Building Class Structure");
 			dumpClasses(objects, "c:/j2j/messages", "com.fieldnation.data.messages", "Message");
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	private static void getProfile() {
+		String[] urls = new String[] { "/api/rest/v1/profile?access_token=" + authToken };
+		try {
+			Result result = Ws.httpGet(hostname, urls[0]);
+
+			JsonObject obj = result.getResultsAsJsonObject();
+
+			System.out.println("Building Class Structure");
+			dumpClass(obj, "c:/j2j/profile", "com.fieldnation.data.profile", "Profile");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

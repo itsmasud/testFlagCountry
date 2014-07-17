@@ -10,6 +10,10 @@ public class ProfileService extends WebService {
 		super(context, username, authToken, callback);
 	}
 
+	public Intent getMyUserInformation(int resultCode, boolean allowCache) {
+		return httpGet(resultCode, "/api/rest/v1/profile", allowCache);
+	}
+
 	public Intent getUserInformation(int resultCode, long userId, boolean allowCache) {
 		return httpGet(resultCode, "/api/rest/v1/profile/" + userId, allowCache);
 	}
