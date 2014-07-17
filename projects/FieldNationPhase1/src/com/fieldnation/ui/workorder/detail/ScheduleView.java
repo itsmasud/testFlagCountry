@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder.detail;
 import java.util.Calendar;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
@@ -57,6 +58,8 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 				_datePicker.show(_fm, "datepicker");
 			}
 		});
+		
+		
 	}
 
 	public void setFragmentManager(FragmentManager fm) {
@@ -93,6 +96,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void refresh() {
+		LoggedWork[] loggedWork = _workorder.getLoggedWork();
 	}
 
 }
