@@ -146,7 +146,7 @@ public class WorkorderActivity extends DrawerActivity {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_woRpc = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReciever);
+			_woRpc = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
 
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
 		}
@@ -159,7 +159,7 @@ public class WorkorderActivity extends DrawerActivity {
 		}
 	}
 
-	private WebServiceResultReceiver _rpcReciever = new WebServiceResultReceiver(new Handler()) {
+	private WebServiceResultReceiver _rpcReceiver = new WebServiceResultReceiver(new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
