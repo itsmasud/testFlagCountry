@@ -23,6 +23,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 
 	// UI
 	private Button _startButton;
+	private LinearLayout _workLogLinearLayout;
 	private DatePickerDialog _datePicker;
 	private TimePickerDialog _timePicker;
 
@@ -51,6 +52,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 		_timePicker = TimePickerDialog.newInstance(_timeSetListener, c.get(Calendar.HOUR_OF_DAY),
 				c.get(Calendar.MINUTE), false, false);
 
+		_workLogLinearLayout = (LinearLayout) findViewById(R.id.worklog_linearlayout);
 		_startButton = (Button) findViewById(R.id.start_button);
 		_startButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -58,8 +60,6 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 				_datePicker.show(_fm, "datepicker");
 			}
 		});
-		
-		
 	}
 
 	public void setFragmentManager(FragmentManager fm) {
@@ -97,6 +97,14 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 
 	private void refresh() {
 		LoggedWork[] loggedWork = _workorder.getLoggedWork();
+
+		_workLogLinearLayout.removeAllViews();
+
+		for (int i = 0; i < loggedWork.length; i++) {
+			ScheduleSummaryView v = new ScheduleSummaryView(getContext());
+			_workLogLinearLayout.addView(v);
+			v.setLoggedWork(loggedWork[i]);
+		}
 	}
 
 }
