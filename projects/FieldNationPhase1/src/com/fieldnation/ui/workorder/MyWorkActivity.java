@@ -57,27 +57,27 @@ public class MyWorkActivity extends DrawerActivity {
 	private void buildTabs() {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
-		_fragments = new MyWorkListFragment[4];
+		_fragments = new MyWorkListFragment[3];
 
-		_fragments[0] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.IN_PROGRESS);
-		_fragments[1] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.ASSIGNED);
-		_fragments[2] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.COMPLETED);
-		_fragments[3] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.CANCELLED);
+		_fragments[0] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.ASSIGNED);
+		_fragments[1] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.COMPLETED);
+		_fragments[2] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.CANCELLED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		ActionBar.Tab tab1 = actionbar.newTab().setText(R.string.my_work_category1);
+		// ActionBar.Tab tab1 =
+		// actionbar.newTab().setText(R.string.my_work_category1);
 		ActionBar.Tab tab2 = actionbar.newTab().setText(R.string.my_work_category2);
 		ActionBar.Tab tab3 = actionbar.newTab().setText(R.string.my_work_category3);
 		ActionBar.Tab tab4 = actionbar.newTab().setText(R.string.my_work_category4);
 
-		tab1.setTabListener(_tabListener);
+		// tab1.setTabListener(_tabListener);
 		tab2.setTabListener(_tabListener);
 		tab3.setTabListener(_tabListener);
 		tab4.setTabListener(_tabListener);
 
-		actionbar.addTab(tab1);
+		// actionbar.addTab(tab1);
 		actionbar.addTab(tab2);
 		actionbar.addTab(tab3);
 		actionbar.addTab(tab4);

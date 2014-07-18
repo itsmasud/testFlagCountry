@@ -10,4 +10,78 @@
         android:layout_height="wrap_content"
         android:text="Shipment" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp" >
+
+        <EditText
+            android:id="@+id/trackingid_textview"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/carrier_button"
+            android:background="@drawable/wo_details_text_border"
+            android:gravity="center_vertical"
+            android:hint="Tracking ID"
+            android:paddingLeft="10dp" />
+
+        <Button
+            android:id="@+id/carrier_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="Carrier" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/carrier_textview"
+        style="@style/WorkorderDetail_EditText"
+        android:layout_width="match_parent"
+        android:hint="ONLY IF CARRIER &quot;OTHER&quot; IS SELECTED" />
+
+    <EditText
+        android:id="@+id/description_textview"
+        style="@style/WorkorderDetail_EditText"
+        android:layout_width="match_parent"
+        android:hint="Shipment Description" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RadioButton
+            style="@style/WorkorderDetail_RadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Shipping to site" />
+
+        <RadioButton
+            style="@style/WorkorderDetail_RadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Shipping from site" />
+    </RadioGroup>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_gravity="right"
+        android:background="@drawable/btn_orange"
+        android:text="Add"
+        android:textColor="#FFFFFFFF" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <com.fieldnation.ui.workorder.detail.ShipmentSummary
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
 </LinearLayout>

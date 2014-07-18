@@ -10,4 +10,21 @@
         android:layout_height="wrap_content"
         android:text="Closing Notes" />
 
+    <EditText
+        style="@style/WorkorderDetail_EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:hint="Enter closing notes here..."
+        android:minLines="4"
+        android:padding="5dp" />
+
+    <Button
+        android:layout_width="96dp"
+        android:layout_height="48dp"
+        android:layout_gravity="right"
+        android:background="@drawable/btn_orange"
+        android:text="Save"
+        android:textColor="#FFFFFFFF" />
+
 </LinearLayout>

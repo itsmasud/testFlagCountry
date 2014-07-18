@@ -176,7 +176,6 @@ public class DrawerView extends RelativeLayout {
 	}
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
-
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			try {
