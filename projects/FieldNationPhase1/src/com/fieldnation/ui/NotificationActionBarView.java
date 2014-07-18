@@ -5,6 +5,7 @@ import java.text.ParseException;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
@@ -23,13 +24,15 @@ import android.widget.TextView;
 
 public class NotificationActionBarView extends RelativeLayout {
 	private static final String TAG = "ui.NotificationActionBarView";
+
+	// UI
 	private TextView _countTextView;
 
+	// data
 	private GlobalState _gs;
 	private MyAuthClient _authclient;
 	private ProfileService _profileService;
-	private int _nextPage = 1;
-	private int _notificationCount = 0;
+	private Profile _profile = null;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -77,49 +80,28 @@ public class NotificationActionBarView extends RelativeLayout {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);			
+			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
 			getContext().startService(_profileService.getMyUserInformation(0, true));
-			_nextPage++;
 		}
 
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
 			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
 			_gs.requestAuthenticationDelayed(_authclient);
-
 		}
-
 	}
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
-
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			Log.v(TAG, "WebServiceResultReceiver.onSuccess");
 			try {
-				JsonArray ja = new JsonArray(new String(
-						resultData.getByteArray((WebServiceConstants.KEY_RESPONSE_DATA))));
-				int JsonArrayLength = ja.size();
-				
-				for (int i = 0; 0 < JsonArrayLength; i++) {
-					JsonObject jaObj = ja.getJsonObject(i);
-					int count = jaObj.getInt("newNotificationCount");
-
-					_notificationCount += count;
-					if (_notificationCount >= 99) {
-						setCount(_notificationCount, false);
-					} else if (count == 25) {
-						setCount(_notificationCount, true);
-						getContext().startService(_profileService.getMyUserInformation(0, true));
-						_nextPage++;
-					} else {
-						setCount(_notificationCount, false);
-					}
-				}
-				
+				JsonObject obj = new JsonObject(new String(
+						resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
+				_profile = Profile.fromJson(obj);
+				refresh();
 			} catch (ParseException e) {
 				e.printStackTrace();
-
 			}
 		}
 
@@ -127,11 +109,15 @@ public class NotificationActionBarView extends RelativeLayout {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			// TODO Method Stub: onError()
 			Log.v(TAG, "Method Stub: onError()");
-
 		}
 	};
 
-	public void setCount(int count, boolean stillLoading) {
+	private void refresh() {
+		if (_profile == null)
+			return;
+
+		int count = _profile.getNewNotificationCount();
+
 		if (count == 0) {
 			_countTextView.setVisibility(GONE);
 		} else {
@@ -139,12 +125,7 @@ public class NotificationActionBarView extends RelativeLayout {
 			if (count >= 99) {
 				_countTextView.setText("!!");
 			} else {
-				if (stillLoading) {
-					// TODO figure out why "+" is not showing up
-					_countTextView.setText(count + "+");
-				} else {
-					_countTextView.setText(count + "");
-				}
+				_countTextView.setText(count + "");
 			}
 		}
 	}
