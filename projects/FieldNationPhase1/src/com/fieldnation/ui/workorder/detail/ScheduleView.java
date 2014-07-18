@@ -49,6 +49,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 		final Calendar c = Calendar.getInstance();
 		_datePicker = DatePickerDialog.newInstance(_dateSetListener, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
 				c.get(Calendar.DAY_OF_MONTH));
+		_datePicker.setCloseOnSingleTapDay(true);
 		_timePicker = TimePickerDialog.newInstance(_timeSetListener, c.get(Calendar.HOUR_OF_DAY),
 				c.get(Calendar.MINUTE), false, false);
 
@@ -100,10 +101,12 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 
 		_workLogLinearLayout.removeAllViews();
 
-		for (int i = 0; i < loggedWork.length; i++) {
-			ScheduleSummaryView v = new ScheduleSummaryView(getContext());
-			_workLogLinearLayout.addView(v);
-			v.setLoggedWork(loggedWork[i]);
+		if (loggedWork != null) {
+			for (int i = 0; i < loggedWork.length; i++) {
+				ScheduleSummaryView v = new ScheduleSummaryView(getContext());
+				_workLogLinearLayout.addView(v);
+				v.setLoggedWork(loggedWork[i]);
+			}
 		}
 	}
 

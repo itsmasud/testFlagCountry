@@ -506,19 +506,10 @@ public class WorkorderCardView extends RelativeLayout {
 		// if Blended, then use payblendedAdditionalRate
 		Pay pay = _workorder.getPay();
 		if (pay != null) {
-			if (pay.getBasis() != null) {
-				String basis = pay.getBasis();
-				_basisTextView.setText(basis);
-				if ("hourly".equals(basis.toLowerCase())) {
-					_cashTextView.setText(misc.toCurrency(pay.getPerHour()).substring(1));
-				} else if (pay.getFixedAmount() != null) {
-					_cashTextView.setText(misc.toCurrency(pay.getFixedAmount()).substring(1));
-
-				} else if (pay.getBlendedAdditionalRate() != null) {
-					_cashTextView.setText(misc.toCurrency(pay.getBlendedAdditionalRate()).substring(1));
-				} else {
-					_paymentLayout.setVisibility(GONE);
-				}
+			String desc = pay.toDisplayStringShort();
+			_basisTextView.setText(pay.getBasis());
+			if (desc != null) {
+				_cashTextView.setText(desc.substring(1));
 			} else {
 				_paymentLayout.setVisibility(GONE);
 			}

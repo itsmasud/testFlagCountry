@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.misc;
 
 public class Pay {
 	@Json(name = "maxDevice")
@@ -70,6 +71,9 @@ public class Pay {
 	}
 
 	public String getBasis() {
+		if (_basis == null)
+			return _payRateBasis;
+
 		return _basis;
 	}
 
@@ -85,16 +89,47 @@ public class Pay {
 		return _expenses;
 	}
 
-	public String getPayRateBasis() {
-		return _payRateBasis;
-	}
-
 	public Double getBlendedAdditionalRate() {
 		return _blendedAdditionalRate;
 	}
 
 	public JsonObject toJson() {
 		return toJson(this);
+	}
+
+	public String[] toDisplayStringLong() {
+		String line1 = null;
+		String line2 = null;
+
+		String basis = getBasis();
+
+		if ("Fixed".equals(basis)) {
+			line1 = "Fixed " + misc.toCurrency(getFixedAmount());
+		} else if ("Hourly".equals(basis)) {
+			line1 = misc.toCurrency(getPerHour()) + " per hr up to " + getMaxHour() + " hours.";
+		} else if ("Blended".equals(basis)) {
+			line1 = misc.toCurrency(getBlendedStartRate()) + " per hr for the first " + getBlendedFirstHours() + " hours.";
+			line2 = "Then " + misc.toCurrency(getBlendedAdditionalRate()) + " per hr up to " + getBlendedAdditionalHours() + " hours.";
+		} else if ("Per Device".equals(basis)) {
+			line1 = misc.toCurrency(getPerDevice()) + " per device up to " + getMaxDevice() + " devices.";
+		}
+
+		return new String[] { line1, line2 };
+	}
+
+	public String toDisplayStringShort() {
+		String basis = getBasis();
+
+		if ("Fixed".equals(basis)) {
+			return misc.toCurrency(getFixedAmount());
+		} else if ("Hourly".equals(basis)) {
+			return misc.toCurrency(getPerHour()) + " X " + getMaxHour();
+		} else if ("Blended".equals(basis)) {
+			return misc.toCurrency(getBlendedStartRate()) + " X " + getBlendedFirstHours() + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " + getBlendedAdditionalHours();
+		} else if ("Per Device".equals(basis)) {
+			return misc.toCurrency(getPerDevice()) + " X " + getMaxDevice();
+		}
+		return null;
 	}
 
 	public static JsonObject toJson(Pay pay) {

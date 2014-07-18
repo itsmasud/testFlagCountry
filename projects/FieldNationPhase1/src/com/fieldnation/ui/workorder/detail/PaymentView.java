@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder.detail;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.Discount;
+import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 
 import android.content.Context;
@@ -19,6 +20,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 	// UI
 	// TODO need to grab the description views at the top
+	private TextView _pay1TextView;
+	private TextView _pay2TextView;
 	private Button _termsButton;
 	private LinearLayout _addExpenseLayout;
 	private LinearLayout _addDiscountLayout;
@@ -45,6 +48,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		if (isInEditMode())
 			return;
 
+		_pay1TextView = (TextView) findViewById(R.id.pay1_textview);
+		_pay2TextView = (TextView) findViewById(R.id.pay2_textview);
 		_termsButton = (Button) findViewById(R.id.terms_button);
 		_addExpenseLayout = (LinearLayout) findViewById(R.id.addexpense_layout);
 		_addDiscountLayout = (LinearLayout) findViewById(R.id.adddiscount_layout);
@@ -77,6 +82,28 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void refresh() {
+
+		Pay pay = _workorder.getPay();
+		if (pay != null) {
+			String[] paytext = pay.toDisplayStringLong();
+
+			if (paytext[0] != null) {
+				_pay1TextView.setText(paytext[0]);
+				_pay1TextView.setVisibility(VISIBLE);
+			} else {
+				_pay1TextView.setVisibility(GONE);
+			}
+
+			if (paytext[1] != null) {
+				_pay2TextView.setText(paytext[1]);
+				_pay2TextView.setVisibility(VISIBLE);
+			} else {
+				_pay2TextView.setVisibility(GONE);
+			}
+		} else {
+			_pay1TextView.setVisibility(GONE);
+			_pay2TextView.setVisibility(GONE);
+		}
 
 		AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
 		if (expenses == null || expenses.length == 0) {

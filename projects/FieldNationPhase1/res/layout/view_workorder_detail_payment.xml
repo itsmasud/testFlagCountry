@@ -11,16 +11,19 @@
         android:text="Payment" />
 
     <TextView
+        android:id="@+id/pay1_textview"
         style="@style/WorkorderDetail_Field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="$5,000 Fixed for 4 hours" />
 
     <TextView
+        android:id="@+id/pay2_textview"
         style="@style/WorkorderDetail_Field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="$75.00 per extra hour up to 5 hours" />
+        android:text="$75.00 per extra hour up to 5 hours"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/terms_button"
