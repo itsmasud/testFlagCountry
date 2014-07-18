@@ -6,6 +6,7 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
@@ -76,10 +77,9 @@ public class NotificationActionBarView extends RelativeLayout {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
-			getContext().startService(_profileService.getNewNotifications(0, _nextPage, true));
+			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);			
+			getContext().startService(_profileService.getMyUserInformation(0, true));
 			_nextPage++;
-
 		}
 
 		@Override
@@ -99,18 +99,24 @@ public class NotificationActionBarView extends RelativeLayout {
 			try {
 				JsonArray ja = new JsonArray(new String(
 						resultData.getByteArray((WebServiceConstants.KEY_RESPONSE_DATA))));
-				int count = ja.size();
+				int JsonArrayLength = ja.size();
+				
+				for (int i = 0; 0 < JsonArrayLength; i++) {
+					JsonObject jaObj = ja.getJsonObject(i);
+					int count = jaObj.getInt("newNotificationCount");
 
-				_notificationCount += count;
-				if (_notificationCount >= 99) {
-					setCount(_notificationCount, false);
-				} else if (count == 25) {
-					setCount(_notificationCount, true);
-					getContext().startService(_profileService.getNewNotifications(0, _nextPage, true));
-					_nextPage++;
-				} else {
-					setCount(_notificationCount, false);
+					_notificationCount += count;
+					if (_notificationCount >= 99) {
+						setCount(_notificationCount, false);
+					} else if (count == 25) {
+						setCount(_notificationCount, true);
+						getContext().startService(_profileService.getMyUserInformation(0, true));
+						_nextPage++;
+					} else {
+						setCount(_notificationCount, false);
+					}
 				}
+				
 			} catch (ParseException e) {
 				e.printStackTrace();
 

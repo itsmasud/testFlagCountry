@@ -4,10 +4,10 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,7 +28,7 @@ public class MessagesActionBarView extends RelativeLayout {
 	private ProfileService _profileService;
 	private int _nextPage = 1;
 	private int _messageCount = 0;
-
+	
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
@@ -75,10 +75,9 @@ public class MessagesActionBarView extends RelativeLayout {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
-			getContext().startService(_profileService.getUnreadMessages(0, _nextPage, true));
+			_profileService = new ProfileService(getContext(), username, authToken, _resultReciever);			
+			getContext().startService(_profileService.getMyUserInformation(0, true));
 			_nextPage++;
-
 		}
 
 		@Override
@@ -95,21 +94,29 @@ public class MessagesActionBarView extends RelativeLayout {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+			
 			try {
+				
 				JsonArray ja = new JsonArray(new String(
 						resultData.getByteArray((WebServiceConstants.KEY_RESPONSE_DATA))));
-				int count = ja.size();
-
-				_messageCount += count;
-				if (_messageCount >= 99) {
-					setCount(_messageCount, false);
-				} else if (count == 25) {
-					setCount(_messageCount, true);
-					getContext().startService(_profileService.getUnreadMessages(0, _nextPage, true));
-					_nextPage++;
-				} else {
-					setCount(_messageCount, false);
+				int JsonArrayLength = ja.size();
+								
+				for (int i = 0; 0 < JsonArrayLength; i++) {
+					JsonObject jaObj = ja.getJsonObject(i);
+					int count = jaObj.getInt("unreadMessageCount");
+								
+					_messageCount += count;
+					if (_messageCount >= 99) {
+						setCount(_messageCount, false);
+					} else if (count == 25) {
+						setCount(_messageCount, true);
+						getContext().startService(_profileService.getMyUserInformation(0, false));
+						_nextPage++;
+					} else {
+						setCount(_messageCount, false);
+					}
 				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 
