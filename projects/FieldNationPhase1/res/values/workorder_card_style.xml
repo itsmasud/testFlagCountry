@@ -24,7 +24,7 @@
     </style>
 
     <style name="WorkorderCard_StatusBar">
-        <item name="android:background">@drawable/wo_card_status_white</item>
+        <item name="android:background">@drawable/wo_card_status_orange</item>
     </style>
 
     <style name="WorkorderCard_StatusText">

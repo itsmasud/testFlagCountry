@@ -24,6 +24,7 @@
         android:layout_height="48dp"
         android:layout_gravity="right"
         android:background="@drawable/btn_orange"
+        android:gravity="center"
         android:text="Save"
         android:textColor="#FFFFFFFF" />
 

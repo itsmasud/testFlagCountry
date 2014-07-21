@@ -31,7 +31,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 	private TextView _distanceTextView;
 	private TextView _whenTextView;
 	private TextView _statusTextView;
-	private LinearLayout _contentLayout;
+	private RelativeLayout _contentLayout;
 	private RelativeLayout _optionsLayout;
 	private RelativeLayout _bundleLayout;
 	private ImageView _bundleImageView;
@@ -58,7 +58,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 
 		_gs = (GlobalState) getContext().getApplicationContext();
 
-		_contentLayout = (LinearLayout) findViewById(R.id.content_layout);
+		_contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
 		_optionsLayout = (RelativeLayout) findViewById(R.id.options_layout);
 		// _optionsLayout.setOnClickListener(_options_onClick);
 		_optionsLayout.setClickable(false);
