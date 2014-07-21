@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<com.fieldnation.ui.GridBagLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.fieldnation"
     style="@style/WorkorderCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    app:columnCount="3"
+    app:orientation="horizontal"
+    app:rowCount="3" >
 
     <View
         android:id="@+id/status_view"
         android:layout_width="48dp"
         android:layout_height="match_parent"
+        app:layout_column="0"
+        app:layout_row="0"
+        app:layout_rowSpan="3"
         android:background="@drawable/wo_card_status_orange" />
 
     <LinearLayout
@@ -17,6 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/right_panel"
+        app:layout_column="1"
+        app:layout_row="0"
+        app:layout_rowSpan="3"
         android:orientation="vertical" >
 
         <TextView
@@ -33,46 +42,38 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/right_panel"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/moneysymbol_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:gravity="top"
-                android:text="$"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/payment_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1,000,000"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-        </LinearLayout>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <TextView
+            android:id="@+id/moneysymbol_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text="TextView" />
+            android:layout_gravity="top"
+            android:gravity="top"
+            android:text="$"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/payment_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1,000,000"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_gravity="right"
+        android:text="TextView" />
 
     <Button
         android:id="@+id/detail_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
+        app:layout_gravity="right|bottom"
         android:text="Button" />
 
-</com.fieldnation.ui.GridBagLayout>
+</android.support.v7.widget.GridLayout>

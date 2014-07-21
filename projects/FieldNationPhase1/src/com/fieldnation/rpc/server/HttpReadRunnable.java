@@ -30,7 +30,8 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
 
 			DataCacheNode cachedData = null;
 
-			cachedData = DataCache.query(_context, _auth, bundle);
+			if (allowCache)
+				cachedData = DataCache.query(_context, _auth, bundle);
 
 			if (allowCache && cachedData != null) {
 				Log.v(TAG, "Cached Response");

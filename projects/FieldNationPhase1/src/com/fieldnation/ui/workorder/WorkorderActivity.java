@@ -42,7 +42,6 @@ public class WorkorderActivity extends DrawerActivity {
 	private Workorder _workorder = null;
 
 	// Services
-	private MyAuthenticationClient _authClient;
 	private WorkorderService _woRpc;
 
 	/*-*************************************-*/
@@ -72,10 +71,8 @@ public class WorkorderActivity extends DrawerActivity {
 			_created = true;
 		}
 
-		_authClient = new MyAuthenticationClient(this);
 		_gs = (GlobalState) getApplicationContext();
 		_gs.requestAuthentication(_authClient);
-
 	}
 
 	private void buildFragments() {
@@ -138,17 +135,7 @@ public class WorkorderActivity extends DrawerActivity {
 		}
 	};
 
-	private class MyAuthenticationClient extends AuthenticationClient {
-		public MyAuthenticationClient(Context context) {
-			super(context);
-		}
-
-		@Override
-		public void onAuthentication(String username, String authToken) {
-			_woRpc = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
-
-			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
-		}
+	private AuthenticationClient _authClient = new AuthenticationClient() {
 
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
@@ -156,7 +143,18 @@ public class WorkorderActivity extends DrawerActivity {
 			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
 
 		}
-	}
+
+		@Override
+		public void onAuthentication(String username, String authToken) {
+			_woRpc = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
+			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+		}
+
+		@Override
+		public GlobalState getGlobalState() {
+			return _gs;
+		}
+	};
 
 	private WebServiceResultReceiver _rpcReceiver = new WebServiceResultReceiver(new Handler()) {
 
@@ -170,7 +168,7 @@ public class WorkorderActivity extends DrawerActivity {
 				_workorder = Workorder.fromJson(new JsonObject(new String(
 						resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
 
-				for (int i = 0; 0 < _fragments.length; i++) {
+				for (int i = 0; i < _fragments.length; i++) {
 					_fragments[i].setWorkorder(_workorder);
 				}
 

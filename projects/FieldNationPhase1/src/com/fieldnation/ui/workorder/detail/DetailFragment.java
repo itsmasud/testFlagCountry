@@ -25,12 +25,6 @@ public class DetailFragment extends WorkorderFragment {
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
 	/*-*************************************-*/
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		// TODO Method Stub: onCreate()
-		Log.v(TAG, "Method Stub: onCreate()");
-		super.onCreate(savedInstanceState);
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

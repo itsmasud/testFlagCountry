@@ -36,14 +36,12 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private String _authToken;
 	private String _username;
 	private ProgressBar _progressBar;
-	private MyAuthClient _authClient;
 	private Listener _listener = null;
 
 	public PagingListAdapter(Activity activity, Class<T> clazz) {
 		_activity = activity;
 		_clazz = clazz;
 		_progressBar = new ProgressBar(_activity);
-		_authClient = new MyAuthClient(_activity);
 		_gs = (GlobalState) _activity.getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
@@ -134,10 +132,12 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		_isViable = false;
 	}
 
-	private class MyAuthClient extends AuthenticationClient {
+	private AuthenticationClient _authClient = new AuthenticationClient() {
 
-		public MyAuthClient(Context context) {
-			super(context);
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 
 		@Override
@@ -153,12 +153,10 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		}
 
 		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
-			_gs.requestAuthenticationDelayed(_authClient);
+		public GlobalState getGlobalState() {
+			return _gs;
 		}
-
-	}
+	};
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 

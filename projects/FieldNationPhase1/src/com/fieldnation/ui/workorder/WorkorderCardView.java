@@ -93,7 +93,6 @@ public class WorkorderCardView extends RelativeLayout {
 	private int _buttonAction = 0;
 	int _notInterestedAction = 0;
 	WorkorderService _dataService;
-	private MyAuthClient _authClient;
 	private int _statusDisplayState = 0;
 	private Listener _listener = null;
 	private String _username;
@@ -137,7 +136,6 @@ public class WorkorderCardView extends RelativeLayout {
 			return;
 
 		_gs = (GlobalState) getContext().getApplicationContext();
-		_authClient = new MyAuthClient(context);
 		_gs.requestAuthentication(_authClient);
 
 		// connect UI components
@@ -296,10 +294,12 @@ public class WorkorderCardView extends RelativeLayout {
 		}
 	};
 
-	private class MyAuthClient extends AuthenticationClient {
+	private AuthenticationClient _authClient = new AuthenticationClient() {
 
-		public MyAuthClient(Context context) {
-			super(context);
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 
 		@Override
@@ -311,11 +311,10 @@ public class WorkorderCardView extends RelativeLayout {
 		}
 
 		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
-			_gs.requestAuthenticationDelayed(_authClient);
+		public GlobalState getGlobalState() {
+			return _gs;
 		}
-	}
+	};
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 

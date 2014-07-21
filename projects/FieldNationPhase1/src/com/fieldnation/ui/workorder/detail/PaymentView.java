@@ -1,12 +1,19 @@
 package com.fieldnation.ui.workorder.detail;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.ExpenseDialog;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +24,8 @@ import android.widget.TextView;
 
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.PaymentView";
+
+	private static final int RESULT_ADD_EXPENSE = 1;
 
 	// UI
 	// TODO need to grab the description views at the top
@@ -29,9 +38,12 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private LinearLayout _expensesLinearLayout;
 	private TextView _discountsLabelTextView;
 	private LinearLayout _discountsLinearLayout;
+	private ExpenseDialog _expenseDialog;
 
 	// Data
 	private Workorder _workorder;
+	private GlobalState _gs;
+	private WorkorderService _service;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -47,16 +59,24 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		if (isInEditMode())
 			return;
+		_gs = (GlobalState) context.getApplicationContext();
+		_gs.requestAuthentication(_authClient);
 
 		_pay1TextView = (TextView) findViewById(R.id.pay1_textview);
 		_pay2TextView = (TextView) findViewById(R.id.pay2_textview);
 		_termsButton = (Button) findViewById(R.id.terms_button);
 		_addExpenseLayout = (LinearLayout) findViewById(R.id.addexpense_layout);
+		_addExpenseLayout.setOnClickListener(_addExpense_onClick);
+
 		_addDiscountLayout = (LinearLayout) findViewById(R.id.adddiscount_layout);
+		_addDiscountLayout.setOnClickListener(_addDiscount_onClick);
+
 		_expensesLabelTextView = (TextView) findViewById(R.id.expenseslabel_textview);
 		_expensesLinearLayout = (LinearLayout) findViewById(R.id.expenses_linearlayout);
 		_discountsLabelTextView = (TextView) findViewById(R.id.discountslabel_textview);
 		_discountsLinearLayout = (LinearLayout) findViewById(R.id.discounts_linearlayout);
+
+		_expenseDialog = new ExpenseDialog(context);
 
 	}
 
@@ -68,6 +88,86 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		public void onClick(View v) {
 			// TODO Method Stub: onClick()
 			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
+
+	private View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			_expenseDialog.show("Add Expense", "", 0.0, _addExpense_listener);
+		}
+	};
+
+	private ExpenseDialog.Listener _addExpense_listener = new ExpenseDialog.Listener() {
+		@Override
+		public void onOk(String description, double amount) {
+			getContext().startService(
+					_service.addExpense(RESULT_ADD_EXPENSE, _workorder.getWorkorderId(), description, amount, false));
+		}
+	};
+
+	private View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+
+		}
+	};
+
+	private AuthenticationClient _authClient = new AuthenticationClient() {
+
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
+			_gs.requestAuthenticationDelayed(_authClient);
+		}
+
+		@Override
+		public void onAuthentication(String username, String authToken) {
+			_service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
+		}
+
+		@Override
+		public GlobalState getGlobalState() {
+			return _gs;
+		}
+	};
+
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+
+		@Override
+		public void onSuccess(int resultCode, Bundle resultData) {
+			// TODO Method Stub: onSuccess()
+			Log.v(TAG, "Method Stub: onSuccess()");
+
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			if (_service != null) {
+				_gs.invalidateAuthToken(_service.getAuthToken());
+			}
+
+			_gs.requestAuthenticationDelayed(_authClient);
+			// TODO, toast failure, put ui in wait mode
+		}
+	};
+
+	private ExpenseView.Listener _expenseView_listener = new ExpenseView.Listener() {
+
+		@Override
+		public void onDelete(ExpenseView view, AdditionalExpense expense) {
+			// TODO Method Stub: onDelete()
+			Log.v(TAG, "Method Stub: onDelete()");
+
+		}
+
+		@Override
+		public void onClick(ExpenseView view, AdditionalExpense expense) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+
 		}
 	};
 
@@ -117,6 +217,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 			for (int i = 0; i < expenses.length; i++) {
 				AdditionalExpense expense = expenses[i];
 				ExpenseView v = new ExpenseView(getContext());
+				v.setListener(_expenseView_listener);
 				_expensesLinearLayout.addView(v);
 				v.setAdditionalExpense(expense);
 			}

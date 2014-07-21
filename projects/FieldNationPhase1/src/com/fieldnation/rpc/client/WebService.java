@@ -42,6 +42,10 @@ public class WebService implements WebServiceConstants {
 		_callback = callback;
 	}
 
+	public String getAuthToken() {
+		return _authToken;
+	}
+
 	/**
 	 * Performs a generic httpRead. (No payload is sent)
 	 * 

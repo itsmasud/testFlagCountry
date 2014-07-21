@@ -52,7 +52,6 @@ public class DrawerView extends RelativeLayout {
 
 	// Data
 	private GlobalState _gs;
-	private MyAuthClient _authClient;
 	private PaymentService _dataService;
 	private boolean _hasPaid = false;
 	private boolean _hasEstimated = false;
@@ -75,14 +74,12 @@ public class DrawerView extends RelativeLayout {
 
 	public DrawerView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		inflater.inflate(R.layout.view_drawer, this);
+		LayoutInflater.from(context).inflate(R.layout.view_drawer, this);
 
 		if (isInEditMode())
 			return;
 
 		_gs = (GlobalState) context.getApplicationContext();
-		_authClient = new MyAuthClient(context);
 		_gs.requestAuthentication(_authClient);
 
 		_myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
@@ -154,10 +151,12 @@ public class DrawerView extends RelativeLayout {
 		}
 	};
 
-	private class MyAuthClient extends AuthenticationClient {
+	private AuthenticationClient _authClient = new AuthenticationClient() {
 
-		public MyAuthClient(Context context) {
-			super(context);
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 
 		@Override
@@ -169,11 +168,10 @@ public class DrawerView extends RelativeLayout {
 		}
 
 		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
-			_gs.requestAuthenticationDelayed(_authClient);
+		public GlobalState getGlobalState() {
+			return _gs;
 		}
-	}
+	};
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 		@Override

@@ -111,4 +111,19 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				null, "message=" + misc.escapeForURL(message), "application/x-www-form-urlencoded", allowCache);
 	}
 
+	public Intent listExpenses(int resultCode, long workorderId, boolean allowCache) {
+		return httpGet(resultCode, "/api/rest/v1/workorder/" + workorderId + "/expenses", null, allowCache);
+	}
+
+	public Intent addExpense(int resultCode, long workorderId, String description, double price, boolean allowCache) {
+		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/expense", null,
+				"description=" + misc.escapeForURL(description) + "&price=" + price,
+				"application/x-www-form-urlencoded", allowCache);
+	}
+
+	public Intent deleteExpense(int resultCode, long workorderId, long expenseId, boolean allowCache) {
+		return httpDelete(resultCode, "/api/rest/v1/workorder/" + workorderId + "/expense/" + expenseId, null,
+				allowCache);
+	}
+
 }

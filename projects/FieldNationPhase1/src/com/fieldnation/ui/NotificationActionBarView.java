@@ -30,7 +30,6 @@ public class NotificationActionBarView extends RelativeLayout {
 
 	// data
 	private GlobalState _gs;
-	private MyAuthClient _authclient;
 	private ProfileService _profileService;
 	private Profile _profile = null;
 
@@ -59,7 +58,6 @@ public class NotificationActionBarView extends RelativeLayout {
 		_gs = (GlobalState) context.getApplicationContext();
 		setOnClickListener(_this_onClick);
 
-		_authclient = new MyAuthClient(context);
 		_gs.requestAuthentication(_authclient);
 	}
 
@@ -72,10 +70,12 @@ public class NotificationActionBarView extends RelativeLayout {
 		}
 	};
 
-	private class MyAuthClient extends AuthenticationClient {
+	private AuthenticationClient _authclient = new AuthenticationClient() {
 
-		public MyAuthClient(Context context) {
-			super(context);
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authclient);
 		}
 
 		@Override
@@ -85,11 +85,10 @@ public class NotificationActionBarView extends RelativeLayout {
 		}
 
 		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
-			_gs.requestAuthenticationDelayed(_authclient);
+		public GlobalState getGlobalState() {
+			return _gs;
 		}
-	}
+	};
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 		@Override

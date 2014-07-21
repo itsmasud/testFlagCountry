@@ -23,11 +23,11 @@ import android.util.Log;
  */
 public abstract class AuthenticationClient {
 	private static final String TAG = "AuthenticationClient";
-	private GlobalState _gs;
 
-	public AuthenticationClient(Context context) {
-		_gs = (GlobalState) context.getApplicationContext();
+	public AuthenticationClient() {
 	}
+
+	public abstract GlobalState getGlobalState();
 
 	/**
 	 * Waits for the future to finish. When finished it will check for an
@@ -66,7 +66,7 @@ public abstract class AuthenticationClient {
 					Thread.sleep(params[0]);
 				} catch (InterruptedException e) {
 				}
-				_gs.requestAuthentication(AuthenticationClient.this);
+				getGlobalState().requestAuthentication(AuthenticationClient.this);
 				return null;
 			}
 		}.execute(timeoutInMilliseconds);
@@ -75,7 +75,7 @@ public abstract class AuthenticationClient {
 	private WaitForFieldAsyncTask.Listener _waitForAccessToken_listener = new WaitForFieldAsyncTask.Listener() {
 		@Override
 		public void onSuccess(Object value) {
-			_gs.requestAuthentication(AuthenticationClient.this);
+			getGlobalState().requestAuthentication(AuthenticationClient.this);
 		}
 
 		@Override
@@ -96,7 +96,7 @@ public abstract class AuthenticationClient {
 
 			if (tokenString == null) {
 				if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
-					_gs.requestAuthentication(AuthenticationClient.this);
+					getGlobalState().requestAuthentication(AuthenticationClient.this);
 				}
 			} else {
 				onAuthentication(bundle.getString("authAccount"), tokenString);

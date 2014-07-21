@@ -130,7 +130,7 @@
             <RelativeLayout
                 style="@style/WorkorderCard_Inside"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="fill_parent" >
 
                 <LinearLayout
                     android:id="@+id/data_layout"
@@ -214,44 +214,48 @@
                         android:visibility="gone" />
                 </LinearLayout>
 
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/actions_layout"
                     style="@style/WorkorderCard_ActionsLayout"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true" >
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_alignParentRight="true"
+                    android:orientation="vertical" >
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/payment_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentTop="true"
                         android:orientation="vertical" >
 
-                        <TextView
-                            android:id="@+id/moneysymbol_textview"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentTop="true"
-                            android:text="@string/money"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                            android:layout_gravity="right"
+                            android:orientation="horizontal" >
 
-                        <TextView
-                            android:id="@+id/payment_textview"
-                            style="@style/WorkorderCard_PaymentLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toRightOf="@+id/moneysymbol_textview"
-                            android:ellipsize="none"
-                            android:gravity="right"
-                            android:maxLines="1"
-                            android:text="000000000000"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textSize="24sp" />
+                            <TextView
+                                android:id="@+id/moneysymbol_textview"
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent"
+                                android:layout_alignParentLeft="true"
+                                android:layout_alignParentTop="true"
+                                android:gravity="top|right"
+                                android:text="@string/money"
+                                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                            <TextView
+                                android:id="@+id/payment_textview"
+                                style="@style/WorkorderCard_PaymentLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="none"
+                                android:gravity="right"
+                                android:maxLines="1"
+                                android:text="000000000000"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textSize="24sp" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/basis_textview"
@@ -259,24 +263,23 @@
                             android:layout_height="wrap_content"
                             android:layout_alignRight="@+id/payment_textview"
                             android:layout_below="@+id/payment_textview"
+                            android:layout_gravity="right"
                             android:gravity="right"
                             android:maxLines="1"
                             android:text="@string/error"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textSize="12sp" />
-                    </RelativeLayout>
+                    </LinearLayout>
 
                     <Button
                         android:id="@+id/detail_button"
                         style="@style/WorkorderCard_Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_below="@+id/payment_layout"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|fill_vertical|right"
                         android:maxLines="1"
                         android:text="@string/error" />
-                </RelativeLayout>
+                </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

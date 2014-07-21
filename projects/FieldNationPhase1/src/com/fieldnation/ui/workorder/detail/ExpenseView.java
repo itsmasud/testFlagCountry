@@ -21,6 +21,10 @@ public class ExpenseView extends LinearLayout {
 	private TextView _costTextView;
 	private ImageButton _deleteImageButton;
 
+	// Data
+	private Listener _listener;
+	private AdditionalExpense _expense;
+
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
@@ -39,17 +43,35 @@ public class ExpenseView extends LinearLayout {
 		_categoryTextView = (TextView) findViewById(R.id.category_textview);
 		_costTextView = (TextView) findViewById(R.id.cost_textview);
 		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
+		_deleteImageButton.setOnClickListener(_delete_onClick);
 
+		setOnClickListener(_this_onClick);
 	}
 
 	/*-*********************************-*/
 	/*-				Event				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _this_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null)
+				_listener.onClick(ExpenseView.this, _expense);
+		}
+	};
+
+	private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null)
+				_listener.onDelete(ExpenseView.this, _expense);
+		}
+	};
 
 	/*-*************************************-*/
 	/*-				Mutators				-*/
 	/*-*************************************-*/
 	public void setAdditionalExpense(AdditionalExpense expense) {
+		_expense = expense;
 		_descriptionTextView.setText(expense.getDescription());
 		// TODO need to map the ID to a real string
 		_categoryTextView.setText(expense.getCategoryId() + "");
@@ -57,8 +79,13 @@ public class ExpenseView extends LinearLayout {
 		_costTextView.setText(misc.toCurrency(expense.getPrice()));
 	}
 
-	public void setOnDeleteClickListener(View.OnClickListener listener) {
-		_deleteImageButton.setOnClickListener(listener);
+	public void setListener(Listener listener) {
+		_listener = listener;
 	}
 
+	public interface Listener {
+		public void onDelete(ExpenseView view, AdditionalExpense expense);
+
+		public void onClick(ExpenseView view, AdditionalExpense expense);
+	}
 }

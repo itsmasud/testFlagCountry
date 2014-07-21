@@ -12,13 +12,13 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "b2685aa6682bfcaad4cd8bd1a2b1dd102e45be14";
+	private static String authToken = "01dd99922d88265c5e07e9f48bc3c2084e916892";
 
 	public static void main(String[] args) {
 		getProfile();
-		// getWorkorders();
-		// getMessages();
-		// getPayments();
+		getWorkorders();
+		getMessages();
+		getPayments();
 	}
 
 	private static void dumpClasses(JsonArray objects, String path, String packageName, String rootName) throws ParseException, IOException {

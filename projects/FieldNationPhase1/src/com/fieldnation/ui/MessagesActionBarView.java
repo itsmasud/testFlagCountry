@@ -28,7 +28,6 @@ public class MessagesActionBarView extends RelativeLayout {
 
 	// Data
 	private GlobalState _gs;
-	private MyAuthClient _authclient;
 	private ProfileService _profileService;
 	private Profile _profile = null;
 
@@ -58,7 +57,6 @@ public class MessagesActionBarView extends RelativeLayout {
 
 		setOnClickListener(_this_onClickListener);
 
-		_authclient = new MyAuthClient(context);
 		_gs.requestAuthentication(_authclient);
 	}
 
@@ -70,9 +68,12 @@ public class MessagesActionBarView extends RelativeLayout {
 		}
 	};
 
-	private class MyAuthClient extends AuthenticationClient {
-		public MyAuthClient(Context context) {
-			super(context);
+	private AuthenticationClient _authclient = new AuthenticationClient() {
+
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			_gs.requestAuthenticationDelayed(_authclient);
 		}
 
 		@Override
@@ -82,11 +83,10 @@ public class MessagesActionBarView extends RelativeLayout {
 		}
 
 		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
-			_gs.requestAuthenticationDelayed(_authclient);
+		public GlobalState getGlobalState() {
+			return _gs;
 		}
-	}
+	};
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 		@Override
