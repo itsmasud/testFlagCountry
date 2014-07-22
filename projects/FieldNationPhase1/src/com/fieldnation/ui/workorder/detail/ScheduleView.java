@@ -2,14 +2,22 @@ package com.fieldnation.ui.workorder.detail;
 
 import java.util.Calendar;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.WorkLogDialog;
+import com.fieldnation.utils.ISO8601;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -17,19 +25,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.ScheduleView";
 
+	private static final int WEB_SUBMIT_WORKLOG = 1;
+
 	// UI
-	private Button _startButton;
+	private Button _addButton;
 	private LinearLayout _workLogLinearLayout;
-	private DatePickerDialog _datePicker;
-	private TimePickerDialog _timePicker;
+	private WorkLogDialog _workLogDialog;
 
 	// Data
+	private GlobalState _gs;
 	private Workorder _workorder;
-	private FragmentManager _fm;
+	private WorkorderService _service;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -45,44 +56,71 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 
 		if (isInEditMode())
 			return;
+		_gs = (GlobalState) context.getApplicationContext();
+		_gs.requestAuthentication(_authClient);
 
-		final Calendar c = Calendar.getInstance();
-		_datePicker = DatePickerDialog.newInstance(_dateSetListener, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-				c.get(Calendar.DAY_OF_MONTH));
-		_datePicker.setCloseOnSingleTapDay(true);
-		_timePicker = TimePickerDialog.newInstance(_timeSetListener, c.get(Calendar.HOUR_OF_DAY),
-				c.get(Calendar.MINUTE), false, false);
+		_workLogDialog = new WorkLogDialog(context);
 
 		_workLogLinearLayout = (LinearLayout) findViewById(R.id.worklog_linearlayout);
-		_startButton = (Button) findViewById(R.id.start_button);
-		_startButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				_datePicker.show(_fm, "datepicker");
-			}
-		});
+		_addButton = (Button) findViewById(R.id.add_button);
+		_addButton.setOnClickListener(_add_onClick);
 	}
 
 	public void setFragmentManager(FragmentManager fm) {
-		_fm = fm;
+		_workLogDialog.setFragmentManager(fm);
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private DatePickerDialog.OnDateSetListener _dateSetListener = new DatePickerDialog.OnDateSetListener() {
+	private View.OnClickListener _add_onClick = new View.OnClickListener() {
 		@Override
-		public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-			_timePicker.show(_fm, "timepicker");
+		public void onClick(View v) {
+			// TODO figure out the two display values here
+			_workLogDialog.show("Add a worklog", false, false, _worklogdialog_onOk);
 		}
 	};
 
-	private TimePickerDialog.OnTimeSetListener _timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+	private WorkLogDialog.Listener _worklogdialog_onOk = new WorkLogDialog.Listener() {
 		@Override
-		public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
-			// TODO Method Stub: onTimeSet()
-			Log.v(TAG, "Method Stub: onTimeSet()");
+		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime) {
+			getContext().startService(
+					_service.logTime(WEB_SUBMIT_WORKLOG, _workorder.getWorkorderId(), start.getTimeInMillis(),
+							end.getTimeInMillis(), false));
+		}
+	};
 
+	private AuthenticationClient _authClient = new AuthenticationClient() {
+
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			_gs.requestAuthenticationDelayed(_authClient);
+		}
+
+		@Override
+		public void onAuthentication(String username, String authToken) {
+			_service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
+		}
+
+		@Override
+		public GlobalState getGlobalState() {
+			return _gs;
+		}
+	};
+
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+
+		@Override
+		public void onSuccess(int resultCode, Bundle resultData) {
+			if (resultCode == WEB_SUBMIT_WORKLOG) {
+				Toast.makeText(getContext(), "Success!", Toast.LENGTH_LONG).show();
+				_workorder.dispatchOnChange();
+			}
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			Toast.makeText(getContext(), "Failed!", Toast.LENGTH_LONG).show();
 		}
 	};
 

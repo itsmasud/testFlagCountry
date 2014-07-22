@@ -126,4 +126,29 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				allowCache);
 	}
 
+	public Intent logTime(int resultCode, long workorderId, long startDate, long endDate, boolean allowCache) {
+		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/log", null,
+				"startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate),
+				"application/x-www-form-urlencoded", allowCache);
+	}
+
+	public Intent logTime(int resultCode, long workorderId, long startDate, long endDate, int numberOfDevices,
+			boolean allowCache) {
+		return httpPost(
+				resultCode,
+				"api/rest/v1/workorder/" + workorderId + "/log",
+				null,
+				"startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&noOfDevices=" + numberOfDevices,
+				"application/x-www-form-urlencoded", allowCache);
+	}
+
+	public Intent logTime(int resultCode, long workorderId, long startDate, long endDate, boolean isOnSiteWork,
+			boolean allowCache) {
+		return httpPost(
+				resultCode,
+				"api/rest/v1/workorder/" + workorderId + "/log",
+				null,
+				"startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&hoursType=" + (isOnSiteWork ? "0" : "1"),
+				"application/x-www-form-urlencoded", allowCache);
+	}
 }
