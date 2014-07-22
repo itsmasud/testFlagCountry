@@ -7,17 +7,16 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DataCacheSqlHelper extends SQLiteOpenHelper {
-	private static final String TAG = "rpc.server.DataCacheSqlHelper";
-	private static final int TABLE_VER = 2;
-	public static final String TABLE_NAME = "data_cache";
+public class PhotoCacheSqlHelper extends SQLiteOpenHelper {
+	private static final String TAG = "rpc.server.PhotoCacheSqlHelper";
+	private static final int TABLE_VER = 1;
+	public static final String TABLE_NAME = "photo_cache";
 
 	public enum Column {
 		ID(0, "_id", "integer primary key autoincrement"),
-		EXIPES_ON(1, "exipres_on", "integer not null", true),
-		KEY(2, "key", "text not null", true),
-		RESPONSE_DATA(3, "response_data", "text not null"),
-		RESPONSE_CODE(4, "response_code", "integer not null");
+		LAST_READ(1, "last_read", "integer not null", true),
+		URL(2, "url", "text not null", true),
+		PHOTO_DATA(3, "photo_data", "blob not null");
 
 		private int _index;
 		private String _name;
@@ -69,9 +68,10 @@ public class DataCacheSqlHelper extends SQLiteOpenHelper {
 		public String toString() {
 			return _name;
 		}
+
 	}
 
-	public DataCacheSqlHelper(Context context) {
+	public PhotoCacheSqlHelper(Context context) {
 		super(context, TABLE_NAME + ".db", null, TABLE_VER);
 	}
 

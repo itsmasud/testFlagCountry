@@ -23,6 +23,7 @@ public class DataService extends IntentService implements DataServiceConstants {
 		// fill in the hashmap
 		new AuthRpc(_rpcs);
 		new WebRpc(_rpcs);
+		new PhotoRpc(_rpcs);
 	}
 
 	@Override

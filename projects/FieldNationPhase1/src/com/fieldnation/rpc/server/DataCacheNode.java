@@ -118,7 +118,6 @@ public class DataCacheNode {
 		} finally {
 			helper.close();
 		}
-		;
 	}
 
 	public static void delete(Context context, long id) {
