@@ -96,7 +96,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 		_skillsTextView.setText(skillString);
 
-		// TODO display the time
 		Schedule schedule = _workoder.getSchedule();
 		if (schedule != null) {
 			String when = schedule.getFormatedTime();

@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.CancelCategory;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderCardView.Listener;
@@ -54,7 +55,7 @@ class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
 		case WorkorderCardView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
 			// TODO, get reason input from user
 			_context.startService(_service.cancelAssignment(WorkorderCardView.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
-					_workorder.getWorkorderId(), 1, "Cause I said So"));
+					_workorder.getWorkorderId(), CancelCategory.OTHER, "UI Not implemented"));
 			break;
 		}
 	}

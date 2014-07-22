@@ -52,6 +52,7 @@ public class WorkorderCardView extends RelativeLayout {
 	public static final int BUTTON_ACTION_ASSIGNMENT = 2;
 	public static final int BUTTON_ACTION_CHECKIN = 3;
 	public static final int BUTTON_ACTION_CHECKOUT = 4;
+	public static final int BUTTON_ACTION_ACKNOWLEDGE_HOLD = 5;
 
 	public static final int NOT_INTERESTED_ACTION_NONE = 0;
 	public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
@@ -91,8 +92,8 @@ public class WorkorderCardView extends RelativeLayout {
 	private WorkorderDataSelector _dataView = null;
 	private Workorder _workorder;
 	private int _buttonAction = 0;
-	int _notInterestedAction = 0;
-	WorkorderService _dataService;
+	private int _notInterestedAction = 0;
+	private WorkorderService _dataService;
 	private int _statusDisplayState = 0;
 	private Listener _listener = null;
 	private String _username;
@@ -290,6 +291,9 @@ public class WorkorderCardView extends RelativeLayout {
 				// TODO, set a time for expiration
 				getContext().startService(_dataService.request(BUTTON_ACTION_REQUEST, _workorder.getWorkorderId(), 600));
 				break;
+			case BUTTON_ACTION_ACKNOWLEDGE_HOLD:
+				getContext().startService(
+						_dataService.acknowledgeHold(BUTTON_ACTION_ACKNOWLEDGE_HOLD, _workorder.getWorkorderId()));
 			}
 		}
 	};
@@ -324,26 +328,6 @@ public class WorkorderCardView extends RelativeLayout {
 
 			Log.v(TAG, resultData.toString());
 			Log.v(TAG, new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-			switch (resultCode) {
-			case BUTTON_ACTION_ASSIGNMENT:
-				// TODO BUTTON_ACTION_ASSIGNMENT
-				break;
-			case BUTTON_ACTION_CHECKIN:
-				// TODO BUTTON_ACTION_CHECKIN
-				break;
-			case BUTTON_ACTION_CHECKOUT:
-				// TODO BUTTON_ACTION_CHECKOUT
-				break;
-			case BUTTON_ACTION_REQUEST:
-				// TODO BUTTON_ACTION_REQUEST
-				break;
-			case NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
-				break;
-			case NOT_INTERESTED_ACTION_DECLINE:
-				break;
-			case NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
-				break;
-			}
 			if (_listener != null)
 				_listener.notifyDataSetChanged();
 			Toast.makeText(getContext(), R.string.success, Toast.LENGTH_LONG).show();
@@ -602,8 +586,7 @@ public class WorkorderCardView extends RelativeLayout {
 				_locationTextView.setVisibility(VISIBLE);
 			} else {
 				_detailButton.setText("Acknowledge");
-				// TODO BUTTON_ACTION_ACKNOWLEDGE
-				// _buttonAction = BUTTON_ACTION_ACKNOWLEDGE;
+				_buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
 				_statusDisplayState = 1;
 
 				_titleTextView.setVisibility(VISIBLE);
@@ -756,8 +739,7 @@ public class WorkorderCardView extends RelativeLayout {
 			} else {
 				_statusDisplayState = 1;
 				_detailButton.setText("Acknowledge");
-				// TODO BUTTON_ACTION_ACKNOWLEDGE!?!?!
-				// _buttonAction = BUTTON_ACTION_ACKNOWLEDGE;
+				_buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
 				_titleTextView.setVisibility(VISIBLE);
 				_locationTextView.setVisibility(VISIBLE);
 				_whenTextView.setVisibility(VISIBLE);

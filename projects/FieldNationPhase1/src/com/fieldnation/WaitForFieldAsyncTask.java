@@ -12,7 +12,6 @@ import android.os.Build;
  * 
  */
 
-// TODO add the ability to fail after a certain timeout
 public class WaitForFieldAsyncTask extends AsyncTask<Object, Void, Object> {
 	private Listener _listener;
 

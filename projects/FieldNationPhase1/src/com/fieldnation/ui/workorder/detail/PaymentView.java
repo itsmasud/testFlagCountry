@@ -103,7 +103,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		@Override
 		public void onOk(String description, double amount) {
 			getContext().startService(
-					_service.addExpense(RESULT_ADD_EXPENSE, _workorder.getWorkorderId(), description, amount, false));
+					_service.addExpense(RESULT_ADD_EXPENSE, _workorder.getWorkorderId(), description, amount));
 		}
 	};
 
