@@ -18,6 +18,7 @@ public class DetailFragment extends WorkorderFragment {
 	private LocationView _locView;
 	private ScheduleView _scheduleView;
 	private PaymentView _payView;
+	private ClosingNotesView _closingNotes;
 
 	// Data
 	private Workorder _workorder;
@@ -39,6 +40,7 @@ public class DetailFragment extends WorkorderFragment {
 		_locView = (LocationView) view.findViewById(R.id.location_view);
 		_scheduleView = (ScheduleView) view.findViewById(R.id.schedule_view);
 		_payView = (PaymentView) view.findViewById(R.id.payment_view);
+		_closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
 
 		_scheduleView.setFragmentManager(getFragmentManager());
 
@@ -71,6 +73,10 @@ public class DetailFragment extends WorkorderFragment {
 
 		if (_payView != null) {
 			_payView.setWorkorder(_workorder);
+		}
+
+		if (_closingNotes != null) {
+			_closingNotes.setWorkorder(_workorder);
 		}
 	}
 

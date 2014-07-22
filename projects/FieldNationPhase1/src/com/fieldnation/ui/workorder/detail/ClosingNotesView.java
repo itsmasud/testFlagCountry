@@ -1,20 +1,36 @@
 package com.fieldnation.ui.workorder.detail;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.ClosingNotesView";
 
+	private static final int WEB_SAVE_NOTES = 1;
+
 	// UI
+	private EditText _notesEditText;
+	private Button _saveButton;
 
 	// Data
+	private GlobalState _gs;
 	private Workorder _workorder;
+	private WorkorderService _service;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -30,8 +46,68 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
 		if (isInEditMode())
 			return;
+		_gs = (GlobalState) context.getApplicationContext();
+		_gs.requestAuthentication(_authClient);
+
+		_notesEditText = (EditText) findViewById(R.id.notes_edittext);
+		_saveButton = (Button) findViewById(R.id.save_button);
+		_saveButton.setOnClickListener(_save_onClick);
+
+		// TODO put UI into loading state
+		_saveButton.setText("Loading...");
 
 	}
+
+	/*-*********************************-*/
+	/*-				Events				-*/
+	/*-*********************************-*/
+	private View.OnClickListener _save_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			getContext().startService(
+					_service.closingNotes(WEB_SAVE_NOTES, _workorder.getWorkorderId(),
+							_notesEditText.getText().toString()));
+		}
+	};
+
+	private AuthenticationClient _authClient = new AuthenticationClient() {
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			if (_service != null) {
+				_gs.invalidateAuthToken(_service.getAuthToken());
+			}
+			_gs.requestAuthenticationDelayed(_authClient);
+		}
+
+		@Override
+		public void onAuthentication(String username, String authToken) {
+			_service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
+			_saveButton.setText("Save");
+		}
+
+		@Override
+		public GlobalState getGlobalState() {
+			return _gs;
+		}
+	};
+
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+		@Override
+		public void onSuccess(int resultCode, Bundle resultData) {
+			_workorder.dispatchOnChange();
+			// TODO Method Stub: onSuccess()
+			Log.v(TAG, "Method Stub: onSuccess()");
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			if (_service != null) {
+				_gs.invalidateAuthToken(_service.getAuthToken());
+			}
+			_gs.requestAuthentication(_authClient);
+			// TODO put UI into loading state
+		}
+	};
 
 	/*-*************************************-*/
 	/*-				Mutators				-*/
@@ -44,6 +120,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	}
 
 	private void refresh() {
+		_notesEditText.setText(_workorder.getClosingNotes());
 	}
 
 }

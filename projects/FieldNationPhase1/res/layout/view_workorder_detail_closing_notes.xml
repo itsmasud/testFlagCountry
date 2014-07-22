@@ -11,6 +11,7 @@
         android:text="Closing Notes" />
 
     <EditText
+        android:id="@+id/notes_edittext"
         style="@style/WorkorderDetail_EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,6 +21,7 @@
         android:padding="5dp" />
 
     <Button
+        android:id="@+id/save_button"
         android:layout_width="96dp"
         android:layout_height="48dp"
         android:layout_gravity="right"
