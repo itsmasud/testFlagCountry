@@ -136,7 +136,6 @@ public class WorkorderActivity extends DrawerActivity {
 	};
 
 	private AuthenticationClient _authClient = new AuthenticationClient() {
-
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
 			// TODO Method Stub: onAuthenticationFailed()
@@ -168,6 +167,8 @@ public class WorkorderActivity extends DrawerActivity {
 				_workorder = Workorder.fromJson(new JsonObject(new String(
 						resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
 
+				_workorder.addListener(_workorder_listener);
+
 				for (int i = 0; i < _fragments.length; i++) {
 					_fragments[i].setWorkorder(_workorder);
 				}
@@ -184,6 +185,14 @@ public class WorkorderActivity extends DrawerActivity {
 			Log.v(TAG, "Method Stub: onError()");
 		}
 	};
+
+	private Workorder.Listener _workorder_listener = new Workorder.Listener() {
+		@Override
+		public void onChange(Workorder workorder) {
+			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+		}
+	};
+
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/

@@ -12,7 +12,7 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "01dd99922d88265c5e07e9f48bc3c2084e916892";
+	private static String authToken = "06c74d1de465bbee056783c58d2e988aa61c9f2f";
 
 	public static void main(String[] args) {
 		getProfile();
@@ -169,6 +169,10 @@ public class J2J {
 					System.out.println(urls[i] + j);
 					Result result = Ws.httpGet(hostname, urls[i] + j);
 
+					if (result.getResultsAsString().contains("payRateBasis")){
+						System.out.println("BP");
+					}
+
 					JsonArray res = result.getResultsAsJsonArray();
 					if (res.size() == 0)
 						break;
@@ -186,6 +190,10 @@ public class J2J {
 				Result result = Ws.httpGet(
 						hostname,
 						"/api/rest/v1/workorder/" + workorder.getString("workorder_id") + "/details?access_token=" + authToken);
+				
+				if (result.getResultsAsString().contains("payRateBasis")){
+					System.out.println("BP");
+				}
 
 				details.add(result.getResultsAsJsonObject());
 			}

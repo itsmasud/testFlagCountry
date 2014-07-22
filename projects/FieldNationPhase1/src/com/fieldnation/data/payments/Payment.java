@@ -10,11 +10,11 @@ public class Payment {
 	@Json(name = "date_paid")
 	private String _datePaid;
 	@Json(name = "amount")
-	private double _amount;
+	private Double _amount;
 	@Json(name = "pay_method")
 	private String _payMethod;
 	@Json(name = "payment_id")
-	private int _paymentId;
+	private Integer _paymentId;
 	@Json(name = "workorders")
 	private Workorder[] _workorders;
 
@@ -29,7 +29,7 @@ public class Payment {
 		return _datePaid;
 	}
 
-	public double getAmount() {
+	public Double getAmount(){
 		return _amount;
 	}
 
@@ -37,7 +37,7 @@ public class Payment {
 		return _payMethod;
 	}
 
-	public int getPaymentId() {
+	public Integer getPaymentId(){
 		return _paymentId;
 	}
 

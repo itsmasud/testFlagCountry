@@ -73,6 +73,7 @@ public class DetailFragment extends WorkorderFragment {
 			_payView.setWorkorder(_workorder);
 		}
 	}
+
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/

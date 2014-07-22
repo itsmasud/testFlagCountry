@@ -8,13 +8,13 @@ public class Workorder {
 	@Json(name = "wo_start_date")
 	private String _woStartDate;
 	@Json(name = "amount")
-	private double _amount;
+	private Double _amount;
 	@Json(name = "wo_end_date")
 	private String _woEndDate;
 	@Json(name = "description")
 	private String _description;
 	@Json(name = "wo_number")
-	private int _woNumber;
+	private Integer _woNumber;
 	@Json(name = "wo_title")
 	private String _woTitle;
 	@Json(name = "client_name")
@@ -27,7 +27,7 @@ public class Workorder {
 		return _woStartDate;
 	}
 
-	public double getAmount() {
+	public Double getAmount(){
 		return _amount;
 	}
 
@@ -39,7 +39,7 @@ public class Workorder {
 		return _description;
 	}
 
-	public int getWoNumber() {
+	public Integer getWoNumber(){
 		return _woNumber;
 	}
 

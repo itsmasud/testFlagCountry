@@ -1,5 +1,11 @@
 package com.fieldnation.data.workorder;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -227,6 +233,31 @@ public class Workorder {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	/*-*********************************************-*/
+	/*-				Not Generated Code				-*/
+	/*-*********************************************-*/
+
+	private Set<Listener> _listeners = new HashSet<Workorder.Listener>();
+
+	public void addListener(Listener listener) {
+		_listeners.add(listener);
+	}
+
+	public void removeListener(Listener listener) {
+		_listeners.remove(listener);
+	}
+
+	public void dispatchOnChange() {
+		Iterator<Listener> iter = _listeners.iterator();
+		while (iter.hasNext()) {
+			iter.next().onChange(this);
+		}
+	}
+
+	public interface Listener {
+		public void onChange(Workorder workorder);
 	}
 
 }

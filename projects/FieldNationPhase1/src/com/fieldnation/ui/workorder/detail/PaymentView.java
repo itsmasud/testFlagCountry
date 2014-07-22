@@ -26,6 +26,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.PaymentView";
 
 	private static final int RESULT_ADD_EXPENSE = 1;
+	private static final int RESULT_DELETE_EXPENSE = 2;
 
 	// UI
 	// TODO need to grab the description views at the top
@@ -138,9 +139,9 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			// TODO Method Stub: onSuccess()
-			Log.v(TAG, "Method Stub: onSuccess()");
-
+			if (resultCode == RESULT_ADD_EXPENSE || resultCode == RESULT_DELETE_EXPENSE) {
+				_workorder.dispatchOnChange();
+			}
 		}
 
 		@Override
@@ -158,6 +159,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		@Override
 		public void onDelete(ExpenseView view, AdditionalExpense expense) {
+			// _service.deleteExpense(RESULT_DELETE_EXPENSE,
+			// _workorder.getWorkorderId(), expense.get, allowCache)
 			// TODO Method Stub: onDelete()
 			Log.v(TAG, "Method Stub: onDelete()");
 

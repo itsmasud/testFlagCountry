@@ -9,6 +9,10 @@ public class LoggedWork{
 	private String _startDate;
 	@Json(name="hours")
 	private Double _hours;
+	@Json(name="noOfDevices")
+	private Integer _noOfDevices;
+	@Json(name="hoursType")
+	private Integer _hoursType;
 	@Json(name="endDate")
 	private String _endDate;
 
@@ -20,6 +24,14 @@ public class LoggedWork{
 
 	public Double getHours(){
 		return _hours;
+	}
+
+	public Integer getNoOfDevices(){
+		return _noOfDevices;
+	}
+
+	public Integer getHoursType(){
+		return _hoursType;
 	}
 
 	public String getEndDate(){
