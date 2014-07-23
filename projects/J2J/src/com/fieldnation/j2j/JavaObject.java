@@ -19,11 +19,10 @@ public class JavaObject {
 	public static JavaObject getInstance(String name, String packageName) {
 		String classname = formatClassName(name);
 		if (!_objectRegistry.containsKey(classname)) {
-			_objectRegistry.put(classname, new JavaObject(classname,
-					packageName));
+			_objectRegistry.put(classname, new JavaObject(classname, packageName));
 		}
 
-		System.out.println("Class: " + classname);
+		// Log.println("Class: " + classname);
 
 		return _objectRegistry.get(classname);
 	}

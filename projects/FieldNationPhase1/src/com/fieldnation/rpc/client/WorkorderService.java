@@ -157,4 +157,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/acknowledge-hold", null, "",
 				"application/x-www-form-urlencoded", false);
 	}
+
+	public Intent getExpenseCategories(int resultCode, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workorder/expense/categories", null, allowCache);
+	}
 }

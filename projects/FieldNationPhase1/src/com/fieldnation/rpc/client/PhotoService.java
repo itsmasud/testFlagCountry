@@ -25,6 +25,7 @@ public class PhotoService implements PhotoServiceConstants {
 
 		intent.putExtra(KEY_RESULT_RECEIVER, _resultReceiver);
 		intent.putExtra(KEY_PARAM_URL, url);
+		intent.putExtra(KEY_RESULT_CODE, resultCode);
 
 		return intent;
 	}

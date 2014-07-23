@@ -26,10 +26,10 @@ public class JavaField {
 	public JavaField(String name, Object data, String packageName) throws ParseException {
 		this.name = name;
 
-		System.out.println("Field: " + name);
+		// Log.println("Field: " + name);
 
 		if (name.equals("dateEntered") && !"".equals(data)) {
-			System.out.println("BP");
+			Log.println("BP");
 		}
 
 		dataType = getType(data, name, packageName);

@@ -275,7 +275,7 @@
                         android:id="@+id/detail_button"
                         style="@style/WorkorderCard_Button"
                         android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         android:layout_gravity="bottom|fill_vertical|right"
                         android:maxLines="1"
                         android:text="@string/error" />

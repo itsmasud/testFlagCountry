@@ -13,6 +13,8 @@ public class AdditionalExpense {
 	private Integer _categoryId;
 	@Json(name = "approved")
 	private Boolean _approved;
+	@Json(name="expense_id")
+	private Integer _expenseId;
 
 	public AdditionalExpense() {
 	}
@@ -31,6 +33,10 @@ public class AdditionalExpense {
 
 	public Boolean getApproved() {
 		return _approved;
+	}
+
+	public Integer getExpenseId(){
+		return _expenseId;
 	}
 
 	public JsonObject toJson() {

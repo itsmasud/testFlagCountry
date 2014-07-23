@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.Enumeration;
 
@@ -12,13 +13,23 @@ import com.fieldnation.json.JsonObject;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
-	private static String authToken = "06c74d1de465bbee056783c58d2e988aa61c9f2f";
+	private static String authToken = "";
 
 	public static void main(String[] args) {
-		getProfile();
+		new File(Config.ObjectPath).mkdirs();
+
+		try {
+			authToken = Tools.authServer("dev.fieldnation.com", "/authentication/api/oauth/token", "password",
+					"demoapp", "demopass", "jacobfaketech", "jacobfaketech");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// getProfile();
 		getWorkorders();
-		getMessages();
-		getPayments();
+		// getMessages();
+		// getPayments();
 	}
 
 	private static void dumpClasses(JsonArray objects, String path, String packageName, String rootName) throws ParseException, IOException {
@@ -40,12 +51,12 @@ public class J2J {
 			fout.close();
 		}
 
-		System.out.println("***********************************");
+		Log.println("***********************************");
 		javaObjects = JavaObject.getJavaObjects();
 		while (javaObjects.hasMoreElements()) {
 			JavaObject obj = javaObjects.nextElement();
 
-			System.out.println(obj.getUnderscoreFields());
+			Log.println(obj.getUnderscoreFields());
 		}
 	}
 
@@ -75,7 +86,7 @@ public class J2J {
 
 			for (int i = 0; i < urls.length; i++) {
 				for (int j = 0; true; j++) {
-					System.out.println(urls[i] + j);
+					Log.println(urls[i] + j);
 					Result result = Ws.httpGet(hostname, urls[i] + j);
 
 					JsonArray ja = result.getResultsAsJsonArray();
@@ -86,8 +97,8 @@ public class J2J {
 				}
 			}
 
-			System.out.println("Building Class Structure");
-			dumpClasses(objects, "c:/j2j/payments", "com.fieldnation.data.payments", "Payment");
+			Log.println("Building Class Structure");
+			dumpClasses(objects, Config.ObjectPath + "payments", "com.fieldnation.data.payments", "Payment");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -104,7 +115,7 @@ public class J2J {
 
 			for (int i = 0; i < urls.length; i++) {
 				for (int j = 0; true; j++) {
-					System.out.println(urls[i] + j);
+					Log.println(urls[i] + j);
 					Result result = Ws.httpGet(hostname, urls[i] + j);
 
 					JsonArray ja = result.getResultsAsJsonArray();
@@ -115,8 +126,8 @@ public class J2J {
 				}
 			}
 
-			System.out.println("Building Class Structure");
-			dumpClasses(objects, "c:/j2j/messages", "com.fieldnation.data.messages", "Message");
+			Log.println("Building Class Structure");
+			dumpClasses(objects, Config.ObjectPath + "messages", "com.fieldnation.data.messages", "Message");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -131,8 +142,8 @@ public class J2J {
 
 			JsonObject obj = result.getResultsAsJsonObject();
 
-			System.out.println("Building Class Structure");
-			dumpClass(obj, "c:/j2j/profile", "com.fieldnation.data.profile", "Profile");
+			Log.println("Building Class Structure");
+			dumpClass(obj, Config.ObjectPath + "profile", "com.fieldnation.data.profile", "Profile");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -166,11 +177,19 @@ public class J2J {
 
 			for (int i = 0; i < urls.length; i++) {
 				for (int j = 0; true; j++) {
-					System.out.println(urls[i] + j);
+					Log.println(urls[i] + j);
 					Result result = Ws.httpGet(hostname, urls[i] + j);
 
-					if (result.getResultsAsString().contains("payRateBasis")){
-						System.out.println("BP");
+					String strres = result.getResultsAsString();
+
+					if (strres.contains("payRateBasis")) {
+						Log.println("payRateBasis");
+					}
+					if (strres.contains("basis")) {
+						Log.println("basis");
+					}
+					if (!strres.contains("pay")) {
+						Log.println("no pay!");
 					}
 
 					JsonArray res = result.getResultsAsJsonArray();
@@ -181,26 +200,36 @@ public class J2J {
 				}
 			}
 
-			System.out.println("Have " + objects.size() + " workorders.");
+			Log.println("Have " + objects.size() + " workorders.");
 			JsonArray details = new JsonArray();
 			for (int i = 0; i < objects.size(); i++) {
-				System.out.println(i);
+				Log.println(i);
 				JsonObject workorder = objects.getJsonObject(i);
 
-				Result result = Ws.httpGet(
-						hostname,
-						"/api/rest/v1/workorder/" + workorder.getString("workorder_id") + "/details?access_token=" + authToken);
-				
-				if (result.getResultsAsString().contains("payRateBasis")){
-					System.out.println("BP");
+				String url = "/api/rest/v1/workorder/" + workorder.getString("workorder_id") + "/details?access_token=" + authToken;
+
+				Log.println(url);
+
+				Result result = Ws.httpGet(hostname, url);
+
+				String res = result.getResultsAsString();
+
+				if (res.contains("payRateBasis")) {
+					Log.println("payRateBasis");
+				}
+				if (res.contains("basis")) {
+					Log.println("basis");
+				}
+				if (!res.contains("pay")) {
+					Log.println("no pay!");
 				}
 
 				details.add(result.getResultsAsJsonObject());
 			}
 			objects.merge(details);
 
-			System.out.println("Building Class Structure");
-			dumpClasses(objects, "c:/j2j/workorder", "com.fieldnation.data.workorder", "Workorder");
+			Log.println("Building Class Structure");
+			dumpClasses(objects, Config.ObjectPath + "workorder", "com.fieldnation.data.workorder", "Workorder");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

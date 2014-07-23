@@ -4,13 +4,18 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Discount {
+public class Discount{
+	@Json(name="discount_id")
+	private Integer _discountId;
 	@Json(name = "amount")
 	private Double _amount;
 	@Json(name = "description")
 	private String _description;
 
-	public Discount() {
+	public Discount(){
+	}
+	public Integer getDiscountId(){
+		return _discountId;
 	}
 
 	public Double getAmount() {
