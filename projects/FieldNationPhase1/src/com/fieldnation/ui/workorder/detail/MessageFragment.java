@@ -100,6 +100,7 @@ public class MessageFragment extends WorkorderFragment {
 	}
 
 	private void rebuildList() {
+		// TODO, need to sort list by date
 		_listview.setAdapter(new MessagesAdapter(_profile, _messages));
 	}
 
