@@ -6,7 +6,7 @@ import android.os.ResultReceiver;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.fieldnation.data.payments.Payment;
+import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.ui.PagingListAdapter;
 

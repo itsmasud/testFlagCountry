@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 
 import com.fieldnation.R;
-import com.fieldnation.data.payments.Payment;
+import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.ui.BaseActivity;
 import com.fieldnation.utils.ISO8601;

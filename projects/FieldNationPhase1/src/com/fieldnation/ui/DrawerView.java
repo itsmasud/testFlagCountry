@@ -5,7 +5,7 @@ import java.util.Calendar;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
-import com.fieldnation.data.payments.Payment;
+import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.common.WebServiceConstants;

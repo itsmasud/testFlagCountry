@@ -1,7 +1,8 @@
 package com.fieldnation.ui.payment;
 
-import com.fieldnation.data.payments.Payment;
-import com.fieldnation.data.payments.Workorder;
+import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.data.accounting.Workorder;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;

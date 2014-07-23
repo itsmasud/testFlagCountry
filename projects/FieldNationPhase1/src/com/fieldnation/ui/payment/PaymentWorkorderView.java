@@ -4,8 +4,8 @@ import java.util.Calendar;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.data.payments.Payment;
-import com.fieldnation.data.payments.Workorder;
+import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.data.accounting.Workorder;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 

@@ -1,6 +1,6 @@
 package com.fieldnation.ui;
 
-import com.fieldnation.data.messages.Message;
+import com.fieldnation.data.profile.Message;
 import com.fieldnation.rpc.client.ProfileService;
 
 import android.app.Activity;

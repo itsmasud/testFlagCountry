@@ -26,10 +26,10 @@ public class J2J {
 			e.printStackTrace();
 		}
 
-		// getProfile();
+		getProfile();
 		getWorkorders();
-		// getMessages();
-		// getPayments();
+		getMessages();
+		getPayments();
 	}
 
 	private static void dumpClasses(JsonArray objects, String path, String packageName, String rootName) throws ParseException, IOException {
@@ -98,7 +98,7 @@ public class J2J {
 			}
 
 			Log.println("Building Class Structure");
-			dumpClasses(objects, Config.ObjectPath + "payments", "com.fieldnation.data.payments", "Payment");
+			dumpClasses(objects, Config.ObjectPath + "accounting", "com.fieldnation.data.accounting", "Payment");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -127,7 +127,7 @@ public class J2J {
 			}
 
 			Log.println("Building Class Structure");
-			dumpClasses(objects, Config.ObjectPath + "messages", "com.fieldnation.data.messages", "Message");
+			dumpClasses(objects, Config.ObjectPath + "profile", "com.fieldnation.data.profile", "Message");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -231,8 +231,34 @@ public class J2J {
 			Log.println("Building Class Structure");
 			dumpClasses(objects, Config.ObjectPath + "workorder", "com.fieldnation.data.workorder", "Workorder");
 
+			getWorkorderMessages(details);
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private static void getWorkorderMessages(JsonArray workorders) {
+		try {
+			JsonArray messages = new JsonArray();
+			for (int i = 0; i < workorders.size(); i++) {
+				JsonObject workorder = workorders.getJsonObject(i);
+
+				String url = "/api/rest/v1/workorder/" + workorder.getLong("workorder_id") + "/messages?access_token=" + authToken;
+				Log.println(url);
+				try {
+					Result result = Ws.httpGet(hostname, url);
+					messages.merge(result.getResultsAsJsonArray());
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			Log.println("Building Class Structure");
+			dumpClasses(messages, Config.ObjectPath + "workorder", "com.fieldnation.data.workorder", "Message");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 	}
 }

@@ -3,7 +3,7 @@ package com.fieldnation.ui;
 import java.util.Calendar;
 
 import com.fieldnation.R;
-import com.fieldnation.data.messages.Message;
+import com.fieldnation.data.profile.Message;
 import com.fieldnation.rpc.client.PhotoService;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.ISO8601;

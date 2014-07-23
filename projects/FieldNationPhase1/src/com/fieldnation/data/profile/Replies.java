@@ -1,4 +1,4 @@
-package com.fieldnation.data.messages;
+package com.fieldnation.data.profile;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;

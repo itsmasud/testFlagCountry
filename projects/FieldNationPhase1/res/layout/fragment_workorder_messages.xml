@@ -8,31 +8,6 @@
         android:id="@+id/messages_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/input_layout"
         android:layout_alignParentTop="true" />
-
-    <RelativeLayout
-        android:id="@+id/input_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
-
-        <EditText
-            android:id="@+id/message_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/send_button"
-            android:hint="Continue the conversation..." />
-
-        <Button
-            android:id="@+id/send_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="Send" />
-    </RelativeLayout>
 
 </RelativeLayout>

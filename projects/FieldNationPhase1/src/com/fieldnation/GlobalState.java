@@ -3,6 +3,7 @@ package com.fieldnation;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.auth.client.AuthenticationServer;
 import com.fieldnation.rpc.server.DataCacheNode;
+import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.Ws;
 
 import android.app.Application;
@@ -35,6 +36,7 @@ public class GlobalState extends Application {
 		accountType = getString(R.string.accounttype);
 		authority = getString(R.string.authority);
 		DataCacheNode.flush(this);
+		PhotoCacheNode.flush(this);
 	}
 
 	/**
