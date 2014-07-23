@@ -59,7 +59,7 @@ public class PhotoCacheNode {
 		SQLiteDatabase db = helper.getWritableDatabase();
 
 		try {
-			Cursor cursor = db.query(PhotoCacheSqlHelper.TABLE_NAME, DataCacheSqlHelper.getColumnNames(),
+			Cursor cursor = db.query(PhotoCacheSqlHelper.TABLE_NAME, PhotoCacheSqlHelper.getColumnNames(),
 					Column.URL + "=?", new String[] { url }, null, null, null);
 			try {
 				if (cursor.moveToFirst()) {

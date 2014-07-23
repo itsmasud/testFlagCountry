@@ -83,4 +83,11 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/profile_imageview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp" />
+
 </RelativeLayout>

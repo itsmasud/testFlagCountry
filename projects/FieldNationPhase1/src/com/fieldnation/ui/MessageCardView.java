@@ -4,13 +4,23 @@ import java.util.Calendar;
 
 import com.fieldnation.R;
 import com.fieldnation.data.messages.Message;
+import com.fieldnation.rpc.client.PhotoService;
+import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,6 +31,10 @@ public class MessageCardView extends RelativeLayout {
 	private TextView _substatusTextView;
 	private TextView _messageBodyTextView;
 	private TextView _timeTextView;
+	private ImageView _profileImageView;
+	private int _viewId;
+
+	private PhotoService _photoService;
 
 	/*-*****************************-*/
 	/*-			LifeCycle			-*/
@@ -41,13 +55,17 @@ public class MessageCardView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
+		_photoService = new PhotoService(context, _resultReceiver);
+
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
 		_messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
 		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
 		_timeTextView = (TextView) findViewById(R.id.time_textview);
+		_profileImageView = (ImageView) findViewById(R.id.profile_imageview);
 	}
 
 	public void setMessage(Message message) {
+		_viewId = (int) (message.getMessageId() % Integer.MAX_VALUE);
 		try {
 			_titleTextView.setText(message.getMessageId() + "");
 		} catch (Exception e) {
@@ -72,6 +90,29 @@ public class MessageCardView extends RelativeLayout {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		try {
+			_profileImageView.setBackgroundDrawable(null);
+			String url = message.getPhotoUrl();
+			getContext().startService(_photoService.getPhoto(_viewId, url));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
+
+	private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
+		@Override
+		protected void onReceiveResult(int resultCode, Bundle resultData) {
+			if (resultCode == _viewId) {
+				byte[] data = resultData.getByteArray(PhotoService.KEY_RESPONSE_DATA);
+
+				Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+				bitmap = misc.extractCircle(bitmap);
+				Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
+				_profileImageView.setBackgroundDrawable(draw);
+			}
+			super.onReceiveResult(resultCode, resultData);
+		}
+	};
 
 }

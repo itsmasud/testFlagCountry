@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class PhotoCacheSqlHelper extends SQLiteOpenHelper {
 	private static final String TAG = "rpc.server.PhotoCacheSqlHelper";
-	private static final int TABLE_VER = 1;
+	private static final int TABLE_VER = 2;
 	public static final String TABLE_NAME = "photo_cache";
 
 	public enum Column {

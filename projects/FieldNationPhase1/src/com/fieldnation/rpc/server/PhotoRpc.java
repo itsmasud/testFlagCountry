@@ -26,8 +26,9 @@ public class PhotoRpc extends RpcInterface implements PhotoServiceConstants {
 		Bundle bundle = intent.getExtras();
 		try {
 			String url = bundle.getString(KEY_PARAM_URL);
+			Log.v(TAG, "Getting image: " + url);
 
-			PhotoCacheNode node = PhotoCacheNode.get(context, url);
+			PhotoCacheNode node = PhotoCache.query(context, url);
 
 			if (node == null) {
 				HttpURLConnection conn = null;
@@ -43,6 +44,8 @@ public class PhotoRpc extends RpcInterface implements PhotoServiceConstants {
 					int contentLength = conn.getContentLength();
 					byte[] results = misc.readAllFromStream(in, 1024, contentLength, 3000);
 					bundle.putByteArray(KEY_RESPONSE_DATA, results);
+
+					PhotoCache.store(context, url, results);
 				} finally {
 					if (in != null)
 						in.close();
