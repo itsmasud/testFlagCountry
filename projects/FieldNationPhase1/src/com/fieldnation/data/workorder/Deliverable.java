@@ -4,7 +4,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Deliverables {
+public class Deliverable {
 	@Json(name = "fileSize")
 	private Integer _fileSize;
 	@Json(name = "fileType")
@@ -18,7 +18,7 @@ public class Deliverables {
 	@Json(name = "fileName")
 	private String _fileName;
 
-	public Deliverables() {
+	public Deliverable() {
 	}
 
 	public Integer getFileSize() {
@@ -49,7 +49,7 @@ public class Deliverables {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(Deliverables deliverables) {
+	public static JsonObject toJson(Deliverable deliverables) {
 		try {
 			return Serializer.serializeObject(deliverables);
 		} catch (Exception ex) {
@@ -58,9 +58,9 @@ public class Deliverables {
 		}
 	}
 
-	public static Deliverables fromJson(JsonObject json) {
+	public static Deliverable fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(Deliverables.class, json);
+			return Serializer.unserializeObject(Deliverable.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

@@ -4,7 +4,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class CustomFields {
+public class CustomField {
 	@Json(name = "dateEntered")
 	private String _dateEntered;
 	@Json(name = "label")
@@ -14,7 +14,7 @@ public class CustomFields {
 	@Json(name = "custom_label_id")
 	private Integer _customLabelId;
 
-	public CustomFields() {
+	public CustomField() {
 	}
 
 	public String getDateEntered() {
@@ -37,7 +37,7 @@ public class CustomFields {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(CustomFields customFields) {
+	public static JsonObject toJson(CustomField customFields) {
 		try {
 			return Serializer.serializeObject(customFields);
 		} catch (Exception ex) {
@@ -46,9 +46,9 @@ public class CustomFields {
 		}
 	}
 
-	public static CustomFields fromJson(JsonObject json) {
+	public static CustomField fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(CustomFields.class, json);
+			return Serializer.unserializeObject(CustomField.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

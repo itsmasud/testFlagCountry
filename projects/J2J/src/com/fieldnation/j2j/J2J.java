@@ -16,66 +16,102 @@ public class J2J {
 	private static String authToken = "";
 
 	public static void main(String[] args) {
-		new File(Config.ObjectPath).mkdirs();
-
 		try {
-			authToken = Tools.authServer("dev.fieldnation.com", "/authentication/api/oauth/token", "password",
-					"demoapp", "demopass", "jacobfaketech", "jacobfaketech");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			new File(Config.ObjectPath).mkdirs();
 
-		getProfile();
-		getWorkorders();
-		getExpenseCategories();
-		getMessages();
-		getPayments();
-	}
+			try {
+				authToken = Tools.authServer("dev.fieldnation.com", "/authentication/api/oauth/token", "password",
+						"demoapp", "demopass", "jacobfaketech", "jacobfaketech");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-	private static void dumpClasses(JsonArray objects, String path, String packageName, String rootName) throws ParseException, IOException {
-		new File(path).mkdirs();
+			// getProfile();
+			getWorkorders();
+			// getExpenseCategories();
+			// getMessages();
+			// getPayments();
 
-		JavaObject.cleanup();
-		JavaObject object = JavaObject.getInstance(rootName, packageName);
-		for (int i = 0; i < objects.size(); i++) {
-			object.addData(objects.getJsonObject(i));
-		}
-
-		Enumeration<JavaObject> javaObjects = JavaObject.getJavaObjects();
-		while (javaObjects.hasMoreElements()) {
-			JavaObject obj = javaObjects.nextElement();
-
-			FileOutputStream fout = new FileOutputStream(path + "/" + obj.getClassName() + ".java");
-
-			fout.write(obj.toString().getBytes());
-			fout.close();
-		}
-
-		Log.println("***********************************");
-		javaObjects = JavaObject.getJavaObjects();
-		while (javaObjects.hasMoreElements()) {
-			JavaObject obj = javaObjects.nextElement();
-
-			Log.println(obj.getUnderscoreFields());
+			exportClasses();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 
-	private static void dumpClass(JsonObject json, String path, String packageName, String className) throws ParseException, IOException {
-		new File(path).mkdirs();
-		JavaObject.cleanup();
-		JavaObject object = JavaObject.getInstance(className, packageName);
+	private static void addData(JsonArray json, String packageName, String className) throws ParseException {
+		for (int i = 0; i < json.size(); i++) {
+			addData(json.getJsonObject(i), packageName, className);
+		}
+	}
+
+	private static void addData(JsonObject json, String packageName, String className) throws ParseException {
+		JavaObject object = JavaObject.getInstance(packageName, className);
 		object.addData(json);
+	}
 
+	private static void exportClasses() throws IOException {
 		Enumeration<JavaObject> javaObjects = JavaObject.getJavaObjects();
 		while (javaObjects.hasMoreElements()) {
 			JavaObject obj = javaObjects.nextElement();
 
-			FileOutputStream fout = new FileOutputStream(path + "/" + obj.getClassName() + ".java");
+			String exportPath = Config.ObjectPath + obj.packageName.replaceAll("\\.", "/") + "/";
+
+			new File(exportPath).mkdirs();
+
+			FileOutputStream fout = new FileOutputStream(exportPath + obj.getClassName() + ".java");
 			fout.write(obj.toString().getBytes());
 			fout.close();
 		}
 	}
+
+	// private static void dumpClasses(JsonArray objects, String path, String
+	// packageName, String rootName) throws ParseException, IOException {
+	// new File(path).mkdirs();
+	//
+	// JavaObject.cleanup();
+	// JavaObject object = JavaObject.getInstance(packageName, rootName);
+	// for (int i = 0; i < objects.size(); i++) {
+	// object.addData(objects.getJsonObject(i));
+	// }
+	//
+	// Enumeration<JavaObject> javaObjects = JavaObject.getJavaObjects();
+	// while (javaObjects.hasMoreElements()) {
+	// JavaObject obj = javaObjects.nextElement();
+	//
+	// FileOutputStream fout = new FileOutputStream(path + "/" +
+	// obj.getClassName() + ".java");
+	//
+	// fout.write(obj.toString().getBytes());
+	// fout.close();
+	// }
+	//
+	// Log.println("***********************************");
+	// javaObjects = JavaObject.getJavaObjects();
+	// while (javaObjects.hasMoreElements()) {
+	// JavaObject obj = javaObjects.nextElement();
+	//
+	// Log.println(obj.getUnderscoreFields());
+	// }
+	// }
+	//
+	// private static void dumpClass(JsonObject json, String path, String
+	// packageName, String className) throws ParseException, IOException {
+	// new File(path).mkdirs();
+	// JavaObject.cleanup();
+	// JavaObject object = JavaObject.getInstance(packageName, className);
+	// object.addData(json);
+	//
+	// Enumeration<JavaObject> javaObjects = JavaObject.getJavaObjects();
+	// while (javaObjects.hasMoreElements()) {
+	// JavaObject obj = javaObjects.nextElement();
+	//
+	// FileOutputStream fout = new FileOutputStream(path + "/" +
+	// obj.getClassName() + ".java");
+	// fout.write(obj.toString().getBytes());
+	// fout.close();
+	// }
+	// }
 
 	private static void getPayments() {
 		String[] urls = new String[] {
@@ -99,7 +135,7 @@ public class J2J {
 			}
 
 			Log.println("Building Class Structure");
-			dumpClasses(objects, Config.ObjectPath + "accounting", "com.fieldnation.data.accounting", "Payment");
+			addData(objects, "com.fieldnation.data.accounting", "Payment");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -128,7 +164,7 @@ public class J2J {
 			}
 
 			Log.println("Building Class Structure");
-			dumpClasses(objects, Config.ObjectPath + "profile", "com.fieldnation.data.profile", "Message");
+			addData(objects, "com.fieldnation.data.profile", "Message");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -144,7 +180,7 @@ public class J2J {
 			JsonObject obj = result.getResultsAsJsonObject();
 
 			Log.println("Building Class Structure");
-			dumpClass(obj, Config.ObjectPath + "profile", "com.fieldnation.data.profile", "Profile");
+			addData(obj, "com.fieldnation.data.profile", "Profile");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -229,9 +265,10 @@ public class J2J {
 			objects.merge(details);
 
 			Log.println("Building Class Structure");
-			dumpClasses(objects, Config.ObjectPath + "workorder", "com.fieldnation.data.workorder", "Workorder");
+			addData(objects, "com.fieldnation.data.workorder", "Workorder");
 
 			getWorkorderMessages(details);
+			getWorkorderTasks(details);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -246,7 +283,7 @@ public class J2J {
 			JsonArray ja = result.getResultsAsJsonArray();
 
 			Log.println("Building Class Structure");
-			dumpClasses(ja, Config.ObjectPath + "workorder", "com.fieldnation.data.workorder", "ExpenseCategory");
+			addData(ja, "com.fieldnation.data.workorder", "ExpenseCategory");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -270,10 +307,36 @@ public class J2J {
 			}
 
 			Log.println("Building Class Structure");
-			dumpClasses(messages, Config.ObjectPath + "workorder", "com.fieldnation.data.workorder", "Message");
+			addData(messages, "com.fieldnation.data.workorder", "Message");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
+	}
+
+	private static void getWorkorderTasks(JsonArray workorders) {
+		try {
+			for (int i = 0; i < workorders.size(); i++) {
+				JsonObject workorder = workorders.getJsonObject(i);
+
+				String url = "/api/rest/v1/workorder/" + workorder.getLong("workorder_id") + "/tasks?access_token=" + authToken;
+				Log.println(url);
+				try {
+					Result result = Ws.httpGet(hostname, url);
+					JsonArray ja = result.getResultsAsJsonArray();
+
+					if (ja.size() > 0) {
+						System.out.println(ja.size());
+					}
+
+					addData(ja, "com.fieldnation.data.workorder", "TaskDetail");
+
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.misc;
 
 public class JavaObject {
 	private static final Hashtable<String, JavaObject> _objectRegistry = new Hashtable<String, JavaObject>();
@@ -16,15 +17,13 @@ public class JavaObject {
 	public String packageName;
 	public Hashtable<String, JavaField> _fields = new Hashtable<String, JavaField>();
 
-	public static JavaObject getInstance(String name, String packageName) {
+	public static JavaObject getInstance(String packageName, String name) {
 		String classname = formatClassName(name);
-		if (!_objectRegistry.containsKey(classname)) {
-			_objectRegistry.put(classname, new JavaObject(classname, packageName));
+		if (!_objectRegistry.containsKey(packageName + "." + classname)) {
+			_objectRegistry.put(packageName + "." + classname, new JavaObject(packageName, classname));
 		}
 
-		// Log.println("Class: " + classname);
-
-		return _objectRegistry.get(classname);
+		return _objectRegistry.get(packageName + "." + classname);
 	}
 
 	public static void cleanup() {
@@ -35,7 +34,7 @@ public class JavaObject {
 		return _objectRegistry.elements();
 	}
 
-	private JavaObject(String name, String packageName) {
+	private JavaObject(String packageName, String name) {
 		this.name = name;
 		this.packageName = packageName;
 	}
@@ -125,8 +124,11 @@ public class JavaObject {
 		String result = "";
 
 		for (int i = 0; i < splitted.length; i++) {
-			result += splitted[i].substring(0, 1).toUpperCase() + splitted[i].substring(1);
+			result += misc.capitalize(splitted[i]);
 		}
+
+		if (Config.ClassNameMap.containsKey(result))
+			return Config.ClassNameMap.get(result);
 
 		return result;
 	}

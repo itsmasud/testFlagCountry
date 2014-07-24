@@ -4,19 +4,18 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Tasks {
-	@Json(name = "task_id")
+public class Task {
+	@Json(name="task_id")
 	private Integer _taskId;
 	@Json(name="type")
 	private String _type;
-	@Json(name = "completed")
+	@Json(name="completed")
 	private Boolean _completed;
-	@Json(name = "dateCompleted")
+	@Json(name="dateCompleted")
 	private String _dateCompleted;
 
-	public Tasks() {
+	public Task() {
 	}
-
 	public Integer getTaskId() {
 		return _taskId;
 	}
@@ -25,11 +24,11 @@ public class Tasks {
 		return _type;
 	}
 
-	public Boolean getCompleted() {
+	public Boolean getCompleted(){
 		return _completed;
 	}
 
-	public String getDateCompleted() {
+	public String getDateCompleted(){
 		return _dateCompleted;
 	}
 
@@ -37,18 +36,18 @@ public class Tasks {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(Tasks tasks) {
+	public static JsonObject toJson(Task task) {
 		try {
-			return Serializer.serializeObject(tasks);
+			return Serializer.serializeObject(task);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
 	}
 
-	public static Tasks fromJson(JsonObject json) {
+	public static Task fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(Tasks.class, json);
+			return Serializer.unserializeObject(Task.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

@@ -24,7 +24,7 @@ public class Workorder {
 	@Json(name = "distance")
 	private Double _distance;
 	@Json(name = "customFields")
-	private CustomFields[] _customFields;
+	private CustomField[] _customFields;
 	@Json(name = "fullWorkDescription")
 	private String _fullWorkDescription;
 	@Json(name = "bundleId")
@@ -50,7 +50,7 @@ public class Workorder {
 	@Json(name = "customerPoliciesProcedures")
 	private String _customerPoliciesProcedures;
 	@Json(name = "tasks")
-	private Tasks[] _tasks;
+	private Task[] _tasks;
 	@Json(name = "company_name")
 	private String _companyName;
 	@Json(name = "additionalExpenses")
@@ -66,7 +66,7 @@ public class Workorder {
 	@Json(name = "schedule")
 	private Schedule _schedule;
 	@Json(name = "deliverables")
-	private Deliverables[] _deliverables;
+	private Deliverable[] _deliverables;
 	@Json(name = "messages")
 	private Integer _messages;
 	@Json(name = "isRemoteWork")
@@ -105,7 +105,7 @@ public class Workorder {
 		return _distance;
 	}
 
-	public CustomFields[] getCustomFields() {
+	public CustomField[] getCustomFields() {
 		return _customFields;
 	}
 
@@ -157,7 +157,7 @@ public class Workorder {
 		return _customerPoliciesProcedures;
 	}
 
-	public Tasks[] getTasks() {
+	public Task[] getTasks() {
 		return _tasks;
 	}
 
@@ -189,7 +189,7 @@ public class Workorder {
 		return _schedule;
 	}
 
-	public Deliverables[] getDeliverables() {
+	public Deliverable[] getDeliverables() {
 		return _deliverables;
 	}
 

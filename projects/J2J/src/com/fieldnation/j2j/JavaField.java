@@ -53,7 +53,7 @@ public class JavaField {
 			break;
 		case TYPE_OBJECT:
 			isObject = true;
-			JavaObject obj = JavaObject.getInstance(name, packageName);
+			JavaObject obj = JavaObject.getInstance(packageName, name);
 			dataTypeName = obj.getClassName();
 			break;
 		case TYPE_BOOLEAN:
@@ -71,7 +71,7 @@ public class JavaField {
 
 		} else if (source instanceof JsonObject) {
 			// this is an object
-			JavaObject obj = JavaObject.getInstance(name, packageName);
+			JavaObject obj = JavaObject.getInstance(packageName, name);
 			obj.addData((JsonObject) source);
 			return TYPE_OBJECT;
 

@@ -5,10 +5,10 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Replies {
-	@Json(name = "messageId")
-	private Integer _messageId;
 	@Json(name = "date")
 	private String _date;
+	@Json(name="messageId")
+	private Integer _messageId;
 	@Json(name = "workorderId")
 	private Integer _workorderId;
 	@Json(name = "message")
@@ -18,13 +18,12 @@ public class Replies {
 
 	public Replies() {
 	}
+	public String getDate(){
+		return _date;
+	}
 
 	public Integer getMessageId() {
 		return _messageId;
-	}
-
-	public String getDate() {
-		return _date;
 	}
 
 	public Integer getWorkorderId() {
