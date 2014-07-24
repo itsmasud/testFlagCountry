@@ -9,8 +9,11 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.DrawerActivity;
+import com.fieldnation.ui.workorder.detail.AttachmentsFragment;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
+import com.fieldnation.ui.workorder.detail.NotificationFragment;
+import com.fieldnation.ui.workorder.detail.TasksFragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -78,10 +81,12 @@ public class WorkorderActivity extends DrawerActivity {
 	private void buildFragments() {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
-		_fragments = new WorkorderFragment[2];
+		_fragments = new WorkorderFragment[5];
 		_fragments[0] = new DetailFragment();
-		_fragments[1] = new MessageFragment();
-		// TODO load fragments
+		_fragments[1] = new TasksFragment();
+		_fragments[2] = new MessageFragment();
+		_fragments[3] = new NotificationFragment();
+		_fragments[4] = new AttachmentsFragment();
 
 		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
 		_viewPager.setAdapter(_pagerAdapter);

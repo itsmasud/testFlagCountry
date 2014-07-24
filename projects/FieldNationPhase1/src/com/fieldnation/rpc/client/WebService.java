@@ -62,7 +62,6 @@ public class WebService implements WebServiceConstants {
 	 * @return
 	 */
 	public Intent httpRead(int resultCode, String method, String path, String options, boolean allowCache) {
-
 		Intent intent = new Intent(_context, DataService.class);
 		intent.setAction(DataServiceConstants.ACTION_RPC);
 		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);

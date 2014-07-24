@@ -124,29 +124,44 @@ public class ListViewEx extends ListView {
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 			// When the refresh view is completely visible, change the text to
-			// say
-			// "Release to refresh..." and flip the arrow drawable.
+			// say "Release to refresh..." and flip the arrow drawable.
+
+			// if scrolling and not refreshing
 			if (_currentScrollState == SCROLL_STATE_TOUCH_SCROLL && _refreshState != _REFRESHING) {
+				// if first visible item is the first item in the list
 				if (firstVisibleItem == 0) {
 					_refreshImageView.setVisibility(View.VISIBLE);
+					// if refreshview has been pulled below the top and not in
+					// release to refresh mode
 					if ((_refreshView.getBottom() >= _refreshViewHeight + 20 || _refreshView.getTop() >= 0) && _refreshState != _RELEASE_TO_REFRESH) {
+						// set to release to refresh mode
 						_refreshTextView.setText(R.string.pull_to_refresh_release_label);
 						_refreshImageView.clearAnimation();
 						_refreshImageView.startAnimation(_flipAnimation);
 						_refreshState = _RELEASE_TO_REFRESH;
+						// if it's not being overscrolled and not in pull to
+						// refresh mode
 					} else if (_refreshView.getBottom() < _refreshViewHeight + 20 && _refreshState != _PULL_TO_REFRESH) {
 						_refreshTextView.setText(R.string.pull_to_refresh_pull_label);
+						// turn off animation
 						if (_refreshState != _TAP_TO_REFRESH) {
 							_refreshImageView.clearAnimation();
 							_refreshImageView.startAnimation(_reverseFlipAnimation);
 						}
+
+						// set to pull to refresh
 						_refreshState = _PULL_TO_REFRESH;
 					}
 				} else {
+					// if first visiable item is not the top item, then hide the
+					// refresh view
 					_refreshImageView.setVisibility(View.GONE);
 					resetHeader();
 				}
+				// if we are in fling state, and top item visiable and not
+				// refreshing
 			} else if (_currentScrollState == SCROLL_STATE_FLING && firstVisibleItem == 0 && _refreshState != _REFRESHING) {
+				// change the selection to the top item, enable the bounce hack
 				setSelection(1);
 				_bounceHack = true;
 			} else if (_bounceHack && _currentScrollState == SCROLL_STATE_FLING) {
@@ -214,16 +229,22 @@ public class ListViewEx extends ListView {
 		_bounceHack = false;
 
 		switch (event.getAction()) {
+		// if touch goes up
 		case MotionEvent.ACTION_UP:
+			// enable vertical scroll bar
 			if (!isVerticalScrollBarEnabled()) {
 				setVerticalScrollBarEnabled(true);
 			}
+			// if at the top and not refreshing
 			if (getFirstVisiblePosition() == 0 && _refreshState != _REFRESHING) {
+				// if overscroll and release to refresh mode
 				if ((_refreshView.getBottom() >= _refreshViewHeight || _refreshView.getTop() >= 0) && _refreshState == _RELEASE_TO_REFRESH) {
 					// Initiate the refresh
+					// trigger refresh
 					_refreshState = _REFRESHING;
 					prepareForRefresh();
 					onRefresh();
+					// if not overscrolling, abort
 				} else if (_refreshView.getBottom() < _refreshViewHeight || _refreshView.getTop() <= 0) {
 					// Abort refresh and scroll down below the refresh view
 					resetHeader();
@@ -235,6 +256,7 @@ public class ListViewEx extends ListView {
 			_lastMotionY = y;
 			break;
 		case MotionEvent.ACTION_MOVE:
+			// moving, apply movement
 			applyHeaderPadding(event);
 			break;
 		}
@@ -245,8 +267,11 @@ public class ListViewEx extends ListView {
 		// getHistorySize has been available since API 1
 		int pointerCount = ev.getHistorySize();
 
+		// walk through all the movement points between events
 		for (int p = 0; p < pointerCount; p++) {
+			// if in release to refresh mode
 			if (_refreshState == _RELEASE_TO_REFRESH) {
+				// ???
 				if (isVerticalFadingEdgeEnabled()) {
 					setVerticalScrollBarEnabled(false);
 				}
@@ -257,6 +282,7 @@ public class ListViewEx extends ListView {
 				// simulate a more resistant effect during pull.
 				int topPadding = (int) (((historicalY - _lastMotionY) - _refreshViewHeight) / 1.7);
 
+				// update the padding
 				_refreshView.setPadding(_refreshView.getPaddingLeft(), topPadding, _refreshView.getPaddingRight(),
 						_refreshView.getPaddingBottom());
 			}
@@ -299,7 +325,7 @@ public class ListViewEx extends ListView {
 			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		}
 
-		int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0, p.width);
+		int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0, p.width);
 		int lpHeight = p.height;
 		int childHeightSpec;
 		if (lpHeight > 0) {

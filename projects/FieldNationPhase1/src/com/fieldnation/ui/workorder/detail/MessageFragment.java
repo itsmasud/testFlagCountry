@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -30,9 +31,9 @@ import android.widget.ListView;
 public class MessageFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.MessageFragment";
 
-	private static final int WEB_GET_MESSAGES = 1;
-	private static final int WEB_GET_PROFILE = 2;
-	private static final int WEB_NEW_MESSAGE = 3;
+	private static int WEB_GET_MESSAGES = 1;
+	private static int WEB_GET_PROFILE = 2;
+	private static int WEB_NEW_MESSAGE = 3;
 
 	// UI
 	private ListView _listview;
@@ -40,6 +41,7 @@ public class MessageFragment extends WorkorderFragment {
 	private Button _sendButton;
 
 	// Data
+	private Random _rand = new Random(System.currentTimeMillis());
 	private WorkorderTabView.Listener _tabViewListener;
 	private GlobalState _gs;
 	private ProfileService _profileService;
@@ -96,6 +98,7 @@ public class MessageFragment extends WorkorderFragment {
 			return;
 
 		_messages.clear();
+		WEB_GET_MESSAGES = _rand.nextInt();
 		getActivity().startService(_workorderService.getMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
 	}
 
@@ -110,6 +113,7 @@ public class MessageFragment extends WorkorderFragment {
 	private View.OnClickListener _send_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			WEB_NEW_MESSAGE = _rand.nextInt();
 			getActivity().startService(
 					_workorderService.newMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
 							_messageEditText.getText().toString()));
@@ -121,6 +125,7 @@ public class MessageFragment extends WorkorderFragment {
 		public void onAuthentication(String username, String authToken) {
 			_profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
 			_workorderService = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+			WEB_GET_PROFILE = _rand.nextInt();
 			getActivity().startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
 			getMessages();
 		}

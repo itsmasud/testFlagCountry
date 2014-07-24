@@ -24,6 +24,19 @@
                 android:background="@drawable/ic_workorder_tab_detail_button" />
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/tasks_layout"
+            android:layout_width="64dp"
+            android:layout_height="64dp" >
+
+            <ImageView
+                android:id="@+id/tasks_imageview"
+                android:layout_width="@dimen/workorder_tab_image_width"
+                android:layout_height="@dimen/workorder_tab_image_height"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_workorder_tab_detail_button" />
+        </RelativeLayout>
+
         <View
             android:layout_width="@dimen/workorder_tab_separator_size"
             android:layout_height="@dimen/workorder_tab_separator_height"
