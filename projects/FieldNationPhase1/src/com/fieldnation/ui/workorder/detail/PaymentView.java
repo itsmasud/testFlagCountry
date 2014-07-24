@@ -159,11 +159,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		@Override
 		public void onDelete(ExpenseView view, AdditionalExpense expense) {
-			// _service.deleteExpense(RESULT_DELETE_EXPENSE,
-			// _workorder.getWorkorderId(), expense.get, allowCache)
-			// TODO Method Stub: onDelete()
-			Log.v(TAG, "Method Stub: onDelete()");
-
+			getContext().startService(
+					_service.deleteExpense(RESULT_DELETE_EXPENSE, _workorder.getWorkorderId(), expense.getExpenseId()));
 		}
 
 		@Override

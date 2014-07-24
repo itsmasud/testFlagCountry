@@ -28,6 +28,7 @@ public class J2J {
 
 		getProfile();
 		getWorkorders();
+		getExpenseCategories();
 		getMessages();
 		getPayments();
 	}
@@ -148,7 +149,6 @@ public class J2J {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
 	}
 
 	private static void getWorkorders() {
@@ -232,6 +232,21 @@ public class J2J {
 			dumpClasses(objects, Config.ObjectPath + "workorder", "com.fieldnation.data.workorder", "Workorder");
 
 			getWorkorderMessages(details);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private static void getExpenseCategories() {
+		String[] urls = new String[] { "/api/rest/v1/workorder/expense/categories?access_token=" + authToken };
+		try {
+			Result result = Ws.httpGet(hostname, urls[0]);
+
+			JsonArray ja = result.getResultsAsJsonArray();
+
+			Log.println("Building Class Structure");
+			dumpClasses(ja, Config.ObjectPath + "workorder", "com.fieldnation.data.workorder", "ExpenseCategory");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
