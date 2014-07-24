@@ -96,4 +96,11 @@
     <string name="login_error_invalid_local_creds">Authentication Failed, check your network settings, and retry.[2]</string>
     <string name="login_error_invalid_remote_creds">Authentication Failed, please check username and password</string>
 
+    <!-- shipment support list -->
+    <string-array name="carrier_list">
+        <item>FedEx</item>
+        <item>UPS</item>
+        <item>other</item>
+    </string-array>
+
 </resources>

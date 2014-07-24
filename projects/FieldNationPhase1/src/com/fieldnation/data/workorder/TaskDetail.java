@@ -4,137 +4,138 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class TaskDetail{
-	@Json(name="showTimeMenu")
+public class TaskDetail {
+	@Json(name = "showTimeMenu")
 	private Boolean _showTimeMenu;
-	@Json(name="timeRelativeTo")
+	@Json(name = "timeRelativeTo")
 	private String _timeRelativeTo;
-	@Json(name="alertOnCompletionInput")
+	@Json(name = "alertOnCompletionInput")
 	private Object _alertOnCompletionInput;
-	@Json(name="alertOnCompletion")
+	@Json(name = "alertOnCompletion")
 	private Object[] _alertOnCompletion;
-	@Json(name="taskId")
+	@Json(name = "taskId")
 	private Integer _taskId;
-	@Json(name="identifier")
+	@Json(name = "identifier")
 	private Integer _identifier;
-	@Json(name="type")
+	@Json(name = "type")
 	private String _type;
-	@Json(name="emailAddress")
+	@Json(name = "emailAddress")
 	private Object _emailAddress;
-	@Json(name="typeId")
+	@Json(name = "typeId")
 	private Integer _typeId;
-	@Json(name="assignedTo")
+	@Json(name = "assignedTo")
 	private String _assignedTo;
-	@Json(name="showAlertMenu")
+	@Json(name = "showAlertMenu")
 	private Boolean _showAlertMenu;
-	@Json(name="phoneNumber")
+	@Json(name = "phoneNumber")
 	private Object _phoneNumber;
-	@Json(name="completedAtDate")
+	@Json(name = "completedAtDate")
 	private Integer _completedAtDate;
-	@Json(name="isEditing")
+	@Json(name = "isEditing")
 	private Boolean _isEditing;
-	@Json(name="customField")
+	@Json(name = "customField")
 	private Object _customField;
-	@Json(name="minutes")
+	@Json(name = "minutes")
 	private Integer _minutes;
-	@Json(name="canDelete")
+	@Json(name = "canDelete")
 	private Boolean _canDelete;
-	@Json(name="description")
+	@Json(name = "description")
 	private String _description;
-	@Json(name="hours")
+	@Json(name = "hours")
 	private Integer _hours;
-	@Json(name="completed")
+	@Json(name = "completed")
 	private Boolean _completed;
-	@Json(name="isNew")
+	@Json(name = "isNew")
 	private Boolean _isNew;
 
-	public TaskDetail(){
+	public TaskDetail() {
 	}
-	public Boolean getShowTimeMenu(){
+
+	public Boolean getShowTimeMenu() {
 		return _showTimeMenu;
 	}
 
-	public String getTimeRelativeTo(){
+	public String getTimeRelativeTo() {
 		return _timeRelativeTo;
 	}
 
-	public Object getAlertOnCompletionInput(){
+	public Object getAlertOnCompletionInput() {
 		return _alertOnCompletionInput;
 	}
 
-	public Object[] getAlertOnCompletion(){
+	public Object[] getAlertOnCompletion() {
 		return _alertOnCompletion;
 	}
 
-	public Integer getTaskId(){
+	public Integer getTaskId() {
 		return _taskId;
 	}
 
-	public Integer getIdentifier(){
+	public Integer getIdentifier() {
 		return _identifier;
 	}
 
-	public String getType(){
+	public String getType() {
 		return _type;
 	}
 
-	public Object getEmailAddress(){
+	public Object getEmailAddress() {
 		return _emailAddress;
 	}
 
-	public Integer getTypeId(){
+	public Integer getTypeId() {
 		return _typeId;
 	}
 
-	public String getAssignedTo(){
+	public String getAssignedTo() {
 		return _assignedTo;
 	}
 
-	public Boolean getShowAlertMenu(){
+	public Boolean getShowAlertMenu() {
 		return _showAlertMenu;
 	}
 
-	public Object getPhoneNumber(){
+	public Object getPhoneNumber() {
 		return _phoneNumber;
 	}
 
-	public Integer getCompletedAtDate(){
+	public Integer getCompletedAtDate() {
 		return _completedAtDate;
 	}
 
-	public Boolean getIsEditing(){
+	public Boolean getIsEditing() {
 		return _isEditing;
 	}
 
-	public Object getCustomField(){
+	public Object getCustomField() {
 		return _customField;
 	}
 
-	public Integer getMinutes(){
+	public Integer getMinutes() {
 		return _minutes;
 	}
 
-	public Boolean getCanDelete(){
+	public Boolean getCanDelete() {
 		return _canDelete;
 	}
 
-	public String getDescription(){
+	public String getDescription() {
 		return _description;
 	}
 
-	public Integer getHours(){
+	public Integer getHours() {
 		return _hours;
 	}
 
-	public Boolean getCompleted(){
+	public Boolean getCompleted() {
 		return _completed;
 	}
 
-	public Boolean getIsNew(){
+	public Boolean getIsNew() {
 		return _isNew;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Shipment" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,13 +21,14 @@
             android:hint="Tracking ID"
             android:paddingLeft="10dp" />
 
-        <Spinner
-            android:id="@+id/carrier_spinner"
+        <Button
+            android:id="@+id/carrier_button"
+            style="?android:attr/spinnerStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="Carrier" />
+            android:text="FedEx" />
     </RelativeLayout>
 
     <EditText
@@ -75,16 +70,5 @@
         android:background="@drawable/btn_orange"
         android:text="Add"
         android:textColor="#FFFFFFFF" />
-
-    <LinearLayout
-        android:id="@+id/shipments_linearlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <com.fieldnation.ui.workorder.detail.ShipmentSummary
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
 
 </LinearLayout>

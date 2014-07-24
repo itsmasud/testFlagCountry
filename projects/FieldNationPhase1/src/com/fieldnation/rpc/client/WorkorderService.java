@@ -163,10 +163,20 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	}
 
 	public Intent addShipmentDetails(int restulCode, long workorderId, String description, boolean isToSite,
+			String carrier, String carrierName, String trackingNumber) {
+		return httpPost(
+				restulCode,
+				"api/rest/v1/workorder/" + workorderId + "/shipments",
+				null,
+				"description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber,
+				"application/x-www-form-urlencoded", false);
+	}
+
+	public Intent addShipmentDetails(int restulCode, long workorderId, String description, boolean isToSite,
 			String carrier, String carrierName, String trackingNumber, long taskId) {
 		return httpPost(
 				restulCode,
-				"api/rest/v1/workorder/" + workorderId + "shipments",
+				"api/rest/v1/workorder/" + workorderId + "/shipments",
 				null,
 				"description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber + "&task_id=" + taskId,
 				"application/x-www-form-urlencoded", false);

@@ -25,6 +25,10 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
 		byte[] data = bundle.getByteArray(KEY_PARAM_DATA);
 		boolean allowCache = bundle.getBoolean(KEY_ALLOW_CACHE);
 
+		if (path.contains("shipments")) {
+			Log.v(TAG, "BP");
+		}
+
 		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
 			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
