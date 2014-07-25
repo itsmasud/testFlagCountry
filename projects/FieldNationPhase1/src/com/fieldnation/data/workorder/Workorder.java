@@ -51,6 +51,8 @@ public class Workorder {
 	private String _customerPoliciesProcedures;
 	@Json(name = "tasks")
 	private Task[] _tasks;
+	@Json(name="shipmentTracking")
+	private ShipmentTracking[] _shipmentTracking;
 	@Json(name = "company_name")
 	private String _companyName;
 	@Json(name = "additionalExpenses")
@@ -159,6 +161,10 @@ public class Workorder {
 
 	public Task[] getTasks() {
 		return _tasks;
+	}
+
+	public ShipmentTracking[] getShipmentTracking(){
+		return _shipmentTracking;
 	}
 
 	public String getCompanyName() {
