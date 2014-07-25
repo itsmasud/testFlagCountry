@@ -1,10 +1,13 @@
 package com.fieldnation.ui.workorder.detail;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Message;
+import com.fieldnation.utils.ISO8601;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,13 +18,12 @@ import android.widget.BaseAdapter;
 public class MessagesAdapter extends BaseAdapter {
 	private static final String TAG = "ui.workorder.detail.MessagesAdapter";
 
-	private List<Message> _messages;
+	private List<Message> _messages = new LinkedList<Message>();
 	private Profile _profile;
 
-	public MessagesAdapter(Profile profile, List<Message> messages) {
+	public MessagesAdapter(Profile profile) {
 		super();
 
-		_messages = messages;
 		_profile = profile;
 	}
 
@@ -35,6 +37,36 @@ public class MessagesAdapter extends BaseAdapter {
 		MessageRcvdView v = null;
 		v = new MessageRcvdView(context);
 		return v;
+	}
+
+	private Comparator<Message> _messageComparator = new Comparator<Message>() {
+
+		@Override
+		public int compare(Message lhs, Message rhs) {
+			try {
+				long lhsUtc = ISO8601.toUtc(lhs.getMsgCreateDate());
+				long rhsUtc = ISO8601.toUtc(rhs.getMsgCreateDate());
+
+				if (lhsUtc < rhsUtc)
+					return -1;
+				else if (lhsUtc == rhsUtc)
+					return 0;
+				else
+					return 1;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			return 0;
+		}
+	};
+
+	public void setMessages(List<Message> messages) {
+		Collections.sort(messages, _messageComparator);
+		_messages = messages;
+
+		notifyDataSetChanged();
+
 	}
 
 	@Override

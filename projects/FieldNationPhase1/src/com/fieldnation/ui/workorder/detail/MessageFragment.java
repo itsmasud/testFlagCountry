@@ -49,6 +49,7 @@ public class MessageFragment extends WorkorderFragment {
 	private WorkorderService _workorderService;
 	private Workorder _workorder;
 	private List<Message> _messages = new LinkedList<Message>();
+	private MessagesAdapter _adapter;
 
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
@@ -76,9 +77,7 @@ public class MessageFragment extends WorkorderFragment {
 
 	@Override
 	public void update() {
-		// TODO Method Stub: update()
-		Log.v(TAG, "Method Stub: update()");
-
+		getMessages();
 	}
 
 	@Override
@@ -97,6 +96,9 @@ public class MessageFragment extends WorkorderFragment {
 		if (_profile == null)
 			return;
 
+		if (getActivity() == null)
+			return;
+
 		_messages.clear();
 		WEB_GET_MESSAGES = _rand.nextInt();
 		getActivity().startService(_workorderService.getMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
@@ -104,7 +106,7 @@ public class MessageFragment extends WorkorderFragment {
 
 	private void rebuildList() {
 		// TODO, need to sort list by date
-		_listview.setAdapter(new MessagesAdapter(_profile, _messages));
+		_adapter.setMessages(_messages);
 	}
 
 	/*-*********************************-*/
@@ -145,10 +147,18 @@ public class MessageFragment extends WorkorderFragment {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
+			Log.v(TAG, "resultCode:" + resultCode);
+			Log.v(TAG, "WEB_GET_PROFILE:" + WEB_GET_PROFILE);
+			Log.v(TAG, "WEB_GET_MESSAGES:" + WEB_GET_MESSAGES);
+			Log.v(TAG, "WEB_NEW_MESSAGE:" + WEB_NEW_MESSAGE);
+
 			if (resultCode == WEB_GET_PROFILE) {
 				try {
 					_profile = Profile.fromJson(new JsonObject(new String(
 							resultData.getByteArray(ProfileService.KEY_RESPONSE_DATA))));
+
+					_adapter = new MessagesAdapter(_profile);
+					_listview.setAdapter(_adapter);
 
 					getMessages();
 				} catch (Exception ex) {
