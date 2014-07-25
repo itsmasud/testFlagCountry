@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder.detail;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
@@ -143,8 +144,21 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 			getContext().startService(
 					_workorderService.addShipmentDetails(WEB_ADD_SHIPMENT, _workorder.getWorkorderId(),
 							_descEditText.getText().toString(), _shipToSiteRadio.isSelected(),
-							(String) _carrierSpinner.getSelectedItem(), null,
-							_trackingIdEditText.getText().toString()));
+							(String) _carrierSpinner.getSelectedItem(), null, _trackingIdEditText.getText().toString()));
+		}
+	};
+
+	private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
+		@Override
+		public void onDelete(ShipmentTracking shipment) {
+			// TODO Method Stub: onDelete()
+			Log.v(TAG, "Method Stub: onDelete()");
+		}
+
+		@Override
+		public void onClick(ShipmentTracking shipment) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
 		}
 	};
 
@@ -159,6 +173,19 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void refresh() {
+		ShipmentTracking[] shipments = _workorder.getShipmentTracking();
+
+		_shipmentsLayout.removeAllViews();
+
+		if (shipments == null)
+			return;
+
+		for (int i = 0; i < shipments.length; i++) {
+			ShipmentSummary view = new ShipmentSummary(getContext());
+			_shipmentsLayout.addView(view);
+			view.setShipmentTracking(shipments[i]);
+			view.setListener(_summaryListener);
+		}
 	}
 
 }

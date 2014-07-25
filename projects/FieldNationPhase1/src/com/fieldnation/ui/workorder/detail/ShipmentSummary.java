@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.ShipmentTracking;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -22,6 +23,8 @@ public class ShipmentSummary extends RelativeLayout {
 	private ImageButton _deleteImageButton;
 
 	// Data
+	private ShipmentTracking _shipment;
+	private Listener _listener;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -47,6 +50,28 @@ public class ShipmentSummary extends RelativeLayout {
 		_directionTextView = (TextView) findViewById(R.id.direction_textview);
 		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 		_deleteImageButton.setOnClickListener(_delete_onClick);
+
+		this.setOnClickListener(_this_onClick);
+	}
+
+	public void setShipmentTracking(ShipmentTracking shipment) {
+		_shipment = shipment;
+
+		if (_shipment.getTrackingId() != null) {
+			_trackingIdTextView.setText(_shipment.getTrackingId());
+		}
+
+		String carrier = _shipment.getCarrier();
+		if (carrier == null) {
+			carrier = _shipment.getCarrierOther();
+		}
+
+		_carrierTextView.setText(carrier);
+
+		_descTextView.setText(_shipment.getName());
+		boolean toSite = _shipment.getDirection().equals("to_site");
+		_directionTextView.setText(toSite ? "To Site" : "From Site");
+
 	}
 
 	/*-*********************************-*/
@@ -55,9 +80,28 @@ public class ShipmentSummary extends RelativeLayout {
 	private View.OnClickListener _delete_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-
+			if (_listener != null) {
+				_listener.onDelete(_shipment);
+			}
 		}
 	};
+
+	private View.OnClickListener _this_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null) {
+				_listener.onClick(_shipment);
+			}
+		}
+	};
+
+	public void setListener(Listener listener) {
+		_listener = listener;
+	}
+
+	public interface Listener {
+		public void onDelete(ShipmentTracking shipment);
+
+		public void onClick(ShipmentTracking shipment);
+	}
 }

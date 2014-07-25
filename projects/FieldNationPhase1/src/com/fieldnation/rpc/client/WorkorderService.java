@@ -162,23 +162,33 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpGet(resultCode, "api/rest/v1/workorder/expense/categories", null, allowCache);
 	}
 
-	public Intent addShipmentDetails(int restulCode, long workorderId, String description, boolean isToSite,
+	public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
 			String carrier, String carrierName, String trackingNumber) {
 		return httpPost(
-				restulCode,
+				resultCode,
 				"api/rest/v1/workorder/" + workorderId + "/shipments",
 				null,
 				"description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber,
 				"application/x-www-form-urlencoded", false);
 	}
 
-	public Intent addShipmentDetails(int restulCode, long workorderId, String description, boolean isToSite,
+	public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
 			String carrier, String carrierName, String trackingNumber, long taskId) {
 		return httpPost(
-				restulCode,
+				resultCode,
 				"api/rest/v1/workorder/" + workorderId + "/shipments",
 				null,
 				"description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber + "&task_id=" + taskId,
+				"application/x-www-form-urlencoded", false);
+	}
+
+	public Intent editShipment(int resultCode, long workorderId, long shipmentId, String description, boolean isToSite,
+			String carrier, String carrierName, String trackingNumber) {
+		return httpPost(
+				resultCode,
+				"api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId,
+				null,
+				"description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber,
 				"application/x-www-form-urlencoded", false);
 	}
 }
