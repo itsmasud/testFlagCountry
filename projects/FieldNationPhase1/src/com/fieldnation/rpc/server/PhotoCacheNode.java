@@ -17,7 +17,7 @@ public class PhotoCacheNode {
 	private byte[] _photoData;
 
 	private PhotoCacheNode(Context context, Cursor cursor) {
-		_context = context;
+		_context = context.getApplicationContext();
 		_id = cursor.getLong(Column.ID.getIndex());
 		_lastViewed = cursor.getLong(Column.LAST_READ.getIndex());
 		_url = cursor.getString(Column.URL.getIndex());

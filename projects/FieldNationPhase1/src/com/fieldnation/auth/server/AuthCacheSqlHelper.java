@@ -81,7 +81,7 @@ public class AuthCacheSqlHelper extends SQLiteOpenHelper {
 	}
 
 	public AuthCacheSqlHelper(Context context) {
-		super(context, TABLE_NAME + ".db", null, TABLE_VER);
+		super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
 	}
 
 	@Override

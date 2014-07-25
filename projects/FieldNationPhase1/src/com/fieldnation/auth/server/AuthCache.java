@@ -31,7 +31,7 @@ public class AuthCache {
 	private String _requestBlob = "";
 
 	private AuthCache(Context context, Cursor src) {
-		_context = context;
+		_context = context.getApplicationContext();
 		_id = src.getLong(Column.ID.getIndex());
 		_username = src.getString(Column.USERNAME.getIndex());
 		_passwordHash = src.getString(Column.PASSWORD_HASH.getIndex());
@@ -42,7 +42,7 @@ public class AuthCache {
 	}
 
 	private AuthCache(Context context, String username, String password) {
-		_context = context;
+		_context = context.getApplicationContext();
 		_username = username;
 		_passwordHash = generatePasswordHash(password);
 	}

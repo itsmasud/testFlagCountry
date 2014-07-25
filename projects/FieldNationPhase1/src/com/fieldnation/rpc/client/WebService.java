@@ -36,7 +36,7 @@ public class WebService implements WebServiceConstants {
 	 *            {@link ResultReceiver} will do.
 	 */
 	public WebService(Context context, String username, String authToken, ResultReceiver callback) {
-		_context = context;
+		_context = context.getApplicationContext();
 		_username = username;
 		_authToken = authToken;
 		_callback = callback;

@@ -19,7 +19,7 @@ public class DataCacheNode {
 	private int _responseCode;
 
 	private DataCacheNode(Context context, Cursor cursor) {
-		_context = context;
+		_context = context.getApplicationContext();
 		_id = cursor.getLong(Column.ID.getIndex());
 		_expiresOn = cursor.getLong(Column.EXIPES_ON.getIndex());
 		_key = cursor.getString(Column.KEY.getIndex());

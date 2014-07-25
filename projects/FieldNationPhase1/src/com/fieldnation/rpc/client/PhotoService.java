@@ -13,7 +13,7 @@ public class PhotoService implements PhotoServiceConstants {
 	private ResultReceiver _resultReceiver;
 
 	public PhotoService(Context context, ResultReceiver resultReceiver) {
-		_context = context;
+		_context = context.getApplicationContext();
 		_resultReceiver = resultReceiver;
 	}
 

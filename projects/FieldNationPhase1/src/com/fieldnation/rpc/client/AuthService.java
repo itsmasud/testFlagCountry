@@ -22,7 +22,7 @@ public class AuthService implements AuthServiceConstants {
 	private Context _context;
 
 	public AuthService(Context conetxt) {
-		_context = conetxt;
+		_context = conetxt.getApplicationContext();
 	}
 
 	/**

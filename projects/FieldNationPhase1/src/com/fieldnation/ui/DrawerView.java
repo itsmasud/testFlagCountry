@@ -118,7 +118,6 @@ public class DrawerView extends RelativeLayout {
 			attachAnimations();
 		}
 	};
-
 	private View.OnClickListener _marketView_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {

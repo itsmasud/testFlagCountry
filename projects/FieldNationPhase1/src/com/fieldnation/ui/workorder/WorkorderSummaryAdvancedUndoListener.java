@@ -29,7 +29,7 @@ class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
 		_listener = listener;
 		_workorder = workorder;
 		_notInterestedAction = notInterestedAction;
-		_context = context;
+		_context = context.getApplicationContext();
 	}
 
 	@Override

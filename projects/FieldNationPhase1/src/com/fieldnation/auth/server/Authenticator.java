@@ -25,8 +25,8 @@ public class Authenticator extends AbstractAccountAuthenticator {
 	private Context _context;
 
 	public Authenticator(Context context) {
-		super(context);
-		_context = context;
+		super(context.getApplicationContext());
+		_context = context.getApplicationContext();
 		Log.v(TAG, "Constructor");
 	}
 

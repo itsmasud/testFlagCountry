@@ -9,7 +9,7 @@ abstract class HttpRunnable implements Runnable {
 	protected OAuth _auth;
 
 	public HttpRunnable(Context context, Intent intent, OAuth at) {
-		_context = context;
+		_context = context.getApplicationContext();
 		_intent = intent;
 		_auth = at;
 	}
