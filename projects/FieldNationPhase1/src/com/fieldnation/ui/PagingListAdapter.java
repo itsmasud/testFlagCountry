@@ -2,6 +2,7 @@ package com.fieldnation.ui;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.GlobalState;
@@ -26,7 +27,7 @@ import android.widget.ProgressBar;
 public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private static final String TAG = "ui.PagingListAdapter";
 
-	private static final int WEB_REQUEST_UPDATE = 1;
+	private int WEB_REQUEST_UPDATE = -1;
 
 	private GlobalState _gs;
 	private Activity _activity;
@@ -40,6 +41,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private String _username;
 	private ProgressBar _progressBar;
 	private Listener _listener = null;
+	private Random _rand = new Random(System.currentTimeMillis());
 
 	public PagingListAdapter(Activity activity, Class<T> clazz) {
 		_activity = activity;
@@ -274,7 +276,8 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		} else {
 			Log.v(TAG, "Have accessToken");
 			getWebService(_activity, _username, _authToken, _resultReciever);
-			executeWebService(0, _nextPage, _allowCache);
+			WEB_REQUEST_UPDATE = -Math.abs(_rand.nextInt());
+			executeWebService(WEB_REQUEST_UPDATE, _nextPage, _allowCache);
 		}
 	}
 

@@ -286,7 +286,7 @@ public class Workorder {
 	private int _notInterestedAction = 0;
 	private int _statusDisplayState = 0;
 	private WorkorderDataSelector _type;
-	private Set<Integer> _labelIds;
+	private Set<Integer> _labelIds = new HashSet<Integer>();
 
 	private Set<Listener> _listeners = new HashSet<Workorder.Listener>();
 
@@ -349,9 +349,11 @@ public class Workorder {
 		_notInterestedAction = NOT_INTERESTED_ACTION_NONE;
 		_buttonAction = BUTTON_ACTION_NONE;
 
-		_labelIds = new HashSet<Integer>();
-		for (int i = 0; i < _label.length; i++) {
-			_labelIds.add(_label[i].getLabelId());
+		_labelIds.clear();
+		if (_label != null) {
+			for (int i = 0; i < _label.length; i++) {
+				_labelIds.add(_label[i].getLabelId());
+			}
 		}
 
 		switch (_type) {
@@ -359,6 +361,9 @@ public class Workorder {
 			buildStatusAssigned();
 			break;
 		case AVAILABLE:
+			buildStatusAvailable();
+			break;
+		case REQUESTED:
 			buildStatusAvailable();
 			break;
 		case CANCELLED:

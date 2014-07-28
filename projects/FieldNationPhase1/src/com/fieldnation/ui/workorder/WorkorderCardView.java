@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Debug;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,11 @@ import android.widget.TextView;
  * 
  */
 public class WorkorderCardView extends RelativeLayout {
-	static final String TAG = "ui.workorder.WorkorderCardView";
+	private static final String TAG = "ui.workorder.WorkorderCardView";
+
+	public static final int MODE_NORMAL = 1;
+	public static final int MODE_UNDO_NOT_INTERESTED = 2;
+	public static final int MODE_DOING_WORK = 3;
 
 	// UI
 	private RelativeLayout _statusLayout;
@@ -60,6 +65,9 @@ public class WorkorderCardView extends RelativeLayout {
 	private TextView _locationTextView;
 	private ImageView _messageAlertImageView;
 	private ImageView _notificationAlertImageView;
+	private RelativeLayout _loadingLayout;
+	private RelativeLayout _undoLayout;
+	private Button _undoButton;
 
 	// animations
 	private Animation _slideAnimation;
@@ -70,7 +78,7 @@ public class WorkorderCardView extends RelativeLayout {
 	private WorkorderDataSelector _dataView = null;
 	private Workorder _workorder;
 	private Listener _listener = null;
-	private boolean _markedForDeletion = false;
+	private int _displayMode = MODE_NORMAL;
 
 	public WorkorderCardView(Context context) {
 		this(context, null, -1);
@@ -126,6 +134,11 @@ public class WorkorderCardView extends RelativeLayout {
 
 		_locationTextView = (TextView) findViewById(R.id.location_textview);
 
+		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+		_undoLayout = (RelativeLayout) findViewById(R.id.undo_layout);
+		_undoButton = (Button) findViewById(R.id.undo_button);
+		_undoButton.setOnClickListener(_undoButton_onClick);
+
 		// _detailButton.setVisibility(GONE);
 		// _cashLinearLayout.setVisibility(GONE);
 
@@ -159,13 +172,26 @@ public class WorkorderCardView extends RelativeLayout {
 		}
 	}
 
-	public boolean isMarkedForDeletion() {
-		return _markedForDeletion;
+	/**
+	 * See the MODE_* constants
+	 * 
+	 * @param displayMode
+	 */
+	public void setDisplayMode(int displayMode) {
+		_displayMode = displayMode;
+		refresh();
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _undoButton_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: _undoButton_onClick()
+			Log.v(TAG, "Method Stub: _undoButton_onClick()");
+		}
+	};
 
 	private View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
 		@Override
@@ -173,7 +199,11 @@ public class WorkorderCardView extends RelativeLayout {
 			if (_listener != null) {
 				// TODO trigger animation before removing
 				_listener.startRemove(_workorder);
-				_markedForDeletion = true;
+				_displayMode = MODE_UNDO_NOT_INTERESTED;
+				_backImageView.setClickable(false);
+				_notInterestedLayout.setClickable(false);
+				_contentLayout.startAnimation(_slideBackAnimation);
+				setDisplayMode(MODE_UNDO_NOT_INTERESTED);
 			}
 		}
 	};
@@ -235,6 +265,7 @@ public class WorkorderCardView extends RelativeLayout {
 					_listener.actionAcknowledgeHold(_workorder);
 				}
 			}
+			setDisplayMode(MODE_DOING_WORK);
 		}
 	};
 
@@ -291,6 +322,33 @@ public class WorkorderCardView extends RelativeLayout {
 	}
 
 	private void refresh() {
+		if (_workorder == null)
+			return;
+		_loadingLayout.setVisibility(GONE);
+		_undoLayout.setVisibility(GONE);
+
+		switch (_displayMode) {
+		case MODE_NORMAL:
+			refreshNormal();
+			break;
+		case MODE_DOING_WORK:
+			refreshDoingWork();
+			break;
+		case MODE_UNDO_NOT_INTERESTED:
+			refreshUndoNotInterested();
+			break;
+		}
+	}
+
+	private void refreshDoingWork() {
+		_loadingLayout.setVisibility(VISIBLE);
+	}
+
+	private void refreshUndoNotInterested() {
+		_undoLayout.setVisibility(VISIBLE);
+	}
+
+	private void refreshNormal() {
 		try {
 			buildStatus();
 		} catch (Exception ex) {
@@ -421,6 +479,9 @@ public class WorkorderCardView extends RelativeLayout {
 			buildStatusAssigned();
 			break;
 		case AVAILABLE:
+			buildStatusAvailable();
+			break;
+		case REQUESTED:
 			buildStatusAvailable();
 			break;
 		case CANCELLED:

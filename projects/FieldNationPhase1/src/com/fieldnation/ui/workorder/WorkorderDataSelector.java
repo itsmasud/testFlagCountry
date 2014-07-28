@@ -11,7 +11,8 @@ package com.fieldnation.ui.workorder;
  * 
  */
 public enum WorkorderDataSelector {
-	AVAILABLE("getRequested"),
+	AVAILABLE("getAvailable"),
+	REQUESTED("getRequested"),
 	ASSIGNED("getAssigned", true),
 	IN_PROGRESS("getAssigned", true),
 	COMPLETED("getCompleted"),

@@ -68,6 +68,10 @@
     <string name="my_work_category3">Completed</string>
     <string name="my_work_category4">Canceled</string>
 
+    <!-- market categories -->
+    <string name="market_requested">Requested</string>
+    <string name="market_available">Available</string>
+
     <!-- Account Preferences -->
     <string name="pref_sync">Sync Frequency</string>
 

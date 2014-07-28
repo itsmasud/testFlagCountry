@@ -67,14 +67,12 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			wosum = new WorkorderCardView(parent.getContext());
 		}
 
-		// TODO if pending delete, alert the view
 		if (_pendingNotInterestedWorkorders.contains(object.getWorkorderId())) {
-
-		}
-
-		// TODO notify view that the request has been sent
-		if (_requestWorkingWorkorders.contains(object.getWorkorderId())) {
-
+			wosum.setDisplayMode(WorkorderCardView.MODE_UNDO_NOT_INTERESTED);
+		} else if (_requestWorkingWorkorders.contains(object.getWorkorderId())) {
+			wosum.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
+		} else {
+			wosum.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 		}
 
 		wosum.setWorkorder(_dataSelection, object);
@@ -131,11 +129,11 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			long workorderId = resultData.getLong(KEY_WORKORDER_ID);
 			_pendingNotInterestedWorkorders.remove(workorderId);
 			_requestWorkingWorkorders.remove(workorderId);
-			notifyDataSetChanged();
+			super.update(false);
 		} else if (resultCode == WEB_CHANGING_WORKORDER) {
 			long workorderId = resultData.getLong(KEY_WORKORDER_ID);
 			_requestWorkingWorkorders.remove(workorderId);
-			notifyDataSetChanged();
+			super.update(false);
 		}
 	}
 
@@ -183,12 +181,12 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		@Override
 		public void cancelRemove(Workorder wo) {
 			_pendingNotInterestedWorkorders.remove(wo.getWorkorderId());
-			notifyDataSetChanged();
+			update(false);
 		}
 
 		@Override
 		public void notifyDataSetChanged() {
-			WorkorderListAdapter.this.notifyDataSetChanged();
+			update(false);
 		}
 
 		@Override

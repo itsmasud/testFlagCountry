@@ -1,19 +1,25 @@
 package com.fieldnation.ui.market;
 
-import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.ui.DrawerActivity;
-import com.fieldnation.ui.ListViewEx;
-import com.fieldnation.ui.workorder.WorkorderCardView;
+import com.fieldnation.ui.workorder.MyWorkListFragment;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.ui.workorder.WorkorderListAdapter;
-import com.fieldnation.ui.workorder.WorkorderSummaryAdvancedUndoListener;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
+import android.support.v7.app.ActionBar.TabListener;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 
 /**
  * Displays all the work orders in the market that are available to this user
@@ -25,12 +31,13 @@ public class MarketActivity extends DrawerActivity {
 	private static final String TAG = "ui.market.MarketActivity";
 
 	// UI
-	private ListViewEx _listView;
+	private ViewPager _viewPager;
+	private MyWorkListFragment[] _fragments;
 
 	// Data
-	private WorkorderListAdapter _adapter;
-
-	// Services
+	private PagerAdapter _pagerAdapter;
+	private boolean _created = false;
+	private int _currentFragment = 0;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -38,69 +45,129 @@ public class MarketActivity extends DrawerActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_itemlist);
+		setContentView(R.layout.activity_tabs);
 		setTitle(R.string.market_title);
 
-		_listView = (ListViewEx) findViewById(R.id.items_listview);
-		_listView.setOnRefreshListener(_listView_onRefreshListener);
-
-		addActionBarAndDrawer(R.id.container);
-	}
-
-	@Override
-	protected void onResume() {
-		_listView.setAdapter(getListAdapter());
-		super.onResume();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (_adapter != null) {
-			_adapter.onStop();
-			_adapter = null;
+		if (!_created) {
+			addActionBarAndDrawer(R.id.container);
+			buildTabs();
+			_created = true;
 		}
+		_currentFragment = getSupportActionBar().getSelectedNavigationIndex();
+		_viewPager.setCurrentItem(_currentFragment, false);
+	}
+
+	private void buildTabs() {
+		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
+
+		_fragments = new MyWorkListFragment[2];
+
+		_fragments[0] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.AVAILABLE);
+		_fragments[1] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.REQUESTED);
+
+		ActionBar actionbar = getSupportActionBar();
+		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		ActionBar.Tab tab1 = actionbar.newTab().setText(R.string.market_available);
+		ActionBar.Tab tab2 = actionbar.newTab().setText(R.string.market_requested);
+
+		tab1.setTabListener(_tabListener);
+		tab2.setTabListener(_tabListener);
+
+		// actionbar.addTab(tab1);
+		actionbar.addTab(tab1);
+		actionbar.addTab(tab2);
+
+		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+
+		_viewPager.setAdapter(_pagerAdapter);
+		_viewPager.setOnPageChangeListener(_viewPager_onChange);
+	}
+
+	@Override
+	public ActionBarDrawerToggle createActionBarDrawerToggle(DrawerLayout drawerLayout) {
+		return new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.launcher_open,
+				R.string.launcher_open) {
+
+			@Override
+			public void onDrawerStateChanged(int newState) {
+				if (newState != 0) {
+					getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+					supportInvalidateOptionsMenu();
+				}
+				super.onDrawerStateChanged(newState);
+			}
+
+			@Override
+			public void onDrawerSlide(View drawerView, float slideOffset) {
+				if (slideOffset == 0.0) {
+					getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+					supportInvalidateOptionsMenu();
+				}
+				super.onDrawerSlide(drawerView, slideOffset);
+			}
+		};
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private WorkorderListAdapter.Listener<Workorder> _workorderAdapter_listener = new WorkorderListAdapter.Listener<Workorder>() {
-		@Override
-		public void onLoading() {
+	// swaps fragments on a pager transition
+	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+		public ScreenSlidePagerAdapter(FragmentManager fm) {
+			super(fm);
 		}
 
 		@Override
-		public void onLoadComplete() {
-			_listView.onRefreshComplete();
+		public Fragment getItem(int postition) {
+			return _fragments[postition];
 		}
 
+		@Override
+		public int getCount() {
+			return _fragments.length;
+		}
+	}
+
+	// sync set actionbar tabs on page viewer change
+	private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
+		@Override
+		public void onPageSelected(int position) {
+			try {
+				_currentFragment = position;
+				getSupportActionBar().setSelectedNavigationItem(position);
+			} catch (Exception ex) {
+			}
+		};
 	};
 
-	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
+	// sync pageviewer based on tab selection
+	private TabListener _tabListener = new TabListener() {
 		@Override
-		public void onRefresh() {
-			getListAdapter().update(false);
+		public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
+		}
+
+		@Override
+		public void onTabSelected(Tab arg0, FragmentTransaction arg1) {
+			_currentFragment = arg0.getPosition();
+			_viewPager.setCurrentItem(_currentFragment, true);
+		}
+
+		@Override
+		public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
 		}
 	};
 
-	/*-*********************************-*/
-	/*-				Util				-*/
-	/*-*********************************-*/
-	private WorkorderListAdapter getListAdapter() {
-		try {
-			if (_adapter == null) {
-				_adapter = new WorkorderListAdapter(this, WorkorderDataSelector.AVAILABLE);
-				_adapter.setLoadingListener(_workorderAdapter_listener);
-			}
-			if (!_adapter.isViable()) {
-				_adapter = new WorkorderListAdapter(this, WorkorderDataSelector.AVAILABLE);
-				_adapter.setLoadingListener(_workorderAdapter_listener);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
+	// when a menu item is selected
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+
+		if (id == R.id.action_refresh) {
+			Log.v(TAG, "onOptionsItemSelected:action_refresh");
+			_fragments[_currentFragment].update();
 		}
-		return _adapter;
+
+		return super.onOptionsItemSelected(item);
 	}
 }

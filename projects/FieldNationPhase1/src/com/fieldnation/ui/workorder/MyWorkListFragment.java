@@ -70,6 +70,7 @@ public class MyWorkListFragment extends Fragment {
 
 	@Override
 	public void onResume() {
+		Log.v(TAG, "onResume");
 		_listView.setAdapter(getAdapter());
 		super.onResume();
 	}
@@ -117,8 +118,7 @@ public class MyWorkListFragment extends Fragment {
 	/*-				Util				-*/
 	/*-*********************************-*/
 	public void update() {
-		// TODO method stub update()
-		Log.v(TAG, "update() stub");
+		getAdapter().update(false);
 	}
 
 	private WorkorderListAdapter getAdapter() {

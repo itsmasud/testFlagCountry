@@ -25,7 +25,6 @@ public class MyWorkActivity extends DrawerActivity {
 
 	// UI
 	private ViewPager _viewPager;
-
 	private MyWorkListFragment[] _fragments;
 
 	// Data
@@ -40,9 +39,6 @@ public class MyWorkActivity extends DrawerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tabs);
-		Log.v(TAG, "onCreate()");
-
-		_gs = (GlobalState) getApplicationContext();
 
 		if (!_created) {
 			addActionBarAndDrawer(R.id.container);
@@ -51,7 +47,6 @@ public class MyWorkActivity extends DrawerActivity {
 		}
 		_currentFragment = getSupportActionBar().getSelectedNavigationIndex();
 		_viewPager.setCurrentItem(_currentFragment, false);
-
 	}
 
 	private void buildTabs() {
@@ -116,7 +111,6 @@ public class MyWorkActivity extends DrawerActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-
 	// swaps fragments on a pager transition
 	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 		public ScreenSlidePagerAdapter(FragmentManager fm) {

@@ -75,7 +75,7 @@ public class AuthCache {
 			return false;
 		}
 
-		Log.d(TAG, _sessionHash);
+		//Log.d(TAG, _sessionHash);
 
 		return _sessionHash.equals(sessionHash);
 	}
