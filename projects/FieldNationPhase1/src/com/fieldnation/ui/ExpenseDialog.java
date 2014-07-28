@@ -1,11 +1,8 @@
 package com.fieldnation.ui;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.AdditionalExpense;
-
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;

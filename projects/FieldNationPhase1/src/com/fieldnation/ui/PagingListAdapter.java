@@ -7,6 +7,7 @@ import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.GlobalState;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
@@ -24,6 +25,8 @@ import android.widget.ProgressBar;
 
 public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private static final String TAG = "ui.PagingListAdapter";
+
+	private static final int WEB_REQUEST_UPDATE = 1;
 
 	private GlobalState _gs;
 	private Activity _activity;
@@ -162,45 +165,50 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			Log.v(TAG, "WebServiceResultReciever.onSuccess");
-			if (!_isViable) {
-				Log.v(TAG, "WebServiceResultReciever.onSuccess(), not viable");
-				return;
-			}
-			_nextPage++;
-			String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 
-			JsonArray objects = null;
-			try {
-				objects = new JsonArray(data);
-			} catch (Exception ex) {
-				// TODO report problem?
-				Log.v(TAG, data);
-				ex.printStackTrace();
-			}
-			if (objects == null) {
-				Log.v(TAG, "objects is null");
-				notifyDataSetChanged();
-				return;
-			}
-			for (int i = 0; i < objects.size(); i++) {
-				try {
-					T o = Serializer.unserializeObject(_clazz, objects.getJsonObject(i));
-					if (includeObject(o)) {
-						_objects.add(o);
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			if (resultCode == WEB_REQUEST_UPDATE) {
+				Log.v(TAG, "WebServiceResultReciever.onSuccess");
+				if (!_isViable) {
+					Log.v(TAG, "WebServiceResultReciever.onSuccess(), not viable");
+					return;
 				}
-			}
+				_nextPage++;
+				String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 
-			if (objects.size() == 0) {
-				Log.v(TAG, "_atEndOfList");
-				_atEndOfList = true;
+				JsonArray objects = null;
+				try {
+					objects = new JsonArray(data);
+				} catch (Exception ex) {
+					// TODO report problem?
+					Log.v(TAG, data);
+					ex.printStackTrace();
+				}
+				if (objects == null) {
+					Log.v(TAG, "objects is null");
+					notifyDataSetChanged();
+					return;
+				}
+				for (int i = 0; i < objects.size(); i++) {
+					try {
+						T o = fromJson(objects.getJsonObject(i));
+						if (includeObject(o)) {
+							_objects.add(o);
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				if (objects.size() == 0) {
+					Log.v(TAG, "_atEndOfList");
+					_atEndOfList = true;
+				}
+				notifyDataSetChanged();
+				dispatchOnLoadComplete();
+			} else {
+				handleWebResult(resultCode, resultData);
 			}
-			notifyDataSetChanged();
-			dispatchOnLoadComplete();
 		}
 
 		@Override
@@ -278,6 +286,15 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	}
 
 	/**
+	 * Will be called when the resultCode is not a value of 1
+	 * 
+	 * @param resultCode
+	 * @param resultData
+	 */
+	public void handleWebResult(int resultCode, Bundle resultData) {
+	}
+
+	/**
 	 * Called when a new view is needed by the listview
 	 * 
 	 * @param obj
@@ -324,10 +341,19 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	 */
 	public abstract void executeWebService(int resultCode, int page, boolean allowCache);
 
+	public T fromJson(JsonObject obj) {
+		try {
+			return Serializer.unserializeObject(_clazz, obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	/*-*****************************-*/
 	/*-			Listener			-*/
 	/*-*****************************-*/
-	public interface Listener {
+	public interface Listener<T> {
 		/**
 		 * Called when loading a page has started
 		 */

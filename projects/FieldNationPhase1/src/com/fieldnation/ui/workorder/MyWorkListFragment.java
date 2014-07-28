@@ -1,8 +1,12 @@
 package com.fieldnation.ui.workorder;
 
+import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.ui.ListViewEx;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -73,7 +77,6 @@ public class MyWorkListFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-
 		if (_adapter != null) {
 			_adapter.onStop();
 			_adapter = null;
@@ -89,7 +92,8 @@ public class MyWorkListFragment extends Fragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private WorkorderListAdapter.Listener _workorderAdapter_listener = new WorkorderListAdapter.Listener() {
+
+	private WorkorderListAdapter.Listener<Workorder> _workorderAdapter_listener = new WorkorderListAdapter.Listener<Workorder>() {
 
 		@Override
 		public void onLoading() {

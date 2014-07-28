@@ -1,9 +1,12 @@
 package com.fieldnation.ui.payment;
 
 import com.fieldnation.R;
+import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.ListViewEx;
 import com.fieldnation.ui.PagingListAdapter;
+
 import android.os.Bundle;
 
 public class PaymentListActivity extends DrawerActivity {
@@ -51,7 +54,7 @@ public class PaymentListActivity extends DrawerActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private PagingListAdapter.Listener _adapter_listener = new PagingListAdapter.Listener() {
+	private PagingListAdapter.Listener<Payment> _adapter_listener = new PagingListAdapter.Listener<Payment>() {
 
 		@Override
 		public void onLoading() {
@@ -74,7 +77,7 @@ public class PaymentListActivity extends DrawerActivity {
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
-	private PagingListAdapter getAdapter() {
+	private PagingListAdapter<Payment> getAdapter() {
 		try {
 			if (_adapter == null) {
 				_adapter = new PaymentListAdapter(this);

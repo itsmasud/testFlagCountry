@@ -14,6 +14,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.ui.workorder.WorkorderTabView;
@@ -68,7 +69,7 @@ public class MessageFragment extends WorkorderFragment {
 
 		_listview = (ListView) view.findViewById(R.id.messages_listview);
 
-		View input = LayoutInflater.from(getActivity()).inflate(R.layout.view_message_input, _listview, false);
+		View input = LayoutInflater.from(_gs).inflate(R.layout.view_message_input, _listview, false);
 		_messageEditText = (EditText) input.findViewById(R.id.message_edittext);
 		_sendButton = (Button) input.findViewById(R.id.send_button);
 		_sendButton.setOnClickListener(_send_onClick);
@@ -96,16 +97,15 @@ public class MessageFragment extends WorkorderFragment {
 		if (_profile == null)
 			return;
 
-		if (getActivity() == null)
+		if (_gs == null)
 			return;
 
 		_messages.clear();
 		WEB_GET_MESSAGES = _rand.nextInt();
-		getActivity().startService(_workorderService.getMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
+		_gs.startService(_workorderService.getMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
 	}
 
 	private void rebuildList() {
-		// TODO, need to sort list by date
 		_adapter.setMessages(_messages);
 	}
 
@@ -116,19 +116,18 @@ public class MessageFragment extends WorkorderFragment {
 		@Override
 		public void onClick(View v) {
 			WEB_NEW_MESSAGE = _rand.nextInt();
-			getActivity().startService(
-					_workorderService.newMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
-							_messageEditText.getText().toString()));
+			_gs.startService(_workorderService.newMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
+					_messageEditText.getText().toString()));
 		}
 	};
 
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
-			_workorderService = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+			_profileService = new ProfileService(_gs, username, authToken, _resultReceiver);
+			_workorderService = new WorkorderService(_gs, username, authToken, _resultReceiver);
 			WEB_GET_PROFILE = _rand.nextInt();
-			getActivity().startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+			_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
 			getMessages();
 		}
 
@@ -155,7 +154,7 @@ public class MessageFragment extends WorkorderFragment {
 			if (resultCode == WEB_GET_PROFILE) {
 				try {
 					_profile = Profile.fromJson(new JsonObject(new String(
-							resultData.getByteArray(ProfileService.KEY_RESPONSE_DATA))));
+							resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
 
 					_adapter = new MessagesAdapter(_profile);
 					_listview.setAdapter(_adapter);
@@ -167,7 +166,7 @@ public class MessageFragment extends WorkorderFragment {
 			} else if (resultCode == WEB_GET_MESSAGES) {
 				try {
 					JsonArray messages = new JsonArray(new String(
-							resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA)));
+							resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
 
 					for (int i = 0; i < messages.size(); i++) {
 						JsonObject obj = messages.getJsonObject(i);

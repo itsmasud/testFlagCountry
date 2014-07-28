@@ -4,7 +4,6 @@ import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.GlobalState;
 import com.fieldnation.WaitForFieldAsyncTask;
 import android.accounts.AccountManagerFuture;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;

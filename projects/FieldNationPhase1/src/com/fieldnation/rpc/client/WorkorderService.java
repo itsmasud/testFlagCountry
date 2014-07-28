@@ -64,9 +64,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpDelete(resultCode, "/api/rest/v1/workorder/" + workorderId + "/request", null, false);
 	}
 
-	public Intent confirmAssignment(int resultCode, long workorderId, long startTime, long endTime) {
+	public Intent confirmAssignment(int resultCode, long workorderId, long startTimeMilliseconds, long endTimeMilliseconds) {
 		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/assignment", null,
-				"start_time=" + ISO8601.fromUTC(startTime) + "&end_time=" + ISO8601.fromUTC(endTime),
+				"start_time=" + ISO8601.fromUTC(startTimeMilliseconds) + "&end_time=" + ISO8601.fromUTC(endTimeMilliseconds),
 				"application/x-www-form-urlencoded", false);
 	}
 
@@ -91,9 +91,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"checkin_time=" + ISO8601.fromUTC(checkinTime), "application/x-www-form-urlencoded", false);
 	}
 
-	public Intent checkout(int resultCode, long workorderId, long checkoutTime) {
+	public Intent checkout(int resultCode, long workorderId, long checkoutTimeMilliseconds) {
 		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
-				"checkout_time=" + ISO8601.fromUTC(checkoutTime), "application/x-www-form-urlencoded", false);
+				"checkout_time=" + ISO8601.fromUTC(checkoutTimeMilliseconds), "application/x-www-form-urlencoded", false);
 	}
 
 	public Intent closingNotes(int resultCode, long workorderId, String notes) {

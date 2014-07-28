@@ -1,12 +1,19 @@
 package com.fieldnation.ui.market;
 
+import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.ListViewEx;
+import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.ui.workorder.WorkorderListAdapter;
+import com.fieldnation.ui.workorder.WorkorderSummaryAdvancedUndoListener;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Displays all the work orders in the market that are available to this user
@@ -38,7 +45,6 @@ public class MarketActivity extends DrawerActivity {
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
 		addActionBarAndDrawer(R.id.container);
-
 	}
 
 	@Override
@@ -50,7 +56,6 @@ public class MarketActivity extends DrawerActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-
 		if (_adapter != null) {
 			_adapter.onStop();
 			_adapter = null;
@@ -60,8 +65,7 @@ public class MarketActivity extends DrawerActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private WorkorderListAdapter.Listener _workorderAdapter_listener = new WorkorderListAdapter.Listener() {
-
+	private WorkorderListAdapter.Listener<Workorder> _workorderAdapter_listener = new WorkorderListAdapter.Listener<Workorder>() {
 		@Override
 		public void onLoading() {
 		}
@@ -70,10 +74,10 @@ public class MarketActivity extends DrawerActivity {
 		public void onLoadComplete() {
 			_listView.onRefreshComplete();
 		}
+
 	};
 
 	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
-
 		@Override
 		public void onRefresh() {
 			getListAdapter().update(false);
@@ -89,18 +93,14 @@ public class MarketActivity extends DrawerActivity {
 				_adapter = new WorkorderListAdapter(this, WorkorderDataSelector.AVAILABLE);
 				_adapter.setLoadingListener(_workorderAdapter_listener);
 			}
-
 			if (!_adapter.isViable()) {
 				_adapter = new WorkorderListAdapter(this, WorkorderDataSelector.AVAILABLE);
 				_adapter.setLoadingListener(_workorderAdapter_listener);
 			}
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
-
 		return _adapter;
-
 	}
 }

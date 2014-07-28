@@ -15,7 +15,6 @@ import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
 import com.fieldnation.ui.workorder.detail.TasksFragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -169,8 +168,10 @@ public class WorkorderActivity extends DrawerActivity {
 
 			try {
 
-				_workorder = Workorder.fromJson(new JsonObject(new String(
-						resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+				// TODO need 
+				_workorder = Workorder.fromJson(
+						new JsonObject(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))),
+						WorkorderDataSelector.ASSIGNED);
 
 				_workorder.addListener(_workorder_listener);
 

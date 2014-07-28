@@ -10,7 +10,6 @@ import com.fieldnation.data.workorder.Message;
 import com.fieldnation.utils.ISO8601;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -88,7 +87,7 @@ public class MessagesAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Message message = _messages.get(position);
 
-		if ((int) message.getMsgFrom() == (int) _profile.getUserId()) {
+		if (message.getMsgFrom() == _profile.getUserId()) {
 			MessageSentView v = null;
 
 			if (convertView == null) {

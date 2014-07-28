@@ -104,7 +104,7 @@ public class MessageCardView extends RelativeLayout {
 		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			if (resultCode == _viewId) {
-				byte[] data = resultData.getByteArray(PhotoService.KEY_RESPONSE_DATA);
+				byte[] data = resultData.getByteArray(PhotoServiceConstants.KEY_RESPONSE_DATA);
 
 				Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 				bitmap = misc.extractCircle(bitmap);

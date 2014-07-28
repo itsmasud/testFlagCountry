@@ -1,30 +1,14 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
-import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.ui.workorder.WorkorderTabView;
-
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 public class NotificationFragment extends WorkorderFragment {
