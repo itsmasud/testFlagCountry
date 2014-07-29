@@ -11,6 +11,9 @@ import com.fieldnation.ui.market.MarketActivity;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -172,7 +175,12 @@ public abstract class BaseActivity extends ActionBarActivity {
 				}
 			} else if (_removing) {
 				_removing = false;
-				getAccount();
+				Intent activity = new Intent(BaseActivity.this, MarketActivity.class);
+				PendingIntent pendingIntent = PendingIntent.getActivity(BaseActivity.this, 1, activity,
+						PendingIntent.FLAG_CANCEL_CURRENT);
+				AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+				mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
+				System.exit(0);
 			}
 
 		}
