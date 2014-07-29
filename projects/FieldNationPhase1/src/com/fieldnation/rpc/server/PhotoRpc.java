@@ -41,8 +41,7 @@ public class PhotoRpc extends RpcInterface implements PhotoServiceConstants {
 
 				InputStream in = conn.getInputStream();
 				try {
-					int contentLength = conn.getContentLength();
-					byte[] results = misc.readAllFromStream(in, 1024, contentLength, 3000);
+					byte[] results = misc.readAllFromStream(in, 1024, -1, 3000);
 					bundle.putByteArray(KEY_RESPONSE_DATA, results);
 
 					PhotoCache.store(context, url, results);

@@ -100,7 +100,7 @@ public class Profile{
 		return _description;
 	}
 
-	public Integer getUserId(){
+	public int getUserId(){
 		return _userId;
 	}
 

@@ -97,7 +97,7 @@ public class MessagesActionBarView extends RelativeLayout {
 				_profile = Profile.fromJson(obj);
 				refresh();
 			} catch (Exception e) {
-				e.printStackTrace();
+				getContext().startService(_profileService.getMyUserInformation(0, false));
 			}
 		}
 

@@ -7,6 +7,7 @@ import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.Ws;
 
 import android.app.Application;
+import android.os.Build;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -37,6 +38,10 @@ public class GlobalState extends Application {
 		authority = getString(R.string.authority);
 		DataCacheNode.flush(this);
 		PhotoCacheNode.flush(this);
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+			System.setProperty("http.keepalive", "false");
+		}
 	}
 
 	/**

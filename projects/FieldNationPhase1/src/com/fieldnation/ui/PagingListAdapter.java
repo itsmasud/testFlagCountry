@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.GlobalState;
+import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -22,7 +23,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private static final String TAG = "ui.PagingListAdapter";
@@ -39,14 +42,14 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private boolean _allowCache = true;
 	private String _authToken;
 	private String _username;
-	private ProgressBar _progressBar;
+	private View _progressBar = null;
 	private Listener _listener = null;
 	private Random _rand = new Random(System.currentTimeMillis());
 
 	public PagingListAdapter(Activity activity, Class<T> clazz) {
 		_activity = activity;
 		_clazz = clazz;
-		_progressBar = new ProgressBar(_activity);
+
 		_gs = (GlobalState) _activity.getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
@@ -93,7 +96,10 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		return position;
 	}
 
-	protected View getProgressBar() {
+	protected View getProgressBar(ViewGroup parent) {
+		if (_progressBar == null) {
+			_progressBar = _activity.getLayoutInflater().inflate(R.layout.view_centered_progressbar, parent, false);
+		}
 		return _progressBar;
 	}
 
@@ -101,7 +107,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (position >= _objects.size()) {
 			getNextPage();
-			return getProgressBar();
+			return getProgressBar(parent);
 		} else {
 			return getView(_objects.get(position), convertView, parent);
 		}
@@ -181,12 +187,8 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 				try {
 					objects = new JsonArray(data);
 				} catch (Exception ex) {
-					// TODO report problem?
-					Log.v(TAG, data);
-					ex.printStackTrace();
-				}
-				if (objects == null) {
-					Log.v(TAG, "objects is null");
+					WEB_REQUEST_UPDATE = -Math.abs(_rand.nextInt());
+					executeWebService(WEB_REQUEST_UPDATE, _nextPage, _allowCache);
 					notifyDataSetChanged();
 					return;
 				}

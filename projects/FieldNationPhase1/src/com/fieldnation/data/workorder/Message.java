@@ -4,149 +4,150 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Message{
-	@Json(name="workorder_id")
+public class Message {
+	@Json(name = "workorder_id")
 	private Integer _workorderId;
-	@Json(name="from_user_name")
+	@Json(name = "from_user_name")
 	private String _fromUserName;
-	@Json(name="email_message_id")
+	@Json(name = "email_message_id")
 	private String _emailMessageId;
-	@Json(name="msg_read_id")
+	@Json(name = "msg_read_id")
 	private Integer _msgReadId;
-	@Json(name="msg_to")
+	@Json(name = "msg_to")
 	private Integer _msgTo;
-	@Json(name="msg_permission")
+	@Json(name = "msg_permission")
 	private Integer _msgPermission;
-	@Json(name="from_company_id")
+	@Json(name = "from_company_id")
 	private Integer _fromCompanyId;
-	@Json(name="msg_from")
+	@Json(name = "msg_from")
 	private Integer _msgFrom;
-	@Json(name="message")
+	@Json(name = "message")
 	private String _message;
-	@Json(name="msg_read")
+	@Json(name = "msg_read")
 	private Integer _msgRead;
-	@Json(name="msg_read_date")
+	@Json(name = "msg_read_date")
 	private String _msgReadDate;
-	@Json(name="to_company_id")
+	@Json(name = "to_company_id")
 	private Integer _toCompanyId;
-	@Json(name="read_by")
+	@Json(name = "read_by")
 	private Integer _readBy;
-	@Json(name="thread_id")
+	@Json(name = "thread_id")
 	private Double _threadId;
-	@Json(name="zendesk_ticket_id")
+	@Json(name = "zendesk_ticket_id")
 	private Integer _zendeskTicketId;
-	@Json(name="from_group_name")
+	@Json(name = "from_group_name")
 	private String _fromGroupName;
-	@Json(name="parent_id")
+	@Json(name = "parent_id")
 	private Integer _parentId;
-	@Json(name="to_group_name")
+	@Json(name = "to_group_name")
 	private String _toGroupName;
-	@Json(name="to_user_name")
+	@Json(name = "to_user_name")
 	private String _toUserName;
-	@Json(name="msg_id")
+	@Json(name = "msg_id")
 	private Integer _msgId;
-	@Json(name="msg_create_date")
+	@Json(name = "msg_create_date")
 	private String _msgCreateDate;
-	@Json(name="from_company_name")
+	@Json(name = "from_company_name")
 	private String _fromCompanyName;
-	@Json(name="to_company_name")
+	@Json(name = "to_company_name")
 	private String _toCompanyName;
 
-	public Message(){
+	public Message() {
 	}
-	public Integer getWorkorderId(){
+
+	public Integer getWorkorderId() {
 		return _workorderId;
 	}
 
-	public String getFromUserName(){
+	public String getFromUserName() {
 		return _fromUserName;
 	}
 
-	public String getEmailMessageId(){
+	public String getEmailMessageId() {
 		return _emailMessageId;
 	}
 
-	public Integer getMsgReadId(){
+	public Integer getMsgReadId() {
 		return _msgReadId;
 	}
 
-	public Integer getMsgTo(){
+	public Integer getMsgTo() {
 		return _msgTo;
 	}
 
-	public Integer getMsgPermission(){
+	public Integer getMsgPermission() {
 		return _msgPermission;
 	}
 
-	public Integer getFromCompanyId(){
+	public Integer getFromCompanyId() {
 		return _fromCompanyId;
 	}
 
-	public Integer getMsgFrom(){
+	public int getMsgFrom() {
 		return _msgFrom;
 	}
 
-	public String getMessage(){
+	public String getMessage() {
 		return _message;
 	}
 
-	public Integer getMsgRead(){
+	public Integer getMsgRead() {
 		return _msgRead;
 	}
 
-	public String getMsgReadDate(){
+	public String getMsgReadDate() {
 		return _msgReadDate;
 	}
 
-	public Integer getToCompanyId(){
+	public Integer getToCompanyId() {
 		return _toCompanyId;
 	}
 
-	public Integer getReadBy(){
+	public Integer getReadBy() {
 		return _readBy;
 	}
 
-	public Double getThreadId(){
+	public Double getThreadId() {
 		return _threadId;
 	}
 
-	public Integer getZendeskTicketId(){
+	public Integer getZendeskTicketId() {
 		return _zendeskTicketId;
 	}
 
-	public String getFromGroupName(){
+	public String getFromGroupName() {
 		return _fromGroupName;
 	}
 
-	public Integer getParentId(){
+	public Integer getParentId() {
 		return _parentId;
 	}
 
-	public String getToGroupName(){
+	public String getToGroupName() {
 		return _toGroupName;
 	}
 
-	public String getToUserName(){
+	public String getToUserName() {
 		return _toUserName;
 	}
 
-	public Integer getMsgId(){
+	public Integer getMsgId() {
 		return _msgId;
 	}
 
-	public String getMsgCreateDate(){
+	public String getMsgCreateDate() {
 		return _msgCreateDate;
 	}
 
-	public String getFromCompanyName(){
+	public String getFromCompanyName() {
 		return _fromCompanyName;
 	}
 
-	public String getToCompanyName(){
+	public String getToCompanyName() {
 		return _toCompanyName;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

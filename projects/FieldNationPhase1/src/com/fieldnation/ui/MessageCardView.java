@@ -107,9 +107,11 @@ public class MessageCardView extends RelativeLayout {
 				byte[] data = resultData.getByteArray(PhotoServiceConstants.KEY_RESPONSE_DATA);
 
 				Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-				bitmap = misc.extractCircle(bitmap);
-				Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
-				_profileImageView.setBackgroundDrawable(draw);
+				if (bitmap != null) {
+					bitmap = misc.extractCircle(bitmap);
+					Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
+					_profileImageView.setBackgroundDrawable(draw);
+				}
 			}
 			super.onReceiveResult(resultCode, resultData);
 		}
