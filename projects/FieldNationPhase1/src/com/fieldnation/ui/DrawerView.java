@@ -145,8 +145,7 @@ public class DrawerView extends RelativeLayout {
 	private View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			_gs.requestRemoveAccount(_authClient);
 		}
 	};
 
@@ -170,6 +169,10 @@ public class DrawerView extends RelativeLayout {
 		public GlobalState getGlobalState() {
 			return _gs;
 		}
+
+		public void onAccountRemoved(boolean status) {
+			Log.v(TAG, "Account removed: " + status);
+		};
 	};
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {

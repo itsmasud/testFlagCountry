@@ -39,6 +39,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 	protected GlobalState _gs;
 	private Account _account = null;
 	private boolean _authenticating = false;
+	private boolean _removing = false;
 
 	// Services
 	private AccountManager _accountManager;
@@ -89,6 +90,11 @@ public abstract class BaseActivity extends ActionBarActivity {
 		@Override
 		public void requestAuthentication(AuthenticationClient client) {
 			Log.v(TAG, "requestAuthentication()");
+			if (_removing) {
+				client.waitForTime(10000);
+				return;
+			}
+
 			if (_account == null) {
 				Log.v(TAG, "requestAuthentication() no account");
 				client.waitForObject(BaseActivity.this, "_acccount");
@@ -106,7 +112,22 @@ public abstract class BaseActivity extends ActionBarActivity {
 		@Override
 		public void invalidateToken(String token) {
 			Log.v(TAG, "invalidateToken(" + token + ")");
+			if (_removing) {
+				return;
+			}
 			_accountManager.invalidateAuthToken(_gs.accountType, token);
+		}
+
+		@Override
+		public void removeAccount(AuthenticationClient client) {
+			if (_removing)
+				return;
+
+			_removing = true;
+			_authenticating = false;
+			AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, _handler);
+			new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+			_account = null;
 		}
 	};
 
@@ -132,20 +153,28 @@ public abstract class BaseActivity extends ActionBarActivity {
 			// TODO stub onFail()
 			Log.v(TAG, "_futureWaitAsyncTaskListener.onFail()");
 			_authenticating = false;
+			_removing = false;
 		}
 
 		@Override
-		public void onComplete(Bundle bundle) {
-			Log.v(TAG, "_futureWaitAsyncTaskListener.onComplete()");
-			String tokenString = bundle.getString("authtoken");
+		public void onComplete(Object result) {
+			if (!_removing) {
+				Bundle bundle = (Bundle) result;
+				Log.v(TAG, "_futureWaitAsyncTaskListener.onComplete()");
+				String tokenString = bundle.getString("authtoken");
 
-			_authenticating = false;
+				_authenticating = false;
 
-			if (tokenString == null) {
-				if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
-					getAccount();
+				if (tokenString == null) {
+					if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
+						getAccount();
+					}
 				}
+			} else if (_removing) {
+				_removing = false;
+				getAccount();
 			}
+
 		}
 	};
 
@@ -153,6 +182,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 		Log.v(TAG, "getAccount()");
 		if (_authenticating)
 			return;
+
+		if (_removing)
+			return;
+
 		Log.v(TAG, "getAccount() not authenticating");
 
 		_authenticating = true;

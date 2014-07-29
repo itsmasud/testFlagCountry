@@ -95,6 +95,7 @@ public class ListViewEx extends ListView {
 		_refreshView.setOnClickListener(new OnClickRefreshListener());
 		_refreshOriginalTopPadding = _refreshView.getPaddingTop();
 
+		// TODO set _TAP_TO_REFRESH
 		_refreshState = _TAP_TO_REFRESH;
 
 		addHeaderView(_refreshView);
@@ -303,6 +304,7 @@ public class ListViewEx extends ListView {
 	private void resetHeader() {
 		if (_refreshState != _TAP_TO_REFRESH) {
 			Log.v(TAG, "resetHeader");
+			// TODO set _TAP_TO_REFRESH
 			_refreshState = _TAP_TO_REFRESH;
 
 			resetHeaderPadding();

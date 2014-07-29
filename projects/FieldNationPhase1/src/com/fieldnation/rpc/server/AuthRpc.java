@@ -117,9 +117,11 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
 			Log.v(TAG, at.toString());
 
 		} catch (Exception ex) {
-			Log.v(TAG, ex.getMessage());
-			if (ex.getMessage().startsWith("No authentication challenges found")) {
-				errorMessage = context.getString(R.string.login_error_invalid_remote_creds);
+			// Log.v(TAG, ex.getMessage());
+			if (ex.getMessage() != null) {
+				if (ex.getMessage().startsWith("No authentication challenges found")) {
+					errorMessage = context.getString(R.string.login_error_invalid_remote_creds);
+				}
 			}
 			// could not get the token... need to figure out why
 			ex.printStackTrace();

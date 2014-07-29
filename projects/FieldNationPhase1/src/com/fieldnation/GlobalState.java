@@ -70,6 +70,14 @@ public class GlobalState extends Application {
 		}
 	}
 
+	public void requestRemoveAccount(AuthenticationClient client) {
+		if (_authServer == null) {
+			client.waitForObject(this, "_authServer");
+		} else {
+			_authServer.removeAccount(client);
+		}
+	}
+
 	public void invalidateAuthToken(String token) {
 		_authServer.invalidateToken(token);
 	}

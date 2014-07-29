@@ -23,7 +23,7 @@ public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
 		_listener = listener;
 	}
 
-	public void execute(AccountManagerFuture<Bundle> future) {
+	public void execute(AccountManagerFuture<?> future) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			executeHoneyComb(future);
 		} else {
@@ -32,14 +32,13 @@ public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void executeHoneyComb(AccountManagerFuture<Bundle> future) {
+	private void executeHoneyComb(AccountManagerFuture<?> future) {
 		super.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, future);
 	}
 
 	@Override
 	protected Object doInBackground(Object... params) {
-		@SuppressWarnings("unchecked")
-		AccountManagerFuture<Bundle> future = (AccountManagerFuture<Bundle>) params[0];
+		AccountManagerFuture<?> future = (AccountManagerFuture<?>) params[0];
 		Log.v(TAG, "Waiting for result.");
 		try {
 			return future.getResult();
@@ -56,12 +55,11 @@ public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
 		if (_listener == null)
 			return;
 
-		if (result instanceof Bundle) {
-			_listener.onComplete((Bundle) result);
-		} else {
+		if (result instanceof Exception) {
 			_listener.onFail((Exception) result);
+		} else {
+			_listener.onComplete(result);
 		}
-
 	}
 
 	/**
@@ -71,7 +69,7 @@ public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
 	 * 
 	 */
 	public interface Listener {
-		public void onComplete(Bundle bundle);
+		public void onComplete(Object result);
 
 		public void onFail(Exception ex);
 	}

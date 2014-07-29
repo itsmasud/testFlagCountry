@@ -32,9 +32,9 @@ import android.widget.ListView;
 public class MessageFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.MessageFragment";
 
-	private static int WEB_GET_MESSAGES = 1;
-	private static int WEB_GET_PROFILE = 2;
-	private static int WEB_NEW_MESSAGE = 3;
+	private int WEB_GET_MESSAGES = 1;
+	private int WEB_GET_PROFILE = 2;
+	private int WEB_NEW_MESSAGE = 3;
 
 	// UI
 	private ListView _listview;

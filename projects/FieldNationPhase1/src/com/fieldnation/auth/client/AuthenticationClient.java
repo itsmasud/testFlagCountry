@@ -35,7 +35,7 @@ public abstract class AuthenticationClient {
 	 * 
 	 * @param future
 	 */
-	public void waitForFuture(AccountManagerFuture<Bundle> future) {
+	public void waitForFuture(AccountManagerFuture<?> future) {
 		new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
 	}
 
@@ -90,15 +90,21 @@ public abstract class AuthenticationClient {
 		}
 
 		@Override
-		public void onComplete(Bundle bundle) {
-			String tokenString = bundle.getString("authtoken");
+		public void onComplete(Object result) {
+			if (result instanceof Bundle) {
+				Bundle bundle = (Bundle) result;
+				String tokenString = bundle.getString("authtoken");
 
-			if (tokenString == null) {
-				if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
-					getGlobalState().requestAuthentication(AuthenticationClient.this);
+				if (tokenString == null) {
+					if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
+						getGlobalState().requestAuthentication(AuthenticationClient.this);
+					}
+				} else {
+					onAuthentication(bundle.getString("authAccount"), tokenString);
 				}
 			} else {
-				onAuthentication(bundle.getString("authAccount"), tokenString);
+				Boolean status = (Boolean) result;
+				onAccountRemoved(status);
 			}
 		}
 	};
@@ -106,5 +112,9 @@ public abstract class AuthenticationClient {
 	public abstract void onAuthentication(String username, String authToken);
 
 	public abstract void onAuthenticationFailed(Exception ex);
+
+	public void onAccountRemoved(boolean status) {
+
+	}
 
 }

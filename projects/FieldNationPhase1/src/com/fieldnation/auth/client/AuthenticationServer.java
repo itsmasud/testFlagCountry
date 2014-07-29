@@ -22,4 +22,6 @@ public interface AuthenticationServer {
 	public void requestAuthentication(AuthenticationClient client);
 
 	public void invalidateToken(String token);
+
+	public void removeAccount(AuthenticationClient client);
 }
