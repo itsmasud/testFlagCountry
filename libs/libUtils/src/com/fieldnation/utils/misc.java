@@ -13,6 +13,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -140,12 +141,27 @@ public class misc {
 		return requestPath;
 	}
 
+	private static Calendar applyTimeZone(Calendar calendar) {
+		TimeZone tz = TimeZone.getDefault();
+		Calendar nc = Calendar.getInstance(tz);
+
+		if (tz.useDaylightTime()) {
+			nc.setTimeInMillis(calendar.getTimeInMillis() + tz.getRawOffset() - tz.getDSTSavings());
+		} else {
+			nc.setTimeInMillis(calendar.getTimeInMillis() + tz.getRawOffset());
+		}
+		// nc.setTimeZone(tz);
+
+		return nc;
+	}
+
 	/**
 	 * 
 	 * @param calendar
 	 * @return June 3, 2014
 	 */
 	public static String formatDateLong(Calendar calendar) {
+		calendar = applyTimeZone(calendar);
 		return String.format(Locale.US, "%tB", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
 	}
 
@@ -163,6 +179,7 @@ public class misc {
 	 * @return in the form MM/DD/YYYY
 	 */
 	public static String formatDate(Calendar calendar) {
+		calendar = applyTimeZone(calendar);
 		int months = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		int year = calendar.get(Calendar.YEAR);
@@ -177,6 +194,8 @@ public class misc {
 	 * @return HH:MM:SS am/pm
 	 */
 	public static String formatTime(Calendar calendar, boolean seconds) {
+		calendar = applyTimeZone(calendar);
+
 		String time = "";
 
 		int hours = calendar.get(Calendar.HOUR);
