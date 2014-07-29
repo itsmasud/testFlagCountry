@@ -92,6 +92,9 @@ public abstract class BaseActivity extends ActionBarActivity {
 			if (_account == null) {
 				Log.v(TAG, "requestAuthentication() no account");
 				client.waitForObject(BaseActivity.this, "_acccount");
+				if (!_authenticating) {
+					getAccount();
+				}
 			} else {
 				Log.v(TAG, "requestAuthentication() asking for account token");
 				AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(_account, _gs.accountType, null,
