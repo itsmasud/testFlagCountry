@@ -102,9 +102,6 @@ public abstract class AuthenticationClient {
 				} else {
 					onAuthentication(bundle.getString("authAccount"), tokenString);
 				}
-			} else {
-				Boolean status = (Boolean) result;
-				onAccountRemoved(status);
 			}
 		}
 	};
@@ -112,9 +109,5 @@ public abstract class AuthenticationClient {
 	public abstract void onAuthentication(String username, String authToken);
 
 	public abstract void onAuthenticationFailed(Exception ex);
-
-	public void onAccountRemoved(boolean status) {
-
-	}
 
 }

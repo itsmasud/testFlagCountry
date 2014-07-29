@@ -171,11 +171,6 @@ public class DrawerView extends RelativeLayout {
 		public GlobalState getGlobalState() {
 			return _gs;
 		}
-
-		public void onAccountRemoved(boolean status) {
-			Log.v(TAG, "Account removed: " + status);
-
-		};
 	};
 
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {

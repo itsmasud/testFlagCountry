@@ -175,6 +175,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 				}
 			} else if (_removing) {
 				_removing = false;
+				// restart the app to clear the backstack, and anything stored
+				// in the UI.
 				Intent activity = new Intent(BaseActivity.this, MarketActivity.class);
 				PendingIntent pendingIntent = PendingIntent.getActivity(BaseActivity.this, 1, activity,
 						PendingIntent.FLAG_CANCEL_CURRENT);
