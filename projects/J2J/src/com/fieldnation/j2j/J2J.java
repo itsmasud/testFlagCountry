@@ -16,24 +16,39 @@ public class J2J {
 	private static String authToken = "";
 
 	public static void main(String[] args) {
+		String[] usernames = { "jacobfaketech", "hexixtech" };
+		String[] passwords = { "jacobfaketech", "hexixtech" };
+
 		try {
 			new File(Config.ObjectPath).mkdirs();
 
-			try {
-				authToken = Tools.authServer("dev.fieldnation.com", "/authentication/api/oauth/token", "password",
-						"demoapp", "demopass", "jacobfaketech", "jacobfaketech");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			for (int i = 0; i < usernames.length; i++) {
+				Log.println("Sarting: " + usernames[i]);
+
+				try {
+					authToken = Tools.authServer("dev.fieldnation.com", "/authentication/api/oauth/token", "password",
+							"demoapp", "demopass", usernames[i], passwords[i]);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				getProfile();
+				getWorkorders();
+				getExpenseCategories();
+				getMessages();
+				getPayments();
+			}
+			exportClasses();
+
+			Log.println("***********************************");
+			Enumeration<JavaObject> javaObjects = JavaObject.getJavaObjects();
+			while (javaObjects.hasMoreElements()) {
+				JavaObject obj = javaObjects.nextElement();
+
+				Log.println(obj.getUnderscoreFields());
 			}
 
-			// getProfile();
-			getWorkorders();
-			// getExpenseCategories();
-			// getMessages();
-			// getPayments();
-
-			exportClasses();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -228,6 +243,10 @@ public class J2J {
 						Log.println("no pay!");
 					}
 
+					if (!strres.contains("contactPhone")) {
+						Log.println("contactPhone");
+					}
+
 					JsonArray res = result.getResultsAsJsonArray();
 					if (res.size() == 0)
 						break;
@@ -242,7 +261,7 @@ public class J2J {
 				Log.println(i);
 				JsonObject workorder = objects.getJsonObject(i);
 
-				String url = "/api/rest/v1/workorder/" + workorder.getString("workorder_id") + "/details?access_token=" + authToken;
+				String url = "/api/rest/v1/workorder/" + workorder.getString("workorderId") + "/details?access_token=" + authToken;
 
 				Log.println(url);
 
@@ -258,6 +277,9 @@ public class J2J {
 				}
 				if (!res.contains("pay")) {
 					Log.println("no pay!");
+				}
+				if (!res.contains("contactPhone")) {
+					Log.println("contactPhone");
 				}
 
 				details.add(result.getResultsAsJsonObject());
@@ -296,7 +318,7 @@ public class J2J {
 			for (int i = 0; i < workorders.size(); i++) {
 				JsonObject workorder = workorders.getJsonObject(i);
 
-				String url = "/api/rest/v1/workorder/" + workorder.getLong("workorder_id") + "/messages?access_token=" + authToken;
+				String url = "/api/rest/v1/workorder/" + workorder.getLong("workorderId") + "/messages?access_token=" + authToken;
 				Log.println(url);
 				try {
 					Result result = Ws.httpGet(hostname, url);
@@ -304,6 +326,10 @@ public class J2J {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+			}
+
+			if (messages.size() > 0) {
+				System.out.println("BP");
 			}
 
 			Log.println("Building Class Structure");
@@ -319,7 +345,7 @@ public class J2J {
 			for (int i = 0; i < workorders.size(); i++) {
 				JsonObject workorder = workorders.getJsonObject(i);
 
-				String url = "/api/rest/v1/workorder/" + workorder.getLong("workorder_id") + "/tasks?access_token=" + authToken;
+				String url = "/api/rest/v1/workorder/" + workorder.getLong("workorderId") + "/tasks?access_token=" + authToken;
 				Log.println(url);
 				try {
 					Result result = Ws.httpGet(hostname, url);

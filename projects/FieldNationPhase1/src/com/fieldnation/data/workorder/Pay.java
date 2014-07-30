@@ -22,8 +22,6 @@ public class Pay {
 	private Double _blendedFirstHours;
 	@Json(name = "perHour")
 	private Double _perHour;
-	@Json(name = "basis")
-	private String _basis;
 	@Json(name = "blendedStartRate")
 	private Double _blendedStartRate;
 	@Json(name = "maximumAmount")
@@ -70,13 +68,6 @@ public class Pay {
 		return _perHour;
 	}
 
-	public String getBasis() {
-		if (_basis == null)
-			return _payRateBasis;
-
-		return _basis;
-	}
-
 	public Double getBlendedStartRate() {
 		return _blendedStartRate;
 	}
@@ -89,47 +80,16 @@ public class Pay {
 		return _expenses;
 	}
 
+	public String getPayRateBasis() {
+		return _payRateBasis;
+	}
+
 	public Double getBlendedAdditionalRate() {
 		return _blendedAdditionalRate;
 	}
 
 	public JsonObject toJson() {
 		return toJson(this);
-	}
-
-	public String[] toDisplayStringLong() {
-		String line1 = null;
-		String line2 = null;
-
-		String basis = getBasis();
-
-		if ("Fixed".equals(basis)) {
-			line1 = "Fixed " + misc.toCurrency(getFixedAmount());
-		} else if ("Hourly".equals(basis)) {
-			line1 = misc.toCurrency(getPerHour()) + " per hr up to " + getMaxHour() + " hours.";
-		} else if ("Blended".equals(basis)) {
-			line1 = misc.toCurrency(getBlendedStartRate()) + " per hr for the first " + getBlendedFirstHours() + " hours.";
-			line2 = "Then " + misc.toCurrency(getBlendedAdditionalRate()) + " per hr up to " + getBlendedAdditionalHours() + " hours.";
-		} else if ("Per Device".equals(basis)) {
-			line1 = misc.toCurrency(getPerDevice()) + " per device up to " + getMaxDevice() + " devices.";
-		}
-
-		return new String[] { line1, line2 };
-	}
-
-	public String toDisplayStringShort() {
-		String basis = getBasis();
-
-		if ("Fixed".equals(basis)) {
-			return misc.toCurrency(getFixedAmount());
-		} else if ("Hourly".equals(basis)) {
-			return misc.toCurrency(getPerHour()) + " X " + getMaxHour();
-		} else if ("Blended".equals(basis)) {
-			return misc.toCurrency(getBlendedStartRate()) + " X " + getBlendedFirstHours() + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " + getBlendedAdditionalHours();
-		} else if ("Per Device".equals(basis)) {
-			return misc.toCurrency(getPerDevice()) + " X " + getMaxDevice();
-		}
-		return null;
 	}
 
 	public static JsonObject toJson(Pay pay) {
@@ -148,6 +108,45 @@ public class Pay {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	/*-*************************************************-*/
+	/*-				Human Generated Code				-*/
+	/*-*************************************************-*/
+
+	public String[] toDisplayStringLong() {
+		String line1 = null;
+		String line2 = null;
+
+		String basis = getPayRateBasis();
+
+		if ("Fixed".equals(basis)) {
+			line1 = "Fixed " + misc.toCurrency(getFixedAmount());
+		} else if ("Hourly".equals(basis)) {
+			line1 = misc.toCurrency(getPerHour()) + " per hr up to " + getMaxHour() + " hours.";
+		} else if ("Blended".equals(basis)) {
+			line1 = misc.toCurrency(getBlendedStartRate()) + " per hr for the first " + getBlendedFirstHours() + " hours.";
+			line2 = "Then " + misc.toCurrency(getBlendedAdditionalRate()) + " per hr up to " + getBlendedAdditionalHours() + " hours.";
+		} else if ("Per Device".equals(basis)) {
+			line1 = misc.toCurrency(getPerDevice()) + " per device up to " + getMaxDevice() + " devices.";
+		}
+
+		return new String[] { line1, line2 };
+	}
+
+	public String toDisplayStringShort() {
+		String basis = getPayRateBasis();
+
+		if ("Fixed".equals(basis)) {
+			return misc.toCurrency(getFixedAmount());
+		} else if ("Hourly".equals(basis)) {
+			return misc.toCurrency(getPerHour()) + " X " + getMaxHour();
+		} else if ("Blended".equals(basis)) {
+			return misc.toCurrency(getBlendedStartRate()) + " X " + getBlendedFirstHours() + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " + getBlendedAdditionalHours();
+		} else if ("Per Device".equals(basis)) {
+			return misc.toCurrency(getPerDevice()) + " X " + getMaxDevice();
+		}
+		return null;
 	}
 
 }

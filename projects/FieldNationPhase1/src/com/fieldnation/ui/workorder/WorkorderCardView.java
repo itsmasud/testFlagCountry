@@ -465,7 +465,7 @@ public class WorkorderCardView extends RelativeLayout {
 		Pay pay = _workorder.getPay();
 		if (pay != null) {
 			String desc = pay.toDisplayStringShort();
-			_basisTextView.setText(pay.getBasis());
+			_basisTextView.setText(pay.getPayRateBasis());
 			if (desc != null) {
 				_paymentTextView.setText(desc.substring(1));
 			} else {

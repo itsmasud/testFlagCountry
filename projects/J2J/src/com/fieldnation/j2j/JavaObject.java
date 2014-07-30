@@ -136,6 +136,7 @@ public class JavaObject {
 	public String getUnderscoreFields() {
 		StringBuilder sb = new StringBuilder();
 
+		sb.append("Package: " + packageName + "\r\n");
 		sb.append("Object: " + name + "\r\n");
 		Enumeration<String> keys = _fields.keys();
 		while (keys.hasMoreElements()) {

@@ -5,29 +5,28 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Skillset {
+	@Json(name="dynamicTermId")
+	private Integer _dynamicTermId;
 	@Json(name = "name")
 	private String _name;
-	@Json(name = "dynamic_term_id")
-	private Integer _dynamicTermId;
 
 	public Skillset() {
+	}
+	public Integer getDynamicTermId(){
+		return _dynamicTermId;
 	}
 
 	public String getName() {
 		return _name;
 	}
 
-	public Integer getDynamicTermId() {
-		return _dynamicTermId;
-	}
-
 	public JsonObject toJson() {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(Skillset skillsets) {
+	public static JsonObject toJson(Skillset skillset) {
 		try {
-			return Serializer.serializeObject(skillsets);
+			return Serializer.serializeObject(skillset);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

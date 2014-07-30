@@ -11,20 +11,20 @@ public class Provider {
 	private Double _distance;
 	@Json(name = "state")
 	private String _state;
-	@Json(name = "photo_url")
-	private String _photoUrl;
 	@Json(name = "city")
 	private String _city;
+	@Json(name="photoUrl")
+	private String _photoUrl;
+	@Json(name="photoThumbUrl")
+	private String _photoThumbUrl;
 	@Json(name = "firstname")
 	private String _firstname;
+	@Json(name="userId")
+	private Integer _userId;
 	@Json(name = "lastname")
 	private String _lastname;
 	@Json(name = "latitude")
 	private Double _latitude;
-	@Json(name = "photo_thumb_url")
-	private String _photoThumbUrl;
-	@Json(name = "user_id")
-	private Integer _userId;
 
 	public Provider() {
 	}
@@ -41,16 +41,24 @@ public class Provider {
 		return _state;
 	}
 
+	public String getCity(){
+		return _city;
+	}
+
 	public String getPhotoUrl() {
 		return _photoUrl;
 	}
 
-	public String getCity() {
-		return _city;
+	public String getPhotoThumbUrl(){
+		return _photoThumbUrl;
 	}
 
 	public String getFirstname() {
 		return _firstname;
+	}
+
+	public Integer getUserId(){
+		return _userId;
 	}
 
 	public String getLastname() {
@@ -59,14 +67,6 @@ public class Provider {
 
 	public Double getLatitude() {
 		return _latitude;
-	}
-
-	public String getPhotoThumbUrl() {
-		return _photoThumbUrl;
-	}
-
-	public Integer getUserId() {
-		return _userId;
 	}
 
 	public JsonObject toJson() {

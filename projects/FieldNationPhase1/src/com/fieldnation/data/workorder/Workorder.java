@@ -12,8 +12,6 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 public class Workorder {
-	@Json(name = "workorder_id")
-	private Long _workorderId;
 	@Json(name = "location")
 	private Location _location;
 	@Json(name = "statusId")
@@ -32,6 +30,8 @@ public class Workorder {
 	private Integer _bundleId;
 	@Json(name = "industry")
 	private String _industry;
+	@Json(name = "workorderId")
+	private Long _workorderId;
 	@Json(name = "closing_notes")
 	private String _closingNotes;
 	@Json(name = "label")
@@ -83,11 +83,6 @@ public class Workorder {
 
 	public Workorder() {
 	}
-
-	public Long getWorkorderId() {
-		return _workorderId;
-	}
-
 	public Location getLocation() {
 		return _location;
 	}
@@ -122,6 +117,10 @@ public class Workorder {
 
 	public String getIndustry() {
 		return _industry;
+	}
+
+	public Long getWorkorderId(){
+		return _workorderId;
 	}
 
 	public String getClosingNotes() {

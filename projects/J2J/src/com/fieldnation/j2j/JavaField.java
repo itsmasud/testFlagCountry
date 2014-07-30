@@ -28,7 +28,7 @@ public class JavaField {
 
 		// Log.println("Field: " + name);
 
-		if (name.equals("dateEntered") && !"".equals(data)) {
+		if (name.equals("contactPhone") && !"".equals(data)) {
 			Log.println("BP");
 		}
 

@@ -12,7 +12,7 @@ public class TaskDetail {
 	@Json(name = "alertOnCompletionInput")
 	private Object _alertOnCompletionInput;
 	@Json(name = "alertOnCompletion")
-	private Object[] _alertOnCompletion;
+	private String[] _alertOnCompletion;
 	@Json(name = "taskId")
 	private Integer _taskId;
 	@Json(name = "identifier")
@@ -34,7 +34,7 @@ public class TaskDetail {
 	@Json(name = "isEditing")
 	private Boolean _isEditing;
 	@Json(name = "customField")
-	private Object _customField;
+	private Integer _customField;
 	@Json(name = "minutes")
 	private Integer _minutes;
 	@Json(name = "canDelete")
@@ -63,7 +63,7 @@ public class TaskDetail {
 		return _alertOnCompletionInput;
 	}
 
-	public Object[] getAlertOnCompletion() {
+	public String[] getAlertOnCompletion(){
 		return _alertOnCompletion;
 	}
 
@@ -107,7 +107,7 @@ public class TaskDetail {
 		return _isEditing;
 	}
 
-	public Object getCustomField() {
+	public Integer getCustomField(){
 		return _customField;
 	}
 

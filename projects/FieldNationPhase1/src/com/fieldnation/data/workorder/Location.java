@@ -12,22 +12,22 @@ public class Location {
 	private String _state;
 	@Json(name = "address2")
 	private String _address2;
-	@Json(name = "contact_phone_ext")
-	private Integer _contactPhoneExt;
 	@Json(name = "address1")
 	private String _address1;
 	@Json(name = "zip")
 	private String _zip;
 	@Json(name = "country")
 	private String _country;
+	@Json(name = "contactPhone")
+	private String _contactPhone;
+	@Json(name = "contactEmail")
+	private String _contactEmail;
 	@Json(name = "city")
 	private String _city;
-	@Json(name = "contact_name")
+	@Json(name = "contactPhoneExt")
+	private Integer _contactPhoneExt;
+	@Json(name = "contactName")
 	private String _contactName;
-	@Json(name = "contact_phone")
-	private String _contactPhone;
-	@Json(name = "contact_email")
-	private String _contactEmail;
 
 	public Location() {
 	}
@@ -44,13 +44,63 @@ public class Location {
 		return _address2;
 	}
 
+	public String getAddress1() {
+		return _address1;
+	}
+
+	public String getZip() {
+		return _zip;
+	}
+
+	public String getCountry() {
+		return _country;
+	}
+
+	public String getContactPhone() {
+		return _contactPhone;
+	}
+
+	public String getContactEmail() {
+		return _contactEmail;
+	}
+
+	public String getCity() {
+		return _city;
+	}
+
 	public Integer getContactPhoneExt() {
 		return _contactPhoneExt;
 	}
 
-	public String getAddress1() {
-		return _address1;
+	public String getContactName() {
+		return _contactName;
 	}
+
+	public JsonObject toJson() {
+		return toJson(this);
+	}
+
+	public static JsonObject toJson(Location location) {
+		try {
+			return Serializer.serializeObject(location);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Location fromJson(JsonObject json) {
+		try {
+			return Serializer.unserializeObject(Location.class, json);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	/*-*************************************************-*/
+	/*-				Human Generated Code				-*/
+	/*-*************************************************-*/
 
 	public String getTopAddressLine() {
 		if (getAddress1() != null || getAddress2() != null) {
@@ -90,52 +140,6 @@ public class Location {
 		address += _country;
 
 		return address;
-	}
-
-	public String getZip() {
-		return _zip;
-	}
-
-	public String getCountry() {
-		return _country;
-	}
-
-	public String getCity() {
-		return _city;
-	}
-
-	public String getContactName() {
-		return _contactName;
-	}
-
-	public String getContactPhone() {
-		return _contactPhone;
-	}
-
-	public String getContactEmail() {
-		return _contactEmail;
-	}
-
-	public JsonObject toJson() {
-		return toJson(this);
-	}
-
-	public static JsonObject toJson(Location location) {
-		try {
-			return Serializer.serializeObject(location);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
-
-	public static Location fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Location.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
 	}
 
 }

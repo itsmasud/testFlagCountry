@@ -9,9 +9,9 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class Schedule {
-	@Json(name = "end_time")
+	@Json(name = "endTime")
 	private String _endTime;
-	@Json(name = "start_time")
+	@Json(name = "startTime")
 	private String _startTime;
 
 	public Schedule() {
@@ -24,6 +24,32 @@ public class Schedule {
 	public String getStartTime() {
 		return _startTime;
 	}
+
+	public JsonObject toJson() {
+		return toJson(this);
+	}
+
+	public static JsonObject toJson(Schedule schedule) {
+		try {
+			return Serializer.serializeObject(schedule);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Schedule fromJson(JsonObject json) {
+		try {
+			return Serializer.unserializeObject(Schedule.class, json);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	/*-*************************************************-*/
+	/*-				Human Generated Code				-*/
+	/*-*************************************************-*/
 
 	public String getFormatedTime() {
 		try {
@@ -53,28 +79,6 @@ public class Schedule {
 			return null;
 		}
 
-	}
-
-	public JsonObject toJson() {
-		return toJson(this);
-	}
-
-	public static JsonObject toJson(Schedule schedule) {
-		try {
-			return Serializer.serializeObject(schedule);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
-
-	public static Schedule fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Schedule.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
 	}
 
 }

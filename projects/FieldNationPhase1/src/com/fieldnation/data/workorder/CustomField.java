@@ -11,7 +11,7 @@ public class CustomField {
 	private String _label;
 	@Json(name = "value")
 	private String _value;
-	@Json(name = "custom_label_id")
+	@Json(name="customLabelId")
 	private Integer _customLabelId;
 
 	public CustomField() {
