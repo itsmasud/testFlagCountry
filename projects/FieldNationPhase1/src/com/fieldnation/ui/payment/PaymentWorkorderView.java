@@ -22,24 +22,24 @@ import android.widget.TextView;
 public class PaymentWorkorderView extends RelativeLayout {
 	private static final String TAG = "ui.payment.PaymentWorkorderView";
 	// UI
-	private RelativeLayout _statusLayout;
+	// status
+	private View _statusView;
+	private TextView _statusTextView;
+	// bundle
+	private RelativeLayout _bundleLayout;
+
+	// center panel
+	// title
 	private TextView _titleTextView;
+	// items
 	private TextView _clientNameTextView;
-	private Button _detailButton;
-	private TextView _cashTextView;
-	private TextView _basisTextView;
 	private TextView _distanceTextView;
 	private TextView _whenTextView;
-	private TextView _statusTextView;
-	private LinearLayout _contentLayout;
-	private RelativeLayout _optionsLayout;
-	private RelativeLayout _bundleLayout;
-	private ImageView _bundleImageView;
-	private TextView _bundleTextView;
-	private View _bundleSeparator;
 
-	// Data
-	private GlobalState _gs;
+	// right panel
+	private TextView _paymentTextView;
+	private TextView _basisTextView;
+	private Button _actionButton;
 
 	public PaymentWorkorderView(Context context) {
 		this(context, null, -1);
@@ -56,40 +56,33 @@ public class PaymentWorkorderView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
-		_gs = (GlobalState) getContext().getApplicationContext();
-
-		_contentLayout = (LinearLayout) findViewById(R.id.content_layout);
-		_optionsLayout = (RelativeLayout) findViewById(R.id.options_layout);
-		// _optionsLayout.setOnClickListener(_options_onClick);
-		_optionsLayout.setClickable(false);
-
+		// connect UI
+		// main content
+		// status
+		_statusView = (RelativeLayout) findViewById(R.id.status_view);
 		_statusTextView = (TextView) findViewById(R.id.status_textview);
 
-		_statusLayout = (RelativeLayout) findViewById(R.id.status_layout);
-
+		// bundle
 		_bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
-		_bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);
-		_bundleTextView = (TextView) findViewById(R.id.bundle_textview);
-		_bundleSeparator = findViewById(R.id.bundle_separator);
 
+		// center panel
+		// title box
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
+		// items
 		_clientNameTextView = (TextView) findViewById(R.id.clientname_textview);
 		_distanceTextView = (TextView) findViewById(R.id.distance_textview);
 		_distanceTextView.setVisibility(GONE);
 		_whenTextView = (TextView) findViewById(R.id.when_textview);
 
-		_detailButton = (Button) findViewById(R.id.detail_button);
-		_detailButton.setVisibility(GONE);
-		// _detailButton.setOnClickListener(_detailButton_onClick);
+		_actionButton = (Button) findViewById(R.id.action_button);
+		_actionButton.setVisibility(GONE);
 
-		_cashTextView = (TextView) findViewById(R.id.payment_textview);
+		_paymentTextView = (TextView) findViewById(R.id.payment_textview);
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
-
-		// _cashLinearLayout.setVisibility(GONE);
 
 		setIsBundle(false);
 
-		_statusLayout.setBackgroundResource(R.drawable.wo_card_status_green);
+		_statusView.setBackgroundResource(R.drawable.wo_card_status_green);
 		_statusTextView.setTextColor(getContext().getResources().getColor(R.color.woCardStatusLabel3));
 
 	}
@@ -99,14 +92,12 @@ public class PaymentWorkorderView extends RelativeLayout {
 			_bundleLayout.setVisibility(VISIBLE);
 			_titleTextView.setVisibility(GONE);
 			_basisTextView.setVisibility(GONE);
-			_cashTextView.setVisibility(GONE);
-			_bundleSeparator.setVisibility(VISIBLE);
+			_paymentTextView.setVisibility(GONE);
 		} else {
 			_bundleLayout.setVisibility(GONE);
-			_bundleSeparator.setVisibility(GONE);
 			_titleTextView.setVisibility(VISIBLE);
 			_basisTextView.setVisibility(VISIBLE);
-			_cashTextView.setVisibility(VISIBLE);
+			_paymentTextView.setVisibility(VISIBLE);
 		}
 	}
 
@@ -131,7 +122,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 			_whenTextView.setVisibility(GONE);
 		}
 		_basisTextView.setText(misc.capitalize(payment.getPayMethod()));
-		_cashTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));
+		_paymentTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));
 		_statusTextView.setText(R.string.processing);
 
 	}

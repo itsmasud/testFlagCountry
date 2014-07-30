@@ -4,295 +4,258 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
+    <!-- not interested layout -->
+
     <RelativeLayout
-        android:id="@+id/options_layout"
-        style="@style/WorkorderCard_Options"
+        android:id="@+id/notinterested_layout"
+        style="@style/WorkorderCard_NotInterested"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignBottom="@+id/content_layout"
         android:layout_alignLeft="@+id/content_layout"
         android:layout_alignRight="@+id/content_layout"
-        android:layout_alignTop="@+id/content_layout"
-        android:layout_margin="20dp" >
+        android:layout_alignTop="@+id/content_layout" >
 
         <ImageView
             android:id="@+id/back_imageview"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            style="@style/WorkorderCard_NotInterested_BackButton"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/grabbar" />
+            android:layout_centerVertical="true" />
 
         <LinearLayout
-            android:id="@+id/notinterested_layout"
+            android:id="@+id/notinterested_button_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:orientation="horizontal" >
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_cancel" />
+            <ImageView style="@style/WorkorderCard_NotInterested_Icon" />
 
             <TextView
-                style="@style/WorkorderCard_Title"
+                style="@style/WorkorderCard_NotInterested_Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
-                android:maxLines="1"
-                android:paddingLeft="5dp"
-                android:text="Not Interested"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFFFF" />
+                android:text="@string/not_interested" />
         </LinearLayout>
     </RelativeLayout>
 
-    <LinearLayout
+    <!-- background -->
+
+    <RelativeLayout
+        android:id="@+id/background_layout"
+        style="@style/WorkorderCard_Background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/content_layout"
+        android:layout_alignLeft="@+id/content_layout"
+        android:layout_alignRight="@+id/content_layout"
+        android:layout_alignTop="@+id/content_layout" >
+
+        <View
+            style="@style/WorkorderCard_BackgroundView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/status_view" />
+
+        <View
+            android:id="@+id/status_view"
+            style="@style/WorkorderCard_StatusView"
+            android:layout_height="match_parent"
+            android:background="@drawable/wo_card_status_orange" />
+    </RelativeLayout>
+
+    <!-- main content -->
+
+    <RelativeLayout
         android:id="@+id/content_layout"
-        style="@style/WorkorderCard_Inside"
+        style="@style/WorkorderCard_MainContent"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:visibility="visible" >
 
+        <!-- status layout -->
+
+        <com.fieldnation.ui.VerticalTextView
+            android:id="@+id/status_textview"
+            style="@style/WorkorderCard_StatusText"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/error" />
+
+        <!-- bundle bar -->
+
         <RelativeLayout
-            android:id="@+id/status_layout"
-            style="@style/WorkorderCard_StatusBar"
-            android:layout_width="30dp"
-            android:layout_height="fill_parent" >
-
-            <com.fieldnation.ui.VerticalTextView
-                android:id="@+id/status_textview"
-                style="@style/WorkorderCard_StatusText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="@string/error" />
-
-            <View
-                style="@style/WorkorderCard_Separator"
-                android:layout_width="2px"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true" />
-        </RelativeLayout>
-
-        <LinearLayout
-            style="@style/WorkorderCard_DataContainer"
+            android:id="@+id/bundle_layout"
+            style="@style/WorkorderCard_BundleLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/status_textview"
+            android:visibility="gone" >
+
+            <ImageView
+                android:id="@+id/bundle_imageview"
+                style="@style/WorkorderCard_Bundle_Icon"
+                android:layout_alignParentLeft="true" />
+
+            <TextView
+                style="@style/WorkorderCard_Bundle_Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/bundle_imageview"
+                android:text="@string/bundle" />
+
+            <TextView
+                android:id="@+id/bundle_textview"
+                style="@style/WorkorderCard_Bundle_Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="@string/error" />
+        </RelativeLayout>
+
+        <!-- center panel -->
+
+        <LinearLayout
+            android:id="@+id/center_panel"
+            style="@style/WorkorderCard_CenterPanel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bundle_layout"
+            android:layout_toLeftOf="@+id/right_layout"
+            android:layout_toRightOf="@+id/status_textview"
             android:orientation="vertical" >
 
             <RelativeLayout
-                android:id="@+id/bundle_layout"
-                style="@style/WorkorderCard_BundleLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" >
+                android:layout_height="wrap_content" >
 
                 <ImageView
-                    android:id="@+id/bundle_imageview"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="5dp"
-                    android:src="@drawable/ic_bundle" />
+                    android:id="@+id/message_alert_imageview"
+                    style="@style/WorkorderCard_MessageIcon"
+                    android:layout_alignBaseline="@+id/title_textview"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/notification_alert_imageview"
+                    style="@style/WorkorderCard_NotificationIcon"
+                    android:layout_alignBaseline="@+id/title_textview"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/message_alert_imageview"
+                    android:visibility="gone" />
 
                 <TextView
+                    android:id="@+id/title_textview"
                     style="@style/WorkorderCard_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/bundle_imageview"
-                    android:maxLines="1"
-                    android:text="Bundle"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/bundle_textview"
-                    style="@style/WorkorderCard_Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:maxLines="1"
-                    android:text="@string/error"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:layout_toRightOf="@+id/notification_alert_imageview"
+                    android:text="@string/error" />
             </RelativeLayout>
 
-            <View
-                android:id="@+id/bundle_separator"
-                style="@style/WorkorderCard_Separator"
-                android:layout_width="fill_parent"
-                android:layout_height="2px"
-                android:visibility="gone" />
-
-            <RelativeLayout
-                style="@style/WorkorderCard_Inside"
+            <TextView
+                android:id="@+id/clientname_textview"
+                style="@style/WorkorderCard_Item"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent" >
+                android:layout_height="wrap_content"
+                android:text="@string/error" />
 
-                <LinearLayout
-                    android:id="@+id/data_layout"
+            <TextView
+                android:id="@+id/distance_textview"
+                style="@style/WorkorderCard_Item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/error" />
+
+            <TextView
+                android:id="@+id/location_textview"
+                style="@style/WorkorderCard_Item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/error" />
+
+            <TextView
+                android:id="@+id/when_textview"
+                style="@style/WorkorderCard_Item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/error" />
+
+            <TextView
+                android:id="@+id/workorderid_textview"
+                style="@style/WorkorderCard_Item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- right panel -->
+
+        <LinearLayout
+            android:id="@+id/right_layout"
+            style="@style/WorkorderCard_RightPanel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/bundle_layout"
+            android:layout_gravity="right"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/moneysymbol_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="top|right"
+                    android:text="@string/money" />
+
+                <TextView
+                    android:id="@+id/payment_textview"
+                    style="@style/WorkorderCard_PaymentLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/actions_layout"
-                    android:orientation="vertical" >
+                    android:gravity="right"
+                    android:text="1000000000000" />
+            </LinearLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
-
-                        <ImageView
-                            android:id="@+id/message_alert_imageview"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_alignBaseline="@+id/title_textview"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="1dp"
-                            android:src="@drawable/ic_message_thumb"
-                            android:visibility="gone" />
-
-                        <ImageView
-                            android:id="@+id/notification_alert_imageview"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_alignBaseline="@+id/title_textview"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="2dp"
-                            android:layout_toRightOf="@+id/message_alert_imageview"
-                            android:src="@drawable/ic_alert_thumb"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/title_textview"
-                            style="@style/WorkorderCard_Title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/notification_alert_imageview"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:text="@string/error"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-                    </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/clientname_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/error"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                    <TextView
-                        android:id="@+id/distance_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/error"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                    <TextView
-                        android:id="@+id/location_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/error"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                    <TextView
-                        android:id="@+id/when_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/error"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                    <TextView
-                        android:id="@+id/workorderid_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/actions_layout"
-                    style="@style/WorkorderCard_ActionsLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_alignParentRight="true"
-                    android:orientation="vertical" >
-
-                    <LinearLayout
-                        android:id="@+id/payment_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" >
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right"
-                            android:orientation="horizontal" >
-
-                            <TextView
-                                android:id="@+id/moneysymbol_textview"
-                                android:layout_width="wrap_content"
-                                android:layout_height="fill_parent"
-                                android:layout_alignParentLeft="true"
-                                android:layout_alignParentTop="true"
-                                android:gravity="top|right"
-                                android:text="@string/money"
-                                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                            <TextView
-                                android:id="@+id/payment_textview"
-                                style="@style/WorkorderCard_PaymentLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:ellipsize="none"
-                                android:gravity="right"
-                                android:maxLines="1"
-                                android:text="000000000000"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textSize="24sp" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/basis_textview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@+id/payment_textview"
-                            android:layout_below="@+id/payment_textview"
-                            android:layout_gravity="right"
-                            android:gravity="right"
-                            android:maxLines="1"
-                            android:text="@string/error"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/detail_button"
-                        style="@style/WorkorderCard_Button"
-                        android:layout_width="100dp"
-                        android:layout_height="48dp"
-                        android:layout_gravity="bottom|fill_vertical|right"
-                        android:maxLines="1"
-                        android:text="@string/error" />
-                </LinearLayout>
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/basis_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/error" />
         </LinearLayout>
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/action_button"
+            style="@style/WorkorderCard_Button"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/error"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <!-- loading layout -->
 
     <RelativeLayout
         android:id="@+id/loading_layout"
+        style="@style/WorkorderCard_LoadingLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignBottom="@+id/content_layout"
         android:layout_alignLeft="@+id/content_layout"
         android:layout_alignRight="@+id/content_layout"
         android:layout_alignTop="@+id/content_layout"
-        android:background="#55000000"
         android:visibility="gone" >
 
         <ProgressBar
@@ -302,15 +265,17 @@
             android:layout_centerInParent="true" />
     </RelativeLayout>
 
+    <!-- undo layout -->
+
     <RelativeLayout
         android:id="@+id/undo_layout"
+        style="@style/WorkorderCard_UndoLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignBottom="@+id/content_layout"
         android:layout_alignLeft="@+id/content_layout"
         android:layout_alignRight="@+id/content_layout"
         android:layout_alignTop="@+id/content_layout"
-        android:background="#55000000"
         android:visibility="gone" >
 
         <Button

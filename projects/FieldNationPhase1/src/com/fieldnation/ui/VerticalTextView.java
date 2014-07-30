@@ -48,7 +48,7 @@ public class VerticalTextView extends TextView {
 			canvas.translate(getWidth(), 0);
 			canvas.rotate(90);
 		} else {
-			canvas.translate(0, getHeight());
+			canvas.translate(getWidth() / 5, getHeight());
 			canvas.rotate(-90);
 		}
 
