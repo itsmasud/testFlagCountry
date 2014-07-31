@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class AuthCacheSqlHelper extends SQLiteOpenHelper {
 	// Note: increment this value every time the structure of the database is
 	// changed.
-	private static final int TABLE_VER = 7;
+	private static final int TABLE_VER = 8;
 	public static final String TABLE_NAME = "auth_cache";
 
 	public enum Column {

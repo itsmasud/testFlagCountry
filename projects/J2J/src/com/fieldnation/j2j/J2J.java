@@ -33,11 +33,12 @@ public class J2J {
 					e.printStackTrace();
 				}
 
-				getProfile();
-				getWorkorders();
-				getExpenseCategories();
-				getMessages();
-				getPayments();
+//				getProfile();
+//				getWorkorders();
+//				getExpenseCategories();
+//				getMessages();
+//				getPayments();
+				getNotifications();
 			}
 			exportClasses();
 
@@ -184,7 +185,6 @@ public class J2J {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
 	}
 
 	private static void getProfile() {
@@ -196,6 +196,34 @@ public class J2J {
 
 			Log.println("Building Class Structure");
 			addData(obj, "com.fieldnation.data.profile", "Profile");
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private static void getNotifications() {
+		String[] urls = new String[] {
+				"/api/rest/v1/profile/notifications/new?access_token=" + authToken + "&page=",
+				"/api/rest/v1/profile/notifications?access_token=" + authToken + "&page=" };
+		try {
+			JsonArray objects = new JsonArray();
+
+			for (int i = 0; i < urls.length; i++) {
+				for (int j = 0; true; j++) {
+					Log.println(urls[i] + j);
+					Result result = Ws.httpGet(hostname, urls[i] + j);
+
+					JsonArray ja = result.getResultsAsJsonArray();
+					if (ja.size() == 0)
+						break;
+
+					objects.merge(result.getResultsAsJsonArray());
+				}
+			}
+
+			Log.println("Building Class Structure");
+			addData(objects, "com.fieldnation.data.profile", "Notification");
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

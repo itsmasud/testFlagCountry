@@ -12,6 +12,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -63,9 +64,8 @@ public class NotificationActionBarView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-
+			Intent intent = new Intent(getContext(), NotificationListActivity.class);
+			getContext().startActivity(intent);
 		}
 	};
 

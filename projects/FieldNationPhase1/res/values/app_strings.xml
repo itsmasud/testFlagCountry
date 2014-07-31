@@ -50,6 +50,9 @@
     <!-- payments list activity -->
     <string name="activity_payments_list_title">Payments</string>
 
+    <!-- notifications list activity -->
+    <string name="activity_notifications_list_title">Notifications</string>
+
     <!-- Drawer strings -->
     <string name="mywork_title">Work Orders</string>
     <string name="mywork_subtitle">Assigned, Pending Approval and Completed jobs</string>

@@ -1,6 +1,8 @@
 package com.fieldnation.ui;
 
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Notification;
+
 import android.os.Bundle;
 
 public class NotificationListActivity extends BaseActivity {
@@ -10,7 +12,7 @@ public class NotificationListActivity extends BaseActivity {
 	private ListViewEx _listView;
 
 	// Data
-	private MessagesListAdapter _adapter;
+	private NotificationListAdapter _adapter;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -48,7 +50,7 @@ public class NotificationListActivity extends BaseActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private MessagesListAdapter.Listener _adapter_listener = new MessagesListAdapter.Listener() {
+	private NotificationListAdapter.Listener<Notification> _adapter_listener = new NotificationListAdapter.Listener<Notification>() {
 
 		@Override
 		public void onLoading() {
@@ -72,15 +74,15 @@ public class NotificationListActivity extends BaseActivity {
 	/*-				Util				-*/
 	/*-*********************************-*/
 
-	private MessagesListAdapter getListAdapter() {
+	private NotificationListAdapter getListAdapter() {
 		try {
 			if (_adapter == null) {
-				_adapter = new MessagesListAdapter(this);
+				_adapter = new NotificationListAdapter(this);
 				_adapter.setLoadingListener(_adapter_listener);
 			}
 
 			if (!_adapter.isViable()) {
-				_adapter = new MessagesListAdapter(this);
+				_adapter = new NotificationListAdapter(this);
 				_adapter.setLoadingListener(_adapter_listener);
 			}
 

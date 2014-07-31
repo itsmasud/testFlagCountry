@@ -1,6 +1,7 @@
 package com.fieldnation.ui;
 
 import com.fieldnation.data.profile.Message;
+import com.fieldnation.data.profile.Notification;
 import com.fieldnation.rpc.client.ProfileService;
 
 import android.app.Activity;
@@ -9,30 +10,30 @@ import android.os.ResultReceiver;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class NotificationListAdapter extends PagingListAdapter<Message> {
+public class NotificationListAdapter extends PagingListAdapter<Notification> {
 	private static final String TAG = "ui.NotificationListAdapter";
 
 	private ProfileService _profileService = null;
 
 	public NotificationListAdapter(Activity activity) {
-		super(activity, Message.class);
+		super(activity, Notification.class);
 	}
 
 	@Override
-	public View getView(Message obj, View convertView, ViewGroup parent) {
-		MessageCardView mv = null;
+	public View getView(Notification obj, View convertView, ViewGroup parent) {
+		NotificationView note = null;
 
 		if (convertView == null) {
-			mv = new MessageCardView(getContext());
+			note = new NotificationView(getContext());
 		} else if (convertView instanceof MessageCardView) {
-			mv = (MessageCardView) convertView;
+			note = (NotificationView) convertView;
 		} else {
-			mv = new MessageCardView(getContext());
+			note = new NotificationView(getContext());
 		}
 
-		mv.setMessage(obj);
+		note.setNotification(obj);
 
-		return mv;
+		return note;
 	}
 
 	@Override
@@ -54,6 +55,6 @@ public class NotificationListAdapter extends PagingListAdapter<Message> {
 
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
-		getContext().startService(_profileService.getUnreadMessages(resultCode, page, allowCache));
+		getContext().startService(_profileService.getAllNotifications(resultCode, page, allowCache));
 	}
 }

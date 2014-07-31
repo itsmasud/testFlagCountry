@@ -48,6 +48,9 @@ public class WorkorderCardView extends RelativeLayout {
 	private ImageView _backImageView;
 	private LinearLayout _notInterestedButtonLayout;
 
+	// background
+	private RelativeLayout _backgroundLayout;
+
 	// main content
 	private RelativeLayout _contentLayout;
 	// status
@@ -117,6 +120,8 @@ public class WorkorderCardView extends RelativeLayout {
 		_notInterestedButtonLayout = (LinearLayout) findViewById(R.id.notinterested_button_layout);
 		_notInterestedButtonLayout.setOnClickListener(_notInterestedButton_onClick);
 		_notInterestedButtonLayout.setClickable(false);
+
+		_backgroundLayout = (RelativeLayout) findViewById(R.id.background_layout);
 
 		// main content
 		_contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
@@ -227,6 +232,7 @@ public class WorkorderCardView extends RelativeLayout {
 				_backImageView.setClickable(false);
 				_notInterestedButtonLayout.setClickable(false);
 				_contentLayout.startAnimation(_slideBackAnimation);
+				_backgroundLayout.startAnimation(_slideBackAnimation);
 				setDisplayMode(MODE_UNDO_NOT_INTERESTED);
 			}
 		}
@@ -238,6 +244,7 @@ public class WorkorderCardView extends RelativeLayout {
 			_backImageView.setClickable(false);
 			_notInterestedButtonLayout.setClickable(false);
 			_contentLayout.startAnimation(_slideBackAnimation);
+			_backgroundLayout.startAnimation(_slideBackAnimation);
 		}
 	};
 
@@ -256,6 +263,7 @@ public class WorkorderCardView extends RelativeLayout {
 			_backImageView.setClickable(true);
 			_notInterestedButtonLayout.setClickable(true);
 			_contentLayout.startAnimation(_slideAnimation);
+			_backgroundLayout.startAnimation(_slideAnimation);
 			return true;
 		}
 	};

@@ -83,19 +83,22 @@ public class Serializer {
 	}
 
 	/*-			From JsonStuff			-*/
-	private static Object unserialize(Class<?> destClass, Object source,
-			Object init, Class<?> paramType) throws Exception {
-		if (isPrimitive(destClass)) {
-			return unserializePrimitive(destClass, source.toString());
+	private static Object unserialize(Class<?> destClass, Object source, Object init, Class<?> paramType) {
+		try {
+			if (isPrimitive(destClass)) {
+				return unserializePrimitive(destClass, source.toString());
+			}
+			if (isArray(destClass)) {
+				return unserializeArray(destClass, (JsonArray) source);
+			}
+			if (isCollection(destClass)) {
+				return unserializeCollection(destClass, (JsonArray) source, (Collection<Object>) init, paramType);
+			}
+			return unserializeObject(destClass, (JsonObject) source);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
 		}
-		if (isArray(destClass)) {
-			return unserializeArray(destClass, (JsonArray) source);
-		}
-		if (isCollection(destClass)) {
-			return unserializeCollection(destClass, (JsonArray) source,
-					(Collection<Object>) init, paramType);
-		}
-		return unserializeObject(destClass, (JsonObject) source);
 
 	}
 
@@ -151,8 +154,8 @@ public class Serializer {
 		return dest;
 	}
 
-	private static Object unserializeCollection(Class<?> destClass,
-			JsonArray source, Collection<Object> init, Class<?> paramType) throws Exception {
+	private static Object unserializeCollection(Class<?> destClass, JsonArray source, Collection<Object> init,
+			Class<?> paramType) throws Exception {
 
 		if (paramType == null) {
 			throw new IllegalArgumentException(
@@ -168,7 +171,7 @@ public class Serializer {
 
 	public static <T> T unserializeObject(Class<T> clazz, JsonObject source) throws Exception {
 		Constructor<T> c = clazz.getConstructor((Class<?>[]) null);
-		//System.out.println("Class: " + clazz.getName());
+		// System.out.println("Class: " + clazz.getName());
 		T dest = c.newInstance();
 
 		Field[] fields = clazz.getDeclaredFields();
@@ -190,21 +193,16 @@ public class Serializer {
 					if (collectionParameterType != null) {
 						field.set(
 								dest,
-								unserialize(fieldclass, source.get(jname),
-										field.get(dest),
+								unserialize(fieldclass, source.get(jname), field.get(dest),
 										collectionParameterType.param()));
 
 					} else {
-						field.set(
-								dest,
-								unserialize(fieldclass, source.get(jname),
-										field.get(dest), null));
+						field.set(dest, unserialize(fieldclass, source.get(jname), field.get(dest), null));
 					}
 				}
 			} catch (Exception ex) {
 				System.out.println("Failure parsing " + clazz.getName() + "." + jname);
-				throw new Exception(
-						"Failure parsing " + clazz.getName() + ":" + jname, ex);
+				throw new Exception("Failure parsing " + clazz.getName() + ":" + jname, ex);
 			}
 
 		}
