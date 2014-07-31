@@ -23,38 +23,33 @@
         android:text="Name of project goes here" />
 
     <TextView
-        android:id="@+id/clientname_textview"
+        android:id="@+id/workorderid_textview"
         style="@style/WorkorderDetail_Field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Client Name" />
+        android:text="Work Order ID" />
 
     <TextView
-        android:id="@+id/worktype_textview"
         style="@style/WorkorderDetail_Field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Type of Work" />
 
     <TextView
-        android:id="@+id/skills_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Skill 1 * Skill 2 * Skill 3" />
-
-    <TextView
-        android:id="@+id/datetime_textview"
-        style="@style/WorkorderDetail_Field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="04/12/14 - 04/23/14 @ 2pm" />
+        android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. " />
 
-    <TextView
-        android:id="@+id/workorderid_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Work Order ID" />
+        android:text="View Confidential Information" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Customer Policies and Procedures" />
 
 </LinearLayout>

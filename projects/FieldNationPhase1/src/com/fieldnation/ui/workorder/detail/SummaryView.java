@@ -21,9 +21,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	private View _substatusProgress; // TODO, need to implement!
 	private TextView _projectNameTextView;
 	private TextView _clientNameTextView;
-	private TextView _workTypeTextView;
-	private TextView _skillsTextView;
-	private TextView _dateTimeTextView;
 	private TextView _workorderIdTextView;
 
 	// Data
@@ -48,9 +45,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 		_substatusProgress = findViewById(R.id.substatus_progress);
 		_projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
 		_clientNameTextView = (TextView) findViewById(R.id.clientname_textview);
-		_workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
-		_skillsTextView = (TextView) findViewById(R.id.skills_textview);
-		_dateTimeTextView = (TextView) findViewById(R.id.datetime_textview);
 		_workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
 
 	}
@@ -76,37 +70,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 			if (location.getContactName() != null) {
 				_clientNameTextView.setText(location.getContactName());
 			}
-		}
-
-		_workTypeTextView.setText(_workoder.getTypeOfWork());
-
-		String skillString = "";
-		Skillset[] skills = _workoder.getSkillsets();
-		if (skills != null) {
-			for (int i = 0; i < skills.length; i++) {
-				Skillset skillset = skills[i];
-
-				skillString += skillset.getName();
-
-				if (i < skills.length - 1) {
-					skillString += " * ";
-				}
-			}
-		}
-
-		_skillsTextView.setText(skillString);
-
-		Schedule schedule = _workoder.getSchedule();
-		if (schedule != null) {
-			String when = schedule.getFormatedTime();
-			if (when != null) {
-				_dateTimeTextView.setVisibility(VISIBLE);
-				_dateTimeTextView.setText(when);
-			} else {
-				_dateTimeTextView.setVisibility(GONE);
-			}
-		} else {
-			_dateTimeTextView.setVisibility(GONE);
 		}
 
 		_workorderIdTextView.setText("ID " + _workoder.getWorkorderId());

@@ -6,6 +6,8 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class Location {
+	@Json(name="name")
+	private String _name;
 	@Json(name = "distance")
 	private Double _distance;
 	@Json(name = "state")
@@ -24,12 +26,17 @@ public class Location {
 	private String _contactEmail;
 	@Json(name = "city")
 	private String _city;
+	@Json(name="notes")
+	private String _notes;
 	@Json(name = "contactPhoneExt")
 	private Integer _contactPhoneExt;
 	@Json(name = "contactName")
 	private String _contactName;
 
 	public Location() {
+	}
+	public String getName(){
+		return _name;
 	}
 
 	public Double getDistance() {
@@ -66,6 +73,10 @@ public class Location {
 
 	public String getCity() {
 		return _city;
+	}
+
+	public String getNotes(){
+		return _notes;
 	}
 
 	public Integer getContactPhoneExt() {

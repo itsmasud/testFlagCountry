@@ -14,7 +14,7 @@ import com.fieldnation.ui.workorder.WorkorderDataSelector;
 public class Workorder {
 	@Json(name = "location")
 	private Location _location;
-	@Json(name="standardInstructions")
+	@Json(name = "standardInstructions")
 	private String _standardInstructions;
 	@Json(name = "statusId")
 	private Integer _statusId;
@@ -24,7 +24,7 @@ public class Workorder {
 	private Boolean _isRequest;
 	@Json(name = "distance")
 	private Double _distance;
-	@Json(name="closingNotes")
+	@Json(name = "closingNotes")
 	private String _closingNotes;
 	@Json(name = "customFields")
 	private CustomField[] _customFields;
@@ -76,18 +76,19 @@ public class Workorder {
 	private Provider[] _provider;
 	@Json(name = "typeOfWork")
 	private String _typeOfWork;
-	@Json(name="companyName")
+	@Json(name = "companyName")
 	private String _companyName;
 	@Json(name = "title")
 	private String _title;
 
 	public Workorder() {
 	}
+
 	public Location getLocation() {
 		return _location;
 	}
 
-	public String getStandardInstructions(){
+	public String getStandardInstructions() {
 		return _standardInstructions;
 	}
 
@@ -107,7 +108,7 @@ public class Workorder {
 		return _distance;
 	}
 
-	public String getClosingNotes(){
+	public String getClosingNotes() {
 		return _closingNotes;
 	}
 
@@ -127,11 +128,11 @@ public class Workorder {
 		return _industry;
 	}
 
-	public Long getWorkorderId(){
+	public Long getWorkorderId() {
 		return _workorderId;
 	}
 
-	public Label[] getLabels(){
+	public Label[] getLabels() {
 		return _label;
 	}
 
@@ -211,7 +212,7 @@ public class Workorder {
 		return _typeOfWork;
 	}
 
-	public String getCompanyName(){
+	public String getCompanyName() {
 		return _companyName;
 	}
 

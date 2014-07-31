@@ -33,11 +33,11 @@ public class J2J {
 					e.printStackTrace();
 				}
 
-//				getProfile();
-//				getWorkorders();
-//				getExpenseCategories();
-//				getMessages();
-//				getPayments();
+				getProfile();
+				getWorkorders();
+				getExpenseCategories();
+				getMessages();
+				getPayments();
 				getNotifications();
 			}
 			exportClasses();
