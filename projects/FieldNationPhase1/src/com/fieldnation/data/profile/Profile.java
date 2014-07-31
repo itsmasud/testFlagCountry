@@ -9,7 +9,7 @@ public class Profile{
 	private String _state;
 	@Json(name="photo")
 	private Photo _photo;
-	@Json(name="workorders_total")
+	@Json(name="workordersTotal")
 	private Integer _workordersTotal;
 	@Json(name="rating")
 	private Double _rating;
@@ -19,24 +19,24 @@ public class Profile{
 	private Integer _unreadMessageCount;
 	@Json(name="newNotificationCount")
 	private Integer _newNotificationCount;
-	@Json(name="ratings_total")
-	private Integer _ratingsTotal;
+	@Json(name="marketplaceStatusOn")
+	private Boolean _marketplaceStatusOn;
 	@Json(name="firstname")
 	private String _firstname;
+	@Json(name="userId")
+	private Integer _userId;
 	@Json(name="lastname")
 	private String _lastname;
 	@Json(name="phone")
 	private String _phone;
 	@Json(name="email")
 	private String _email;
-	@Json(name="marketplace_status_on")
-	private Boolean _marketplaceStatusOn;
+	@Json(name="ratingsTotal")
+	private Integer _ratingsTotal;
 	@Json(name="tagline")
 	private String _tagline;
 	@Json(name="description")
 	private String _description;
-	@Json(name="user_id")
-	private Integer _userId;
 
 	public Profile(){
 	}
@@ -68,12 +68,16 @@ public class Profile{
 		return _newNotificationCount;
 	}
 
-	public Integer getRatingsTotal(){
-		return _ratingsTotal;
+	public Boolean getMarketplaceStatusOn(){
+		return _marketplaceStatusOn;
 	}
 
 	public String getFirstname(){
 		return _firstname;
+	}
+
+	public Integer getUserId(){
+		return _userId;
 	}
 
 	public String getLastname(){
@@ -88,8 +92,8 @@ public class Profile{
 		return _email;
 	}
 
-	public Boolean getMarketplaceStatusOn(){
-		return _marketplaceStatusOn;
+	public Integer getRatingsTotal(){
+		return _ratingsTotal;
 	}
 
 	public String getTagline(){
@@ -98,10 +102,6 @@ public class Profile{
 
 	public String getDescription(){
 		return _description;
-	}
-
-	public int getUserId(){
-		return _userId;
 	}
 
 	public JsonObject toJson(){

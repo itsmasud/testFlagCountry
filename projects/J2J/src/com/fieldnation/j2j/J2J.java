@@ -243,8 +243,8 @@ public class J2J {
 						Log.println("no pay!");
 					}
 
-					if (!strres.contains("contactPhone")) {
-						Log.println("contactPhone");
+					if (!strres.contains("file_url")) {
+						Log.println("file_url");
 					}
 
 					JsonArray res = result.getResultsAsJsonArray();
@@ -278,8 +278,8 @@ public class J2J {
 				if (!res.contains("pay")) {
 					Log.println("no pay!");
 				}
-				if (!res.contains("contactPhone")) {
-					Log.println("contactPhone");
+				if (!res.contains("file_url")) {
+					Log.println("file_url");
 				}
 
 				details.add(result.getResultsAsJsonObject());

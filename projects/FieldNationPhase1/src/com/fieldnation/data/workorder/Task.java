@@ -5,7 +5,7 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Task {
-	@Json(name="task_id")
+	@Json(name="taskId")
 	private Integer _taskId;
 	@Json(name="type")
 	private String _type;

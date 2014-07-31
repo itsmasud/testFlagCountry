@@ -37,9 +37,9 @@ public class CustomField {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(CustomField customFields) {
+	public static JsonObject toJson(CustomField customField) {
 		try {
-			return Serializer.serializeObject(customFields);
+			return Serializer.serializeObject(customField);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

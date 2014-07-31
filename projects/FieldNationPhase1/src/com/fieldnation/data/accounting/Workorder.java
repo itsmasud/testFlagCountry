@@ -5,50 +5,49 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
-	@Json(name = "wo_start_date")
-	private String _woStartDate;
+	@Json(name="fullWorkDescription")
+	private String _fullWorkDescription;
+	@Json(name="endTime")
+	private String _endTime;
 	@Json(name = "amount")
 	private Double _amount;
-	@Json(name = "wo_end_date")
-	private String _woEndDate;
-	@Json(name = "description")
-	private String _description;
-	@Json(name = "wo_number")
-	private Integer _woNumber;
-	@Json(name = "wo_title")
-	private String _woTitle;
-	@Json(name = "client_name")
+	@Json(name="workorderId")
+	private Integer _workorderId;
+	@Json(name="clientName")
 	private String _clientName;
+	@Json(name="startTime")
+	private String _startTime;
+	@Json(name="title")
+	private String _title;
 
 	public Workorder() {
 	}
+	public String getFullWorkDescription(){
+		return _fullWorkDescription;
+	}
 
-	public String getWoStartDate() {
-		return _woStartDate;
+	public String getEndTime(){
+		return _endTime;
 	}
 
 	public Double getAmount(){
 		return _amount;
 	}
 
-	public String getWoEndDate() {
-		return _woEndDate;
+	public Integer getWorkorderId(){
+		return _workorderId;
 	}
 
-	public String getDescription() {
-		return _description;
-	}
-
-	public Integer getWoNumber(){
-		return _woNumber;
-	}
-
-	public String getWoTitle() {
-		return _woTitle;
-	}
-
-	public String getClientName() {
+	public String getClientName(){
 		return _clientName;
+	}
+
+	public String getStartTime(){
+		return _startTime;
+	}
+
+	public String getTitle(){
+		return _title;
 	}
 
 	public JsonObject toJson() {

@@ -5,12 +5,14 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Message {
-	@Json(name = "photo_url")
-	private String _photoUrl;
+	@Json(name = "file_url")
+	private String _file_Url;
 	@Json(name = "date")
 	private String _date;
-	@Json(name = "file_url")
-	private String _fileUrl;
+	@Json(name = "photoUrl")
+	private String _photoUrl;
+	@Json(name = "photoThumbUrl")
+	private String _photoThumbUrl;
 	@Json(name = "replies")
 	private Replies[] _replies;
 	@Json(name = "messageFrom")
@@ -19,24 +21,30 @@ public class Message {
 	private Long _messageId;
 	@Json(name = "workorderId")
 	private Integer _workorderId;
-	@Json(name = "photo_thumb_url")
-	private String _photoThumbUrl;
+	@Json(name = "fileUrl")
+	private String _fileUrl;
 	@Json(name = "message")
 	private String _message;
 
 	public Message() {
 	}
 
-	public String getPhotoUrl() {
-		return _photoUrl;
+	public String getFileUrl() {
+		if (_fileUrl == null)
+			return _file_Url;
+		return _fileUrl;
 	}
 
 	public String getDate() {
 		return _date;
 	}
 
-	public String getFileUrl() {
-		return _fileUrl;
+	public String getPhotoUrl() {
+		return _photoUrl;
+	}
+
+	public String getPhotoThumbUrl() {
+		return _photoThumbUrl;
 	}
 
 	public Replies[] getReplies() {
@@ -53,10 +61,6 @@ public class Message {
 
 	public Integer getWorkorderId() {
 		return _workorderId;
-	}
-
-	public String getPhotoThumbUrl() {
-		return _photoThumbUrl;
 	}
 
 	public String getMessage() {

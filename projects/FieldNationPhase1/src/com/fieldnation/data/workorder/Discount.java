@@ -5,7 +5,7 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Discount{
-	@Json(name="discount_id")
+	@Json(name="discountId")
 	private Integer _discountId;
 	@Json(name = "amount")
 	private Double _amount;
@@ -30,9 +30,9 @@ public class Discount{
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(Discount discounts) {
+	public static JsonObject toJson(Discount discount) {
 		try {
-			return Serializer.serializeObject(discounts);
+			return Serializer.serializeObject(discount);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

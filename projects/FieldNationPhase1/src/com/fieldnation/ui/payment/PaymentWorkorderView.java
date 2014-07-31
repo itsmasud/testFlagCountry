@@ -102,13 +102,13 @@ public class PaymentWorkorderView extends RelativeLayout {
 	}
 
 	public void setWorkorder(Payment payment, Workorder wo) {
-		_titleTextView.setText(wo.getWoTitle());
+		_titleTextView.setText(wo.getTitle());
 		_clientNameTextView.setText(wo.getClientName());
 
 		try {
-			if (wo.getWoEndDate() != null) {
+			if (wo.getEndTime() != null) {
 				String when = "";
-				Calendar cal = ISO8601.toCalendar(wo.getWoEndDate());
+				Calendar cal = ISO8601.toCalendar(wo.getEndTime());
 
 				when = misc.formatDate(cal);
 

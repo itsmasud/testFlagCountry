@@ -49,9 +49,9 @@ public class Deliverable {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(Deliverable deliverables) {
+	public static JsonObject toJson(Deliverable deliverable) {
 		try {
-			return Serializer.serializeObject(deliverables);
+			return Serializer.serializeObject(deliverable);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

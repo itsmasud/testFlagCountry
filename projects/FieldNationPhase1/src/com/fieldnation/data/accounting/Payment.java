@@ -5,28 +5,31 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Payment {
+	@Json(name="paymentId")
+	private Integer _paymentId;
+	@Json(name="datePaid")
+	private String _datePaid;
 	@Json(name = "status")
 	private String _status;
-	@Json(name = "date_paid")
-	private String _datePaid;
 	@Json(name = "amount")
 	private Double _amount;
-	@Json(name = "pay_method")
+	@Json(name="payMethod")
 	private String _payMethod;
-	@Json(name = "payment_id")
-	private Integer _paymentId;
 	@Json(name = "workorders")
 	private Workorder[] _workorders;
 
 	public Payment() {
 	}
-
-	public String getStatus() {
-		return _status;
+	public Integer getPaymentId(){
+		return _paymentId;
 	}
 
 	public String getDatePaid() {
 		return _datePaid;
+	}
+
+	public String getStatus(){
+		return _status;
 	}
 
 	public Double getAmount(){
@@ -35,10 +38,6 @@ public class Payment {
 
 	public String getPayMethod() {
 		return _payMethod;
-	}
-
-	public Integer getPaymentId(){
-		return _paymentId;
 	}
 
 	public Workorder[] getWorkorders() {

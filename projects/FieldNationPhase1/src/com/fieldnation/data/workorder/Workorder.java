@@ -14,6 +14,8 @@ import com.fieldnation.ui.workorder.WorkorderDataSelector;
 public class Workorder {
 	@Json(name = "location")
 	private Location _location;
+	@Json(name="standardInstructions")
+	private String _standardInstructions;
 	@Json(name = "statusId")
 	private Integer _statusId;
 	@Json(name = "identifier")
@@ -22,6 +24,8 @@ public class Workorder {
 	private Boolean _isRequest;
 	@Json(name = "distance")
 	private Double _distance;
+	@Json(name="closingNotes")
+	private String _closingNotes;
 	@Json(name = "customFields")
 	private CustomField[] _customFields;
 	@Json(name = "fullWorkDescription")
@@ -32,8 +36,6 @@ public class Workorder {
 	private String _industry;
 	@Json(name = "workorderId")
 	private Long _workorderId;
-	@Json(name = "closing_notes")
-	private String _closingNotes;
 	@Json(name = "label")
 	private Label[] _label;
 	@Json(name = "estimatedSchedule")
@@ -44,8 +46,6 @@ public class Workorder {
 	private Boolean _isCounter;
 	@Json(name = "pay")
 	private Pay _pay;
-	@Json(name = "standard_instructions")
-	private String _standardInstructions;
 	@Json(name = "discounts")
 	private Discount[] _discounts;
 	@Json(name = "customerPoliciesProcedures")
@@ -54,8 +54,6 @@ public class Workorder {
 	private Task[] _tasks;
 	@Json(name = "shipmentTracking")
 	private ShipmentTracking[] _shipmentTracking;
-	@Json(name = "company_name")
-	private String _companyName;
 	@Json(name = "additionalExpenses")
 	private AdditionalExpense[] _additionalExpenses;
 	@Json(name = "documents")
@@ -78,6 +76,8 @@ public class Workorder {
 	private Provider[] _provider;
 	@Json(name = "typeOfWork")
 	private String _typeOfWork;
+	@Json(name="companyName")
+	private String _companyName;
 	@Json(name = "title")
 	private String _title;
 
@@ -85,6 +85,10 @@ public class Workorder {
 	}
 	public Location getLocation() {
 		return _location;
+	}
+
+	public String getStandardInstructions(){
+		return _standardInstructions;
 	}
 
 	public Integer getStatusId() {
@@ -101,6 +105,10 @@ public class Workorder {
 
 	public Double getDistance() {
 		return _distance;
+	}
+
+	public String getClosingNotes(){
+		return _closingNotes;
 	}
 
 	public CustomField[] getCustomFields() {
@@ -123,11 +131,7 @@ public class Workorder {
 		return _workorderId;
 	}
 
-	public String getClosingNotes() {
-		return _closingNotes;
-	}
-
-	public Label[] getLabels() {
+	public Label[] getLabels(){
 		return _label;
 	}
 
@@ -147,10 +151,6 @@ public class Workorder {
 		return _pay;
 	}
 
-	public String getStandardInstructions() {
-		return _standardInstructions;
-	}
-
 	public Discount[] getDiscounts() {
 		return _discounts;
 	}
@@ -165,10 +165,6 @@ public class Workorder {
 
 	public ShipmentTracking[] getShipmentTracking() {
 		return _shipmentTracking;
-	}
-
-	public String getCompanyName() {
-		return _companyName;
 	}
 
 	public AdditionalExpense[] getAdditionalExpenses() {
@@ -213,6 +209,10 @@ public class Workorder {
 
 	public String getTypeOfWork() {
 		return _typeOfWork;
+	}
+
+	public String getCompanyName(){
+		return _companyName;
 	}
 
 	public String getTitle() {

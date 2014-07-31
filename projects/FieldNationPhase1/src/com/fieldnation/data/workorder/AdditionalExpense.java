@@ -5,18 +5,21 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class AdditionalExpense {
+	@Json(name="expenseId")
+	private Integer _expenseId;
 	@Json(name = "description")
 	private String _description;
 	@Json(name = "price")
 	private Double _price;
-	@Json(name = "category_id")
-	private Integer _categoryId;
 	@Json(name = "approved")
 	private Boolean _approved;
-	@Json(name="expense_id")
-	private Integer _expenseId;
+	@Json(name="categoryId")
+	private Integer _categoryId;
 
 	public AdditionalExpense() {
+	}
+	public Integer getExpenseId(){
+		return _expenseId;
 	}
 
 	public String getDescription() {
@@ -27,25 +30,21 @@ public class AdditionalExpense {
 		return _price;
 	}
 
-	public Integer getCategoryId() {
-		return _categoryId;
-	}
-
 	public Boolean getApproved() {
 		return _approved;
 	}
 
-	public Integer getExpenseId(){
-		return _expenseId;
+	public Integer getCategoryId(){
+		return _categoryId;
 	}
 
 	public JsonObject toJson() {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(AdditionalExpense additionalExpenses) {
+	public static JsonObject toJson(AdditionalExpense additionalExpense) {
 		try {
-			return Serializer.serializeObject(additionalExpenses);
+			return Serializer.serializeObject(additionalExpense);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

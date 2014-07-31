@@ -5,146 +5,145 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Message {
-	@Json(name = "workorder_id")
-	private Integer _workorderId;
-	@Json(name = "from_user_name")
-	private String _fromUserName;
-	@Json(name = "email_message_id")
+	@Json(name="emailMessageId")
 	private String _emailMessageId;
-	@Json(name = "msg_read_id")
-	private Integer _msgReadId;
-	@Json(name = "msg_to")
-	private Integer _msgTo;
-	@Json(name = "msg_permission")
-	private Integer _msgPermission;
-	@Json(name = "from_company_id")
-	private Integer _fromCompanyId;
-	@Json(name = "msg_from")
+	@Json(name="msgId")
+	private Integer _msgId;
+	@Json(name="msgFrom")
 	private Integer _msgFrom;
+	@Json(name="msgRead")
+	private Integer _msgRead;
+	@Json(name="fromGroupName")
+	private String _fromGroupName;
+	@Json(name="fromUserName")
+	private String _fromUserName;
+	@Json(name="toCompanyName")
+	private String _toCompanyName;
+	@Json(name="fromCompanyId")
+	private Integer _fromCompanyId;
+	@Json(name="workorderId")
+	private Integer _workorderId;
 	@Json(name = "message")
 	private String _message;
-	@Json(name = "msg_read")
-	private Integer _msgRead;
-	@Json(name = "msg_read_date")
-	private String _msgReadDate;
-	@Json(name = "to_company_id")
-	private Integer _toCompanyId;
-	@Json(name = "read_by")
-	private Integer _readBy;
-	@Json(name = "thread_id")
-	private Double _threadId;
-	@Json(name = "zendesk_ticket_id")
-	private Integer _zendeskTicketId;
-	@Json(name = "from_group_name")
-	private String _fromGroupName;
-	@Json(name = "parent_id")
-	private Integer _parentId;
-	@Json(name = "to_group_name")
-	private String _toGroupName;
-	@Json(name = "to_user_name")
-	private String _toUserName;
-	@Json(name = "msg_id")
-	private Integer _msgId;
-	@Json(name = "msg_create_date")
+	@Json(name="msgCreateDate")
 	private String _msgCreateDate;
-	@Json(name = "from_company_name")
+	@Json(name="threadId")
+	private Double _threadId;
+	@Json(name="msgPermission")
+	private Integer _msgPermission;
+	@Json(name="msgTo")
+	private Integer _msgTo;
+	@Json(name="msgReadDate")
+	private String _msgReadDate;
+	@Json(name="fromCompanyName")
 	private String _fromCompanyName;
-	@Json(name = "to_company_name")
-	private String _toCompanyName;
+	@Json(name="toGroupName")
+	private String _toGroupName;
+	@Json(name="zendeskTicketId")
+	private Integer _zendeskTicketId;
+	@Json(name="parentId")
+	private Integer _parentId;
+	@Json(name="toUserName")
+	private String _toUserName;
+	@Json(name="toCompanyId")
+	private Integer _toCompanyId;
+	@Json(name="msgReadId")
+	private Integer _msgReadId;
+	@Json(name="readBy")
+	private Integer _readBy;
 
 	public Message() {
 	}
-
-	public Integer getWorkorderId() {
-		return _workorderId;
-	}
-
-	public String getFromUserName() {
-		return _fromUserName;
-	}
-
-	public String getEmailMessageId() {
+	public String getEmailMessageId(){
 		return _emailMessageId;
 	}
 
-	public Integer getMsgReadId() {
-		return _msgReadId;
+	public Integer getMsgId(){
+		return _msgId;
 	}
 
-	public Integer getMsgTo() {
-		return _msgTo;
+	public Integer getMsgFrom(){
+		return _msgFrom;
 	}
 
-	public Integer getMsgPermission() {
-		return _msgPermission;
+	public Integer getMsgRead(){
+		return _msgRead;
+	}
+
+	public String getFromGroupName(){
+		return _fromGroupName;
+	}
+
+	public String getFromUserName(){
+		return _fromUserName;
+	}
+
+	public String getToCompanyName(){
+		return _toCompanyName;
 	}
 
 	public Integer getFromCompanyId() {
 		return _fromCompanyId;
 	}
 
-	public int getMsgFrom() {
-		return _msgFrom;
+	public Integer getWorkorderId(){
+		return _workorderId;
 	}
 
 	public String getMessage() {
 		return _message;
 	}
 
-	public Integer getMsgRead() {
-		return _msgRead;
+	public String getMsgCreateDate(){
+		return _msgCreateDate;
 	}
 
-	public String getMsgReadDate() {
-		return _msgReadDate;
-	}
-
-	public Integer getToCompanyId() {
-		return _toCompanyId;
-	}
-
-	public Integer getReadBy() {
-		return _readBy;
-	}
-
-	public Double getThreadId() {
+	public Double getThreadId(){
 		return _threadId;
 	}
 
-	public Integer getZendeskTicketId() {
+	public Integer getMsgPermission(){
+		return _msgPermission;
+	}
+
+	public Integer getMsgTo(){
+		return _msgTo;
+	}
+
+	public String getMsgReadDate(){
+		return _msgReadDate;
+	}
+
+	public String getFromCompanyName(){
+		return _fromCompanyName;
+	}
+
+	public String getToGroupName(){
+		return _toGroupName;
+	}
+
+	public Integer getZendeskTicketId(){
 		return _zendeskTicketId;
 	}
 
-	public String getFromGroupName() {
-		return _fromGroupName;
-	}
-
-	public Integer getParentId() {
+	public Integer getParentId(){
 		return _parentId;
-	}
-
-	public String getToGroupName() {
-		return _toGroupName;
 	}
 
 	public String getToUserName() {
 		return _toUserName;
 	}
 
-	public Integer getMsgId() {
-		return _msgId;
+	public Integer getToCompanyId(){
+		return _toCompanyId;
 	}
 
-	public String getMsgCreateDate() {
-		return _msgCreateDate;
+	public Integer getMsgReadId(){
+		return _msgReadId;
 	}
 
-	public String getFromCompanyName() {
-		return _fromCompanyName;
-	}
-
-	public String getToCompanyName() {
-		return _toCompanyName;
+	public Integer getReadBy(){
+		return _readBy;
 	}
 
 	public JsonObject toJson() {
