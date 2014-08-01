@@ -21,7 +21,7 @@ import android.util.Log;
  * 
  */
 public abstract class AuthenticationClient {
-	private static final String TAG = "AuthenticationClient";
+	private static final String TAG = "auth.client.AuthenticationClient";
 
 	public AuthenticationClient() {
 	}

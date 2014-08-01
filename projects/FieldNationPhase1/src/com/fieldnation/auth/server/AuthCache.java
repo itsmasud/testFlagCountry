@@ -75,7 +75,7 @@ public class AuthCache {
 			return false;
 		}
 
-		//Log.d(TAG, _sessionHash);
+		// Log.d(TAG, _sessionHash);
 
 		return _sessionHash.equals(sessionHash);
 	}
@@ -125,21 +125,28 @@ public class AuthCache {
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			return misc.getHex(md.digest((password + ":" + _username + ":" + System.currentTimeMillis()).getBytes()));
 		} catch (Exception ex) {
-			// TODO should never happen!
-			ex.printStackTrace();
-			return null;
+			try {
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				return misc.getHex(md.digest((password + ":" + _username + ":" + System.currentTimeMillis()).getBytes()));
+			} catch (Exception ex2) {
+				return null;
+			}
 		}
 	}
 
 	private String generatePasswordHash(String password) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			// TODO, salt this hash !?
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			return misc.getHex(md.digest(password.getBytes()));
 		} catch (Exception ex) {
-			// TODO should never happen!
-			ex.printStackTrace();
-			return null;
+			try {
+				// TODO, salt this hash !?
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				return misc.getHex(md.digest(password.getBytes()));
+			} catch (Exception ex2) {
+				return null;
+			}
 		}
 	}
 

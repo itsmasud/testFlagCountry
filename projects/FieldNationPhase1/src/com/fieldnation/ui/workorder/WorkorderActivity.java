@@ -24,6 +24,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class WorkorderActivity extends DrawerActivity {
 	private static final String TAG = "ui.workorder.WorkorderActivity";
@@ -34,6 +37,7 @@ public class WorkorderActivity extends DrawerActivity {
 	private ViewPager _viewPager;
 	private WorkorderFragment[] _fragments;
 	private WorkorderTabView _tabview;
+	private RelativeLayout _loadingLayout;
 
 	// Data
 	private GlobalState _gs;
@@ -72,6 +76,9 @@ public class WorkorderActivity extends DrawerActivity {
 			buildFragments();
 			_created = true;
 		}
+
+		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+		setLoading(true);
 
 		_gs = (GlobalState) getApplicationContext();
 		_gs.requestAuthentication(_authClient);
@@ -180,6 +187,7 @@ public class WorkorderActivity extends DrawerActivity {
 				}
 
 				System.out.println("Have workorder");
+				setLoading(false);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -196,11 +204,21 @@ public class WorkorderActivity extends DrawerActivity {
 		@Override
 		public void onChange(Workorder workorder) {
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+			setLoading(true);
 		}
 	};
 
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
+	private void setLoading(boolean loading) {
+		if (loading) {
+			_loadingLayout.setVisibility(View.VISIBLE);
+			_viewPager.setVisibility(View.GONE);
+		} else {
+			_loadingLayout.setVisibility(View.GONE);
+			_viewPager.setVisibility(View.VISIBLE);
+		}
+	}
 
 }

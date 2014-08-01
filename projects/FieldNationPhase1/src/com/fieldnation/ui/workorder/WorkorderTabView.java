@@ -28,16 +28,22 @@ public class WorkorderTabView extends RelativeLayout {
 	/*-				Lifecycle				-*/
 	/*-*************************************-*/
 	public WorkorderTabView(Context context) {
-		this(context, null, -1);
+		super(context);
+		init();
 	}
 
 	public WorkorderTabView(Context context, AttributeSet attrs) {
-		this(context, attrs, -1);
+		super(context, attrs);
+		init();
 	}
 
 	public WorkorderTabView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_tabview, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_tabview, this);
 
 		if (isInEditMode())
 			return;

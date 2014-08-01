@@ -14,7 +14,7 @@ import android.util.Log;
  * 
  */
 public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
-	private static final String TAG = "auth.server.FutureWaitAsyncTask";
+	private static final String TAG = "FutureWaitAsyncTask";
 
 	private Listener _listener;
 

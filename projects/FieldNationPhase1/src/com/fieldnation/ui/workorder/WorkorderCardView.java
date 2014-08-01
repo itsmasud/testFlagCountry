@@ -324,12 +324,16 @@ public class WorkorderCardView extends RelativeLayout {
 			_basisTextView.setVisibility(GONE);
 			_paymentTextView.setVisibility(GONE);
 			_rightLayout.setVisibility(GONE);
+			showAlertIcon(false);
+			showMessageAlertIcon(false);
 		} else {
 			_bundleLayout.setVisibility(GONE);
 			_titleTextView.setVisibility(VISIBLE);
 			_basisTextView.setVisibility(VISIBLE);
 			_paymentTextView.setVisibility(VISIBLE);
 			_rightLayout.setVisibility(VISIBLE);
+			showAlertIcon(true);
+			showMessageAlertIcon(true);
 		}
 	}
 
@@ -486,6 +490,11 @@ public class WorkorderCardView extends RelativeLayout {
 		_contentLayout.clearAnimation();
 		_backImageView.setClickable(false);
 		_notInterestedButtonLayout.setClickable(false);
+
+		if (_workorder.getBundleId() != null) {
+			setIsBundle(true);
+		}
+
 	}
 
 	private void buildStatus() throws ParseException {

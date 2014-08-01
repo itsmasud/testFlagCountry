@@ -12,4 +12,8 @@ public interface PhotoServiceConstants {
 	public static final String KEY_RESPONSE_CODE = "RESPONSE_CODE";
 	public static final String KEY_RESPONSE_MESSAGE = "RESPONSE_MESSAGE";
 
+	public static final String KEY_RESPONSE_ERROR = "RESPONSE_ERROR";
+
+	public static final String ERROR_NONE = "NONE";
+	public static final String ERROR_UNKNOWN = "UNKNOWN";
 }

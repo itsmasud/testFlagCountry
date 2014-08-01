@@ -121,7 +121,8 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 				Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
 
 			} catch (Exception e) {
-				// TODO handle properly
+				Toast.makeText(AuthActivity.this, "An unexpected error occored. Could not connect to account.",
+						Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
 		};

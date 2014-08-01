@@ -38,6 +38,7 @@ public class PhotoRpc extends RpcInterface implements PhotoServiceConstants {
 
 				bundle.putInt(KEY_RESPONSE_CODE, conn.getResponseCode());
 				bundle.putString(KEY_RESPONSE_MESSAGE, conn.getResponseMessage());
+				bundle.putString(KEY_RESPONSE_ERROR, ERROR_NONE);
 
 				InputStream in = conn.getInputStream();
 				try {
@@ -61,12 +62,20 @@ public class PhotoRpc extends RpcInterface implements PhotoServiceConstants {
 				int resultCode = bundle.getInt(KEY_RESULT_CODE);
 				byte[] data = node.getPhotoData();
 				bundle.putByteArray(KEY_RESPONSE_DATA, data);
+				bundle.putString(KEY_RESPONSE_ERROR, ERROR_NONE);
 
 				rr.send(resultCode, bundle);
 			}
 		} catch (Exception ex) {
-			// TODO need to send back up
+			doError(intent);
 			ex.printStackTrace();
 		}
+	}
+
+	private void doError(Intent intent) {
+		Bundle bundle = intent.getExtras();
+		ResultReceiver rr = intent.getParcelableExtra(KEY_RESULT_RECEIVER);
+		bundle.putString(KEY_RESPONSE_ERROR, ERROR_UNKNOWN);
+		rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
 	}
 }

@@ -523,7 +523,6 @@ public class Workorder {
 
 		if (labels.contains(19)) {
 			_statusDisplayState = 0;
-
 		} else if (labels.contains(20)) {
 			_statusDisplayState = 0;
 		} else if (labels.contains(21)) {

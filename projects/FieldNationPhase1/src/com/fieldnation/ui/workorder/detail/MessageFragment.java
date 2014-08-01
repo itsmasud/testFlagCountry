@@ -187,9 +187,11 @@ public class MessageFragment extends WorkorderFragment {
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			if (_profileService != null) {
-				_gs.invalidateAuthToken(_profileService.getAuthToken());
+//				_gs.invalidateAuthToken(_profileService.getAuthToken());
 			}
-			_gs.requestAuthentication(_authClient);
+//			_gs.requestAuthentication(_authClient);
+			
+			// TODO, a fail here probably means that this workroder is not assigned, therefore no messages.
 		}
 	};
 }

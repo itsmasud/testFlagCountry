@@ -9,7 +9,7 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstants {
-	private static final String TAG = "HttpWriteRunnable";
+	private static final String TAG = "rpc.server.HttpWriteRunnable";
 
 	public HttpWriteRunnable(Context context, Intent intent, OAuth at) {
 		super(context, intent, at);

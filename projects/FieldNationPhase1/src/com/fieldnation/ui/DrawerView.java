@@ -67,21 +67,27 @@ public class DrawerView extends RelativeLayout {
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 	public DrawerView(Context context) {
-		this(context, null, -1);
+		super(context);
+		init();
 	}
 
 	public DrawerView(Context context, AttributeSet attrs) {
-		this(context, attrs, -1);
+		super(context, attrs);
+		init();
 	}
 
 	public DrawerView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_drawer, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_drawer, this);
 
 		if (isInEditMode())
 			return;
 
-		_gs = (GlobalState) context.getApplicationContext();
+		_gs = (GlobalState) getContext().getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
 		_myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
@@ -106,7 +112,6 @@ public class DrawerView extends RelativeLayout {
 		_estimatedLayout = (RelativeLayout) findViewById(R.id.estimated_layout);
 		_estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
 		_estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
-
 	}
 
 	/*-*********************************-*/

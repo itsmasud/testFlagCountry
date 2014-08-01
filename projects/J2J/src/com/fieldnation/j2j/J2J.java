@@ -275,7 +275,20 @@ public class J2J {
 						Log.println("file_url");
 					}
 
+					if (strres.contains("bundle")) {
+						Log.println("bundle");
+					}
+
 					JsonArray res = result.getResultsAsJsonArray();
+
+					for (int k = 0; k < res.size(); k++) {
+						JsonObject obj = res.getJsonObject(k);
+
+						if (obj.has("bundleId") && obj.get("bundleId") != null) {
+							Log.println(obj.getLong("workorderId") + ": " + obj.getString("bundleId"));
+						}
+					}
+
 					if (res.size() == 0)
 						break;
 
@@ -308,6 +321,10 @@ public class J2J {
 				}
 				if (!res.contains("file_url")) {
 					Log.println("file_url");
+				}
+
+				if (res.contains("bundle")) {
+					Log.println("bundle");
 				}
 
 				details.add(result.getResultsAsJsonObject());

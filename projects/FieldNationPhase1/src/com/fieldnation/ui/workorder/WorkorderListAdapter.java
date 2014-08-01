@@ -191,7 +191,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 		@Override
 		public void actionRequest(Workorder workorder) {
-			// TODO as user for time.
+			// TODO ask user for time.
 			Intent intent = _workorderService.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), 600);
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);

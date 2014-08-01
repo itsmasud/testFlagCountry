@@ -9,7 +9,7 @@ import android.util.Log;
 import com.fieldnation.rpc.common.WebServiceConstants;
 
 public class HttpReadRunnable extends HttpRunnable implements WebServiceConstants {
-	private static final String TAG = "HttpReadRunnable";
+	private static final String TAG = "rpc.server.HttpReadRunnable";
 
 	public HttpReadRunnable(Context context, Intent intent, OAuth at) {
 		super(context, intent, at);
