@@ -491,10 +491,7 @@ public class WorkorderCardView extends RelativeLayout {
 		_backImageView.setClickable(false);
 		_notInterestedButtonLayout.setClickable(false);
 
-		if (_workorder.getBundleId() != null) {
-			setIsBundle(true);
-		}
-
+		setIsBundle(_workorder.getBundleId() != null);
 	}
 
 	private void buildStatus() throws ParseException {

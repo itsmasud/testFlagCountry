@@ -68,9 +68,9 @@
     <string name="activity_notifications_list_title">Notifications</string>
 
     <!-- Drawer strings -->
-    <string name="mywork_title">Work Orders</string>
-    <string name="mywork_subtitle">Assigned, Pending Approval and Completed jobs</string>
-    <string name="market_title">Market</string>
+    <string name="mywork_title">My Work Orders</string>
+    <string name="mywork_subtitle">Assigned, Completed, and Canceled Jobs</string>
+    <string name="market_title">Marketplace</string>
     <string name="market_subtitle">Available, Requested and Recruitment</string>
     <string name="payment_title">Payment</string>
     <string name="payment_subtitle">Processing and Paid</string>
