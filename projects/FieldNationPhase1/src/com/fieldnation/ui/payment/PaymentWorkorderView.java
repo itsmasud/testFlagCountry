@@ -82,7 +82,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 
 		setIsBundle(false);
 
-		_statusView.setBackgroundResource(R.drawable.wo_card_status_green);
+		_statusView.setBackgroundResource(R.drawable.card_status_green);
 		_statusTextView.setTextColor(getContext().getResources().getColor(R.color.woCardStatusLabel3));
 
 	}

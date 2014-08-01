@@ -37,6 +37,20 @@
     <string name="try_again">Action failed, please try again</string>
     <string name="not_interested">Not Interested</string>
     <string name="bundle">Bundle</string>
+    <string name="tracking_id">Tracking ID</string>
+    <string name="carrier_name">Carrier Name</string>
+    <string name="shipment_description">Shipment Description</string>
+    <string name="shipping_to_site">Shipping to site</string>
+    <string name="shipping_from_size">Shipping from site</string>
+    <string name="add">Add</string>
+    <string name="travel_time">Travel Time</string>
+    <string name="on_site_work">On Site Work</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="number_of_devices">Number of Devices</string>
+    <string name="ok">OK</string>
+    <string name="amount">Amount</string>
+    <string name="description">Description</string>
     <!-- /general strings -->
 
 

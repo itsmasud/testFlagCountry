@@ -262,20 +262,20 @@ public class Workorder {
 
 	// status colors lookuptable
 	private static final int[] _STATUS_LOOKUP_TABLE = {
-			R.drawable.wo_card_status_white,
-			R.drawable.wo_card_status_orange,
-			R.drawable.wo_card_status_green,
-			R.drawable.wo_card_status_gray };
+			R.drawable.card_status_white,
+			R.drawable.card_status_orange,
+			R.drawable.card_status_green,
+			R.drawable.card_status_gray };
 	private static final int[] _STATUS_TEXT_TABLE = {
 			R.color.woCardStatusLabel1,
 			R.color.woCardStatusLabel2,
 			R.color.woCardStatusLabel3,
 			R.color.woCardStatusLabel4 };
 	private static final int[] _STATUS_BUTTON_FG = {
-			R.color.woCardButton1Foreground,
-			R.color.woCardButton2Foreground,
-			R.color.woCardButton3Foreground,
-			R.color.woCardButton1Foreground };
+			R.color.btn_white_fg,
+			R.color.btn_orange_fg,
+			R.color.btn_green_fg,
+			R.color.btn_gray_fg };
 	private static final int[] _STATUS_BUTTON_BG = {
 			R.drawable.btn_white,
 			R.drawable.btn_orange,
@@ -387,19 +387,21 @@ public class Workorder {
 		// get on-hold value
 		Label[] labels = getLabels();
 
-		for (int i = 0; i < labels.length; i++) {
-			Label label = labels[i];
-			if (label.getType() != null) {
-				if (label.getType().equals("on-hold"))
-					isOnHold = true;
+		if (labels != null) {
+			for (int i = 0; i < labels.length; i++) {
+				Label label = labels[i];
+				if (label.getType() != null) {
+					if (label.getType().equals("on-hold"))
+						isOnHold = true;
 
-				if (label.getAction() == null || label.getAction().equals("acknowledge")) {
-					isAcked = true;
+					if (label.getAction() == null || label.getAction().equals("acknowledge")) {
+						isAcked = true;
+					}
 				}
-			}
 
-			if (label.getLabelId() == 16) {
-				has16 = true;
+				if (label.getLabelId() == 16) {
+					has16 = true;
+				}
 			}
 		}
 
@@ -433,17 +435,18 @@ public class Workorder {
 			boolean has13 = false;
 
 			Label[] labels = getLabels();
-
-			for (int i = 0; i < labels.length; i++) {
-				Label label = labels[i];
-				if (label.getLabelId() == 11) {
-					has11 = true;
-				}
-				if (label.getLabelId() == 12) {
-					has12 = true;
-				}
-				if (label.getLabelId() == 13) {
-					has13 = true;
+			if (labels != null) {
+				for (int i = 0; i < labels.length; i++) {
+					Label label = labels[i];
+					if (label.getLabelId() == 11) {
+						has11 = true;
+					}
+					if (label.getLabelId() == 12) {
+						has12 = true;
+					}
+					if (label.getLabelId() == 13) {
+						has13 = true;
+					}
 				}
 			}
 
@@ -473,20 +476,21 @@ public class Workorder {
 
 		// get on-hold value
 		Label[] labels = getLabels();
+		if (labels != null) {
+			for (int i = 0; i < labels.length; i++) {
+				Label label = labels[i];
+				if (label.getType() != null) {
+					if (label.getType().equals("on-hold"))
+						isOnHold = true;
 
-		for (int i = 0; i < labels.length; i++) {
-			Label label = labels[i];
-			if (label.getType() != null) {
-				if (label.getType().equals("on-hold"))
-					isOnHold = true;
-
-				if (label.getAction() == null || label.getAction().equals("acknowledge")) {
-					isAcked = true;
+					if (label.getAction() == null || label.getAction().equals("acknowledge")) {
+						isAcked = true;
+					}
 				}
-			}
 
-			if (label.getLabelId() == 1) {
-				has1 = true;
+				if (label.getLabelId() == 1) {
+					has1 = true;
+				}
 			}
 		}
 
@@ -510,9 +514,11 @@ public class Workorder {
 		Set<Integer> labels = new HashSet<Integer>();
 
 		Label[] slabels = getLabels();
-		for (int i = 0; i < slabels.length; i++) {
-			int labelid = slabels[i].getLabelId();
-			labels.add(labelid);
+		if (slabels != null) {
+			for (int i = 0; i < slabels.length; i++) {
+				int labelid = slabels[i].getLabelId();
+				labels.add(labelid);
+			}
 		}
 
 		if (labels.contains(19)) {
@@ -529,6 +535,7 @@ public class Workorder {
 
 	private void buildStatusCancelled() {
 		// TODO METHOD STUB buildStatusCancelled!
+		_statusDisplayState = 0;
 	}
 
 }

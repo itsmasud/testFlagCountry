@@ -705,6 +705,10 @@ public class WorkorderCardView extends RelativeLayout {
 
 	private void buildStatusCancelled() {
 		// TODO METHOD STUB buildStatusCancelled!
+		_titleTextView.setVisibility(VISIBLE);
+		_clientNameTextView.setVisibility(VISIBLE);
+		_whenTextView.setVisibility(VISIBLE);
+		_rightLayout.setVisibility(GONE);
 	}
 
 	public interface Listener {

@@ -30,23 +30,34 @@
         android:text="Work Order ID" />
 
     <TextView
+        android:id="@+id/worktype_textview"
         style="@style/WorkorderDetail_Field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Type of Work" />
 
     <TextView
+        android:id="@+id/company_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Company Name" />
+
+    <TextView
+        android:id="@+id/description_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. " />
 
     <Button
+        android:id="@+id/confidential_button"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="View Confidential Information" />
 
     <Button
+        android:id="@+id/policies_button"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

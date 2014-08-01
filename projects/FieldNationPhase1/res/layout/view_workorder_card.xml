@@ -64,7 +64,7 @@
             android:id="@+id/status_view"
             style="@style/WorkorderCard_StatusView"
             android:layout_height="match_parent"
-            android:background="@drawable/wo_card_status_orange" />
+            android:background="@drawable/card_status_orange" />
     </RelativeLayout>
 
     <!-- main content -->

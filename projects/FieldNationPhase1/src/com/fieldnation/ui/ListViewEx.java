@@ -88,7 +88,7 @@ public class ListViewEx extends ListView {
 		_refreshView = (RelativeLayout) inflater.inflate(R.layout.view_listviewex_header, this, false);
 		_refreshTextView = (TextView) _refreshView.findViewById(R.id.pull_to_refresh_text);
 		_refreshImageView = (ImageView) _refreshView.findViewById(R.id.pull_to_refresh_image);
-		_refreshProgressView = (ProgressBar) _refreshView.findViewById(R.id.pull_to_refresh_progress);
+		_refreshProgressView = (ProgressBar) _refreshView.findViewById(R.id.listviewex_refresh_progress);
 		_refreshViewLastUpdated = (TextView) _refreshView.findViewById(R.id.pull_to_refresh_updated_at);
 
 		_refreshImageView.setMinimumHeight(50);

@@ -51,9 +51,9 @@ public class NotificationView extends RelativeLayout {
 	public void setNotification(Notification notification) {
 		_note = notification;
 		if (notification.getViewed() == 0) {
-			_statusView.setBackgroundResource(R.drawable.wo_card_status_white);
+			_statusView.setBackgroundResource(R.drawable.card_status_white);
 		} else {
-			_statusView.setBackgroundResource(R.drawable.wo_card_status_orange);
+			_statusView.setBackgroundResource(R.drawable.card_status_orange);
 		}
 
 		_messageTextView.setText(notification.getMessage());

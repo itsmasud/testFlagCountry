@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="btn_white_fg">#FF000000</color>
+    <color name="btn_orange_fg">#FFFFFFFF</color>
+    <color name="btn_green_fg">#FFFFFFFF</color>
+    <color name="btn_gray_fg">#FFFFFFFF</color>
+
+    <style name="ButtonWhite">
+        <item name="android:textColor">@color/btn_white_fg</item>
+        <item name="android:background">@drawable/btn_white</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="ButtonOrange">
+        <item name="android:textColor">@color/btn_orange_fg</item>
+        <item name="android:background">@drawable/btn_orange</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
+    </style>
+
+    <style name="ButtonGreen">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/btn_green_fg</item>
+        <item name="android:background">@drawable/btn_green</item>
+        <item name="android:layout_height">48dp</item>
+    </style>
+
+    <style name="ButtonGray">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/btn_white_fg</item>
+        <item name="android:background">@drawable/btn_white</item>
+        <item name="android:layout_height">48dp</item>
+    </style>
+
+</resources>

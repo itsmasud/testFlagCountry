@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="ListViewEx_RefreshHeader">
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingTop">10dp</item>
+    </style>
+
+    <style name="ListViewEx_ProgressBar" parent="android:attr/progressBarStyleSmall">
+        <item name="android:layout_marginLeft">30dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+</resources>

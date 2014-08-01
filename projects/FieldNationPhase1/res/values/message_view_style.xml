@@ -9,11 +9,11 @@
     </style>
 
     <style name="MessageView_Padding">
-        <item name="android:background">@drawable/wo_card_mid</item>
+        <item name="android:background">@drawable/card_mid</item>
     </style>
 
     <style name="MessageView_RightSide">
-        <item name="android:background">@drawable/wo_card_right</item>
+        <item name="android:background">@drawable/card_right</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:paddingTop">10dp</item>

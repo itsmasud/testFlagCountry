@@ -45,7 +45,7 @@
 
     <style name="WorkorderCard_BackgroundView">
         <item name="android:layout_marginLeft">-2dp</item>
-        <item name="android:background">@drawable/wo_card_right</item>
+        <item name="android:background">@drawable/card_right</item>
     </style>
 
     <!-- main content -->
@@ -144,7 +144,7 @@
 
     <style name="WorkorderCard_Button" parent="android:attr/buttonStyleSmall">
         <item name="android:background">@drawable/btn_white</item>
-        <item name="android:textColor">@color/woCardButton1Foreground</item>
+        <item name="android:textColor">@color/btn_white_fg</item>
         <item name="android:maxLines">1</item>
         <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">48dp</item>

@@ -5,11 +5,15 @@ import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Skillset;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.misc;
 
 import android.content.Context;
+import android.text.Html;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,23 +24,32 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	private TextView _substatusTextView;
 	private View _substatusProgress; // TODO, need to implement!
 	private TextView _projectNameTextView;
-	private TextView _clientNameTextView;
 	private TextView _workorderIdTextView;
+	private TextView _worktypeTextView;
+	private TextView _companyTextView;
+	private TextView _descriptionTextView;
+	private Button _confidentialButton;
+	private Button _policiesButton;
 
 	// Data
-	private Workorder _workoder;
+	private Workorder _workorder;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 
 	public SummaryView(Context context) {
-		this(context, null);
+		super(context);
+		init();
 	}
 
 	public SummaryView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_sum, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_detail_sum, this);
 
 		if (isInEditMode())
 			return;
@@ -44,9 +57,13 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
 		_substatusProgress = findViewById(R.id.substatus_progress);
 		_projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
-		_clientNameTextView = (TextView) findViewById(R.id.clientname_textview);
 		_workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
+		_worktypeTextView = (TextView) findViewById(R.id.worktype_textview);
+		_companyTextView = (TextView) findViewById(R.id.company_textview);
+		_descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
+		_confidentialButton = (Button) findViewById(R.id.confidential_button);
+		_policiesButton = (Button) findViewById(R.id.policies_button);
 	}
 
 	/*-*************************************-*/
@@ -55,24 +72,49 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
-		_workoder = workorder;
+		_workorder = workorder;
 
 		refresh();
 	}
 
 	private void refresh() {
-		_substatusTextView.setText(_workoder.getStatus());
+		_substatusTextView.setText(_workorder.getStatus());
 		// TODO set progress bar here
-		_projectNameTextView.setText(_workoder.getTitle());
+		_projectNameTextView.setText(_workorder.getTitle());
 
-		Location location = _workoder.getLocation();
-		if (location != null) {
-			if (location.getContactName() != null) {
-				_clientNameTextView.setText(location.getContactName());
-			}
+		_workorderIdTextView.setText("ID " + _workorder.getWorkorderId());
+
+		_workorderIdTextView.setText(_workorder.getTypeOfWork());
+
+		if (misc.isEmptyOrNull(_workorder.getCompanyName()))
+			_companyTextView.setVisibility(GONE);
+		else {
+			_companyTextView.setVisibility(VISIBLE);
+			_companyTextView.setText(_workorder.getCompanyName());
 		}
 
-		_workorderIdTextView.setText("ID " + _workoder.getWorkorderId());
+		_descriptionTextView.setText(Html.fromHtml(_workorder.getFullWorkDescription()).toString());
 
+		// TODO hook up policies
+		// TODO hook up confidential info
 	}
+
+	/*-*********************************-*/
+	/*-				Events				-*/
+	/*-*********************************-*/
+	private View.OnClickListener _confidential_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
+
+	private View.OnClickListener _policies_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
 }

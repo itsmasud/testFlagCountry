@@ -26,6 +26,9 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	// UI
 	private EditText _notesEditText;
 	private Button _saveButton;
+	private Button _requestButton;
+	private Button _notInterestedButton;
+	private Button _completeButton;
 
 	// Data
 	private GlobalState _gs;
@@ -52,6 +55,12 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 		_notesEditText = (EditText) findViewById(R.id.notes_edittext);
 		_saveButton = (Button) findViewById(R.id.save_button);
 		_saveButton.setOnClickListener(_save_onClick);
+		_requestButton = (Button) findViewById(R.id.request_button);
+		_requestButton.setOnClickListener(_request_onClick);
+		_notInterestedButton = (Button) findViewById(R.id.not_interested_button);
+		_notInterestedButton.setOnClickListener(_notInterested_onClick);
+		_completeButton = (Button) findViewById(R.id.complete_button);
+		_completeButton.setOnClickListener(_complete_onClick);
 
 		// TODO put UI into loading state
 		_saveButton.setText("Loading...");
@@ -61,6 +70,29 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _request_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
+
+	private View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
+
+	private View.OnClickListener _complete_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
 	private View.OnClickListener _save_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -121,6 +153,8 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
 	private void refresh() {
 		_notesEditText.setText(_workorder.getClosingNotes());
+		
+		
 	}
 
 }

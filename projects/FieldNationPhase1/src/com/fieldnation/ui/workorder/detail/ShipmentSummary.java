@@ -29,16 +29,22 @@ public class ShipmentSummary extends RelativeLayout {
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 	public ShipmentSummary(Context context) {
-		this(context, null, -1);
+		super(context);
+		init();
 	}
 
 	public ShipmentSummary(Context context, AttributeSet attrs) {
-		this(context, attrs, -1);
+		super(context, attrs);
+		init();
 	}
 
 	public ShipmentSummary(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_shipment_summary, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_shipment_summary, this);
 
 		if (isInEditMode())
 			return;

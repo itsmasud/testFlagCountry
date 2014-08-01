@@ -38,6 +38,7 @@
         android:orientation="horizontal" >
 
         <Button
+            android:id="@+id/request_button"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="5dp"
@@ -49,6 +50,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <Button
+            android:id="@+id/not_interested_button"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="5dp"
@@ -61,6 +63,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/complete_button"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginBottom="5dp"

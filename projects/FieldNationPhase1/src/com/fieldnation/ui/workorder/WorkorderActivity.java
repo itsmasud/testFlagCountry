@@ -168,7 +168,7 @@ public class WorkorderActivity extends DrawerActivity {
 
 			try {
 
-				// TODO need 
+				// TODO need to get data selector from REST API
 				_workorder = Workorder.fromJson(
 						new JsonObject(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))),
 						WorkorderDataSelector.ASSIGNED);

@@ -19,12 +19,12 @@
             android:id="@+id/status_view"
             android:layout_width="32dp"
             android:layout_height="match_parent"
-            android:background="@drawable/wo_card_status_orange" />
+            android:background="@drawable/card_status_orange" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/wo_card_right" />
+            android:background="@drawable/card_right" />
     </LinearLayout>
 
     <!-- content -->

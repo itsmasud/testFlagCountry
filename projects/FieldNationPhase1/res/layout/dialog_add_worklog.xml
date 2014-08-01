@@ -9,20 +9,20 @@
         style="?android:attr/spinnerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Start Time" />
+        android:hint="@string/start_time" />
 
     <Button
         android:id="@+id/end_spinner"
         style="?android:attr/spinnerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="End Time" />
+        android:hint="@string/end_time" />
 
     <EditText
         android:id="@+id/devices_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Number of Devices"
+        android:hint="@string/number_of_devices"
         android:inputType="number"
         android:visibility="gone" />
 
@@ -41,20 +41,19 @@
                 android:id="@+id/onsite_radio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="On Site Work" />
+                android:text="@string/on_site_work" />
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Travel Time" />
+                android:text="@string/travel_time" />
         </LinearLayout>
     </RadioGroup>
 
     <Button
         android:id="@+id/ok_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/ButtonGreen"
         android:layout_gravity="right"
-        android:text="OK" />
+        android:text="@string/ok" />
 
 </LinearLayout>

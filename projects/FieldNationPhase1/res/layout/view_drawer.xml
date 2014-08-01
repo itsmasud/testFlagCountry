@@ -20,7 +20,6 @@
             <ImageView
                 android:id="@+id/mywork_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
@@ -64,7 +63,6 @@
             <ImageView
                 android:id="@+id/market_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
@@ -108,7 +106,6 @@
             <ImageView
                 android:id="@+id/payment_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
@@ -204,7 +201,6 @@
             <ImageView
                 android:id="@+id/settings_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
@@ -248,14 +244,12 @@
             <ImageView
                 android:id="@+id/logout_imageview"
                 style="@style/DrawerItemIcon"
-                android:layout_width="@dimen/drawer_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_logout" />
 
             <TextView
-                android:id="@+id/title_textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

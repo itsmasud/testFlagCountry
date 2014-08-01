@@ -18,7 +18,7 @@
             android:layout_toLeftOf="@+id/carrier_button"
             android:background="@drawable/wo_details_text_border"
             android:gravity="center_vertical"
-            android:hint="Tracking ID"
+            android:hint="@string/tracking_id"
             android:paddingLeft="10dp" />
 
         <Button
@@ -27,21 +27,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="FedEx" />
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 
     <EditText
         android:id="@+id/carrier_edittext"
         style="@style/WorkorderDetail_EditText"
         android:layout_width="match_parent"
-        android:hint="ONLY IF CARRIER &quot;OTHER&quot; IS SELECTED" />
+        android:hint="@string/carrier_name" />
 
     <EditText
         android:id="@+id/description_edittext"
         style="@style/WorkorderDetail_EditText"
         android:layout_width="match_parent"
-        android:hint="Shipment Description" />
+        android:hint="@string/shipment_description" />
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -53,22 +52,19 @@
             style="@style/WorkorderDetail_RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Shipping to site" />
+            android:text="@string/shipping_to_site" />
 
         <RadioButton
             style="@style/WorkorderDetail_RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Shipping from site" />
+            android:text="@string/shipping_from_size" />
     </RadioGroup>
 
     <Button
         android:id="@+id/add_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        style="@style/ButtonOrange"
         android:layout_gravity="right"
-        android:background="@drawable/btn_orange"
-        android:text="Add"
-        android:textColor="#FFFFFFFF" />
+        android:text="@string/add" />
 
 </LinearLayout>

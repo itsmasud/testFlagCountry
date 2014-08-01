@@ -29,6 +29,8 @@
 
     <style name="DrawerItemIcon">
         <item name="android:paddingRight">@dimen/drawer_item_icon_paddingRight</item>
+        <item name="android:src">@drawable/ic_todo</item>
+        <item name="android:layout_width">@dimen/drawer_icon_width</item>
     </style>
 
     <style name="DrawerSeparator">
