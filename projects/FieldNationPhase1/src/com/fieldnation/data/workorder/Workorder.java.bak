@@ -12,87 +12,86 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 public class Workorder {
-	@Json(name = "discounts")
+	@Json(name="discounts")
 	private Discount[] _discounts;
-	@Json(name = "typeOfWork")
+	@Json(name="typeOfWork")
 	private String _typeOfWork;
 	@Json(name = "fullWorkDescription")
 	private String _fullWorkDescription;
-	@Json(name = "workorderId")
+	@Json(name="workorderId")
 	private Long _workorderId;
-	@Json(name = "pay")
+	@Json(name="pay")
 	private Pay _pay;
 	@Json(name = "bundleId")
 	private Integer _bundleId;
-	@Json(name = "customFields")
+	@Json(name="customFields")
 	private CustomField[] _customFields;
-	@Json(name = "declinedWo")
+	@Json(name="declinedWo")
 	private Integer _declinedWo;
 	@Json(name = "skillsets")
 	private Skillset[] _skillsets;
-	@Json(name = "identifier")
+	@Json(name="identifier")
 	private String _identifier;
-	@Json(name = "loggedWork")
+	@Json(name="loggedWork")
 	private LoggedWork[] _loggedWork;
 	@Json(name = "customerPoliciesProcedures")
 	private String _customerPoliciesProcedures;
-	@Json(name = "location")
+	@Json(name="location")
 	private Location _location;
-	@Json(name = "messages")
+	@Json(name="messages")
 	private Integer _messages;
 	@Json(name = "additionalExpenses")
 	private AdditionalExpense[] _additionalExpenses;
-	@Json(name = "industry")
+	@Json(name="industry")
 	private String _industry;
-	@Json(name = "standardInstructions")
+	@Json(name="standardInstructions")
 	private String _standardInstructions;
-	@Json(name = "provider")
+	@Json(name="provider")
 	private Provider[] _provider;
-	@Json(name = "isRemoteWork")
+	@Json(name="isRemoteWork")
 	private Integer _isRemoteWork;
-	@Json(name = "distance")
+	@Json(name="distance")
 	private Double _distance;
-	@Json(name = "statusId")
+	@Json(name="statusId")
 	private Integer _statusId;
 	@Json(name = "schedule")
 	private Schedule _schedule;
 	@Json(name = "deliverables")
 	private Deliverable[] _deliverables;
-	@Json(name = "expectedPayment")
+	@Json(name="expectedPayment")
 	private ExpectedPayment _expectedPayment;
-	@Json(name = "confidentialInformation")
+	@Json(name="confidentialInformation")
 	private String _confidentialInformation;
 	@Json(name = "companyName")
 	private String _companyName;
-	@Json(name = "estimatedSchedule")
+	@Json(name="estimatedSchedule")
 	private EstimatedSchedule _estimatedSchedule;
-	@Json(name = "status")
+	@Json(name="status")
 	private String _status;
 	@Json(name = "title")
 	private String _title;
-	@Json(name = "tasks")
+	@Json(name="tasks")
 	private Task[] _tasks;
-	@Json(name = "isRequest")
+	@Json(name="isRequest")
 	private Boolean _isRequest;
-	@Json(name = "isCounter")
+	@Json(name="isCounter")
 	private Boolean _isCounter;
-	@Json(name = "documents")
+	@Json(name="documents")
 	private Documents[] _documents;
-	@Json(name = "closingNotes")
+	@Json(name="closingNotes")
 	private String _closingNotes;
-	@Json(name = "label")
+	@Json(name="label")
 	private Label[] _label;
-	@Json(name = "shipmentTracking")
+	@Json(name="shipmentTracking")
 	private ShipmentTracking[] _shipmentTracking;
 
 	public Workorder() {
 	}
-
-	public Discount[] getDiscounts() {
+	public Discount[] getDiscounts(){
 		return _discounts;
 	}
 
-	public String getTypeOfWork() {
+	public String getTypeOfWork(){
 		return _typeOfWork;
 	}
 
@@ -100,23 +99,23 @@ public class Workorder {
 		return _fullWorkDescription;
 	}
 
-	public Long getWorkorderId() {
+	public Long getWorkorderId(){
 		return _workorderId;
 	}
 
-	public Pay getPay() {
+	public Pay getPay(){
 		return _pay;
 	}
 
-	public Integer getBundleId() {
+	public Integer getBundleId(){
 		return _bundleId;
 	}
 
-	public CustomField[] getCustomFields() {
+	public CustomField[] getCustomFields(){
 		return _customFields;
 	}
 
-	public Integer getDeclinedWo() {
+	public Integer getDeclinedWo(){
 		return _declinedWo;
 	}
 
@@ -124,11 +123,11 @@ public class Workorder {
 		return _skillsets;
 	}
 
-	public String getIdentifier() {
+	public String getIdentifier(){
 		return _identifier;
 	}
 
-	public LoggedWork[] getLoggedWork() {
+	public LoggedWork[] getLoggedWork(){
 		return _loggedWork;
 	}
 
@@ -136,11 +135,11 @@ public class Workorder {
 		return _customerPoliciesProcedures;
 	}
 
-	public Location getLocation() {
+	public Location getLocation(){
 		return _location;
 	}
 
-	public Integer getMessages() {
+	public Integer getMessages(){
 		return _messages;
 	}
 
@@ -148,11 +147,11 @@ public class Workorder {
 		return _additionalExpenses;
 	}
 
-	public String getIndustry() {
+	public String getIndustry(){
 		return _industry;
 	}
 
-	public String getStandardInstructions() {
+	public String getStandardInstructions(){
 		return _standardInstructions;
 	}
 
@@ -160,76 +159,80 @@ public class Workorder {
 		return _provider;
 	}
 
-	public Integer getIsRemoteWork() {
+	public Integer getIsRemoteWork(){
 		return _isRemoteWork;
 	}
 
-	public Double getDistance() {
+	public Double getDistance(){
 		return _distance;
 	}
 
-	public Integer getStatusId() {
+	public Integer getStatusId(){
 		return _statusId;
 	}
 
-	public Schedule getSchedule() {
+	public Schedule getSchedule(){
 		return _schedule;
 	}
 
-	public Deliverable[] getDeliverables() {
+	public Deliverable[] getDeliverables(){
 		return _deliverables;
 	}
 
-	public ExpectedPayment getExpectedPayment() {
+	public ExpectedPayment getExpectedPayment(){
 		return _expectedPayment;
 	}
 
-	public String getConfidentialInformation() {
+	public String getConfidentialInformation(){
 		return _confidentialInformation;
 	}
 
-	public String getCompanyName() {
+	public String getCompanyName(){
 		return _companyName;
 	}
 
-	public EstimatedSchedule getEstimatedSchedule() {
+	public EstimatedSchedule getEstimatedSchedule(){
 		return _estimatedSchedule;
 	}
 
-	public String getStatus() {
+	public String getStatus(){
 		return _status;
 	}
 
-	public String getTitle() {
+	public String getTitle(){
 		return _title;
 	}
 
-	public Task[] getTasks() {
+	public Task[] getTasks(){
 		return _tasks;
 	}
 
-	public Boolean getIsRequest() {
+	public Boolean getIsRequest(){
 		return _isRequest;
 	}
 
-	public Boolean getIsCounter() {
+	public Boolean getIsCounter(){
 		return _isCounter;
 	}
 
-	public Documents[] getDocuments() {
+	public Documents[] getDocuments(){
 		return _documents;
 	}
 
-	public String getClosingNotes() {
+	public String getClosingNotes(){
 		return _closingNotes;
 	}
 
-	public Label[] getLabels() {
+	public Label[] getLabel(){
 		return _label;
 	}
 
-	public ShipmentTracking[] getShipmentTracking() {
+	public ShipmentTracking[] getShipmentTracking(){
 		return _shipmentTracking;
+	}
+
+	public JsonObject toJson(){
+		return toJson(this);
 	}
 
 	public JsonObject toJson() {

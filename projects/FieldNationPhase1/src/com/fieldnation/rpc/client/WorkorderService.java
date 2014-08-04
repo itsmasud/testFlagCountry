@@ -200,4 +200,79 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	public Intent getBundle(int resultCode, long bundleId, boolean allowCache) {
 		return httpGet(resultCode, "api/rest/v1/workorder/bundle/" + bundleId, allowCache);
 	}
+
+	public Intent setFixedCounterOffer(int resultCode, long workorderId, double fixedTotalAmount, String explanation,
+			boolean expire, int expireAfterMinutes) {
+		if (expire) {
+			return httpPost(
+					resultCode,
+					"api/rest/v1/workorder/" + workorderId + "/counter_offer",
+					null,
+					"payBasis=fixed&fixedTotalAmount=" + fixedTotalAmount + "&explanation=" + explanation + "&expire=" + expire + "&expireAfterMinutes" + expireAfterMinutes,
+					"application/x-www-form-urlencoded", false);
+		} else {
+			return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/counter_offer", null,
+					"payBasis=fixed&fixedTotalAmount=" + fixedTotalAmount + "&explanation=" + explanation,
+					"application/x-www-form-urlencoded", false);
+		}
+	}
+
+	public Intent setHourlyCounterOffer(int resultCode, long workorderId, double perHourRate, double maxHours,
+			String explanation, boolean expire, int expireAfterMinutes) {
+		if (expire) {
+			return httpPost(
+					resultCode,
+					"api/rest/v1/workorder/" + workorderId + "/counter_offer",
+					null,
+					"payBasis=per_hour&perHourRate=" + perHourRate + "&maxHours=" + maxHours + "&explanation=" + explanation + "&expire=" + expire + "&expireAfterMinutes" + expireAfterMinutes,
+					"application/x-www-form-urlencoded", false);
+		} else {
+			return httpPost(
+					resultCode,
+					"api/rest/v1/workorder/" + workorderId + "/counter_offer",
+					null,
+					"payBasis=per_hour&perHourRate=" + perHourRate + "&maxHours=" + maxHours + "&explanation=" + explanation,
+					"application/x-www-form-urlencoded", false);
+		}
+	}
+
+	public Intent setPerDeviceCounterOffer(int resultCode, long workorderId, double perDeviceRate, double maxDevice,
+			String explanation, boolean expire, int expireAfterMinutes) {
+		if (expire) {
+			return httpPost(
+					resultCode,
+					"api/rest/v1/workorder/" + workorderId + "/counter_offer",
+					null,
+					"payBasis=per_device&perDeviceRate=" + perDeviceRate + "&maxDeviceRate=" + maxDevice + "&explanation=" + explanation + "&expire=" + expire + "&expireAfterMinutes" + expireAfterMinutes,
+					"application/x-www-form-urlencoded", false);
+		} else {
+			return httpPost(
+					resultCode,
+					"api/rest/v1/workorder/" + workorderId + "/counter_offer",
+					null,
+					"payBasis=per_device&perDeviceRate=" + perDeviceRate + "&maxDeviceRate=" + maxDevice + "&explanation=" + explanation,
+					"application/x-www-form-urlencoded", false);
+		}
+	}
+
+	public Intent setBlendedCounterOffer(int resultCode, long workorderId, double perHourRate, double maxHours,
+			double additionalHourRate, double additionalHours, String explanation, boolean expire,
+			int expireAfterMinutes) {
+		if (expire) {
+			return httpPost(
+					resultCode,
+					"api/rest/v1/workorder/" + workorderId + "/counter_offer",
+					null,
+					"payBasis=blended&perHourRate=" + perHourRate + "&maxHours=" + maxHours + "&additionalHourRate=" + additionalHourRate + "&additionalHours=" + additionalHours + "&explanation=" + explanation + "&expire=" + expire + "&expireAfterMinutes" + expireAfterMinutes,
+					"application/x-www-form-urlencoded", false);
+		} else {
+			return httpPost(
+					resultCode,
+					"api/rest/v1/workorder/" + workorderId + "/counter_offer",
+					null,
+					"payBasis=blended&perHourRate=" + perHourRate + "&maxHours=" + maxHours + "&additionalHourRate=" + additionalHourRate + "&additionalHours=" + additionalHours + "&explanation=" + explanation,
+					"application/x-www-form-urlencoded", false);
+		}
+	}
+
 }

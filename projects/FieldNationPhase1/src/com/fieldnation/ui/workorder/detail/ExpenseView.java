@@ -44,20 +44,11 @@ public class ExpenseView extends LinearLayout {
 		_costTextView = (TextView) findViewById(R.id.cost_textview);
 		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 		_deleteImageButton.setOnClickListener(_delete_onClick);
-
-		setOnClickListener(_this_onClick);
 	}
 
 	/*-*********************************-*/
 	/*-				Event				-*/
 	/*-*********************************-*/
-	private View.OnClickListener _this_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (_listener != null)
-				_listener.onClick(ExpenseView.this, _expense);
-		}
-	};
 
 	private View.OnClickListener _delete_onClick = new View.OnClickListener() {
 		@Override
@@ -85,7 +76,5 @@ public class ExpenseView extends LinearLayout {
 
 	public interface Listener {
 		public void onDelete(ExpenseView view, AdditionalExpense expense);
-
-		public void onClick(ExpenseView view, AdditionalExpense expense);
 	}
 }

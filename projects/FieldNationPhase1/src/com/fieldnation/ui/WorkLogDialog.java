@@ -63,7 +63,6 @@ public class WorkLogDialog extends Dialog {
 
 		_startCalendar = Calendar.getInstance();
 		_endCalendar = Calendar.getInstance();
-
 	}
 
 	public void setFragmentManager(FragmentManager fm) {

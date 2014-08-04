@@ -55,8 +55,6 @@ public class ShipmentSummary extends RelativeLayout {
 		_directionTextView = (TextView) findViewById(R.id.direction_textview);
 		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 		_deleteImageButton.setOnClickListener(_delete_onClick);
-
-		this.setOnClickListener(_this_onClick);
 	}
 
 	public void setShipmentTracking(ShipmentTracking shipment) {
@@ -91,22 +89,11 @@ public class ShipmentSummary extends RelativeLayout {
 		}
 	};
 
-	private View.OnClickListener _this_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (_listener != null) {
-				_listener.onClick(_shipment);
-			}
-		}
-	};
-
 	public void setListener(Listener listener) {
 		_listener = listener;
 	}
 
 	public interface Listener {
 		public void onDelete(ShipmentTracking shipment);
-
-		public void onClick(ShipmentTracking shipment);
 	}
 }

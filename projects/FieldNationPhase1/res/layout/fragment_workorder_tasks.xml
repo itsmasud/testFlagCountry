@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/WorkorderDetail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-</LinearLayout>
+    <LinearLayout
+        style="@style/WorkorderDetail_Data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <com.fieldnation.ui.workorder.detail.PrereqView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.ui.workorder.detail.ShipmentView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</ScrollView>

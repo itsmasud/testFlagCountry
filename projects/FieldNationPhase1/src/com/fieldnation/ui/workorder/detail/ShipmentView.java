@@ -1,5 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
+import java.util.Calendar;
+
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -29,13 +31,9 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private static final int WEB_ADD_SHIPMENT = 1;
 
 	// UI
-	private EditText _trackingIdEditText;
-	private Spinner _carrierSpinner;
-	private EditText _carrierEditText;
-	private EditText _descEditText;
-	private RadioButton _shipToSiteRadio;
 	private Button _addButton;
 	private LinearLayout _shipmentsLayout;
+	private ShipmentAddDialog _addDialog;
 
 	// Data
 	private Workorder _workorder;
@@ -60,24 +58,12 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 		_gs = (GlobalState) context.getApplicationContext();
 		_gs.requestAuthentication(_authclient);
 
-		_trackingIdEditText = (EditText) findViewById(R.id.trackingid_edittext);
-
-		_carrierSpinner = (Spinner) findViewById(R.id.carrier_spinner);
-		_carrierSpinner.setOnItemSelectedListener(_carrier_selected);
-
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.carrier_list,
-				android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		_carrierSpinner.setAdapter(adapter);
-
-		_carrierEditText = (EditText) findViewById(R.id.carrier_edittext);
-		_descEditText = (EditText) findViewById(R.id.description_edittext);
-		_shipToSiteRadio = (RadioButton) findViewById(R.id.shiptosite_radio);
-
 		_addButton = (Button) findViewById(R.id.add_button);
 		_addButton.setOnClickListener(_addButton_onClick);
 
 		_shipmentsLayout = (LinearLayout) findViewById(R.id.shipments_linearlayout);
+
+		_addDialog = new ShipmentAddDialog(getContext());
 
 	}
 
@@ -105,7 +91,6 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-
 			Log.v(TAG, errorType);
 			Log.v(TAG, resultData.toString());
 			// if (_workorderService != null) {
@@ -122,28 +107,10 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 		}
 	};
 
-	private AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			// TODO Method Stub: onItemSelected()
-			Log.v(TAG, "Method Stub: onItemSelected()");
-
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> parent) {
-			// TODO Method Stub: onNothingSelected()
-			Log.v(TAG, "Method Stub: onNothingSelected()");
-		}
-	};
-
 	private View.OnClickListener _addButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			getContext().startService(
-					_workorderService.addShipmentDetails(WEB_ADD_SHIPMENT, _workorder.getWorkorderId(),
-							_descEditText.getText().toString(), _shipToSiteRadio.isSelected(),
-							(String) _carrierSpinner.getSelectedItem(), null, _trackingIdEditText.getText().toString()));
+			_addDialog.show(R.string.add, _addDialog_listener);
 		}
 	};
 
@@ -153,11 +120,14 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 			// TODO Method Stub: onDelete()
 			Log.v(TAG, "Method Stub: onDelete()");
 		}
+	};
 
+	private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
 		@Override
-		public void onClick(ShipmentTracking shipment) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+		public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
+			getContext().startService(
+					_workorderService.addShipmentDetails(WEB_ADD_SHIPMENT, _workorder.getWorkorderId(), description,
+							shipToSite, carrier, null, trackingId));
 		}
 	};
 
