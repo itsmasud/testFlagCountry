@@ -196,4 +196,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber,
 				"application/x-www-form-urlencoded", false);
 	}
+
+	public Intent getBundle(int resultCode, long bundleId, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workorder/bundle/" + bundleId, allowCache);
+	}
 }

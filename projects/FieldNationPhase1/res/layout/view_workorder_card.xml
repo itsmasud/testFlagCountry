@@ -10,11 +10,7 @@
         android:id="@+id/notinterested_layout"
         style="@style/WorkorderCard_NotInterested"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/content_layout"
-        android:layout_alignLeft="@+id/content_layout"
-        android:layout_alignRight="@+id/content_layout"
-        android:layout_alignTop="@+id/content_layout" >
+        android:layout_height="match_parent" >
 
         <ImageView
             android:id="@+id/back_imageview"
@@ -48,18 +44,13 @@
         android:id="@+id/background_layout"
         style="@style/WorkorderCard_Background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/content_layout"
-        android:layout_alignLeft="@+id/content_layout"
-        android:layout_alignRight="@+id/content_layout"
-        android:layout_alignTop="@+id/content_layout" >
+        android:layout_height="match_parent" >
 
         <View
             android:id="@+id/background_view"
             style="@style/WorkorderCard_BackgroundView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/status_view" />
+            android:layout_height="match_parent" />
 
         <View
             android:id="@+id/status_view"
@@ -254,10 +245,6 @@
         style="@style/WorkorderCard_LoadingLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/content_layout"
-        android:layout_alignLeft="@+id/content_layout"
-        android:layout_alignRight="@+id/content_layout"
-        android:layout_alignTop="@+id/content_layout"
         android:visibility="gone" >
 
         <ProgressBar
@@ -274,10 +261,6 @@
         style="@style/WorkorderCard_UndoLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/content_layout"
-        android:layout_alignLeft="@+id/content_layout"
-        android:layout_alignRight="@+id/content_layout"
-        android:layout_alignTop="@+id/content_layout"
         android:visibility="gone" >
 
         <Button

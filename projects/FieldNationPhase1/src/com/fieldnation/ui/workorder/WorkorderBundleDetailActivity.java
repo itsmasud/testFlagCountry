@@ -9,6 +9,12 @@ import android.os.Bundle;
 public class WorkorderBundleDetailActivity extends BaseActivity {
 	private static final String TAG = "ui.workorder.WorkorderBundleDetailActivity";
 
+	public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity";
+
+	// UI
+	// Data
+	private long _workorderId = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -17,6 +23,18 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 		Intent intent = getIntent();
 
 		if (intent == null) {
+			finish();
+			return;
+		}
+
+		if (intent.hasExtra("workorder_id")) {
+			_workorderId = intent.getLongExtra("workorder_id", -1);
+		} else {
+			finish();
+			return;
+		}
+
+		if (_workorderId == -1) {
 			finish();
 			return;
 		}

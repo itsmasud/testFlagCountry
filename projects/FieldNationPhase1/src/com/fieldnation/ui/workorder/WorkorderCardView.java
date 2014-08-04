@@ -489,7 +489,6 @@ public class WorkorderCardView extends RelativeLayout {
 		_backImageView.setClickable(false);
 		_notInterestedButtonLayout.setClickable(false);
 
-		setIsBundle(_workorder.getBundleId() != null);
 	}
 
 	private void buildStatus() throws ParseException {
@@ -498,6 +497,7 @@ public class WorkorderCardView extends RelativeLayout {
 		} else {
 			_statusTextView.setText("");
 		}
+		setIsBundle(_workorder.getBundleId() != null);
 
 		setNotInterestedEnabled(false);
 		_titleTextView.setVisibility(GONE);
