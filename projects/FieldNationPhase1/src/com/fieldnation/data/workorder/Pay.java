@@ -142,7 +142,9 @@ public class Pay {
 		} else if ("Hourly".equals(basis)) {
 			return misc.toCurrency(getPerHour()) + " X " + getMaxHour();
 		} else if ("Blended".equals(basis)) {
-			return misc.toCurrency(getBlendedStartRate()) + " X " + getBlendedFirstHours() + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " + getBlendedAdditionalHours();
+			return misc.toCurrency(getBlendedStartRate()) + " X " + getBlendedFirstHours();
+			// + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " +
+			// getBlendedAdditionalHours();
 		} else if ("Per Device".equals(basis)) {
 			return misc.toCurrency(getPerDevice()) + " X " + getMaxDevice();
 		}

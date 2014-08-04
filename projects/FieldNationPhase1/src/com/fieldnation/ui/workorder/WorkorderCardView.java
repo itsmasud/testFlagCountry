@@ -1,12 +1,8 @@
 package com.fieldnation.ui.workorder;
 
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Label;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
@@ -49,12 +45,13 @@ public class WorkorderCardView extends RelativeLayout {
 	private LinearLayout _notInterestedButtonLayout;
 
 	// background
-	private RelativeLayout _backgroundLayout;
+	private ViewGroup _backgroundLayout;
+	private View _statusView;
+	private View _backgroundView;
 
 	// main content
 	private RelativeLayout _contentLayout;
 	// status
-	private View _statusView;
 	private TextView _statusTextView;
 	// bundle
 	private RelativeLayout _bundleLayout;
@@ -121,13 +118,14 @@ public class WorkorderCardView extends RelativeLayout {
 		_notInterestedButtonLayout.setOnClickListener(_notInterestedButton_onClick);
 		_notInterestedButtonLayout.setClickable(false);
 
-		_backgroundLayout = (RelativeLayout) findViewById(R.id.background_layout);
+		_backgroundLayout = (ViewGroup) findViewById(R.id.background_layout);
+		_backgroundView = (View) findViewById(R.id.background_view);
+		_statusView = (View) findViewById(R.id.status_view);
 
 		// main content
 		_contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
 
 		// status
-		_statusView = (View) findViewById(R.id.status_view);
 		_statusTextView = (TextView) findViewById(R.id.status_textview);
 
 		// bundle bar
