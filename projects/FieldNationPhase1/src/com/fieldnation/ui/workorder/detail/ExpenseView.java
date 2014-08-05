@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder.detail;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.ExpenseCategories;
+import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -24,8 +25,8 @@ public class ExpenseView extends LinearLayout {
 
 	// Data
 	private Listener _listener;
-	private AdditionalExpense _expense;
-	private ExpenseCategories _categories;
+	private AdditionalExpense _expense = null;
+	private ExpenseCategory[] _categories;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -51,12 +52,21 @@ public class ExpenseView extends LinearLayout {
 		_costTextView = (TextView) findViewById(R.id.cost_textview);
 		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 		_deleteImageButton.setOnClickListener(_delete_onClick);
+
+		ExpenseCategories categories = ExpenseCategories.getInstance(getContext());
+		categories.setListener(_categoriesListener);
 	}
 
 	/*-*********************************-*/
 	/*-				Event				-*/
 	/*-*********************************-*/
-
+	private ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
+		@Override
+		public void onHaveCategories(ExpenseCategory[] categories) {
+			_categories = categories;
+			refresh();
+		}
+	};
 	private View.OnClickListener _delete_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -70,11 +80,26 @@ public class ExpenseView extends LinearLayout {
 	/*-*************************************-*/
 	public void setAdditionalExpense(AdditionalExpense expense) {
 		_expense = expense;
-		_descriptionTextView.setText(expense.getDescription());
+		refresh();
+	}
+
+	private void refresh() {
+		if (_expense == null)
+			return;
+
+		_descriptionTextView.setText(_expense.getDescription());
 		// TODO need to map the ID to a real string
-		_categoryTextView.setText(expense.getCategoryId() + "");
+
+		if (_categories != null) {
+			for (int i = 0; i < _categories.length; i++) {
+				if (_categories[i].getId() == _expense.getCategoryId()) {
+					_categoryTextView.setText(_categories[i].getName());
+					break;
+				}
+			}
+		}
 		// TODO, need to get quantity and priceper item numbers
-		_costTextView.setText(misc.toCurrency(expense.getPrice()));
+		_costTextView.setText(misc.toCurrency(_expense.getPrice()));
 	}
 
 	public void setListener(Listener listener) {

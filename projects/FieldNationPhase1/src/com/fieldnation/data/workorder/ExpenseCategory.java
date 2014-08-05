@@ -17,7 +17,7 @@ public class ExpenseCategory {
 		return _name;
 	}
 
-	public Integer getId() {
+	public int getId() {
 		return _id;
 	}
 

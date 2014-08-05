@@ -34,7 +34,7 @@ public class AdditionalExpense {
 		return _approved;
 	}
 
-	public Integer getCategoryId(){
+	public int getCategoryId(){
 		return _categoryId;
 	}
 
