@@ -4,16 +4,16 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.ui.DrawerActivity;
-import com.fieldnation.ui.ListViewEx;
 import com.fieldnation.ui.PagingListAdapter;
 
+import eu.erikw.PullToRefreshListView;
 import android.os.Bundle;
 
 public class PaymentListActivity extends DrawerActivity {
 	private static final String TAG = "ui.payment.PaymentListActivity";
 
 	// UI
-	private ListViewEx _listView;
+	private PullToRefreshListView _listView;
 
 	// Data
 	private PaymentListAdapter _adapter;
@@ -27,7 +27,7 @@ public class PaymentListActivity extends DrawerActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_itemlist);
 
-		_listView = (ListViewEx) findViewById(R.id.items_listview);
+		_listView = (PullToRefreshListView) findViewById(R.id.items_listview);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
 		addActionBarAndDrawer(R.id.container);
@@ -58,6 +58,7 @@ public class PaymentListActivity extends DrawerActivity {
 
 		@Override
 		public void onLoading() {
+			_listView.setRefreshing();
 		}
 
 		@Override
@@ -66,8 +67,7 @@ public class PaymentListActivity extends DrawerActivity {
 		}
 	};
 
-	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
-
+	private PullToRefreshListView.OnRefreshListener _listView_onRefreshListener = new PullToRefreshListView.OnRefreshListener() {
 		@Override
 		public void onRefresh() {
 			getAdapter().update(false);

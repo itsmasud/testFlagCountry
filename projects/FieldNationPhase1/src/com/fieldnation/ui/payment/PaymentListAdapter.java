@@ -37,7 +37,7 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 	}
 
 	@Override
-	public void invalidateWebervice() {
+	public void invalidateWebService() {
 		_service = null;
 	}
 

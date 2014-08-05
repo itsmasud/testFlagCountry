@@ -6,7 +6,7 @@
 
     <!-- The main content view -->
 
-    <com.fieldnation.ui.ListViewEx
+    <eu.erikw.PullToRefreshListView
         android:id="@+id/items_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

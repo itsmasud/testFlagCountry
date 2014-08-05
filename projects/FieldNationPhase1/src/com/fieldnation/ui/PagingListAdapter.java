@@ -23,9 +23,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private static final String TAG = "ui.PagingListAdapter";
@@ -43,7 +40,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private String _authToken;
 	private String _username;
 	private View _progressBar = null;
-	private Listener _listener = null;
+	private Listener<T> _listener = null;
 	private Random _rand = new Random(System.currentTimeMillis());
 
 	public PagingListAdapter(Activity activity, Class<T> clazz) {
@@ -116,18 +113,20 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	/*-*****************************-*/
 	/*-			Dispatchers			-*/
 	/*-*****************************-*/
-	public void setLoadingListener(Listener listener) {
+	public void setLoadingListener(Listener<T> listener) {
 		_listener = listener;
 	}
 
 	private void dispatchOnLoading() {
-		if (_listener != null)
+		if (_listener != null) {
 			_listener.onLoading();
+		}
 	}
 
 	private void dispatchOnLoadComplete() {
-		if (_listener != null)
+		if (_listener != null) {
 			_listener.onLoadComplete();
+		}
 	}
 
 	/*-*********************************-*/
@@ -208,8 +207,8 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 					Log.v(TAG, "_atEndOfList");
 					_atEndOfList = true;
 				}
-				notifyDataSetChanged();
 				dispatchOnLoadComplete();
+				notifyDataSetChanged();
 			} else {
 				handleWebResult(resultCode, resultData);
 			}
@@ -273,7 +272,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		dispatchOnLoading();
 		if (_authToken == null) {
 			Log.v(TAG, "Waiting for accessToken");
-			invalidateWebervice();
+			invalidateWebService();
 			_gs.requestAuthentication(_authClient);
 		} else {
 			Log.v(TAG, "Have accessToken");
@@ -310,10 +309,10 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	public abstract View getView(T obj, View convertView, ViewGroup parent);
 
 	/**
-	 * When authenticatino fails, or some other error happens that requires that
+	 * When authentication fails, or some other error happens that requires that
 	 * the web sevice be restarted
 	 */
-	public abstract void invalidateWebervice();
+	public abstract void invalidateWebService();
 
 	/**
 	 * This should create a new webservice if one doesn't already exist. If one

@@ -37,7 +37,7 @@ public class NotificationListAdapter extends PagingListAdapter<Notification> {
 	}
 
 	@Override
-	public void invalidateWebervice() {
+	public void invalidateWebService() {
 		_profileService = null;
 	}
 

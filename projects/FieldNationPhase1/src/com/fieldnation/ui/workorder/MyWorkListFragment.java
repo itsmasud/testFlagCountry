@@ -4,8 +4,8 @@ import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.ui.ListViewEx;
 
+import eu.erikw.PullToRefreshListView;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,7 +18,7 @@ public class MyWorkListFragment extends Fragment {
 	private static final String TAG = "ui.workorder.MyWorkListFragment";
 
 	// UI
-	private ListViewEx _listView;
+	private PullToRefreshListView _listView;
 
 	// Data
 	private WorkorderListAdapter _adapter;
@@ -57,7 +57,7 @@ public class MyWorkListFragment extends Fragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		_listView = (ListViewEx) view.findViewById(R.id.workorders_listview);
+		_listView = (PullToRefreshListView) view.findViewById(R.id.workorders_listview);
 		_listView.setDivider(null);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 	}
@@ -98,6 +98,7 @@ public class MyWorkListFragment extends Fragment {
 
 		@Override
 		public void onLoading() {
+			_listView.setRefreshing();
 		}
 
 		@Override
@@ -106,8 +107,7 @@ public class MyWorkListFragment extends Fragment {
 		}
 	};
 
-	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
-
+	private PullToRefreshListView.OnRefreshListener _listView_onRefreshListener = new PullToRefreshListView.OnRefreshListener() {
 		@Override
 		public void onRefresh() {
 			_adapter.update(false);
@@ -119,6 +119,7 @@ public class MyWorkListFragment extends Fragment {
 	/*-*********************************-*/
 	public void update() {
 		getAdapter().update(false);
+		_listView.setRefreshing();
 	}
 
 	private WorkorderListAdapter getAdapter() {

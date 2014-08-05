@@ -36,7 +36,7 @@ public class MessagesListAdapter extends PagingListAdapter<Message> {
 	}
 
 	@Override
-	public void invalidateWebervice() {
+	public void invalidateWebService() {
 		_profileService = null;
 	}
 

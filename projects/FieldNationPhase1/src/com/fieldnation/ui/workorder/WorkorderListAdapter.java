@@ -91,7 +91,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	}
 
 	@Override
-	public void invalidateWebervice() {
+	public void invalidateWebService() {
 		_workorderService = null;
 	}
 

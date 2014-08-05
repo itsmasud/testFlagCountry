@@ -3,13 +3,14 @@ package com.fieldnation.ui;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 
+import eu.erikw.PullToRefreshListView;
 import android.os.Bundle;
 
 public class NotificationListActivity extends BaseActivity {
 	private static final String TAG = "ui.NotificationListActivity";
 
 	// UI
-	private ListViewEx _listView;
+	private PullToRefreshListView _listView;
 
 	// Data
 	private NotificationListAdapter _adapter;
@@ -23,7 +24,7 @@ public class NotificationListActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_itemlist);
 
-		_listView = (ListViewEx) findViewById(R.id.items_listview);
+		_listView = (PullToRefreshListView) findViewById(R.id.items_listview);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
 		// addActionBarAndDrawer(R.id.container);
@@ -54,6 +55,7 @@ public class NotificationListActivity extends BaseActivity {
 
 		@Override
 		public void onLoading() {
+			_listView.setRefreshing();
 		}
 
 		@Override
@@ -62,7 +64,7 @@ public class NotificationListActivity extends BaseActivity {
 		}
 	};
 
-	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
+	private PullToRefreshListView.OnRefreshListener _listView_onRefreshListener = new PullToRefreshListView.OnRefreshListener() {
 
 		@Override
 		public void onRefresh() {

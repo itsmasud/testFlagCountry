@@ -1,13 +1,15 @@
 package com.fieldnation.ui;
 
 import com.fieldnation.R;
+
+import eu.erikw.PullToRefreshListView;
 import android.os.Bundle;
 
 public class MessageListActivity extends BaseActivity {
 	private static final String TAG = "ui.MessageListActivity";
 
 	// UI
-	private ListViewEx _listView;
+	private PullToRefreshListView _listView;
 
 	// Data
 	private MessagesListAdapter _adapter;
@@ -21,7 +23,7 @@ public class MessageListActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_itemlist);
 
-		_listView = (ListViewEx) findViewById(R.id.items_listview);
+		_listView = (PullToRefreshListView) findViewById(R.id.items_listview);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
 		// addActionBarAndDrawer(R.id.container);
@@ -52,6 +54,7 @@ public class MessageListActivity extends BaseActivity {
 
 		@Override
 		public void onLoading() {
+			_listView.setRefreshing();
 		}
 
 		@Override
@@ -60,8 +63,7 @@ public class MessageListActivity extends BaseActivity {
 		}
 	};
 
-	private ListViewEx.OnRefreshListener _listView_onRefreshListener = new ListViewEx.OnRefreshListener() {
-
+	private PullToRefreshListView.OnRefreshListener _listView_onRefreshListener = new PullToRefreshListView.OnRefreshListener() {
 		@Override
 		public void onRefresh() {
 			getListAdapter().update(false);
