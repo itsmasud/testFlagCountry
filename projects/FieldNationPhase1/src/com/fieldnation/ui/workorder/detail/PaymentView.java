@@ -5,6 +5,7 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.Discount;
+import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
@@ -101,9 +102,9 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 	private ExpenseDialog.Listener _addExpense_listener = new ExpenseDialog.Listener() {
 		@Override
-		public void onOk(String description, double amount) {
+		public void onOk(String description, double amount, ExpenseCategory category) {
 			getContext().startService(
-					_service.addExpense(RESULT_ADD_EXPENSE, _workorder.getWorkorderId(), description, amount));
+					_service.addExpense(RESULT_ADD_EXPENSE, _workorder.getWorkorderId(), description, amount, category));
 		}
 	};
 

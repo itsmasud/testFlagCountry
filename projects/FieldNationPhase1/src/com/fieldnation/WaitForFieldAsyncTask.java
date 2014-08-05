@@ -50,7 +50,8 @@ public class WaitForFieldAsyncTask extends AsyncTask<Object, Void, Object> {
 		Object obj = params[0];
 		String fieldName = (String) params[1];
 		try {
-			Field field = obj.getClass().getField(fieldName);
+			Field field = obj.getClass().getDeclaredField(fieldName);
+			field.setAccessible(true);
 
 			while (field.get(obj) == null) {
 				Thread.sleep(100);
@@ -58,6 +59,7 @@ public class WaitForFieldAsyncTask extends AsyncTask<Object, Void, Object> {
 
 			return field.get(obj);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			return ex;
 		}
 	}

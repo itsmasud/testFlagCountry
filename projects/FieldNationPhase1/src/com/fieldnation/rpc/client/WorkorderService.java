@@ -1,5 +1,6 @@
 package com.fieldnation.rpc.client;
 
+import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -124,9 +125,13 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpGet(resultCode, "/api/rest/v1/workorder/" + workorderId + "/expenses", null, allowCache);
 	}
 
-	public Intent addExpense(int resultCode, long workorderId, String description, double price) {
-		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/expense", null,
-				"description=" + misc.escapeForURL(description) + "&price=" + price,
+	public Intent addExpense(int resultCode, long workorderId, String description, double price,
+			ExpenseCategory category) {
+		return httpPost(
+				resultCode,
+				"/api/rest/v1/workorder/" + workorderId + "/expense",
+				null,
+				"description=" + misc.escapeForURL(description) + "&price=" + price + "&category_id=" + category.getId(),
 				"application/x-www-form-urlencoded", false);
 	}
 

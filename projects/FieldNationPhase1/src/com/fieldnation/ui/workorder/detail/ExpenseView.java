@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -24,17 +25,23 @@ public class ExpenseView extends LinearLayout {
 	// Data
 	private Listener _listener;
 	private AdditionalExpense _expense;
+	private ExpenseCategories _categories;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 	public ExpenseView(Context context) {
-		this(context, null);
+		super(context);
+		init();
 	}
 
 	public ExpenseView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_expense, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_expense, this);
 
 		if (isInEditMode())
 			return;

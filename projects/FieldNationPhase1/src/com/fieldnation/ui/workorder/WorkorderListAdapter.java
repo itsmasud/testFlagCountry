@@ -11,6 +11,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.CancelCategory;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
+import com.fieldnation.ui.payment.PayDialog;
 
 import android.app.Activity;
 import android.content.Context;
@@ -39,6 +40,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	private WorkorderDataSelector _dataSelection;
 	private Set<Long> _pendingNotInterestedWorkorders = new HashSet<Long>();
 	private Set<Long> _requestWorkingWorkorders = new HashSet<Long>();
+	private PayDialog _payDialog;
 
 	/*-*****************************-*/
 	/*-			Lifecycle			-*/
@@ -53,6 +55,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 				int.class,
 				boolean.class });
 		_rpcMethod.setAccessible(true);
+
+		_payDialog = new PayDialog(activity);
 	}
 
 	@Override
@@ -232,6 +236,12 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
 			_requestWorkingWorkorders.add(workorder.getWorkorderId());
+		}
+
+		@Override
+		public void viewCounter(Workorder workorder) {
+			// TODO this is not correct;
+			_payDialog.show();
 		}
 	};
 }

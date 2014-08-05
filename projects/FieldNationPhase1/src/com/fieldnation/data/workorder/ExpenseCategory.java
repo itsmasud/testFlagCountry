@@ -4,23 +4,29 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class ExpenseCategory{
-	@Json(name="name")
+public class ExpenseCategory {
+	@Json(name = "name")
 	private String _name;
-	@Json(name="id")
+	@Json(name = "id")
 	private Integer _id;
 
-	public ExpenseCategory(){
+	public ExpenseCategory() {
 	}
-	public String getName(){
+
+	public String getName() {
 		return _name;
 	}
 
-	public Integer getId(){
+	public Integer getId() {
 		return _id;
 	}
 
-	public JsonObject toJson(){
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

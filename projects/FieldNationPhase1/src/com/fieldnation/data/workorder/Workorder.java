@@ -266,6 +266,7 @@ public class Workorder {
 	public static final int BUTTON_ACTION_CHECKIN = 3;
 	public static final int BUTTON_ACTION_CHECKOUT = 4;
 	public static final int BUTTON_ACTION_ACKNOWLEDGE_HOLD = 5;
+	public static final int BUTTON_ACTION_VIEW_COUNTER = 6;
 
 	public static final int NOT_INTERESTED_ACTION_NONE = 0;
 	public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
@@ -472,8 +473,7 @@ public class Workorder {
 				_notInterestedAction = NOT_INTERESTED_ACTION_WITHDRAW_REQUEST;
 			} else if (has13) {
 				_statusDisplayState = 3;
-				// TODO BUTTON_ACTION_VIEW_COUNTER!?
-				// _buttonAction = BUTTON_ACTION_VIEW_COUNTER;
+				_buttonAction = BUTTON_ACTION_VIEW_COUNTER;
 				_notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
 
 			}

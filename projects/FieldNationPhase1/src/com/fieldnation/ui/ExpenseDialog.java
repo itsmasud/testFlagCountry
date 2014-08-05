@@ -1,19 +1,37 @@
 package com.fieldnation.ui;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.ExpenseCategories;
+import com.fieldnation.data.workorder.ExpenseCategory;
+
 import android.app.Dialog;
 import android.content.Context;
+import android.database.DataSetObserver;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 
 public class ExpenseDialog extends Dialog {
 	private static String TAG = "ui.ExpenseDialog";
 	private Button _okButton;
 	private EditText _amountEditText;
 	private EditText _descriptionEditText;
-
+	private Spinner _categorySpinner;
 	private Listener _listener;
+	private ExpenseCategory[] _categories;
+	private ArrayAdapter<ExpenseCategory> _adapter;
 
 	public ExpenseDialog(Context context) {
 		super(context);
@@ -23,13 +41,26 @@ public class ExpenseDialog extends Dialog {
 		_okButton.setOnClickListener(_okButton_onClick);
 		_amountEditText = (EditText) findViewById(R.id.amount_edittext);
 		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
-
+		_categorySpinner = (Spinner) findViewById(R.id.category_spinner);
+		ExpenseCategories.getInstance(getContext()).setListener(_categoriesListener);
 	}
+
+	private ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
+		@Override
+		public void onHaveCategories(ExpenseCategory[] categories) {
+			_categories = categories;
+
+			_adapter = new ArrayAdapter<ExpenseCategory>(getContext(), android.R.layout.simple_spinner_dropdown_item,
+					categories);
+
+			_categorySpinner.setAdapter(_adapter);
+		}
+	};
 
 	private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_listener.onOk(getDescription(), getAmount());
+			_listener.onOk(getDescription(), getAmount(), getCategory());
 			ExpenseDialog.this.dismiss();
 		}
 	};
@@ -51,7 +82,11 @@ public class ExpenseDialog extends Dialog {
 		return Double.parseDouble(_amountEditText.getText().toString());
 	}
 
+	public ExpenseCategory getCategory() {
+		return _adapter.getItem(_categorySpinner.getSelectedItemPosition());
+	}
+
 	public interface Listener {
-		public void onOk(String description, double amount);
+		public void onOk(String description, double amount, ExpenseCategory category);
 	}
 }

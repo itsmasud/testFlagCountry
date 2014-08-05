@@ -294,6 +294,10 @@ public class WorkorderCardView extends RelativeLayout {
 				if (_listener != null) {
 					_listener.actionAcknowledgeHold(_workorder);
 				}
+			case Workorder.BUTTON_ACTION_VIEW_COUNTER:
+				if (_listener != null) {
+					_listener.viewCounter(_workorder);
+				}
 			}
 			setDisplayMode(MODE_DOING_WORK);
 		}
@@ -731,5 +735,7 @@ public class WorkorderCardView extends RelativeLayout {
 		public void actionCheckout(Workorder workorder);
 
 		public void actionAcknowledgeHold(Workorder workorder);
+
+		public void viewCounter(Workorder workorder);
 	}
 }

@@ -2,6 +2,7 @@ package com.fieldnation;
 
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.auth.client.AuthenticationServer;
+import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.rpc.server.DataCacheNode;
 import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.Ws;
@@ -25,6 +26,9 @@ public class GlobalState extends Application {
 	public String authority;
 	public String accountType;
 
+	private long _waitTime = 5000;
+	private long _lastDelayed = 0;
+
 	public GlobalState() {
 		super();
 		Ws.USE_HTTPS = true;
@@ -39,9 +43,22 @@ public class GlobalState extends Application {
 		DataCacheNode.flush(this);
 		PhotoCacheNode.flush(this);
 
+		ExpenseCategories.getInstance(this);
+
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 			System.setProperty("http.keepalive", "false");
 		}
+	}
+
+	private long getNextDelay() {
+		long dif = System.currentTimeMillis() - _lastDelayed;
+		if (dif < 10000) {
+			_waitTime += 5000;
+		} else {
+			_waitTime = 5000;
+		}
+		_lastDelayed = System.currentTimeMillis();
+		return _waitTime;
 	}
 
 	/**
@@ -66,7 +83,7 @@ public class GlobalState extends Application {
 		if (_authServer == null) {
 			client.waitForObject(this, "_authServer");
 		} else {
-			client.waitForTime(5000);
+			client.waitForTime(getNextDelay());
 		}
 	}
 

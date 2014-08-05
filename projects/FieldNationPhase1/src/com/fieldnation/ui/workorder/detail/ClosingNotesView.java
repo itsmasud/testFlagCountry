@@ -6,6 +6,7 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.payment.PayDialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	private Button _requestButton;
 	private Button _notInterestedButton;
 	private Button _completeButton;
+	private Button _counterOfferButton;
+	private PayDialog _payDialog;
 
 	// Data
 	private GlobalState _gs;
@@ -61,6 +64,10 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 		_notInterestedButton.setOnClickListener(_notInterested_onClick);
 		_completeButton = (Button) findViewById(R.id.complete_button);
 		_completeButton.setOnClickListener(_complete_onClick);
+		_counterOfferButton = (Button) findViewById(R.id.counteroffer_button);
+		_counterOfferButton.setOnClickListener(_counter_onClick);
+
+		_payDialog = new PayDialog(getContext());
 
 		// TODO put UI into loading state
 		_saveButton.setText("Loading...");
@@ -70,6 +77,12 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _counter_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			_payDialog.show();
+		}
+	};
 	private View.OnClickListener _request_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -153,8 +166,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
 	private void refresh() {
 		_notesEditText.setText(_workorder.getClosingNotes());
-		
-		
+
 	}
 
 }

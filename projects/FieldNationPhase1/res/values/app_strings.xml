@@ -125,5 +125,11 @@
         <item>UPS</item>
         <item>Other</item>
     </string-array>
+    <string-array name="pay_types">
+        <item>Fixed</item>
+        <item>Hourly</item>
+        <item>Per Device</item>
+        <item>Bleneded</item>
+    </string-array>
 
 </resources>
