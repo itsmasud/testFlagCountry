@@ -24,44 +24,34 @@
                 android:layout_weight="0.75"
                 android:orientation="vertical" >
 
-                <TextView
-                    android:id="@+id/id_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ID 971"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" >
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Processing "
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                    <ImageView
+                        android:id="@+id/bundle_imageview"
+                        style="@style/WorkorderCard_Bundle_Icon" />
 
                     <TextView
-                        android:id="@+id/payment_textview"
+                        style="@style/WorkorderCard_Bundle_Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$1,748.00"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                        android:text="@string/bundle" />
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/paymenttype_textview"
+                    android:id="@+id/distance_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Check"
+                    android:text="Average Distance 3.5mi"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/date_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Estimated 05/21/14"
+                    android:text="Range 04/12/14 - 04/23/14"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
 
@@ -72,21 +62,12 @@
                 android:layout_weight="0.25"
                 android:orientation="vertical" >
 
-                <TextView
-                    android:id="@+id/workordercount_textview"
+                <Button
+                    style="@style/ButtonWhite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:text="3 Work Orders"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/feescount_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:text="2 Fees"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:padding="15dp"
+                    android:text="Request (5)" />
             </LinearLayout>
         </LinearLayout>
 

@@ -69,6 +69,11 @@
             android:exported="false"
             android:label="@string/activity_notifications_list_title" >
         </activity>
+        <activity
+            android:name="com.fieldnation.ui.workorder.WorkorderBundleDetailActivity"
+            android:exported="false"
+            android:label="@string/activity_bundle_detail" >
+        </activity>
 
         <provider
             android:name="com.fieldnation.rpc.server.StubProvider"
@@ -112,7 +117,7 @@
             android:exported="true"
             android:process=":sync" >
             <intent-filter>
-com.fieldnation.service
+com.fieldnation.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 

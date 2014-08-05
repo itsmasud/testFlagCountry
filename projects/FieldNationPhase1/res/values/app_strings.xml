@@ -66,6 +66,7 @@
 
     <!-- notifications list activity -->
     <string name="activity_notifications_list_title">Notifications</string>
+    <string name="activity_bundle_detail">Bundle Details</string>
 
     <!-- Drawer strings -->
     <string name="mywork_title">My Work Orders</string>

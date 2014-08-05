@@ -10,6 +10,7 @@ import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Debug;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -92,6 +93,7 @@ public class WorkorderCardView extends RelativeLayout {
 	private Workorder _workorder;
 	private Listener _listener = null;
 	private int _displayMode = MODE_NORMAL;
+	private boolean _isBundle;
 
 	public WorkorderCardView(Context context) {
 		this(context, null, -1);
@@ -249,9 +251,16 @@ public class WorkorderCardView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent(getContext(), WorkorderActivity.class);
-			intent.putExtra("workorder_id", _workorder.getWorkorderId());
-			getContext().startActivity(intent);
+			if (_isBundle) {
+				Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
+				intent.putExtra("workorder_id", _workorder.getWorkorderId());
+				getContext().startActivity(intent);
+
+			} else {
+				Intent intent = new Intent(getContext(), WorkorderActivity.class);
+				intent.putExtra("workorder_id", _workorder.getWorkorderId());
+				getContext().startActivity(intent);
+			}
 		}
 	};
 
@@ -337,6 +346,7 @@ public class WorkorderCardView extends RelativeLayout {
 			showAlertIcon(true);
 			showMessageAlertIcon(true);
 		}
+		_isBundle = isBundle;
 	}
 
 	public void setNotInterestedEnabled(boolean enabled) {

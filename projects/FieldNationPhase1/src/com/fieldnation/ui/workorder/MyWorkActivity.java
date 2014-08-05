@@ -25,7 +25,7 @@ public class MyWorkActivity extends DrawerActivity {
 
 	// UI
 	private ViewPager _viewPager;
-	private MyWorkListFragment[] _fragments;
+	private WorkorderListFragment[] _fragments;
 
 	// Data
 	private PagerAdapter _pagerAdapter;
@@ -52,11 +52,11 @@ public class MyWorkActivity extends DrawerActivity {
 	private void buildTabs() {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
-		_fragments = new MyWorkListFragment[3];
+		_fragments = new WorkorderListFragment[3];
 
-		_fragments[0] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.ASSIGNED);
-		_fragments[1] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.COMPLETED);
-		_fragments[2] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.CANCELLED);
+		_fragments[0] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.ASSIGNED);
+		_fragments[1] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.COMPLETED);
+		_fragments[2] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.CANCELLED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

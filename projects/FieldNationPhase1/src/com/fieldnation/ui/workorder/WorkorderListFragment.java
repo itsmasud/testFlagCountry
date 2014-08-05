@@ -9,12 +9,17 @@ import eu.erikw.PullToRefreshListView;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class MyWorkListFragment extends Fragment {
+public class WorkorderListFragment extends Fragment {
 	private static final String TAG = "ui.workorder.MyWorkListFragment";
 
 	// UI
@@ -28,7 +33,7 @@ public class MyWorkListFragment extends Fragment {
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 
-	public MyWorkListFragment setDisplayType(WorkorderDataSelector displayView) {
+	public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
 		_displayView = displayView;
 		return this;
 	}
@@ -37,7 +42,7 @@ public class MyWorkListFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.v(TAG, "onCreate: " + MyWorkListFragment.this.toString() + "/" + _displayView.getCall());
+		Log.v(TAG, "onCreate: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
 
 		if (savedInstanceState != null) {
 			if (savedInstanceState.containsKey("_displayView")) {
@@ -60,6 +65,8 @@ public class MyWorkListFragment extends Fragment {
 		_listView = (PullToRefreshListView) view.findViewById(R.id.workorders_listview);
 		_listView.setDivider(null);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
+
+		((ActionBarActivity) getActivity()).startSupportActionMode(_actionMode_Callback);
 	}
 
 	@Override
@@ -93,6 +100,36 @@ public class MyWorkListFragment extends Fragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private ActionMode.Callback _actionMode_Callback = new ActionMode.Callback() {
+
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.workorder_card, menu);
+			return true;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode arg0, Menu arg1) {
+			// TODO Method Stub: onPrepareActionMode()
+			Log.v(TAG, "Method Stub: onPrepareActionMode()");
+			return false;
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode arg0) {
+			// TODO Method Stub: onDestroyActionMode()
+			Log.v(TAG, "Method Stub: onDestroyActionMode()");
+
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
+			// TODO Method Stub: onActionItemClicked()
+			Log.v(TAG, "Method Stub: onActionItemClicked()");
+			return false;
+		}
+	};
 
 	private WorkorderListAdapter.Listener<Workorder> _workorderAdapter_listener = new WorkorderListAdapter.Listener<Workorder>() {
 

@@ -2,7 +2,7 @@ package com.fieldnation.ui.market;
 
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
-import com.fieldnation.ui.workorder.MyWorkListFragment;
+import com.fieldnation.ui.workorder.WorkorderListFragment;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import android.os.Bundle;
@@ -32,7 +32,7 @@ public class MarketActivity extends DrawerActivity {
 
 	// UI
 	private ViewPager _viewPager;
-	private MyWorkListFragment[] _fragments;
+	private WorkorderListFragment[] _fragments;
 
 	// Data
 	private PagerAdapter _pagerAdapter;
@@ -60,10 +60,10 @@ public class MarketActivity extends DrawerActivity {
 	private void buildTabs() {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
-		_fragments = new MyWorkListFragment[2];
+		_fragments = new WorkorderListFragment[2];
 
-		_fragments[0] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.AVAILABLE);
-		_fragments[1] = new MyWorkListFragment().setDisplayType(WorkorderDataSelector.REQUESTED);
+		_fragments[0] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.AVAILABLE);
+		_fragments[1] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.REQUESTED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
