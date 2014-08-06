@@ -2,14 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/notinterested_action"
         android:orderInCategory="200"
-        android:title="@string/settings"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_refresh"
-        android:orderInCategory="100"
-        android:title="@string/refresh"
+        android:title="Not Interested"
         app:showAsAction="always"/>
 
 </menu>

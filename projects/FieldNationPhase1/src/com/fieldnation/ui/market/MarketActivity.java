@@ -129,12 +129,14 @@ public class MarketActivity extends DrawerActivity {
 		}
 	}
 
-	// sync set actionbar tabs on page viewer change
+	// sync actionbar tabs on page viewer change
 	private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
 		@Override
 		public void onPageSelected(int position) {
 			try {
+				_fragments[_currentFragment].onPause();
 				_currentFragment = position;
+				_fragments[_currentFragment].onResume();
 				getSupportActionBar().setSelectedNavigationItem(position);
 			} catch (Exception ex) {
 			}
@@ -149,7 +151,9 @@ public class MarketActivity extends DrawerActivity {
 
 		@Override
 		public void onTabSelected(Tab arg0, FragmentTransaction arg1) {
+			_fragments[_currentFragment].onPause();
 			_currentFragment = arg0.getPosition();
+			_fragments[_currentFragment].onResume();
 			_viewPager.setCurrentItem(_currentFragment, true);
 		}
 

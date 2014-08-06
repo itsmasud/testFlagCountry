@@ -65,26 +65,30 @@ public class WorkorderListFragment extends Fragment {
 		_listView = (PullToRefreshListView) view.findViewById(R.id.workorders_listview);
 		_listView.setDivider(null);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
-
-		((ActionBarActivity) getActivity()).startSupportActionMode(_actionMode_Callback);
 	}
 
 	@Override
 	public void onStart() {
+		Log.v(TAG, "onStart");
+		if (_listView != null) {
+			_listView.setAdapter(getAdapter());
+		}
 		super.onStart();
-		// update();
-	}
-
-	@Override
-	public void onResume() {
-		Log.v(TAG, "onResume");
-		_listView.setAdapter(getAdapter());
-		super.onResume();
 	}
 
 	@Override
 	public void onPause() {
+		Log.v(TAG, "onPause()");
+		if (_adapter != null) {
+			_adapter.onPause();
+		}
 		super.onPause();
+	}
+
+	@Override
+	public void onStop() {
+		Log.v(TAG, "Method Stub: onStop()");
+		super.onStop();
 		if (_adapter != null) {
 			_adapter.onStop();
 			_adapter = null;
@@ -100,36 +104,6 @@ public class WorkorderListFragment extends Fragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private ActionMode.Callback _actionMode_Callback = new ActionMode.Callback() {
-
-		@Override
-		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			MenuInflater inflater = mode.getMenuInflater();
-			inflater.inflate(R.menu.workorder_card, menu);
-			return true;
-		}
-
-		@Override
-		public boolean onPrepareActionMode(ActionMode arg0, Menu arg1) {
-			// TODO Method Stub: onPrepareActionMode()
-			Log.v(TAG, "Method Stub: onPrepareActionMode()");
-			return false;
-		}
-
-		@Override
-		public void onDestroyActionMode(ActionMode arg0) {
-			// TODO Method Stub: onDestroyActionMode()
-			Log.v(TAG, "Method Stub: onDestroyActionMode()");
-
-		}
-
-		@Override
-		public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
-			// TODO Method Stub: onActionItemClicked()
-			Log.v(TAG, "Method Stub: onActionItemClicked()");
-			return false;
-		}
-	};
 
 	private WorkorderListAdapter.Listener<Workorder> _workorderAdapter_listener = new WorkorderListAdapter.Listener<Workorder>() {
 
@@ -157,6 +131,10 @@ public class WorkorderListFragment extends Fragment {
 	public void update() {
 		getAdapter().update(false);
 		_listView.setRefreshing();
+	}
+
+	public void hiding() {
+		_adapter.onStop();
 	}
 
 	private WorkorderListAdapter getAdapter() {

@@ -3,9 +3,11 @@ package com.fieldnation.ui.workorder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import com.fieldnation.DelayedCall;
+import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.CancelCategory;
@@ -18,7 +20,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,6 +48,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	private Set<Long> _pendingNotInterestedWorkorders = new HashSet<Long>();
 	private Set<Long> _requestWorkingWorkorders = new HashSet<Long>();
 	private PayDialog _payDialog;
+	private ActionMode _actionMode = null;
+	private Set<Long> _selectedWorkorders = new HashSet<Long>();
 
 	/*-*****************************-*/
 	/*-			Lifecycle			-*/
@@ -77,6 +86,12 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			wosum.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
 		} else {
 			wosum.setDisplayMode(WorkorderCardView.MODE_NORMAL);
+		}
+
+		if (_selectedWorkorders.contains(object.getWorkorderId())) {
+			wosum.setSelected(true);
+		} else {
+			wosum.setSelected(false);
 		}
 
 		wosum.setWorkorder(_dataSelection, object);
@@ -177,23 +192,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	private WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
 
 		@Override
-		public void startRemove(Workorder wo) {
-			_pendingNotInterestedWorkorders.add(wo.getWorkorderId());
-			new DelayedCall<Workorder>().execute(10000, _workorderDelayedDelete, wo);
-		}
-
-		@Override
-		public void cancelRemove(Workorder wo) {
-			_pendingNotInterestedWorkorders.remove(wo.getWorkorderId());
-			update(false);
-		}
-
-		@Override
-		public void notifyDataSetChanged() {
-			update(false);
-		}
-
-		@Override
 		public void actionRequest(Workorder workorder) {
 			// TODO ask user for time.
 			Intent intent = _workorderService.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), 600);
@@ -243,5 +241,84 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			// TODO this is not correct;
 			_payDialog.show();
 		}
+
+		@Override
+		public void onLongClick(WorkorderCardView view, Workorder workorder) {
+			if (_selectedWorkorders.contains(workorder.getWorkorderId())) {
+				_selectedWorkorders.remove(workorder.getWorkorderId());
+
+				view.setSelected(false);
+
+				if (_actionMode != null && _selectedWorkorders.size() == 0) {
+					_actionMode.finish();
+					_actionMode = null;
+				}
+			} else {
+				_selectedWorkorders.add(workorder.getWorkorderId());
+
+				view.setSelected(true);
+
+				if (_actionMode == null) {
+					_actionMode = ((ActionBarActivity) getActivity()).startSupportActionMode(_actionMode_Callback);
+				}
+			}
+		}
+
+		@Override
+		public void onClick(WorkorderCardView view, Workorder workorder) {
+			if (view.isBundle()) {
+				Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
+				intent.putExtra("workorder_id", workorder.getWorkorderId());
+				getContext().startActivity(intent);
+
+			} else {
+				Intent intent = new Intent(getContext(), WorkorderActivity.class);
+				intent.putExtra("workorder_id", workorder.getWorkorderId());
+				getContext().startActivity(intent);
+			}
+		}
 	};
+
+	private ActionMode.Callback _actionMode_Callback = new ActionMode.Callback() {
+
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.workorder_card, menu);
+			return true;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			return false;
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			_actionMode = null;
+			_selectedWorkorders.clear();
+			notifyDataSetChanged();
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			// TODO Method Stub: onActionItemClicked()
+			Log.v(TAG, "Method Stub: onActionItemClicked()");
+			if (item != null) {
+				Log.v(TAG, item.getItemId() + ":" + R.id.notinterested_action);
+			} else {
+				Log.v(TAG, "No item");
+			}
+			return false;
+		}
+	};
+
+	public void onPause() {
+		if (_actionMode != null) {
+			_actionMode.finish();
+			_actionMode = null;
+			_selectedWorkorders.clear();
+		}
+	}
+
 }

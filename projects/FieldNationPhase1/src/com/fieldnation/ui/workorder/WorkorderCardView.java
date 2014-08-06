@@ -10,15 +10,12 @@ import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Debug;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,8 +39,8 @@ public class WorkorderCardView extends RelativeLayout {
 	// UI
 	// not interested
 	/*-private RelativeLayout _notInterestedLayout;-*/
-	private ImageView _backImageView;
-	private LinearLayout _notInterestedButtonLayout;
+	/*-private ImageView _backImageView;-*/
+	/*-private LinearLayout _notInterestedButtonLayout;-*/
 
 	// background
 	private ViewGroup _backgroundLayout;
@@ -85,8 +82,8 @@ public class WorkorderCardView extends RelativeLayout {
 	private Button _undoButton;
 
 	// animations
-	private Animation _slideAnimation;
-	private Animation _slideBackAnimation;
+	// private Animation _slideAnimation;
+	// private Animation _slideBackAnimation;
 
 	// Data
 	private WorkorderDataSelector _dataView = null;
@@ -96,16 +93,22 @@ public class WorkorderCardView extends RelativeLayout {
 	private boolean _isBundle;
 
 	public WorkorderCardView(Context context) {
-		this(context, null, -1);
+		super(context);
+		init();
 	}
 
 	public WorkorderCardView(Context context, AttributeSet attrs) {
-		this(context, attrs, -1);
+		super(context, attrs);
+		init();
 	}
 
 	public WorkorderCardView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_card, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_card, this);
 
 		if (isInEditMode())
 			return;
@@ -113,12 +116,18 @@ public class WorkorderCardView extends RelativeLayout {
 		// connect UI components
 		// not interested
 		/*-_notInterestedLayout = (RelativeLayout) findViewById(R.id.notinterested_layout);-*/
-		_backImageView = (ImageView) findViewById(R.id.back_imageview);
-		_backImageView.setOnClickListener(_back_onClick);
-		_backImageView.setClickable(false);
-		_notInterestedButtonLayout = (LinearLayout) findViewById(R.id.notinterested_button_layout);
-		_notInterestedButtonLayout.setOnClickListener(_notInterestedButton_onClick);
-		_notInterestedButtonLayout.setClickable(false);
+		/* _backImageView = (ImageView) findViewById(R.id.back_imageview); */
+		/* _backImageView.setOnClickListener(_back_onClick); */
+		/* _backImageView.setClickable(false); */
+		/*
+		 * _notInterestedButtonLayout = (LinearLayout)
+		 * findViewById(R.id.notinterested_button_layout);
+		 */
+		/*
+		 * _notInterestedButtonLayout.setOnClickListener(
+		 * _notInterestedButton_onClick);
+		 */
+		/* _notInterestedButtonLayout.setClickable(false); */
 
 		_backgroundLayout = (ViewGroup) findViewById(R.id.background_layout);
 		_backgroundView = (View) findViewById(R.id.background_view);
@@ -173,8 +182,10 @@ public class WorkorderCardView extends RelativeLayout {
 		setOnClickListener(_this_onClick);
 
 		// hook up animations
-		_slideAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.wocard_slide_away);
-		_slideBackAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.wocard_slide_back);
+		// _slideAnimation = AnimationUtils.loadAnimation(getContext(),
+		// R.anim.wocard_slide_away);
+		// _slideBackAnimation = AnimationUtils.loadAnimation(getContext(),
+		// R.anim.wocard_slide_back);
 
 		// initialize ui
 		setIsBundle(false);
@@ -182,9 +193,19 @@ public class WorkorderCardView extends RelativeLayout {
 		showAlertIcon(true);
 	}
 
-	/*-*********************************-*/
-	/*-	set message/notification icon	-*/
-	/*-*********************************-*/
+	/*-*****************************************-*/
+	/*-				Setters Getters				-*/
+	/*-*****************************************-*/
+	public void setWorkorder(WorkorderDataSelector workorderDataSelector, Workorder workorder) {
+		_workorder = workorder;
+		_dataView = workorderDataSelector;
+		refresh();
+	}
+
+	public Workorder getWorkorder() {
+		return _workorder;
+	}
+
 	public void showMessageAlertIcon(boolean enabled) {
 		if (enabled) {
 			_messageAlertImageView.setVisibility(VISIBLE);
@@ -211,6 +232,39 @@ public class WorkorderCardView extends RelativeLayout {
 		refresh();
 	}
 
+	public void setIsBundle(boolean isBundle) {
+		if (isBundle) {
+			_bundleLayout.setVisibility(VISIBLE);
+			_titleTextView.setVisibility(GONE);
+			_basisTextView.setVisibility(GONE);
+			_paymentTextView.setVisibility(GONE);
+			_rightLayout.setVisibility(GONE);
+			showAlertIcon(false);
+			showMessageAlertIcon(false);
+		} else {
+			_bundleLayout.setVisibility(GONE);
+			_titleTextView.setVisibility(VISIBLE);
+			_basisTextView.setVisibility(VISIBLE);
+			_paymentTextView.setVisibility(VISIBLE);
+			_rightLayout.setVisibility(VISIBLE);
+			showAlertIcon(true);
+			showMessageAlertIcon(true);
+		}
+		_isBundle = isBundle;
+	}
+
+	public boolean isBundle() {
+		return _isBundle;
+	}
+
+	public void setNotInterestedEnabled(boolean enabled) {
+		this.setLongClickable(enabled);
+	}
+
+	public void setWorkorderSummaryListener(Listener listener) {
+		_listener = listener;
+	}
+
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
@@ -221,24 +275,24 @@ public class WorkorderCardView extends RelativeLayout {
 			Log.v(TAG, "Method Stub: _undoButton_onClick()");
 		}
 	};
-
-	private View.OnClickListener _notInterestedButton_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (_listener != null) {
-				// TODO trigger animation before removing
-				_listener.startRemove(_workorder);
-				_displayMode = MODE_UNDO_NOT_INTERESTED;
-				_backImageView.setClickable(false);
-				_notInterestedButtonLayout.setClickable(false);
-				_contentLayout.startAnimation(_slideBackAnimation);
-				_backgroundLayout.startAnimation(_slideBackAnimation);
-				setDisplayMode(MODE_UNDO_NOT_INTERESTED);
-			}
-		}
-	};
-
-	private View.OnClickListener _back_onClick = new View.OnClickListener() {
+	/*-
+	 private View.OnClickListener _notInterestedButton_onClick = new View.OnClickListener() {
+	 @Override
+	 public void onClick(View v) {
+	 if (_listener != null) {
+	 // TODO trigger animation before removing
+	 _listener.startRemove(_workorder);
+	 _displayMode = MODE_UNDO_NOT_INTERESTED;
+	 _backImageView.setClickable(false);
+	 _notInterestedButtonLayout.setClickable(false);
+	 _contentLayout.startAnimation(_slideBackAnimation);
+	 _backgroundLayout.startAnimation(_slideBackAnimation);
+	 setDisplayMode(MODE_UNDO_NOT_INTERESTED);
+	 }
+	 }
+	 };
+	 -*/
+	/*-private View.OnClickListener _back_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			_backImageView.setClickable(false);
@@ -246,20 +300,13 @@ public class WorkorderCardView extends RelativeLayout {
 			_contentLayout.startAnimation(_slideBackAnimation);
 			_backgroundLayout.startAnimation(_slideBackAnimation);
 		}
-	};
+	};-*/
 
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if (_isBundle) {
-				Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
-				intent.putExtra("workorder_id", _workorder.getWorkorderId());
-				getContext().startActivity(intent);
-
-			} else {
-				Intent intent = new Intent(getContext(), WorkorderActivity.class);
-				intent.putExtra("workorder_id", _workorder.getWorkorderId());
-				getContext().startActivity(intent);
+			if (_listener != null) {
+				_listener.onClick(WorkorderCardView.this, _workorder);
 			}
 		}
 	};
@@ -267,10 +314,13 @@ public class WorkorderCardView extends RelativeLayout {
 	private View.OnLongClickListener _this_onLongClickListener = new View.OnLongClickListener() {
 		@Override
 		public boolean onLongClick(View v) {
-			_backImageView.setClickable(true);
-			_notInterestedButtonLayout.setClickable(true);
-			_contentLayout.startAnimation(_slideAnimation);
-			_backgroundLayout.startAnimation(_slideAnimation);
+			if (_listener != null) {
+				_listener.onLongClick(WorkorderCardView.this, _workorder);
+			}
+			// _backImageView.setClickable(true);
+			// _notInterestedButtonLayout.setClickable(true);
+			// _contentLayout.startAnimation(_slideAnimation);
+			// _backgroundLayout.startAnimation(_slideAnimation);
 			return true;
 		}
 	};
@@ -311,51 +361,6 @@ public class WorkorderCardView extends RelativeLayout {
 			setDisplayMode(MODE_DOING_WORK);
 		}
 	};
-
-	/*-*********************************-*/
-	/*-				Data				-*/
-	/*-*********************************-*/
-	public void setWorkorder(WorkorderDataSelector workorderDataSelector, Workorder workorder) {
-		_workorder = workorder;
-		_dataView = workorderDataSelector;
-		refresh();
-	}
-
-	public Workorder getWorkorder() {
-		return _workorder;
-	}
-
-	/*-*****************************************-*/
-	/*-				State Change				-*/
-	/*-*****************************************-*/
-	public void setIsBundle(boolean isBundle) {
-		if (isBundle) {
-			_bundleLayout.setVisibility(VISIBLE);
-			_titleTextView.setVisibility(GONE);
-			_basisTextView.setVisibility(GONE);
-			_paymentTextView.setVisibility(GONE);
-			_rightLayout.setVisibility(GONE);
-			showAlertIcon(false);
-			showMessageAlertIcon(false);
-		} else {
-			_bundleLayout.setVisibility(GONE);
-			_titleTextView.setVisibility(VISIBLE);
-			_basisTextView.setVisibility(VISIBLE);
-			_paymentTextView.setVisibility(VISIBLE);
-			_rightLayout.setVisibility(VISIBLE);
-			showAlertIcon(true);
-			showMessageAlertIcon(true);
-		}
-		_isBundle = isBundle;
-	}
-
-	public void setNotInterestedEnabled(boolean enabled) {
-		this.setLongClickable(enabled);
-	}
-
-	public void setWorkorderSummaryListener(Listener listener) {
-		_listener = listener;
-	}
 
 	/*-*********************************-*/
 	/*-				Util				-*/
@@ -500,8 +505,8 @@ public class WorkorderCardView extends RelativeLayout {
 		}
 
 		_contentLayout.clearAnimation();
-		_backImageView.setClickable(false);
-		_notInterestedButtonLayout.setClickable(false);
+		/*-_backImageView.setClickable(false);
+		_notInterestedButtonLayout.setClickable(false);-*/
 
 	}
 
@@ -730,11 +735,6 @@ public class WorkorderCardView extends RelativeLayout {
 	}
 
 	public interface Listener {
-		public void startRemove(Workorder workorder);
-
-		public void cancelRemove(Workorder workorder);
-
-		public void notifyDataSetChanged();
 
 		public void actionRequest(Workorder workorder);
 
@@ -747,5 +747,9 @@ public class WorkorderCardView extends RelativeLayout {
 		public void actionAcknowledgeHold(Workorder workorder);
 
 		public void viewCounter(Workorder workorder);
+
+		public void onLongClick(WorkorderCardView view, Workorder workorder);
+
+		public void onClick(WorkorderCardView view, Workorder workorder);
 	}
 }

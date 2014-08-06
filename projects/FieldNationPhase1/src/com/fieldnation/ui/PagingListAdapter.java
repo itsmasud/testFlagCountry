@@ -62,6 +62,10 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		return _activity;
 	}
 
+	public Activity getActivity() {
+		return _activity;
+	}
+
 	public boolean isViable() {
 		return _isViable;
 	}

@@ -140,13 +140,13 @@ public class Pay {
 		if ("Fixed".equals(basis)) {
 			return misc.toCurrency(getFixedAmount());
 		} else if ("Hourly".equals(basis)) {
-			return misc.toCurrency(getPerHour()) + " X " + getMaxHour();
+			return misc.toCurrency(getPerHour());
 		} else if ("Blended".equals(basis)) {
-			return misc.toCurrency(getBlendedStartRate()) + " X " + getBlendedFirstHours();
+			return misc.toCurrency(getBlendedStartRate());
 			// + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " +
 			// getBlendedAdditionalHours();
 		} else if ("Per Device".equals(basis)) {
-			return misc.toCurrency(getPerDevice()) + " X " + getMaxDevice();
+			return misc.toCurrency(getPerDevice());
 		}
 		return null;
 	}

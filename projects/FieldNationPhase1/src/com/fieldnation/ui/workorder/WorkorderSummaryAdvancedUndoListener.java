@@ -34,9 +34,6 @@ public class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListene
 
 	@Override
 	public void onUndo(Parcelable token) {
-		if (_listener != null) {
-			_listener.cancelRemove(_workorder);
-		}
 	}
 
 	@Override
@@ -67,8 +64,6 @@ public class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListene
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			if (_listener != null)
-				_listener.notifyDataSetChanged();
 			Toast.makeText(_context, R.string.success, Toast.LENGTH_LONG).show();
 
 		}
