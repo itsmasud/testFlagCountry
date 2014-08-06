@@ -20,7 +20,7 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 	}
 
 	@Override
-	public View getView(Payment obj, View convertView, ViewGroup parent) {
+	public View getView(int position, Payment obj, View convertView, ViewGroup parent) {
 		PaymentCardView view = null;
 
 		if (convertView == null) {

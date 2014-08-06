@@ -2,15 +2,19 @@ package com.fieldnation.ui.workorder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
-import com.fieldnation.DelayedCall;
+import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
+import com.cocosw.undobar.UndoBarController.UndoBar;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.CancelCategory;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
 import com.fieldnation.ui.payment.PayDialog;
@@ -19,6 +23,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.ResultReceiver;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -28,6 +33,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 /**
  * A list adapter that loads work order lists.
@@ -45,11 +51,11 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	private WorkorderService _workorderService = null;
 	private Method _rpcMethod;
 	private WorkorderDataSelector _dataSelection;
-	private Set<Long> _pendingNotInterestedWorkorders = new HashSet<Long>();
-	private Set<Long> _requestWorkingWorkorders = new HashSet<Long>();
+	private Hashtable<Long, Workorder> _pendingNotInterestedWorkorders = new Hashtable<Long, Workorder>();
+	private Hashtable<Long, Workorder> _requestWorkingWorkorders = new Hashtable<Long, Workorder>();
 	private PayDialog _payDialog;
 	private ActionMode _actionMode = null;
-	private Set<Long> _selectedWorkorders = new HashSet<Long>();
+	private Hashtable<Long, Workorder> _selectedWorkorders = new Hashtable<Long, Workorder>();
 
 	/*-*****************************-*/
 	/*-			Lifecycle			-*/
@@ -69,7 +75,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	}
 
 	@Override
-	public View getView(Workorder object, View convertView, ViewGroup parent) {
+	public View getView(int position, Workorder object, View convertView, ViewGroup parent) {
 		WorkorderCardView wosum = null;
 
 		if (convertView == null) {
@@ -80,22 +86,24 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			wosum = new WorkorderCardView(parent.getContext());
 		}
 
-		if (_pendingNotInterestedWorkorders.contains(object.getWorkorderId())) {
+		if (_pendingNotInterestedWorkorders.containsKey(object.getWorkorderId())) {
 			wosum.setDisplayMode(WorkorderCardView.MODE_UNDO_NOT_INTERESTED);
-		} else if (_requestWorkingWorkorders.contains(object.getWorkorderId())) {
+		} else if (_requestWorkingWorkorders.containsKey(object.getWorkorderId())) {
 			wosum.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
 		} else {
 			wosum.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 		}
 
-		if (_selectedWorkorders.contains(object.getWorkorderId())) {
-			wosum.setSelected(true);
-		} else {
-			wosum.setSelected(false);
-		}
-
 		wosum.setWorkorder(_dataSelection, object);
 		wosum.setWorkorderSummaryListener(_wocv_listener);
+
+		if (_selectedWorkorders.containsKey(object.getWorkorderId())) {
+			((ListView) parent).setItemChecked(position, true);
+			// wosum.setSelected(true);
+		} else {
+			((ListView) parent).setItemChecked(position, false);
+			// wosum.setSelected(false);
+		}
 
 		return wosum;
 	}
@@ -138,6 +146,12 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		}
 	}
 
+	@Override
+	public void update(boolean allowCache) {
+		removeActionMode();
+		super.update(allowCache);
+	}
+
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
@@ -148,46 +162,13 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			long workorderId = resultData.getLong(KEY_WORKORDER_ID);
 			_pendingNotInterestedWorkorders.remove(workorderId);
 			_requestWorkingWorkorders.remove(workorderId);
-			super.update(false);
+			update(false);
 		} else if (resultCode == WEB_CHANGING_WORKORDER) {
 			long workorderId = resultData.getLong(KEY_WORKORDER_ID);
 			_requestWorkingWorkorders.remove(workorderId);
-			super.update(false);
+			update(false);
 		}
 	}
-
-	private DelayedCall.Listener<Workorder> _workorderDelayedDelete = new DelayedCall.Listener<Workorder>() {
-		@Override
-		public void onComplete(DelayedCall<Workorder> delayedCall, Workorder workorder) {
-			if (_pendingNotInterestedWorkorders.contains(workorder.getWorkorderId())) {
-				_requestWorkingWorkorders.add(workorder.getWorkorderId());
-				_pendingNotInterestedWorkorders.remove(workorder.getWorkorderId());
-				switch (workorder.getNotInterestedAction()) {
-				case Workorder.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT: {
-					// TODO, need to ask user for category/reason
-					Intent intent = _workorderService.cancelAssignment(WEB_REMOVING_WORKRODER,
-							workorder.getWorkorderId(), CancelCategory.OTHER, "This is a test");
-					intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-					getContext().startService(intent);
-					break;
-				}
-				case Workorder.NOT_INTERESTED_ACTION_DECLINE: {
-					Intent intent = _workorderService.decline(WEB_REMOVING_WORKRODER, workorder.getWorkorderId());
-					intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-					getContext().startService(intent);
-					break;
-				}
-				case Workorder.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST: {
-					Intent intent = _workorderService.withdrawRequest(WEB_REMOVING_WORKRODER,
-							workorder.getWorkorderId());
-					intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-					getContext().startService(intent);
-					break;
-				}
-				}
-			}
-		}
-	};
 
 	private WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
 
@@ -197,7 +178,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			Intent intent = _workorderService.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), 600);
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
-			_requestWorkingWorkorders.add(workorder.getWorkorderId());
+			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
 		}
 
 		@Override
@@ -206,7 +187,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 					System.currentTimeMillis());
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
-			_requestWorkingWorkorders.add(workorder.getWorkorderId());
+			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
 		}
 
 		@Override
@@ -215,7 +196,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 					System.currentTimeMillis());
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
-			_requestWorkingWorkorders.add(workorder.getWorkorderId());
+			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
 		}
 
 		@Override
@@ -225,7 +206,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 					0);
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
-			_requestWorkingWorkorders.add(workorder.getWorkorderId());
+			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
 		}
 
 		@Override
@@ -233,7 +214,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			Intent intent = _workorderService.acknowledgeHold(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
-			_requestWorkingWorkorders.add(workorder.getWorkorderId());
+			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
 		}
 
 		@Override
@@ -244,20 +225,16 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 		@Override
 		public void onLongClick(WorkorderCardView view, Workorder workorder) {
-			if (_selectedWorkorders.contains(workorder.getWorkorderId())) {
+			if (_selectedWorkorders.containsKey(workorder.getWorkorderId())) {
 				_selectedWorkorders.remove(workorder.getWorkorderId());
-
 				view.setSelected(false);
-
 				if (_actionMode != null && _selectedWorkorders.size() == 0) {
 					_actionMode.finish();
 					_actionMode = null;
 				}
 			} else {
-				_selectedWorkorders.add(workorder.getWorkorderId());
-
+				_selectedWorkorders.put(workorder.getWorkorderId(), workorder);
 				view.setSelected(true);
-
 				if (_actionMode == null) {
 					_actionMode = ((ActionBarActivity) getActivity()).startSupportActionMode(_actionMode_Callback);
 				}
@@ -277,6 +254,11 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 				getContext().startActivity(intent);
 			}
 		}
+	};
+
+	public void notifyDataSetChanged() {
+		super.notifyDataSetChanged();
+		// removeActionMode();
 	};
 
 	private ActionMode.Callback _actionMode_Callback = new ActionMode.Callback() {
@@ -303,17 +285,34 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 			// TODO Method Stub: onActionItemClicked()
-			Log.v(TAG, "Method Stub: onActionItemClicked()");
-			if (item != null) {
-				Log.v(TAG, item.getItemId() + ":" + R.id.notinterested_action);
-			} else {
-				Log.v(TAG, "No item");
+			if (item.getItemId() == R.id.notinterested_action) {
+				Enumeration<Workorder> e = _selectedWorkorders.elements();
+				List<Workorder> list = new LinkedList<Workorder>();
+				while (e.hasMoreElements()) {
+					Workorder wo = e.nextElement();
+					_pendingNotInterestedWorkorders.put(wo.getWorkorderId(), wo);
+					list.add(wo);
+				}
+				_selectedWorkorders.clear();
+
+				UndoBar undo = new UndoBar(getActivity());
+				undo.message("Undo Not Interested");
+				undo.listener(new WorkorderSummaryAdvancedUndoListener(list, getContext(), getUsername(),
+						getAuthToken()));
+				undo.duration(5000);
+				undo.show();
+
+				return true;
 			}
 			return false;
 		}
 	};
 
 	public void onPause() {
+		removeActionMode();
+	}
+
+	private void removeActionMode() {
 		if (_actionMode != null) {
 			_actionMode.finish();
 			_actionMode = null;

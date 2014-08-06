@@ -19,7 +19,7 @@ public class MessagesListAdapter extends PagingListAdapter<Message> {
 	}
 
 	@Override
-	public View getView(Message obj, View convertView, ViewGroup parent) {
+	public View getView(int position, Message obj, View convertView, ViewGroup parent) {
 		MessageCardView mv = null;
 
 		if (convertView == null) {

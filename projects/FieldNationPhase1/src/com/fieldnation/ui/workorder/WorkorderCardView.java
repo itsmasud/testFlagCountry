@@ -268,6 +268,7 @@ public class WorkorderCardView extends RelativeLayout {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+
 	private View.OnClickListener _undoButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {

@@ -44,7 +44,7 @@
     </style>
 
     <style name="WorkorderCard_BackgroundView">
-        <item name="android:layout_marginLeft">-2dp</item>
+        <item name="android:layout_marginLeft">30dp</item>
         <item name="android:background">@drawable/card_data_bg</item>
     </style>
 

@@ -20,7 +20,7 @@ public class NotificationListAdapter extends PagingListAdapter<Notification> {
 	}
 
 	@Override
-	public View getView(Notification obj, View convertView, ViewGroup parent) {
+	public View getView(int position, Notification obj, View convertView, ViewGroup parent) {
 		NotificationView note = null;
 
 		if (convertView == null) {

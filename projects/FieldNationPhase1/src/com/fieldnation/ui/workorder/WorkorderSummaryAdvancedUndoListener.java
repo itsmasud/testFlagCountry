@@ -1,5 +1,8 @@
 package com.fieldnation.ui.workorder;
 
+import java.util.List;
+import java.util.Set;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,17 +21,13 @@ import com.fieldnation.ui.workorder.WorkorderCardView.Listener;
 public class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListener {
 	private static final String TAG = "ui.workorder.WorkorderSummaryAdvancedUndoListener";
 	private WorkorderService _service;
-	private Listener _listener;
-	private Workorder _workorder;
-	private int _notInterestedAction;
+	private List<Workorder> _workorders;
 	private Context _context;
 
-	public WorkorderSummaryAdvancedUndoListener(Workorder workorder, Context context, String username,
-			String authToken, Listener listener, int notInterestedAction) {
+	public WorkorderSummaryAdvancedUndoListener(List<Workorder> workorders, Context context, String username,
+			String authToken) {
+		_workorders = workorders;
 		_service = new WorkorderService(context, username, authToken, _resultReciever);
-		_listener = listener;
-		_workorder = workorder;
-		_notInterestedAction = notInterestedAction;
 		_context = context.getApplicationContext();
 	}
 
@@ -38,21 +37,26 @@ public class WorkorderSummaryAdvancedUndoListener implements AdvancedUndoListene
 
 	@Override
 	public void onHide(Parcelable token) {
-		switch (_notInterestedAction) {
-		case Workorder.NOT_INTERESTED_ACTION_DECLINE:
-			_context.startService(_service.decline(Workorder.NOT_INTERESTED_ACTION_DECLINE, _workorder.getWorkorderId()));
+		for (int i = 0; i < _workorders.size(); i++) {
+			Workorder workorder = _workorders.get(i);
 
-			break;
-		case Workorder.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
-			_context.startService(_service.withdrawRequest(Workorder.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
-					_workorder.getWorkorderId()));
+			switch (workorder.getNotInterestedAction()) {
+			case Workorder.NOT_INTERESTED_ACTION_DECLINE:
+				_context.startService(_service.decline(Workorder.NOT_INTERESTED_ACTION_DECLINE,
+						workorder.getWorkorderId()));
 
-			break;
-		case Workorder.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
-			// TODO, get reason input from user
-			_context.startService(_service.cancelAssignment(Workorder.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
-					_workorder.getWorkorderId(), CancelCategory.OTHER, "UI Not implemented"));
-			break;
+				break;
+			case Workorder.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST:
+				_context.startService(_service.withdrawRequest(Workorder.NOT_INTERESTED_ACTION_WITHDRAW_REQUEST,
+						workorder.getWorkorderId()));
+
+				break;
+			case Workorder.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT:
+				// TODO, get reason input from user
+				_context.startService(_service.cancelAssignment(Workorder.NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT,
+						workorder.getWorkorderId(), CancelCategory.OTHER, "UI Not implemented"));
+				break;
+			}
 		}
 	}
 

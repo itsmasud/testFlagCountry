@@ -10,6 +10,8 @@ public class DelayedCall<Tag> extends AsyncTaskEx<Long, Void, Object> {
 
 	private Listener<Tag> _listener;
 	private Tag _tag;
+	private boolean _finished = false;
+	private boolean _cancelled = false;
 
 	public void execute(long timeInMilliseconds, Listener<Tag> listener, Tag tag) {
 		_listener = listener;
@@ -17,9 +19,19 @@ public class DelayedCall<Tag> extends AsyncTaskEx<Long, Void, Object> {
 		super.executeEx(timeInMilliseconds);
 	}
 
+	public void finish() {
+		_finished = true;
+		if (_listener != null) {
+			_listener.onComplete(this, _tag);
+		}
+	}
+
+	public void cancel() {
+		_cancelled = true;
+	}
+
 	@Override
 	protected Object doInBackground(Long... params) {
-
 		try {
 			Thread.sleep(params[0]);
 		} catch (InterruptedException e) {
@@ -29,6 +41,8 @@ public class DelayedCall<Tag> extends AsyncTaskEx<Long, Void, Object> {
 
 	@Override
 	protected void onPostExecute(Object result) {
+		if (_finished || _cancelled)
+			return;
 
 		if (_listener != null) {
 			_listener.onComplete(this, _tag);

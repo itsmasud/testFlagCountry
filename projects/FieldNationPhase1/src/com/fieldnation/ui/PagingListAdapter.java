@@ -58,6 +58,14 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	/*-*********************************-*/
 	/*-			Getters/Setters			-*/
 	/*-*********************************-*/
+	public String getUsername() {
+		return _username;
+	}
+
+	public String getAuthToken() {
+		return _authToken;
+	}
+
 	public Context getContext() {
 		return _activity;
 	}
@@ -110,7 +118,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 			getNextPage();
 			return getProgressBar(parent);
 		} else {
-			return getView(_objects.get(position), convertView, parent);
+			return getView(position, _objects.get(position), convertView, parent);
 		}
 	}
 
@@ -310,7 +318,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	 * @param parent
 	 * @return
 	 */
-	public abstract View getView(T obj, View convertView, ViewGroup parent);
+	public abstract View getView(int position, T obj, View convertView, ViewGroup parent);
 
 	/**
 	 * When authentication fails, or some other error happens that requires that
