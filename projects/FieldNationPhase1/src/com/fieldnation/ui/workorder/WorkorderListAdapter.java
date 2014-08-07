@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.cocosw.undobar.UndoBarController;
 import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
 import com.cocosw.undobar.UndoBarController.UndoBar;
 import com.fieldnation.R;
@@ -56,6 +57,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	private PayDialog _payDialog;
 	private ActionMode _actionMode = null;
 	private Hashtable<Long, Workorder> _selectedWorkorders = new Hashtable<Long, Workorder>();
+	private WorkorderUndoListener _wosumUndoListener;
 
 	/*-*****************************-*/
 	/*-			Lifecycle			-*/
@@ -87,7 +89,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		}
 
 		if (_pendingNotInterestedWorkorders.containsKey(object.getWorkorderId())) {
-			wosum.setDisplayMode(WorkorderCardView.MODE_UNDO_NOT_INTERESTED);
+			// wosum.setDisplayMode(WorkorderCardView.MODE_UNDO_NOT_INTERESTED);
+			return new View(getContext());
 		} else if (_requestWorkingWorkorders.containsKey(object.getWorkorderId())) {
 			wosum.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
 		} else if (_selectedWorkorders.containsKey(object.getWorkorderId())) {
@@ -144,6 +147,20 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	public void update(boolean allowCache) {
 		removeActionMode();
 		super.update(allowCache);
+	}
+
+	// happens on page flip
+	public void onPause() {
+		removeActionMode();
+		UndoBarController.clear(getActivity());
+	}
+
+	private void removeActionMode() {
+		if (_actionMode != null) {
+			_actionMode.finish();
+			_actionMode = null;
+			_selectedWorkorders.clear();
+		}
 	}
 
 	/*-*********************************-*/
@@ -250,11 +267,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		}
 	};
 
-	public void notifyDataSetChanged() {
-		super.notifyDataSetChanged();
-		// removeActionMode();
-	};
-
 	private ActionMode.Callback _actionMode_Callback = new ActionMode.Callback() {
 
 		@Override
@@ -289,12 +301,15 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 				}
 				_selectedWorkorders.clear();
 
+				_wosumUndoListener = new WorkorderUndoListener(list, getContext(), getUsername(), getAuthToken(),
+						_undoListener);
 				UndoBar undo = new UndoBar(getActivity());
 				undo.message("Undo Not Interested");
-				undo.listener(new WorkorderSummaryAdvancedUndoListener(list, getContext(), getUsername(),
-						getAuthToken()));
+				undo.listener(_wosumUndoListener);
 				undo.duration(5000);
 				undo.show();
+
+				notifyDataSetChanged();
 
 				return true;
 			}
@@ -302,16 +317,18 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		}
 	};
 
-	public void onPause() {
-		removeActionMode();
-	}
-
-	private void removeActionMode() {
-		if (_actionMode != null) {
-			_actionMode.finish();
-			_actionMode = null;
-			_selectedWorkorders.clear();
+	private WorkorderUndoListener.Listener _undoListener = new WorkorderUndoListener.Listener() {
+		@Override
+		public void onComplete(List<Workorder> success, List<Workorder> failed) {
+			_pendingNotInterestedWorkorders.clear();
+			notifyDataSetChanged();
 		}
-	}
+
+		@Override
+		public void onUndo() {
+			_pendingNotInterestedWorkorders.clear();
+			notifyDataSetChanged();
+		}
+	};
 
 }

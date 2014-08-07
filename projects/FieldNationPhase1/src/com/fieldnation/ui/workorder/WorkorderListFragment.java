@@ -1,21 +1,13 @@
 package com.fieldnation.ui.workorder;
 
-import com.cocosw.undobar.UndoBarController;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
 
 import eu.erikw.PullToRefreshListView;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
