@@ -320,14 +320,16 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	private WorkorderUndoListener.Listener _undoListener = new WorkorderUndoListener.Listener() {
 		@Override
 		public void onComplete(List<Workorder> success, List<Workorder> failed) {
+			new Exception().printStackTrace();
 			_pendingNotInterestedWorkorders.clear();
-			notifyDataSetChanged();
+			update(false);
 		}
 
 		@Override
 		public void onUndo() {
+			new Exception().printStackTrace();
 			_pendingNotInterestedWorkorders.clear();
-			notifyDataSetChanged();
+			update(false);
 		}
 	};
 
