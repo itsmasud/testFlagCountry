@@ -9,6 +9,7 @@
     <color name="woCardStatusLabel2">#FFFFFFFF</color>
     <color name="woCardStatusLabel3">#FFFFFFFF</color>
     <color name="woCardStatusLabel4">#FFFFFFFF</color>
-    <color name="woCardSelected">#7F6aa0e2</color>
+    <color name="woCardSelectedTextColor">#FFFFFFFF</color>
+    <color name="woCardTextColor">#FF000000</color>
 
 </resources>

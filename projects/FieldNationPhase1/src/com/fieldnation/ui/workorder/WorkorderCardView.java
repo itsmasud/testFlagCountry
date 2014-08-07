@@ -35,6 +35,7 @@ public class WorkorderCardView extends RelativeLayout {
 	public static final int MODE_NORMAL = 1;
 	public static final int MODE_UNDO_NOT_INTERESTED = 2;
 	public static final int MODE_DOING_WORK = 3;
+	public static final int MODE_SELECTED = 4;
 
 	// UI
 	// not interested
@@ -70,6 +71,7 @@ public class WorkorderCardView extends RelativeLayout {
 
 	// right panel
 	private LinearLayout _rightLayout;
+	private TextView _moneySymbolTextView;
 	private TextView _paymentTextView;
 	private TextView _basisTextView;
 	private Button _actionButton;
@@ -161,6 +163,7 @@ public class WorkorderCardView extends RelativeLayout {
 		// _paymentLayout = (LinearLayout) findViewById(R.id.payment_layout);
 		_paymentTextView = (TextView) findViewById(R.id.payment_textview);
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
+		_moneySymbolTextView = (TextView) findViewById(R.id.moneysymbol_textview);
 
 		_actionButton = (Button) findViewById(R.id.action_button);
 		_actionButton.setOnClickListener(_actionButton_onClick);
@@ -389,18 +392,59 @@ public class WorkorderCardView extends RelativeLayout {
 		case MODE_UNDO_NOT_INTERESTED:
 			refreshUndoNotInterested();
 			break;
+		case MODE_SELECTED:
+			refreshSelected();
+			break;
 		}
 	}
 
 	private void refreshDoingWork() {
+		refreshNormal();
 		_loadingLayout.setVisibility(VISIBLE);
 	}
 
 	private void refreshUndoNotInterested() {
+		refreshNormal();
 		_undoLayout.setVisibility(VISIBLE);
 	}
 
+	private void refreshSelected() {
+		refreshNormal();
+
+		int color = getContext().getResources().getColor(R.color.woCardSelectedTextColor);
+		_basisTextView.setTextColor(color);
+		_titleTextView.setTextColor(color);
+		_clientNameTextView.setTextColor(color);
+		_distanceTextView.setTextColor(color);
+		_locationTextView.setTextColor(color);
+		_whenTextView.setTextColor(color);
+		_workorderIdTextView.setTextColor(color);
+		_paymentTextView.setTextColor(color);
+		_statusTextView.setTextColor(color);
+		_moneySymbolTextView.setTextColor(color);
+
+		_backgroundView.setBackgroundResource(R.drawable.card_right_selected);
+		_statusView.setBackgroundResource(R.drawable.card_status_black);
+		_statusTextView.setText("Selected");
+	}
+
 	private void refreshNormal() {
+		int color = getContext().getResources().getColor(R.color.woCardTextColor);
+		_basisTextView.setTextColor(color);
+		_titleTextView.setTextColor(color);
+		_clientNameTextView.setTextColor(color);
+		_distanceTextView.setTextColor(color);
+		_locationTextView.setTextColor(color);
+		_whenTextView.setTextColor(color);
+		_workorderIdTextView.setTextColor(color);
+		_paymentTextView.setTextColor(color);
+		_statusTextView.setTextColor(color);
+		_moneySymbolTextView.setTextColor(color);
+
+		_backgroundView.setBackgroundResource(R.drawable.card_right);
+		_statusView.setBackgroundResource(R.drawable.card_status_black);
+		_statusTextView.setText("Selected");
+
 		try {
 			buildStatus();
 		} catch (Exception ex) {

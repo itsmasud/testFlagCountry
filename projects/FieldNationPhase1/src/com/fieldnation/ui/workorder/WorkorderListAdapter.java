@@ -90,20 +90,14 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			wosum.setDisplayMode(WorkorderCardView.MODE_UNDO_NOT_INTERESTED);
 		} else if (_requestWorkingWorkorders.containsKey(object.getWorkorderId())) {
 			wosum.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
+		} else if (_selectedWorkorders.containsKey(object.getWorkorderId())) {
+			wosum.setDisplayMode(WorkorderCardView.MODE_SELECTED);
 		} else {
 			wosum.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 		}
 
 		wosum.setWorkorder(_dataSelection, object);
 		wosum.setWorkorderSummaryListener(_wocv_listener);
-
-		if (_selectedWorkorders.containsKey(object.getWorkorderId())) {
-			((ListView) parent).setItemChecked(position, true);
-			// wosum.setSelected(true);
-		} else {
-			((ListView) parent).setItemChecked(position, false);
-			// wosum.setSelected(false);
-		}
 
 		return wosum;
 	}
@@ -227,14 +221,14 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		public void onLongClick(WorkorderCardView view, Workorder workorder) {
 			if (_selectedWorkorders.containsKey(workorder.getWorkorderId())) {
 				_selectedWorkorders.remove(workorder.getWorkorderId());
-				view.setSelected(false);
+				view.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 				if (_actionMode != null && _selectedWorkorders.size() == 0) {
 					_actionMode.finish();
 					_actionMode = null;
 				}
 			} else {
 				_selectedWorkorders.put(workorder.getWorkorderId(), workorder);
-				view.setSelected(true);
+				view.setDisplayMode(WorkorderCardView.MODE_SELECTED);
 				if (_actionMode == null) {
 					_actionMode = ((ActionBarActivity) getActivity()).startSupportActionMode(_actionMode_Callback);
 				}
