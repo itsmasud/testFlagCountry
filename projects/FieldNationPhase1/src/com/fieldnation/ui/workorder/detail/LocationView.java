@@ -77,8 +77,12 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 		contactInfo += location.getContactPhone();
 		_contactInfoTextView.setText(contactInfo);
 
-		// TODO get location description text
-		_descriptionTextView.setVisibility(GONE);
+		if (location.getNotes() != null) {
+			_descriptionTextView.setText(location.getNotes());
+			_descriptionTextView.setVisibility(VISIBLE);
+		} else {
+			_descriptionTextView.setVisibility(GONE);
+		}
 	}
 
 }

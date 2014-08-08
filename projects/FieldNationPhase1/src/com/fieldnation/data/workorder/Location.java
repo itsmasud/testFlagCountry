@@ -30,6 +30,8 @@ public class Location {
 	private String _notes;
 	@Json(name = "contactPhoneExt")
 	private Integer _contactPhoneExt;
+	@Json(name="type")
+	private String _type;
 	@Json(name = "contactName")
 	private String _contactName;
 
@@ -81,6 +83,10 @@ public class Location {
 
 	public Integer getContactPhoneExt() {
 		return _contactPhoneExt;
+	}
+
+	public String getType(){
+		return _type;
 	}
 
 	public String getContactName() {

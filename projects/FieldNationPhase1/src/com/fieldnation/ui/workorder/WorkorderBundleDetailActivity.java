@@ -58,9 +58,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 	private AuthenticationClient _authclient = new AuthenticationClient() {
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			// TODO Method Stub: onAuthenticationFailed()
-			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
-
+			_gs.requestAuthenticationDelayed(_authclient);
 		}
 
 		@Override

@@ -151,9 +151,7 @@ public class WorkorderActivity extends DrawerActivity {
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			// TODO Method Stub: onAuthenticationFailed()
-			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
-
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 
 		@Override

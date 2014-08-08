@@ -72,6 +72,8 @@ public class Workorder {
 	private String _title;
 	@Json(name = "tasks")
 	private Task[] _tasks;
+	@Json(name="alerts")
+	private Integer _alerts;
 	@Json(name = "isRequest")
 	private Boolean _isRequest;
 	@Json(name = "isCounter")
@@ -206,6 +208,10 @@ public class Workorder {
 
 	public Task[] getTasks() {
 		return _tasks;
+	}
+
+	public Integer getAlerts(){
+		return _alerts;
 	}
 
 	public Boolean getIsRequest() {

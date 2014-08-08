@@ -290,7 +290,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			// TODO Method Stub: onActionItemClicked()
 			if (item.getItemId() == R.id.notinterested_action) {
 				Enumeration<Workorder> e = _selectedWorkorders.elements();
 				List<Workorder> list = new LinkedList<Workorder>();

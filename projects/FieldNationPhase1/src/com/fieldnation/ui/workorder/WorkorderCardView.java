@@ -177,7 +177,6 @@ public class WorkorderCardView extends RelativeLayout {
 		// undo layout
 		_undoLayout = (RelativeLayout) findViewById(R.id.undo_layout);
 		_undoButton = (Button) findViewById(R.id.undo_button);
-		_undoButton.setOnClickListener(_undoButton_onClick);
 
 		// debugging
 		// _detailButton.setVisibility(GONE);
@@ -274,40 +273,6 @@ public class WorkorderCardView extends RelativeLayout {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-
-	private View.OnClickListener _undoButton_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: _undoButton_onClick()
-			Log.v(TAG, "Method Stub: _undoButton_onClick()");
-		}
-	};
-	/*-
-	 private View.OnClickListener _notInterestedButton_onClick = new View.OnClickListener() {
-	 @Override
-	 public void onClick(View v) {
-	 if (_listener != null) {
-	 // TODO trigger animation before removing
-	 _listener.startRemove(_workorder);
-	 _displayMode = MODE_UNDO_NOT_INTERESTED;
-	 _backImageView.setClickable(false);
-	 _notInterestedButtonLayout.setClickable(false);
-	 _contentLayout.startAnimation(_slideBackAnimation);
-	 _backgroundLayout.startAnimation(_slideBackAnimation);
-	 setDisplayMode(MODE_UNDO_NOT_INTERESTED);
-	 }
-	 }
-	 };
-	 -*/
-	/*-private View.OnClickListener _back_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			_backImageView.setClickable(false);
-			_notInterestedButtonLayout.setClickable(false);
-			_contentLayout.startAnimation(_slideBackAnimation);
-			_backgroundLayout.startAnimation(_slideBackAnimation);
-		}
-	};-*/
 
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override

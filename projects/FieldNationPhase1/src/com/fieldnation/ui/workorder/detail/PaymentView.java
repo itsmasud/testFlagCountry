@@ -121,7 +121,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
 			_gs.requestAuthenticationDelayed(_authClient);
 		}
 
@@ -150,7 +149,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 			if (_service != null) {
 				_gs.invalidateAuthToken(_service.getAuthToken());
 			}
-
 			_gs.requestAuthenticationDelayed(_authClient);
 			// TODO, toast failure, put ui in wait mode
 		}
