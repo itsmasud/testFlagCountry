@@ -4,13 +4,17 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 
 import eu.erikw.PullToRefreshListView;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import android.os.Bundle;
+import android.view.View;
 
 public class NotificationListActivity extends BaseActivity {
 	private static final String TAG = "ui.NotificationListActivity";
 
 	// UI
 	private PullToRefreshListView _listView;
+	private SmoothProgressBar _loadingProgress;
 
 	// Data
 	private NotificationListAdapter _adapter;
@@ -27,8 +31,8 @@ public class NotificationListActivity extends BaseActivity {
 		_listView = (PullToRefreshListView) findViewById(R.id.items_listview);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
-		// addActionBarAndDrawer(R.id.container);
-
+		_loadingProgress = (SmoothProgressBar) findViewById(R.id.loading_progress);
+		_loadingProgress.setSmoothProgressDrawableCallbacks(_loadingCallback);
 	}
 
 	@Override
@@ -51,16 +55,30 @@ public class NotificationListActivity extends BaseActivity {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private SmoothProgressDrawable.Callbacks _loadingCallback = new SmoothProgressDrawable.Callbacks() {
+		@Override
+		public void onStop() {
+			_loadingProgress.setVisibility(View.GONE);
+		}
+
+		@Override
+		public void onStart() {
+			_loadingProgress.setVisibility(View.VISIBLE);
+		}
+	};
+
 	private NotificationListAdapter.Listener<Notification> _adapter_listener = new NotificationListAdapter.Listener<Notification>() {
 
 		@Override
 		public void onLoading() {
 			_listView.setRefreshing();
+			_loadingProgress.progressiveStart();
 		}
 
 		@Override
 		public void onLoadComplete() {
 			_listView.onRefreshComplete();
+			_loadingProgress.progressiveStop();
 		}
 	};
 
@@ -69,6 +87,7 @@ public class NotificationListActivity extends BaseActivity {
 		@Override
 		public void onRefresh() {
 			getListAdapter().update(false);
+			_loadingProgress.progressiveStart();
 		}
 	};
 

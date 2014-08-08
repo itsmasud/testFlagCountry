@@ -64,16 +64,17 @@ public class WorkorderListFragment extends Fragment {
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 
 		_loadingBar = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
-		_loadingBar.setSmoothProgressDrawableInterpolator(new AccelerateDecelerateInterpolator());
-		_loadingBar.setSmoothProgressDrawableColors(getActivity().getResources().getIntArray(R.array.loading_bar_colors));
-		_loadingBar.setSmoothProgressDrawableMirrorMode(true);
-		_loadingBar.setSmoothProgressDrawableReversed(true);
-		_loadingBar.setSmoothProgressDrawableSeparatorLength(0);
-		_loadingBar.setSmoothProgressDrawableSpeed(2.0F);
-		_loadingBar.setSmoothProgressDrawableProgressiveStartSpeed(2.0F);
-		_loadingBar.setSmoothProgressDrawableProgressiveStopSpeed(2.0F);
-		_loadingBar.setSmoothProgressDrawableStrokeWidth(8F);
-		_loadingBar.setSmoothProgressDrawableSectionsCount(1);
+		// _loadingBar.setSmoothProgressDrawableInterpolator(new
+		// AccelerateDecelerateInterpolator());
+		// _loadingBar.setSmoothProgressDrawableColors(getActivity().getResources().getIntArray(R.array.loading_bar_colors));
+		// _loadingBar.setSmoothProgressDrawableMirrorMode(true);
+		// _loadingBar.setSmoothProgressDrawableReversed(true);
+		// _loadingBar.setSmoothProgressDrawableSeparatorLength(0);
+		// _loadingBar.setSmoothProgressDrawableSpeed(2.0F);
+		// _loadingBar.setSmoothProgressDrawableProgressiveStartSpeed(2.0F);
+		// _loadingBar.setSmoothProgressDrawableProgressiveStopSpeed(2.0F);
+		// _loadingBar.setSmoothProgressDrawableStrokeWidth(8F);
+		// _loadingBar.setSmoothProgressDrawableSectionsCount(1);
 		_loadingBar.setSmoothProgressDrawableCallbacks(_progressCallback);
 	}
 
