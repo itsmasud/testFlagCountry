@@ -59,7 +59,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 		// connect UI
 		// main content
 		// status
-		_statusView = (RelativeLayout) findViewById(R.id.status_view);
+		_statusView = (View) findViewById(R.id.status_view);
 		_statusTextView = (TextView) findViewById(R.id.status_textview);
 
 		// bundle

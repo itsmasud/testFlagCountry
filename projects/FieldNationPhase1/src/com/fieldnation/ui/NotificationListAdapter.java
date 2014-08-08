@@ -55,6 +55,6 @@ public class NotificationListAdapter extends PagingListAdapter<Notification> {
 
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
-		getContext().startService(_profileService.getAllNotifications(resultCode, page, allowCache));
+		getContext().startService(_profileService.getNewNotifications(resultCode, page, allowCache));
 	}
 }

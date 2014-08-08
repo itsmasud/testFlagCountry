@@ -38,7 +38,6 @@ public class MessageListActivity extends BaseActivity {
 	@Override
 	protected void onResume() {
 		_listView.setAdapter(getListAdapter());
-
 		super.onResume();
 	}
 
