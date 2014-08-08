@@ -256,12 +256,12 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		public void onClick(WorkorderCardView view, Workorder workorder) {
 			if (view.isBundle()) {
 				Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
-				intent.putExtra("workorder_id", workorder.getWorkorderId());
+				intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
 				getContext().startActivity(intent);
 
 			} else {
 				Intent intent = new Intent(getContext(), WorkorderActivity.class);
-				intent.putExtra("workorder_id", workorder.getWorkorderId());
+				intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
 				getContext().startActivity(intent);
 			}
 		}

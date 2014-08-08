@@ -25,6 +25,11 @@
         <item name="android:paddingBottom">15dp</item>
     </style>
 
+    <style name="WorkorderDetail_Field_Bold">
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="WorkorderDetail_FieldTitle" parent="WorkorderDetail_Field">
         <item name="android:textColor">#FF97976e</item>
     </style>

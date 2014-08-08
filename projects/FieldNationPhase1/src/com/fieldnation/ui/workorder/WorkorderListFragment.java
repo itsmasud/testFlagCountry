@@ -4,18 +4,23 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 
 import eu.erikw.PullToRefreshListView;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBarUtils;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 public class WorkorderListFragment extends Fragment {
 	private static final String TAG = "ui.workorder.MyWorkListFragment";
 
 	// UI
 	private PullToRefreshListView _listView;
+	private SmoothProgressBar _loadingBar;
 
 	// Data
 	private WorkorderListAdapter _adapter;
@@ -47,7 +52,7 @@ public class WorkorderListFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_mywork_list, container, false);
+		return inflater.inflate(R.layout.fragment_workorder_list, container, false);
 	}
 
 	@Override
@@ -57,6 +62,19 @@ public class WorkorderListFragment extends Fragment {
 		_listView = (PullToRefreshListView) view.findViewById(R.id.workorders_listview);
 		_listView.setDivider(null);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
+
+		_loadingBar = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
+		_loadingBar.setSmoothProgressDrawableInterpolator(new AccelerateDecelerateInterpolator());
+		_loadingBar.setSmoothProgressDrawableColors(getActivity().getResources().getIntArray(R.array.loading_bar_colors));
+		_loadingBar.setSmoothProgressDrawableMirrorMode(true);
+		_loadingBar.setSmoothProgressDrawableReversed(true);
+		_loadingBar.setSmoothProgressDrawableSeparatorLength(0);
+		_loadingBar.setSmoothProgressDrawableSpeed(2.0F);
+		_loadingBar.setSmoothProgressDrawableProgressiveStartSpeed(2.0F);
+		_loadingBar.setSmoothProgressDrawableProgressiveStopSpeed(2.0F);
+		_loadingBar.setSmoothProgressDrawableStrokeWidth(8F);
+		_loadingBar.setSmoothProgressDrawableSectionsCount(1);
+		_loadingBar.setSmoothProgressDrawableCallbacks(_progressCallback);
 	}
 
 	@Override
@@ -96,17 +114,32 @@ public class WorkorderListFragment extends Fragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private SmoothProgressDrawable.Callbacks _progressCallback = new SmoothProgressDrawable.Callbacks() {
+
+		@Override
+		public void onStop() {
+			_loadingBar.setVisibility(View.GONE);
+		}
+
+		@Override
+		public void onStart() {
+			_loadingBar.setVisibility(View.VISIBLE);
+		}
+
+	};
 
 	private WorkorderListAdapter.Listener<Workorder> _workorderAdapter_listener = new WorkorderListAdapter.Listener<Workorder>() {
 
 		@Override
 		public void onLoading() {
 			_listView.setRefreshing();
+			_loadingBar.progressiveStart();
 		}
 
 		@Override
 		public void onLoadComplete() {
 			_listView.onRefreshComplete();
+			_loadingBar.progressiveStop();
 		}
 	};
 
@@ -114,6 +147,7 @@ public class WorkorderListFragment extends Fragment {
 		@Override
 		public void onRefresh() {
 			_adapter.update(false);
+			_loadingBar.progressiveStart();
 		}
 	};
 

@@ -3,11 +3,20 @@ package eu.erikw;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.animation.*;
+import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.widget.*;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -65,26 +74,13 @@ public class PullToRefreshListView extends ListView {
 	private boolean scrollbarEnabled;
 	private boolean bounceBackHeader;
 	private boolean lockScrollWhileRefreshing;
-	private boolean showLastUpdatedText;
-	private String pullToRefreshText;
-	private String releaseToRefreshText;
-	private String refreshingText;
-	private String lastUpdatedText;
-	private SimpleDateFormat lastUpdatedDateFormat = new SimpleDateFormat("dd/MM HH:mm");
 
 	private float previousY;
 	private int headerPadding;
 	private boolean hasResetHeader;
-	private long lastUpdated = -1;
 	private State state;
 	private LinearLayout headerContainer;
 	private RelativeLayout header;
-	private RotateAnimation flipAnimation;
-	private RotateAnimation reverseFlipAnimation;
-	private ImageView image;
-	private ProgressBar spinner;
-	private TextView text;
-	private TextView lastUpdatedTextView;
 	private OnItemClickListener onItemClickListener;
 	private OnItemLongClickListener onItemLongClickListener;
 	private OnRefreshListener onRefreshListener;
@@ -146,30 +142,6 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	/**
-	 * Default is false. Show the last-updated date/time in the 'Pull ro
-	 * Refresh' header. See 'setLastUpdatedDateFormat' to set the date/time
-	 * formatting.
-	 * 
-	 * @param showLastUpdatedText
-	 */
-	public void setShowLastUpdatedText(boolean showLastUpdatedText) {
-		this.showLastUpdatedText = showLastUpdatedText;
-		if (!showLastUpdatedText)
-			lastUpdatedTextView.setVisibility(View.GONE);
-	}
-
-	/**
-	 * Default: "dd/MM HH:mm". Set the format in which the last-updated
-	 * date/time is shown. Meaningless if 'showLastUpdatedText == false
-	 * (default)'. See 'setShowLastUpdatedText'.
-	 * 
-	 * @param lastUpdatedDateFormat
-	 */
-	public void setLastUpdatedDateFormat(SimpleDateFormat lastUpdatedDateFormat) {
-		this.lastUpdatedDateFormat = lastUpdatedDateFormat;
-	}
-
-	/**
 	 * Explicitly set the state to refreshing. This is useful when you want to
 	 * show the spinner and 'Refreshing' text when the refresh was not triggered
 	 * by 'pull to refresh', for example on start.
@@ -188,46 +160,6 @@ public class PullToRefreshListView extends ListView {
 	public void onRefreshComplete() {
 		state = State.PULL_TO_REFRESH;
 		resetHeader();
-		lastUpdated = System.currentTimeMillis();
-	}
-
-	/**
-	 * Change the label text on state 'Pull to Refresh'
-	 * 
-	 * @param pullToRefreshText
-	 *            Text
-	 */
-	public void setTextPullToRefresh(String pullToRefreshText) {
-		this.pullToRefreshText = pullToRefreshText;
-		if (state == State.PULL_TO_REFRESH) {
-			text.setText(pullToRefreshText);
-		}
-	}
-
-	/**
-	 * Change the label text on state 'Release to Refresh'
-	 * 
-	 * @param releaseToRefreshText
-	 *            Text
-	 */
-	public void setTextReleaseToRefresh(String releaseToRefreshText) {
-		this.releaseToRefreshText = releaseToRefreshText;
-		if (state == State.RELEASE_TO_REFRESH) {
-			text.setText(releaseToRefreshText);
-		}
-	}
-
-	/**
-	 * Change the label text on state 'Refreshing'
-	 * 
-	 * @param refreshingText
-	 *            Text
-	 */
-	public void setTextRefreshing(String refreshingText) {
-		this.refreshingText = refreshingText;
-		if (state == State.REFRESHING) {
-			text.setText(refreshingText);
-		}
 	}
 
 	private void init() {
@@ -235,27 +167,6 @@ public class PullToRefreshListView extends ListView {
 
 		headerContainer = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.ptr_header, null);
 		header = (RelativeLayout) headerContainer.findViewById(R.id.ptr_id_header);
-		text = (TextView) header.findViewById(R.id.ptr_id_text);
-		lastUpdatedTextView = (TextView) header.findViewById(R.id.ptr_id_last_updated);
-		image = (ImageView) header.findViewById(R.id.ptr_id_image);
-		spinner = (ProgressBar) header.findViewById(R.id.ptr_id_spinner);
-
-		pullToRefreshText = getContext().getString(R.string.ptr_pull_to_refresh);
-		releaseToRefreshText = getContext().getString(R.string.ptr_release_to_refresh);
-		refreshingText = getContext().getString(R.string.ptr_refreshing);
-		lastUpdatedText = getContext().getString(R.string.ptr_last_updated);
-
-		flipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-		flipAnimation.setInterpolator(new LinearInterpolator());
-		flipAnimation.setDuration(ROTATE_ARROW_ANIMATION_DURATION);
-		flipAnimation.setFillAfter(true);
-
-		reverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-		reverseFlipAnimation.setInterpolator(new LinearInterpolator());
-		reverseFlipAnimation.setDuration(ROTATE_ARROW_ANIMATION_DURATION);
-		reverseFlipAnimation.setFillAfter(true);
 
 		addHeaderView(headerContainer);
 		setState(State.PULL_TO_REFRESH);
@@ -327,13 +238,13 @@ public class PullToRefreshListView extends ListView {
 					if (state == State.PULL_TO_REFRESH && headerPadding > 0) {
 						setState(State.RELEASE_TO_REFRESH);
 
-						image.clearAnimation();
-						image.startAnimation(flipAnimation);
+						// image.clearAnimation();
+						// image.startAnimation(flipAnimation);
 					} else if (state == State.RELEASE_TO_REFRESH && headerPadding < 0) {
 						setState(State.PULL_TO_REFRESH);
 
-						image.clearAnimation();
-						image.startAnimation(reverseFlipAnimation);
+						// image.clearAnimation();
+						// image.startAnimation(reverseFlipAnimation);
 					}
 				}
 			}
@@ -376,38 +287,37 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	private void setUiRefreshing() {
-		spinner.setVisibility(View.VISIBLE);
-		image.clearAnimation();
-		image.setVisibility(View.INVISIBLE);
-		text.setText(refreshingText);
+		// spinner.setVisibility(View.VISIBLE);
+		// image.clearAnimation();
+		// image.setVisibility(View.INVISIBLE);
+		// text.setText(refreshingText);
 	}
 
 	private void setState(State state) {
 		this.state = state;
 		switch (state) {
 		case PULL_TO_REFRESH:
-			spinner.setVisibility(View.INVISIBLE);
-			image.setVisibility(View.VISIBLE);
-			text.setText(pullToRefreshText);
+			// spinner.setVisibility(View.INVISIBLE);
+			// image.setVisibility(View.VISIBLE);
+			// text.setText(pullToRefreshText);
 
-			if (showLastUpdatedText && lastUpdated != -1) {
-				lastUpdatedTextView.setVisibility(View.VISIBLE);
-				lastUpdatedTextView.setText(String.format(lastUpdatedText,
-						lastUpdatedDateFormat.format(new Date(lastUpdated))));
-			}
+			// if (showLastUpdatedText && lastUpdated != -1) {
+			// lastUpdatedTextView.setVisibility(View.VISIBLE);
+			// lastUpdatedTextView.setText(String.format(lastUpdatedText,
+			// lastUpdatedDateFormat.format(new Date(lastUpdated))));
+			// }
 
 			break;
 
 		case RELEASE_TO_REFRESH:
-			spinner.setVisibility(View.INVISIBLE);
-			image.setVisibility(View.VISIBLE);
-			text.setText(releaseToRefreshText);
+			// spinner.setVisibility(View.INVISIBLE);
+			// image.setVisibility(View.VISIBLE);
+			// text.setText(releaseToRefreshText);
 			break;
 
 		case REFRESHING:
 			setUiRefreshing();
 
-			lastUpdated = System.currentTimeMillis();
 			if (onRefreshListener == null) {
 				setState(State.PULL_TO_REFRESH);
 			} else {

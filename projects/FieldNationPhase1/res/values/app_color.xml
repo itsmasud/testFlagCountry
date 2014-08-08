@@ -2,5 +2,15 @@
 <resources>
 
     <color name="transparent">#00000000</color>
+    <color name="loading_bar_color_1">#FF47D3AF</color>
+    <color name="loading_bar_color_2">#FF42CFB2</color>
+    <color name="loading_bar_color_3">#FF54C5C8</color>
+    <color name="loading_bar_color_4">#FF68B8E1</color>
+    <color name="loading_bar_color_5">#FF7EAFF5</color>
+
+    <integer-array name="loading_bar_colors">
+        <item>@color/loading_bar_color_1</item>
+        <item>@color/loading_bar_color_5</item>
+    </integer-array>
 
 </resources>

@@ -31,6 +31,8 @@ import android.widget.RelativeLayout;
 public class WorkorderActivity extends DrawerActivity {
 	private static final String TAG = "ui.workorder.WorkorderActivity";
 
+	public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
+
 	private static final int RPC_GET_DETAIL = 1;
 
 	// UI
@@ -60,8 +62,8 @@ public class WorkorderActivity extends DrawerActivity {
 
 		Intent intent = getIntent();
 		if (intent != null) {
-			if (intent.hasExtra("workorder_id")) {
-				_workorderId = intent.getLongExtra("workorder_id", 0);
+			if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
+				_workorderId = intent.getLongExtra(INTENT_FIELD_WORKORDER_ID, 0);
 			}
 		}
 

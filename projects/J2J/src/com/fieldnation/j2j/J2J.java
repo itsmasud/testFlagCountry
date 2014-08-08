@@ -337,6 +337,7 @@ public class J2J {
 			getWorkorderMessages(details);
 			getWorkorderTasks(details);
 			getCounterOffers(details);
+			getWorkorderBundle(details);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -353,6 +354,35 @@ public class J2J {
 			Log.println("Building Class Structure");
 			addData(ja, "com.fieldnation.data.workorder", "ExpenseCategory");
 
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private static void getWorkorderBundle(JsonArray workorders) {
+		try {
+			JsonArray messages = new JsonArray();
+			for (int i = 0; i < workorders.size(); i++) {
+				JsonObject workorder = workorders.getJsonObject(i);
+
+				String url = "/api/rest/v1/workorder/bundle/" + workorder.getLong("workorderId") + "?access_token=" + authToken;
+				Log.println(url);
+				try {
+					Result result = Ws.httpGet(hostname, url);
+
+					System.out.println(result.getResultsAsString());
+
+					messages.merge(result.getResultsAsJsonArray());
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			if (messages.size() > 0) {
+				System.out.println("BP");
+			}
+			Log.println("Building Class Structure");
+			addData(messages, "com.fieldnation.data.workorder", "Bundle");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

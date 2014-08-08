@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/username"
-            android:text="hexixtech" />
+            android:text="jacobfaketech" />
 
         <EditText
             android:id="@+id/password_edittext"
@@ -38,7 +38,7 @@
             android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword"
-            android:text="hexixtech" />
+            android:text="jacobfaketech" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
