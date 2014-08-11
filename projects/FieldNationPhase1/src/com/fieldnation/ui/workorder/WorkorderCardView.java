@@ -7,6 +7,7 @@ import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.ui.AutoResizeTextButton;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -78,7 +79,7 @@ public class WorkorderCardView extends RelativeLayout {
 	private TextView _moneySymbolTextView;
 	private TextView _paymentTextView;
 	private TextView _basisTextView;
-	private Button _actionButton;
+	private AutoResizeTextButton _actionButton;
 
 	// loading layout
 	private RelativeLayout _loadingLayout;
@@ -169,8 +170,9 @@ public class WorkorderCardView extends RelativeLayout {
 		_basisTextView = (TextView) findViewById(R.id.basis_textview);
 		_moneySymbolTextView = (TextView) findViewById(R.id.moneysymbol_textview);
 
-		_actionButton = (Button) findViewById(R.id.action_button);
+		_actionButton = (AutoResizeTextButton) findViewById(R.id.action_button);
 		_actionButton.setOnClickListener(_actionButton_onClick);
+		_actionButton.setMinTextSize(1F);
 
 		// loading layout
 		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
@@ -572,14 +574,6 @@ public class WorkorderCardView extends RelativeLayout {
 			Log.v(TAG, "BP");
 		}
 		updateStatusUiColors();
-
-		// _titleTextView.setVisibility(VISIBLE);
-		// _clientNameTextView.setVisibility(VISIBLE);
-		// _distanceTextView.setVisibility(VISIBLE);
-		// _locationTextView.setVisibility(VISIBLE);
-		// _whenTextView.setVisibility(VISIBLE);
-		// _paymentLayout.setVisibility(VISIBLE);
-		// _detailButton.setVisibility(VISIBLE);
 	}
 
 	private void buildStatusAssigned() {
@@ -658,7 +652,9 @@ public class WorkorderCardView extends RelativeLayout {
 		case COUNTEROFFERED:
 			_statusTextView.setText("Sent Counter");
 			_actionButton.setVisibility(VISIBLE);
+			//_actionButton.setTextSize(10F);
 			_actionButton.setText("View Counter");
+
 			_titleTextView.setVisibility(VISIBLE);
 			_distanceTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);

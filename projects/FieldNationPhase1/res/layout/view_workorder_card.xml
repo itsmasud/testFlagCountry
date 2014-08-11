@@ -229,7 +229,7 @@
                 android:text="@string/error" />
         </LinearLayout>
 
-        <Button
+        <com.fieldnation.ui.AutoResizeTextButton
             android:id="@+id/action_button"
             style="@style/WorkorderCard_Button"
             android:layout_alignParentBottom="true"
