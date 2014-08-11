@@ -10,11 +10,13 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.WorkLogDialog;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -114,7 +116,9 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			Toast.makeText(getContext(), "Failed!", Toast.LENGTH_LONG).show();
+
+			Log.v(TAG, "onError()");
+			Log.v(TAG, resultData.getString(WorkorderService.KEY_RESPONSE_ERROR));
 		}
 	};
 

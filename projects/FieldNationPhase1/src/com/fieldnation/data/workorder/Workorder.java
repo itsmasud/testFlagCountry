@@ -67,7 +67,7 @@ public class Workorder {
 	@Json(name = "estimatedSchedule")
 	private EstimatedSchedule _estimatedSchedule;
 	@Json(name = "status")
-	private String _status;
+	private Status _status;
 	@Json(name = "title")
 	private String _title;
 	@Json(name = "tasks")
@@ -198,7 +198,7 @@ public class Workorder {
 		return _estimatedSchedule;
 	}
 
-	public String getStatus() {
+	public Status getStatus(){
 		return _status;
 	}
 

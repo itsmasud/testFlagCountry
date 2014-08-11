@@ -167,18 +167,16 @@ public class WorkorderActivity extends DrawerActivity {
 	};
 
 	private WebServiceResultReceiver _rpcReceiver = new WebServiceResultReceiver(new Handler()) {
-
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			Log.v(TAG, "onSuccess()");
 			Log.v(TAG, resultData.toString());
 
 			try {
-
 				// TODO need to get data selector from REST API
-				_workorder = Workorder.fromJson(
-						new JsonObject(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))),
-						WorkorderDataSelector.ASSIGNED);
+				String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+				Log.v(TAG, data);
+				_workorder = Workorder.fromJson(new JsonObject(data), WorkorderDataSelector.ASSIGNED);
 
 				_workorder.addListener(_workorder_listener);
 
@@ -207,6 +205,12 @@ public class WorkorderActivity extends DrawerActivity {
 			setLoading(true);
 		}
 	};
+
+	@Override
+	public void onRefresh() {
+		startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+		setLoading(true);
+	}
 
 	/*-*********************************-*/
 	/*-				Util				-*/

@@ -147,9 +147,14 @@ public abstract class BaseActivity extends ActionBarActivity {
 			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
 			return true;
+		case R.id.action_refresh:
+			onRefresh();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	public abstract void onRefresh();
 
 	private FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
 		@Override

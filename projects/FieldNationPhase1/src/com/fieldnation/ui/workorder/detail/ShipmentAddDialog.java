@@ -23,6 +23,7 @@ public class ShipmentAddDialog extends Dialog {
 	// UI
 	private EditText _trackingIdEditText;
 	private Spinner _carrierSpinner;
+	private ArrayAdapter<CharSequence> _carrierAdapter;
 	private EditText _carrierEditText;
 	private EditText _descriptionEditText;
 	private RadioButton _shipToSiteRadio;
@@ -42,17 +43,19 @@ public class ShipmentAddDialog extends Dialog {
 		_carrierSpinner = (Spinner) findViewById(R.id.carrier_spinner);
 		_carrierSpinner.setOnItemSelectedListener(_carrier_selected);
 
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.carrier_list,
+		_carrierAdapter = ArrayAdapter.createFromResource(getContext(), R.array.carrier_list,
 				android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		_carrierSpinner.setAdapter(adapter);
+		_carrierAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		_carrierSpinner.setAdapter(_carrierAdapter);
 
 		_carrierEditText = (EditText) findViewById(R.id.carrier_edittext);
+		_carrierEditText.setVisibility(View.GONE);
 		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
 		_shipToSiteRadio = (RadioButton) findViewById(R.id.shiptosite_radio);
 
 		_addButton = (Button) findViewById(R.id.add_button);
 		_addButton.setOnClickListener(_addButton_onClick);
+
 	}
 
 	/*-*********************************-*/
@@ -61,22 +64,33 @@ public class ShipmentAddDialog extends Dialog {
 	private AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			// TODO Method Stub: onItemSelected()
-			Log.v(TAG, "Method Stub: onItemSelected()");
+			if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+				_carrierEditText.setVisibility(View.VISIBLE);
+			} else {
+				_carrierEditText.setVisibility(View.GONE);
+			}
 		}
 
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
-			// TODO Method Stub: onNothingSelected()
-			Log.v(TAG, "Method Stub: onNothingSelected()");
 		}
 	};
 
 	private View.OnClickListener _addButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			// TODO validate input
+			if (_listener != null) {
+				if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+					_listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
+							_descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked());
+				} else {
+					_listener.onOk(_trackingIdEditText.getText().toString(),
+							_carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
+							_shipToSiteRadio.isChecked());
+				}
+			}
+			ShipmentAddDialog.this.dismiss();
 		}
 	};
 
@@ -86,9 +100,7 @@ public class ShipmentAddDialog extends Dialog {
 
 	public void show(CharSequence title, Listener listener) {
 		_listener = listener;
-
 		setTitle(title);
-
 		show();
 	}
 

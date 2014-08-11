@@ -91,6 +91,12 @@ public class NotificationListActivity extends BaseActivity {
 		}
 	};
 
+	@Override
+	public void onRefresh() {
+		getListAdapter().update(false);
+		_loadingProgress.progressiveStart();
+	}
+
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/

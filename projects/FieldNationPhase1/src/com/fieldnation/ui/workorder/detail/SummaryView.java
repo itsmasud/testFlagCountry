@@ -78,7 +78,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void refresh() {
-		_substatusTextView.setText(_workorder.getStatus());
+		_substatusTextView.setText(_workorder.getStatus().getStatus());
 		// TODO set progress bar here
 		_projectNameTextView.setText(_workorder.getTitle());
 

@@ -114,4 +114,10 @@ public class MessageListActivity extends BaseActivity {
 
 	}
 
+	@Override
+	public void onRefresh() {
+		getListAdapter().update(false);
+		_loadingProgress.progressiveStart();
+	}
+
 }

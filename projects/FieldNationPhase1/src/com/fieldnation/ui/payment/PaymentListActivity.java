@@ -96,6 +96,12 @@ public class PaymentListActivity extends DrawerActivity {
 		}
 	};
 
+	@Override
+	public void onRefresh() {
+		getAdapter().update(false);
+		_loadingProgress.progressiveStart();
+	}
+
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
@@ -117,7 +123,6 @@ public class PaymentListActivity extends DrawerActivity {
 		}
 
 		return _adapter;
-
 	}
 
 }

@@ -92,4 +92,11 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 		}
 	};
 
+	@Override
+	public void onRefresh() {
+		// TODO Method Stub: onRefresh()
+		Log.v(TAG, "Method Stub: onRefresh()");
+		
+	}
+
 }

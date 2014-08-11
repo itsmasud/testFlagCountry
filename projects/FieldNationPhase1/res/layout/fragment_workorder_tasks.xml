@@ -12,6 +12,7 @@
         android:orientation="vertical" >
 
         <com.fieldnation.ui.workorder.detail.PrereqView
+            android:id="@+id/prereq_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -20,6 +21,7 @@
             android:layout_width="match_parent" />
 
         <com.fieldnation.ui.workorder.detail.ShipmentView
+            android:id="@+id/shipment_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

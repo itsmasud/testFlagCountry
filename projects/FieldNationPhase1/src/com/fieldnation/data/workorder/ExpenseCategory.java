@@ -21,11 +21,6 @@ public class ExpenseCategory {
 		return _id;
 	}
 
-	@Override
-	public String toString() {
-		return getName();
-	}
-
 	public JsonObject toJson() {
 		return toJson(this);
 	}
@@ -48,4 +43,11 @@ public class ExpenseCategory {
 		}
 	}
 
+	/*-*************************************************-*/
+	/*-				Human Generated Code				-*/
+	/*-*************************************************-*/
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

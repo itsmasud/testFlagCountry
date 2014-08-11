@@ -4,65 +4,66 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class ExpectedPayment{
-	@Json(name="bonuses")
+public class ExpectedPayment {
+	@Json(name = "bonuses")
 	private Bonuses[] _bonuses;
-	@Json(name="expectedTotal")
+	@Json(name = "expectedTotal")
 	private Double _expectedTotal;
-	@Json(name="expectedAmount")
+	@Json(name = "expectedAmount")
 	private Double _expectedAmount;
-	@Json(name="expectedFee")
+	@Json(name = "expectedFee")
 	private Double _expectedFee;
-	@Json(name="laborEarned")
+	@Json(name = "laborEarned")
 	private Double _laborEarned;
-	@Json(name="expensesApproved")
+	@Json(name = "expensesApproved")
 	private Double _expensesApproved;
-	@Json(name="discounts")
+	@Json(name = "discounts")
 	private Double _discounts;
-	@Json(name="penalties")
+	@Json(name = "penalties")
 	private Penalties[] _penalties;
-	@Json(name="paymentStatus")
+	@Json(name = "paymentStatus")
 	private String _paymentStatus;
 
-	public ExpectedPayment(){
+	public ExpectedPayment() {
 	}
-	public Bonuses[] getBonuses(){
+
+	public Bonuses[] getBonuses() {
 		return _bonuses;
 	}
 
-	public Double getExpectedTotal(){
+	public Double getExpectedTotal() {
 		return _expectedTotal;
 	}
 
-	public Double getExpectedAmount(){
+	public Double getExpectedAmount() {
 		return _expectedAmount;
 	}
 
-	public Double getExpectedFee(){
+	public Double getExpectedFee() {
 		return _expectedFee;
 	}
 
-	public Double getLaborEarned(){
+	public Double getLaborEarned() {
 		return _laborEarned;
 	}
 
-	public Double getExpensesApproved(){
+	public Double getExpensesApproved() {
 		return _expensesApproved;
 	}
 
-	public Double getDiscounts(){
+	public Double getDiscounts() {
 		return _discounts;
 	}
 
-	public Penalties[] getPenalties(){
+	public Penalties[] getPenalties() {
 		return _penalties;
 	}
 
-	public String getPaymentStatus(){
+	public String getPaymentStatus() {
 		return _paymentStatus;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

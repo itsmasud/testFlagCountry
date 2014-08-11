@@ -525,7 +525,7 @@ public class WorkorderCardView extends RelativeLayout {
 
 	private void buildStatus() throws ParseException {
 		if (_workorder.getStatus() != null) {
-			_statusTextView.setText(_workorder.getStatus());
+			_statusTextView.setText(_workorder.getStatus().getStatus());
 		} else {
 			_statusTextView.setText("");
 		}

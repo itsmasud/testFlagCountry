@@ -157,17 +157,9 @@ public class MyWorkActivity extends DrawerActivity {
 		}
 	};
 
-	// when a menu item is selected
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-
-		if (id == R.id.action_refresh) {
-			Log.v(TAG, "onOptionsItemSelected:action_refresh");
-			_fragments[_currentFragment].update();
-		}
-
-		return super.onOptionsItemSelected(item);
+	public void onRefresh() {
+		_fragments[_currentFragment].update();
 	}
 
 }

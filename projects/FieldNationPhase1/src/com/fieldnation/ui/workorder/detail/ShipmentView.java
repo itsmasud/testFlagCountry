@@ -29,6 +29,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.ShipmentView";
 
 	private static final int WEB_ADD_SHIPMENT = 1;
+	private static final int WEB_DEL_SHIPMENT = 2;
 
 	// UI
 	private Button _addButton;
@@ -93,10 +94,13 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, errorType);
 			Log.v(TAG, resultData.toString());
+			//Log.v(TAG, resultData.getString(WorkorderService.KEY_RESPONSE_DATA));
+			Log.v(TAG, resultData.getString(WorkorderService.KEY_RESPONSE_ERROR));
 			// if (_workorderService != null) {
 			// _gs.invalidateAuthToken(_workorderService.getAuthToken());
 			// }
 			// _gs.requestAuthentication(_authclient);
+			_workorder.dispatchOnChange();
 		}
 
 		@Override
@@ -104,6 +108,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 			// TODO Method Stub: onSuccess()
 			Log.v(TAG, "Method Stub: onSuccess()");
 			Log.v(TAG, resultData.toString());
+			_workorder.dispatchOnChange();
 		}
 	};
 
@@ -117,8 +122,9 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
 		@Override
 		public void onDelete(ShipmentTracking shipment) {
-			// TODO Method Stub: onDelete()
-			Log.v(TAG, "Method Stub: onDelete()");
+			getContext().startService(
+					_workorderService.deleteShipment(WEB_DEL_SHIPMENT, _workorder.getWorkorderId(),
+							shipment.getWorkorderShipmentId()));
 		}
 	};
 

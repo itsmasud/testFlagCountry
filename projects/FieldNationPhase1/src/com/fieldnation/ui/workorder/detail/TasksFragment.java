@@ -15,10 +15,10 @@ public class TasksFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.TasksFragment";
 
 	// UI
-	private ListView _listview;
+	private PrereqView _prereqs;
+	private ShipmentView _shipments;
 
 	// Data
-	private GlobalState _gs;
 	private Workorder _workorder;
 
 	/*-*************************************-*/
@@ -33,22 +33,32 @@ public class TasksFragment extends WorkorderFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		_gs = (GlobalState) getActivity().getApplicationContext();
-		// _gs.requestAuthentication(_authClient);
+		_prereqs = (PrereqView) view.findViewById(R.id.prereq_view);
+		_shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
 
-		_listview = (ListView) view.findViewById(R.id.messages_listview);
+		configureUi();
 	}
 
 	@Override
 	public void update() {
-		// TODO Method Stub: update()
-		Log.v(TAG, "Method Stub: update()");
-
+		configureUi();
 	}
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
 		_workorder = workorder;
+		configureUi();
+	}
+
+	private void configureUi() {
+		if (_workorder == null)
+			return;
+
+		if (_prereqs == null || _shipments == null)
+			return;
+
+		_prereqs.setWorkorder(_workorder);
+		_shipments.setWorkorder(_workorder);
 	}
 
 	/*-*********************************-*/
