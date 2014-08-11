@@ -265,6 +265,13 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 				getContext().startActivity(intent);
 			}
 		}
+
+		@Override
+		public void onViewPayments(WorkorderCardView view, Workorder workorder) {
+			// TODO Method Stub: onViewPayments()
+			Log.v(TAG, "Method Stub: onViewPayments()");
+			
+		}
 	};
 
 	private ActionMode.Callback _actionMode_Callback = new ActionMode.Callback() {

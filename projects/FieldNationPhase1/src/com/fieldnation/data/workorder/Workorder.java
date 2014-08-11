@@ -1,6 +1,5 @@
 package com.fieldnation.data.workorder;
 
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -72,7 +71,7 @@ public class Workorder {
 	private String _title;
 	@Json(name = "tasks")
 	private Task[] _tasks;
-	@Json(name="alerts")
+	@Json(name = "alerts")
 	private Integer _alerts;
 	@Json(name = "isRequest")
 	private Boolean _isRequest;
@@ -82,8 +81,8 @@ public class Workorder {
 	private Documents[] _documents;
 	@Json(name = "closingNotes")
 	private String _closingNotes;
-	@Json(name = "label")
-	private Label[] _label;
+	// @Json(name = "label")
+	// private Label[] _label;
 	@Json(name = "shipmentTracking")
 	private ShipmentTracking[] _shipmentTracking;
 
@@ -198,7 +197,22 @@ public class Workorder {
 		return _estimatedSchedule;
 	}
 
-	public Status getStatus(){
+	public Status getStatus() {
+		if (_status == null) {
+			String data = "Status is null: " + _workorderId;
+			System.out.println(data);
+		} else if (_status.getWorkorderStatus() == null) {
+			String data = "Could not get status: " + _workorderId + "\r\n";
+			data += _status.toJson().display();
+
+			System.out.println(data);
+		} else if (_status.getWorkorderSubstatus() == null) {
+			String data = "Could not get substatus: " + _workorderId + "\r\n";
+			data += _status.toJson().display();
+
+			System.out.println(data);
+		}
+
 		return _status;
 	}
 
@@ -210,7 +224,7 @@ public class Workorder {
 		return _tasks;
 	}
 
-	public Integer getAlerts(){
+	public Integer getAlerts() {
 		return _alerts;
 	}
 
@@ -230,9 +244,9 @@ public class Workorder {
 		return _closingNotes;
 	}
 
-	public Label[] getLabels() {
-		return _label;
-	}
+	// public Label[] getLabels() {
+	// return _label;
+	// }
 
 	public ShipmentTracking[] getShipmentTracking() {
 		return _shipmentTracking;
@@ -273,6 +287,7 @@ public class Workorder {
 	public static final int BUTTON_ACTION_CHECKOUT = 4;
 	public static final int BUTTON_ACTION_ACKNOWLEDGE_HOLD = 5;
 	public static final int BUTTON_ACTION_VIEW_COUNTER = 6;
+	public static final int BUTTON_ACTION_VIEW_PAYMENT = 7;
 
 	public static final int NOT_INTERESTED_ACTION_NONE = 0;
 	public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
@@ -303,9 +318,8 @@ public class Workorder {
 
 	private int _buttonAction = 0;
 	private int _notInterestedAction = 0;
-	private int _statusDisplayState = 0;
 	private WorkorderDataSelector _type;
-	private Set<Integer> _labelIds = new HashSet<Integer>();
+	// private Set<Integer> _labelIds = new HashSet<Integer>();
 
 	private Set<Listener> _listeners = new HashSet<Workorder.Listener>();
 
@@ -322,23 +336,23 @@ public class Workorder {
 	}
 
 	public int getStatusBG() {
-		return _STATUS_LOOKUP_TABLE[_statusDisplayState];
+		return _STATUS_LOOKUP_TABLE[getStatusIntent().ordinal()];
 	}
 
 	public int getStatusTextColor() {
-		return _STATUS_TEXT_TABLE[_statusDisplayState];
+		return _STATUS_TEXT_TABLE[getStatusIntent().ordinal()];
 	}
 
 	public int getStatusButtonBG() {
-		return _STATUS_BUTTON_BG[_statusDisplayState];
+		return _STATUS_BUTTON_BG[getStatusIntent().ordinal()];
 	}
 
 	public int getStatusButtonFG() {
-		return _STATUS_BUTTON_FG[_statusDisplayState];
+		return _STATUS_BUTTON_FG[getStatusIntent().ordinal()];
 	}
 
-	public int getDisplayState() {
-		return _statusDisplayState;
+	public StatusIntent getStatusIntent() {
+		return getStatus().getStatusIntent();
 	}
 
 	public void addListener(Listener listener) {
@@ -356,203 +370,105 @@ public class Workorder {
 		}
 	}
 
-	public boolean hasLabel(int labelId) {
-		return _labelIds.contains(labelId);
-	}
-
 	public interface Listener {
 		public void onChange(Workorder workorder);
 	}
 
-	private void buildStatus() throws ParseException {
+	private void buildStatus() {
 		_notInterestedAction = NOT_INTERESTED_ACTION_NONE;
 		_buttonAction = BUTTON_ACTION_NONE;
 
-		_labelIds.clear();
-		if (_label != null) {
-			for (int i = 0; i < _label.length; i++) {
-				_labelIds.add(_label[i].getLabelId());
-			}
-		}
+		Status status = getStatus();
 
-		switch (_type) {
+		switch (status.getWorkorderStatus()) {
 		case ASSIGNED:
-			buildStatusAssigned();
+			buildStatusAssigned(status);
 			break;
 		case AVAILABLE:
-			buildStatusAvailable();
-			break;
-		case REQUESTED:
-			buildStatusAvailable();
+			buildStatusAvailable(status);
 			break;
 		case CANCELLED:
-			buildStatusCancelled();
+			buildStatusCancelled(status);
 			break;
 		case COMPLETED:
-			buildStatusCompleted();
+			buildStatusCompleted(status);
 			break;
-		case IN_PROGRESS:
-			buildStatusInProgress();
+		case INPROGRESS:
+			buildStatusInProgress(status);
 			break;
 		}
 	}
 
-	private void buildStatusAssigned() throws ParseException {
-		// if on-hold, then only check for acknowledged
-		boolean isOnHold = false;
-		boolean isAcked = false;
-		boolean has16 = false;
-
-		// get on-hold value
-		Label[] labels = getLabels();
-
-		if (labels != null) {
-			for (int i = 0; i < labels.length; i++) {
-				Label label = labels[i];
-				if (label.getType() != null) {
-					if (label.getType().equals("on-hold"))
-						isOnHold = true;
-
-					if (label.getAction() == null || label.getAction().equals("acknowledge")) {
-						isAcked = true;
-					}
-				}
-
-				if (label.getLabelId() == 16) {
-					has16 = true;
-				}
-			}
-		}
-
-		if (isOnHold) {
-			if (isAcked) {
-				_statusDisplayState = 3;
-				_buttonAction = BUTTON_ACTION_NONE;
-			} else {
-				_buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
-				_statusDisplayState = 1;
-			}
-		} else if (has16) {
-			_statusDisplayState = 2;
-			_buttonAction = BUTTON_ACTION_ASSIGNMENT;
-			_notInterestedAction = NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT;
-		} else {
-			_statusDisplayState = 0;
-			_buttonAction = BUTTON_ACTION_CHECKIN;
-		}
-	}
-
-	private void buildStatusAvailable() throws ParseException {
-		long statusId = getStatusId();
-		if (statusId == 9) {
-			_statusDisplayState = 1;
+	private void buildStatusAvailable(Status status) {
+		switch (status.getWorkorderSubstatus()) {
+		case AVAILABLE:
+			_buttonAction = BUTTON_ACTION_REQUEST;
+			_notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
+			break;
+		case ROUTED:
 			_buttonAction = BUTTON_ACTION_ASSIGNMENT;
 			_notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
-		} else {
-			boolean has11 = false;
-			boolean has12 = false;
-			boolean has13 = false;
-
-			Label[] labels = getLabels();
-			if (labels != null) {
-				for (int i = 0; i < labels.length; i++) {
-					Label label = labels[i];
-					if (label.getLabelId() == 11) {
-						has11 = true;
-					}
-					if (label.getLabelId() == 12) {
-						has12 = true;
-					}
-					if (label.getLabelId() == 13) {
-						has13 = true;
-					}
-				}
-			}
-
-			if (has11) {
-				_statusDisplayState = 0;
-				_buttonAction = BUTTON_ACTION_REQUEST;
-				_notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
-
-			} else if (has12) {
-				_statusDisplayState = 2;
-				_notInterestedAction = NOT_INTERESTED_ACTION_WITHDRAW_REQUEST;
-			} else if (has13) {
-				_statusDisplayState = 3;
-				_buttonAction = BUTTON_ACTION_VIEW_COUNTER;
-				_notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
-
-			}
+			break;
+		case REQUESTED:
+			_notInterestedAction = NOT_INTERESTED_ACTION_WITHDRAW_REQUEST;
+			break;
+		case COUNTEROFFERED:
+			_buttonAction = BUTTON_ACTION_VIEW_COUNTER;
+			_notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
+			break;
+		default:
+			return;
 		}
 	}
 
-	private void buildStatusInProgress() throws ParseException {
-		// if on-hold, then only check for acknowledged
-		boolean isOnHold = false;
-		boolean isAcked = false;
-		boolean has1 = false;
-
-		// get on-hold value
-		Label[] labels = getLabels();
-		if (labels != null) {
-			for (int i = 0; i < labels.length; i++) {
-				Label label = labels[i];
-				if (label.getType() != null) {
-					if (label.getType().equals("on-hold"))
-						isOnHold = true;
-
-					if (label.getAction() == null || label.getAction().equals("acknowledge")) {
-						isAcked = true;
-					}
-				}
-
-				if (label.getLabelId() == 1) {
-					has1 = true;
-				}
-			}
-		}
-
-		if (isOnHold) {
-			if (isAcked) {
-				_statusDisplayState = 3;
-			} else {
-				_statusDisplayState = 1;
-				_buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
-			}
-		} else if (has1) {
-			_statusDisplayState = 2;
-			_buttonAction = BUTTON_ACTION_CHECKOUT;
-		} else {
-			_statusDisplayState = 0;
+	private void buildStatusAssigned(Status status) {
+		switch (status.getWorkorderSubstatus()) {
+		case UNCONFIRMED: // green
+			_buttonAction = BUTTON_ACTION_ASSIGNMENT;
+			_notInterestedAction = NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT;
+			break;
+		case CONFIRMED: // white
 			_buttonAction = BUTTON_ACTION_CHECKIN;
+			break;
+		case ONHOLD_UNACKNOWLEDGED: // orange
+			_buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
+			break;
+		case ONHOLD_ACKNOWLEDGED: // gray
+			_buttonAction = BUTTON_ACTION_NONE;
+			break;
+		default:
+			return;
 		}
 	}
 
-	private void buildStatusCompleted() throws ParseException {
-		Set<Integer> labels = new HashSet<Integer>();
-
-		Label[] slabels = getLabels();
-		if (slabels != null) {
-			for (int i = 0; i < slabels.length; i++) {
-				int labelid = slabels[i].getLabelId();
-				labels.add(labelid);
-			}
-		}
-
-		if (labels.contains(19)) {
-			_statusDisplayState = 0;
-		} else if (labels.contains(20)) {
-			_statusDisplayState = 0;
-		} else if (labels.contains(21)) {
-			_statusDisplayState = 2;
-		} else if (getStatus() != null && getStatus().equals("Paid")) {
-			_statusDisplayState = 3;
+	private void buildStatusInProgress(Status status) {
+		switch (status.getWorkorderSubstatus()) {
+		case CHECKEDIN: // green
+			_buttonAction = BUTTON_ACTION_CHECKOUT;
+			break;
+		case CHECKEDOUT: // white
+			_buttonAction = BUTTON_ACTION_CHECKIN;
+			break;
+		case ONHOLD_UNACKNOWLEDGED: // orange
+			_buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
+			break;
+		case ONHOLD_ACKNOWLEDGED: // gray
+			// no action
+			break;
+		default:
+			return;
 		}
 	}
 
-	private void buildStatusCancelled() {
-		// TODO METHOD STUB buildStatusCancelled!
-		_statusDisplayState = 0;
+	private void buildStatusCompleted(Status status) {
+		if (status.getWorkorderSubstatus() == WorkorderSubstatus.APPROVED_PROCESSINGPAYMENT) {
+			_buttonAction = BUTTON_ACTION_VIEW_PAYMENT;
+		}
 	}
 
+	private void buildStatusCancelled(Status status) {
+		if (status.getWorkorderSubstatus() == WorkorderSubstatus.CANCELLED_LATEFEEPROCESSING) {
+			_buttonAction = BUTTON_ACTION_VIEW_PAYMENT;
+		}
+	}
 }

@@ -4,7 +4,7 @@
     <color name="btn_white_fg">#FF000000</color>
     <color name="btn_orange_fg">#FFFFFFFF</color>
     <color name="btn_green_fg">#FFFFFFFF</color>
-    <color name="btn_gray_fg">#FFFFFFFF</color>
+    <color name="btn_gray_fg">#FF000000</color>
 
     <style name="ButtonWhite">
         <item name="android:textColor">@color/btn_white_fg</item>
