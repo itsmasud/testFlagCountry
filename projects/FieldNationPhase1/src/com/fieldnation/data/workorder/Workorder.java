@@ -436,6 +436,11 @@ public class Workorder {
 		case ONHOLD_ACKNOWLEDGED: // gray
 			_buttonAction = BUTTON_ACTION_NONE;
 			break;
+		case CHECKEDIN:
+			_buttonAction = BUTTON_ACTION_CHECKOUT;
+			break;
+		case CHECKEDOUT:
+			_buttonAction = BUTTON_ACTION_CHECKIN;
 		default:
 			return;
 		}

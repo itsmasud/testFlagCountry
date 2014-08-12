@@ -1,11 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.fieldnation.GlobalState;
-import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.workorder.WorkorderFragment;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-public class NotificationFragment extends WorkorderFragment {
-	private static final String TAG = "ui.workorder.detail.NotificationFragment";
+import com.fieldnation.GlobalState;
+import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.workorder.WorkorderFragment;
+
+public class DocumentsFragment extends WorkorderFragment {
+	private static final String TAG = "ui.workorder.detail.DocumentsFragment";
 
 	// UI
 	private ListView _listview;
@@ -28,7 +28,7 @@ public class NotificationFragment extends WorkorderFragment {
 	/*-*************************************-*/
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_workorder_notifications, container, false);
+		return inflater.inflate(R.layout.fragment_workorder_documents, container, false);
 	}
 
 	@Override
@@ -50,7 +50,9 @@ public class NotificationFragment extends WorkorderFragment {
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
-		_workorder = workorder;
+		// TODO Method Stub: setWorkorder()
+		Log.v(TAG, "Method Stub: setWorkorder()");
+
 	}
 
 	/*-*********************************-*/
@@ -59,8 +61,7 @@ public class NotificationFragment extends WorkorderFragment {
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			// TODO Method Stub: onAuthenticationFailed()
-			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 
 		@Override

@@ -535,7 +535,7 @@ public class WorkorderCardView extends RelativeLayout {
 
 	private void buildStatus() throws ParseException {
 		if (_workorder.getStatus() != null) {
-			_statusTextView.setText(_workorder.getStatus().getStatus());
+			_statusTextView.setText(_workorder.getStatus().getSubStatus());
 		} else {
 			_statusTextView.setText("");
 		}
@@ -614,7 +614,31 @@ public class WorkorderCardView extends RelativeLayout {
 			_clientNameTextView.setVisibility(VISIBLE);
 			_locationTextView.setVisibility(VISIBLE);
 			break;
+		case CHECKEDIN:
+			_statusTextView.setText("Checked In");
+			_actionButton.setText("Check Out");
+			_titleTextView.setVisibility(VISIBLE);
+			_whenTextView.setVisibility(VISIBLE);
+			_clientNameTextView.setVisibility(VISIBLE);
+			_locationTextView.setVisibility(VISIBLE);
+			_actionButton.setVisibility(VISIBLE);
+			break;
+		case CHECKEDOUT:
+			_statusTextView.setText("Checked Out");
+			_actionButton.setText("Check In");
+			_titleTextView.setVisibility(VISIBLE);
+			_whenTextView.setVisibility(VISIBLE);
+			_clientNameTextView.setVisibility(VISIBLE);
+			_locationTextView.setVisibility(VISIBLE);
+			_actionButton.setVisibility(VISIBLE);
+			break;
 		default:
+			_titleTextView.setVisibility(VISIBLE);
+			_whenTextView.setVisibility(VISIBLE);
+			_clientNameTextView.setVisibility(VISIBLE);
+			_locationTextView.setVisibility(VISIBLE);
+			Log.v(TAG,
+					"Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
 			break;
 		}
 	}
@@ -652,7 +676,7 @@ public class WorkorderCardView extends RelativeLayout {
 		case COUNTEROFFERED:
 			_statusTextView.setText("Sent Counter");
 			_actionButton.setVisibility(VISIBLE);
-			//_actionButton.setTextSize(10F);
+			// _actionButton.setTextSize(10F);
 			_actionButton.setText("View Counter");
 
 			_titleTextView.setVisibility(VISIBLE);
@@ -662,6 +686,14 @@ public class WorkorderCardView extends RelativeLayout {
 			_actionButton.setVisibility(VISIBLE);
 			break;
 		default:
+			_titleTextView.setVisibility(VISIBLE);
+			_clientNameTextView.setVisibility(VISIBLE);
+			_distanceTextView.setVisibility(VISIBLE);
+			_whenTextView.setVisibility(VISIBLE);
+			_rightLayout.setVisibility(VISIBLE);
+
+			Log.v(TAG,
+					"Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
 			break;
 		}
 	}
@@ -703,6 +735,11 @@ public class WorkorderCardView extends RelativeLayout {
 			// TODO show 'task' ui?
 			break;
 		default:
+			_titleTextView.setVisibility(VISIBLE);
+			_locationTextView.setVisibility(VISIBLE);
+			_whenTextView.setVisibility(VISIBLE);
+			Log.v(TAG,
+					"Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
 			break;
 		}
 	}
@@ -741,6 +778,13 @@ public class WorkorderCardView extends RelativeLayout {
 			_rightLayout.setVisibility(VISIBLE);
 			break;
 		default:
+			_titleTextView.setVisibility(VISIBLE);
+			_clientNameTextView.setVisibility(VISIBLE);
+			_whenTextView.setVisibility(VISIBLE);
+			_rightLayout.setVisibility(VISIBLE);
+
+			Log.v(TAG,
+					"Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
 			break;
 		}
 	}
@@ -765,6 +809,8 @@ public class WorkorderCardView extends RelativeLayout {
 			_actionButton.setText("Payments");
 			break;
 		default:
+			Log.v(TAG,
+					"Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
 			break;
 		}
 

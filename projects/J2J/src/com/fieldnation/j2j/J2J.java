@@ -338,7 +338,7 @@ public class J2J {
 			getWorkorderTasks(details);
 			getCounterOffers(details);
 			getWorkorderBundle(details);
-
+			getDeliverables(details);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -435,6 +435,39 @@ public class J2J {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private static void getDeliverables(JsonArray workorders) {
+		try {
+			JsonArray deliverables = new JsonArray();
+			for (int i = 0; i < workorders.size(); i++) {
+				JsonObject workorder = workorders.getJsonObject(i);
+
+				String url = "/api/rest/v1/workorder/" + workorder.getLong("workorderId") + "/deliverables?access_token=" + authToken;
+				Log.println(url);
+				try {
+					Result result = Ws.httpGet(hostname, url);
+					JsonArray ja = result.getResultsAsJsonArray();
+
+					if (ja.size() > 0) {
+						System.out.println(ja.size());
+					}
+
+					addData(ja, "com.fieldnation.data.workorder", "Deliverable");
+					deliverables.merge(ja);
+
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			getDeliverableDetails(deliverables);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private static void getDeliverableDetails(JsonArray deliverables) {
+
 	}
 
 	private static void getWorkorderTasks(JsonArray workorders) {
