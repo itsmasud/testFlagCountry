@@ -284,4 +284,25 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		}
 	}
 
+	public Intent deleteDeliverable(int resultCode, long workorderId, long deliverableId) {
+		return httpDelete(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId, null,
+				false);
+	}
+
+	// public Intent uploadDeliverable(int resultCode, long workorderId, long
+	// deliverableId, byte[] blob) {
+	// return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId +
+	// "/deliverables/" + deliverableId, null, data, contentType,
+	// allowCache)
+	// return null;
+	// }
+
+	public Intent getDeliverableDetails(int resultCode, long workorderId, long deliverableId, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId,
+				allowCache);
+	}
+
+	public Intent getDeliverableList(int resultCode, long workorderId, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables", allowCache);
+	}
 }

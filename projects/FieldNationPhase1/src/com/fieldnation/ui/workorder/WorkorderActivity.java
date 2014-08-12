@@ -9,8 +9,8 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.DrawerActivity;
-import com.fieldnation.ui.workorder.detail.AttachmentsFragment;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
+import com.fieldnation.ui.workorder.detail.DocumentsFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
 import com.fieldnation.ui.workorder.detail.TasksFragment;
@@ -94,7 +94,7 @@ public class WorkorderActivity extends DrawerActivity {
 		_fragments[1] = new TasksFragment();
 		_fragments[2] = new MessageFragment();
 		_fragments[3] = new NotificationFragment();
-		_fragments[4] = new AttachmentsFragment();
+		_fragments[4] = new DocumentsFragment();
 
 		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
 		_viewPager.setAdapter(_pagerAdapter);

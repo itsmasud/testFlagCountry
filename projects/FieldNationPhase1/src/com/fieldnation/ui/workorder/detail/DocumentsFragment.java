@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +12,14 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
 public class DocumentsFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.DocumentsFragment";
+
+	private static final int WEB_GET_DOCUMENTS = 1;
 
 	// UI
 	private ListView _listview;
@@ -22,6 +27,7 @@ public class DocumentsFragment extends WorkorderFragment {
 	// Data
 	private GlobalState _gs;
 	private Workorder _workorder;
+	private WorkorderService _service;
 
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
@@ -50,9 +56,11 @@ public class DocumentsFragment extends WorkorderFragment {
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
-		// TODO Method Stub: setWorkorder()
-		Log.v(TAG, "Method Stub: setWorkorder()");
+		_workorder = workorder;
 
+		if (_service != null) {
+			_service.getDeliverableList(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false);
+		}
 	}
 
 	/*-*********************************-*/
@@ -66,15 +74,33 @@ public class DocumentsFragment extends WorkorderFragment {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-
-			// TODO Method Stub: onAuthentication()
-			Log.v(TAG, "Method Stub: onAuthentication()");
-
+			_service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+			getActivity().startService(
+					_service.getDeliverableList(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false));
 		}
 
 		@Override
 		public GlobalState getGlobalState() {
 			return _gs;
+		}
+	};
+
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+		@Override
+		public void onSuccess(int resultCode, Bundle resultData) {
+			// TODO Method Stub: onSuccess()
+			Log.v(TAG, "Method Stub: onSuccess()");
+
+			String data = new String(resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA));
+
+			Log.v(TAG, data);
+			Log.v(TAG, "BP");
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			// TODO Method Stub: onError()
+			Log.v(TAG, "Method Stub: onError()");
 		}
 	};
 
