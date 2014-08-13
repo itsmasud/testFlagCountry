@@ -5,7 +5,7 @@
     android:layout_marginTop="20dp" >
 
     <ImageView
-        android:id="@+id/doctype_imageview"
+        android:id="@+id/filetype_imageview"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentLeft="true"
@@ -15,29 +15,29 @@
 
     <LinearLayout
         android:id="@+id/data_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/delete_imagebutton"
-        android:layout_toRightOf="@+id/doctype_imageview"
+        android:layout_toRightOf="@+id/filetype_imageview"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/filename_textview"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="File Name.ext"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/date_textview"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="01/02/2014 @ 12:00 AM"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
