@@ -102,7 +102,7 @@ public class MessageFragment extends WorkorderFragment {
 
 		_messages.clear();
 		WEB_GET_MESSAGES = _rand.nextInt();
-		_gs.startService(_workorderService.getMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
+		_gs.startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
 	}
 
 	private void rebuildList() {
@@ -116,7 +116,7 @@ public class MessageFragment extends WorkorderFragment {
 		@Override
 		public void onClick(View v) {
 			WEB_NEW_MESSAGE = _rand.nextInt();
-			_gs.startService(_workorderService.newMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
+			_gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
 					_messageEditText.getText().toString()));
 		}
 	};

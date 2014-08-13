@@ -6,7 +6,9 @@ public enum WorkorderStatus {
 	INPROGRESS("STATUS_INPROGRESS"),
 	COMPLETED("STATUS_COMPLETED"),
 	CANCELLED("STATUS_CANCELLED"),
-	NA(null);
+	PAID("STATUS_PAID"), // completed
+	APPROVED("STATUS_APPROVED"), // completed
+	NA("NA");
 
 	private String _value;
 

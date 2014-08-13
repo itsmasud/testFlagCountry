@@ -59,7 +59,7 @@ public class DocumentsFragment extends WorkorderFragment {
 		_workorder = workorder;
 
 		if (_service != null) {
-			_service.getDeliverableList(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false);
+			_service.listDeliverables(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class DocumentsFragment extends WorkorderFragment {
 		public void onAuthentication(String username, String authToken) {
 			_service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
 			getActivity().startService(
-					_service.getDeliverableList(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false));
+					_service.listDeliverables(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false));
 		}
 
 		@Override

@@ -98,6 +98,8 @@ public class WorkorderCardView extends RelativeLayout {
 	private Listener _listener = null;
 	private int _displayMode = MODE_NORMAL;
 	private boolean _isBundle;
+	private String[] _statusStrings;
+	private String[] _substatusStrings;
 
 	public WorkorderCardView(Context context) {
 		super(context);
@@ -180,6 +182,9 @@ public class WorkorderCardView extends RelativeLayout {
 		// undo layout
 		_undoLayout = (RelativeLayout) findViewById(R.id.undo_layout);
 		_undoButton = (Button) findViewById(R.id.undo_button);
+
+		_statusStrings = getContext().getResources().getStringArray(R.array.workorder_status);
+		_substatusStrings = getContext().getResources().getStringArray(R.array.workorder_substatus);
 
 		// debugging
 		// _detailButton.setVisibility(GONE);
@@ -403,7 +408,7 @@ public class WorkorderCardView extends RelativeLayout {
 
 		_backgroundView.setBackgroundResource(R.drawable.card_right_selected);
 		_statusView.setBackgroundResource(R.drawable.card_status_black);
-		_statusTextView.setText("Selected");
+		_statusTextView.setText(getResources().getString(R.string.workorder_selected));
 	}
 
 	private void refreshNormal() {
@@ -421,7 +426,6 @@ public class WorkorderCardView extends RelativeLayout {
 
 		_backgroundView.setBackgroundResource(R.drawable.card_right);
 		_statusView.setBackgroundResource(R.drawable.card_status_black);
-		_statusTextView.setText("Selected");
 
 		try {
 			buildStatus();
@@ -535,7 +539,7 @@ public class WorkorderCardView extends RelativeLayout {
 
 	private void buildStatus() throws ParseException {
 		if (_workorder.getStatus() != null) {
-			_statusTextView.setText(_workorder.getStatus().getSubStatus());
+			_statusTextView.setText(_substatusStrings[_workorder.getStatus().getWorkorderSubstatus().ordinal()]);
 		} else {
 			_statusTextView.setText("");
 		}
@@ -561,12 +565,15 @@ public class WorkorderCardView extends RelativeLayout {
 			buildStatusCancelled();
 			break;
 		case COMPLETED:
+		case APPROVED:
+		case PAID:
 			buildStatusCompleted();
 			break;
 		case INPROGRESS:
 			buildStatusInProgress();
 			break;
 		default:
+			buildStatusDefault();
 			break;
 		}
 
@@ -576,10 +583,16 @@ public class WorkorderCardView extends RelativeLayout {
 		updateStatusUiColors();
 	}
 
+	private void buildStatusDefault() {
+		_titleTextView.setVisibility(VISIBLE);
+		_whenTextView.setVisibility(VISIBLE);
+		_clientNameTextView.setVisibility(VISIBLE);
+		_locationTextView.setVisibility(VISIBLE);
+	}
+
 	private void buildStatusAssigned() {
 		switch (_workorder.getStatus().getWorkorderSubstatus()) {
 		case CONFIRMED:
-			_statusTextView.setText("Confirmed");
 			_actionButton.setText("Check In");
 			_titleTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
@@ -589,7 +602,6 @@ public class WorkorderCardView extends RelativeLayout {
 
 			break;
 		case ONHOLD_UNACKNOWLEDGED:
-			_statusTextView.setText("On Hold");
 			_actionButton.setText("Acknowledge");
 			_titleTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
@@ -598,7 +610,6 @@ public class WorkorderCardView extends RelativeLayout {
 			_actionButton.setVisibility(VISIBLE);
 			break;
 		case UNCONFIRMED:
-			_statusTextView.setText("Unconfirmed");
 			_actionButton.setText("Confirm");
 			setNotInterestedEnabled(true);
 			_titleTextView.setVisibility(VISIBLE);
@@ -608,14 +619,12 @@ public class WorkorderCardView extends RelativeLayout {
 			_actionButton.setVisibility(VISIBLE);
 			break;
 		case ONHOLD_ACKNOWLEDGED:
-			_statusTextView.setText("On Hold");
 			_titleTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
 			_clientNameTextView.setVisibility(VISIBLE);
 			_locationTextView.setVisibility(VISIBLE);
 			break;
 		case CHECKEDIN:
-			_statusTextView.setText("Checked In");
 			_actionButton.setText("Check Out");
 			_titleTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
@@ -624,7 +633,6 @@ public class WorkorderCardView extends RelativeLayout {
 			_actionButton.setVisibility(VISIBLE);
 			break;
 		case CHECKEDOUT:
-			_statusTextView.setText("Checked Out");
 			_actionButton.setText("Check In");
 			_titleTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
@@ -647,7 +655,6 @@ public class WorkorderCardView extends RelativeLayout {
 		setNotInterestedEnabled(true);
 		switch (_workorder.getStatus().getWorkorderSubstatus()) {
 		case AVAILABLE:
-			_statusTextView.setText("Available");
 			_actionButton.setText("Request");
 			_titleTextView.setVisibility(VISIBLE);
 			_clientNameTextView.setVisibility(VISIBLE);
@@ -657,7 +664,6 @@ public class WorkorderCardView extends RelativeLayout {
 			_actionButton.setVisibility(VISIBLE);
 			break;
 		case ROUTED:
-			_statusTextView.setText("Routed");
 			_actionButton.setText("Accept");
 			_titleTextView.setVisibility(VISIBLE);
 			_clientNameTextView.setVisibility(VISIBLE);
@@ -667,14 +673,12 @@ public class WorkorderCardView extends RelativeLayout {
 			_actionButton.setVisibility(VISIBLE);
 			break;
 		case REQUESTED:
-			_statusTextView.setText("Requested");
 			_titleTextView.setVisibility(VISIBLE);
 			_distanceTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
 			_rightLayout.setVisibility(VISIBLE);
 			break;
 		case COUNTEROFFERED:
-			_statusTextView.setText("Sent Counter");
 			_actionButton.setVisibility(VISIBLE);
 			// _actionButton.setTextSize(10F);
 			_actionButton.setText("View Counter");
@@ -701,7 +705,6 @@ public class WorkorderCardView extends RelativeLayout {
 	public void buildStatusInProgress() {
 		switch (_workorder.getStatus().getWorkorderSubstatus()) {
 		case CHECKEDOUT:
-			_statusTextView.setText("Checked Out");
 			_actionButton.setText("Check In");
 			_titleTextView.setVisibility(VISIBLE);
 			_locationTextView.setVisibility(VISIBLE);
@@ -710,7 +713,6 @@ public class WorkorderCardView extends RelativeLayout {
 			// TODO show 'task' ui?
 			break;
 		case ONHOLD_UNACKNOWLEDGED:
-			_statusTextView.setText("On Hold");
 			_actionButton.setText("Acknowledge");
 			_titleTextView.setVisibility(VISIBLE);
 			_locationTextView.setVisibility(VISIBLE);
@@ -719,7 +721,6 @@ public class WorkorderCardView extends RelativeLayout {
 			// TODO show 'task' ui?
 			break;
 		case CHECKEDIN:
-			_statusTextView.setText("Checked In");
 			_actionButton.setText("Check Out");
 			_titleTextView.setVisibility(VISIBLE);
 			_locationTextView.setVisibility(VISIBLE);
@@ -728,7 +729,6 @@ public class WorkorderCardView extends RelativeLayout {
 			// TODO show 'task' ui?
 			break;
 		case ONHOLD_ACKNOWLEDGED:
-			_statusTextView.setText("On Hold");
 			_titleTextView.setVisibility(VISIBLE);
 			_locationTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
@@ -747,21 +747,18 @@ public class WorkorderCardView extends RelativeLayout {
 	public void buildStatusCompleted() {
 		switch (_workorder.getStatus().getWorkorderSubstatus()) {
 		case PENDINGREVIEWED:
-			_statusTextView.setText("Pending");
 			_titleTextView.setVisibility(VISIBLE);
 			_clientNameTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
 			_rightLayout.setVisibility(VISIBLE);
 			break;
 		case INREVIEW:
-			_statusTextView.setText("In Review");
 			_titleTextView.setVisibility(VISIBLE);
 			_clientNameTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
 			_rightLayout.setVisibility(VISIBLE);
 			break;
 		case APPROVED_PROCESSINGPAYMENT:
-			_statusTextView.setText("Processing");
 			_actionButton.setText("Payments");
 
 			_titleTextView.setVisibility(VISIBLE);
@@ -771,7 +768,6 @@ public class WorkorderCardView extends RelativeLayout {
 			_actionButton.setVisibility(VISIBLE);
 			break;
 		case PAID:
-			_statusTextView.setText("Paid");
 			_titleTextView.setVisibility(VISIBLE);
 			_clientNameTextView.setVisibility(VISIBLE);
 			_whenTextView.setVisibility(VISIBLE);
@@ -798,13 +794,10 @@ public class WorkorderCardView extends RelativeLayout {
 
 		switch (_workorder.getStatus().getWorkorderSubstatus()) {
 		case CANCELLED:
-			_statusTextView.setText("Cancelled");
 			break;
 		case CANCELLED_LATEFEEPAID:
-			_statusTextView.setText("Fee Paid");
 			break;
 		case CANCELLED_LATEFEEPROCESSING:
-			_statusTextView.setText("Fee Pending");
 			_actionButton.setVisibility(VISIBLE);
 			_actionButton.setText("Payments");
 			break;

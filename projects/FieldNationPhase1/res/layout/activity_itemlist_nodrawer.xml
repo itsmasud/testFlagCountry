@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/WorkorderDetail"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <eu.erikw.PullToRefreshListView
-        android:id="@+id/listview"
-        style="@style/WorkorderDetail_Data"
+        android:id="@+id/items_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
@@ -20,6 +18,7 @@
         style="@style/spb_loading"
         android:layout_width="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="-1dp" />
+        android:layout_marginTop="-1dp"
+        android:visibility="gone" />
 
 </RelativeLayout>

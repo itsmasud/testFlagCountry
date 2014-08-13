@@ -8,6 +8,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.BaseActivity;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.DocumentsFragment;
@@ -28,7 +29,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-public class WorkorderActivity extends DrawerActivity {
+public class WorkorderActivity extends BaseActivity {
 	private static final String TAG = "ui.workorder.WorkorderActivity";
 
 	public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
@@ -74,7 +75,7 @@ public class WorkorderActivity extends DrawerActivity {
 		}
 
 		if (!_created) {
-			addActionBarAndDrawer(R.id.container);
+			// addActionBarAndDrawer(R.id.container);
 			buildFragments();
 			_created = true;
 		}
@@ -193,8 +194,10 @@ public class WorkorderActivity extends DrawerActivity {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			// TODO Method Stub: onError()
-			Log.v(TAG, "Method Stub: onError()");
+			if (_woRpc != null) {
+				_gs.invalidateAuthToken(_woRpc.getAuthToken());
+			}
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 	};
 

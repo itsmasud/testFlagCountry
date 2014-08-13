@@ -68,7 +68,7 @@ public class ExpenseCategories {
 		@Override
 		public void onAuthentication(String username, String authToken) {
 			_ws = new WorkorderService(_gs, username, authToken, _resultReciever);
-			_gs.startService(_ws.getExpenseCategories(0, true));
+			_gs.startService(_ws.listExpenseCategories(0, true));
 		}
 
 		@Override

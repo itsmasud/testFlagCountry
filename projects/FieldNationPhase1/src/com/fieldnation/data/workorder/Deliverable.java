@@ -5,132 +5,121 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Deliverable {
-	@Json(name = "workorder_upload_slot_id")
-	private Integer _workorderUploadSlotId;
-	@Json(name = "workorder_upload_id")
-	private Integer _workorderUploadId;
-	@Json(name = "workorder_id")
-	private Integer _workorderId;
-	@Json(name = "user_id")
-	private Integer _userId;
-	@Json(name = "review_user_id")
-	private Integer _reviewUserId;
+	@Json(name="thumbnailFilename")
+	private String _thumbnailFilename;
 	@Json(name = "fileType")
 	private String _fileType;
-	@Json(name = "file_type")
-	private String _file_Type;
-	@Json(name = "thumbNail")
-	private String _thumbNail;
-	@Json(name = "upload_unique_id")
-	private String _uploadUniqueId;
-	@Json(name = "thumbnail_filesize")
-	private Integer _thumbnailFilesize;
-	@Json(name = "review_time")
+	@Json(name="reviewTime")
 	private Integer _reviewTime;
+	@Json(name="userId")
+	private Integer _userId;
+	@Json(name="uploadedTime")
+	private Integer _uploadedTime;
+	@Json(name="thumbNail")
+	private Object _thumbNail;
+	@Json(name="workorderId")
+	private Integer _workorderId;
+	@Json(name="workorderUploadId")
+	private Integer _workorderUploadId;
+	@Json(name="workorderUploadSlotId")
+	private Integer _workorderUploadSlotId;
 	@Json(name = "fileSize")
 	private Integer _fileSize;
-	@Json(name = "file_size")
-	private Integer _file_Size;
 	@Json(name = "filePath")
-	private String _filePath;
-	@Json(name = "storage_type")
-	private String _storageType;
-	@Json(name = "review_comment")
-	private String _reviewComment;
+	private Object _filePath;
+	@Json(name="reviewUserId")
+	private Integer _reviewUserId;
+	@Json(name="thumbnailFilesize")
+	private Integer _thumbnailFilesize;
+	@Json(name="uploadUniqueId")
+	private String _uploadUniqueId;
 	@Json(name = "status")
 	private Integer _status;
-	@Json(name = "thumbnail_filename")
-	private String _thumbnailFilename;
-	@Json(name = "uploader_user_id")
+	@Json(name="reviewComment")
+	private String _reviewComment;
+	@Json(name="storageType")
+	private String _storageType;
+	@Json(name="uploaderUserId")
 	private Integer _uploaderUserId;
-	@Json(name = "uploaded_time")
-	private Integer _uploadedTime;
-	@Json(name = "storage_src")
+	@Json(name="storageSrc")
 	private String _storageSrc;
 	@Json(name = "fileName")
 	private String _fileName;
 	@Json(name = "dateUploaded")
 	private Object _dateUploaded;
-	@Json(name = "file_name")
-	private String _file_Name;
 
 	public Deliverable() {
 	}
-
-	public Integer getWorkorderUploadSlotId() {
-		return _workorderUploadSlotId;
+	public String getThumbnailFilename(){
+		return _thumbnailFilename;
 	}
 
-	public Integer getWorkorderUploadId() {
-		return _workorderUploadId;
+	public String getFileType(){
+		return _fileType;
 	}
 
-	public Integer getWorkorderId() {
-		return _workorderId;
+	public Integer getReviewTime(){
+		return _reviewTime;
 	}
 
 	public Integer getUserId() {
 		return _userId;
 	}
 
-	public Integer getReviewUserId() {
-		return _reviewUserId;
+	public Integer getUploadedTime(){
+		return _uploadedTime;
 	}
 
-	public String getFileType() {
-		if (_file_Type != null)
-			return _file_Type;
-		return _fileType;
-	}
-
-	public String getThumbNail() {
+	public Object getThumbNail(){
 		return _thumbNail;
 	}
 
-	public String getUploadUniqueId() {
-		return _uploadUniqueId;
+	public Integer getWorkorderId(){
+		return _workorderId;
 	}
 
-	public Integer getThumbnailFilesize() {
-		return _thumbnailFilesize;
+	public Integer getWorkorderUploadId(){
+		return _workorderUploadId;
 	}
 
-	public Integer getReviewTime() {
-		return _reviewTime;
+	public Integer getWorkorderUploadSlotId(){
+		return _workorderUploadSlotId;
 	}
 
 	public Integer getFileSize() {
-		if (_file_Size != null)
-			return _file_Size;
 		return _fileSize;
 	}
 
-	public String getFilePath() {
+	public Object getFilePath(){
 		return _filePath;
 	}
 
-	public String getStorageType() {
-		return _storageType;
+	public Integer getReviewUserId(){
+		return _reviewUserId;
 	}
 
-	public String getReviewComment() {
-		return _reviewComment;
+	public Integer getThumbnailFilesize(){
+		return _thumbnailFilesize;
+	}
+
+	public String getUploadUniqueId(){
+		return _uploadUniqueId;
 	}
 
 	public Integer getStatus() {
 		return _status;
 	}
 
-	public String getThumbnailFilename() {
-		return _thumbnailFilename;
+	public String getReviewComment(){
+		return _reviewComment;
 	}
 
-	public Integer getUploaderUserId() {
+	public String getStorageType(){
+		return _storageType;
+	}
+
+	public Integer getUploaderUserId(){
 		return _uploaderUserId;
-	}
-
-	public Integer getUploadedTime() {
-		return _uploadedTime;
 	}
 
 	public String getStorageSrc() {
@@ -138,8 +127,6 @@ public class Deliverable {
 	}
 
 	public String getFileName() {
-		if (_file_Name != null)
-			return _file_Name;
 		return _fileName;
 	}
 

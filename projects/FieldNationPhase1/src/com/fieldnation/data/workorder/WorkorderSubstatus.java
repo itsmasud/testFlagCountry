@@ -18,12 +18,13 @@ public enum WorkorderSubstatus {
 	CANCELLED("SUBSTATUS_CANCELLED"),
 	CANCELLED_LATEFEEPROCESSING("SUBSTATUS_CANCELLED_LATEFEEPROCESSING"),
 	CANCELLED_LATEFEEPAID("SUBSTATUS_CANCELLED_LATEFEEPAID"),
-	NA(null);
+	NA("NA");
 
 	private String _value;
 
 	private WorkorderSubstatus(String value) {
 		_value = value;
+
 	}
 
 	public String getDisplay() {

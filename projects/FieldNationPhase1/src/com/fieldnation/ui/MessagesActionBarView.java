@@ -35,16 +35,22 @@ public class MessagesActionBarView extends RelativeLayout {
 	/*-*************************************-*/
 
 	public MessagesActionBarView(Context context) {
-		this(context, null, -1);
+		super(context);
+		init();
 	}
 
 	public MessagesActionBarView(Context context, AttributeSet attrs) {
-		this(context, attrs, -1);
+		super(context, attrs);
+		init();
 	}
 
 	public MessagesActionBarView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		init();
+	}
+
+	private void init() {
+		final LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.view_messages_action_bar, this);
 
 		_countTextView = (TextView) findViewById(R.id.count_textview);
@@ -52,7 +58,7 @@ public class MessagesActionBarView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
-		_gs = (GlobalState) context.getApplicationContext();
+		_gs = (GlobalState) getContext().getApplicationContext();
 
 		setOnClickListener(_this_onClickListener);
 
@@ -68,7 +74,6 @@ public class MessagesActionBarView extends RelativeLayout {
 	};
 
 	private AuthenticationClient _authclient = new AuthenticationClient() {
-
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
 			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
@@ -103,8 +108,10 @@ public class MessagesActionBarView extends RelativeLayout {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			// TODO Method Stub: onError()
-			Log.v(TAG, "Method Stub: onError()");
+			if (_profileService != null) {
+				_gs.invalidateAuthToken(_profileService.getAuthToken());
+			}
+			_gs.requestAuthenticationDelayed(_authclient);
 		}
 	};
 

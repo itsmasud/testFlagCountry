@@ -15,6 +15,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		super(context, username, authToken, callback);
 	}
 
+	// workorders
 	public Intent getRequested(int resultCode, int page, boolean allowCache) {
 		return httpGet(resultCode, "/api/rest/v1/workorder/requested", "?page=" + page, allowCache);
 	}
@@ -48,6 +49,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"application/x-www-form-urlencoded", false);
 	}
 
+	// interactions
 	public Intent request(int resultCode, long workorderId, int expireInSeconds) {
 		if (expireInSeconds == -1)
 			return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/request", null, "",
@@ -61,7 +63,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpDelete(resultCode, "/api/rest/v1/workorder/" + workorderId + "/withdraw-request", null, false);
 	}
 
-	public Intent removeRequest(int resultCode, long workorderId) {
+	public Intent deleteRequest(int resultCode, long workorderId) {
 		return httpDelete(resultCode, "/api/rest/v1/workorder/" + workorderId + "/request", null, false);
 	}
 
@@ -107,20 +109,27 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"notes=" + misc.escapeForURL(notes), "application/x-www-form-urlencoded", false);
 	}
 
-	public Intent getMessages(int resultCode, long workorderId, boolean allowCache) {
+	public Intent acknowledgeHold(int resultCode, long workorderId) {
+		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/acknowledge-hold", null, "",
+				"application/x-www-form-urlencoded", false);
+	}
+
+	// messages
+	public Intent listMessages(int resultCode, long workorderId, boolean allowCache) {
 		return httpGet(resultCode, "/api/rest/v1/workorder/" + workorderId + "/messages", allowCache);
 	}
 
-	public Intent newMessage(int resultCode, long workorderId, String message) {
+	public Intent addMessage(int resultCode, long workorderId, String message) {
 		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/messages/new", null,
 				"message=" + misc.escapeForURL(message), "application/x-www-form-urlencoded", false);
 	}
 
-	public Intent newMessage(int resultCode, long workorderId, long messageId, String message) {
+	public Intent addMessage(int resultCode, long workorderId, long messageId, String message) {
 		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/messages/" + messageId + "/reply",
 				null, "message=" + misc.escapeForURL(message), "application/x-www-form-urlencoded", false);
 	}
 
+	// expenses
 	public Intent listExpenses(int resultCode, long workorderId, boolean allowCache) {
 		return httpGet(resultCode, "/api/rest/v1/workorder/" + workorderId + "/expenses", null, allowCache);
 	}
@@ -139,6 +148,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpDelete(resultCode, "/api/rest/v1/workorder/" + workorderId + "/expense/" + expenseId, null, false);
 	}
 
+	public Intent listExpenseCategories(int resultCode, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workorder/expense/categories", null, allowCache);
+	}
+
+	// time
 	public Intent logTime(int resultCode, long workorderId, long startDate, long endDate) {
 		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/log", null,
 				"startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate),
@@ -163,15 +177,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"application/x-www-form-urlencoded", false);
 	}
 
-	public Intent acknowledgeHold(int resultCode, long workorderId) {
-		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/acknowledge-hold", null, "",
-				"application/x-www-form-urlencoded", false);
-	}
-
-	public Intent getExpenseCategories(int resultCode, boolean allowCache) {
-		return httpGet(resultCode, "api/rest/v1/workorder/expense/categories", null, allowCache);
-	}
-
+	// shipments
 	public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
 			String carrier, String carrierName, String trackingNumber) {
 		return httpPost(
@@ -180,10 +186,6 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				null,
 				"description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber,
 				"application/x-www-form-urlencoded", false);
-	}
-
-	public Intent deleteShipment(int resultCode, long workorderId, long shipmentId) {
-		return httpDelete(resultCode, "api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId, null, false);
 	}
 
 	public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
@@ -196,7 +198,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"application/x-www-form-urlencoded", false);
 	}
 
-	public Intent editShipment(int resultCode, long workorderId, long shipmentId, String description, boolean isToSite,
+	public Intent deleteShipment(int resultCode, long workorderId, long shipmentId) {
+		return httpDelete(resultCode, "api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId, null, false);
+	}
+
+	public Intent setShipment(int resultCode, long workorderId, long shipmentId, String description, boolean isToSite,
 			String carrier, String carrierName, String trackingNumber) {
 		return httpPost(
 				resultCode,
@@ -206,10 +212,12 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"application/x-www-form-urlencoded", false);
 	}
 
+	// bundles
 	public Intent getBundle(int resultCode, long bundleId, boolean allowCache) {
 		return httpGet(resultCode, "api/rest/v1/workorder/bundle/" + bundleId, allowCache);
 	}
 
+	// counter offers
 	public Intent setFixedCounterOffer(int resultCode, long workorderId, double fixedTotalAmount, String explanation,
 			boolean expire, int expireAfterMinutes) {
 		if (expire) {
@@ -284,6 +292,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		}
 	}
 
+	// deliverables
 	public Intent deleteDeliverable(int resultCode, long workorderId, long deliverableId) {
 		return httpDelete(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId, null,
 				false);
@@ -302,7 +311,12 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				allowCache);
 	}
 
-	public Intent getDeliverableList(int resultCode, long workorderId, boolean allowCache) {
+	public Intent listDeliverables(int resultCode, long workorderId, boolean allowCache) {
 		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables", allowCache);
+	}
+
+	// notifications
+	public Intent listNotifications(int resultCode, long workorderId, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/notifications", allowCache);
 	}
 }

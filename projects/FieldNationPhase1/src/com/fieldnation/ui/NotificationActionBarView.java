@@ -107,8 +107,10 @@ public class NotificationActionBarView extends RelativeLayout {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			// TODO Method Stub: onError()
-			Log.v(TAG, "Method Stub: onError()");
+			if (_profileService != null) {
+				_gs.invalidateAuthToken(_profileService.getAuthToken());
+			}
+			_gs.requestAuthenticationDelayed(_authclient);
 		}
 	};
 

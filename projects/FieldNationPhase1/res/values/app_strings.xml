@@ -133,4 +133,38 @@
         <item>Bleneded</item>
     </string-array>
 
+    <!-- workorder status list -->
+    <string-array name="workorder_status">
+        <item>Available</item>
+        <item>Assigned</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+        <item>Cancelled</item>
+        <item>Paid</item>
+        <item>Approved</item>
+    </string-array>
+
+    <string name="workorder_selected">Selected</string>
+    <!-- workorder substatus list -->
+    <string-array name="workorder_substatus">
+        <item>Available</item>
+        <item>Routed</item>
+        <item>Requested</item>
+        <item>Countered</item>
+        <item>Unconfirmed</item>
+        <item>Confirmed</item>
+        <item>On Hold</item>
+        <item>On Hold</item>
+        <item>Checked In</item>
+        <item>Checked Out</item>
+        <item>Pending</item>
+        <item>In Review</item>
+        <item>Processing</item>
+        <item>Paid</item>
+        <item>Cancelled</item>
+        <item>Fee Pending</item>
+        <item>Fee Paid</item>
+        <item>Unknown</item>
+    </string-array>
+
 </resources>

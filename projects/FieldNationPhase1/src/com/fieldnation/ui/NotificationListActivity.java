@@ -26,7 +26,7 @@ public class NotificationListActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_itemlist);
+		setContentView(R.layout.activity_itemlist_nodrawer);
 
 		_listView = (PullToRefreshListView) findViewById(R.id.items_listview);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);

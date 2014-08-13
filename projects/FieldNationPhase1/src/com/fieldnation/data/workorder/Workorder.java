@@ -393,6 +393,8 @@ public class Workorder {
 			buildStatusCancelled(status);
 			break;
 		case COMPLETED:
+		case APPROVED:
+		case PAID:
 			buildStatusCompleted(status);
 			break;
 		case INPROGRESS:
