@@ -33,6 +33,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 	// Data
 	private Workorder _workorder;
+	private String[] _substatus;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -64,6 +65,8 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 		_confidentialButton = (Button) findViewById(R.id.confidential_button);
 		_policiesButton = (Button) findViewById(R.id.policies_button);
+
+		_substatus = getResources().getStringArray(R.array.workorder_substatus);
 	}
 
 	/*-*************************************-*/
@@ -78,7 +81,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void refresh() {
-		_substatusTextView.setText(_workorder.getStatus().getStatus());
+		_substatusTextView.setText(_substatus[_workorder.getStatus().getWorkorderSubstatus().ordinal()]);
 		// TODO set progress bar here
 		_projectNameTextView.setText(_workorder.getTitle());
 

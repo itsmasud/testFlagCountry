@@ -31,7 +31,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
-            android:background="@drawable/profile_pic" />
+            android:background="@drawable/missing" />
     </RelativeLayout>
 
     <LinearLayout

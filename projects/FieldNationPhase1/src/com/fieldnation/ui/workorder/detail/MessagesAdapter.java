@@ -87,7 +87,7 @@ public class MessagesAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Message message = _messages.get(position);
 
-		if (message.getMsgFrom() == _profile.getUserId()) {
+		if (message.getFromUser().getUserId() == _profile.getUserId()) {
 			MessageSentView v = null;
 
 			if (convertView == null) {

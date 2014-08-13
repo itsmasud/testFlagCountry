@@ -1,13 +1,24 @@
 package com.fieldnation.ui.workorder.detail;
 
 import java.text.ParseException;
+import java.util.Random;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
+import com.fieldnation.rpc.client.PhotoService;
+import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -15,42 +26,97 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MessageSentView extends RelativeLayout {
-
+	private static final String TAG = "ui.workorder.detail.MessageSentView";
+	private int WEB_GET_PHOTO = 1;
+	// UI
 	private TextView _messageTextView;
 	private ImageView _profileImageView;
 	private TextView _timeTextView;
 	private TextView _pendingTextView;
 	private ImageView _checkImageView;
 
+	// Data
+	private GlobalState _gs;
 	private Message _message = null;
+	private PhotoService _service;
+	private Random _rand = new Random();
 
 	public MessageSentView(Context context) {
-		this(context, null, -1);
+		super(context);
+		init();
 	}
 
 	public MessageSentView(Context context, AttributeSet attrs) {
-		this(context, attrs, -1);
+		super(context, attrs);
+		init();
 	}
 
 	public MessageSentView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_message_sent, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_sent, this);
+
+		_gs = (GlobalState) getContext().getApplicationContext();
 
 		_messageTextView = (TextView) findViewById(R.id.message_textview);
 		_profileImageView = (ImageView) findViewById(R.id.profile_imageview);
 		_timeTextView = (TextView) findViewById(R.id.time_textview);
 		_pendingTextView = (TextView) findViewById(R.id.pending_textview);
 		_checkImageView = (ImageView) findViewById(R.id.check_imageview);
+
+		_service = new PhotoService(_gs, _resultReceiver);
 	}
 
 	public void setMessage(Message message) {
 		_message = message;
 
-		_messageTextView.setText(message.getMessage());
+		getPhoto();
+		populateUi();
+	}
+
+	private void getPhoto() {
+		if (_service == null)
+			return;
+
+		if (_message == null)
+			return;
+
+		WEB_GET_PHOTO = _rand.nextInt();
+		_gs.startService(_service.getPhoto(WEB_GET_PHOTO, _message.getFromUser().getPhotoThumbUrl()));
+	}
+
+	private void populateUi() {
+		if (_service == null)
+			return;
+
+		if (_message == null)
+			return;
+
+		_messageTextView.setText(_message.getMessage());
 		try {
-			_timeTextView.setText(misc.formatDateTime(ISO8601.toCalendar(message.getMsgCreateDate()), false));
+			_timeTextView.setText(misc.formatDateTime(ISO8601.toCalendar(_message.getMsgCreateDate()), false));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+
 	}
+
+	private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
+		@Override
+		protected void onReceiveResult(int resultCode, Bundle resultData) {
+			if (resultCode == WEB_GET_PHOTO) {
+				byte[] data = resultData.getByteArray(PhotoServiceConstants.KEY_RESPONSE_DATA);
+
+				Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+				if (bitmap != null) {
+					Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
+					_profileImageView.setBackgroundDrawable(draw);
+				}
+			}
+			super.onReceiveResult(resultCode, resultData);
+		}
+	};
 }

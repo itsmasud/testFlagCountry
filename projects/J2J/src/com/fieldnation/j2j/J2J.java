@@ -46,7 +46,6 @@ public class J2J {
 			Enumeration<JavaObject> javaObjects = JavaObject.getJavaObjects();
 			while (javaObjects.hasMoreElements()) {
 				JavaObject obj = javaObjects.nextElement();
-
 				Log.println(obj.getUnderscoreFields());
 			}
 
@@ -450,7 +449,7 @@ public class J2J {
 					JsonArray ja = result.getResultsAsJsonArray();
 
 					if (ja.size() > 0) {
-						System.out.println(ja.size());
+						System.out.println("Deliverables(" + workorder.getLong("workorderId") + ") " + ja.size());
 					}
 
 					addData(ja, "com.fieldnation.data.workorder", "Deliverable");
@@ -467,7 +466,7 @@ public class J2J {
 	}
 
 	private static void getDeliverableDetails(JsonArray deliverables) {
-
+		// TODO getDeliverableDetails
 	}
 
 	private static void getWorkorderTasks(JsonArray workorders) {

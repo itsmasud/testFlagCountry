@@ -80,7 +80,7 @@ public class Workorder {
 	@Json(name = "isCounter")
 	private Boolean _isCounter;
 	@Json(name = "documents")
-	private Documents[] _documents;
+	private Document[] _documents;
 	@Json(name = "closingNotes")
 	private String _closingNotes;
 	// @Json(name = "label")
@@ -238,7 +238,7 @@ public class Workorder {
 		return _isCounter;
 	}
 
-	public Documents[] getDocuments() {
+	public Document[] getDocuments() {
 		return _documents;
 	}
 

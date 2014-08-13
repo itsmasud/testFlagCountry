@@ -18,6 +18,9 @@ public class Config {
 		ClassNameMap.put("Deliverables", "Deliverable");
 		ClassNameMap.put("Workorders", "Workorder");
 		ClassNameMap.put("Discounts", "Discount");
+		ClassNameMap.put("ToUser", "User");
+		ClassNameMap.put("FromUser", "User");
+		ClassNameMap.put("Documents", "Document");
 
 	}
 

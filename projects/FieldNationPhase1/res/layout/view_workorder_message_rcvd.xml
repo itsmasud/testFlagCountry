@@ -17,7 +17,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/profile_pic" />
+            android:background="@drawable/missing" />
 
         <TextView
             android:id="@+id/message_textview"
