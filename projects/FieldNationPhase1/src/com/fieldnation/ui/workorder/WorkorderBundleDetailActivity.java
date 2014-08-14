@@ -4,6 +4,7 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
 
@@ -80,7 +81,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 			// TODO Method Stub: onSuccess()
 			Log.v(TAG, "Method Stub: onSuccess()");
 			Log.v(TAG, resultData.toString());
-			byte[] data = resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA);
+			byte[] data = resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA);
 			Log.v(TAG, new String(data));
 		}
 

@@ -1,7 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.text.ParseException;
-
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.utils.ISO8601;
@@ -9,7 +7,6 @@ import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;

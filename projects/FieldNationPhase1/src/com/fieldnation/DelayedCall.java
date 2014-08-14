@@ -1,10 +1,5 @@
 package com.fieldnation;
 
-import android.annotation.TargetApi;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.util.Log;
-
 public class DelayedCall<Tag> extends AsyncTaskEx<Long, Void, Object> {
 	private static final String TAG = "DelayedCall";
 

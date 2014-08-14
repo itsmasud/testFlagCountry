@@ -1,7 +1,5 @@
 package com.fieldnation.ui;
 
-import java.text.ParseException;
-
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;

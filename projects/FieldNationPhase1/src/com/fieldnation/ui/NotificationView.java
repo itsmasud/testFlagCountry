@@ -11,7 +11,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -43,7 +42,7 @@ public class NotificationView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
-		_statusView = (View) findViewById(R.id.status_view);
+		_statusView = findViewById(R.id.status_view);
 		_messageTextView = (TextView) findViewById(R.id.message_textview);
 		_dateTextView = (TextView) findViewById(R.id.date_textview);
 	}

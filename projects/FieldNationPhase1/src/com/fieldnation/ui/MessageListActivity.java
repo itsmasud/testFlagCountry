@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.TextView;
 
 public class MessageListActivity extends BaseActivity {
 	private static final String TAG = "ui.MessageListActivity";
@@ -19,11 +18,9 @@ public class MessageListActivity extends BaseActivity {
 	// UI
 	private PullToRefreshListView _listView;
 	private SmoothProgressBar _loadingProgress;
-	private TextView _hidden_workorder_id;
 
 	// Data
 	private MessagesListAdapter _adapter;
-	private int MESSAGE_TAB = 2;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -37,7 +34,7 @@ public class MessageListActivity extends BaseActivity {
 		_listView = (PullToRefreshListView) findViewById(R.id.items_listview);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
 		_listView.setOnItemClickListener(_listView_ItemClickListener);
-		
+
 		_loadingProgress = (SmoothProgressBar) findViewById(R.id.loading_progress);
 		_loadingProgress.setSmoothProgressDrawableCallbacks(_loadingCallback);
 	}
@@ -95,21 +92,18 @@ public class MessageListActivity extends BaseActivity {
 			_loadingProgress.progressiveStart();
 		}
 	};
-	
+
 	private PullToRefreshListView.OnItemClickListener _listView_ItemClickListener = new PullToRefreshListView.OnItemClickListener() {
 		@Override
-		public void onItemClick(AdapterView<?> a, View v, int position, long id) {			
-			_hidden_workorder_id = (TextView) v.findViewById(R.id.hidden_workorder_id);
-			Long _workorder_id = Long.parseLong(_hidden_workorder_id.getText().toString());
-					
-			Intent intent = new Intent(v.getContext(), WorkorderActivity.class);			
-			intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder_id);
-			intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, MESSAGE_TAB);
+		public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+			long workorderId = ((MessageCardView) v).getMessage().getWorkorderId();
+
+			Intent intent = new Intent(v.getContext(), WorkorderActivity.class);
+			intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
+			intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
 			v.getContext().startActivity(intent);
-			
 		}
 	};
-	
 
 	/*-*********************************-*/
 	/*-				Util				-*/

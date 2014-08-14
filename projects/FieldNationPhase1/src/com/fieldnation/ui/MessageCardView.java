@@ -27,7 +27,6 @@ import android.widget.TextView;
 public class MessageCardView extends RelativeLayout {
 	private static final String TAG = "ui.MessageView";
 	private View _statusView;
-	private TextView _hidden_workorder_id;
 	private TextView _titleTextView;
 	private TextView _substatusTextView;
 	private TextView _messageBodyTextView;
@@ -36,6 +35,7 @@ public class MessageCardView extends RelativeLayout {
 	private int _viewId;
 
 	private PhotoService _photoService;
+	private Message _message;
 
 	/*-*****************************-*/
 	/*-			LifeCycle			-*/
@@ -58,7 +58,6 @@ public class MessageCardView extends RelativeLayout {
 
 		_photoService = new PhotoService(context, _resultReceiver);
 
-		_hidden_workorder_id = (TextView) findViewById(R.id.hidden_workorder_id);
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
 		_messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
 		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
@@ -67,10 +66,10 @@ public class MessageCardView extends RelativeLayout {
 	}
 
 	public void setMessage(Message message) {
+		_message = message;
 		_viewId = (int) (message.getMessageId() % Integer.MAX_VALUE);
 		try {
 			_titleTextView.setText(message.getMessageId() + "");
-			_hidden_workorder_id.setText(message.getWorkorderId() + "");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,6 +100,10 @@ public class MessageCardView extends RelativeLayout {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public Message getMessage() {
+		return _message;
 	}
 
 	private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {

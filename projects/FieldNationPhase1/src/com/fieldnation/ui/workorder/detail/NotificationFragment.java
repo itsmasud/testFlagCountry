@@ -13,10 +13,9 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.ui.workorder.WorkorderListAdapter;
-
 import eu.erikw.PullToRefreshListView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import android.os.Bundle;
@@ -25,7 +24,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 public class NotificationFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.NotificationFragment";
@@ -139,7 +137,7 @@ public class NotificationFragment extends WorkorderFragment {
 		public void onSuccess(int resultCode, Bundle resultData) {
 
 			try {
-				JsonArray ja = new JsonArray(new String(resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA)));
+				JsonArray ja = new JsonArray(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
 				_notes = new LinkedList<Notification>();
 
 				for (int i = 0; i < ja.size(); i++) {

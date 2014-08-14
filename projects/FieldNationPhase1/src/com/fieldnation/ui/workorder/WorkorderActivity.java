@@ -9,7 +9,6 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
-import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -26,7 +25,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class WorkorderActivity extends BaseActivity {
@@ -34,6 +32,12 @@ public class WorkorderActivity extends BaseActivity {
 
 	public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
 	public static final String INTENT_FIELD_CURRENT_TAB = "com.fieldnation.ui.workorder.WorkorderActivity:current_tab";
+
+	public static final int TAB_DETAILS = 0;
+	public static final int TAB_TASKS = 1;
+	public static final int TAB_MESSAGE = 2;
+	public static final int TAB_NOTIFICATIONS = 3;
+	public static final int TAB_DELIVERABLES = 4;
 
 	private static final int RPC_GET_DETAIL = 1;
 

@@ -1,20 +1,14 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.util.Calendar;
-
 import com.fieldnation.R;
-import com.fieldnation.ui.WorkLogDialog.Listener;
-
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 public class ShipmentAddDialog extends Dialog {

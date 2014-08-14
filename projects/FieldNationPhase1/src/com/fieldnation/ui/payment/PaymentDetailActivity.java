@@ -1,13 +1,11 @@
 package com.fieldnation.ui.payment;
 
-import java.text.ParseException;
 import java.util.Calendar;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
@@ -21,7 +19,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class PaymentDetailActivity extends BaseActivity {
 	private static final String TAG = "ui.payment.PaymentDetailActivity";

@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.rpc.client.ProfileService;
 

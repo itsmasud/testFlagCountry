@@ -1,27 +1,16 @@
 package com.fieldnation.ui;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.database.DataSetObserver;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 
 public class ExpenseDialog extends Dialog {
 	private static String TAG = "ui.ExpenseDialog";

@@ -1,9 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Location;
-import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.Skillset;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 

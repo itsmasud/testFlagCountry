@@ -4,7 +4,6 @@ import com.fieldnation.R;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.opengl.Visibility;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;

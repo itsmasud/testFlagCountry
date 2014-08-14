@@ -6,21 +6,16 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.ui.AutoResizeTextButton;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Debug;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -139,8 +134,8 @@ public class WorkorderCardView extends RelativeLayout {
 		/* _notInterestedButtonLayout.setClickable(false); */
 
 		_backgroundLayout = (ViewGroup) findViewById(R.id.background_layout);
-		_backgroundView = (View) findViewById(R.id.background_view);
-		_statusView = (View) findViewById(R.id.status_view);
+		_backgroundView = findViewById(R.id.background_view);
+		_statusView = findViewById(R.id.status_view);
 
 		// main content
 		_contentLayout = (RelativeLayout) findViewById(R.id.content_layout);

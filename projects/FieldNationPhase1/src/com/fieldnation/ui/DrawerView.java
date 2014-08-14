@@ -17,8 +17,6 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;

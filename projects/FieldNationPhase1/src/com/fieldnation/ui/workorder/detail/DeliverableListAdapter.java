@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.fieldnation.data.workorder.Deliverable;
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;

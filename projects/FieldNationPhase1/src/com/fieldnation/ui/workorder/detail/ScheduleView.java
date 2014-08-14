@@ -8,6 +8,7 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.WorkLogDialog;
 
@@ -118,7 +119,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 
 			Log.v(TAG, "onError()");
-			Log.v(TAG, resultData.getString(WorkorderService.KEY_RESPONSE_ERROR));
+			Log.v(TAG, resultData.getString(WebServiceConstants.KEY_RESPONSE_ERROR));
 		}
 	};
 

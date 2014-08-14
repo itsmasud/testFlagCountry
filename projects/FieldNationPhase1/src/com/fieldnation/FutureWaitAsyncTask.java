@@ -4,7 +4,6 @@ import android.accounts.AccountManagerFuture;
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 /**

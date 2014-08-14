@@ -1,6 +1,5 @@
 package com.fieldnation.ui.workorder;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
 
@@ -16,8 +15,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 
 public class MyWorkActivity extends DrawerActivity {

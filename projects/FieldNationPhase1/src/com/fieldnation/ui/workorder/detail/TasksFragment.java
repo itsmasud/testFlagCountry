@@ -1,15 +1,12 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 public class TasksFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.TasksFragment";

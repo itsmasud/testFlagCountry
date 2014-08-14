@@ -2,7 +2,6 @@ package com.fieldnation.ui.payment;
 
 import java.util.Calendar;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.accounting.Workorder;
@@ -14,8 +13,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -59,7 +56,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 		// connect UI
 		// main content
 		// status
-		_statusView = (View) findViewById(R.id.status_view);
+		_statusView = findViewById(R.id.status_view);
 		_statusTextView = (TextView) findViewById(R.id.status_textview);
 
 		// bundle

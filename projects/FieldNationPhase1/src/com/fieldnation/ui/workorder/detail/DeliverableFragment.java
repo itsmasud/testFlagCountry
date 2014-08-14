@@ -1,6 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +21,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
@@ -128,7 +128,7 @@ public class DeliverableFragment extends WorkorderFragment {
 				try {
 					_deliverables = new LinkedList<Deliverable>();
 
-					String data = new String(resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA));
+					String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 					JsonArray ja = new JsonArray(data);
 					for (int i = 0; i < ja.size(); i++) {
 						_deliverables.add(Deliverable.fromJson(ja.getJsonObject(i)));
@@ -142,7 +142,7 @@ public class DeliverableFragment extends WorkorderFragment {
 				_profile = null;
 				try {
 					_profile = Profile.fromJson(new JsonObject(new String(
-							resultData.getByteArray(ProfileService.KEY_RESPONSE_DATA))));
+							resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
 				} catch (Exception e) {
 					// TODO mulligan?
 					e.printStackTrace();

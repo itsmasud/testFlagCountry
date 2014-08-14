@@ -2,7 +2,6 @@ package com.fieldnation.ui.payment;
 
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.PagingListAdapter;
 

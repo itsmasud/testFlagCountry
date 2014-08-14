@@ -1,7 +1,5 @@
 package com.fieldnation.data.workorder;
 
-import java.util.Hashtable;
-
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;

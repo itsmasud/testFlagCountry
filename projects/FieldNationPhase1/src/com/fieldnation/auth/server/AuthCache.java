@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.fieldnation.auth.server.AuthCacheSqlHelper.Column;

@@ -2,22 +2,15 @@ package com.fieldnation.ui.workorder;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
-import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.CancelCategory;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.workorder.WorkorderCardView.Listener;
 
 public class WorkorderUndoListener implements AdvancedUndoListener {
 	private static final String TAG = "ui.workorder.WorkorderSummaryAdvancedUndoListener";

@@ -2,8 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Deliverable;
-import com.fieldnation.data.workorder.Document;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;

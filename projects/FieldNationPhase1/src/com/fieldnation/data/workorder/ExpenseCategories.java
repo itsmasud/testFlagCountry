@@ -1,17 +1,13 @@
 package com.fieldnation.data.workorder;
 
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.fieldnation.GlobalState;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
@@ -82,7 +78,7 @@ public class ExpenseCategories {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			try {
-				JsonArray ja = new JsonArray(new String(resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA)));
+				JsonArray ja = new JsonArray(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
 
 				_categories = new ExpenseCategory[ja.size()];
 
