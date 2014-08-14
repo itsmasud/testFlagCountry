@@ -199,6 +199,9 @@ public class PullToRefreshListView extends ListView {
 
 		super.setOnItemClickListener(new PTROnItemClickListener());
 		super.setOnItemLongClickListener(new PTROnItemLongClickListener());
+
+		setHeaderPadding(0);
+		header.invalidate();
 	}
 
 	private void setHeaderPadding(int padding) {
@@ -250,20 +253,22 @@ public class PullToRefreshListView extends ListView {
 
 		case MotionEvent.ACTION_MOVE:
 			if (previousY != -1 && getFirstVisiblePosition() == 0 && Math.abs(mScrollStartY - event.getY()) > IDLE_DISTANCE) {
-				if (!isPulling) {
-					if (stateListener != null)
-						stateListener.onStartPull();
-					isPulling = true;
-				}
 				float y = event.getY();
 				float diff = y - previousY;
 				if (diff > 0)
 					diff /= PULL_RESISTANCE;
 				previousY = y;
 
+				Log.v(TAG, headerPadding + ":" + diff + ":" + (-header.getHeight()));
+
 				int newHeaderPadding = Math.max(Math.round(headerPadding + diff), -header.getHeight());
 
 				if (newHeaderPadding != headerPadding && state != State.REFRESHING) {
+					if (!isPulling) {
+						if (stateListener != null)
+							stateListener.onStartPull();
+						isPulling = true;
+					}
 					setHeaderPadding(newHeaderPadding);
 
 					if (state == State.PULL_TO_REFRESH && headerPadding > PULL_DISTANCE) {
@@ -346,10 +351,10 @@ public class PullToRefreshListView extends ListView {
 		case RELEASE_TO_REFRESH:
 			Log.v(TAG, "setHeaderPadding BP");
 			if (isPulling) {
-				isPulling = false;
 				if (stateListener != null) {
 					stateListener.onStopPull();
 				}
+				isPulling = false;
 			}
 			// spinner.setVisibility(View.INVISIBLE);
 			// image.setVisibility(View.VISIBLE);
