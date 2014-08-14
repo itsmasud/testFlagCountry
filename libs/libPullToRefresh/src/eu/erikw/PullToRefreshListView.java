@@ -44,14 +44,16 @@ import java.util.Date;
  * @version 1.3.0
  */
 public class PullToRefreshListView extends ListView {
+	private static final String TAG = "eu.erikw.PullToRefreshListView";
 
 	private static final float PULL_RESISTANCE = 1.7f;
 	private static final int BOUNCE_ANIMATION_DURATION = 700;
 	private static final int BOUNCE_ANIMATION_DELAY = 100;
 	private static final float BOUNCE_OVERSHOOT_TENSION = 1.4f;
+	private static final int PULL_DISTANCE = 200;
 	private static final int ROTATE_ARROW_ANIMATION_DURATION = 250;
 
-	private static enum State {
+	public static enum State {
 		PULL_TO_REFRESH,
 		RELEASE_TO_REFRESH,
 		REFRESHING
@@ -69,6 +71,16 @@ public class PullToRefreshListView extends ListView {
 		public void onRefresh();
 	}
 
+	public interface StateListener {
+		public void onPull(int pullPercent);
+
+		public void onStateChange(State state);
+
+		public void onStartPull();
+
+		public void onStopPull();
+	}
+
 	private static int measuredHeaderHeight;
 
 	private boolean scrollbarEnabled;
@@ -81,9 +93,11 @@ public class PullToRefreshListView extends ListView {
 	private State state;
 	private LinearLayout headerContainer;
 	private RelativeLayout header;
+	private StateListener stateListener;
 	private OnItemClickListener onItemClickListener;
 	private OnItemLongClickListener onItemLongClickListener;
 	private OnRefreshListener onRefreshListener;
+	private boolean isPulling = false;
 
 	private float mScrollStartY;
 	private final int IDLE_DISTANCE = 5;
@@ -124,6 +138,10 @@ public class PullToRefreshListView extends ListView {
 		this.onRefreshListener = onRefreshListener;
 	}
 
+	public void setStateListener(StateListener stateListener) {
+		this.stateListener = stateListener;
+	}
+
 	/**
 	 * @return If the list is in 'Refreshing' state
 	 */
@@ -162,6 +180,10 @@ public class PullToRefreshListView extends ListView {
 		resetHeader();
 	}
 
+	public State getState() {
+		return state;
+	}
+
 	private void init() {
 		setVerticalFadingEdgeEnabled(false);
 
@@ -180,7 +202,12 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	private void setHeaderPadding(int padding) {
+		Log.v(TAG, "setHeaderPadding() " + padding);
 		headerPadding = padding;
+
+		if (stateListener != null) {
+			stateListener.onPull((padding * 100) / PULL_DISTANCE);
+		}
 
 		MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) header.getLayoutParams();
 		mlp.setMargins(0, Math.round(padding), 0, 0);
@@ -190,6 +217,7 @@ public class PullToRefreshListView extends ListView {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (lockScrollWhileRefreshing && (state == State.REFRESHING || getAnimation() != null && !getAnimation().hasEnded())) {
+			Log.v(TAG, "Quit Touch event");
 			return true;
 		}
 
@@ -203,7 +231,6 @@ public class PullToRefreshListView extends ListView {
 
 			// Remember where have we started
 			mScrollStartY = event.getY();
-
 			break;
 
 		case MotionEvent.ACTION_UP:
@@ -212,7 +239,6 @@ public class PullToRefreshListView extends ListView {
 				case RELEASE_TO_REFRESH:
 					setState(State.REFRESHING);
 					bounceBackHeader();
-
 					break;
 
 				case PULL_TO_REFRESH:
@@ -224,6 +250,11 @@ public class PullToRefreshListView extends ListView {
 
 		case MotionEvent.ACTION_MOVE:
 			if (previousY != -1 && getFirstVisiblePosition() == 0 && Math.abs(mScrollStartY - event.getY()) > IDLE_DISTANCE) {
+				if (!isPulling) {
+					if (stateListener != null)
+						stateListener.onStartPull();
+					isPulling = true;
+				}
 				float y = event.getY();
 				float diff = y - previousY;
 				if (diff > 0)
@@ -235,7 +266,7 @@ public class PullToRefreshListView extends ListView {
 				if (newHeaderPadding != headerPadding && state != State.REFRESHING) {
 					setHeaderPadding(newHeaderPadding);
 
-					if (state == State.PULL_TO_REFRESH && headerPadding > 0) {
+					if (state == State.PULL_TO_REFRESH && headerPadding > PULL_DISTANCE) {
 						setState(State.RELEASE_TO_REFRESH);
 
 						// image.clearAnimation();
@@ -257,7 +288,6 @@ public class PullToRefreshListView extends ListView {
 
 	private void bounceBackHeader() {
 		int yTranslate = state == State.REFRESHING ? header.getHeight() - headerContainer.getHeight() : -headerContainer.getHeight() - headerContainer.getTop() + getPaddingTop();
-		;
 
 		TranslateAnimation bounceAnimation = new TranslateAnimation(TranslateAnimation.ABSOLUTE, 0,
 				TranslateAnimation.ABSOLUTE, 0, TranslateAnimation.ABSOLUTE, 0, TranslateAnimation.ABSOLUTE, yTranslate);
@@ -294,7 +324,11 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	private void setState(State state) {
+		if (stateListener != null && state != this.state) {
+			stateListener.onStateChange(state);
+		}
 		this.state = state;
+		Log.v(TAG, "State: " + state.name());
 		switch (state) {
 		case PULL_TO_REFRESH:
 			// spinner.setVisibility(View.INVISIBLE);
@@ -310,6 +344,13 @@ public class PullToRefreshListView extends ListView {
 			break;
 
 		case RELEASE_TO_REFRESH:
+			Log.v(TAG, "setHeaderPadding BP");
+			if (isPulling) {
+				isPulling = false;
+				if (stateListener != null) {
+					stateListener.onStopPull();
+				}
+			}
 			// spinner.setVisibility(View.INVISIBLE);
 			// image.setVisibility(View.VISIBLE);
 			// text.setText(releaseToRefreshText);
@@ -336,7 +377,6 @@ public class PullToRefreshListView extends ListView {
 			if (measuredHeaderHeight > 0 && state != State.REFRESHING) {
 				setHeaderPadding(-measuredHeaderHeight);
 			}
-
 			hasResetHeader = true;
 		}
 	}
@@ -388,6 +428,12 @@ public class PullToRefreshListView extends ListView {
 					}
 				}, BOUNCE_ANIMATION_DELAY);
 			} else if (stateAtAnimationStart != State.REFRESHING) {
+				if (isPulling) {
+					if (stateListener != null)
+						stateListener.onStopPull();
+					isPulling = false;
+				}
+
 				setState(State.PULL_TO_REFRESH);
 			}
 		}

@@ -95,7 +95,7 @@ public class Ws {
 		return httpRead("DELETE", path, options, contentType);
 	}
 
-	public Result httpWrite(String method, String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
+	public Result httpReadWrite(String method, String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
 
 		if (!path.startsWith("/"))
 			path = "/" + path;
@@ -110,7 +110,6 @@ public class Ws {
 			// only enabled if debugging
 			if (DEBUG)
 				trustAllHosts();
-
 			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
 			if (DEBUG)
@@ -123,12 +122,10 @@ public class Ws {
 		conn.setRequestProperty("ContentType", contentType);
 
 		conn.setDoInput(true);
-
-		if (data != null)
-			conn.setDoOutput(true);
 		conn.setReadTimeout(10000);
 
 		if (data != null) {
+			conn.setDoOutput(true);
 			OutputStream out = conn.getOutputStream();
 			out.write(data);
 			out.flush();
@@ -147,11 +144,11 @@ public class Ws {
 	}
 
 	public Result httpPost(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
-		return httpWrite("POST", path, options, data, contentType);
+		return httpReadWrite("POST", path, options, data, contentType);
 	}
 
 	public Result httpPut(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
-		return httpWrite("PUT", path, options, data, contentType);
+		return httpReadWrite("PUT", path, options, data, contentType);
 	}
 
 	// always verify the host - don't check for certificate

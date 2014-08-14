@@ -170,7 +170,7 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 				Ws ws = new Ws(at);
 				Result result = null;
 				try {
-					result = ws.httpWrite(method, path, options, data, contentType);
+					result = ws.httpReadWrite(method, path, options, data, contentType);
 
 					try {
 						// happy path

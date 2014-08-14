@@ -4,6 +4,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 
 import eu.erikw.PullToRefreshListView;
+import eu.erikw.PullToRefreshListView.State;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 
 public class WorkorderListFragment extends Fragment {
 	private static final String TAG = "ui.workorder.MyWorkListFragment";
@@ -60,6 +62,7 @@ public class WorkorderListFragment extends Fragment {
 		_listView = (PullToRefreshListView) view.findViewById(R.id.workorders_listview);
 		_listView.setDivider(null);
 		_listView.setOnRefreshListener(_listView_onRefreshListener);
+		_listView.setStateListener(_listview_onPullListener);
 
 		_loadingBar = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
 		// _loadingBar.setSmoothProgressDrawableInterpolator(new
@@ -74,6 +77,7 @@ public class WorkorderListFragment extends Fragment {
 		// _loadingBar.setSmoothProgressDrawableStrokeWidth(8F);
 		// _loadingBar.setSmoothProgressDrawableSectionsCount(1);
 		_loadingBar.setSmoothProgressDrawableCallbacks(_progressCallback);
+		_loadingBar.setMax(100);
 	}
 
 	@Override
@@ -142,11 +146,74 @@ public class WorkorderListFragment extends Fragment {
 		}
 	};
 
+	private Interpolator _customInterpolator = new Interpolator() {
+
+		@Override
+		public float getInterpolation(float input) {
+			// TODO Method Stub: getInterpolation()
+			Log.v(TAG, "Method Stub: getInterpolation()");
+			return 10;
+		}
+	};
+
 	private PullToRefreshListView.OnRefreshListener _listView_onRefreshListener = new PullToRefreshListView.OnRefreshListener() {
 		@Override
 		public void onRefresh() {
-			_adapter.update(false);
+			// _adapter.update(false);
+			// _loadingBar.setIndeterminate(true);
+			// _loadingBar.progressiveStart();
+		}
+	};
+
+	private PullToRefreshListView.StateListener _listview_onPullListener = new PullToRefreshListView.StateListener() {
+		@Override
+		public void onPull(int pullPercent) {
+			if (_listView.getState() == PullToRefreshListView.State.PULL_TO_REFRESH) {
+				// _loadingBar.setIndeterminate(false);
+				// _loadingBar.setInterpolator(_customInterpolator);
+				// if (pullPercent < 50) {
+				// _loadingBar.setSmoothProgressDrawableReversed(true);
+				// } else {
+				// _loadingBar.setSmoothProgressDrawableReversed(false);
+				// }
+
+				float sep = 4f - 4 * Math.abs(pullPercent) / 100f;
+				if (sep < 0)
+					sep = 0f;
+				_loadingBar.setSmoothProgressDrawableSpeed(sep);
+
+				// _loadingBar.setSmoothProgressDrawableSeparatorLength(sep);
+			}
+		}
+
+		@Override
+		public void onStateChange(State state) {
+			if (state == State.RELEASE_TO_REFRESH) {
+				_adapter.update(false);
+				_loadingBar.progressiveStart();
+			}
+			// TODO Method Stub: onStateChange()
+			Log.v(TAG, "Method Stub: onStateChange()");
+		}
+
+		@Override
+		public void onStartPull() {
+			_loadingBar.setSmoothProgressDrawableSectionsCount(1);
+			_loadingBar.setSmoothProgressDrawableReversed(true);
 			_loadingBar.progressiveStart();
+			// TODO Method Stub: onStartPull()
+			Log.v(TAG, "Method Stub: onStartPull()");
+		}
+
+		@Override
+		public void onStopPull() {
+			_loadingBar.setSmoothProgressDrawableSpeed(2f);
+			_loadingBar.setSmoothProgressDrawableReversed(true);
+			_loadingBar.setSmoothProgressDrawableSectionsCount(1);
+			_loadingBar.progressiveStop();
+			_loadingBar.setVisibility(View.GONE);
+			// TODO Method Stub: onStopPull()
+			Log.v(TAG, "Method Stub: onStopPull()");
 		}
 	};
 

@@ -45,7 +45,7 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
 				Ws ws = new Ws(_auth);
 				Result result = null;
 				try {
-					result = ws.httpWrite(method, path, options, data, contentType);
+					result = ws.httpReadWrite(method, path, options, data, contentType);
 
 					try {
 						// happy path
