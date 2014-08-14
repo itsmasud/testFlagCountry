@@ -33,6 +33,7 @@ public class WorkorderActivity extends BaseActivity {
 	private static final String TAG = "ui.workorder.WorkorderActivity";
 
 	public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
+	public static final String INTENT_FIELD_CURRENT_TAB = "com.fieldnation.ui.workorder.WorkorderActivity:current_tab";
 
 	private static final int RPC_GET_DETAIL = 1;
 
@@ -45,6 +46,7 @@ public class WorkorderActivity extends BaseActivity {
 	// Data
 	private GlobalState _gs;
 	private long _workorderId = 0;
+	private int _currentTab = 0;
 	private int _currentFragment = 0;
 	private boolean _created = false;
 	private PagerAdapter _pagerAdapter;
@@ -65,6 +67,7 @@ public class WorkorderActivity extends BaseActivity {
 		if (intent != null) {
 			if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
 				_workorderId = intent.getLongExtra(INTENT_FIELD_WORKORDER_ID, 0);
+				_currentTab = intent.getIntExtra(INTENT_FIELD_CURRENT_TAB, 0);
 			}
 		}
 
@@ -104,7 +107,7 @@ public class WorkorderActivity extends BaseActivity {
 		_tabview = (WorkorderTabView) findViewById(R.id.tabview);
 		_tabview.setListener(_tabview_onChange);
 
-		_viewPager.setCurrentItem(0, false);
+		_viewPager.setCurrentItem(_currentTab, false);
 	}
 
 	/*-*************************-*/

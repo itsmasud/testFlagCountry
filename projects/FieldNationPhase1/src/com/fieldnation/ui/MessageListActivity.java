@@ -23,6 +23,7 @@ public class MessageListActivity extends BaseActivity {
 
 	// Data
 	private MessagesListAdapter _adapter;
+	private int MESSAGE_TAB = 2;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -100,10 +101,12 @@ public class MessageListActivity extends BaseActivity {
 		public void onItemClick(AdapterView<?> a, View v, int position, long id) {			
 			_hidden_workorder_id = (TextView) v.findViewById(R.id.hidden_workorder_id);
 			Long _workorder_id = Long.parseLong(_hidden_workorder_id.getText().toString());
-						
+					
 			Intent intent = new Intent(v.getContext(), WorkorderActivity.class);			
 			intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder_id);
+			intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, MESSAGE_TAB);
 			v.getContext().startActivity(intent);
+			
 		}
 	};
 	
