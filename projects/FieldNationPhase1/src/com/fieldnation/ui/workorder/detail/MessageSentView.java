@@ -110,10 +110,12 @@ public class MessageSentView extends RelativeLayout {
 			if (resultCode == WEB_GET_PHOTO) {
 				byte[] data = resultData.getByteArray(PhotoServiceConstants.KEY_RESPONSE_DATA);
 
-				Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-				if (bitmap != null) {
-					Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
-					_profileImageView.setBackgroundDrawable(draw);
+				if (data != null) {
+					Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+					if (bitmap != null) {
+						Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
+						_profileImageView.setBackgroundDrawable(draw);
+					}
 				}
 			}
 			super.onReceiveResult(resultCode, resultData);

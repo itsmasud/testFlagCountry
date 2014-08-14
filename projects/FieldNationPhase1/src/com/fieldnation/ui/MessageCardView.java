@@ -75,7 +75,20 @@ public class MessageCardView extends RelativeLayout {
 			e.printStackTrace();
 		}
 		try {
-			_messageBodyTextView.setText(message.getMessage());
+			// compress the data a bit
+			String msg = message.getMessage();
+			msg = msg.replaceAll("\\r", " ").replaceAll("\\n", " ");
+			int length = 0;
+			while (length != msg.length()) {
+				length = msg.length();
+				msg = msg.replaceAll("  ", " ");
+			}
+
+			if (msg.length() > 200) {
+				msg = msg.substring(0, 200) + "...";
+			}
+
+			_messageBodyTextView.setText(msg);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
