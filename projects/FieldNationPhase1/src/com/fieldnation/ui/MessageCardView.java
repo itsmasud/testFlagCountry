@@ -36,6 +36,7 @@ public class MessageCardView extends RelativeLayout {
 
 	private PhotoService _photoService;
 	private Message _message;
+	private String[] _substatus;
 
 	/*-*****************************-*/
 	/*-			LifeCycle			-*/
@@ -56,6 +57,8 @@ public class MessageCardView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
+		_substatus = getResources().getStringArray(R.array.workorder_substatus);
+
 		_photoService = new PhotoService(context, _resultReceiver);
 
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
@@ -63,10 +66,13 @@ public class MessageCardView extends RelativeLayout {
 		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
 		_timeTextView = (TextView) findViewById(R.id.time_textview);
 		_profileImageView = (ImageView) findViewById(R.id.profile_imageview);
+		_statusView = (View) findViewById(R.id.status_view);
 	}
 
 	public void setMessage(Message message) {
 		_message = message;
+		_substatusTextView.setText(_substatus[_message.getStatus().getWorkorderSubstatus().ordinal()]);
+
 		_viewId = (int) (message.getMessageId() % Integer.MAX_VALUE);
 		try {
 			_titleTextView.setText(message.getMessageId() + "");
@@ -112,6 +118,24 @@ public class MessageCardView extends RelativeLayout {
 			getContext().startService(_photoService.getPhoto(_viewId, url));
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+
+		switch (_message.getStatus().getStatusIntent()) {
+		case NORMAL:
+			_statusView.setBackgroundResource(R.drawable.card_status_white);
+			break;
+		case SUCCESS:
+			_statusView.setBackgroundResource(R.drawable.card_status_green);
+			break;
+		case UNKNOWN:
+			_statusView.setBackgroundResource(R.drawable.card_status_white);
+			break;
+		case WAITING:
+			_statusView.setBackgroundResource(R.drawable.card_status_gray);
+			break;
+		case WARNING:
+			_statusView.setBackgroundResource(R.drawable.card_status_orange);
+			break;
 		}
 	}
 

@@ -36,12 +36,12 @@ public class J2J {
 					e.printStackTrace();
 				}
 
-				getProfile();
-				getWorkorders();
-				getExpenseCategories();
+				// getProfile();
+				// getWorkorders();
+				// getExpenseCategories();
 				getMessages();
-				getPayments();
-				getNotifications();
+				// getPayments();
+				// getNotifications();
 			}
 			exportClasses();
 
@@ -170,14 +170,18 @@ public class J2J {
 
 			for (int i = 0; i < urls.length; i++) {
 				for (int j = 0; true; j++) {
-					Log.println(urls[i] + j);
-					Result result = Ws.httpGet(hostname, urls[i] + j);
+					try {
+						Log.println(urls[i] + j);
+						Result result = Ws.httpGet(hostname, urls[i] + j);
 
-					JsonArray ja = result.getResultsAsJsonArray();
-					if (ja.size() == 0)
-						break;
+						JsonArray ja = result.getResultsAsJsonArray();
+						if (ja.size() == 0)
+							break;
 
-					objects.merge(result.getResultsAsJsonArray());
+						objects.merge(result.getResultsAsJsonArray());
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 				}
 			}
 

@@ -17,6 +17,7 @@
                 android:id="@+id/status_view"
                 android:layout_width="@dimen/MessageView_StatusWidth"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
                 android:background="@drawable/card_status_white" />
 
             <View

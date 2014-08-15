@@ -1,5 +1,6 @@
 package com.fieldnation.data.profile;
 
+import com.fieldnation.data.workorder.Status;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -9,6 +10,8 @@ public class Message {
 	private String _file_Url;
 	@Json(name = "date")
 	private String _date;
+	@Json(name="status")
+	private Status _status;
 	@Json(name = "photoUrl")
 	private String _photoUrl;
 	@Json(name = "photoThumbUrl")
@@ -37,6 +40,10 @@ public class Message {
 
 	public String getDate() {
 		return _date;
+	}
+
+	public Status getStatus(){
+		return _status;
 	}
 
 	public String getPhotoUrl() {
