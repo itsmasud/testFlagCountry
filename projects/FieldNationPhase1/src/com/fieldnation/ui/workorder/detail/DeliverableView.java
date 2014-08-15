@@ -1,6 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.io.File;
 import java.text.ParseException;
 
 import com.fieldnation.R;
@@ -14,7 +13,6 @@ import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -33,6 +31,7 @@ public class DeliverableView extends RelativeLayout {
 	// Data
 	private Deliverable _deliverable;
 	private long _profileId;
+	private Listener _listener;
 
 	/*-*****************************-*/
 	/*-			Life Cycle			-*/
@@ -63,6 +62,7 @@ public class DeliverableView extends RelativeLayout {
 		_dateTextView = (TextView) findViewById(R.id.date_textview);
 		_usernameTextView = (TextView) findViewById(R.id.username_textview);
 		_deleteButton = (ImageButton) findViewById(R.id.delete_imagebutton);
+		_deleteButton.setOnClickListener(_delete_onClick);
 
 		setOnClickListener(_this_onClick);
 	}
@@ -74,6 +74,10 @@ public class DeliverableView extends RelativeLayout {
 		_deliverable = deliverable;
 		_profileId = profileId;
 		populateUi();
+	}
+
+	public void setListener(Listener listener) {
+		_listener = listener;
 	}
 
 	private void populateUi() {
@@ -107,4 +111,16 @@ public class DeliverableView extends RelativeLayout {
 			getContext().startActivity(intent);
 		}
 	};
+
+	private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null)
+				_listener.onDelete(_deliverable);
+		}
+	};
+
+	public interface Listener {
+		public void onDelete(Deliverable deliverable);
+	}
 }

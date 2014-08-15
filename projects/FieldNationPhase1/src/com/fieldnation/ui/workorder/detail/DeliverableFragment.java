@@ -30,6 +30,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 	private static final int WEB_GET_DOCUMENTS = 1;
 	private static final int WEB_GET_PROFILE = 2;
+	private static final int WEB_DELETE_DELIVERABLE = 3;
 
 	// UI
 	private ListView _listview;
@@ -59,7 +60,7 @@ public class DeliverableFragment extends WorkorderFragment {
 		_gs.requestAuthentication(_authClient);
 
 		_listview = (ListView) view.findViewById(R.id.listview);
-		_adapter = new DeliverableListAdapter();
+		_adapter = new DeliverableListAdapter(_deliverableListener);
 		_listview.setAdapter(_adapter);
 	}
 
@@ -76,15 +77,15 @@ public class DeliverableFragment extends WorkorderFragment {
 
 	private void getData() {
 		if (_profileService != null && _profile == null)
-			getActivity().startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+			_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
 
 		if (_service == null)
 			return;
 
-		if (_workorder == null)
+		if (_workorder == null || _workorder.getWorkorderId() == null)
 			return;
 
-		getActivity().startService(_service.listDeliverables(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false));
+		_gs.startService(_service.listDeliverables(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false));
 	}
 
 	private void populateUi() {
@@ -99,11 +100,18 @@ public class DeliverableFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private DeliverableView.Listener _deliverableListener = new DeliverableView.Listener() {
+		@Override
+		public void onDelete(Deliverable deliverable) {
+			_gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE, _workorder.getWorkorderId(),
+					deliverable.getWorkorderUploadId()));
+		}
+	};
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
-			_profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
+			_service = new WorkorderService(_gs, username, authToken, _resultReceiver);
+			_profileService = new ProfileService(_gs, username, authToken, _resultReceiver);
 			getData();
 		}
 
@@ -131,7 +139,8 @@ public class DeliverableFragment extends WorkorderFragment {
 					String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 					JsonArray ja = new JsonArray(data);
 					for (int i = 0; i < ja.size(); i++) {
-						_deliverables.add(Deliverable.fromJson(ja.getJsonObject(i)));
+						Deliverable deliverable = Deliverable.fromJson(ja.getJsonObject(i));
+						_deliverables.add(deliverable);
 					}
 				} catch (Exception ex) {
 					// TODO mulligan?
@@ -148,6 +157,8 @@ public class DeliverableFragment extends WorkorderFragment {
 					e.printStackTrace();
 					_profile = null;
 				}
+			} else if (resultCode == WEB_DELETE_DELIVERABLE) {
+				getData();
 			}
 			populateUi();
 		}

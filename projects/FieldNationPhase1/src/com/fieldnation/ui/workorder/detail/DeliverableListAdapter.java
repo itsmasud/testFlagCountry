@@ -14,10 +14,12 @@ public class DeliverableListAdapter extends BaseAdapter {
 
 	private long _profileId;
 	private List<Deliverable> _deliverables;
+	private DeliverableView.Listener _listener;
 
-	public DeliverableListAdapter() {
+	public DeliverableListAdapter(DeliverableView.Listener listener) {
 		super();
 		_deliverables = new LinkedList<Deliverable>();
+		_listener = listener;
 	}
 
 	public void setData(long profileId, List<Deliverable> deliverables) {
@@ -54,6 +56,7 @@ public class DeliverableListAdapter extends BaseAdapter {
 			view = new DeliverableView(parent.getContext());
 		}
 		view.setDeliverable(_profileId, _deliverables.get(position));
+		view.setListener(_listener);
 		return view;
 	}
 
