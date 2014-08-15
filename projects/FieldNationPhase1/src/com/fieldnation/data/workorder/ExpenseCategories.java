@@ -91,7 +91,7 @@ public class ExpenseCategories {
 				if (_listener != null) {
 					_listener.onHaveCategories(_categories);
 				}
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 

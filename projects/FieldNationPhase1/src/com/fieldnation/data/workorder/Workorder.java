@@ -73,6 +73,8 @@ public class Workorder {
 	private Task[] _tasks;
 	@Json(name = "alerts")
 	private Integer _alerts;
+	@Json(name="bundleCount")
+	private Integer _bundleCount;
 	@Json(name = "isRequest")
 	private Boolean _isRequest;
 	@Json(name = "isCounter")
@@ -226,6 +228,10 @@ public class Workorder {
 
 	public Integer getAlerts() {
 		return _alerts;
+	}
+
+	public Integer getBundleCount(){
+		return _bundleCount;
 	}
 
 	public Boolean getIsRequest() {

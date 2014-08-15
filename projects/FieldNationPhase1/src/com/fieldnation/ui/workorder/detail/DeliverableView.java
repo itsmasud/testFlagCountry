@@ -1,11 +1,20 @@
 package com.fieldnation.ui.workorder.detail;
 
+import java.io.File;
+import java.text.ParseException;
+
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Deliverable;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
+
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -55,6 +64,7 @@ public class DeliverableView extends RelativeLayout {
 		_usernameTextView = (TextView) findViewById(R.id.username_textview);
 		_deleteButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 
+		setOnClickListener(_this_onClick);
 	}
 
 	/*-*************************-*/
@@ -71,7 +81,11 @@ public class DeliverableView extends RelativeLayout {
 			return;
 
 		_filenameTextView.setText(_deliverable.getFileName());
-		_dateTextView.setText(_deliverable.getUploadedTime() + "");
+		try {
+			_dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_deliverable.getUploadedTime())));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		_usernameTextView.setText(_deliverable.getUserId() + "");
 
 		if (_profileId == _deliverable.getUserId().intValue()) {
@@ -81,8 +95,16 @@ public class DeliverableView extends RelativeLayout {
 		}
 
 	}
+
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/
-
+	private View.OnClickListener _this_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.parse(_deliverable.getStorageSrc()), _deliverable.getFileType());
+			getContext().startActivity(intent);
+		}
+	};
 }

@@ -27,12 +27,14 @@ import android.widget.BaseAdapter;
 public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private static final String TAG = "ui.PagingListAdapter";
 
+	private static final int START_PAGE = 0;
+
 	private int WEB_REQUEST_UPDATE = -1;
 
 	private GlobalState _gs;
 	private Activity _activity;
 	private boolean _isViable;
-	private int _nextPage = 0;
+	private int _nextPage = START_PAGE;
 	private boolean _atEndOfList;
 	private List<T> _objects = null;
 	private Class<T> _clazz = null;
@@ -51,7 +53,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		_gs.requestAuthentication(_authClient);
 
 		_isViable = true;
-		_nextPage = 0;
+		_nextPage = START_PAGE;
 		_atEndOfList = false;
 	}
 
@@ -269,7 +271,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		Log.v(TAG, "Starting query ");
 		_allowCache = allowCache;
 
-		_nextPage = 0;
+		_nextPage = START_PAGE;
 		_atEndOfList = false;
 		_objects = new LinkedList<T>();
 		getNextPage();

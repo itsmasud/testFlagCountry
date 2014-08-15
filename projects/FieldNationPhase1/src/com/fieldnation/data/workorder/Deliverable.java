@@ -14,7 +14,7 @@ public class Deliverable {
 	@Json(name="userId")
 	private Integer _userId;
 	@Json(name="uploadedTime")
-	private Integer _uploadedTime;
+	private String _uploadedTime;
 	@Json(name="thumbNail")
 	private Object _thumbNail;
 	@Json(name="workorderId")
@@ -66,7 +66,7 @@ public class Deliverable {
 		return _userId;
 	}
 
-	public Integer getUploadedTime(){
+	public String getUploadedTime(){
 		return _uploadedTime;
 	}
 

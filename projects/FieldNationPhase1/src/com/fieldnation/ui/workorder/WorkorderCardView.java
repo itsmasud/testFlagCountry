@@ -55,7 +55,7 @@ public class WorkorderCardView extends RelativeLayout {
 	// bundle
 	private RelativeLayout _bundleLayout;
 	/*-private ImageView _bundleImageView;-*/
-	/*-private TextView _bundleTextView;-*/
+	private TextView _bundleTextView;
 
 	// center panel
 	// title
@@ -146,7 +146,7 @@ public class WorkorderCardView extends RelativeLayout {
 		// bundle bar
 		_bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
 		/*-_bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);-*/
-		/*-_bundleTextView = (TextView) findViewById(R.id.bundle_textview);-*/
+		_bundleTextView = (TextView) findViewById(R.id.bundle_textview);
 
 		// center panel
 		// title box
@@ -433,6 +433,11 @@ public class WorkorderCardView extends RelativeLayout {
 			_workorderIdTextView.setVisibility(VISIBLE);
 		} else {
 			_workorderIdTextView.setVisibility(GONE);
+		}
+
+		// bundle
+		if (_workorder.getBundleCount() != null) {
+			_bundleTextView.setText(_workorder.getBundleCount() + " Work Orders");
 		}
 
 		// title

@@ -5,17 +5,21 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Task {
+	@Json(name="completedAtDate")
+	private String _completedAtDate;
 	@Json(name="taskId")
 	private Integer _taskId;
 	@Json(name="type")
 	private String _type;
 	@Json(name="completed")
 	private Boolean _completed;
-	@Json(name="dateCompleted")
-	private String _dateCompleted;
 
 	public Task() {
 	}
+	public String getCompletedAtDate(){
+		return _completedAtDate;
+	}
+
 	public Integer getTaskId() {
 		return _taskId;
 	}
@@ -26,10 +30,6 @@ public class Task {
 
 	public Boolean getCompleted(){
 		return _completed;
-	}
-
-	public String getDateCompleted(){
-		return _dateCompleted;
 	}
 
 	public JsonObject toJson() {

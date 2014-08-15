@@ -110,8 +110,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	}
 
 	public Intent acknowledgeHold(int resultCode, long workorderId) {
-		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/acknowledge-hold", null, "",
-				"application/x-www-form-urlencoded", false);
+		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/acknowledge-hold", null, false);
 	}
 
 	// messages

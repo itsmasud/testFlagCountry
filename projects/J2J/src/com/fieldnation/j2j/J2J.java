@@ -16,11 +16,11 @@ public class J2J {
 	private static String authToken = "";
 
 	public static void main(String[] args) {
-		// String[] usernames = { "jacobfaketech", "hexixtech" };
-		// String[] passwords = { "jacobfaketech", "hexixtech" };
+		String[] usernames = { "jacobfaketech", "hexixtech" };
+		String[] passwords = { "jacobfaketech", "hexixtech" };
 
-		String[] usernames = { "hexixtech" };
-		String[] passwords = { "hexixtech" };
+		// String[] usernames = { "hexixtech" };
+		// String[] passwords = { "hexixtech" };
 
 		try {
 			new File(Config.ObjectPath).mkdirs();
@@ -36,12 +36,12 @@ public class J2J {
 					e.printStackTrace();
 				}
 
-//				getProfile();
+				getProfile();
 				getWorkorders();
-//				getExpenseCategories();
-//				getMessages();
-//				getPayments();
-//				getNotifications();
+				getExpenseCategories();
+				getMessages();
+				getPayments();
+				getNotifications();
 			}
 			exportClasses();
 
@@ -336,10 +336,10 @@ public class J2J {
 			Log.println("Building Class Structure");
 			addData(objects, "com.fieldnation.data.workorder", "Workorder");
 
-//			getWorkorderMessages(details);
-//			getWorkorderTasks(details);
-//			getCounterOffers(details);
-//			getWorkorderBundle(details);
+			getWorkorderMessages(details);
+			getWorkorderTasks(details);
+			getCounterOffers(details);
+			getWorkorderBundle(details);
 			getDeliverables(details);
 		} catch (Exception ex) {
 			ex.printStackTrace();

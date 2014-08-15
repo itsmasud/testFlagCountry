@@ -103,6 +103,8 @@ public class MessageRcvdView extends RelativeLayout {
 			e.printStackTrace();
 		}
 
+		_profileImageView.setBackgroundResource(R.drawable.missing);
+
 	}
 
 	private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
@@ -110,11 +112,12 @@ public class MessageRcvdView extends RelativeLayout {
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			if (resultCode == WEB_GET_PHOTO) {
 				byte[] data = resultData.getByteArray(PhotoServiceConstants.KEY_RESPONSE_DATA);
-
-				Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-				if (bitmap != null) {
-					Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
-					_profileImageView.setBackgroundDrawable(draw);
+				if (data != null) {
+					Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+					if (bitmap != null) {
+						Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
+						_profileImageView.setBackgroundDrawable(draw);
+					}
 				}
 			}
 			super.onReceiveResult(resultCode, resultData);
