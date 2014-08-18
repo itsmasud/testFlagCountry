@@ -98,8 +98,12 @@ public class PaymentDetailActivity extends BaseActivity {
 		}
 
 		_workorderCountTextView.setText(_paid.getWorkorders().length + " " + this.getString(R.string.work_orders));
-		// TODO add fees lookup here
 
+		if (_paid.getFees() != null && _paid.getFees().length > 0) {
+			_feesCountTextView.setText(_paid.getFees().length + " Fees");
+		} else {
+			_feesCountTextView.setText("0 Fees");
+		}
 	}
 
 	/*-*********************************-*/

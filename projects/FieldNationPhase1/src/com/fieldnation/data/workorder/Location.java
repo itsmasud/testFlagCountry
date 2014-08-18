@@ -26,6 +26,8 @@ public class Location {
 	private String _contactEmail;
 	@Json(name = "city")
 	private String _city;
+	@Json(name="distanceMapUrl")
+	private String _distanceMapUrl;
 	@Json(name="notes")
 	private String _notes;
 	@Json(name = "contactPhoneExt")
@@ -75,6 +77,10 @@ public class Location {
 
 	public String getCity() {
 		return _city;
+	}
+
+	public String getDistanceMapUrl(){
+		return _distanceMapUrl;
 	}
 
 	public String getNotes(){

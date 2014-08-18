@@ -82,19 +82,7 @@ public class MessageCardView extends RelativeLayout {
 		}
 		try {
 			// compress the data a bit
-			String msg = message.getMessage();
-			msg = msg.replaceAll("\\r", " ").replaceAll("\\n", " ");
-			int length = 0;
-			while (length != msg.length()) {
-				length = msg.length();
-				msg = msg.replaceAll("  ", " ");
-			}
-
-			if (msg.length() > 200) {
-				msg = msg.substring(0, 200) + "...";
-			}
-
-			_messageBodyTextView.setText(msg);
+			_messageBodyTextView.setText(message.getMessage());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -113,7 +101,8 @@ public class MessageCardView extends RelativeLayout {
 		}
 
 		try {
-			_profileImageView.setBackgroundDrawable(null);
+			// _profileImageView.setBackgroundDrawable(null);
+			_profileImageView.setImageDrawable(null);
 			String url = message.getPhotoUrl();
 			getContext().startService(_photoService.getPhoto(_viewId, url));
 		} catch (Exception ex) {
@@ -153,7 +142,8 @@ public class MessageCardView extends RelativeLayout {
 				if (bitmap != null) {
 					bitmap = misc.extractCircle(bitmap);
 					Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
-					_profileImageView.setBackgroundDrawable(draw);
+					// _profileImageView.setBackgroundDrawable(draw);
+					_profileImageView.setImageDrawable(draw);
 				}
 			}
 			super.onReceiveResult(resultCode, resultData);

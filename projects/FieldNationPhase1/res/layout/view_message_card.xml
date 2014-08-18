@@ -17,7 +17,7 @@
                 android:id="@+id/status_view"
                 android:layout_width="@dimen/MessageView_StatusWidth"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="26dp"
                 android:background="@drawable/card_status_white" />
 
             <View
@@ -70,6 +70,8 @@
                 style="@style/MessageView_Body"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:text="Here is the message body. This should be able to handle a lot of text. On many lines, going forever. Uhg."
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -86,9 +88,11 @@
 
     <ImageView
         android:id="@+id/profile_imageview"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="5dp" />
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/message_card_profile_bg"
+        android:padding="2dp" />
 
 </RelativeLayout>

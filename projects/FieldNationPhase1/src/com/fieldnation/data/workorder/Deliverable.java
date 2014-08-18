@@ -19,6 +19,8 @@ public class Deliverable {
 	private Object _thumbNail;
 	@Json(name="workorderId")
 	private Integer _workorderId;
+	@Json(name="uploadedBy")
+	private User _uploadedBy;
 	@Json(name="workorderUploadId")
 	private Integer _workorderUploadId;
 	@Json(name="workorderUploadSlotId")
@@ -76,6 +78,10 @@ public class Deliverable {
 
 	public Integer getWorkorderId(){
 		return _workorderId;
+	}
+
+	public User getUploadedBy(){
+		return _uploadedBy;
 	}
 
 	public Integer getWorkorderUploadId(){

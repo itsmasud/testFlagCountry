@@ -36,12 +36,12 @@ public class J2J {
 					e.printStackTrace();
 				}
 
-				// getProfile();
-				// getWorkorders();
-				// getExpenseCategories();
+				getProfile();
+				getWorkorders();
+				getExpenseCategories();
 				getMessages();
-				// getPayments();
-				// getNotifications();
+				getPayments();
+				getNotifications();
 			}
 			exportClasses();
 

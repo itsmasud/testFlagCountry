@@ -5,79 +5,43 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CounterOffer{
+	@Json(name="expiresAfter")
+	private String _expiresAfter;
+	@Json(name="fixedTotalAmount")
+	private Double _fixedTotalAmount;
+	@Json(name="expires")
+	private Boolean _expires;
+	@Json(name="maxHours")
+	private Double _maxHours;
 	@Json(name="payBasis")
 	private String _payBasis;
 	@Json(name="hourlyRate")
 	private Double _hourlyRate;
-	@Json(name="payPerDevice")
-	private Double _payPerDevice;
-	@Json(name="expires")
-	private Boolean _expires;
-	@Json(name="additionalMaxHours")
-	private Double _additionalMaxHours;
-	@Json(name="maxHours")
-	private Double _maxHours;
-	@Json(name="additionalHourRate")
-	private Double _additionalHourRate;
-	@Json(name="fixedHourRate")
-	private Double _fixedHourRate;
-	@Json(name="fixedHours")
-	private Double _fixedHours;
-	@Json(name="fixedTotalAmount")
-	private Double _fixedTotalAmount;
-	@Json(name="expiresAfter")
-	private String _expiresAfter;
-	@Json(name="maxDevices")
-	private Double _maxDevices;
 
 	public CounterOffer(){
 	}
-	public String getPayBasis(){
-		return _payBasis;
-	}
-
-	public Double getHourlyRate(){
-		return _hourlyRate;
-	}
-
-	public Double getPayPerDevice(){
-		return _payPerDevice;
-	}
-
-	public Boolean getExpires(){
-		return _expires;
-	}
-
-	public Double getAdditionalMaxHours(){
-		return _additionalMaxHours;
-	}
-
-	public Double getMaxHours(){
-		return _maxHours;
-	}
-
-	public Double getAdditionalHourRate(){
-		return _additionalHourRate;
-	}
-
-	public Double getFixedHourRate(){
-		return _fixedHourRate;
-	}
-
-	public Double getFixedHours(){
-		return _fixedHours;
+	public String getExpiresAfter(){
+		return _expiresAfter;
 	}
 
 	public Double getFixedTotalAmount(){
 		return _fixedTotalAmount;
 	}
 
-	public String getExpiresAfter(){
-		return _expiresAfter;
+	public Boolean getExpires(){
+		return _expires;
 	}
 
-	public Double getMaxDevices(){
-		return _maxDevices;
+	public Double getMaxHours(){
+		return _maxHours;
+	}
+
+	public String getPayBasis(){
+		return _payBasis;
+	}
+
+	public Double getHourlyRate(){
+		return _hourlyRate;
 	}
 
 	public JsonObject toJson(){

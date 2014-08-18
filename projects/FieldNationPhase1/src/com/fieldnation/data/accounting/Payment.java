@@ -11,6 +11,8 @@ public class Payment {
 	private String _datePaid;
 	@Json(name = "status")
 	private String _status;
+	@Json(name="fees")
+	private Fee[] _fees;
 	@Json(name = "amount")
 	private Double _amount;
 	@Json(name="payMethod")
@@ -30,6 +32,10 @@ public class Payment {
 
 	public String getStatus(){
 		return _status;
+	}
+
+	public Fee[] getFees(){
+		return _fees;
 	}
 
 	public Double getAmount(){

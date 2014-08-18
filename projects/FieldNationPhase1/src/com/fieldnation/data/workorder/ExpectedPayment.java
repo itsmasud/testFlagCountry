@@ -19,6 +19,8 @@ public class ExpectedPayment {
 	private Double _expensesApproved;
 	@Json(name = "discounts")
 	private Double _discounts;
+	@Json(name="maxPayLimit")
+	private Double _maxPayLimit;
 	@Json(name = "penalties")
 	private Penalties[] _penalties;
 	@Json(name = "paymentStatus")
@@ -53,6 +55,10 @@ public class ExpectedPayment {
 
 	public Double getDiscounts() {
 		return _discounts;
+	}
+
+	public Double getMaxPayLimit(){
+		return _maxPayLimit;
 	}
 
 	public Penalties[] getPenalties() {

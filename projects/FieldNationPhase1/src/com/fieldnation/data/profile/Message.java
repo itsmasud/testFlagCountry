@@ -6,6 +6,8 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Message {
+	@Json(name="workorderTitle")
+	private String _workorderTitle;
 	@Json(name = "file_url")
 	private String _file_Url;
 	@Json(name = "date")

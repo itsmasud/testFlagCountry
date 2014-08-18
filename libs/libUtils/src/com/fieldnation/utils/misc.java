@@ -61,9 +61,18 @@ public class misc {
 			for (int y = yoff; y < source.getHeight() - yoff; y++) {
 				dx = cx - x;
 				dy = cy - y;
-				if (dx * dx + dy * dy < dist2) {
+				int dist = dx * dx + dy * dy;
+
+				if (dist <= dist2 - 255) {
 					destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
+				} else if (dist <= dist2 - 127) {
+					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xE6000000;
+				} else if (dist <= dist2 - 63) {
+					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xCC000000;
+				} else if (dist <= dist2) {
+					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xB3000000;
 				}
+
 			}
 		}
 

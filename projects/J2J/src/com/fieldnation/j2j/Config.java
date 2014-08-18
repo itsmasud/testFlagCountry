@@ -20,7 +20,9 @@ public class Config {
 		ClassNameMap.put("Discounts", "Discount");
 		ClassNameMap.put("ToUser", "User");
 		ClassNameMap.put("FromUser", "User");
+		ClassNameMap.put("UploadedBy", "User");
 		ClassNameMap.put("Documents", "Document");
+		ClassNameMap.put("Fees", "Fee");
 
 	}
 

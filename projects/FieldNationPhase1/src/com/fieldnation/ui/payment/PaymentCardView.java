@@ -87,11 +87,19 @@ public class PaymentCardView extends RelativeLayout {
 			ex.printStackTrace();
 			_amountTextView.setText("NA");
 		}
-		// workorders.size()
 		try {
-			_descriptionTextView.setText(_paymentInfo.getWorkorders().length + " " + getContext().getString(
-					R.string.work_orders));
-			// TODO figure out where to get the fees
+			// TODO create string resources.
+			if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length == 1) {
+				_descriptionTextView.setText(_paymentInfo.getWorkorders().length + " " + getContext().getString(
+						R.string.work_orders) + " / 1 Fee");
+			} else if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length > 0) {
+				_descriptionTextView.setText(_paymentInfo.getWorkorders().length + " " + getContext().getString(
+						R.string.work_orders) + " / " + _paymentInfo.getFees().length + " Fees");
+
+			} else {
+				_descriptionTextView.setText(_paymentInfo.getWorkorders().length + " " + getContext().getString(
+						R.string.work_orders) + " / 0 Fees");
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			_descriptionTextView.setText("");
