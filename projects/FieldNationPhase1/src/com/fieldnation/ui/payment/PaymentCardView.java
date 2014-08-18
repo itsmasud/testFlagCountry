@@ -66,7 +66,7 @@ public class PaymentCardView extends RelativeLayout {
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent(getContext(), PaymentDetailActivity.class);
-			intent.putExtra("PAYMENT_INFO", _paymentInfo.toJson().toString());
+			intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, _paymentInfo.getPaymentId());
 			getContext().startActivity(intent);
 		}
 	};

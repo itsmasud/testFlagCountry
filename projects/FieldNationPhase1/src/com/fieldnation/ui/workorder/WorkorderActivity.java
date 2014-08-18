@@ -71,7 +71,11 @@ public class WorkorderActivity extends BaseActivity {
 		if (intent != null) {
 			if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
 				_workorderId = intent.getLongExtra(INTENT_FIELD_WORKORDER_ID, 0);
+			}
+			if (intent.hasExtra(INTENT_FIELD_CURRENT_TAB)) {
 				_currentTab = intent.getIntExtra(INTENT_FIELD_CURRENT_TAB, 0);
+			} else {
+				_currentTab = TAB_DETAILS;
 			}
 		}
 

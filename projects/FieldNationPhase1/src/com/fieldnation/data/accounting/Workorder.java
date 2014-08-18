@@ -12,7 +12,7 @@ public class Workorder {
 	@Json(name = "amount")
 	private Double _amount;
 	@Json(name="workorderId")
-	private Integer _workorderId;
+	private long _workorderId;
 	@Json(name="clientName")
 	private String _clientName;
 	@Json(name="startTime")
@@ -34,7 +34,7 @@ public class Workorder {
 		return _amount;
 	}
 
-	public Integer getWorkorderId(){
+	public long getWorkorderId(){
 		return _workorderId;
 	}
 

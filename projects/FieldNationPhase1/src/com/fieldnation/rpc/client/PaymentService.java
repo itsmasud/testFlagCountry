@@ -23,6 +23,6 @@ public class PaymentService extends WebService {
 	}
 
 	public Intent getPayment(int resultCode, long paymentId, boolean allowCache) {
-		return httpGet(resultCode, "/api/rest/v1/payment-queue/" + paymentId, allowCache);
+		return httpGet(resultCode, "/api/rest/v1/accounting/payment-queue/" + paymentId, allowCache);
 	}
 }

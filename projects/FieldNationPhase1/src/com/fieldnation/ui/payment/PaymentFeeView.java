@@ -3,24 +3,22 @@ package com.fieldnation.ui.payment;
 import java.util.Calendar;
 
 import com.fieldnation.R;
+import com.fieldnation.data.accounting.Fee;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.accounting.Workorder;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class PaymentWorkorderView extends RelativeLayout {
-	private static final String TAG = "ui.payment.PaymentWorkorderView";
+public class PaymentFeeView extends RelativeLayout {
+	private static final String TAG = "ui.payment.PaymentFeeView";
 	// UI
 	// status
 	private View _statusView;
@@ -42,17 +40,16 @@ public class PaymentWorkorderView extends RelativeLayout {
 	private Button _actionButton;
 
 	// Data
-	private Workorder _workorder;
 
-	public PaymentWorkorderView(Context context) {
+	public PaymentFeeView(Context context) {
 		this(context, null, -1);
 	}
 
-	public PaymentWorkorderView(Context context, AttributeSet attrs) {
+	public PaymentFeeView(Context context, AttributeSet attrs) {
 		this(context, attrs, -1);
 	}
 
-	public PaymentWorkorderView(Context context, AttributeSet attrs, int defStyle) {
+	public PaymentFeeView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_card, this);
 
@@ -87,7 +84,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 
 		_statusView.setBackgroundResource(R.drawable.card_status_green);
 		_statusTextView.setTextColor(getContext().getResources().getColor(R.color.woCardStatusLabel3));
-		setOnClickListener(_this_onClick);
+
 	}
 
 	private void setIsBundle(boolean isBundle) {
@@ -104,39 +101,34 @@ public class PaymentWorkorderView extends RelativeLayout {
 		}
 	}
 
-	public void setWorkorder(Payment payment, Workorder wo) {
-		_workorder = wo;
-		_titleTextView.setText(wo.getTitle());
-		_clientNameTextView.setText(wo.getClientName());
+	public void setWorkorder(Payment payment, Fee fee) {
+		// _titleTextView.setText(fee.get);
+		_titleTextView.setText("Fee [" + fee.getWorkorderId() + "]");
+		// _clientNameTextView.setText(fee.getClientName());
+		// _titleTextView.setVisibility(GONE);
+		_clientNameTextView.setVisibility(GONE);
 
 		try {
-			if (wo.getEndTime() != null) {
-				String when = "";
-				Calendar cal = ISO8601.toCalendar(wo.getEndTime());
-
-				when = misc.formatDate(cal);
-
-				_whenTextView.setVisibility(VISIBLE);
-				_whenTextView.setText(when);
-			} else {
-				_whenTextView.setVisibility(GONE);
-			}
+			// if (fee.getEndTime() != null) {
+			// String when = "";
+			// Calendar cal = ISO8601.toCalendar(wo.getEndTime());
+			//
+			// when = misc.formatDate(cal);
+			//
+			// _whenTextView.setVisibility(VISIBLE);
+			// _whenTextView.setText(when);
+			// } else {
+			// _whenTextView.setVisibility(GONE);
+			// }
 		} catch (Exception ex) {
 			// ex.printStackTrace();
 			_whenTextView.setVisibility(GONE);
 		}
+		_whenTextView.setVisibility(GONE);
+
 		_basisTextView.setText(misc.capitalize(payment.getPayMethod()));
-		_paymentTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));
+		_paymentTextView.setText(misc.toCurrency(fee.getAmount()).substring(1));
 		_statusTextView.setText(R.string.processing);
 	}
-
-	private View.OnClickListener _this_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent(getContext(), WorkorderActivity.class);
-			intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-			getContext().startActivity(intent);
-		}
-	};
 
 }

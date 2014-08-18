@@ -206,8 +206,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		@Override
 		public void actionAssignment(Workorder workorder) {
 			// TODO, get start/end time?
-			Intent intent = _workorderService.confirmAssignment(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), 0,
-					0);
+			Intent intent = _workorderService.confirmAssignment(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(),
+					System.currentTimeMillis(), System.currentTimeMillis() + 86400000L);
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
 			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
@@ -263,7 +263,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		public void onViewPayments(WorkorderCardView view, Workorder workorder) {
 			// TODO Method Stub: onViewPayments()
 			Log.v(TAG, "Method Stub: onViewPayments()");
-			
+
 		}
 	};
 

@@ -19,7 +19,7 @@ public class Workorder {
 	private String _fullWorkDescription;
 	@Json(name = "workorderId")
 	private Long _workorderId;
-	@Json(name="hasFund")
+	@Json(name = "hasFund")
 	private Boolean _hasFund;
 	@Json(name = "pay")
 	private Pay _pay;
@@ -29,7 +29,7 @@ public class Workorder {
 	private CustomField[] _customFields;
 	@Json(name = "declinedWo")
 	private Integer _declinedWo;
-	@Json(name="timezone")
+	@Json(name = "timezone")
 	private String _timezone;
 	@Json(name = "skillsets")
 	private Skillset[] _skillsets;
@@ -43,7 +43,7 @@ public class Workorder {
 	private Location _location;
 	@Json(name = "additionalExpenses")
 	private AdditionalExpense[] _additionalExpenses;
-	@Json(name="messages")
+	@Json(name = "messages")
 	private Integer _messages;
 	@Json(name = "industry")
 	private String _industry;
@@ -71,23 +71,23 @@ public class Workorder {
 	private EstimatedSchedule _estimatedSchedule;
 	@Json(name = "status")
 	private Status _status;
-	@Json(name="isWorkPerformed")
+	@Json(name = "isWorkPerformed")
 	private Boolean _isWorkPerformed;
 	@Json(name = "title")
 	private String _title;
 	@Json(name = "tasks")
 	private Task[] _tasks;
-	@Json(name="w2")
+	@Json(name = "w2")
 	private Integer _w2;
-	@Json(name="companyId")
+	@Json(name = "companyId")
 	private Integer _companyId;
-	@Json(name="isDeliverablesUploaded")
+	@Json(name = "isDeliverablesUploaded")
 	private Boolean _isDeliverablesUploaded;
 	@Json(name = "alerts")
 	private Integer _alerts;
-	@Json(name="cancelFee")
+	@Json(name = "cancelFee")
 	private Integer _cancelFee;
-	@Json(name="bundleCount")
+	@Json(name = "bundleCount")
 	private Integer _bundleCount;
 	@Json(name = "isRequest")
 	private Boolean _isRequest;
@@ -121,7 +121,7 @@ public class Workorder {
 		return _workorderId;
 	}
 
-	public Boolean getHasFund(){
+	public Boolean getHasFund() {
 		return _hasFund;
 	}
 
@@ -141,7 +141,7 @@ public class Workorder {
 		return _declinedWo;
 	}
 
-	public String getTimezone(){
+	public String getTimezone() {
 		return _timezone;
 	}
 
@@ -169,7 +169,7 @@ public class Workorder {
 		return _additionalExpenses;
 	}
 
-	public Integer getMessages(){
+	public Integer getMessages() {
 		return _messages;
 	}
 
@@ -240,7 +240,7 @@ public class Workorder {
 		return _status;
 	}
 
-	public Boolean getIsWorkPerformed(){
+	public Boolean getIsWorkPerformed() {
 		return _isWorkPerformed;
 	}
 
@@ -248,19 +248,19 @@ public class Workorder {
 		return _title;
 	}
 
-	public Task[] getTasks(){
+	public Task[] getTasks() {
 		return _tasks;
 	}
 
-	public Integer getW2(){
+	public Integer getW2() {
 		return _w2;
 	}
 
-	public Integer getCompanyId(){
+	public Integer getCompanyId() {
 		return _companyId;
 	}
 
-	public Boolean getIsDeliverablesUploaded(){
+	public Boolean getIsDeliverablesUploaded() {
 		return _isDeliverablesUploaded;
 	}
 
@@ -268,11 +268,11 @@ public class Workorder {
 		return _alerts;
 	}
 
-	public Integer getCancelFee(){
+	public Integer getCancelFee() {
 		return _cancelFee;
 	}
 
-	public Integer getBundleCount(){
+	public Integer getBundleCount() {
 		return _bundleCount;
 	}
 

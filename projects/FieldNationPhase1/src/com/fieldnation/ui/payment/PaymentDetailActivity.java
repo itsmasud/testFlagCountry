@@ -1,11 +1,14 @@
 package com.fieldnation.ui.payment;
 
+import java.text.ParseException;
 import java.util.Calendar;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
@@ -64,6 +67,7 @@ public class PaymentDetailActivity extends BaseActivity {
 		}
 
 		_gs = (GlobalState) getApplicationContext();
+		_gs.requestAuthentication(_authClient);
 
 		_idTextView = (TextView) findViewById(R.id.id_textview);
 		_paymentTextView = (TextView) findViewById(R.id.payment_textview);
@@ -73,12 +77,22 @@ public class PaymentDetailActivity extends BaseActivity {
 		_feesCountTextView = (TextView) findViewById(R.id.feescount_textview);
 
 		_listView = (ListView) findViewById(R.id.items_listview);
+		// TODO set loading info
+	}
 
-		_adapter = new PaymentDetailAdapter(_paid);
-		_listView.setAdapter(_adapter);
-		_idTextView.setText("ID " + _paid.getPaymentId());
-		_paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
-		_paymentTypeTextView.setText(misc.capitalize(_paid.getPayMethod()));
+	private void requestData() {
+		if (_service == null)
+			return;
+
+		_gs.startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
+	}
+
+	private void populateUi() {
+		if (_service == null)
+			return;
+
+		if (_paid == null)
+			return;
 
 		try {
 			if (_paid.getDatePaid() != null) {
@@ -93,7 +107,6 @@ public class PaymentDetailActivity extends BaseActivity {
 				_dateTextView.setVisibility(View.GONE);
 			}
 		} catch (Exception ex) {
-			// ex.printStackTrace();
 			_dateTextView.setVisibility(View.GONE);
 		}
 
@@ -104,6 +117,12 @@ public class PaymentDetailActivity extends BaseActivity {
 		} else {
 			_feesCountTextView.setText("0 Fees");
 		}
+
+		_adapter = new PaymentDetailAdapter(_paid);
+		_listView.setAdapter(_adapter);
+		_idTextView.setText("ID " + _paid.getPaymentId());
+		_paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
+		_paymentTypeTextView.setText(misc.capitalize(_paid.getPayMethod()));
 	}
 
 	/*-*********************************-*/
@@ -112,15 +131,13 @@ public class PaymentDetailActivity extends BaseActivity {
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			// TODO Method Stub: onAuthenticationFailed()
-			Log.v(TAG, "Method Stub: onAuthenticationFailed()");
-
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
 			_service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
-			// TODO need to query for individual payments
+			requestData();
 		}
 
 		@Override
@@ -132,15 +149,35 @@ public class PaymentDetailActivity extends BaseActivity {
 	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			// TODO Method Stub: onSuccess()
-			Log.v(TAG, "Method Stub: onSuccess()");
+			if (resultCode == WEB_GET_PAY) {
+				byte[] data = resultData.getByteArray(PaymentService.KEY_RESPONSE_DATA);
+
+				Log.v(TAG, new String(data));
+
+				try {
+					_paid = Payment.fromJson(new JsonObject(new String(data)));
+					populateUi();
+				} catch (ParseException e) {
+					e.printStackTrace();
+
+					try {
+						_paid = Payment.fromJson(new JsonArray(new String(data)).getJsonObject(0));
+						populateUi();
+
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+				Log.v(TAG, "skdjfhdskjfh");
+			}
 		}
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			// TODO Method Stub: onError()
-			Log.v(TAG, "Method Stub: onError()");
-
+			if (_service != null) {
+				_gs.invalidateAuthToken(_service.getAuthToken());
+			}
+			_gs.requestAuthenticationDelayed(_authClient);
 		}
 	};
 

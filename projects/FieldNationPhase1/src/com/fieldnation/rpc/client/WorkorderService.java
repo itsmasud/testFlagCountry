@@ -99,7 +99,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	}
 
 	public Intent checkout(int resultCode, long workorderId, long checkoutTimeMilliseconds) {
-		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
+		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
 				"checkout_time=" + ISO8601.fromUTC(checkoutTimeMilliseconds), "application/x-www-form-urlencoded",
 				false);
 	}
