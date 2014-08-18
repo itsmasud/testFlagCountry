@@ -9,6 +9,16 @@
         style="@style/WorkorderDetail_Data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/upload_button"
         android:layout_alignParentTop="true" />
+
+    <Button
+        android:id="@+id/upload_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/btn_orange"
+        android:text="Upload File"
+        android:textColor="#FFFFFFFF" />
 
 </RelativeLayout>
