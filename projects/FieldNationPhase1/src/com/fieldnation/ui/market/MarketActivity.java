@@ -1,5 +1,7 @@
 package com.fieldnation.ui.market;
 
+import java.util.List;
+
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.workorder.WorkorderListFragment;
@@ -17,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -48,20 +51,29 @@ public class MarketActivity extends DrawerActivity {
 
 		if (!_created) {
 			addActionBarAndDrawer(R.id.container);
-			buildTabs();
+			buildTabs(savedInstanceState);
 			_created = true;
 		}
 		_currentFragment = getSupportActionBar().getSelectedNavigationIndex();
 		_viewPager.setCurrentItem(_currentFragment, false);
 	}
 
-	private void buildTabs() {
+	private void buildTabs(Bundle savedInstanceState) {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
 		_fragments = new WorkorderListFragment[2];
 
-		_fragments[0] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.AVAILABLE);
-		_fragments[1] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.REQUESTED);
+		if (savedInstanceState != null) {
+			List<Fragment> fragments = getSupportFragmentManager().getFragments();
+			for (int i = 0; i < fragments.size(); i++) {
+				_fragments[i] = (WorkorderListFragment) fragments.get(i);
+			}
+		}
+
+		if (_fragments[0] == null)
+			_fragments[0] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.AVAILABLE);
+		if (_fragments[1] == null)
+			_fragments[1] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.REQUESTED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

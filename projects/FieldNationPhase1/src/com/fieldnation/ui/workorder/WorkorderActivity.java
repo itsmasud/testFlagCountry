@@ -1,5 +1,7 @@
 package com.fieldnation.ui.workorder;
 
+import java.util.List;
+
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -62,6 +64,11 @@ public class WorkorderActivity extends BaseActivity {
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
+	public WorkorderActivity() {
+		super();
+		Log.v(TAG, "WorkorderActivity()");
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,7 +94,7 @@ public class WorkorderActivity extends BaseActivity {
 
 		if (!_created) {
 			// addActionBarAndDrawer(R.id.container);
-			buildFragments();
+			buildFragments(savedInstanceState);
 			_created = true;
 		}
 
@@ -98,15 +105,43 @@ public class WorkorderActivity extends BaseActivity {
 		_gs.requestAuthentication(_authClient);
 	}
 
-	private void buildFragments() {
+	private void buildFragments(Bundle savedInstanceState) {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
-		_fragments = new WorkorderFragment[5];
-		_fragments[0] = new DetailFragment();
-		_fragments[1] = new TasksFragment();
-		_fragments[2] = new MessageFragment();
-		_fragments[3] = new NotificationFragment();
-		_fragments[4] = new DeliverableFragment();
+		if (_fragments == null) {
+			_fragments = new WorkorderFragment[5];
+
+			if (savedInstanceState != null) {
+				List<Fragment> fragments = getSupportFragmentManager().getFragments();
+
+				for (int i = 0; i < fragments.size(); i++) {
+					Fragment frag = fragments.get(i);
+
+					if (frag instanceof DetailFragment) {
+						_fragments[0] = (DetailFragment) frag;
+					} else if (frag instanceof TasksFragment) {
+						_fragments[1] = (TasksFragment) frag;
+					} else if (frag instanceof MessageFragment) {
+						_fragments[2] = (MessageFragment) frag;
+					} else if (frag instanceof NotificationFragment) {
+						_fragments[3] = (NotificationFragment) frag;
+					} else if (frag instanceof DeliverableFragment) {
+						_fragments[4] = (DeliverableFragment) frag;
+					}
+				}
+			}
+
+			if (_fragments[0] == null)
+				_fragments[0] = new DetailFragment();
+			if (_fragments[1] == null)
+				_fragments[1] = new TasksFragment();
+			if (_fragments[2] == null)
+				_fragments[2] = new MessageFragment();
+			if (_fragments[3] == null)
+				_fragments[3] = new NotificationFragment();
+			if (_fragments[4] == null)
+				_fragments[4] = new DeliverableFragment();
+		}
 
 		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
 		_viewPager.setAdapter(_pagerAdapter);

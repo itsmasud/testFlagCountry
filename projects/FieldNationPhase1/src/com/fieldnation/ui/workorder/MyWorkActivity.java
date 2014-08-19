@@ -1,5 +1,7 @@
 package com.fieldnation.ui.workorder;
 
+import java.util.List;
+
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
 
@@ -39,21 +41,32 @@ public class MyWorkActivity extends DrawerActivity {
 
 		if (!_created) {
 			addActionBarAndDrawer(R.id.container);
-			buildTabs();
+			buildTabs(savedInstanceState);
 			_created = true;
 		}
 		_currentFragment = getSupportActionBar().getSelectedNavigationIndex();
 		_viewPager.setCurrentItem(_currentFragment, false);
 	}
 
-	private void buildTabs() {
+	private void buildTabs(Bundle savedInstanceState) {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
 		_fragments = new WorkorderListFragment[3];
 
-		_fragments[0] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.ASSIGNED);
-		_fragments[1] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.COMPLETED);
-		_fragments[2] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.CANCELLED);
+		if (savedInstanceState != null) {
+			List<Fragment> fragments = getSupportFragmentManager().getFragments();
+
+			for (int i = 0; i < fragments.size(); i++) {
+				_fragments[0] = (WorkorderListFragment) fragments.get(i);
+			}
+		}
+
+		if (_fragments[0] == null)
+			_fragments[0] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.ASSIGNED);
+		if (_fragments[1] == null)
+			_fragments[1] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.COMPLETED);
+		if (_fragments[2] == null)
+			_fragments[2] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.CANCELLED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

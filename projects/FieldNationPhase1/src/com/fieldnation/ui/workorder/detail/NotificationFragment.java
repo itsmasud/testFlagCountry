@@ -16,8 +16,10 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+
 import eu.erikw.PullToRefreshListView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -27,7 +29,6 @@ import android.view.ViewGroup;
 
 public class NotificationFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.NotificationFragment";
-
 	private int WEB_LIST_NOTIFICATIONS = 1;
 
 	// UI
@@ -45,6 +46,7 @@ public class NotificationFragment extends WorkorderFragment {
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
 	/*-*************************************-*/
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_workorder_notifications, container, false);
@@ -53,6 +55,7 @@ public class NotificationFragment extends WorkorderFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		Log.v(TAG, "onCreateView");
 
 		_gs = (GlobalState) getActivity().getApplicationContext();
 		_gs.requestAuthentication(_authclient);
@@ -61,7 +64,6 @@ public class NotificationFragment extends WorkorderFragment {
 		_adapter = new NotificationListAdapter();
 		_listview.setAdapter(_adapter);
 		_loadingProgress = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
-
 	}
 
 	@Override
@@ -71,16 +73,22 @@ public class NotificationFragment extends WorkorderFragment {
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
+		Log.v(TAG,
+				"setWorkorder: wokorder==null:" + (workorder == null) + " _service==null:" + (_service == null) + " _gs==null:" + (_gs == null));
 		_workorder = workorder;
+
 		populateUi();
 		getNotifications();
 	}
 
 	public void populateUi() {
+		Log.v(TAG, "populateUi, _notes:" + (_notes == null) + " _workorder:" + (_workorder == null));
 		if (_notes == null)
 			return;
 		if (_workorder == null)
 			return;
+
+		Log.v(TAG, "populateUi");
 
 		_adapter.setNotifications(_notes);
 
@@ -89,8 +97,13 @@ public class NotificationFragment extends WorkorderFragment {
 	}
 
 	private void getNotifications() {
+		Log.v(TAG, "getNotifications, _service:" + (_service == null) + " _workorder:" + (_workorder == null));
 		if (_service == null)
 			return;
+
+		if (_workorder == null)
+			return;
+		Log.v(TAG, "getNotifications");
 
 		_listview.setRefreshing();
 		_loadingProgress.setVisibility(View.VISIBLE);
@@ -113,14 +126,17 @@ public class NotificationFragment extends WorkorderFragment {
 			getNotifications();
 		}
 	};
+
 	private AuthenticationClient _authclient = new AuthenticationClient() {
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
+			Log.v(TAG, "onAuthenticationFailed");
 			_gs.requestAuthenticationDelayed(_authclient);
 		}
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
+			Log.v(TAG, "onAuthentication");
 			_service = new WorkorderService(_gs, username, authToken, _resultReceiver);
 			getNotifications();
 		}
@@ -140,19 +156,24 @@ public class NotificationFragment extends WorkorderFragment {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
+			Log.v(TAG, "onSuccess");
 
-			try {
-				JsonArray ja = new JsonArray(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-				_notes = new LinkedList<Notification>();
+			if (resultCode == WEB_LIST_NOTIFICATIONS) {
+				Log.v(TAG, "onSuccess2");
+				try {
+					JsonArray ja = new JsonArray(new String(
+							resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
+					_notes = new LinkedList<Notification>();
 
-				for (int i = 0; i < ja.size(); i++) {
-					JsonObject obj = ja.getJsonObject(i);
-					_notes.add(Notification.fromJson(obj));
+					for (int i = 0; i < ja.size(); i++) {
+						JsonObject obj = ja.getJsonObject(i);
+						_notes.add(Notification.fromJson(obj));
+					}
+
+					populateUi();
+				} catch (ParseException e) {
+					e.printStackTrace();
 				}
-
-				populateUi();
-			} catch (ParseException e) {
-				e.printStackTrace();
 			}
 		}
 	};
