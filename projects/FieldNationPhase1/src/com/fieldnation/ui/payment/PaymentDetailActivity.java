@@ -159,14 +159,6 @@ public class PaymentDetailActivity extends BaseActivity {
 					populateUi();
 				} catch (ParseException e) {
 					e.printStackTrace();
-
-					try {
-						_paid = Payment.fromJson(new JsonArray(new String(data)).getJsonObject(0));
-						populateUi();
-
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
 				}
 				Log.v(TAG, "skdjfhdskjfh");
 			}

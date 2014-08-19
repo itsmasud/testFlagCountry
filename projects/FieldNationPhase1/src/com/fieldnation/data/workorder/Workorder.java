@@ -11,6 +11,8 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 public class Workorder {
+	@Json(name="isAssignedToWorkorder")
+	private Boolean _isAssignedToWorkorder;
 	@Json(name = "discounts")
 	private Discount[] _discounts;
 	@Json(name = "typeOfWork")
@@ -35,6 +37,8 @@ public class Workorder {
 	private Skillset[] _skillsets;
 	@Json(name = "identifier")
 	private String _identifier;
+	@Json(name="checkInOutInfo")
+	private CheckInOutInfo _checkInOutInfo;
 	@Json(name = "loggedWork")
 	private LoggedWork[] _loggedWork;
 	@Json(name = "customerPoliciesProcedures")
@@ -104,6 +108,9 @@ public class Workorder {
 
 	public Workorder() {
 	}
+	public Boolean getIsAssignedToWorkorder(){
+		return _isAssignedToWorkorder;
+	}
 
 	public Discount[] getDiscounts() {
 		return _discounts;
@@ -151,6 +158,10 @@ public class Workorder {
 
 	public String getIdentifier() {
 		return _identifier;
+	}
+
+	public CheckInOutInfo getCheckInOutInfo(){
+		return _checkInOutInfo;
 	}
 
 	public LoggedWork[] getLoggedWork() {

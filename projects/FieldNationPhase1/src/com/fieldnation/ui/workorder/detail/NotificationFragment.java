@@ -96,7 +96,12 @@ public class NotificationFragment extends WorkorderFragment {
 		_loadingProgress.setVisibility(View.VISIBLE);
 		_notes = null;
 		WEB_LIST_NOTIFICATIONS = _rand.nextInt();
-		_gs.startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
+		try {
+			_gs.startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			Log.v(TAG, "BP");
+		}
 	}
 
 	/*-*********************************-*/

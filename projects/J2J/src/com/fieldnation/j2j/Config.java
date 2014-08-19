@@ -12,6 +12,7 @@ public class Config {
 		ClassNameMap = new Hashtable<String, String>();
 
 		ClassNameMap.put("Tasks", "Task");
+		ClassNameMap.put("TaskDetail", "Task");
 		ClassNameMap.put("Skillsets", "Skillset");
 		ClassNameMap.put("AdditionalExpenses", "AdditionalExpense");
 		ClassNameMap.put("CustomFields", "CustomField");
@@ -21,6 +22,7 @@ public class Config {
 		ClassNameMap.put("ToUser", "User");
 		ClassNameMap.put("FromUser", "User");
 		ClassNameMap.put("UploadedBy", "User");
+		ClassNameMap.put("UpdatedBy", "User");
 		ClassNameMap.put("Documents", "Document");
 		ClassNameMap.put("Fees", "Fee");
 

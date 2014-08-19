@@ -9,22 +9,22 @@ public class User {
 	private String _userType;
 	@Json(name = "photoUrl")
 	private String _photoUrl;
-	@Json(name = "photoThumbUrl")
-	private String _photoThumbUrl;
 	@Json(name = "firstname")
 	private String _firstname;
-	@Json(name = "userId")
-	private Integer _userId;
+	@Json(name = "photoThumbUrl")
+	private String _photoThumbUrl;
 	@Json(name = "lastname")
 	private String _lastname;
+	@Json(name = "userId")
+	private Integer _userId;
 	@Json(name = "firstName")
 	private String _firstName;
 	@Json(name = "companyId")
 	private Integer _companyId;
-	@Json(name = "lastName")
-	private String _lastName;
 	@Json(name = "user_id")
 	private Integer _user_id;
+	@Json(name = "lastName")
+	private String _lastName;
 	@Json(name = "companyName")
 	private String _companyName;
 
@@ -39,22 +39,22 @@ public class User {
 		return _photoUrl;
 	}
 
-	public String getPhotoThumbUrl() {
-		return _photoThumbUrl;
-	}
-
 	public String getFirstname() {
 		return _firstname;
 	}
 
-	public Integer getUserId() {
-		if (_userId == null)
-			return _user_id;
-		return _userId;
+	public String getPhotoThumbUrl() {
+		return _photoThumbUrl;
 	}
 
 	public String getLastname() {
 		return _lastname;
+	}
+
+	public Integer getUserId() {
+		if (_user_id != null)
+			return _user_id;
+		return _userId;
 	}
 
 	public String getFirstName() {

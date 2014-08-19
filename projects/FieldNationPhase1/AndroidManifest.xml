@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fieldnation"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.001" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -116,11 +116,8 @@
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>
-com.fieldnation.service
-                <action android:name="android.content.SyncAdapter" />
+            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
             </intent-filter>
-
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
