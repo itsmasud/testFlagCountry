@@ -116,18 +116,7 @@ public class WorkorderActivity extends BaseActivity {
 
 				for (int i = 0; i < fragments.size(); i++) {
 					Fragment frag = fragments.get(i);
-
-					if (frag instanceof DetailFragment) {
-						_fragments[0] = (DetailFragment) frag;
-					} else if (frag instanceof TasksFragment) {
-						_fragments[1] = (TasksFragment) frag;
-					} else if (frag instanceof MessageFragment) {
-						_fragments[2] = (MessageFragment) frag;
-					} else if (frag instanceof NotificationFragment) {
-						_fragments[3] = (NotificationFragment) frag;
-					} else if (frag instanceof DeliverableFragment) {
-						_fragments[4] = (DeliverableFragment) frag;
-					}
+					_fragments[i] = (WorkorderFragment) frag;
 				}
 			}
 
