@@ -35,12 +35,16 @@ public class Workorder {
 	private String _timezone;
 	@Json(name = "skillsets")
 	private Skillset[] _skillsets;
+	@Json(name="messageCount")
+	private Integer _messageCount;
 	@Json(name = "identifier")
 	private String _identifier;
 	@Json(name="checkInOutInfo")
 	private CheckInOutInfo _checkInOutInfo;
 	@Json(name = "loggedWork")
 	private LoggedWork[] _loggedWork;
+	@Json(name="alertCount ")
+	private Integer _alertCount ;
 	@Json(name = "customerPoliciesProcedures")
 	private String _customerPoliciesProcedures;
 	@Json(name = "location")
@@ -156,6 +160,10 @@ public class Workorder {
 		return _skillsets;
 	}
 
+	public Integer getMessageCount(){
+		return _messageCount;
+	}
+
 	public String getIdentifier() {
 		return _identifier;
 	}
@@ -166,6 +174,10 @@ public class Workorder {
 
 	public LoggedWork[] getLoggedWork() {
 		return _loggedWork;
+	}
+
+	public Integer getAlertCount (){
+		return _alertCount ;
 	}
 
 	public String getCustomerPoliciesProcedures() {

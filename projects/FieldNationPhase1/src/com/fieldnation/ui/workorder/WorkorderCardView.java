@@ -446,6 +446,9 @@ public class WorkorderCardView extends RelativeLayout {
 			_titleTextView.setText(title);
 		}
 
+		showMessageAlertIcon(_workorder.getMessageCount() != null && _workorder.getMessageCount() > 0);
+		showAlertIcon(_workorder.getAlertCount() != null && _workorder.getAlertCount() > 0);
+
 		// client name location.contact_name
 		Location location = _workorder.getLocation();
 		if (location != null) {
