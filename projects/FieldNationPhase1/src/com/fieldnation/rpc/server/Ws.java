@@ -1,5 +1,6 @@
 package com.fieldnation.rpc.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -15,6 +16,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 
 import android.util.Log;
 
@@ -149,6 +156,9 @@ public class Ws {
 
 	public Result httpPut(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
 		return httpReadWrite("PUT", path, options, data, contentType);
+	}
+
+	public void httpPostFile() {
 	}
 
 	// always verify the host - don't check for certificate

@@ -1,14 +1,24 @@
 package com.fieldnation.ui.workorder.detail;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.net.ssl.ManagerFactoryParameters;
+
+import org.apache.http.conn.ManagedClientConnection;
+
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.fieldnation.GlobalState;
@@ -28,12 +38,15 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 public class DeliverableFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.DeliverableFragment";
 
+	private static final int RESULT_CODE_GET_ATTACHMENT = 1;
+
 	private static final int WEB_GET_DOCUMENTS = 1;
 	private static final int WEB_GET_PROFILE = 2;
 	private static final int WEB_DELETE_DELIVERABLE = 3;
 
 	// UI
 	private ListView _listview;
+	private Button _uploadButton;
 
 	// Data
 	private GlobalState _gs;
@@ -62,6 +75,8 @@ public class DeliverableFragment extends WorkorderFragment {
 		_listview = (ListView) view.findViewById(R.id.listview);
 		_adapter = new DeliverableListAdapter(_deliverableListener);
 		_listview.setAdapter(_adapter);
+		_uploadButton = (Button) view.findViewById(R.id.upload_button);
+		_uploadButton.setOnClickListener(_upload_onClick);
 	}
 
 	@Override
@@ -97,9 +112,33 @@ public class DeliverableFragment extends WorkorderFragment {
 		_adapter.setData(_profile.getUserId(), _deliverables);
 	}
 
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
+			Uri uri = Uri.parse(data.getData().toString());
+
+			String[] projection = { MediaStore.Images.Media.DATA };
+			Cursor cur = _gs.getContentResolver().query(uri, projection, null, null, null);
+			cur.moveToFirst();
+			String path = cur.getString(cur.getColumnIndex(MediaStore.Images.Media.DATA));
+			File file = new File(path);
+
+			Log.v(TAG, "BP");
+		}
+	};
+
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _upload_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			intent.setType("*/*");
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+			startActivityForResult(intent, RESULT_CODE_GET_ATTACHMENT);
+		}
+	};
+
 	private DeliverableView.Listener _deliverableListener = new DeliverableView.Listener() {
 		@Override
 		public void onDelete(Deliverable deliverable) {

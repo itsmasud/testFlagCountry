@@ -146,6 +146,11 @@ public class WorkorderActivity extends BaseActivity {
 	/*-			Events			-*/
 	/*-*************************-*/
 
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		super.onActivityResult(arg0, arg1, arg2);
+	}
+
 	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 		public ScreenSlidePagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -215,6 +220,17 @@ public class WorkorderActivity extends BaseActivity {
 				_workorder = Workorder.fromJson(new JsonObject(data), WorkorderDataSelector.ASSIGNED);
 
 				_workorder.addListener(_workorder_listener);
+				if (_workorder.getAlertCount() != null) {
+					_tabview.setAlertsCount(_workorder.getAlertCount());
+				} else {
+					_tabview.setAlertsCount(0);
+				}
+
+				if (_workorder.getMessageCount() != null) {
+					_tabview.setMessagesCount(_workorder.getMessageCount());
+				} else {
+					_tabview.setMessagesCount(0);
+				}
 
 				for (int i = 0; i < _fragments.length; i++) {
 					_fragments[i].setWorkorder(_workorder);

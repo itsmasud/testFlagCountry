@@ -133,11 +133,21 @@ public class WorkorderTabView extends RelativeLayout {
 	}
 
 	public void setMessagesCount(int count) {
-		_messagesTextView.setText(count + "");
+		if (count == 0) {
+			_messagesTextView.setVisibility(GONE);
+		} else {
+			_messagesTextView.setVisibility(VISIBLE);
+			_messagesTextView.setText(count + "");
+		}
 	}
 
 	public void setAlertsCount(int count) {
-		_alertTextView.setText(count + "");
+		if (count == 0) {
+			_alertTextView.setVisibility(GONE);
+		} else {
+			_alertTextView.setVisibility(VISIBLE);
+			_alertTextView.setText(count + "");
+		}
 	}
 
 	public void setListener(Listener listener) {

@@ -162,8 +162,7 @@ public class J2J {
 	}
 
 	private static void getMessages() {
-		String[] urls = new String[] {
-				"/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=",
+		String[] urls = new String[] { "/api/rest/v1/profile/messages/unread?access_token=" + authToken + "&page=",
 				"/api/rest/v1/profile/messages?access_token=" + authToken + "&page=" };
 		try {
 			JsonArray objects = new JsonArray();
@@ -209,8 +208,7 @@ public class J2J {
 	}
 
 	private static void getNotifications() {
-		String[] urls = new String[] {
-				"/api/rest/v1/profile/notifications/new?access_token=" + authToken + "&page=",
+		String[] urls = new String[] { "/api/rest/v1/profile/notifications/new?access_token=" + authToken + "&page=",
 				"/api/rest/v1/profile/notifications?access_token=" + authToken + "&page=" };
 		try {
 			JsonArray objects = new JsonArray();
@@ -376,7 +374,7 @@ public class J2J {
 				try {
 					Result result = Ws.httpGet(hostname, url);
 
-					System.out.println(result.getResultsAsString());
+					Log.println(result.getResultsAsString());
 
 					messages.merge(result.getResultsAsJsonArray());
 				} catch (Exception ex) {
@@ -385,7 +383,7 @@ public class J2J {
 			}
 
 			if (messages.size() > 0) {
-				System.out.println("BP");
+				Log.println("BP");
 			}
 			Log.println("Building Class Structure");
 			addData(messages, "com.fieldnation.data.workorder", "Bundle");
@@ -411,7 +409,7 @@ public class J2J {
 			}
 
 			if (messages.size() > 0) {
-				System.out.println("BP");
+				Log.println("BP");
 			}
 			Log.println("Building Class Structure");
 			addData(messages, "com.fieldnation.data.workorder", "Message");
@@ -456,7 +454,7 @@ public class J2J {
 					JsonArray ja = result.getResultsAsJsonArray();
 
 					if (ja.size() > 0) {
-						System.out.println("Deliverables(" + workorder.getLong("workorderId") + ") " + ja.size());
+						Log.println("Deliverables(" + workorder.getLong("workorderId") + ") " + ja.size());
 					}
 
 					addData(ja, "com.fieldnation.data.workorder", "Deliverable");
@@ -488,7 +486,7 @@ public class J2J {
 					JsonArray ja = result.getResultsAsJsonArray();
 
 					if (ja.size() > 0) {
-						System.out.println(ja.size());
+						Log.println(ja.size());
 					}
 
 					addData(ja, "com.fieldnation.data.workorder", "TaskDetail");

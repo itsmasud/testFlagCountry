@@ -10,6 +10,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/send_button"
+        android:background="@drawable/wo_details_text_border"
         android:hint="Continue the conversation..."
         android:textColor="#FF000000" />
 
