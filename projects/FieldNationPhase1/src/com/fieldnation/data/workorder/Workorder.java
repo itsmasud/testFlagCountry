@@ -58,7 +58,9 @@ public class Workorder {
 	@Json(name = "standardInstructions")
 	private String _standardInstructions;
 	@Json(name = "provider")
-	private Provider[] _provider;
+	private Provider _provider;
+	@Json(name="canViewServicePayRateInfo")
+	private Boolean _canViewServicePayRateInfo;
 	@Json(name = "isRemoteWork")
 	private Integer _isRemoteWork;
 	@Json(name = "distance")
@@ -103,6 +105,8 @@ public class Workorder {
 	private Boolean _isCounter;
 	@Json(name = "documents")
 	private Document[] _documents;
+	@Json(name="displayCounterOffer")
+	private Integer _displayCounterOffer;
 	@Json(name = "closingNotes")
 	private String _closingNotes;
 	// @Json(name = "label")
@@ -204,8 +208,12 @@ public class Workorder {
 		return _standardInstructions;
 	}
 
-	public Provider[] getProvider() {
+	public Provider getProvider(){
 		return _provider;
+	}
+
+	public Boolean getCanViewServicePayRateInfo(){
+		return _canViewServicePayRateInfo;
 	}
 
 	public Integer getIsRemoteWork() {
@@ -309,6 +317,10 @@ public class Workorder {
 
 	public Document[] getDocuments() {
 		return _documents;
+	}
+
+	public Integer getDisplayCounterOffer(){
+		return _displayCounterOffer;
 	}
 
 	public String getClosingNotes() {

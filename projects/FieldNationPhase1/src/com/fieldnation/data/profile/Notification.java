@@ -11,6 +11,8 @@ public class Notification{
 	private String _date;
 	@Json(name="workorderId")
 	private Integer _workorderId;
+	@Json(name="workorder")
+	private Workorder _workorder;
 	@Json(name="message")
 	private String _message;
 	@Json(name="notificationId")
@@ -30,6 +32,10 @@ public class Notification{
 
 	public Integer getWorkorderId(){
 		return _workorderId;
+	}
+
+	public Workorder getWorkorder(){
+		return _workorder;
 	}
 
 	public String getMessage(){
