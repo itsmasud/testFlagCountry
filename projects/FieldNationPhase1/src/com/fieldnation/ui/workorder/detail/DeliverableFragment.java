@@ -9,6 +9,7 @@ import javax.net.ssl.ManagerFactoryParameters;
 import org.apache.http.conn.ManagedClientConnection;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.AppPickerDialog;
+import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -47,6 +50,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	// UI
 	private ListView _listview;
 	private Button _uploadButton;
+	private AppPickerDialog _dialog;
 
 	// Data
 	private GlobalState _gs;
@@ -112,7 +116,28 @@ public class DeliverableFragment extends WorkorderFragment {
 		_adapter.setData(_profile.getUserId(), _deliverables);
 	}
 
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		if (_dialog == null) {
+			_dialog = new AppPickerDialog(getActivity(), _dialog_listener);
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			intent.setType("*/*");
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+			_dialog.addIntent(intent, "Get Content");
+
+			if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+				intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				_dialog.addIntent(intent, "Take Picture");
+
+			}
+
+			_dialog.finish();
+		}
+	}
+
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 		if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
 			Uri uri = Uri.parse(data.getData().toString());
 
@@ -129,13 +154,20 @@ public class DeliverableFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
+
+		@Override
+		public void onClick(AppPickerPackage pack) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+
+		}
+	};
+
 	private View.OnClickListener _upload_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-			intent.setType("*/*");
-			intent.addCategory(Intent.CATEGORY_OPENABLE);
-			startActivityForResult(intent, RESULT_CODE_GET_ATTACHMENT);
+			_dialog.show();
 		}
 	};
 

@@ -9,6 +9,8 @@ import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -158,7 +160,46 @@ public class Ws {
 		return httpReadWrite("PUT", path, options, data, contentType);
 	}
 
-	public void httpPostFile() {
+	public Result httpPostFile(String path, String options, String fieldName, String filename,
+			byte[] data, Map<String, String> map) throws ParseException, MalformedURLException, IOException {
+		if (!path.startsWith("/"))
+			path = "/" + path;
+
+		if (_accessToken != null)
+			options = _accessToken.applyToUrlOptions(options);
+
+		Log.v(TAG, path + options);
+
+		HttpURLConnection conn = null;
+		if (USE_HTTPS) {
+			// only enabled if debugging
+			if (DEBUG)
+				trustAllHosts();
+			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+
+			if (DEBUG)
+				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+		} else {
+			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+		}
+
+		MultipartUtility util = new MultipartUtility(conn, "UTF-8");
+
+		if (map != null) {
+			Iterator<String> iter = map.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				util.addFormField(key, map.get(key));
+			}
+		}
+
+		util.addFilePart(fieldName, filename, data);
+
+		try {
+			return new Result(util.finish());
+		} finally {
+			conn.disconnect();
+		}
 	}
 
 	// always verify the host - don't check for certificate

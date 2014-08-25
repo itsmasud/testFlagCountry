@@ -27,7 +27,7 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 		String errorMessage = null;
 		String errorType = ERROR_NONE;
 
-		//Log.v(TAG, "username " + username);
+		// Log.v(TAG, "username " + username);
 
 		OAuth auth = null;
 
@@ -65,6 +65,8 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 			} else if (METHOD_HTTP_WRITE.equals(method)) {
 				new Thread(new HttpWriteRunnable(context, intent, auth)).start();
 				// doHttpWrite(context, intent, auth);
+			} else if (METHOD_HTTP_POST_FILE.equals(method)) {
+				new Thread(new HttpPostFileRunnable(context, intent, auth)).start();
 			}
 		} else {
 			doHttpError(context, intent, errorType, errorMessage);
