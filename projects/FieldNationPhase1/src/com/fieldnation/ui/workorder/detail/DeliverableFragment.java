@@ -1,6 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,11 +13,20 @@ import javax.net.ssl.ManagerFactoryParameters;
 
 import org.apache.http.conn.ManagedClientConnection;
 
+import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -37,11 +51,13 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerDialog;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.misc;
 
 public class DeliverableFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.DeliverableFragment";
 
 	private static final int RESULT_CODE_GET_ATTACHMENT = 1;
+	private static final int RESULT_CODE_GET_CAMERA_PIC = 2;
 
 	private static final int WEB_GET_DOCUMENTS = 1;
 	private static final int WEB_GET_PROFILE = 2;
@@ -131,22 +147,82 @@ public class DeliverableFragment extends WorkorderFragment {
 				_dialog.addIntent(intent, "Take Picture");
 
 			}
-
 			_dialog.finish();
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 		if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
 			Uri uri = Uri.parse(data.getData().toString());
 
-			String[] projection = { MediaStore.Images.Media.DATA };
-			Cursor cur = _gs.getContentResolver().query(uri, projection, null, null, null);
-			cur.moveToFirst();
-			String path = cur.getString(cur.getColumnIndex(MediaStore.Images.Media.DATA));
-			File file = new File(path);
+			try {
+				InputStream in = _gs.getContentResolver().openInputStream(uri);
 
+				byte[] bin = misc.readAllFromStream(in, 1024, -1, 500);
+
+				_gs.startService(_service.uploadDeliverable(0, _workorder.getWorkorderId(), 0L,
+						System.currentTimeMillis() + "", bin));
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// String[] projection = { MediaStore.Images.Media.DATA };
+			// Cursor cur = _gs.getContentResolver().query(uri, projection,
+			// null, null, null);
+			// cur.moveToFirst();
+			// String path =
+			// cur.getString(cur.getColumnIndex(MediaStore.Images.Media.DATA));
+			// File file = new File(path);
+
+			// _gs.startService(_service.uploadDeliverable(0,
+			// _workorder.getWorkorderId(), 0L, c1.getInt(0) + ".png",
+			// bout.toByteArray()));
+
+			// cur.close();
+
+		} else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
+			ContentResolver cr = getActivity().getContentResolver();
+			String[] p1 = new String[] { MediaStore.Images.ImageColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN };
+			Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, p1, null, null, p1[1] + " DESC");
+			if (c1.moveToFirst()) {
+				String uristringpic = "content://media/external/images/media/" + c1.getInt(0);
+				Uri uri = Uri.parse(uristringpic);
+				try {
+					Bitmap bm = android.provider.MediaStore.Images.Media.getBitmap(cr, uri);
+
+					// Debug
+					// String packageName = _gs.getPackageName();
+					// File externalPath =
+					// Environment.getExternalStorageDirectory();
+					// File appFiles = new File(externalPath.getAbsolutePath() +
+					// "/Android/data/" + packageName + "/files");
+					// appFiles.mkdirs();
+
+					// TODO, save file locally, and pass the path rather than
+					// the data.
+
+					// File appFiles = new
+					// File(_gs.getFilesDir().getAbsolutePath() + "/");
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
+					// Log.v(TAG, appFiles.getAbsolutePath());
+					bm.compress(CompressFormat.PNG, 100, bout);
+
+					_gs.startService(_service.uploadDeliverable(0, _workorder.getWorkorderId(), 0L,
+							c1.getInt(0) + ".png", bout.toByteArray()));
+
+					bout.close();
+
+				} catch (Exception ex) {
+					ex.printStackTrace();
+
+				}
+			}
+			c1.close();
 			Log.v(TAG, "BP");
 		}
 	};
@@ -158,9 +234,17 @@ public class DeliverableFragment extends WorkorderFragment {
 
 		@Override
 		public void onClick(AppPickerPackage pack) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			Intent src = pack.intent;
 
+			ResolveInfo info = pack.resolveInfo;
+
+			src.setComponent(new ComponentName(info.activityInfo.applicationInfo.packageName, info.activityInfo.name));
+
+			if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+				startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
+			} else {
+				startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
+			}
 		}
 	};
 
