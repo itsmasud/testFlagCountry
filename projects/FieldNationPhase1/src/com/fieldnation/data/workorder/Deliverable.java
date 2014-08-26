@@ -5,45 +5,45 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Deliverable {
-	@Json(name="thumbnailFilename")
+	@Json(name = "thumbnailFilename")
 	private String _thumbnailFilename;
 	@Json(name = "fileType")
 	private String _fileType;
-	@Json(name="reviewTime")
+	@Json(name = "reviewTime")
 	private Integer _reviewTime;
-	@Json(name="userId")
+	@Json(name = "userId")
 	private Integer _userId;
-	@Json(name="uploadedTime")
+	@Json(name = "uploadedTime")
 	private String _uploadedTime;
-	@Json(name="thumbNail")
+	@Json(name = "thumbNail")
 	private Object _thumbNail;
-	@Json(name="workorderId")
+	@Json(name = "workorderId")
 	private Integer _workorderId;
-	@Json(name="uploadedBy")
+	@Json(name = "uploadedBy")
 	private User _uploadedBy;
-	@Json(name="workorderUploadId")
+	@Json(name = "workorderUploadId")
 	private Integer _workorderUploadId;
-	@Json(name="workorderUploadSlotId")
+	@Json(name = "workorderUploadSlotId")
 	private Integer _workorderUploadSlotId;
 	@Json(name = "fileSize")
 	private Integer _fileSize;
 	@Json(name = "filePath")
 	private Object _filePath;
-	@Json(name="reviewUserId")
+	@Json(name = "reviewUserId")
 	private Integer _reviewUserId;
-	@Json(name="thumbnailFilesize")
+	@Json(name = "thumbnailFilesize")
 	private Integer _thumbnailFilesize;
-	@Json(name="uploadUniqueId")
+	@Json(name = "uploadUniqueId")
 	private String _uploadUniqueId;
 	@Json(name = "status")
 	private Integer _status;
-	@Json(name="reviewComment")
+	@Json(name = "reviewComment")
 	private String _reviewComment;
-	@Json(name="storageType")
+	@Json(name = "storageType")
 	private String _storageType;
-	@Json(name="uploaderUserId")
+	@Json(name = "uploaderUserId")
 	private Integer _uploaderUserId;
-	@Json(name="storageSrc")
+	@Json(name = "storageSrc")
 	private String _storageSrc;
 	@Json(name = "fileName")
 	private String _fileName;
@@ -52,15 +52,16 @@ public class Deliverable {
 
 	public Deliverable() {
 	}
-	public String getThumbnailFilename(){
+
+	public String getThumbnailFilename() {
 		return _thumbnailFilename;
 	}
 
-	public String getFileType(){
+	public String getFileType() {
 		return _fileType;
 	}
 
-	public Integer getReviewTime(){
+	public Integer getReviewTime() {
 		return _reviewTime;
 	}
 
@@ -68,27 +69,27 @@ public class Deliverable {
 		return _userId;
 	}
 
-	public String getUploadedTime(){
+	public String getUploadedTime() {
 		return _uploadedTime;
 	}
 
-	public Object getThumbNail(){
+	public Object getThumbNail() {
 		return _thumbNail;
 	}
 
-	public Integer getWorkorderId(){
+	public Integer getWorkorderId() {
 		return _workorderId;
 	}
 
-	public User getUploadedBy(){
+	public User getUploadedBy() {
 		return _uploadedBy;
 	}
 
-	public Integer getWorkorderUploadId(){
+	public Integer getWorkorderUploadId() {
 		return _workorderUploadId;
 	}
 
-	public Integer getWorkorderUploadSlotId(){
+	public Integer getWorkorderUploadSlotId() {
 		return _workorderUploadSlotId;
 	}
 
@@ -96,19 +97,19 @@ public class Deliverable {
 		return _fileSize;
 	}
 
-	public Object getFilePath(){
+	public Object getFilePath() {
 		return _filePath;
 	}
 
-	public Integer getReviewUserId(){
+	public Integer getReviewUserId() {
 		return _reviewUserId;
 	}
 
-	public Integer getThumbnailFilesize(){
+	public Integer getThumbnailFilesize() {
 		return _thumbnailFilesize;
 	}
 
-	public String getUploadUniqueId(){
+	public String getUploadUniqueId() {
 		return _uploadUniqueId;
 	}
 
@@ -116,15 +117,15 @@ public class Deliverable {
 		return _status;
 	}
 
-	public String getReviewComment(){
+	public String getReviewComment() {
 		return _reviewComment;
 	}
 
-	public String getStorageType(){
+	public String getStorageType() {
 		return _storageType;
 	}
 
-	public Integer getUploaderUserId(){
+	public Integer getUploaderUserId() {
 		return _uploaderUserId;
 	}
 

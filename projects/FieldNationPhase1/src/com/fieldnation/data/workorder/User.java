@@ -51,7 +51,7 @@ public class User {
 		return _lastname;
 	}
 
-	public Integer getUserId() {
+	public int getUserId() {
 		if (_user_id != null)
 			return _user_id;
 		return _userId;

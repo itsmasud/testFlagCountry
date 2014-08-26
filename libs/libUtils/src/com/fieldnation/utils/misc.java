@@ -350,55 +350,12 @@ public class misc {
 	}
 
 	public static String escapeForURL(String Data) {
-		String[] srch = {
-				"\\x25",
-				"\\x2B",
-				"\\x20",
-				"\\x3C",
-				"\\x3E",
-				"\\x23",
-				"\\x7B",
-				"\\x7D",
-				"\\x7C",
-				"\\x5C",
-				"\\x5E",
-				"\\x7E",
-				"\\x5B",
-				"\\x5D",
-				"\\x60",
-				"\\x3B",
-				"\\x2F",
-				"\\x3F",
-				"\\x3A",
-				"\\x40",
-				"\\x3D",
-				"\\x26",
-				"\\x24" };
+		String[] srch = { "\\x25", "\\x2B", "\\x20", "\\x3C", "\\x3E", "\\x23", "\\x7B", "\\x7D", "\\x7C", "\\x5C",
+				"\\x5E", "\\x7E", "\\x5B", "\\x5D", "\\x60", "\\x3B", "\\x2F", "\\x3F", "\\x3A", "\\x40", "\\x3D",
+				"\\x26", "\\x24" };
 
-		String[] replace = {
-				"%25",
-				"%2B",
-				"%20",
-				"%3C",
-				"%3E",
-				"%23",
-				"%7B",
-				"%7D",
-				"%7C",
-				"%5C",
-				"%5E",
-				"%7E",
-				"%5B",
-				"%5D",
-				"%60",
-				"%3B",
-				"%2F",
-				"%3F",
-				"%3A",
-				"%40",
-				"%3D",
-				"%26",
-				"%24" };
+		String[] replace = { "%25", "%2B", "%20", "%3C", "%3E", "%23", "%7B", "%7D", "%7C", "%5C", "%5E", "%7E", "%5B",
+				"%5D", "%60", "%3B", "%2F", "%3F", "%3A", "%40", "%3D", "%26", "%24" };
 
 		for (int i = 0; i < srch.length; i++) {
 			Data = Data.replaceAll(srch[i], replace[i]);
@@ -577,53 +534,11 @@ public class misc {
 	}
 
 	public static String unescapeForURL(String Data) {
-		String[] replace = {
-				" ",
-				"<",
-				">",
-				"#",
-				"%",
-				"{",
-				"}",
-				"|",
-				"\\",
-				"^",
-				"~",
-				"[",
-				"]",
-				"`",
-				";",
-				"/",
-				"?",
-				":",
-				"@",
-				"=",
-				"&",
-				"$" };
+		String[] replace = { " ", "<", ">", "#", "%", "{", "}", "|", "\\", "^", "~", "[", "]", "`", ";", "/", "?", ":",
+				"@", "=", "&", "$" };
 
-		String[] srch = {
-				"%20",
-				"%3C",
-				"%3E",
-				"%23",
-				"%25",
-				"%7B",
-				"%7D",
-				"%7C",
-				"%5C",
-				"%5E",
-				"%7E",
-				"%5B",
-				"%5D",
-				"%60",
-				"%3B",
-				"%2F",
-				"%3F",
-				"%3A",
-				"%40",
-				"%3D",
-				"%26",
-				"%24" };
+		String[] srch = { "%20", "%3C", "%3E", "%23", "%25", "%7B", "%7D", "%7C", "%5C", "%5E", "%7E", "%5B", "%5D",
+				"%60", "%3B", "%2F", "%3F", "%3A", "%40", "%3D", "%26", "%24" };
 
 		for (int i = 0; i < srch.length; i++) {
 			Data = Data.replaceAll(srch[i], replace[i]);
@@ -707,6 +622,74 @@ public class misc {
 		}
 
 		return null;
+	}
+
+	public interface PacketListener {
+		public void onPacket(byte[] packet, int length);
+	}
+
+	public static void readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli,
+			PacketListener listener) throws IOException {
+		int read = 0;
+		int pos = 0;
+		int size = expectedSize;
+		long timeout = System.currentTimeMillis() + timeoutInMilli;
+
+		if (packetSize > expectedSize && expectedSize != -1) {
+			packetSize = expectedSize;
+		}
+
+		byte[] packet = new byte[packetSize];
+		boolean error = false;
+		boolean timedOut = false;
+		boolean complete = false;
+
+		try {
+			while (!error && !timedOut && !complete) {
+
+				/*
+				 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
+				 * break; }
+				 */
+
+				read = in.read(packet, 0, packetSize);
+
+				if (read > 0) {
+					pos += read;
+
+					if (size - pos < packetSize && size != -1) {
+						packetSize = size - pos;
+					}
+					listener.onPacket(packet, read);
+					timeout = System.currentTimeMillis() + timeoutInMilli;
+				} else if (read == 0) {
+					try {
+						Thread.sleep(100);
+					} catch (Exception ex) {
+					}
+				} else if (read == -1) {
+					// error, stop
+					error = true;
+				}
+
+				// finished, stop
+				if (pos == size && size != -1) {
+					complete = true;
+				}
+
+				// read too much!
+				if (pos > size && size != -1) {
+					error = true;
+				}
+
+				// timeout, stop
+				if (timeout < System.currentTimeMillis()) {
+					timedOut = true;
+				}
+
+			}
+		} catch (IOException e) {
+		}
 	}
 
 	public static void copyStream(InputStream source, OutputStream dest, int packetSize, int expectedSize,

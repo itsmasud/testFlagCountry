@@ -1,5 +1,7 @@
 package com.fieldnation.rpc.client;
 
+import java.io.File;
+
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.ISO8601;
@@ -297,10 +299,13 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				false);
 	}
 
-	public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String filename,
-			byte[] blob) {
+	public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, File file) {
+		if (deliverableSlotId <= 0) {
+			return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables", null, "file",
+					file, null);
+		}
 		return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
-				null, "file", filename, blob, null);
+				null, "file", file, null);
 	}
 
 	public Intent getDeliverableDetails(int resultCode, long workorderId, long deliverableId, boolean allowCache) {
@@ -316,4 +321,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	public Intent listNotifications(int resultCode, long workorderId, boolean allowCache) {
 		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/notifications", allowCache);
 	}
+
+	public Intent getTasks(int resultCode, long workorderId, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks", allowCache);
+	}
+
 }

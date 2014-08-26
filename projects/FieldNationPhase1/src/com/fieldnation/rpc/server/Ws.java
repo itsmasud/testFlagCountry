@@ -2,6 +2,7 @@ package com.fieldnation.rpc.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -160,8 +161,8 @@ public class Ws {
 		return httpReadWrite("PUT", path, options, data, contentType);
 	}
 
-	public Result httpPostFile(String path, String options, String fieldName, String filename,
-			byte[] data, Map<String, String> map) throws ParseException, MalformedURLException, IOException {
+	public Result httpPostFile(String path, String options, String fieldName, String filename, InputStream inputStream,
+			int length, Map<String, String> map) throws ParseException, MalformedURLException, IOException {
 		if (!path.startsWith("/"))
 			path = "/" + path;
 
@@ -193,7 +194,7 @@ public class Ws {
 			}
 		}
 
-		util.addFilePart(fieldName, filename, data);
+		util.addFilePart(fieldName, filename, inputStream, length);
 
 		try {
 			return new Result(util.finish());

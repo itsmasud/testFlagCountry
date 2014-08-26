@@ -76,7 +76,7 @@ public class MessagesActionBarView extends RelativeLayout {
 	private AuthenticationClient _authclient = new AuthenticationClient() {
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			//Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
 			_gs.requestAuthenticationDelayed(_authclient);
 		}
 
@@ -95,7 +95,7 @@ public class MessagesActionBarView extends RelativeLayout {
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+			//Log.v(TAG, "WebServiceResultReceiver.onSuccess");
 			try {
 				JsonObject obj = new JsonObject(new String(
 						resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));

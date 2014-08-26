@@ -2,6 +2,7 @@ package com.fieldnation.rpc.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpConnection;
+
+import com.fieldnation.utils.misc;
 
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP
@@ -83,16 +86,28 @@ public class MultipartUtility {
 	 *            a File to be uploaded
 	 * @throws IOException
 	 */
-	public void addFilePart(String fieldName, String filename, byte[] data) throws IOException {
+	public void addFilePart(String fieldName, String filename, InputStream inputStream, int length) throws IOException {
 		writer.append("--" + boundary).append(LINE_FEED);
 		writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + filename + "\"").append(
 				LINE_FEED);
 		writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(LINE_FEED);
 		writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+		if (length > 0) {
+			writer.append("Content-Length: " + length);
+		}
 		writer.append(LINE_FEED);
 		writer.flush();
 
-		outputStream.write(data, 0, data.length);
+		misc.readAllFromStream(inputStream, 1024, length, 500, new misc.PacketListener() {
+			@Override
+			public void onPacket(byte[] packet, int length) {
+				try {
+					outputStream.write(packet, 0, length);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 		outputStream.flush();
 

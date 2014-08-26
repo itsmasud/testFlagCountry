@@ -1,5 +1,7 @@
 package com.fieldnation.rpc.server;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +28,12 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 		String path = bundle.getString(KEY_PARAM_PATH);
 		String options = bundle.getString(KEY_PARAM_OPTIONS);
 		byte[] data = bundle.getByteArray(KEY_PARAM_DATA);
-		String fieldName = bundle.getString(KEY_FILE_FIELD_NAME);
-		String filename = bundle.getString(KEY_FILE_NAME);
-		String fieldMapString = bundle.getString(KEY_FIELD_MAP);
+		String uri = bundle.getString(KEY_PARAM_FILE_URI);
+		String filepath = bundle.getString(KEY_PARAM_FILE_NAME);
+		String fieldName = bundle.getString(KEY_PARAM_FILE_FIELD_NAME);
+		String fieldMapString = bundle.getString(KEY_PARAM_FIELD_MAP);
 		Map<String, String> fields = null;
+		File file = new File(uri);
 
 		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
 			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
@@ -53,7 +57,8 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 			Ws ws = new Ws(_auth);
 			Result result = null;
 			try {
-				result = ws.httpPostFile(path, options, fieldName, filename, data, fields);
+				result = ws.httpPostFile(path, options, fieldName, filepath, new FileInputStream(file),
+						(int) file.length(), fields);
 
 				try {
 					// happy path

@@ -1,5 +1,6 @@
 package com.fieldnation.rpc.client;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -130,20 +131,20 @@ public class WebService implements WebServiceConstants {
 		return intent;
 	}
 
-	public Intent httpPostFile(int resultCode, String path, String options, String fieldName, String filename,
-			byte[] data, Map<String, String> fields) {
+	public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, File file,
+			Map<String, String> fields) {
 		Intent intent = new Intent(_context, DataService.class);
 		intent.setAction(DataServiceConstants.ACTION_RPC);
 		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
 		intent.putExtra(KEY_PARAM_AUTH_TOKEN, _authToken);
 		intent.putExtra(KEY_PARAM_USERNAME, _username);
-		intent.putExtra(KEY_METHOD, METHOD_HTTP_WRITE);
+		intent.putExtra(KEY_METHOD, METHOD_HTTP_POST_FILE);
 		intent.putExtra(KEY_PARAM_PATH, path);
 		intent.putExtra(KEY_PARAM_OPTIONS, options);
-		intent.putExtra(KEY_PARAM_DATA, data);
 		intent.putExtra(KEY_RESULT_CODE, resultCode);
-		intent.putExtra(KEY_FILE_FIELD_NAME, fieldName);
-		intent.putExtra(KEY_FILE_NAME, filename);
+		intent.putExtra(KEY_PARAM_FILE_URI, file.getAbsolutePath());
+		intent.putExtra(KEY_PARAM_FILE_FIELD_NAME, fileFieldName);
+		intent.putExtra(KEY_PARAM_FILE_NAME, file.getName());
 
 		if (fields != null && fields.size() > 0) {
 			JsonObject obj = new JsonObject();
@@ -159,7 +160,7 @@ public class WebService implements WebServiceConstants {
 				}
 			}
 
-			intent.putExtra(KEY_FIELD_MAP, obj.toString());
+			intent.putExtra(KEY_PARAM_FIELD_MAP, obj.toString());
 		}
 
 		if (_callback != null) {

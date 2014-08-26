@@ -71,7 +71,7 @@ public class NotificationActionBarView extends RelativeLayout {
 
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
+			//Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
 			_gs.requestAuthenticationDelayed(_authclient);
 		}
 
@@ -90,11 +90,11 @@ public class NotificationActionBarView extends RelativeLayout {
 	private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+			//Log.v(TAG, "WebServiceResultReceiver.onSuccess");
 			String raw;
 			try {
 				raw = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-				Log.v(TAG, raw);
+				//Log.v(TAG, raw);
 				JsonObject obj = new JsonObject(raw);
 				_profile = Profile.fromJson(obj);
 				refresh();

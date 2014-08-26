@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.fieldnation.GlobalState;
@@ -41,6 +43,7 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Deliverable;
+import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -62,9 +65,13 @@ public class DeliverableFragment extends WorkorderFragment {
 	private static final int WEB_GET_DOCUMENTS = 1;
 	private static final int WEB_GET_PROFILE = 2;
 	private static final int WEB_DELETE_DELIVERABLE = 3;
+	private static final int WEB_SEND_DELIVERABLE = 4;
+	private static final int WEB_GET_TASKS = 5;
 
 	// UI
-	private ListView _listview;
+	private LinearLayout _reviewLayout;
+	private LinearLayout _uploadLayout;
+	private LinearLayout _filesLayout;
 	private Button _uploadButton;
 	private AppPickerDialog _dialog;
 
@@ -75,7 +82,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private ProfileService _profileService;
 	private Profile _profile = null;
 	private List<Deliverable> _deliverables = null;
-	private DeliverableListAdapter _adapter;
+	private List<Task> _tasks = null;
 
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
@@ -92,9 +99,9 @@ public class DeliverableFragment extends WorkorderFragment {
 		_gs = (GlobalState) getActivity().getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
-		_listview = (ListView) view.findViewById(R.id.listview);
-		_adapter = new DeliverableListAdapter(_deliverableListener);
-		_listview.setAdapter(_adapter);
+		_reviewLayout = (LinearLayout) view.findViewById(R.id.review_layout);
+		_uploadLayout = (LinearLayout) view.findViewById(R.id.upload_layout);
+		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
 		_uploadButton = (Button) view.findViewById(R.id.upload_button);
 		_uploadButton.setOnClickListener(_upload_onClick);
 	}
@@ -121,6 +128,7 @@ public class DeliverableFragment extends WorkorderFragment {
 			return;
 
 		_gs.startService(_service.listDeliverables(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false));
+		_gs.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), false));
 	}
 
 	private void populateUi() {
@@ -128,8 +136,40 @@ public class DeliverableFragment extends WorkorderFragment {
 			return;
 		if (_profile == null)
 			return;
+		if (_tasks == null)
+			return;
+		if (getActivity() == null)
+			return;
 
-		_adapter.setData(_profile.getUserId(), _deliverables);
+		_reviewLayout.removeAllViews();
+		_uploadLayout.removeAllViews();
+		_filesLayout.removeAllViews();
+		for (int i = 0; i < _deliverables.size(); i++) {
+			Deliverable deliv = _deliverables.get(i);
+			DeliverableView v = new DeliverableView(getActivity());
+			v.setDeliverable(_profile.getUserId(), deliv);
+
+			if (deliv.getUploadedBy().getUserId() == _profile.getUserId()) {
+				boolean found = false;
+				for (int j = 0; j < _tasks.size(); j++) {
+					if (_tasks.get(j).getIdentifier() == null)
+						continue;
+
+					if (_tasks.get(j).getIdentifier().equals(deliv.getWorkorderUploadSlotId())) {
+						found = true;
+						break;
+					}
+				}
+				if (found) {
+					_uploadLayout.addView(v);
+				} else {
+					_filesLayout.addView(v);
+				}
+			} else {
+				_reviewLayout.addView(v);
+			}
+		}
+
 	}
 
 	@Override
@@ -151,38 +191,36 @@ public class DeliverableFragment extends WorkorderFragment {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 		if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
 			Uri uri = Uri.parse(data.getData().toString());
 
 			try {
+				// get temp path
+				String packageName = _gs.getPackageName();
+				File externalPath = Environment.getExternalStorageDirectory();
+				File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+				temppath.mkdirs();
+
+				// create temp folder
+				File tempfile = File.createTempFile("DATA", null, temppath);
+
+				// copy the data
 				InputStream in = _gs.getContentResolver().openInputStream(uri);
+				OutputStream out = new FileOutputStream(tempfile);
+				misc.copyStream(in, out, 1024, -1, 500);
+				out.close();
+				in.close();
 
-				byte[] bin = misc.readAllFromStream(in, 1024, -1, 500);
-
-				_gs.startService(_service.uploadDeliverable(0, _workorder.getWorkorderId(), 0L,
-						System.currentTimeMillis() + "", bin));
+				// send to the service
+				_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 0L,
+						tempfile));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			// String[] projection = { MediaStore.Images.Media.DATA };
-			// Cursor cur = _gs.getContentResolver().query(uri, projection,
-			// null, null, null);
-			// cur.moveToFirst();
-			// String path =
-			// cur.getString(cur.getColumnIndex(MediaStore.Images.Media.DATA));
-			// File file = new File(path);
-
-			// _gs.startService(_service.uploadDeliverable(0,
-			// _workorder.getWorkorderId(), 0L, c1.getInt(0) + ".png",
-			// bout.toByteArray()));
-
-			// cur.close();
 
 		} else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
 			ContentResolver cr = getActivity().getContentResolver();
@@ -192,34 +230,28 @@ public class DeliverableFragment extends WorkorderFragment {
 				String uristringpic = "content://media/external/images/media/" + c1.getInt(0);
 				Uri uri = Uri.parse(uristringpic);
 				try {
+
+					// find temp path
+					String packageName = _gs.getPackageName();
+					File externalPath = Environment.getExternalStorageDirectory();
+					File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+					temppath.mkdirs();
+
+					// open temp file
+					File tempfile = File.createTempFile("DATA", null, temppath);
+
+					// write the image
+					OutputStream out = new FileOutputStream(tempfile);
 					Bitmap bm = android.provider.MediaStore.Images.Media.getBitmap(cr, uri);
+					bm.compress(CompressFormat.PNG, 100, out);
+					out.close();
 
-					// Debug
-					// String packageName = _gs.getPackageName();
-					// File externalPath =
-					// Environment.getExternalStorageDirectory();
-					// File appFiles = new File(externalPath.getAbsolutePath() +
-					// "/Android/data/" + packageName + "/files");
-					// appFiles.mkdirs();
-
-					// TODO, save file locally, and pass the path rather than
-					// the data.
-
-					// File appFiles = new
-					// File(_gs.getFilesDir().getAbsolutePath() + "/");
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
-					// Log.v(TAG, appFiles.getAbsolutePath());
-					bm.compress(CompressFormat.PNG, 100, bout);
-
-					_gs.startService(_service.uploadDeliverable(0, _workorder.getWorkorderId(), 0L,
-							c1.getInt(0) + ".png", bout.toByteArray()));
-
-					bout.close();
+					// send data to service
+					_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 0L,
+							tempfile));
 
 				} catch (Exception ex) {
 					ex.printStackTrace();
-
 				}
 			}
 			c1.close();
@@ -314,6 +346,22 @@ public class DeliverableFragment extends WorkorderFragment {
 				}
 			} else if (resultCode == WEB_DELETE_DELIVERABLE) {
 				getData();
+			} else if (resultCode == WEB_GET_TASKS) {
+				_tasks = null;
+				try {
+					_tasks = new LinkedList<Task>();
+
+					String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+					JsonArray ja = new JsonArray(data);
+					for (int i = 0; i < ja.size(); i++) {
+						Task task = Task.fromJson(ja.getJsonObject(i));
+						_tasks.add(task);
+					}
+				} catch (Exception ex) {
+					// TODO mulligan?
+					ex.printStackTrace();
+					_tasks = null;
+				}
 			}
 			populateUi();
 		}

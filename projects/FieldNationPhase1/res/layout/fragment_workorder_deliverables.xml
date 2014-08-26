@@ -1,26 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/WorkorderDetail"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ListView
-        android:id="@+id/listview"
+    <LinearLayout
         style="@style/WorkorderDetail_Data"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/upload_button"
-        android:layout_alignParentTop="true" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/upload_button"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/btn_orange"
-        android:text="Upload File"
-        android:textColor="#FFFFFFFF" />
+        <TextView
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Documents to Review" />
 
-</RelativeLayout>
+        <LinearLayout
+            android:id="@+id/review_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <TextView
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Documents to Upload" />
+
+        <LinearLayout
+            android:id="@+id/upload_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <TextView
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Additional Files" />
+
+        <LinearLayout
+            android:id="@+id/files_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/upload_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/btn_orange"
+            android:text="Upload File"
+            android:textColor="#FFFFFFFF" />
+    </LinearLayout>
+
+</ScrollView>
