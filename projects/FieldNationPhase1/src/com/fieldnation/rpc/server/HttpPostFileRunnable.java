@@ -27,7 +27,6 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 		Bundle bundle = _intent.getExtras();
 		String path = bundle.getString(KEY_PARAM_PATH);
 		String options = bundle.getString(KEY_PARAM_OPTIONS);
-		byte[] data = bundle.getByteArray(KEY_PARAM_DATA);
 		String uri = bundle.getString(KEY_PARAM_FILE_URI);
 		String filepath = bundle.getString(KEY_PARAM_FILE_NAME);
 		String fieldName = bundle.getString(KEY_PARAM_FILE_FIELD_NAME);

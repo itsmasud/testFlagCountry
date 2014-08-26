@@ -1,20 +1,12 @@
 package com.fieldnation.rpc.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.HttpConnection;
-
 import com.fieldnation.utils.misc;
 
 /**
@@ -51,6 +43,7 @@ public class MultipartUtility {
 		boundary = "===" + System.currentTimeMillis() + "===";
 		httpConn = httpConnection;
 		httpConn.setUseCaches(false);
+		httpConn.setRequestMethod("POST");
 		httpConn.setDoOutput(true); // indicates POST method
 		httpConn.setDoInput(true);
 		httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
@@ -77,37 +70,20 @@ public class MultipartUtility {
 		writer.flush();
 	}
 
-	/**
-	 * Adds a upload file section to the request
-	 * 
-	 * @param fieldName
-	 *            name attribute in <input type="file" name="..." />
-	 * @param uploadFile
-	 *            a File to be uploaded
-	 * @throws IOException
-	 */
 	public void addFilePart(String fieldName, String filename, InputStream inputStream, int length) throws IOException {
 		writer.append("--" + boundary).append(LINE_FEED);
 		writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + filename + "\"").append(
 				LINE_FEED);
 		writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(LINE_FEED);
 		writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+
 		if (length > 0) {
 			writer.append("Content-Length: " + length);
 		}
 		writer.append(LINE_FEED);
 		writer.flush();
 
-		misc.readAllFromStream(inputStream, 1024, length, 500, new misc.PacketListener() {
-			@Override
-			public void onPacket(byte[] packet, int length) {
-				try {
-					outputStream.write(packet, 0, length);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		misc.copyStream(inputStream, outputStream, 1024, length, 1000);
 
 		outputStream.flush();
 

@@ -1,6 +1,5 @@
 package com.fieldnation.rpc.server;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,12 +18,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
 
 import android.util.Log;
 
@@ -183,9 +176,9 @@ public class Ws {
 		} else {
 			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
 		}
+		conn.setReadTimeout(10000);
 
 		MultipartUtility util = new MultipartUtility(conn, "UTF-8");
-
 		if (map != null) {
 			Iterator<String> iter = map.keySet().iterator();
 			while (iter.hasNext()) {

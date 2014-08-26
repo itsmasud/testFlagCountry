@@ -19,7 +19,6 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 
 import eu.erikw.PullToRefreshListView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -130,13 +129,13 @@ public class NotificationFragment extends WorkorderFragment {
 	private AuthenticationClient _authclient = new AuthenticationClient() {
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed");
+			 Log.v(TAG, "onAuthenticationFailed");
 			_gs.requestAuthenticationDelayed(_authclient);
 		}
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			Log.v(TAG, "onAuthentication");
+			 Log.v(TAG, "onAuthentication");
 			_service = new WorkorderService(_gs, username, authToken, _resultReceiver);
 			getNotifications();
 		}

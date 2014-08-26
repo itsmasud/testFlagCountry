@@ -2,7 +2,6 @@ package com.fieldnation.rpc.client;
 
 import java.io.File;
 import java.text.ParseException;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
-import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.DataServiceConstants;
 import com.fieldnation.rpc.common.WebServiceConstants;
@@ -131,8 +129,8 @@ public class WebService implements WebServiceConstants {
 		return intent;
 	}
 
-	public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, File file,
-			Map<String, String> fields) {
+	public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, String fileName,
+			File file, Map<String, String> fields) {
 		Intent intent = new Intent(_context, DataService.class);
 		intent.setAction(DataServiceConstants.ACTION_RPC);
 		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
@@ -144,7 +142,7 @@ public class WebService implements WebServiceConstants {
 		intent.putExtra(KEY_RESULT_CODE, resultCode);
 		intent.putExtra(KEY_PARAM_FILE_URI, file.getAbsolutePath());
 		intent.putExtra(KEY_PARAM_FILE_FIELD_NAME, fileFieldName);
-		intent.putExtra(KEY_PARAM_FILE_NAME, file.getName());
+		intent.putExtra(KEY_PARAM_FILE_NAME, fileName);
 
 		if (fields != null && fields.size() > 0) {
 			JsonObject obj = new JsonObject();

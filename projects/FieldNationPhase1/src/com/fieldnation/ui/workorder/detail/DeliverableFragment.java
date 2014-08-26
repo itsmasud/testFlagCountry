@@ -1,18 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.net.ssl.ManagerFactoryParameters;
-
-import org.apache.http.conn.ManagedClientConnection;
 
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -21,22 +14,21 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -54,6 +46,7 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerDialog;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -104,11 +97,31 @@ public class DeliverableFragment extends WorkorderFragment {
 		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
 		_uploadButton = (Button) view.findViewById(R.id.upload_button);
 		_uploadButton.setOnClickListener(_upload_onClick);
+
+		checkMedia();
+	}
+
+	private boolean checkMedia() {
+		if (_uploadButton == null)
+			return false;
+
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+			_uploadButton.setBackgroundResource(R.drawable.btn_orange);
+			_uploadButton.setTextColor(_gs.getResources().getColor(R.color.white));
+			_uploadButton.setText("Upload File");
+			return true;
+		} else {
+			_uploadButton.setBackgroundResource(R.drawable.btn_white);
+			_uploadButton.setText("No Media");
+			_uploadButton.setTextColor(0xFF000000);
+			return false;
+		}
 	}
 
 	@Override
 	public void update() {
 		getData();
+		checkMedia();
 	}
 
 	@Override
@@ -148,6 +161,7 @@ public class DeliverableFragment extends WorkorderFragment {
 			Deliverable deliv = _deliverables.get(i);
 			DeliverableView v = new DeliverableView(getActivity());
 			v.setDeliverable(_profile.getUserId(), deliv);
+			v.setListener(_deliverableListener);
 
 			if (deliv.getUploadedBy().getUserId() == _profile.getUserId()) {
 				boolean found = false;
@@ -191,11 +205,14 @@ public class DeliverableFragment extends WorkorderFragment {
 		}
 	}
 
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 		if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
-			Uri uri = Uri.parse(data.getData().toString());
+			if (data == null)
+				return;
 
+			Uri uri = data.getData();
 			try {
 				// get temp path
 				String packageName = _gs.getPackageName();
@@ -213,10 +230,14 @@ public class DeliverableFragment extends WorkorderFragment {
 				out.close();
 				in.close();
 
-				// send to the service
-				_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 0L,
-						tempfile));
+				Cursor c = _gs.getContentResolver().query(uri, null, null, null, null);
+				int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+				c.moveToFirst();
 
+				// send to the service
+				_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 2,
+						c.getString(nameIndex), tempfile));
+				c.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -224,13 +245,12 @@ public class DeliverableFragment extends WorkorderFragment {
 
 		} else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
 			ContentResolver cr = getActivity().getContentResolver();
-			String[] p1 = new String[] { MediaStore.Images.ImageColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN };
+			String[] p1 = new String[] { BaseColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN };
 			Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, p1, null, null, p1[1] + " DESC");
 			if (c1.moveToFirst()) {
 				String uristringpic = "content://media/external/images/media/" + c1.getInt(0);
 				Uri uri = Uri.parse(uristringpic);
 				try {
-
 					// find temp path
 					String packageName = _gs.getPackageName();
 					File externalPath = Environment.getExternalStorageDirectory();
@@ -241,15 +261,21 @@ public class DeliverableFragment extends WorkorderFragment {
 					File tempfile = File.createTempFile("DATA", null, temppath);
 
 					// write the image
+					InputStream in = _gs.getContentResolver().openInputStream(uri);
 					OutputStream out = new FileOutputStream(tempfile);
-					Bitmap bm = android.provider.MediaStore.Images.Media.getBitmap(cr, uri);
-					bm.compress(CompressFormat.PNG, 100, out);
+					misc.copyStream(in, out, 1024, -1, 500);
 					out.close();
+					in.close();
+
+					Cursor c = _gs.getContentResolver().query(uri, null, null, null, null);
+					int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+					c.moveToFirst();
 
 					// send data to service
-					_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 0L,
-							tempfile));
+					_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 2,
+							c.getString(nameIndex), tempfile));
 
+					c.close();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -283,7 +309,11 @@ public class DeliverableFragment extends WorkorderFragment {
 	private View.OnClickListener _upload_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_dialog.show();
+			if (checkMedia()) {
+				_dialog.show();
+			} else {
+				Toast.makeText(getActivity(), "Need External Storage", Toast.LENGTH_LONG).show();
+			}
 		}
 	};
 

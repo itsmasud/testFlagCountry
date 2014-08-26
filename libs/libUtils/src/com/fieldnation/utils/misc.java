@@ -709,9 +709,9 @@ public class misc {
 		boolean complete = false;
 
 		try {
-			if (!waitForData(source, timeoutInMilli)) {
-				return;
-			}
+			// if (!waitForData(source, timeoutInMilli)) {
+			// return;
+			// }
 
 			while (!error && !timedOut && !complete) {
 				read = source.read(packet, 0, packetSize);

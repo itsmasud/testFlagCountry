@@ -299,13 +299,13 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				false);
 	}
 
-	public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, File file) {
+	public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String filename, File file) {
 		if (deliverableSlotId <= 0) {
 			return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables", null, "file",
-					file, null);
+					filename, file, null);
 		}
 		return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
-				null, "file", file, null);
+				null, "file", filename, file, null);
 	}
 
 	public Intent getDeliverableDetails(int resultCode, long workorderId, long deliverableId, boolean allowCache) {

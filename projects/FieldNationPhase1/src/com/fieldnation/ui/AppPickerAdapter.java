@@ -2,7 +2,6 @@ package com.fieldnation.ui;
 
 import java.util.List;
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;

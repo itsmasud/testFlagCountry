@@ -7,9 +7,9 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
 import com.fieldnation.utils.ISO8601;
@@ -150,7 +150,7 @@ public class PaymentDetailActivity extends BaseActivity {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			if (resultCode == WEB_GET_PAY) {
-				byte[] data = resultData.getByteArray(PaymentService.KEY_RESPONSE_DATA);
+				byte[] data = resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA);
 
 				Log.v(TAG, new String(data));
 
