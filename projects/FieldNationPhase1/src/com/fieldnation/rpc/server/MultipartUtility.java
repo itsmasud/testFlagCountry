@@ -78,7 +78,7 @@ public class MultipartUtility {
 		writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
 
 		if (length > 0) {
-			writer.append("Content-Length: " + length);
+			writer.append("Content-Length: " + length).append(LINE_FEED);
 		}
 		writer.append(LINE_FEED);
 		writer.flush();
