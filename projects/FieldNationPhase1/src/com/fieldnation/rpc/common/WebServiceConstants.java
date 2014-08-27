@@ -34,4 +34,5 @@ public interface WebServiceConstants {
 	public static final String KEY_PARAM_FILE_FIELD_NAME = "PARAM_FILE_FIELD_NAME";
 	public static final String KEY_PARAM_FILE_NAME = "PARAM_FILE_NAME";
 	public static final String KEY_PARAM_FIELD_MAP = "PARAM_FIELD_MAP";
+	public static final String KEY_PARAM_NOTIFICATION_INTENT = "PARAM_NOTIFICATION_INTENT";
 }

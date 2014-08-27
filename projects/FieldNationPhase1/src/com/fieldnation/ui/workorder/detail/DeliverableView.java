@@ -32,6 +32,7 @@ public class DeliverableView extends RelativeLayout {
 	private Deliverable _deliverable;
 	private long _profileId;
 	private Listener _listener;
+	private int _loadingCounter = 0;
 
 	/*-*****************************-*/
 	/*-			Life Cycle			-*/

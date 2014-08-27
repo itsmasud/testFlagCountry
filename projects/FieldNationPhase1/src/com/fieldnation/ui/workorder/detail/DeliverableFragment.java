@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -28,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
@@ -45,6 +48,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerDialog;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -67,6 +71,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private LinearLayout _filesLayout;
 	private Button _uploadButton;
 	private AppPickerDialog _dialog;
+	private RelativeLayout _loadingLayout;
 
 	// Data
 	private GlobalState _gs;
@@ -76,6 +81,8 @@ public class DeliverableFragment extends WorkorderFragment {
 	private Profile _profile = null;
 	private List<Deliverable> _deliverables = null;
 	private List<Task> _tasks = null;
+	private int _loadingCounter = 0;
+	private SecureRandom _rand = new SecureRandom();
 
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
@@ -97,6 +104,7 @@ public class DeliverableFragment extends WorkorderFragment {
 		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
 		_uploadButton = (Button) view.findViewById(R.id.upload_button);
 		_uploadButton.setOnClickListener(_upload_onClick);
+		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
 
 		checkMedia();
 	}
@@ -118,6 +126,23 @@ public class DeliverableFragment extends WorkorderFragment {
 		}
 	}
 
+	private void startLoading() {
+		if (_loadingCounter == 0) {
+			_loadingLayout.setVisibility(View.VISIBLE);
+		}
+		_loadingCounter++;
+		Log.v(TAG, "startLoading(" + _loadingCounter + ")");
+	}
+
+	private void stopLoading() {
+		_loadingCounter--;
+		if (_loadingCounter <= 0) {
+			_loadingCounter = 0;
+			_loadingLayout.setVisibility(View.GONE);
+		}
+		Log.v(TAG, "stopLoading(" + _loadingCounter + ")");
+	}
+
 	@Override
 	public void update() {
 		getData();
@@ -128,11 +153,22 @@ public class DeliverableFragment extends WorkorderFragment {
 	public void setWorkorder(Workorder workorder) {
 		_workorder = workorder;
 		getData();
+
+	}
+
+	private PendingIntent getNotificationIntent() {
+		Intent intent = new Intent(_gs, WorkorderActivity.class);
+		intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
+		intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+
+		return PendingIntent.getActivity(_gs, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
 
 	private void getData() {
-		if (_profileService != null && _profile == null)
+		if (_profileService != null && _profile == null) {
+			startLoading();
 			_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+		}
 
 		if (_service == null)
 			return;
@@ -140,7 +176,10 @@ public class DeliverableFragment extends WorkorderFragment {
 		if (_workorder == null || _workorder.getWorkorderId() == null)
 			return;
 
+		startLoading();
 		_gs.startService(_service.listDeliverables(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false));
+
+		startLoading();
 		_gs.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), false));
 	}
 
@@ -235,8 +274,9 @@ public class DeliverableFragment extends WorkorderFragment {
 				c.moveToFirst();
 
 				// send to the service
+				startLoading();
 				_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 2,
-						c.getString(nameIndex), tempfile));
+						c.getString(nameIndex), tempfile, getNotificationIntent()));
 				c.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -272,8 +312,9 @@ public class DeliverableFragment extends WorkorderFragment {
 					c.moveToFirst();
 
 					// send data to service
+					startLoading();
 					_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 2,
-							c.getString(nameIndex), tempfile));
+							c.getString(nameIndex), tempfile, getNotificationIntent()));
 
 					c.close();
 				} catch (Exception ex) {
@@ -320,6 +361,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private DeliverableView.Listener _deliverableListener = new DeliverableView.Listener() {
 		@Override
 		public void onDelete(Deliverable deliverable) {
+			startLoading();
 			_gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE, _workorder.getWorkorderId(),
 					deliverable.getWorkorderUploadId()));
 		}
@@ -346,6 +388,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
+			stopLoading();
 			// TODO Method Stub: onSuccess()
 			Log.v(TAG, "Method Stub: onSuccess()");
 			if (resultCode == WEB_GET_DOCUMENTS) {
@@ -374,7 +417,7 @@ public class DeliverableFragment extends WorkorderFragment {
 					e.printStackTrace();
 					_profile = null;
 				}
-			} else if (resultCode == WEB_DELETE_DELIVERABLE) {
+			} else if (resultCode == WEB_DELETE_DELIVERABLE || resultCode == WEB_SEND_DELIVERABLE) {
 				getData();
 			} else if (resultCode == WEB_GET_TASKS) {
 				_tasks = null;
@@ -398,6 +441,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
+			stopLoading();
 			if (_service != null) {
 				_gs.invalidateAuthToken(_service.getAuthToken());
 			} else if (_profileService != null) {

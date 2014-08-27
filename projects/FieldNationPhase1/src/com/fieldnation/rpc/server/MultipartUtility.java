@@ -7,6 +7,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
+
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 /**
@@ -83,7 +85,11 @@ public class MultipartUtility {
 		writer.append(LINE_FEED);
 		writer.flush();
 
+		System.out.println("Start upload...." + ISO8601.now());
+
 		misc.copyStream(inputStream, outputStream, 1024, length, 1000);
+
+		System.out.println("Finish upload...." + ISO8601.now());
 
 		outputStream.flush();
 

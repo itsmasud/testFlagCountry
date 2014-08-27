@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
@@ -130,7 +131,7 @@ public class WebService implements WebServiceConstants {
 	}
 
 	public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, String fileName,
-			File file, Map<String, String> fields) {
+			File file, Map<String, String> fields, PendingIntent notificationIntent) {
 		Intent intent = new Intent(_context, DataService.class);
 		intent.setAction(DataServiceConstants.ACTION_RPC);
 		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
@@ -143,6 +144,7 @@ public class WebService implements WebServiceConstants {
 		intent.putExtra(KEY_PARAM_FILE_URI, file.getAbsolutePath());
 		intent.putExtra(KEY_PARAM_FILE_FIELD_NAME, fileFieldName);
 		intent.putExtra(KEY_PARAM_FILE_NAME, fileName);
+		intent.putExtra(KEY_PARAM_NOTIFICATION_INTENT, notificationIntent);
 
 		if (fields != null && fields.size() > 0) {
 			JsonObject obj = new JsonObject();
