@@ -15,8 +15,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,6 +36,7 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Deliverable;
+import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
@@ -50,7 +49,6 @@ import com.fieldnation.ui.AppPickerDialog;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -220,6 +218,16 @@ public class DeliverableFragment extends WorkorderFragment {
 				}
 			} else {
 				_reviewLayout.addView(v);
+			}
+		}
+
+		Document[] docs = _workorder.getDocuments();
+		if (docs != null) {
+			for (int i = 0; i < docs.length; i++) {
+				Document doc = docs[i];
+				DocumentView v = new DocumentView(getActivity());
+				_reviewLayout.addView(v);
+				v.setDocument(doc);
 			}
 		}
 
