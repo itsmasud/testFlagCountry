@@ -66,11 +66,17 @@ public class misc {
 				if (dist <= dist2 - 255) {
 					destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
 				} else if (dist <= dist2 - 127) {
-					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xE6000000;
+					int c = pixels[x + y * source.getWidth()];
+					int i = (x - xoff) + (y - yoff) * size;
+					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 115) / 128) << 56 & 0xFF000000);
 				} else if (dist <= dist2 - 63) {
-					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xCC000000;
+					int c = pixels[x + y * source.getWidth()];
+					int i = (x - xoff) + (y - yoff) * size;
+					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 51) / 64) << 56 & 0xFF000000);
 				} else if (dist <= dist2) {
-					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xB3000000;
+					int c = pixels[x + y * source.getWidth()];
+					int i = (x - xoff) + (y - yoff) * size;
+					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 179) / 256) << 56 & 0xFF000000);
 				}
 
 			}
