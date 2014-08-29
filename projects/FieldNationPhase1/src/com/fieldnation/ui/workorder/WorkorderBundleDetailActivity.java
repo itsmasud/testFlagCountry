@@ -1,8 +1,12 @@
 package com.fieldnation.ui.workorder;
 
+import java.text.ParseException;
+
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
@@ -19,6 +23,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 	public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:workorder_id";
 
 	private static final int WEB_GET_BUNDLE = 1;
+	private static final int WEB_GET_DETAILS = 2;
 
 	// UI
 	// Data
@@ -66,6 +71,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 		public void onAuthentication(String username, String authToken) {
 			_service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
 			startService(_service.getBundle(WEB_GET_BUNDLE, _workorderId, false));
+			startService(_service.getDetails(WEB_GET_DETAILS, _workorderId, false));
 		}
 
 		@Override
@@ -83,13 +89,25 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 			Log.v(TAG, resultData.toString());
 			byte[] data = resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA);
 			Log.v(TAG, new String(data));
+			if (resultCode == WEB_GET_DETAILS) {
+
+			} else if (resultCode == WEB_GET_BUNDLE) {
+				try {
+					Workorder workorder = Workorder.fromJson(new JsonObject(new String(data)));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
 		}
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			// TODO Method Stub: onError()
-			Log.v(TAG, "Method Stub: onError()");
-			Log.v(TAG, resultData.toString());
+			if (_service != null) {
+				_gs.invalidateAuthToken(_service.getAuthToken());
+			}
+			_gs.requestAuthenticationDelayed(_authclient);
 		}
 	};
 
@@ -97,7 +115,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 	public void onRefresh() {
 		// TODO Method Stub: onRefresh()
 		Log.v(TAG, "Method Stub: onRefresh()");
-		
+
 	}
 
 }

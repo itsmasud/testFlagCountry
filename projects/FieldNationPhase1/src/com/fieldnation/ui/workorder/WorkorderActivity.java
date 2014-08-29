@@ -217,7 +217,7 @@ public class WorkorderActivity extends BaseActivity {
 				// TODO need to get data selector from REST API
 				String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 				Log.v(TAG, data);
-				_workorder = Workorder.fromJson(new JsonObject(data), WorkorderDataSelector.ASSIGNED);
+				_workorder = Workorder.fromJson(new JsonObject(data));
 
 				_workorder.addListener(_workorder_listener);
 				if (_workorder.getAlertCount() != null) {

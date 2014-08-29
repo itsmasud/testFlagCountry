@@ -8,10 +8,9 @@ import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
-import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 public class Workorder {
-	@Json(name="isAssignedToWorkorder")
+	@Json(name = "isAssignedToWorkorder")
 	private Boolean _isAssignedToWorkorder;
 	@Json(name = "discounts")
 	private Discount[] _discounts;
@@ -35,16 +34,16 @@ public class Workorder {
 	private String _timezone;
 	@Json(name = "skillsets")
 	private Skillset[] _skillsets;
-	@Json(name="messageCount")
+	@Json(name = "messageCount")
 	private Integer _messageCount;
 	@Json(name = "identifier")
 	private String _identifier;
-	@Json(name="checkInOutInfo")
+	@Json(name = "checkInOutInfo")
 	private CheckInOutInfo _checkInOutInfo;
 	@Json(name = "loggedWork")
 	private LoggedWork[] _loggedWork;
-	@Json(name="alertCount ")
-	private Integer _alertCount ;
+	@Json(name = "alertCount ")
+	private Integer _alertCount;
 	@Json(name = "customerPoliciesProcedures")
 	private String _customerPoliciesProcedures;
 	@Json(name = "location")
@@ -59,7 +58,7 @@ public class Workorder {
 	private String _standardInstructions;
 	@Json(name = "provider")
 	private Provider _provider;
-	@Json(name="canViewServicePayRateInfo")
+	@Json(name = "canViewServicePayRateInfo")
 	private Boolean _canViewServicePayRateInfo;
 	@Json(name = "isRemoteWork")
 	private Integer _isRemoteWork;
@@ -105,7 +104,7 @@ public class Workorder {
 	private Boolean _isCounter;
 	@Json(name = "documents")
 	private Document[] _documents;
-	@Json(name="displayCounterOffer")
+	@Json(name = "displayCounterOffer")
 	private Integer _displayCounterOffer;
 	@Json(name = "closingNotes")
 	private String _closingNotes;
@@ -116,7 +115,8 @@ public class Workorder {
 
 	public Workorder() {
 	}
-	public Boolean getIsAssignedToWorkorder(){
+
+	public Boolean getIsAssignedToWorkorder() {
 		return _isAssignedToWorkorder;
 	}
 
@@ -164,7 +164,7 @@ public class Workorder {
 		return _skillsets;
 	}
 
-	public Integer getMessageCount(){
+	public Integer getMessageCount() {
 		return _messageCount;
 	}
 
@@ -172,7 +172,7 @@ public class Workorder {
 		return _identifier;
 	}
 
-	public CheckInOutInfo getCheckInOutInfo(){
+	public CheckInOutInfo getCheckInOutInfo() {
 		return _checkInOutInfo;
 	}
 
@@ -180,8 +180,8 @@ public class Workorder {
 		return _loggedWork;
 	}
 
-	public Integer getAlertCount (){
-		return _alertCount ;
+	public Integer getAlertCount() {
+		return _alertCount;
 	}
 
 	public String getCustomerPoliciesProcedures() {
@@ -208,11 +208,11 @@ public class Workorder {
 		return _standardInstructions;
 	}
 
-	public Provider getProvider(){
+	public Provider getProvider() {
 		return _provider;
 	}
 
-	public Boolean getCanViewServicePayRateInfo(){
+	public Boolean getCanViewServicePayRateInfo() {
 		return _canViewServicePayRateInfo;
 	}
 
@@ -319,7 +319,7 @@ public class Workorder {
 		return _documents;
 	}
 
-	public Integer getDisplayCounterOffer(){
+	public Integer getDisplayCounterOffer() {
 		return _displayCounterOffer;
 	}
 
@@ -348,10 +348,9 @@ public class Workorder {
 		}
 	}
 
-	public static Workorder fromJson(JsonObject json, WorkorderDataSelector selector) {
+	public static Workorder fromJson(JsonObject json) {
 		try {
 			Workorder wo = Serializer.unserializeObject(Workorder.class, json);
-			wo._type = selector;
 			wo.buildStatus();
 			return wo;
 		} catch (Exception ex) {
@@ -378,30 +377,17 @@ public class Workorder {
 	public static final int NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT = 103;
 
 	// status colors lookuptable
-	private static final int[] _STATUS_LOOKUP_TABLE = {
-			R.drawable.card_status_white,
-			R.drawable.card_status_orange,
-			R.drawable.card_status_green,
-			R.drawable.card_status_gray };
-	private static final int[] _STATUS_TEXT_TABLE = {
-			R.color.woCardStatusLabel1,
-			R.color.woCardStatusLabel2,
-			R.color.woCardStatusLabel3,
-			R.color.woCardStatusLabel4 };
-	private static final int[] _STATUS_BUTTON_FG = {
-			R.color.btn_white_fg,
-			R.color.btn_orange_fg,
-			R.color.btn_green_fg,
+	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.card_status_white, R.drawable.card_status_orange,
+			R.drawable.card_status_green, R.drawable.card_status_gray };
+	private static final int[] _STATUS_TEXT_TABLE = { R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
+			R.color.woCardStatusLabel3, R.color.woCardStatusLabel4 };
+	private static final int[] _STATUS_BUTTON_FG = { R.color.btn_white_fg, R.color.btn_orange_fg, R.color.btn_green_fg,
 			R.color.btn_gray_fg };
-	private static final int[] _STATUS_BUTTON_BG = {
-			R.drawable.btn_white,
-			R.drawable.btn_orange,
-			R.drawable.btn_green,
+	private static final int[] _STATUS_BUTTON_BG = { R.drawable.btn_white, R.drawable.btn_orange, R.drawable.btn_green,
 			R.drawable.btn_white };
 
 	private int _buttonAction = 0;
 	private int _notInterestedAction = 0;
-	private WorkorderDataSelector _type;
 	// private Set<Integer> _labelIds = new HashSet<Integer>();
 
 	private Set<Listener> _listeners = new HashSet<Workorder.Listener>();
@@ -412,10 +398,6 @@ public class Workorder {
 
 	public int getNotInterestedAction() {
 		return _notInterestedAction;
-	}
-
-	public WorkorderDataSelector getWorkorderDataSelector() {
-		return _type;
 	}
 
 	public int getStatusBG() {

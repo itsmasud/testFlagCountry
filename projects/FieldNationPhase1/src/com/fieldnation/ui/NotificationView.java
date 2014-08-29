@@ -108,10 +108,12 @@ public class NotificationView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent(getContext(), WorkorderActivity.class);
-			intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_NOTIFICATIONS);
-			intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _note.getWorkorder().getWorkorderId());
-			getContext().startActivity(intent);
+			if (_note.getWorkorder() != null) {
+				Intent intent = new Intent(getContext(), WorkorderActivity.class);
+				intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_NOTIFICATIONS);
+				intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _note.getWorkorder().getWorkorderId());
+				getContext().startActivity(intent);
+			}
 		}
 	};
 }

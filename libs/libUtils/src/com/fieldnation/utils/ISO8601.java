@@ -15,6 +15,15 @@ import java.util.GregorianCalendar;
  * -string-to-java-util-date -*
  */
 public final class ISO8601 {
+	private static SimpleDateFormat _sdf = null;
+
+	private static SimpleDateFormat getSDF() {
+		if (_sdf == null) {
+			_sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		}
+
+		return _sdf;
+	}
 
 	public static String fromUTC(long utcMilliseconds) {
 		final Calendar cal = Calendar.getInstance();
@@ -25,7 +34,7 @@ public final class ISO8601 {
 	/** Transform Calendar to ISO 8601 string. */
 	public static String fromCalendar(final Calendar calendar) {
 		Date date = calendar.getTime();
-		String formatted = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(date);
+		String formatted = getSDF().format(date);
 		return formatted.substring(0, 22) + ":" + formatted.substring(22);
 	}
 
@@ -49,7 +58,7 @@ public final class ISO8601 {
 		} catch (IndexOutOfBoundsException e) {
 			throw new ParseException("Invalid length", 0);
 		}
-		Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(s);
+		Date date = getSDF().parse(s);
 		calendar.setTime(date);
 		return calendar;
 	}

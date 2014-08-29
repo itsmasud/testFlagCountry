@@ -170,7 +170,7 @@ public class NotificationFragment extends WorkorderFragment {
 					}
 
 					populateUi();
-				} catch (ParseException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
