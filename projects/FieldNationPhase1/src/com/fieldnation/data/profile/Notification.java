@@ -1,5 +1,6 @@
 package com.fieldnation.data.profile;
 
+import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -7,6 +8,8 @@ import com.fieldnation.json.annotations.Json;
 public class Notification {
 	@Json(name = "viewed")
 	private Integer _viewed;
+	@Json(name="fromUser")
+	private User _fromUser;
 	@Json(name = "date")
 	private String _date;
 	@Json(name = "workorderId")
@@ -25,6 +28,10 @@ public class Notification {
 
 	public Integer getViewed() {
 		return _viewed;
+	}
+
+	public User getFromUser(){
+		return _fromUser;
 	}
 
 	public String getDate() {

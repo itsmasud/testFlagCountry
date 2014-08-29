@@ -18,10 +18,10 @@ public class Location {
 	private String _address1;
 	@Json(name = "zip")
 	private String _zip;
-	@Json(name = "country")
-	private String _country;
 	@Json(name = "contactPhone")
 	private String _contactPhone;
+	@Json(name="country")
+	private String _country;
 	@Json(name = "contactEmail")
 	private String _contactEmail;
 	@Json(name = "city")
@@ -63,12 +63,12 @@ public class Location {
 		return _zip;
 	}
 
-	public String getCountry() {
-		return _country;
-	}
-
 	public String getContactPhone() {
 		return _contactPhone;
+	}
+
+	public String getCountry(){
+		return _country;
 	}
 
 	public String getContactEmail() {

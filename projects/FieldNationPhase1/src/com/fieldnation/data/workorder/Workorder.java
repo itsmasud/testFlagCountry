@@ -95,7 +95,7 @@ public class Workorder {
 	@Json(name = "alerts")
 	private Integer _alerts;
 	@Json(name = "cancelFee")
-	private Integer _cancelFee;
+	private Double _cancelFee;
 	@Json(name = "bundleCount")
 	private Integer _bundleCount;
 	@Json(name = "isRequest")
@@ -112,6 +112,8 @@ public class Workorder {
 	// private Label[] _label;
 	@Json(name = "shipmentTracking")
 	private ShipmentTracking[] _shipmentTracking;
+	@Json(name="isWoOnHold")
+	private Boolean _isWoOnHold;
 
 	public Workorder() {
 	}
@@ -299,7 +301,7 @@ public class Workorder {
 		return _alerts;
 	}
 
-	public Integer getCancelFee() {
+	public Double getCancelFee(){
 		return _cancelFee;
 	}
 
@@ -333,6 +335,10 @@ public class Workorder {
 
 	public ShipmentTracking[] getShipmentTracking() {
 		return _shipmentTracking;
+	}
+
+	public Boolean getIsWoOnHold(){
+		return _isWoOnHold;
 	}
 
 	public JsonObject toJson() {

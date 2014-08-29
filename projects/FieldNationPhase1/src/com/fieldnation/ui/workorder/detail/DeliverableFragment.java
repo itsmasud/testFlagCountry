@@ -64,9 +64,14 @@ public class DeliverableFragment extends WorkorderFragment {
 	private static final int WEB_GET_TASKS = 5;
 
 	// UI
+	private LinearLayout _reviewList;
+	private LinearLayout _uploadList;
+	private LinearLayout _filesList;
 	private LinearLayout _reviewLayout;
 	private LinearLayout _uploadLayout;
 	private LinearLayout _filesLayout;
+	private View _bar1View;
+	private View _bar2View;
 	private Button _uploadButton;
 	private AppPickerDialog _dialog;
 	private RelativeLayout _loadingLayout;
@@ -97,9 +102,14 @@ public class DeliverableFragment extends WorkorderFragment {
 		_gs = (GlobalState) getActivity().getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
+		_reviewList = (LinearLayout) view.findViewById(R.id.review_list);
+		_uploadList = (LinearLayout) view.findViewById(R.id.upload_list);
+		_filesList = (LinearLayout) view.findViewById(R.id.files_list);
 		_reviewLayout = (LinearLayout) view.findViewById(R.id.review_layout);
 		_uploadLayout = (LinearLayout) view.findViewById(R.id.upload_layout);
 		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
+		_bar1View = view.findViewById(R.id.bar1_view);
+		_bar2View = view.findViewById(R.id.bar2_view);
 		_uploadButton = (Button) view.findViewById(R.id.upload_button);
 		_uploadButton.setOnClickListener(_upload_onClick);
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
@@ -191,9 +201,9 @@ public class DeliverableFragment extends WorkorderFragment {
 		if (getActivity() == null)
 			return;
 
-		_reviewLayout.removeAllViews();
-		_uploadLayout.removeAllViews();
-		_filesLayout.removeAllViews();
+		_reviewList.removeAllViews();
+		_uploadList.removeAllViews();
+		_filesList.removeAllViews();
 		for (int i = 0; i < _deliverables.size(); i++) {
 			Deliverable deliv = _deliverables.get(i);
 			DeliverableView v = new DeliverableView(getActivity());
@@ -212,12 +222,12 @@ public class DeliverableFragment extends WorkorderFragment {
 					}
 				}
 				if (found) {
-					_uploadLayout.addView(v);
+					_uploadList.addView(v);
 				} else {
-					_filesLayout.addView(v);
+					_filesList.addView(v);
 				}
 			} else {
-				_reviewLayout.addView(v);
+				_reviewList.addView(v);
 			}
 		}
 
@@ -226,11 +236,36 @@ public class DeliverableFragment extends WorkorderFragment {
 			for (int i = 0; i < docs.length; i++) {
 				Document doc = docs[i];
 				DocumentView v = new DocumentView(getActivity());
-				_reviewLayout.addView(v);
+				_reviewList.addView(v);
 				v.setDocument(doc);
 			}
 		}
+		_bar1View.setVisibility(View.GONE);
+		_bar2View.setVisibility(View.GONE);
 
+		if (_reviewList.getChildCount() == 0) {
+			_reviewLayout.setVisibility(View.GONE);
+		} else {
+			_reviewLayout.setVisibility(View.VISIBLE);
+		}
+
+		if (_uploadList.getChildCount() == 0) {
+			_uploadLayout.setVisibility(View.GONE);
+		} else {
+			if (_reviewList.getChildCount() > 0) {
+				_bar1View.setVisibility(View.VISIBLE);
+			}
+			_uploadLayout.setVisibility(View.VISIBLE);
+		}
+
+		if (_filesList.getChildCount() == 0) {
+			_filesLayout.setVisibility(View.GONE);
+		} else {
+			if (_reviewList.getChildCount() > 0 || _uploadList.getChildCount() > 0) {
+				_bar2View.setVisibility(View.VISIBLE);
+			}
+			_filesLayout.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override

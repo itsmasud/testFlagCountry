@@ -16,7 +16,7 @@ public class Deliverable {
 	@Json(name = "uploadedTime")
 	private String _uploadedTime;
 	@Json(name = "thumbNail")
-	private Object _thumbNail;
+	private String _thumbNail;
 	@Json(name = "workorderId")
 	private Integer _workorderId;
 	@Json(name = "uploadedBy")
@@ -28,7 +28,7 @@ public class Deliverable {
 	@Json(name = "fileSize")
 	private Integer _fileSize;
 	@Json(name = "filePath")
-	private Object _filePath;
+	private String _filePath;
 	@Json(name = "reviewUserId")
 	private Integer _reviewUserId;
 	@Json(name = "thumbnailFilesize")
@@ -48,7 +48,7 @@ public class Deliverable {
 	@Json(name = "fileName")
 	private String _fileName;
 	@Json(name = "dateUploaded")
-	private Object _dateUploaded;
+	private String _dateUploaded;
 
 	public Deliverable() {
 	}
@@ -73,7 +73,7 @@ public class Deliverable {
 		return _uploadedTime;
 	}
 
-	public Object getThumbNail() {
+	public String getThumbNail(){
 		return _thumbNail;
 	}
 
@@ -97,7 +97,7 @@ public class Deliverable {
 		return _fileSize;
 	}
 
-	public Object getFilePath() {
+	public String getFilePath(){
 		return _filePath;
 	}
 
@@ -137,7 +137,7 @@ public class Deliverable {
 		return _fileName;
 	}
 
-	public Object getDateUploaded() {
+	public String getDateUploaded(){
 		return _dateUploaded;
 	}
 

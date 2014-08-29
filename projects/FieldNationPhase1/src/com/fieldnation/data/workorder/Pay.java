@@ -30,6 +30,8 @@ public class Pay {
 	private Double _expenses;
 	@Json(name = "payRateBasis")
 	private String _payRateBasis;
+	@Json(name="description")
+	private String _description;
 	@Json(name = "blendedAdditionalRate")
 	private Double _blendedAdditionalRate;
 
@@ -82,6 +84,10 @@ public class Pay {
 
 	public String getPayRateBasis() {
 		return _payRateBasis;
+	}
+
+	public String getDescription(){
+		return _description;
 	}
 
 	public Double getBlendedAdditionalRate() {

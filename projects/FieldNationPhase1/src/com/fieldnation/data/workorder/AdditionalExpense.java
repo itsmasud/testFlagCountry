@@ -5,6 +5,10 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class AdditionalExpense {
+	@Json(name="statusDescription")
+	private String _statusDescription;
+	@Json(name="status")
+	private String _status;
 	@Json(name="expenseId")
 	private Integer _expenseId;
 	@Json(name = "description")
@@ -18,6 +22,14 @@ public class AdditionalExpense {
 
 	public AdditionalExpense() {
 	}
+	public String getStatusDescription(){
+		return _statusDescription;
+	}
+
+	public String getStatus(){
+		return _status;
+	}
+
 	public Integer getExpenseId(){
 		return _expenseId;
 	}
