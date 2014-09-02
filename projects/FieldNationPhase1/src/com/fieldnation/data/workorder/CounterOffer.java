@@ -4,113 +4,114 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class CounterOffer{
-	@Json(name="payBasis")
+public class CounterOffer {
+	@Json(name = "payBasis")
 	private String _payBasis;
-	@Json(name="providerExplanation")
+	@Json(name = "providerExplanation")
 	private String _providerExplanation;
-	@Json(name="hourlyRate")
+	@Json(name = "hourlyRate")
 	private Double _hourlyRate;
-	@Json(name="payPerDevice")
+	@Json(name = "payPerDevice")
 	private Double _payPerDevice;
-	@Json(name="expires")
+	@Json(name = "expires")
 	private Boolean _expires;
-	@Json(name="proposedSchedule")
+	@Json(name = "proposedSchedule")
 	private ProposedSchedule _proposedSchedule;
-	@Json(name="proposedExpense")
+	@Json(name = "proposedExpense")
 	private String[] _proposedExpense;
-	@Json(name="additionalMaxHours")
+	@Json(name = "additionalMaxHours")
 	private Double _additionalMaxHours;
-	@Json(name="maxHours")
+	@Json(name = "maxHours")
 	private Double _maxHours;
-	@Json(name="additionalHourRate")
+	@Json(name = "additionalHourRate")
 	private Double _additionalHourRate;
-	@Json(name="fixedHourRate")
+	@Json(name = "fixedHourRate")
 	private Double _fixedHourRate;
-	@Json(name="fixedHours")
+	@Json(name = "fixedHours")
 	private Double _fixedHours;
-	@Json(name="fixedTotalAmount")
+	@Json(name = "fixedTotalAmount")
 	private Double _fixedTotalAmount;
-	@Json(name="maximumAmount")
+	@Json(name = "maximumAmount")
 	private Integer _maximumAmount;
-	@Json(name="expiresAfter")
+	@Json(name = "expiresAfter")
 	private String _expiresAfter;
-	@Json(name="maxDevices")
+	@Json(name = "maxDevices")
 	private Double _maxDevices;
-	@Json(name="description")
+	@Json(name = "description")
 	private String _description;
 
-	public CounterOffer(){
+	public CounterOffer() {
 	}
-	public String getPayBasis(){
+
+	public String getPayBasis() {
 		return _payBasis;
 	}
 
-	public String getProviderExplanation(){
+	public String getProviderExplanation() {
 		return _providerExplanation;
 	}
 
-	public Double getHourlyRate(){
+	public Double getHourlyRate() {
 		return _hourlyRate;
 	}
 
-	public Double getPayPerDevice(){
+	public Double getPayPerDevice() {
 		return _payPerDevice;
 	}
 
-	public Boolean getExpires(){
+	public Boolean getExpires() {
 		return _expires;
 	}
 
-	public ProposedSchedule getProposedSchedule(){
+	public ProposedSchedule getProposedSchedule() {
 		return _proposedSchedule;
 	}
 
-	public String[] getProposedExpense(){
+	public String[] getProposedExpense() {
 		return _proposedExpense;
 	}
 
-	public Double getAdditionalMaxHours(){
+	public Double getAdditionalMaxHours() {
 		return _additionalMaxHours;
 	}
 
-	public Double getMaxHours(){
+	public Double getMaxHours() {
 		return _maxHours;
 	}
 
-	public Double getAdditionalHourRate(){
+	public Double getAdditionalHourRate() {
 		return _additionalHourRate;
 	}
 
-	public Double getFixedHourRate(){
+	public Double getFixedHourRate() {
 		return _fixedHourRate;
 	}
 
-	public Double getFixedHours(){
+	public Double getFixedHours() {
 		return _fixedHours;
 	}
 
-	public Double getFixedTotalAmount(){
+	public Double getFixedTotalAmount() {
 		return _fixedTotalAmount;
 	}
 
-	public Integer getMaximumAmount(){
+	public Integer getMaximumAmount() {
 		return _maximumAmount;
 	}
 
-	public String getExpiresAfter(){
+	public String getExpiresAfter() {
 		return _expiresAfter;
 	}
 
-	public Double getMaxDevices(){
+	public Double getMaxDevices() {
 		return _maxDevices;
 	}
 
-	public String getDescription(){
+	public String getDescription() {
 		return _description;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 
