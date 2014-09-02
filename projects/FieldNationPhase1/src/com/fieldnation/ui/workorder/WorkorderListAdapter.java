@@ -248,6 +248,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			if (view.isBundle()) {
 				Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
 				intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+				intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, workorder.getBundleId());
 				getContext().startActivity(intent);
 
 			} else {

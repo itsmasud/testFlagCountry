@@ -368,15 +368,18 @@ public class J2J {
 			JsonArray messages = new JsonArray();
 			for (int i = 0; i < workorders.size(); i++) {
 				JsonObject workorder = workorders.getJsonObject(i);
-
-				String url = "/api/rest/v1/workorder/bundle/" + workorder.getLong("workorderId") + "?access_token=" + authToken;
-				Log.println(url);
 				try {
-					Result result = Ws.httpGet(hostname, url);
+					String url = "/api/rest/v1/workorder/bundle/" + workorder.getLong("bundleId") + "?access_token=" + authToken;
+					Log.println(url);
+					try {
+						Result result = Ws.httpGet(hostname, url);
 
-					Log.println(result.getResultsAsString());
+						Log.println(result.getResultsAsString());
 
-					messages.merge(result.getResultsAsJsonArray());
+						messages.add(result.getResultsAsJsonObject());
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 
 public class WorkorderListFragment extends Fragment {
-	private static final String TAG = "ui.workorder.MyWorkListFragment";
+	private static final String TAG = "ui.workorder.WorkorderListFragment";
 
 	// UI
 	private PullToRefreshListView _listView;

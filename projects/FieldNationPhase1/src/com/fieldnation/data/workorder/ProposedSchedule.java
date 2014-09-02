@@ -6,7 +6,7 @@ import com.fieldnation.json.annotations.Json;
 
 public class ProposedSchedule{
 	@Json(name="endTime")
-	private Object _endTime;
+	private String _endTime;
 	@Json(name="startTime")
 	private String _startTime;
 	@Json(name="startTimeStamp")

@@ -25,7 +25,7 @@ public class Workorder {
 	@Json(name = "pay")
 	private Pay _pay;
 	@Json(name = "bundleId")
-	private Integer _bundleId;
+	private Long _bundleId;
 	@Json(name = "customFields")
 	private CustomField[] _customFields;
 	@Json(name = "declinedWo")
@@ -112,7 +112,7 @@ public class Workorder {
 	// private Label[] _label;
 	@Json(name = "shipmentTracking")
 	private ShipmentTracking[] _shipmentTracking;
-	@Json(name="isWoOnHold")
+	@Json(name = "isWoOnHold")
 	private Boolean _isWoOnHold;
 
 	public Workorder() {
@@ -146,7 +146,7 @@ public class Workorder {
 		return _pay;
 	}
 
-	public Integer getBundleId() {
+	public Long getBundleId() {
 		return _bundleId;
 	}
 
@@ -301,7 +301,7 @@ public class Workorder {
 		return _alerts;
 	}
 
-	public Double getCancelFee(){
+	public Double getCancelFee() {
 		return _cancelFee;
 	}
 
@@ -337,7 +337,7 @@ public class Workorder {
 		return _shipmentTracking;
 	}
 
-	public Boolean getIsWoOnHold(){
+	public Boolean getIsWoOnHold() {
 		return _isWoOnHold;
 	}
 

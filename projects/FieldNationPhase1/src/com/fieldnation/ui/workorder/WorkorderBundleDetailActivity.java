@@ -1,35 +1,54 @@
 package com.fieldnation.ui.workorder;
 
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.text.NumberFormat;
 import java.text.ParseException;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class WorkorderBundleDetailActivity extends BaseActivity {
 	private static final String TAG = "ui.workorder.WorkorderBundleDetailActivity";
 
 	public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:workorder_id";
+	public static final String INTENT_FIELD_BUNDLE_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:bundle_id";
 
 	private static final int WEB_GET_BUNDLE = 1;
 	private static final int WEB_GET_DETAILS = 2;
 
 	// UI
+	private ListView _listview;
+	private TextView _distanceTextView;
+	private TextView _dateTextView;
+	private Button _requestButton;
+
 	// Data
 	private GlobalState _gs;
 	private long _workorderId = 0;
+	private long _bundleId = 0;
 	private WorkorderService _service;
+	private BundleAdapter _adapter;
+	private com.fieldnation.data.workorder.Bundle _woBundle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +66,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 
 		if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
 			_workorderId = intent.getLongExtra(INTENT_FIELD_WORKORDER_ID, -1);
+			_bundleId = intent.getLongExtra(INTENT_FIELD_BUNDLE_ID, -1);
 		} else {
 			finish();
 			return;
@@ -57,9 +77,23 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 			return;
 		}
 
+		_listview = (ListView) findViewById(R.id.items_listview);
+		_distanceTextView = (TextView) findViewById(R.id.distance_textview);
+		_dateTextView = (TextView) findViewById(R.id.date_textview);
+		_requestButton = (Button) findViewById(R.id.request_button);
+		_requestButton.setOnClickListener(_request_onClick);
+
 		_gs.requestAuthentication(_authclient);
 		// TODO put into wait mode
 	}
+
+	private View.OnClickListener _request_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
 
 	private AuthenticationClient _authclient = new AuthenticationClient() {
 		@Override
@@ -70,7 +104,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 		@Override
 		public void onAuthentication(String username, String authToken) {
 			_service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
-			startService(_service.getBundle(WEB_GET_BUNDLE, _workorderId, false));
+			startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
 			startService(_service.getDetails(WEB_GET_DETAILS, _workorderId, false));
 		}
 
@@ -93,12 +127,31 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 
 			} else if (resultCode == WEB_GET_BUNDLE) {
 				try {
-					Workorder workorder = Workorder.fromJson(new JsonObject(new String(data)));
-				} catch (ParseException e) {
+					_woBundle = com.fieldnation.data.workorder.Bundle.fromJson(new JsonObject(new String(data)));
+					NumberFormat form = NumberFormat.getNumberInstance();
+					form.setMinimumFractionDigits(1);
+					form.setMaximumFractionDigits(1);
+
+					try {
+						_distanceTextView.setText("Average Distance: " + form.format(_woBundle.getAverageDistance()) + " mi");
+					} catch (Exception ex) {
+					}
+					try {
+						_requestButton.setText("Request (" + _woBundle.getWorkorder().length + ")");
+					} catch (Exception ex) {
+					}
+					try {
+						_dateTextView.setText("Range " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
+					} catch (Exception ex) {
+					}
+
+					_adapter = new BundleAdapter(_woBundle, _wocard_listener);
+
+					_listview.setAdapter(_adapter);
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		}
 
@@ -117,5 +170,70 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 		Log.v(TAG, "Method Stub: onRefresh()");
 
 	}
+
+	private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.Listener() {
+		@Override
+		public void viewCounter(Workorder workorder) {
+			// TODO Method Stub: viewCounter()
+			Log.v(TAG, "Method Stub: viewCounter()");
+
+		}
+
+		@Override
+		public void onViewPayments(WorkorderCardView view, Workorder workorder) {
+			// TODO Method Stub: onViewPayments()
+			Log.v(TAG, "Method Stub: onViewPayments()");
+
+		}
+
+		@Override
+		public void onLongClick(WorkorderCardView view, Workorder workorder) {
+			// TODO Method Stub: onLongClick()
+			Log.v(TAG, "Method Stub: onLongClick()");
+
+		}
+
+		@Override
+		public void onClick(WorkorderCardView view, Workorder workorder) {
+			Intent intent = new Intent(WorkorderBundleDetailActivity.this, WorkorderActivity.class);
+			intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+			WorkorderBundleDetailActivity.this.startActivity(intent);
+		}
+
+		@Override
+		public void actionRequest(Workorder workorder) {
+			// TODO Method Stub: actionRequest()
+			Log.v(TAG, "Method Stub: actionRequest()");
+
+		}
+
+		@Override
+		public void actionCheckout(Workorder workorder) {
+			// TODO Method Stub: actionCheckout()
+			Log.v(TAG, "Method Stub: actionCheckout()");
+
+		}
+
+		@Override
+		public void actionCheckin(Workorder workorder) {
+			// TODO Method Stub: actionCheckin()
+			Log.v(TAG, "Method Stub: actionCheckin()");
+
+		}
+
+		@Override
+		public void actionAssignment(Workorder workorder) {
+			// TODO Method Stub: actionAssignment()
+			Log.v(TAG, "Method Stub: actionAssignment()");
+
+		}
+
+		@Override
+		public void actionAcknowledgeHold(Workorder workorder) {
+			// TODO Method Stub: actionAcknowledgeHold()
+			Log.v(TAG, "Method Stub: actionAcknowledgeHold()");
+
+		}
+	};
 
 }
