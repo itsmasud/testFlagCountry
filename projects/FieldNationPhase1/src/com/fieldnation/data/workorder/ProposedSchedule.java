@@ -4,35 +4,36 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class ProposedSchedule{
-	@Json(name="endTime")
+public class ProposedSchedule {
+	@Json(name = "endTime")
 	private String _endTime;
-	@Json(name="startTime")
+	@Json(name = "startTime")
 	private String _startTime;
-	@Json(name="startTimeStamp")
+	@Json(name = "startTimeStamp")
 	private Integer _startTimeStamp;
-	@Json(name="endTimeStamp")
+	@Json(name = "endTimeStamp")
 	private Integer _endTimeStamp;
 
-	public ProposedSchedule(){
+	public ProposedSchedule() {
 	}
-	public Object getEndTime(){
+
+	public String getEndTime() {
 		return _endTime;
 	}
 
-	public String getStartTime(){
+	public String getStartTime() {
 		return _startTime;
 	}
 
-	public Integer getStartTimeStamp(){
+	public Integer getStartTimeStamp() {
 		return _startTimeStamp;
 	}
 
-	public Integer getEndTimeStamp(){
+	public Integer getEndTimeStamp() {
 		return _endTimeStamp;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

@@ -18,7 +18,7 @@ public class CounterOffer{
 	@Json(name="proposedSchedule")
 	private ProposedSchedule _proposedSchedule;
 	@Json(name="proposedExpense")
-	private Object[] _proposedExpense;
+	private String[] _proposedExpense;
 	@Json(name="additionalMaxHours")
 	private Double _additionalMaxHours;
 	@Json(name="maxHours")
@@ -66,7 +66,7 @@ public class CounterOffer{
 		return _proposedSchedule;
 	}
 
-	public Object[] getProposedExpense(){
+	public String[] getProposedExpense(){
 		return _proposedExpense;
 	}
 

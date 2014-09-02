@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class WorkorderBundleDetailActivity extends BaseActivity {
@@ -34,13 +35,13 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 	public static final String INTENT_FIELD_BUNDLE_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:bundle_id";
 
 	private static final int WEB_GET_BUNDLE = 1;
-	private static final int WEB_GET_DETAILS = 2;
 
 	// UI
 	private ListView _listview;
 	private TextView _distanceTextView;
 	private TextView _dateTextView;
 	private Button _requestButton;
+	private RelativeLayout _loadingLayout;
 
 	// Data
 	private GlobalState _gs;
@@ -82,8 +83,10 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 		_dateTextView = (TextView) findViewById(R.id.date_textview);
 		_requestButton = (Button) findViewById(R.id.request_button);
 		_requestButton.setOnClickListener(_request_onClick);
+		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
 		_gs.requestAuthentication(_authclient);
+		_loadingLayout.setVisibility(View.VISIBLE);
 		// TODO put into wait mode
 	}
 
@@ -105,7 +108,6 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 		public void onAuthentication(String username, String authToken) {
 			_service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
 			startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
-			startService(_service.getDetails(WEB_GET_DETAILS, _workorderId, false));
 		}
 
 		@Override
@@ -123,9 +125,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 			Log.v(TAG, resultData.toString());
 			byte[] data = resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA);
 			Log.v(TAG, new String(data));
-			if (resultCode == WEB_GET_DETAILS) {
-
-			} else if (resultCode == WEB_GET_BUNDLE) {
+			if (resultCode == WEB_GET_BUNDLE) {
 				try {
 					_woBundle = com.fieldnation.data.workorder.Bundle.fromJson(new JsonObject(new String(data)));
 					NumberFormat form = NumberFormat.getNumberInstance();
@@ -148,6 +148,8 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 					_adapter = new BundleAdapter(_woBundle, _wocard_listener);
 
 					_listview.setAdapter(_adapter);
+
+					_loadingLayout.setVisibility(View.GONE);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -166,9 +168,9 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 
 	@Override
 	public void onRefresh() {
-		// TODO Method Stub: onRefresh()
-		Log.v(TAG, "Method Stub: onRefresh()");
-
+		if (_service != null) {
+			startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
+		}
 	}
 
 	private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.Listener() {

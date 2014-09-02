@@ -94,9 +94,18 @@ public class DocumentView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent(Intent.ACTION_VIEW);
-			intent.setDataAndType(Uri.parse(_document.getFilePath()), _document.getFileType());
-			getContext().startActivity(intent);
+			try {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setDataAndType(Uri.parse(_document.getFilePath()), _document.getFileType());
+				getContext().startActivity(intent);
+			} catch (Exception ex) {
+				try {
+					Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_document.getFilePath()));
+					getContext().startActivity(intent);
+				} catch (Exception ex1) {
+					ex1.printStackTrace();
+				}
+			}
 		}
 	};
 }
