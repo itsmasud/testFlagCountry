@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.fieldnation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:orientation="horizontal" >
+
+    <com.fieldnation.ui.workorder.detail.ProgressNode
+        android:id="@+id/progressNode1"
+        style="@style/WorkorderDetail_ProgressNode"
+        app:text="Available" />
+
+    <ImageView
+        android:id="@+id/sep1"
+        style="@style/WorkorderDetail_ProgressSep"
+        android:layout_gravity="center_vertical" />
+
+    <com.fieldnation.ui.workorder.detail.ProgressNode
+        android:id="@+id/progressNode2"
+        style="@style/WorkorderDetail_ProgressNode"
+        app:text="Requested" />
+
+    <ImageView
+        android:id="@+id/sep2"
+        style="@style/WorkorderDetail_ProgressSep"
+        android:layout_gravity="center_vertical" />
+
+    <com.fieldnation.ui.workorder.detail.ProgressNode
+        android:id="@+id/progressNode3"
+        style="@style/WorkorderDetail_ProgressNode"
+        app:text="Confirm" />
+
+    <ImageView
+        android:id="@+id/sep3"
+        style="@style/WorkorderDetail_ProgressSep"
+        android:layout_gravity="center_vertical" />
+
+    <com.fieldnation.ui.workorder.detail.ProgressNode
+        android:id="@+id/progressNode4"
+        style="@style/WorkorderDetail_ProgressNode"
+        app:text="Assigned" />
+
+</LinearLayout>

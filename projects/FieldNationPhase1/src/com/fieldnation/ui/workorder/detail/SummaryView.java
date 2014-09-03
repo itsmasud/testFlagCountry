@@ -19,7 +19,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 	// UI
 	private TextView _substatusTextView;
-	private View _substatusProgress; // TODO, need to implement!
+	// private View _substatusProgress; // TODO, need to implement!
 	private TextView _projectNameTextView;
 	private TextView _workorderIdTextView;
 	private TextView _worktypeTextView;
@@ -53,7 +53,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 			return;
 
 		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
-		_substatusProgress = findViewById(R.id.substatus_progress);
+		// _substatusProgress = findViewById(R.id.substatus_progress);
 		_projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
 		_workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
 		_worktypeTextView = (TextView) findViewById(R.id.worktype_textview);
