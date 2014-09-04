@@ -16,7 +16,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/carrier_spinner"
-            android:background="@drawable/wo_details_text_border"
+            android:background="@drawable/textview_bg"
             android:gravity="center_vertical"
             android:hint="@string/tracking_id"
             android:paddingLeft="10dp" />

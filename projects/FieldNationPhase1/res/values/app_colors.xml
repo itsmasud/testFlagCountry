@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <color name="transparent">#00000000</color>
+    <color name="loading_bar_color_1">#FF47D3AF</color>
+    <color name="loading_bar_color_2">#FF42CFB2</color>
+    <color name="loading_bar_color_3">#FF54C5C8</color>
+    <color name="loading_bar_color_4">#FF68B8E1</color>
+    <color name="loading_bar_color_5">#FF7EAFF5</color>
+
+    <integer-array name="loading_bar_colors">
+        <item>@color/loading_bar_color_1</item>
+        <item>@color/loading_bar_color_5</item>
+    </integer-array>
+
+    <color name="text_normal">#FF000000</color>
+    <color name="text_success">#FF48CEAD</color>
+    <color name="text_waiting">#FF6D6D62</color>
+    <color name="text_warning">#FFFC6102</color>
+
+    <integer-array name="status_text_colors">
+        <item>@color/text_normal</item>
+        <item>@color/text_success</item>
+        <item>@color/text_waiting</item>
+        <item>@color/text_warning</item>
+    </integer-array>
+
+    <!-- cards -->
+    <color name="card_inside_bg">#FFFCFCFC</color>
+    <color name="card_bevel">#FFe0e0e0</color>
+    <!-- drawer -->
+    <color name="drawerBackground">#FFe7e8da</color>
+    <color name="drawerHighlightBackground">#FFc0e4bc</color>
+    <color name="drawerHighlightBorder">#FF5cc087</color>
+    <color name="drawerForeground">#FFcecfc0</color>
+    <color name="drawerPaymentEstimatedAmountBackground">#FF3bc89e</color>
+    <color name="drawerPaymentPaidAmountBackground">#FF69695d</color>
+    <color name="drawerPaymentAmountForeground">#FFFFFFFF</color>
+
+    <!-- notifications -->
+    <color name="notificationBackground">#FFfe6200</color>
+    <color name="notificationForeground">#FFFFFFFF</color>
+
+    <!-- payments -->
+    <color name="payment_header_background">#FF3fcca9</color>
+    <color name="payment_header_bg_paid">#FF6a6a5e</color>
+
+    <!-- workorder colors -->
+    <color name="woCardBackground">#00000000</color>
+    <color name="woCardOptionsBackground">#FF383f49</color>
+    <color name="woCardStatusLabel1">#FF000000</color>
+    <color name="woCardStatusLabel2">#FFFFFFFF</color>
+    <color name="woCardStatusLabel3">#FFFFFFFF</color>
+    <color name="woCardStatusLabel4">#FFFFFFFF</color>
+    <color name="woCardSelectedTextColor">#FFFFFFFF</color>
+    <color name="woCardTextColor">#FF000000</color>
+
+    <!-- workorder detail colors -->
+    <color name="workorder_detail_bg">#FFf3f3eb</color>
+    <color name="workorder_detail_separator_color">#FFe9e9e7</color>
+
+    <!-- workorder detail tab -->
+    <color name="workorder_tab_separator_color">#FFe9e9e7</color>
+    <color name="workorder_tab_text_selected">#FF424314</color>
+    <color name="workorder_tab_text">#FFbcbdb7</color>
+    <color name="workorder_tab_bg">#FFf3f3eb</color>
+
+</resources>

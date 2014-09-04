@@ -2,8 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/WorkorderDetail"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#FFf3f3eb" >
+    android:layout_height="wrap_content" >
 
     <LinearLayout
         style="@style/WorkorderDetail_Data"
