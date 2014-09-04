@@ -8,10 +8,9 @@
 
     <ImageView
         android:id="@+id/icon_imageview"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_wo_detail_progress_active" />
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:id="@+id/label_textview"

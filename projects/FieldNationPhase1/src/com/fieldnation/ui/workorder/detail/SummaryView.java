@@ -18,8 +18,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.SummaryView";
 
 	// UI
-	private TextView _substatusTextView;
-	// private View _substatusProgress; // TODO, need to implement!
+	private WoProgressBar _progress;
 	private TextView _projectNameTextView;
 	private TextView _workorderIdTextView;
 	private TextView _worktypeTextView;
@@ -30,7 +29,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 	// Data
 	private Workorder _workorder;
-	private String[] _substatus;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -52,8 +50,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 		if (isInEditMode())
 			return;
 
-		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
-		// _substatusProgress = findViewById(R.id.substatus_progress);
+		_progress = (WoProgressBar) findViewById(R.id.substatus_progressbar);
 		_projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
 		_workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
 		_worktypeTextView = (TextView) findViewById(R.id.worktype_textview);
@@ -62,8 +59,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 		_confidentialButton = (Button) findViewById(R.id.confidential_button);
 		_policiesButton = (Button) findViewById(R.id.policies_button);
-
-		_substatus = getResources().getStringArray(R.array.workorder_substatus);
 	}
 
 	/*-*************************************-*/
@@ -78,8 +73,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void refresh() {
-		_substatusTextView.setText(_substatus[_workorder.getStatus().getWorkorderSubstatus().ordinal()]);
-		// TODO set progress bar here
+		_progress.setSubstatus(_workorder.getStatus().getWorkorderSubstatus());
 		_projectNameTextView.setText(_workorder.getTitle());
 
 		_workorderIdTextView.setText("ID " + _workorder.getWorkorderId());
@@ -95,6 +89,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 		_descriptionTextView.setText(Html.fromHtml(_workorder.getFullWorkDescription()).toString());
 
+		_worktypeTextView.setText(_workorder.getTypeOfWork());
 		// TODO hook up policies
 		// TODO hook up confidential info
 	}

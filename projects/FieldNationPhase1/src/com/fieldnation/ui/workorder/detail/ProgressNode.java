@@ -52,4 +52,14 @@ public class ProgressNode extends RelativeLayout {
 	public int getIconWidth() {
 		return _iconImageView.getWidth();
 	}
+
+	public void setActive(boolean active) {
+		if (active) {
+			_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_active);
+		} else {
+			_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_inactive);
+		}
+		invalidate();
+
+	}
 }

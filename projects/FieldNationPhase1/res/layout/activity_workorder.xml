@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#FFf3f3eb" >
 
     <!-- The main content view -->
 
@@ -21,7 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
-            android:layout_below="@+id/tabview" />
+            android:layout_below="@+id/tabview"
+            android:background="#FFf3f3eb" />
 
         <!-- loading layout -->
 

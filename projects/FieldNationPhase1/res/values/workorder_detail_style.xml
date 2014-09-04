@@ -60,17 +60,18 @@
     </style>
 
     <style name="WorkorderDetail_ProgressSep">
-        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">0dp</item>
-        <item name="android:layout_marginRight">0dp</item>
-        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginLeft">32dp</item>
+        <item name="android:layout_marginRight">32dp</item>
         <item name="android:background">@drawable/wo_detail_progress_sep</item>
     </style>
 
     <style name="WorkorderDetail_ProgressNode">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
 </resources>
