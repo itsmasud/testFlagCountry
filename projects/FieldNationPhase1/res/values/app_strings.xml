@@ -96,7 +96,9 @@
     <string name="provider_must_have_the_following_skillsets">Provider must have the following skillsets:</string>
     <string name="provider_must_confirm_assignment">Provider must confirm assignment</string>
     <string name="prerequisites">Prerequisites</string>
-    <string name="this_work_order_as_no_notification_at_this_time">This work order as no notification at this time.</string>
+    <string name="this_work_order_as_no_notification_at_this_time">This work order as no notifications at this time.</string>
+    <string name="tasks_are_associated_with_this_work_order"> tasks are associated with this work order</string>
+    <string name="view_all_tasks">View All Tasks</string>
 
     <!-- /general strings -->
 

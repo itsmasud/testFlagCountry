@@ -45,7 +45,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
 	public ShipmentView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_shipment, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_shipment, this);
 
 		if (isInEditMode())
 			return;

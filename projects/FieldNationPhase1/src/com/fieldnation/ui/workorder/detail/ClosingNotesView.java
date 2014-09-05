@@ -48,7 +48,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
 	public ClosingNotesView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_closing_notes, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_closing_notes, this);
 
 		if (isInEditMode())
 			return;

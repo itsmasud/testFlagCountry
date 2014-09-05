@@ -49,7 +49,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 
 	public ScheduleView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_schedule, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_schedule, this);
 
 		if (isInEditMode())
 			return;

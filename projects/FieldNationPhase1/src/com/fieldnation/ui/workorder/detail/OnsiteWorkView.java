@@ -26,7 +26,7 @@ public class OnsiteWorkView extends LinearLayout implements WorkorderRenderer {
 
 	public OnsiteWorkView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_onsitework, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_onsitework, this);
 
 		if (isInEditMode())
 			return;

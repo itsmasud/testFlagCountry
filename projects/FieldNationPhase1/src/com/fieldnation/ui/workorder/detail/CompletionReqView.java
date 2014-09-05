@@ -26,7 +26,7 @@ public class CompletionReqView extends LinearLayout implements WorkorderRenderer
 
 	public CompletionReqView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_completion_req, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_completion_req, this);
 
 		if (isInEditMode())
 			return;

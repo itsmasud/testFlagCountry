@@ -3,10 +3,12 @@ package com.fieldnation.ui.workorder.detail;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,7 +34,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
 	public LocationView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_location, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_location, this);
 
 		if (isInEditMode())
 			return;
@@ -61,8 +63,13 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 			this.setVisibility(GONE);
 			return;
 		}
-
-		_addressTextView.setText(location.getFullAddress());
+		String fullAddr = location.getFullAddress();
+		if (misc.isEmptyOrNull(fullAddr)) {
+			_addressTextView.setText(fullAddr);
+			_addressTextView.setVisibility(View.VISIBLE);
+		} else {
+			_addressTextView.setVisibility(View.GONE);
+		}
 
 		if (_workorder.getDistance() != null) {
 			_distanceTextView.setText(_workorder.getDistance() + " mi");
@@ -72,10 +79,15 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
 		String contactInfo = "";
 
-		contactInfo += location.getContactName() + "\n";
-		contactInfo += location.getContactEmail() + "\n";
-		contactInfo += location.getContactPhone();
-		_contactInfoTextView.setText(contactInfo);
+		if (!misc.isEmptyOrNull(location.getContactName()) && !misc.isEmptyOrNull(location.getContactEmail()) && !misc.isEmptyOrNull(location.getContactPhone())) {
+			contactInfo += location.getContactName() + "\n";
+			contactInfo += location.getContactEmail() + "\n";
+			contactInfo += location.getContactPhone();
+			_contactInfoTextView.setText(contactInfo);
+			_contactInfoTextView.setVisibility(View.VISIBLE);
+		} else {
+			_contactInfoTextView.setVisibility(View.GONE);
+		}
 
 		if (location.getNotes() != null) {
 			_descriptionTextView.setText(location.getNotes());

@@ -34,7 +34,7 @@ public class WoProgressBar extends RelativeLayout {
 	}
 
 	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_wodetail_progress, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_progress, this);
 
 		if (isInEditMode())
 			return;

@@ -10,17 +10,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <!-- Summary -->
+
         <com.fieldnation.ui.workorder.detail.SummaryView
-            android:id="@+id/detailsum_view"
+            android:id="@+id/summaryview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <View
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
+
+        <!-- tasks -->
+
+        <com.fieldnation.ui.workorder.detail.TaskSumView
+            android:id="@+id/tasksumview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <!-- location -->
 
         <com.fieldnation.ui.workorder.detail.LocationView
-            android:id="@+id/location_view"
+            android:id="@+id/locationview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -28,8 +43,8 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.ui.workorder.detail.ScheduleView
-            android:id="@+id/schedule_view"
+        <com.fieldnation.ui.workorder.detail.ScheduleSumView
+            android:id="@+id/scheduleview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -45,20 +60,6 @@
         <View
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
-
-        <com.fieldnation.ui.workorder.detail.ClosingNotesView
-            android:id="@+id/closingnotes_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <View
-            style="@style/WorkorderDetail_Separator"
-            android:layout_width="match_parent" />
-
-        <com.fieldnation.ui.workorder.detail.ExpectedPaymentView
-            android:id="@+id/expected_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </ScrollView>

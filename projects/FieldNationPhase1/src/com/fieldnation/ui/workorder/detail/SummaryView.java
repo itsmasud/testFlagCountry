@@ -45,7 +45,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_detail_sum, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_sum, this);
 
 		if (isInEditMode())
 			return;
@@ -77,8 +77,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 		_projectNameTextView.setText(_workorder.getTitle());
 
 		_workorderIdTextView.setText("ID " + _workorder.getWorkorderId());
-
-		_workorderIdTextView.setText(_workorder.getTypeOfWork());
 
 		if (misc.isEmptyOrNull(_workorder.getCompanyName()))
 			_companyTextView.setVisibility(GONE);

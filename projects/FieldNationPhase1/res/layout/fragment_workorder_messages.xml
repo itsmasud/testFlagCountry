@@ -6,9 +6,11 @@
 
     <ListView
         android:id="@+id/messages_listview"
+        style="@style/WorkorderDetail_Data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:divider="@null" />
+        android:divider="@null"
+        android:scrollbarStyle="outsideOverlay" />
 
 </RelativeLayout>

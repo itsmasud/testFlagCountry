@@ -26,7 +26,7 @@ public class PrereqView extends LinearLayout implements WorkorderRenderer {
 
 	public PrereqView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_prereq, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_prereq, this);
 
 		if (isInEditMode())
 			return;

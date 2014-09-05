@@ -34,7 +34,7 @@ public class ProgressNode extends RelativeLayout {
 	}
 
 	private void init(AttributeSet attrs, int defStyle) {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_wodetail_progress_node, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_progress_node, this);
 
 		if (isInEditMode())
 			return;

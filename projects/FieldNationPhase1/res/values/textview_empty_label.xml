@@ -7,6 +7,7 @@
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:visibility">gone</item>
+        <item name="android:gravity">center</item>
     </style>
 
 </resources>

@@ -57,7 +57,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 	public PaymentView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_payment, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_payment, this);
 
 		if (isInEditMode())
 			return;

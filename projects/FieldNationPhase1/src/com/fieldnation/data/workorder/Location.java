@@ -6,7 +6,7 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class Location {
-	@Json(name="name")
+	@Json(name = "name")
 	private String _name;
 	@Json(name = "distance")
 	private Double _distance;
@@ -20,26 +20,27 @@ public class Location {
 	private String _zip;
 	@Json(name = "contactPhone")
 	private String _contactPhone;
-	@Json(name="country")
+	@Json(name = "country")
 	private String _country;
 	@Json(name = "contactEmail")
 	private String _contactEmail;
 	@Json(name = "city")
 	private String _city;
-	@Json(name="distanceMapUrl")
+	@Json(name = "distanceMapUrl")
 	private String _distanceMapUrl;
-	@Json(name="notes")
+	@Json(name = "notes")
 	private String _notes;
 	@Json(name = "contactPhoneExt")
 	private Integer _contactPhoneExt;
-	@Json(name="type")
+	@Json(name = "type")
 	private String _type;
 	@Json(name = "contactName")
 	private String _contactName;
 
 	public Location() {
 	}
-	public String getName(){
+
+	public String getName() {
 		return _name;
 	}
 
@@ -67,7 +68,7 @@ public class Location {
 		return _contactPhone;
 	}
 
-	public String getCountry(){
+	public String getCountry() {
 		return _country;
 	}
 
@@ -79,11 +80,11 @@ public class Location {
 		return _city;
 	}
 
-	public String getDistanceMapUrl(){
+	public String getDistanceMapUrl() {
 		return _distanceMapUrl;
 	}
 
-	public String getNotes(){
+	public String getNotes() {
 		return _notes;
 	}
 
@@ -91,7 +92,7 @@ public class Location {
 		return _contactPhoneExt;
 	}
 
-	public String getType(){
+	public String getType() {
 		return _type;
 	}
 
@@ -149,20 +150,25 @@ public class Location {
 			if (address1 != null) {
 				return address1;
 			} else {
-				return null;
+				return "";
 			}
 		} else {
-			return null;
+			return "";
 		}
 	}
 
 	public String getFullAddress() {
-		String address = getTopAddressLine() + "\n";
+		String address = "";
 
-		address += _city + ", " + _state + " " + _zip + "\n";
-		address += _country;
+		if (misc.isEmptyOrNull(getTopAddressLine())) {
+			address = getTopAddressLine() + "\n";
+		}
+
+		if (!misc.isEmptyOrNull(_city) && !misc.isEmptyOrNull(_state) && !misc.isEmptyOrNull(_zip) && !misc.isEmptyOrNull(_country)) {
+			address += _city + ", " + _state + " " + _zip + "\n";
+			address += _country;
+		}
 
 		return address;
 	}
-
 }

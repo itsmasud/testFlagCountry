@@ -44,7 +44,7 @@ public class NotificationView extends RelativeLayout {
 	}
 
 	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_detail_note, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_note, this);
 
 		if (isInEditMode())
 			return;

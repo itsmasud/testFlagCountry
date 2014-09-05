@@ -51,7 +51,7 @@ public class DocumentView extends RelativeLayout {
 	}
 
 	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_detail_deliverable, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_deliverable, this);
 
 		if (isInEditMode())
 			return;
