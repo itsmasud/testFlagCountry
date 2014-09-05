@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="workorder_tab_separator_color">#FFe9e9e7</color>
+    <color name="workorder_tab_text_selected">#FF424314</color>
+    <color name="workorder_tab_text">#FFbcbdb7</color>
+    <color name="workorder_tab_bg">#FFf3f3eb</color>
+
+    <dimen name="workorder_tab_button_padding">15dp</dimen>
+    <dimen name="workorder_tab_bottom_separator_margin">15dp</dimen>
+    <dimen name="workorder_tab_top_margin">15dp</dimen>
+    <dimen name="workorder_tab_separator_thickness">2px</dimen>
+    <dimen name="workorder_tab_separator_height">24dp</dimen>
+    <dimen name="workorder_tab_image_width">32dp</dimen>
+    <dimen name="workorder_tab_image_height">32dp</dimen>
+    <dimen name="workorder_tab_separator_bottom_margin">20dp</dimen>
+
+    <style name="WorkorderTabView">
+        <item name="android:background">@color/workorder_tab_bg</item>
+    </style>
+
+    <style name="WorkorderTabView_TabContainer">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
+    </style>
+
+    <style name="WorkorderTabView_Tab">
+        <item name="android:layout_width">@dimen/workorder_tab_image_width</item>
+        <item name="android:layout_height">@dimen/workorder_tab_image_height</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+
+    <style name="WorkorderTabView_Sep_Horz">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/workorder_tab_separator_thickness</item>
+        <item name="android:layout_marginLeft">@dimen/workorder_tab_separator_bottom_margin</item>
+        <item name="android:layout_marginRight">@dimen/workorder_tab_separator_bottom_margin</item>
+        <item name="android:background">@color/workorder_tab_separator_color</item>
+    </style>
+
+    <style name="WorkorderTabView_Sep_Vert">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/workorder_tab_separator_thickness</item>
+        <item name="android:background">@color/workorder_tab_separator_color</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+</resources>

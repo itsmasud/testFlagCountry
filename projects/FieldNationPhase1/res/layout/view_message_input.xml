@@ -10,18 +10,15 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/send_button"
-        android:background="#FFFFFFFF"
-        android:hint="Continue the conversation..."
-        android:textColor="#FF000000" />
+        android:hint="@string/continue_the_conversation"
+        android:minLines="2" />
 
     <Button
         android:id="@+id/send_button"
+        style="@style/ButtonOrange"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/btn_orange"
-        android:text="Send"
-        android:textColor="#FFFFFFFF" />
+        android:text="@string/send" />
 
 </RelativeLayout>

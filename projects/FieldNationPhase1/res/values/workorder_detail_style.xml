@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- workorder detail colors -->
+    <color name="workorder_detail_bg">#FFf3f3eb</color>
+    <color name="workorder_detail_separator_color">#FFe9e9e7</color>
+
     <style name="WorkorderDetail">
         <item name="android:background">@color/workorder_detail_bg</item>
     </style>
@@ -36,27 +40,6 @@
 
     <style name="WorkorderDetail_FieldSubTitle" parent="WorkorderDetail_FieldTitle">
         <item name="android:textStyle">italic</item>
-    </style>
-
-    <style name="WorkorderDetail_CheckBox">
-        <item name="android:drawableLeft">@drawable/ic_checkbox_check</item>
-        <item name="android:button">@null</item>
-        <item name="android:background">@drawable/task_border</item>
-        <item name="android:layout_marginBottom">5dp</item>
-    </style>
-
-    <style name="WorkorderDetail_EditText">
-        <item name="android:layout_height">48dp</item>
-        <item name="android:background">@drawable/textview_bg</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:layout_marginBottom">10dp</item>
-    </style>
-
-    <style name="WorkorderDetail_RadioButton">
-        <item name="android:drawableLeft">@drawable/ic_radio_button</item>
-        <item name="android:button">@null</item>
-        <item name="android:background">@null</item>
     </style>
 
     <style name="WorkorderDetail_ProgressSep">

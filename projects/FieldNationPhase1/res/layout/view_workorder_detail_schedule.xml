@@ -8,22 +8,19 @@
         style="@style/WorkorderDetail_FieldTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Schedule" />
+        android:text="@string/schedule" />
 
     <Button
         android:id="@+id/add_button"
+        style="@style/ButtonOrange"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:background="@drawable/btn_orange"
-        android:text="Add"
-        android:textColor="#FFFFFFFF" />
-    <!-- TODO, need date/time pickers -->
+        android:text="@string/add" />
 
     <TextView
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Work Performed:" />
+        android:text="@string/work_performed" />
 
     <LinearLayout
         android:id="@+id/worklog_linearlayout"

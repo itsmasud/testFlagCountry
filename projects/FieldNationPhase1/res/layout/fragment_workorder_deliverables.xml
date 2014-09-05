@@ -26,7 +26,7 @@
                     style="@style/WorkorderDetail_FieldTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Documents to Review" />
+                    android:text="@string/documents_to_review" />
 
                 <LinearLayout
                     android:id="@+id/review_list"
@@ -52,7 +52,7 @@
                     style="@style/WorkorderDetail_FieldTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Documents to Upload" />
+                    android:text="@string/documents_to_upload" />
 
                 <LinearLayout
                     android:id="@+id/upload_list"
@@ -78,7 +78,7 @@
                     style="@style/WorkorderDetail_FieldTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="My Additional Files" />
+                    android:text="@string/my_additional_files" />
 
                 <LinearLayout
                     android:id="@+id/files_list"
@@ -89,13 +89,11 @@
 
             <Button
                 android:id="@+id/upload_button"
+                style="@style/ButtonOrange"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/btn_orange"
-                android:text="Upload File"
-                android:textColor="#FFFFFFFF" />
+                android:text="@string/upload_file" />
         </LinearLayout>
     </ScrollView>
 

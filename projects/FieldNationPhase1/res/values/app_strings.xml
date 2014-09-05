@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="default_username">hexixtech</string>
+    <string name="default_password">hexixtech</string>
+
     <!-- connection info -->
     <string name="fn_hostname">dev.fieldnation.com</string>
     <string name="fn_grant_type">password</string>
@@ -39,6 +42,7 @@
     <string name="bundle">Bundle</string>
     <string name="tracking_id">Tracking ID</string>
     <string name="carrier_name">Carrier Name</string>
+    <string name="carrier">Carrier</string>
     <string name="shipment_description">Shipment Description</string>
     <string name="shipping_to_site">Shipping to site</string>
     <string name="shipping_from_size">Shipping from site</string>
@@ -52,6 +56,36 @@
     <string name="amount">Amount</string>
     <string name="description">Description</string>
     <string name="by">by</string>
+    <string name="fixed_pay_amount">Fixed Pay Amount</string>
+    <string name="hourly_rate">Hourly Rate</string>
+    <string name="max_hours">Max Hours</string>
+    <string name="per_device_rate">Per Device Rate</string>
+    <string name="max_devices">Max Devices</string>
+    <string name="pay_of">Pay of</string>
+    <string name="per_hour_for_the_first">per hour for the first</string>
+    <string name="hours">hours</string>
+    <string name="then">then</string>
+    <string name="per_hour_up_to">per hour up to</string>
+    <string name="additional_hours">additional hours</string>
+    <string name="documents_to_review">Documents to Review</string>
+    <string name="documents_to_upload">Documents to Upload</string>
+    <string name="my_additional_files">My Additional Files</string>
+    <string name="upload_file">Upload File</string>
+    <string name="status_colon">Status: </string>
+    <string name="send">Send</string>
+    <string name="continue_the_conversation">Continue the conversation...</string>
+    <string name="pending">...pending</string>
+    <string name="add_shipment">Add Shipment</string>
+    <string name="shipment">Shipment</string>
+    <string name="schedule">Schedule</string>
+    <string name="work_performed">Work Performed: </string>
+    <string name="closing_notes">Closing Notes</string>
+    <string name="enter_closing_notes_here">Enter clkosing notes here...</string>
+    <string name="save">Save</string>
+    <string name="request_work">Request Work</string>
+    <string name="counter_offer">Counter Offer</string>
+    <string name="mark_work_as_complete">Mark Work as Complete</string>
+    
     <!-- /general strings -->
 
 

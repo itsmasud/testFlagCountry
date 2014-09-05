@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/MessageView"
+    style="@style/MessageCard"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
@@ -15,21 +15,21 @@
 
             <View
                 android:id="@+id/status_view"
-                android:layout_width="@dimen/MessageView_StatusWidth"
+                android:layout_width="@dimen/MessageCard_StatusWidth"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="26dp"
                 android:background="@drawable/card_status_white" />
 
             <View
                 android:id="@+id/filler"
-                style="@style/MessageView_Padding"
-                android:layout_width="@dimen/MessageView_PaddingWidth"
+                style="@style/MessageCard_Padding"
+                android:layout_width="@dimen/MessageCard_PaddingWidth"
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@+id/status_view" />
         </RelativeLayout>
 
         <LinearLayout
-            style="@style/MessageView_RightSide"
+            style="@style/MessageCard_RightSide"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
@@ -49,10 +49,10 @@
                 android:orientation="horizontal" >
 
                 <TextView
-                    style="@style/MessageView_StatusLabel"
+                    style="@style/MessageCard_StatusLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Status: "
+                    android:text="@string/status_colon"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -67,7 +67,7 @@
 
             <TextView
                 android:id="@+id/messagebody_textview"
-                style="@style/MessageView_Body"
+                style="@style/MessageCard_Body"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -77,7 +77,7 @@
 
             <TextView
                 android:id="@+id/time_textview"
-                style="@style/MessageView_Time"
+                style="@style/MessageCard_Time"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"

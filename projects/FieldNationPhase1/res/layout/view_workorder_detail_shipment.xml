@@ -8,15 +8,13 @@
         style="@style/WorkorderDetail_FieldTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Shipment" />
+        android:text="@string/shipment" />
 
     <Button
         android:id="@+id/add_button"
+        style="@style/ButtonOrange"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/btn_orange"
-        android:text="Add Shipment"
-        android:textColor="#FFFFFFFF" />
+        android:text="@string/add_shipment" />
 
     <LinearLayout
         android:id="@+id/shipments_linearlayout"

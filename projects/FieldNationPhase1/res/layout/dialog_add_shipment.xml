@@ -16,7 +16,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/carrier_spinner"
-            android:background="@drawable/textview_bg"
+            android:background="@drawable/edittext_bg"
             android:gravity="center_vertical"
             android:hint="@string/tracking_id"
             android:paddingLeft="10dp" />
@@ -27,18 +27,18 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/trackingid_edittext"
             android:layout_alignParentRight="true"
-            android:text="Carrier" />
+            android:text="@string/carrier" />
     </RelativeLayout>
 
     <EditText
         android:id="@+id/carrier_edittext"
-        style="@style/WorkorderDetail_EditText"
+        style="@style/EditText"
         android:layout_width="match_parent"
         android:hint="@string/carrier_name" />
 
     <EditText
         android:id="@+id/description_edittext"
-        style="@style/WorkorderDetail_EditText"
+        style="@style/EditText"
         android:layout_width="match_parent"
         android:hint="@string/shipment_description" />
 
@@ -49,13 +49,13 @@
 
         <RadioButton
             android:id="@+id/shiptosite_radio"
-            style="@style/WorkorderDetail_RadioButton"
+            style="@style/RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/shipping_to_site" />
 
         <RadioButton
-            style="@style/WorkorderDetail_RadioButton"
+            style="@style/RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/shipping_from_size" />

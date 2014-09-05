@@ -16,13 +16,13 @@
         android:orientation="vertical" >
 
         <CheckBox
-            style="@style/WorkorderDetail_CheckBox"
+            style="@style/CheckBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Provider must check out" />
 
         <CheckBox
-            style="@style/WorkorderDetail_CheckBox"
+            style="@style/CheckBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Provider must enter close out notes" />

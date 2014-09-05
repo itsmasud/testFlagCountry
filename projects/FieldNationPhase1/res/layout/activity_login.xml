@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/username"
-            android:text="hexixtech" />
+            android:text="@string/default_username" />
 
         <EditText
             android:id="@+id/password_edittext"
@@ -38,7 +38,7 @@
             android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword"
-            android:text="hexixtech" />
+            android:text="@string/default_password" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -46,7 +46,8 @@
 
             <Button
                 android:id="@+id/login_button"
-                android:layout_width="wrap_content"
+                style="@style/ButtonOrange"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="@string/login" />

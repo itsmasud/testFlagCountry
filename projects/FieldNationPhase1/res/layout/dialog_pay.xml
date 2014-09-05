@@ -19,7 +19,7 @@
             android:id="@+id/fixed_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Fixed Pay Amount" />
+            android:hint="@string/fixed_pay_amount" />
     </FrameLayout>
 
     <LinearLayout
@@ -33,13 +33,13 @@
             android:id="@+id/hourlyrate_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Hourly Rate" />
+            android:hint="@string/hourly_rate" />
 
         <EditText
             android:id="@+id/maxhours_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Max Hours" />
+            android:hint="@string/max_hours" />
     </LinearLayout>
 
     <LinearLayout
@@ -53,13 +53,13 @@
             android:id="@+id/devicerate_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Per Device Rate" />
+            android:hint="@string/per_device_rate" />
 
         <EditText
             android:id="@+id/maxdevices_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Max Devices" />
+            android:hint="@string/max_devices" />
     </LinearLayout>
 
     <LinearLayout
@@ -76,7 +76,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pay of" />
+                android:text="@string/pay_of" />
 
             <EditText
                 android:id="@+id/blendedhourlyrate_edittext"
@@ -87,7 +87,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="per hour for the first" />
+                android:text="@string/per_hour_for_the_first" />
 
             <EditText
                 android:id="@+id/blendedmaxhours_edittext"
@@ -98,7 +98,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="hours" />
+                android:text="@string/hours" />
         </LinearLayout>
 
         <LinearLayout
@@ -109,7 +109,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="then" />
+                android:text="@string/then" />
 
             <EditText
                 android:id="@+id/extrahours_edittext"
@@ -120,7 +120,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="per hour up to" />
+                android:text="@string/per_hour_up_to" />
 
             <EditText
                 android:id="@+id/extramaxhours_edittext"
@@ -131,12 +131,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="additional hours" />
+                android:text="@string/additional_hours" />
         </LinearLayout>
     </LinearLayout>
 
     <Button
         android:id="@+id/ok_button"
+        style="@style/ButtonGreen"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_gravity="right"

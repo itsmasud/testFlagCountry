@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/WorkorderTabView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/workorder_tab_bg"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -13,52 +13,35 @@
 
         <RelativeLayout
             android:id="@+id/detail_layout"
-            android:layout_width="64dp"
-            android:layout_height="64dp" >
+            style="@style/WorkorderTabView_TabContainer" >
 
             <ImageView
                 android:id="@+id/detail_imageview"
-                android:layout_width="@dimen/workorder_tab_image_width"
-                android:layout_height="@dimen/workorder_tab_image_height"
-                android:layout_centerInParent="true"
+                style="@style/WorkorderTabView_Tab"
                 android:background="@drawable/ic_workorder_tab_detail_button" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="@dimen/workorder_tab_separator_size"
-            android:layout_height="@dimen/workorder_tab_separator_height"
-            android:layout_gravity="center_vertical"
-            android:background="@color/workorder_tab_separator_color" />
+        <View style="@style/WorkorderTabView_Sep_Vert" />
 
         <RelativeLayout
             android:id="@+id/tasks_layout"
-            android:layout_width="64dp"
-            android:layout_height="64dp" >
+            style="@style/WorkorderTabView_TabContainer" >
 
             <ImageView
                 android:id="@+id/tasks_imageview"
-                android:layout_width="@dimen/workorder_tab_image_width"
-                android:layout_height="@dimen/workorder_tab_image_height"
-                android:layout_centerInParent="true"
+                style="@style/WorkorderTabView_Tab"
                 android:background="@drawable/ic_workorder_tab_task_button" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="@dimen/workorder_tab_separator_size"
-            android:layout_height="@dimen/workorder_tab_separator_height"
-            android:layout_gravity="center_vertical"
-            android:background="@color/workorder_tab_separator_color" />
+        <View style="@style/WorkorderTabView_Sep_Vert" />
 
         <RelativeLayout
             android:id="@+id/messages_layout"
-            android:layout_width="64dp"
-            android:layout_height="64dp" >
+            style="@style/WorkorderTabView_TabContainer" >
 
             <ImageView
                 android:id="@+id/messages_imageview"
-                android:layout_width="@dimen/workorder_tab_image_width"
-                android:layout_height="@dimen/workorder_tab_image_height"
-                android:layout_centerInParent="true"
+                style="@style/WorkorderTabView_Tab"
                 android:background="@drawable/ic_workorder_tab_messages_button" />
 
             <TextView
@@ -70,22 +53,15 @@
                 android:visibility="gone" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="@dimen/workorder_tab_separator_size"
-            android:layout_height="@dimen/workorder_tab_separator_height"
-            android:layout_gravity="center_vertical"
-            android:background="@color/workorder_tab_separator_color" />
+        <View style="@style/WorkorderTabView_Sep_Vert" />
 
         <RelativeLayout
             android:id="@+id/alert_layout"
-            android:layout_width="64dp"
-            android:layout_height="64dp" >
+            style="@style/WorkorderTabView_TabContainer" >
 
             <ImageView
                 android:id="@+id/alert_imageview"
-                android:layout_width="@dimen/workorder_tab_image_width"
-                android:layout_height="@dimen/workorder_tab_image_height"
-                android:layout_centerInParent="true"
+                style="@style/WorkorderTabView_Tab"
                 android:background="@drawable/ic_workorder_tab_alert_button" />
 
             <TextView
@@ -98,31 +74,19 @@
                 android:visibility="gone" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="@dimen/workorder_tab_separator_size"
-            android:layout_height="@dimen/workorder_tab_separator_height"
-            android:layout_gravity="center_vertical"
-            android:background="@color/workorder_tab_separator_color" />
+        <View style="@style/WorkorderTabView_Sep_Vert" />
 
         <RelativeLayout
             android:id="@+id/attachments_layout"
-            android:layout_width="64dp"
-            android:layout_height="64dp" >
+            style="@style/WorkorderTabView_TabContainer" >
 
             <ImageView
                 android:id="@+id/attachments_imageview"
-                android:layout_width="@dimen/workorder_tab_image_width"
-                android:layout_height="@dimen/workorder_tab_image_height"
-                android:layout_centerInParent="true"
+                style="@style/WorkorderTabView_Tab"
                 android:background="@drawable/ic_workorder_tab_attachments_button" />
         </RelativeLayout>
     </LinearLayout>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/workorder_tab_separator_size"
-        android:layout_marginLeft="@dimen/workorder_tab_separator_bottom_margin"
-        android:layout_marginRight="@dimen/workorder_tab_separator_bottom_margin"
-        android:background="@color/workorder_tab_separator_color" />
+    <View style="@style/WorkorderTabView_Sep_Horz" />
 
 </LinearLayout>

@@ -6,32 +6,40 @@
     <color name="btn_green_fg">#FFFFFFFF</color>
     <color name="btn_gray_fg">#FF000000</color>
 
-    <style name="ButtonWhite">
+    <style name="ButtonWhite" parent="@android:style/Widget.Button">
         <item name="android:textColor">@color/btn_white_fg</item>
         <item name="android:background">@drawable/btn_white</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
     </style>
 
-    <style name="ButtonOrange">
+    <style name="ButtonOrange" parent="@android:style/Widget.Button">
         <item name="android:textColor">@color/btn_orange_fg</item>
         <item name="android:background">@drawable/btn_orange</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">48dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
     </style>
 
-    <style name="ButtonGreen">
+    <style name="ButtonGreen" parent="@android:style/Widget.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/btn_green_fg</item>
         <item name="android:background">@drawable/btn_green</item>
         <item name="android:layout_height">48dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
     </style>
 
-    <style name="ButtonGray">
+    <style name="ButtonGray" parent="@android:style/Widget.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/btn_white_fg</item>
         <item name="android:background">@drawable/btn_white</item>
         <item name="android:layout_height">48dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
     </style>
 
 </resources>
