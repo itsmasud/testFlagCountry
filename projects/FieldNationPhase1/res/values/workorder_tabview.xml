@@ -39,8 +39,10 @@
     </style>
 
     <style name="WorkorderTabView_Sep_Vert">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">@dimen/workorder_tab_separator_thickness</item>
+        <item name="android:layout_marginTop">@dimen/workorder_tab_top_margin</item>
+        <item name="android:layout_marginBottom">@dimen/workorder_tab_top_margin</item>
+        <item name="android:layout_width">@dimen/workorder_tab_separator_thickness</item>
+        <item name="android:layout_height">fill_parent</item>
         <item name="android:background">@color/workorder_tab_separator_color</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>

@@ -43,18 +43,16 @@
         android:layout_height="wrap_content"
         android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. " />
 
-    <Button
-        android:id="@+id/confidential_button"
-        style="?android:attr/buttonStyleSmall"
+    <TextView
+        android:id="@+id/confidential_textview"
+        style="@style/TextViewLink"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View Confidential Information" />
+        android:text="@string/view_confidential_information" />
 
-    <Button
-        android:id="@+id/policies_button"
-        style="?android:attr/buttonStyleSmall"
+    <TextView
+        android:id="@+id/policies_textview"
+        style="@style/TextViewLink"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View Customer Policies and Procedures" />
+        android:text="@string/view_customer_policies_and_procedures" />
 
 </LinearLayout>

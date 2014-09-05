@@ -8,7 +8,7 @@
         style="@style/WorkorderDetail_FieldTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="On-site Work" />
+        android:text="@string/on_site_work" />
 
     <LinearLayout
         android:layout_width="match_parent"

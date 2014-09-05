@@ -33,7 +33,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	// TODO need to grab the description views at the top
 	private TextView _pay1TextView;
 	private TextView _pay2TextView;
-	private Button _termsButton;
+	private TextView _termsTextView;
 	private LinearLayout _addExpenseLayout;
 	private LinearLayout _addDiscountLayout;
 	private TextView _expensesLabelTextView;
@@ -66,7 +66,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		_pay1TextView = (TextView) findViewById(R.id.pay1_textview);
 		_pay2TextView = (TextView) findViewById(R.id.pay2_textview);
-		_termsButton = (Button) findViewById(R.id.terms_button);
+		_termsTextView = (TextView) findViewById(R.id.terms_textview);
 		_addExpenseLayout = (LinearLayout) findViewById(R.id.addexpense_layout);
 		_addExpenseLayout.setOnClickListener(_addExpense_onClick);
 

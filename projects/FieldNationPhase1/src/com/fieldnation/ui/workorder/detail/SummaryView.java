@@ -24,8 +24,8 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	private TextView _worktypeTextView;
 	private TextView _companyTextView;
 	private TextView _descriptionTextView;
-	private Button _confidentialButton;
-	private Button _policiesButton;
+	private TextView _confidentialTextView;
+	private TextView _policiesTextView;
 
 	// Data
 	private Workorder _workorder;
@@ -57,8 +57,8 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 		_companyTextView = (TextView) findViewById(R.id.company_textview);
 		_descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
-		_confidentialButton = (Button) findViewById(R.id.confidential_button);
-		_policiesButton = (Button) findViewById(R.id.policies_button);
+		_confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
+		_policiesTextView = (TextView) findViewById(R.id.policies_textview);
 	}
 
 	/*-*************************************-*/

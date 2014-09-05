@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class NotificationFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.NotificationFragment";
@@ -33,6 +34,7 @@ public class NotificationFragment extends WorkorderFragment {
 	// UI
 	private PullToRefreshListView _listview;
 	private SmoothProgressBar _loadingProgress;
+	private TextView _emptyTextView;
 
 	// Data
 	private GlobalState _gs;
@@ -63,6 +65,7 @@ public class NotificationFragment extends WorkorderFragment {
 		_adapter = new NotificationListAdapter();
 		_listview.setAdapter(_adapter);
 		_loadingProgress = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
+		_emptyTextView = (TextView) view.findViewById(R.id.empty_textview);
 	}
 
 	@Override
@@ -91,6 +94,10 @@ public class NotificationFragment extends WorkorderFragment {
 
 		_adapter.setNotifications(_notes);
 
+		if (_notes.size() == 0) {
+			_emptyTextView.setVisibility(View.VISIBLE);
+		}
+
 		_loadingProgress.setVisibility(View.GONE);
 		_listview.onRefreshComplete();
 	}
@@ -108,6 +115,7 @@ public class NotificationFragment extends WorkorderFragment {
 		_loadingProgress.setVisibility(View.VISIBLE);
 		_notes = null;
 		WEB_LIST_NOTIFICATIONS = _rand.nextInt();
+		_emptyTextView.setVisibility(View.GONE);
 		try {
 			_gs.startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
 		} catch (Exception ex) {
@@ -129,13 +137,13 @@ public class NotificationFragment extends WorkorderFragment {
 	private AuthenticationClient _authclient = new AuthenticationClient() {
 		@Override
 		public void onAuthenticationFailed(Exception ex) {
-			 Log.v(TAG, "onAuthenticationFailed");
+			Log.v(TAG, "onAuthenticationFailed");
 			_gs.requestAuthenticationDelayed(_authclient);
 		}
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			 Log.v(TAG, "onAuthentication");
+			Log.v(TAG, "onAuthentication");
 			_service = new WorkorderService(_gs, username, authToken, _resultReceiver);
 			getNotifications();
 		}

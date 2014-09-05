@@ -80,12 +80,24 @@
     <string name="schedule">Schedule</string>
     <string name="work_performed">Work Performed: </string>
     <string name="closing_notes">Closing Notes</string>
-    <string name="enter_closing_notes_here">Enter clkosing notes here...</string>
+    <string name="enter_closing_notes_here">Enter closing notes here...</string>
     <string name="save">Save</string>
     <string name="request_work">Request Work</string>
     <string name="counter_offer">Counter Offer</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>
-    
+    <string name="view_customer_policies_and_procedures">View Customer Policies and Procedures</string>
+    <string name="view_confidential_information">View Confidential Information</string>
+    <string name="view_field_nation_terms">View Field Nation Terms</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="add_discount">Add Discount</string>
+    <string name="expenses_colon">Expenses:</string>
+    <string name="discounts_colon">Discounts:</string>
+    <string name="payment">Payment</string>
+    <string name="provider_must_have_the_following_skillsets">Provider must have the following skillsets:</string>
+    <string name="provider_must_confirm_assignment">Provider must confirm assignment</string>
+    <string name="prerequisites">Prerequisites</string>
+    <string name="this_work_order_as_no_notification_at_this_time">This work order as no notification at this time.</string>
+
     <!-- /general strings -->
 
 

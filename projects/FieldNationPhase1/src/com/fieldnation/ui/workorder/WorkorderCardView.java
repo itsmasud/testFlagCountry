@@ -247,6 +247,7 @@ public class WorkorderCardView extends RelativeLayout {
 			_basisTextView.setVisibility(GONE);
 			_paymentTextView.setVisibility(GONE);
 			_rightLayout.setVisibility(GONE);
+			_moneySymbolTextView.setVisibility(GONE);
 			showAlertIcon(false);
 			showMessageAlertIcon(false);
 		} else {
@@ -254,6 +255,7 @@ public class WorkorderCardView extends RelativeLayout {
 			_titleTextView.setVisibility(VISIBLE);
 			_basisTextView.setVisibility(VISIBLE);
 			_paymentTextView.setVisibility(VISIBLE);
+			_moneySymbolTextView.setVisibility(VISIBLE);
 			_rightLayout.setVisibility(VISIBLE);
 			showAlertIcon(true);
 			showMessageAlertIcon(true);

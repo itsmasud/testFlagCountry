@@ -8,7 +8,7 @@
         style="@style/WorkorderDetail_FieldTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Payment" />
+        android:text="@string/payment" />
 
     <TextView
         android:id="@+id/pay1_textview"
@@ -25,12 +25,11 @@
         android:text="$75.00 per extra hour up to 5 hours"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/terms_button"
-        style="?android:attr/buttonStyleSmall"
+    <TextView
+        android:id="@+id/terms_textview"
+        style="@style/TextViewLink"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View Field Nation Terms" />
+        android:text="@string/view_field_nation_terms" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -52,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Add Expense" />
+                android:text="@string/add_expense" />
         </LinearLayout>
 
         <LinearLayout
@@ -71,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Add Discount" />
+                android:text="@string/add_discount" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -80,7 +79,7 @@
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Expenses:" />
+        android:text="@string/expenses_colon" />
 
     <LinearLayout
         android:id="@+id/expenses_linearlayout"
@@ -94,7 +93,7 @@
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Discounts:" />
+        android:text="@string/discounts_colon" />
 
     <LinearLayout
         android:id="@+id/discounts_linearlayout"
