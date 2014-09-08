@@ -13,7 +13,7 @@
         <!-- Summary -->
 
         <com.fieldnation.ui.workorder.detail.SummaryView
-            android:id="@+id/summaryview"
+            android:id="@+id/summary_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -24,7 +24,7 @@
         <!-- tasks -->
 
         <com.fieldnation.ui.workorder.detail.TaskSumView
-            android:id="@+id/tasksumview"
+            android:id="@+id/tasksum_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -35,7 +35,7 @@
         <!-- location -->
 
         <com.fieldnation.ui.workorder.detail.LocationView
-            android:id="@+id/locationview"
+            android:id="@+id/location_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -43,8 +43,8 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.ui.workorder.detail.ScheduleSumView
-            android:id="@+id/scheduleview"
+        <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
+            android:id="@+id/schedule_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

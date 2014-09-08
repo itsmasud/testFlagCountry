@@ -1,76 +1,76 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.text.ParseException;
+import java.util.Calendar;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.WorkLogDialog;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.RelativeLayout;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class ScheduleSummaryView extends RelativeLayout {
+public class ScheduleSummaryView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
 
+	private static final int WEB_SUBMIT_WORKLOG = 1;
+
 	// UI
-	private TextView _timeTextView;
-	private TextView _durationTextView;
+	private TextView _arriveTimeTextView;
+
+	// Data
+	private Workorder _workorder;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
 	/*-*************************************-*/
 
 	public ScheduleSummaryView(Context context) {
-		this(context, null, -1);
+		super(context);
+		init();
 	}
 
 	public ScheduleSummaryView(Context context, AttributeSet attrs) {
-		this(context, attrs, -1);
+		super(context, attrs);
+		init();
 	}
 
-	public ScheduleSummaryView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		LayoutInflater.from(context).inflate(R.layout.view_schedule_summary, this);
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_schedule_summary, this);
 
 		if (isInEditMode())
 			return;
 
-		_timeTextView = (TextView) findViewById(R.id.time_textview);
-		_durationTextView = (TextView) findViewById(R.id.duration_textview);
+		_arriveTimeTextView = (TextView) findViewById(R.id.arrivetime_view);
 	}
 
-	public void setLoggedWork(LoggedWork loggedWork) {
-		String startDate = loggedWork.getStartDate();
+	/*-*************************************-*/
+	/*-				Mutators				-*/
+	/*-*************************************-*/
 
-		String date = "";
-		try {
-			date = misc.formatDateTime(ISO8601.toCalendar(startDate), false);
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-		}
+	@Override
+	public void setWorkorder(Workorder workorder) {
+		_workorder = workorder;
+		refresh();
+	}
 
-		try {
-			String endDate = loggedWork.getEndDate();
-
-			endDate = misc.formatDateTime(ISO8601.toCalendar(endDate), false);
-
-			date += " to " + endDate;
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		_timeTextView.setText(date);
-
-		// TODO if endtime is not set, then calculate duration if and only if
-		// the current time is still the same day as the start time.
-
-		if (loggedWork.getHours() != null) {
-			_durationTextView.setText(loggedWork.getHours().intValue() + "hrs");
-		}
+	private void refresh() {
 
 	}
+
 }

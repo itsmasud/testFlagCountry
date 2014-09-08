@@ -44,19 +44,24 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 	/*-*************************************-*/
 
 	public ScheduleView(Context context) {
-		this(context, null);
+		super(context);
+		init();
 	}
 
 	public ScheduleView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_wd_schedule, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_schedule, this);
 
 		if (isInEditMode())
 			return;
-		_gs = (GlobalState) context.getApplicationContext();
+		_gs = (GlobalState) getContext().getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
-		_workLogDialog = new WorkLogDialog(context);
+		_workLogDialog = new WorkLogDialog(getContext());
 
 		_workLogLinearLayout = (LinearLayout) findViewById(R.id.worklog_linearlayout);
 		_addButton = (Button) findViewById(R.id.add_button);
@@ -140,7 +145,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 
 		if (loggedWork != null) {
 			for (int i = 0; i < loggedWork.length; i++) {
-				ScheduleSummaryView v = new ScheduleSummaryView(getContext());
+				ScheduleDetailView v = new ScheduleDetailView(getContext());
 				_workLogLinearLayout.addView(v);
 				v.setLoggedWork(loggedWork[i]);
 			}

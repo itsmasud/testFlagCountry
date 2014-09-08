@@ -1,13 +1,16 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
-public class TaskSumView extends RelativeLayout {
+public class TaskSumView extends RelativeLayout implements WorkorderRenderer {
+	private static final String TAG = "ui.workorder.detail.TaskSumView";
 
 	public TaskSumView(Context context) {
 		super(context);
@@ -29,5 +32,12 @@ public class TaskSumView extends RelativeLayout {
 
 		if (isInEditMode())
 			return;
+	}
+
+	@Override
+	public void setWorkorder(Workorder workorder) {
+		// TODO Method Stub: setWorkorder()
+		Log.v(TAG, "Method Stub: setWorkorder()");
+
 	}
 }

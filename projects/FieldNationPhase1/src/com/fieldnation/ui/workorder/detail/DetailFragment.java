@@ -15,10 +15,9 @@ public class DetailFragment extends WorkorderFragment {
 	// UI
 	private SummaryView _sumView;
 	private LocationView _locView;
-	private ScheduleView _scheduleView;
+	private ScheduleSummaryView _scheduleView;
 	private PaymentView _payView;
-	private ClosingNotesView _closingNotes;
-	private ExpectedPaymentView _expectedPaymentView;
+	private TaskSumView _taskView;
 
 	// Data
 	private Workorder _workorder;
@@ -36,14 +35,12 @@ public class DetailFragment extends WorkorderFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		_sumView = (SummaryView) view.findViewById(R.id.detailsum_view);
+		_sumView = (SummaryView) view.findViewById(R.id.summary_view);
+		_taskView = (TaskSumView) view.findViewById(R.id.tasksum_view);
 		_locView = (LocationView) view.findViewById(R.id.location_view);
-		_scheduleView = (ScheduleView) view.findViewById(R.id.schedule_view);
+		_scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
 		_payView = (PaymentView) view.findViewById(R.id.payment_view);
-		_closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
-		_expectedPaymentView = (ExpectedPaymentView) view.findViewById(R.id.expected_view);
-
-		_scheduleView.setFragmentManager(getFragmentManager());
+		_payView.showDetails(false);
 
 		if (_workorder != null) {
 			setWorkorder(_workorder);
@@ -66,6 +63,10 @@ public class DetailFragment extends WorkorderFragment {
 			_sumView.setWorkorder(_workorder);
 		}
 
+		if (_taskView != null) {
+			_taskView.setWorkorder(_workorder);
+		}
+
 		if (_locView != null) {
 			_locView.setWorkorder(_workorder);
 		}
@@ -76,14 +77,6 @@ public class DetailFragment extends WorkorderFragment {
 
 		if (_payView != null) {
 			_payView.setWorkorder(_workorder);
-		}
-
-		if (_closingNotes != null) {
-			_closingNotes.setWorkorder(_workorder);
-		}
-
-		if (_expectedPaymentView != null) {
-			_expectedPaymentView.setWorkorder(_workorder);
 		}
 	}
 

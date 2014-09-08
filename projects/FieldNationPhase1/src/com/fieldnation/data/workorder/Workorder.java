@@ -82,6 +82,8 @@ public class Workorder {
 	private Status _status;
 	@Json(name = "isWorkPerformed")
 	private Boolean _isWorkPerformed;
+	@Json(name="uploadSlots")
+	private UploadSlot[] _uploadSlots;
 	@Json(name = "title")
 	private String _title;
 	@Json(name = "tasks")
@@ -275,6 +277,10 @@ public class Workorder {
 
 	public Boolean getIsWorkPerformed() {
 		return _isWorkPerformed;
+	}
+
+	public UploadSlot[] getUploadSlots(){
+		return _uploadSlots;
 	}
 
 	public String getTitle() {

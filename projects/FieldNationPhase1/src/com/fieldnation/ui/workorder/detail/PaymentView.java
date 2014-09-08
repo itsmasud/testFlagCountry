@@ -41,6 +41,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private TextView _discountsLabelTextView;
 	private LinearLayout _discountsLinearLayout;
 	private ExpenseDialog _expenseDialog;
+	private LinearLayout _counterOfferLayout;
+	private LinearLayout _detailLayout;
 
 	// Data
 	private Workorder _workorder;
@@ -79,12 +81,22 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		_discountsLinearLayout = (LinearLayout) findViewById(R.id.discounts_linearlayout);
 
 		_expenseDialog = new ExpenseDialog(context);
-
+		_counterOfferLayout = (LinearLayout) findViewById(R.id.counteroffer_layout);
+		_counterOfferLayout.setOnClickListener(_counterOffer_onClick);
+		_detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _counterOffer_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
+
 	private View.OnClickListener _terms_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -166,6 +178,14 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	/*-*************************************-*/
 	/*-				Mutators				-*/
 	/*-*************************************-*/
+
+	public void showDetails(boolean enabled) {
+		if (enabled) {
+			_detailLayout.setVisibility(View.VISIBLE);
+		} else {
+			_detailLayout.setVisibility(View.GONE);
+		}
+	}
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
