@@ -95,6 +95,7 @@
                 android:layout_alignParentLeft="true" />
 
             <TextView
+                android:id="@+id/bundle_title"
                 style="@style/WorkorderCard_Bundle_Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
