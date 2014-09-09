@@ -4,41 +4,42 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class UploadSlot{
-	@Json(name="slotName")
+public class UploadSlot {
+	@Json(name = "slotName")
 	private String _slotName;
-	@Json(name="slotId")
+	@Json(name = "slotId")
 	private Integer _slotId;
-	@Json(name="minFiles")
+	@Json(name = "minFiles")
 	private Integer _minFiles;
-	@Json(name="maxFiles")
+	@Json(name = "maxFiles")
 	private Integer _maxFiles;
-	@Json(name="uploadedDocuments")
+	@Json(name = "uploadedDocuments")
 	private UploadedDocument[] _uploadedDocuments;
 
-	public UploadSlot(){
+	public UploadSlot() {
 	}
-	public String getSlotName(){
+
+	public String getSlotName() {
 		return _slotName;
 	}
 
-	public Integer getSlotId(){
+	public Integer getSlotId() {
 		return _slotId;
 	}
 
-	public Integer getMinFiles(){
+	public Integer getMinFiles() {
 		return _minFiles;
 	}
 
-	public Integer getMaxFiles(){
+	public Integer getMaxFiles() {
 		return _maxFiles;
 	}
 
-	public UploadedDocument[] getUploadedDocuments(){
+	public UploadedDocument[] getUploadedDocuments() {
 		return _uploadedDocuments;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

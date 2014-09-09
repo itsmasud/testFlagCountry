@@ -41,8 +41,12 @@ public class Task {
 	private Boolean _canDelete;
 	@Json(name = "description")
 	private String _description;
+	@Json(name = "order")
+	private Integer _order;
 	@Json(name = "hours")
 	private Integer _hours;
+	@Json(name = "stage")
+	private String _stage;
 	@Json(name = "completed")
 	private Boolean _completed;
 	@Json(name = "isNew")
@@ -123,8 +127,16 @@ public class Task {
 		return _description;
 	}
 
+	public Integer getOrder() {
+		return _order;
+	}
+
 	public Integer getHours() {
 		return _hours;
+	}
+
+	public String getStage() {
+		return _stage;
 	}
 
 	public Boolean getCompleted() {

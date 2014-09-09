@@ -30,6 +30,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_wo_detail_delete" />
+        android:src="@drawable/ic_delete" />
 
 </RelativeLayout>

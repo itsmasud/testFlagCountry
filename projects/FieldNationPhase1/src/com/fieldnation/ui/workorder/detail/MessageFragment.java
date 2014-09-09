@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 public class MessageFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.MessageFragment";
@@ -40,6 +41,7 @@ public class MessageFragment extends WorkorderFragment {
 	private ListView _listview;
 	private EditText _messageEditText;
 	private Button _sendButton;
+	private RelativeLayout _loadingLayout;
 
 	// Data
 	private Random _rand = new Random(System.currentTimeMillis());
@@ -73,7 +75,11 @@ public class MessageFragment extends WorkorderFragment {
 		_messageEditText = (EditText) input.findViewById(R.id.message_edittext);
 		_sendButton = (Button) input.findViewById(R.id.send_button);
 		_sendButton.setOnClickListener(_send_onClick);
+
+		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
 		_listview.addFooterView(input);
+
+		_loadingLayout.setVisibility(View.VISIBLE);
 	}
 
 	@Override
@@ -107,6 +113,7 @@ public class MessageFragment extends WorkorderFragment {
 
 	private void rebuildList() {
 		_adapter.setMessages(_messages);
+		_loadingLayout.setVisibility(View.GONE);
 	}
 
 	/*-*********************************-*/
@@ -187,11 +194,12 @@ public class MessageFragment extends WorkorderFragment {
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			if (_profileService != null) {
-//				_gs.invalidateAuthToken(_profileService.getAuthToken());
+				// _gs.invalidateAuthToken(_profileService.getAuthToken());
 			}
-//			_gs.requestAuthentication(_authClient);
-			
-			// TODO, a fail here probably means that this workroder is not assigned, therefore no messages.
+			// _gs.requestAuthentication(_authClient);
+
+			// TODO, a fail here probably means that this workroder is not
+			// assigned, therefore no messages.
 		}
 	};
 }

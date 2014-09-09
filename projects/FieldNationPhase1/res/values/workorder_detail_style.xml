@@ -32,6 +32,7 @@
     <style name="WorkorderDetail_Field_Bold">
         <item name="android:paddingBottom">15dp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FF2d2e00</item>
     </style>
 
     <style name="WorkorderDetail_FieldTitle" parent="WorkorderDetail_Field">

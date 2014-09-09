@@ -14,6 +14,7 @@ public class TasksFragment extends WorkorderFragment {
 	// UI
 	private PrereqView _prereqs;
 	private ShipmentView _shipments;
+	private ScopeOfWorkView _scope;
 
 	// Data
 	private Workorder _workorder;
@@ -32,6 +33,7 @@ public class TasksFragment extends WorkorderFragment {
 
 		_prereqs = (PrereqView) view.findViewById(R.id.prereq_view);
 		_shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
+		_scope = (ScopeOfWorkView) view.findViewById(R.id.scope_view);
 
 		configureUi();
 	}
@@ -54,8 +56,14 @@ public class TasksFragment extends WorkorderFragment {
 		if (_prereqs == null || _shipments == null)
 			return;
 
-		_prereqs.setWorkorder(_workorder);
-		_shipments.setWorkorder(_workorder);
+		if (_prereqs != null)
+			_prereqs.setWorkorder(_workorder);
+
+		if (_shipments != null)
+			_shipments.setWorkorder(_workorder);
+
+		if (_scope != null)
+			_scope.setWorkorder(_workorder);
 	}
 
 	/*-*********************************-*/

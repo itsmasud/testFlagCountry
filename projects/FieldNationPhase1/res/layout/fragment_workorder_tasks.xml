@@ -11,6 +11,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <com.fieldnation.ui.workorder.detail.ScopeOfWorkView
+            android:id="@+id/scope_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
         <com.fieldnation.ui.workorder.detail.PrereqView
             android:id="@+id/prereq_view"
             android:layout_width="match_parent"
