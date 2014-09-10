@@ -17,8 +17,6 @@ public class ScheduleDetailView extends RelativeLayout {
 	private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
 
 	// UI
-	private TextView _timeTextView;
-	private TextView _durationTextView;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -45,8 +43,6 @@ public class ScheduleDetailView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
-		_timeTextView = (TextView) findViewById(R.id.time_textview);
-		_durationTextView = (TextView) findViewById(R.id.duration_textview);
 	}
 
 	public void setLoggedWork(LoggedWork loggedWork) {
@@ -69,13 +65,13 @@ public class ScheduleDetailView extends RelativeLayout {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		_timeTextView.setText(date);
+		//_timeTextView.setText(date);
 
 		// TODO if endtime is not set, then calculate duration if and only if
 		// the current time is still the same day as the start time.
 
 		if (loggedWork.getHours() != null) {
-			_durationTextView.setText(loggedWork.getHours().intValue() + "hrs");
+			//_durationTextView.setText(loggedWork.getHours().intValue() + "hrs");
 		}
 
 	}

@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 public class MessageFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.MessageFragment";
@@ -150,7 +151,6 @@ public class MessageFragment extends WorkorderFragment {
 	};
 
 	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
-
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			Log.v(TAG, "resultCode:" + resultCode);
@@ -194,11 +194,12 @@ public class MessageFragment extends WorkorderFragment {
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, "WS Fail");
+			_loadingLayout.setVisibility(View.GONE);
+			Toast.makeText(_gs, "No messages", Toast.LENGTH_LONG).show();
 			if (_profileService != null) {
 				// _gs.invalidateAuthToken(_profileService.getAuthToken());
 			}
 			// _gs.requestAuthentication(_authClient);
-
 			// TODO, a fail here probably means that this workroder is not
 			// assigned, therefore no messages.
 		}

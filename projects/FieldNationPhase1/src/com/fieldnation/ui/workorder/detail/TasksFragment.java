@@ -2,7 +2,9 @@ package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ public class TasksFragment extends WorkorderFragment {
 	// UI
 	private ShipmentView _shipments;
 	private ScopeOfWorkView _scope;
+	private TimeLoggedView _timeLogged;
 
 	// Data
 	private Workorder _workorder;
@@ -32,6 +35,7 @@ public class TasksFragment extends WorkorderFragment {
 
 		_shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
 		_scope = (ScopeOfWorkView) view.findViewById(R.id.scope_view);
+		_timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
 
 		configureUi();
 	}
@@ -56,6 +60,18 @@ public class TasksFragment extends WorkorderFragment {
 
 		if (_scope != null)
 			_scope.setWorkorder(_workorder);
+
+		if (_timeLogged != null)
+			_timeLogged.setWorkorder(_workorder);
+
+		WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
+		if (status.ordinal() <= WorkorderStatus.ASSIGNED.ordinal()) {
+			_shipments.setVisibility(View.GONE);
+			_timeLogged.setVisibility(View.GONE);
+		} else {
+			_shipments.setVisibility(View.VISIBLE);
+			_timeLogged.setVisibility(View.VISIBLE);
+		}
 	}
 
 	/*-*********************************-*/
