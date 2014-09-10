@@ -83,7 +83,7 @@ public class WorkorderListFragment extends Fragment {
 	@Override
 	public void onStart() {
 		Log.v(TAG, "onStart");
-		if (_listView != null) {
+		if (_listView != null && getAdapter() != null) {
 			_listView.setAdapter(getAdapter());
 		}
 		super.onStart();
@@ -92,8 +92,8 @@ public class WorkorderListFragment extends Fragment {
 	@Override
 	public void onPause() {
 		Log.v(TAG, "onPause()");
-		if (_adapter != null) {
-			_adapter.onPause();
+		if (getAdapter() != null) {
+			getAdapter().onPause();
 		}
 		super.onPause();
 	}
@@ -102,8 +102,8 @@ public class WorkorderListFragment extends Fragment {
 	public void onStop() {
 		Log.v(TAG, "Method Stub: onStop()");
 		super.onStop();
-		if (_adapter != null) {
-			_adapter.onStop();
+		if (getAdapter() != null) {
+			getAdapter().onStop();
 			_adapter = null;
 		}
 	}
@@ -189,7 +189,8 @@ public class WorkorderListFragment extends Fragment {
 		@Override
 		public void onStateChange(State state) {
 			if (state == State.RELEASE_TO_REFRESH) {
-				_adapter.update(false);
+				if (getAdapter() != null)
+					getAdapter().update(false);
 				_loadingBar.progressiveStart();
 			}
 			// TODO Method Stub: onStateChange()
@@ -221,12 +222,14 @@ public class WorkorderListFragment extends Fragment {
 	/*-				Util				-*/
 	/*-*********************************-*/
 	public void update() {
-		getAdapter().update(false);
+		if (getAdapter() != null)
+			getAdapter().update(false);
 		_listView.setRefreshing();
 	}
 
 	public void hiding() {
-		_adapter.onStop();
+		if (getAdapter() != null)
+			getAdapter().onStop();
 	}
 
 	private WorkorderListAdapter getAdapter() {

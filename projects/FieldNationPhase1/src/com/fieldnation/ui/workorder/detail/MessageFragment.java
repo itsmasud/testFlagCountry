@@ -193,6 +193,7 @@ public class MessageFragment extends WorkorderFragment {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
+			Log.v(TAG, "WS Fail");
 			if (_profileService != null) {
 				// _gs.invalidateAuthToken(_profileService.getAuthToken());
 			}

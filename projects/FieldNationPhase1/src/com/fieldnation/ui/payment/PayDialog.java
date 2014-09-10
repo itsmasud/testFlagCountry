@@ -20,7 +20,7 @@ public class PayDialog extends Dialog {
 	// UI
 	private Spinner _typeSpinner;
 
-	private FrameLayout _fixedLayout;
+	private LinearLayout _fixedLayout;
 	private EditText _fixedEditText;
 
 	private LinearLayout _hourlyLayout;
@@ -57,7 +57,7 @@ public class PayDialog extends Dialog {
 		_typeSpinner.setAdapter(adapter);
 
 		// fixed
-		_fixedLayout = (FrameLayout) findViewById(R.id.fixed_layout);
+		_fixedLayout = (LinearLayout) findViewById(R.id.fixed_layout);
 		_fixedEditText = (EditText) findViewById(R.id.fixed_edittext);
 
 		// hourly
