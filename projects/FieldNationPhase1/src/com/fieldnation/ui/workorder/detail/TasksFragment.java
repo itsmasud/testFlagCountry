@@ -64,13 +64,15 @@ public class TasksFragment extends WorkorderFragment {
 		if (_timeLogged != null)
 			_timeLogged.setWorkorder(_workorder);
 
-		WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
-		if (status.ordinal() <= WorkorderStatus.ASSIGNED.ordinal()) {
-			_shipments.setVisibility(View.GONE);
-			_timeLogged.setVisibility(View.GONE);
-		} else {
-			_shipments.setVisibility(View.VISIBLE);
-			_timeLogged.setVisibility(View.VISIBLE);
+		if (_shipments != null && _timeLogged != null) {
+			WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
+			if (status.ordinal() <= WorkorderStatus.ASSIGNED.ordinal()) {
+				_shipments.setVisibility(View.GONE);
+				_timeLogged.setVisibility(View.GONE);
+			} else {
+				_shipments.setVisibility(View.VISIBLE);
+				_timeLogged.setVisibility(View.VISIBLE);
+			}
 		}
 	}
 
