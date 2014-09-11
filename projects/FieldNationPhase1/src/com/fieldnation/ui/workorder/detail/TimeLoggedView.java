@@ -2,8 +2,10 @@ package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.WorkLogDialog;
 
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 	private TextView _totalTimeTextView;
 	private LinearLayout _addLogLinearLayout;
 	private TextView _noTimeTextView;
+	private WorkLogDialog _dialog;
 
 	// Data
 	private Workorder _workorder;
@@ -47,23 +50,30 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
 		_logList = (LinearLayout) findViewById(R.id.log_list);
 		_totalTimeTextView = (TextView) findViewById(R.id.totaltime_textview);
+		_noTimeTextView = (TextView) findViewById(R.id.notime_textview);
 		_addLogLinearLayout = (LinearLayout) findViewById(R.id.addlog_linearlayout);
 		_addLogLinearLayout.setOnClickListener(_addLog_onClick);
-		_noTimeTextView = (TextView) findViewById(R.id.notime_textview);
-
 	}
 
-	private View.OnClickListener _addLog_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-		}
-	};
+	public void setFragmentManager(FragmentManager _fm) {
+		_dialog = new WorkLogDialog(getContext());
+		_dialog.setFragmentManager(_fm);
+	}
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
 		_workorder = workorder;
 		// TODO need to do something
 	}
+
+	/*-*************************-*/
+	/*-			Events			-*/
+	/*-*************************-*/
+
+	private View.OnClickListener _addLog_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			_dialog.show();
+		}
+	};
 }

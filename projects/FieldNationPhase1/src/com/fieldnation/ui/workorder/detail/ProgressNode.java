@@ -7,10 +7,11 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class ProgressNode extends RelativeLayout {
+public class ProgressNode extends LinearLayout {
 
 	// UI
 	private ImageView _iconImageView;
@@ -20,20 +21,15 @@ public class ProgressNode extends RelativeLayout {
 
 	public ProgressNode(Context context) {
 		super(context);
-		init(null, -1);
+		init(null);
 	}
 
 	public ProgressNode(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(attrs, -1);
+		init(attrs);
 	}
 
-	public ProgressNode(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init(attrs, defStyle);
-	}
-
-	private void init(AttributeSet attrs, int defStyle) {
+	private void init(AttributeSet attrs) {
 		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_progress_node, this);
 
 		if (isInEditMode())
@@ -61,5 +57,13 @@ public class ProgressNode extends RelativeLayout {
 		}
 		invalidate();
 
+	}
+
+	public void setLabel(int resId) {
+		_labelTextView.setText(resId);
+	}
+
+	public void setLabel(String value) {
+		_labelTextView.setText(value);
 	}
 }

@@ -10,56 +10,61 @@
         style="@style/WorkorderDetail_ProgressSep" />
 
     <LinearLayout
+        android:id="@+id/node_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="4" >
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/progressnode_layout1"
+            style="@style/WorkorderDetail_ProgressNode"
             android:orientation="vertical" >
 
             <com.fieldnation.ui.workorder.detail.ProgressNode
                 android:id="@+id/progressNode1"
-                style="@style/WorkorderDetail_ProgressNode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 app:text="Available" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/progressnode_layout2"
+            style="@style/WorkorderDetail_ProgressNode"
             android:orientation="vertical" >
 
             <com.fieldnation.ui.workorder.detail.ProgressNode
                 android:id="@+id/progressNode2"
-                style="@style/WorkorderDetail_ProgressNode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 app:text="Requested" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/progressnode_layout3"
+            style="@style/WorkorderDetail_ProgressNode"
             android:orientation="vertical" >
 
             <com.fieldnation.ui.workorder.detail.ProgressNode
                 android:id="@+id/progressNode3"
-                style="@style/WorkorderDetail_ProgressNode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 app:text="Confirm" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/progressnode_layout4"
+            style="@style/WorkorderDetail_ProgressNode"
             android:orientation="vertical" >
 
             <com.fieldnation.ui.workorder.detail.ProgressNode
                 android:id="@+id/progressNode4"
-                style="@style/WorkorderDetail_ProgressNode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 app:text="Assigned" />
         </LinearLayout>
     </LinearLayout>

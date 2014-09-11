@@ -36,6 +36,7 @@ public class TasksFragment extends WorkorderFragment {
 		_shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
 		_scope = (ScopeOfWorkView) view.findViewById(R.id.scope_view);
 		_timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
+		_timeLogged.setFragmentManager(getFragmentManager());
 
 		configureUi();
 	}
@@ -66,7 +67,7 @@ public class TasksFragment extends WorkorderFragment {
 
 		if (_shipments != null && _timeLogged != null) {
 			WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
-			if (status.ordinal() <= WorkorderStatus.ASSIGNED.ordinal()) {
+			if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
 				_shipments.setVisibility(View.GONE);
 				_timeLogged.setVisibility(View.GONE);
 			} else {
