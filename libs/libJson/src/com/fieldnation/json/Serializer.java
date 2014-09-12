@@ -190,7 +190,7 @@ public class Serializer {
 			CollectionParameterType collectionParameterType = field.getAnnotation(CollectionParameterType.class);
 			try {
 				if (source.has(jname) && source.get(jname) != null) {
-					System.out.println("Parsing " + clazz.getName() + ":" + jname);
+					//System.out.println("Parsing " + clazz.getName() + ":" + jname);
 					if (collectionParameterType != null) {
 						field.set(
 								dest,

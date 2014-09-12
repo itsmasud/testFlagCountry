@@ -13,6 +13,7 @@
         android:layout_alignParentTop="true"
         android:divider="@null"
         android:dividerHeight="0dp"
+        android:scrollbarStyle="outsideOverlay"
         android:smoothScrollbar="false" />
 
     <TextView

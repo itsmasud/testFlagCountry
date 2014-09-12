@@ -16,9 +16,12 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.ui.workorder.WorkorderListAdapter;
 
 import eu.erikw.PullToRefreshListView;
+import eu.erikw.PullToRefreshListView.State;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -62,11 +65,19 @@ public class NotificationFragment extends WorkorderFragment {
 		_gs.requestAuthentication(_authclient);
 		_listview = (PullToRefreshListView) view.findViewById(R.id.listview);
 		_listview.setOnRefreshListener(_listview_onRefresh);
+		_listview.setStateListener(_listview_stateListener);
 		_adapter = new NotificationListAdapter();
 		_listview.setAdapter(_adapter);
 		_loadingProgress = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
+		_loadingProgress.setSmoothProgressDrawableCallbacks(_progressCallback);
+		_loadingProgress.setMax(100);
 		_emptyTextView = (TextView) view.findViewById(R.id.empty_textview);
 	}
+
+	public void onPause() {
+		super.onPause();
+		WEB_LIST_NOTIFICATIONS = 0;
+	};
 
 	@Override
 	public void update() {
@@ -127,11 +138,64 @@ public class NotificationFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private SmoothProgressDrawable.Callbacks _progressCallback = new SmoothProgressDrawable.Callbacks() {
+
+		@Override
+		public void onStop() {
+			_loadingProgress.setVisibility(View.GONE);
+		}
+
+		@Override
+		public void onStart() {
+			_loadingProgress.setVisibility(View.VISIBLE);
+		}
+
+	};
+
 	private PullToRefreshListView.OnRefreshListener _listview_onRefresh = new PullToRefreshListView.OnRefreshListener() {
 		@Override
 		public void onRefresh() {
 			getNotifications();
 		}
+	};
+
+	private PullToRefreshListView.StateListener _listview_stateListener = new PullToRefreshListView.StateListener() {
+		@Override
+		public void onPull(int pullPercent) {
+			if (_listview.getState() == PullToRefreshListView.State.PULL_TO_REFRESH) {
+				float sep = 4f - 4 * Math.abs(pullPercent) / 100f;
+				if (sep < 0)
+					sep = 0f;
+
+				_loadingProgress.setSmoothProgressDrawableSpeed(sep);
+			}
+		}
+
+		@Override
+		public void onStopPull() {
+			_loadingProgress.setSmoothProgressDrawableSpeed(2f);
+			_loadingProgress.setSmoothProgressDrawableReversed(true);
+			_loadingProgress.setSmoothProgressDrawableSectionsCount(1);
+			_loadingProgress.progressiveStop();
+			_loadingProgress.setVisibility(View.GONE);
+		}
+
+		@Override
+		public void onStateChange(State state) {
+			if (state == State.RELEASE_TO_REFRESH) {
+				// if (getAdapter() != null)
+				// getAdapter().update(false);
+				_loadingProgress.progressiveStart();
+			}
+		}
+
+		@Override
+		public void onStartPull() {
+			_loadingProgress.setSmoothProgressDrawableSectionsCount(1);
+			_loadingProgress.setSmoothProgressDrawableReversed(true);
+			_loadingProgress.progressiveStart();
+		}
+
 	};
 
 	private AuthenticationClient _authclient = new AuthenticationClient() {
@@ -185,4 +249,25 @@ public class NotificationFragment extends WorkorderFragment {
 		}
 	};
 
+	private NotificationListAdapter getAdapter() {
+		if (this.getActivity() == null)
+			return null;
+		try {
+			if (_adapter == null) {
+				_adapter = new NotificationListAdapter();
+				// _adapter.setLoadingListener(_workorderAdapter_listener);
+			}
+
+			// if (!_adapter.isViable()) {
+			// _adapter = new NotificationListAdapter();
+			// // _adapter.setLoadingListener(_workorderAdapter_listener);
+			// }
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+
+		return _adapter;
+	}
 }

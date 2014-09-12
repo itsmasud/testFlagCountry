@@ -84,6 +84,14 @@ public class MessageFragment extends WorkorderFragment {
 	}
 
 	@Override
+	public void onPause() {
+		WEB_GET_MESSAGES = 1;
+		WEB_GET_PROFILE = 2;
+		WEB_NEW_MESSAGE = 3;
+		super.onPause();
+	}
+
+	@Override
 	public void update() {
 		getMessages();
 	}
@@ -185,6 +193,13 @@ public class MessageFragment extends WorkorderFragment {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+
+				if (_messages.size() == 0) {
+					_messageEditText.setHint(R.string.start_the_conversation);
+				} else {
+					_messageEditText.setHint(R.string.continue_the_conversation);
+				}
+
 			} else if (resultCode == WEB_NEW_MESSAGE) {
 				_messageEditText.setText("");
 				getMessages();
@@ -195,7 +210,7 @@ public class MessageFragment extends WorkorderFragment {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, "WS Fail");
 			_loadingLayout.setVisibility(View.GONE);
-			Toast.makeText(_gs, "No messages", Toast.LENGTH_LONG).show();
+			_messageEditText.setHint(R.string.start_the_conversation);
 			if (_profileService != null) {
 				// _gs.invalidateAuthToken(_profileService.getAuthToken());
 			}

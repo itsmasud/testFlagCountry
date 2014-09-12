@@ -10,17 +10,29 @@
         android:layout_height="wrap_content"
         android:text="@string/shipment" />
 
-    <Button
-        android:id="@+id/add_button"
-        style="@style/ButtonOrange"
-        android:layout_width="match_parent"
-        android:text="@string/add_shipment" />
-
     <LinearLayout
         android:id="@+id/shipments_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/add_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/TextViewLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/add_shipment" />
     </LinearLayout>
 
 </LinearLayout>

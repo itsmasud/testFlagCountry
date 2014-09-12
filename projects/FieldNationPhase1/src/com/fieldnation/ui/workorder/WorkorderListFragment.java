@@ -169,41 +169,11 @@ public class WorkorderListFragment extends Fragment {
 		@Override
 		public void onPull(int pullPercent) {
 			if (_listView.getState() == PullToRefreshListView.State.PULL_TO_REFRESH) {
-				// _loadingBar.setIndeterminate(false);
-				// _loadingBar.setInterpolator(_customInterpolator);
-				// if (pullPercent < 50) {
-				// _loadingBar.setSmoothProgressDrawableReversed(true);
-				// } else {
-				// _loadingBar.setSmoothProgressDrawableReversed(false);
-				// }
-
 				float sep = 4f - 4 * Math.abs(pullPercent) / 100f;
 				if (sep < 0)
 					sep = 0f;
 				_loadingBar.setSmoothProgressDrawableSpeed(sep);
-
-				// _loadingBar.setSmoothProgressDrawableSeparatorLength(sep);
 			}
-		}
-
-		@Override
-		public void onStateChange(State state) {
-			if (state == State.RELEASE_TO_REFRESH) {
-				if (getAdapter() != null)
-					getAdapter().update(false);
-				_loadingBar.progressiveStart();
-			}
-			// TODO Method Stub: onStateChange()
-			Log.v(TAG, "Method Stub: onStateChange()");
-		}
-
-		@Override
-		public void onStartPull() {
-			_loadingBar.setSmoothProgressDrawableSectionsCount(1);
-			_loadingBar.setSmoothProgressDrawableReversed(true);
-			_loadingBar.progressiveStart();
-			// TODO Method Stub: onStartPull()
-			Log.v(TAG, "Method Stub: onStartPull()");
 		}
 
 		@Override
@@ -213,9 +183,24 @@ public class WorkorderListFragment extends Fragment {
 			_loadingBar.setSmoothProgressDrawableSectionsCount(1);
 			_loadingBar.progressiveStop();
 			_loadingBar.setVisibility(View.GONE);
-			// TODO Method Stub: onStopPull()
-			Log.v(TAG, "Method Stub: onStopPull()");
 		}
+
+		@Override
+		public void onStateChange(State state) {
+			if (state == State.RELEASE_TO_REFRESH) {
+				if (getAdapter() != null)
+					getAdapter().update(false);
+				_loadingBar.progressiveStart();
+			}
+		}
+
+		@Override
+		public void onStartPull() {
+			_loadingBar.setSmoothProgressDrawableSectionsCount(1);
+			_loadingBar.setSmoothProgressDrawableReversed(true);
+			_loadingBar.progressiveStart();
+		}
+
 	};
 
 	/*-*********************************-*/

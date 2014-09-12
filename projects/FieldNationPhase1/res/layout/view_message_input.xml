@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/send_button"
-        android:hint="@string/continue_the_conversation"
+        android:hint="@string/start_the_conversation"
         android:minLines="2" />
 
     <Button

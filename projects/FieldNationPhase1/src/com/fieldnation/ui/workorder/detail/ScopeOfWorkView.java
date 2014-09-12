@@ -101,7 +101,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 		if (_tasks.size() == 0)
 			return;
 
-		boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage());
+		boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage()) || "any".equals(_tasks.get(0).getStage());
 
 		_preVisistList.removeAllViews();
 		_onSiteLayout.removeAllViews();
