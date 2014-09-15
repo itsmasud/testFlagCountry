@@ -205,7 +205,7 @@ public class PullToRefreshListView extends ListView {
 	}
 
 	private void setHeaderPadding(int padding) {
-		//Log.v(TAG, "setHeaderPadding() " + padding);
+		// Log.v(TAG, "setHeaderPadding() " + padding);
 		headerPadding = padding;
 
 		if (stateListener != null) {
@@ -220,7 +220,7 @@ public class PullToRefreshListView extends ListView {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (lockScrollWhileRefreshing && (state == State.REFRESHING || getAnimation() != null && !getAnimation().hasEnded())) {
-			//Log.v(TAG, "Quit Touch event");
+			// Log.v(TAG, "Quit Touch event");
 			return true;
 		}
 
@@ -259,7 +259,8 @@ public class PullToRefreshListView extends ListView {
 					diff /= PULL_RESISTANCE;
 				previousY = y;
 
-				//Log.v(TAG, headerPadding + ":" + diff + ":" + (-header.getHeight()));
+				// Log.v(TAG, headerPadding + ":" + diff + ":" +
+				// (-header.getHeight()));
 
 				int newHeaderPadding = Math.max(Math.round(headerPadding + diff), -header.getHeight());
 
@@ -333,7 +334,7 @@ public class PullToRefreshListView extends ListView {
 			stateListener.onStateChange(state);
 		}
 		this.state = state;
-		//Log.v(TAG, "State: " + state.name());
+		// Log.v(TAG, "State: " + state.name());
 		switch (state) {
 		case PULL_TO_REFRESH:
 			// spinner.setVisibility(View.INVISIBLE);
@@ -349,7 +350,7 @@ public class PullToRefreshListView extends ListView {
 			break;
 
 		case RELEASE_TO_REFRESH:
-			//Log.v(TAG, "setHeaderPadding BP");
+			// Log.v(TAG, "setHeaderPadding BP");
 			if (isPulling) {
 				if (stateListener != null) {
 					stateListener.onStopPull();

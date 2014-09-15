@@ -101,7 +101,6 @@ public class MessageSentView extends RelativeLayout {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {

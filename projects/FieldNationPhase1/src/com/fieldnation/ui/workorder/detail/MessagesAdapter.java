@@ -13,6 +13,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.HeaderViewListAdapter;
 
 public class MessagesAdapter extends BaseAdapter {
 	private static final String TAG = "ui.workorder.detail.MessagesAdapter";
@@ -65,7 +66,6 @@ public class MessagesAdapter extends BaseAdapter {
 		_messages = messages;
 
 		notifyDataSetChanged();
-
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class MessagesAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Message message = _messages.get(position);
 
-		if (message.getFromUser().getUserId() == _profile.getUserId()) {
+		//if (message.getFromUser().getUserId() == _profile.getUserId()) {
 			MessageSentView v = null;
 
 			if (convertView == null) {
@@ -102,21 +102,21 @@ public class MessagesAdapter extends BaseAdapter {
 
 			v.setMessage(message);
 			return v;
-		} else {
-			MessageRcvdView v = null;
-
-			if (convertView == null) {
-				v = getMessageRcvdView(parent.getContext());
-			} else if (convertView instanceof MessageRcvdView) {
-				v = (MessageRcvdView) convertView;
-			} else if (convertView instanceof MessageSentView) {
-				v = getMessageRcvdView(parent.getContext());
-			} else {
-				v = getMessageRcvdView(parent.getContext());
-			}
-
-			v.setMessage(message);
-			return v;
-		}
+//		} else {
+//			MessageRcvdView v = null;
+//
+//			if (convertView == null) {
+//				v = getMessageRcvdView(parent.getContext());
+//			} else if (convertView instanceof MessageRcvdView) {
+//				v = (MessageRcvdView) convertView;
+//			} else if (convertView instanceof MessageSentView) {
+//				v = getMessageRcvdView(parent.getContext());
+//			} else {
+//				v = getMessageRcvdView(parent.getContext());
+//			}
+//
+//			v.setMessage(message);
+//			return v;
+//		}
 	}
 }

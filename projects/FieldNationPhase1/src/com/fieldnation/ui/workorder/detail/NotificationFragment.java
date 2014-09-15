@@ -66,8 +66,6 @@ public class NotificationFragment extends WorkorderFragment {
 		_listview = (PullToRefreshListView) view.findViewById(R.id.listview);
 		_listview.setOnRefreshListener(_listview_onRefresh);
 		_listview.setStateListener(_listview_stateListener);
-		_adapter = new NotificationListAdapter();
-		_listview.setAdapter(_adapter);
 		_loadingProgress = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
 		_loadingProgress.setSmoothProgressDrawableCallbacks(_progressCallback);
 		_loadingProgress.setMax(100);
@@ -77,6 +75,10 @@ public class NotificationFragment extends WorkorderFragment {
 	public void onPause() {
 		super.onPause();
 		WEB_LIST_NOTIFICATIONS = 0;
+		if (_adapter != null) {
+			_adapter.notifyDataSetInvalidated();
+			_adapter = null;
+		}
 	};
 
 	@Override
@@ -103,7 +105,8 @@ public class NotificationFragment extends WorkorderFragment {
 
 		Log.v(TAG, "populateUi");
 
-		_adapter.setNotifications(_notes);
+		if (getAdapter() != null)
+			getAdapter().setNotifications(_notes);
 
 		if (_notes.size() == 0) {
 			_emptyTextView.setVisibility(View.VISIBLE);
@@ -255,13 +258,8 @@ public class NotificationFragment extends WorkorderFragment {
 		try {
 			if (_adapter == null) {
 				_adapter = new NotificationListAdapter();
-				// _adapter.setLoadingListener(_workorderAdapter_listener);
+				_listview.setAdapter(_adapter);
 			}
-
-			// if (!_adapter.isViable()) {
-			// _adapter = new NotificationListAdapter();
-			// // _adapter.setLoadingListener(_workorderAdapter_listener);
-			// }
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

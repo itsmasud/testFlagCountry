@@ -27,6 +27,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 
 public class WorkorderActivity extends BaseActivity {
@@ -158,6 +159,7 @@ public class WorkorderActivity extends BaseActivity {
 
 		@Override
 		public Fragment getItem(int position) {
+			Log.v(TAG, "getItem(" + position + ") / " + _fragments.length);
 			_fragments[position].update();
 			return _fragments[position];
 		}
@@ -172,10 +174,12 @@ public class WorkorderActivity extends BaseActivity {
 		@Override
 		public void onPageSelected(int position) {
 			try {
+				Log.v(TAG, "onPageSelected(" + position + ") / " + _fragments.length);
 				_currentFragment = position;
 				_tabview.setSelected(position);
 				_fragments[position].update();
 			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		};
 	};
@@ -183,6 +187,7 @@ public class WorkorderActivity extends BaseActivity {
 	private WorkorderTabView.Listener _tabview_onChange = new WorkorderTabView.Listener() {
 		@Override
 		public void onChange(int index) {
+			Log.v(TAG, "onChange(" + index + ") / " + _fragments.length);
 			_currentFragment = index;
 			_fragments[index].update();
 			_viewPager.setCurrentItem(_currentFragment, true);

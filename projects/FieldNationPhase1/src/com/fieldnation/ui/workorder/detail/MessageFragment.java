@@ -40,9 +40,10 @@ public class MessageFragment extends WorkorderFragment {
 
 	// UI
 	private ListView _listview;
-	private EditText _messageEditText;
-	private Button _sendButton;
+	// private EditText _messageEditText;
+	// private Button _sendButton;
 	private RelativeLayout _loadingLayout;
+	// private View _messageInputView;
 
 	// Data
 	private Random _rand = new Random(System.currentTimeMillis());
@@ -72,13 +73,18 @@ public class MessageFragment extends WorkorderFragment {
 
 		_listview = (ListView) view.findViewById(R.id.messages_listview);
 
-		View input = LayoutInflater.from(_gs).inflate(R.layout.view_message_input, _listview, false);
-		_messageEditText = (EditText) input.findViewById(R.id.message_edittext);
-		_sendButton = (Button) input.findViewById(R.id.send_button);
-		_sendButton.setOnClickListener(_send_onClick);
+		// _messageInputView =
+		// LayoutInflater.from(_gs).inflate(R.layout.view_message_input,
+		// _listview, false);
+		// _messageEditText = (EditText)
+		// _messageInputView.findViewById(R.id.message_edittext);
+		// _sendButton = (Button)
+		// _messageInputView.findViewById(R.id.send_button);
+		// _sendButton.setOnClickListener(_send_onClick);
 
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
-		_listview.addFooterView(input);
+		// TODO investigate removing all the footer views
+		// _listview.addFooterView(_messageInputView);
 
 		_loadingLayout.setVisibility(View.VISIBLE);
 	}
@@ -88,6 +94,10 @@ public class MessageFragment extends WorkorderFragment {
 		WEB_GET_MESSAGES = 1;
 		WEB_GET_PROFILE = 2;
 		WEB_NEW_MESSAGE = 3;
+		if (_adapter != null) {
+			_adapter.notifyDataSetInvalidated();
+			_adapter = null;
+		}
 		super.onPause();
 	}
 
@@ -121,7 +131,8 @@ public class MessageFragment extends WorkorderFragment {
 	}
 
 	private void rebuildList() {
-		_adapter.setMessages(_messages);
+		if (getAdapter() != null)
+			getAdapter().setMessages(_messages);
 		_loadingLayout.setVisibility(View.GONE);
 	}
 
@@ -132,8 +143,9 @@ public class MessageFragment extends WorkorderFragment {
 		@Override
 		public void onClick(View v) {
 			WEB_NEW_MESSAGE = _rand.nextInt();
-			_gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
-					_messageEditText.getText().toString()));
+			// _gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE,
+			// _workorder.getWorkorderId(),
+			// _messageEditText.getText().toString()));
 		}
 	};
 
@@ -171,8 +183,7 @@ public class MessageFragment extends WorkorderFragment {
 					_profile = Profile.fromJson(new JsonObject(new String(
 							resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
 
-					_adapter = new MessagesAdapter(_profile);
-					_listview.setAdapter(_adapter);
+					getAdapter();
 
 					getMessages();
 				} catch (Exception ex) {
@@ -195,13 +206,13 @@ public class MessageFragment extends WorkorderFragment {
 				}
 
 				if (_messages.size() == 0) {
-					_messageEditText.setHint(R.string.start_the_conversation);
+					//_messageEditText.setHint(R.string.start_the_conversation);
 				} else {
-					_messageEditText.setHint(R.string.continue_the_conversation);
+					//_messageEditText.setHint(R.string.continue_the_conversation);
 				}
 
 			} else if (resultCode == WEB_NEW_MESSAGE) {
-				_messageEditText.setText("");
+				//_messageEditText.setText("");
 				getMessages();
 			}
 		}
@@ -210,7 +221,7 @@ public class MessageFragment extends WorkorderFragment {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, "WS Fail");
 			_loadingLayout.setVisibility(View.GONE);
-			_messageEditText.setHint(R.string.start_the_conversation);
+			//_messageEditText.setHint(R.string.start_the_conversation);
 			if (_profileService != null) {
 				// _gs.invalidateAuthToken(_profileService.getAuthToken());
 			}
@@ -219,4 +230,23 @@ public class MessageFragment extends WorkorderFragment {
 			// assigned, therefore no messages.
 		}
 	};
+
+	private MessagesAdapter getAdapter() {
+		if (this.getActivity() == null)
+			return null;
+
+		if (_profile == null)
+			return null;
+
+		try {
+			if (_adapter == null) {
+				_adapter = new MessagesAdapter(_profile);
+				_listview.setAdapter(_adapter);
+			}
+			return _adapter;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
 }
