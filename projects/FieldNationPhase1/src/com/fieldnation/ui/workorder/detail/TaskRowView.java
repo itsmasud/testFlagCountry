@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Task;
+import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -39,16 +40,20 @@ public class TaskRowView extends RelativeLayout {
 
 		if (isInEditMode())
 			return;
+
 		_checkbox = (CheckBox) findViewById(R.id.checkbox);
 	}
 
 	public void setTask(Task task) {
 		_task = task;
 
-		if (misc.isEmptyOrNull(task.getDescription()))
-			_checkbox.setText(task.getType());
-		else
-			_checkbox.setText(task.getDescription());
+		TaskType type = task.getTaskType();
+
+		if (misc.isEmptyOrNull(task.getDescription())) {
+			_checkbox.setText(type.getDisplay(getContext()));
+		} else {
+			_checkbox.setText(type.getDisplay(getContext()) + "\n" + task.getDescription());
+		}
 
 		_checkbox.setChecked(task.getCompleted());
 	}

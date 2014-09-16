@@ -147,6 +147,10 @@ public class Task {
 		return _isNew;
 	}
 
+	public TaskType getTaskType() {
+		return TaskType.fromId(_typeId);
+	}
+
 	public JsonObject toJson() {
 		return toJson(this);
 	}

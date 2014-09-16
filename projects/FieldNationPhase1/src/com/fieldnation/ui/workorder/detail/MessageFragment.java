@@ -44,6 +44,7 @@ public class MessageFragment extends WorkorderFragment {
 	// private EditText _messageEditText;
 	// private Button _sendButton;
 	private RelativeLayout _loadingLayout;
+	private MessageInputView _inputView;
 
 	// Data
 	private Random _rand = new Random(System.currentTimeMillis());
@@ -75,6 +76,8 @@ public class MessageFragment extends WorkorderFragment {
 		_listview = (ListView) view.findViewById(R.id.messages_listview);
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
 		_loadingLayout.setVisibility(View.VISIBLE);
+		_inputView = (MessageInputView) view.findViewById(R.id.input_view);
+		_inputView.setOnSendButtonClick(_send_onClick);
 	}
 
 	@Override
@@ -127,11 +130,12 @@ public class MessageFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private MessagesAdapter.Listener _send_onClick = new MessagesAdapter.Listener() {
+	private View.OnClickListener _send_onClick = new View.OnClickListener() {
 		@Override
-		public void onClick(String msg) {
+		public void onClick(View v) {
 			WEB_NEW_MESSAGE = _rand.nextInt();
-			_gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(), msg));
+			_gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
+					_inputView.getInputText()));
 		}
 	};
 
@@ -191,7 +195,14 @@ public class MessageFragment extends WorkorderFragment {
 					ex.printStackTrace();
 				}
 
+				if (_messages.size() == 0) {
+					_inputView.setHint(R.string.start_the_conversation);
+				} else {
+					_inputView.setHint(R.string.continue_the_conversation);
+				}
+
 			} else if (resultCode == WEB_NEW_MESSAGE) {
+				_inputView.clearText();
 				getMessages();
 			}
 		}
@@ -219,7 +230,7 @@ public class MessageFragment extends WorkorderFragment {
 
 		try {
 			if (_adapter == null) {
-				_adapter = new MessagesAdapter(_profile, _send_onClick);
+				_adapter = new MessagesAdapter(_profile);
 				_listview.setAdapter(_adapter);
 			}
 			return _adapter;

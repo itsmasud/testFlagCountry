@@ -220,5 +220,22 @@
         <item>Fee Paid</item>
         <item>Unknown</item>
     </string-array>
+    
+    <string-array name="task_type">
+        <item>Reserved</item>
+        <item>Confirm Assignment</item>
+        <item>Enter close out notes</item>
+        <item>Check in</item>
+        <item>Check out</item>
+        <item>Upload a file</item>
+        <item>Upload or take a picture</item>
+        <item>Fill out custom field</item>
+        <item>Call phone number</item>
+        <item>Send an e-mail</item>
+        <item>Unique task</item>
+        <item>Collect a signature</item>
+        <item>Enter shipment tracking</item>
+        <item>Download a File</item>
+    </string-array>
 
 </resources>

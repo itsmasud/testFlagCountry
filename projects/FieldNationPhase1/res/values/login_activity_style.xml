@@ -1,8 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Application theme. -->
-    <style name="ActivityLogin" parent="AppTheme">
-        <item name="android:background">@drawable/loginscreen</item>
-    </style>
+    <style name="ActivityLogin" parent="AppTheme"></style>
 
 </resources>

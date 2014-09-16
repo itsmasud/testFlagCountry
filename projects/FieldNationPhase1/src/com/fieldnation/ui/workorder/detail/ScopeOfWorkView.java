@@ -31,10 +31,8 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 	// UI
 	private TextView _preVisistTextView;
 	private LinearLayout _preVisistList;
-
 	private LinearLayout _onSiteLayout;
 	private LinearLayout _onSiteList;
-
 	private LinearLayout _postVisitLayout;
 	private LinearLayout _postVisitList;
 
@@ -74,7 +72,6 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 		_onSiteList = (LinearLayout) findViewById(R.id.onsite_list);
 		_postVisitLayout = (LinearLayout) findViewById(R.id.postvisit_layout);
 		_postVisitList = (LinearLayout) findViewById(R.id.postvisit_list);
-
 	}
 
 	@Override
@@ -136,7 +133,6 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 				}
 			}
 		}
-
 	}
 
 	/*-*************************-*/
