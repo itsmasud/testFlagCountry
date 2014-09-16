@@ -19,6 +19,7 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.ui.workorder.WorkorderTabView;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -43,7 +44,6 @@ public class MessageFragment extends WorkorderFragment {
 	// private EditText _messageEditText;
 	// private Button _sendButton;
 	private RelativeLayout _loadingLayout;
-	// private View _messageInputView;
 
 	// Data
 	private Random _rand = new Random(System.currentTimeMillis());
@@ -67,25 +67,13 @@ public class MessageFragment extends WorkorderFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		Log.v(TAG, "onViewCreated");
 
 		_gs = (GlobalState) getActivity().getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
 		_listview = (ListView) view.findViewById(R.id.messages_listview);
-
-		// _messageInputView =
-		// LayoutInflater.from(_gs).inflate(R.layout.view_message_input,
-		// _listview, false);
-		// _messageEditText = (EditText)
-		// _messageInputView.findViewById(R.id.message_edittext);
-		// _sendButton = (Button)
-		// _messageInputView.findViewById(R.id.send_button);
-		// _sendButton.setOnClickListener(_send_onClick);
-
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
-		// TODO investigate removing all the footer views
-		// _listview.addFooterView(_messageInputView);
-
 		_loadingLayout.setVisibility(View.VISIBLE);
 	}
 
@@ -139,13 +127,11 @@ public class MessageFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private View.OnClickListener _send_onClick = new View.OnClickListener() {
+	private MessagesAdapter.Listener _send_onClick = new MessagesAdapter.Listener() {
 		@Override
-		public void onClick(View v) {
+		public void onClick(String msg) {
 			WEB_NEW_MESSAGE = _rand.nextInt();
-			// _gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE,
-			// _workorder.getWorkorderId(),
-			// _messageEditText.getText().toString()));
+			_gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(), msg));
 		}
 	};
 
@@ -205,14 +191,7 @@ public class MessageFragment extends WorkorderFragment {
 					ex.printStackTrace();
 				}
 
-				if (_messages.size() == 0) {
-					//_messageEditText.setHint(R.string.start_the_conversation);
-				} else {
-					//_messageEditText.setHint(R.string.continue_the_conversation);
-				}
-
 			} else if (resultCode == WEB_NEW_MESSAGE) {
-				//_messageEditText.setText("");
 				getMessages();
 			}
 		}
@@ -221,7 +200,7 @@ public class MessageFragment extends WorkorderFragment {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, "WS Fail");
 			_loadingLayout.setVisibility(View.GONE);
-			//_messageEditText.setHint(R.string.start_the_conversation);
+			// _messageInputView.setHint(R.string.start_the_conversation);
 			if (_profileService != null) {
 				// _gs.invalidateAuthToken(_profileService.getAuthToken());
 			}
@@ -240,7 +219,7 @@ public class MessageFragment extends WorkorderFragment {
 
 		try {
 			if (_adapter == null) {
-				_adapter = new MessagesAdapter(_profile);
+				_adapter = new MessagesAdapter(_profile, _send_onClick);
 				_listview.setAdapter(_adapter);
 			}
 			return _adapter;
