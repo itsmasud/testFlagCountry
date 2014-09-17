@@ -183,8 +183,8 @@
     <string-array name="pay_types">
         <item>Fixed</item>
         <item>Hourly</item>
-        <item>Per Device</item>
         <item>Bleneded</item>
+        <item>Per Device</item>
     </string-array>
 
     <!-- workorder status list -->
@@ -220,7 +220,6 @@
         <item>Fee Paid</item>
         <item>Unknown</item>
     </string-array>
-    
     <string-array name="task_type">
         <item>Reserved</item>
         <item>Confirm Assignment</item>

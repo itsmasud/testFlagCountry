@@ -9,7 +9,10 @@ import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,6 +20,11 @@ public class ScheduleDetailView extends RelativeLayout {
 	private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
 
 	// UI
+	private TextView _hoursTextView;
+	private TextView _dateTextView;
+	private TextView _startTextView;
+	private TextView _endTextView;
+	private ImageView _editImageView;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -43,6 +51,12 @@ public class ScheduleDetailView extends RelativeLayout {
 		if (isInEditMode())
 			return;
 
+		_hoursTextView = (TextView) findViewById(R.id.hours_textview);
+		_dateTextView = (TextView) findViewById(R.id.date_textview);
+		_startTextView = (TextView) findViewById(R.id.start_textview);
+		_endTextView = (TextView) findViewById(R.id.end_textview);
+		_editImageView = (ImageView) findViewById(R.id.edit_imageview);
+		_editImageView.setOnClickListener(_edit_onClick);
 	}
 
 	public void setLoggedWork(LoggedWork loggedWork) {
@@ -65,14 +79,22 @@ public class ScheduleDetailView extends RelativeLayout {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		//_timeTextView.setText(date);
+		// _timeTextView.setText(date);
 
 		// TODO if endtime is not set, then calculate duration if and only if
 		// the current time is still the same day as the start time.
 
 		if (loggedWork.getHours() != null) {
-			//_durationTextView.setText(loggedWork.getHours().intValue() + "hrs");
+			// _durationTextView.setText(loggedWork.getHours().intValue() +
+			// "hrs");
 		}
-
 	}
+
+	private View.OnClickListener _edit_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
 }

@@ -18,6 +18,8 @@ public class TasksFragment extends WorkorderFragment {
 	private ShipmentView _shipments;
 	private ScopeOfWorkView _scope;
 	private TimeLoggedView _timeLogged;
+	private ClosingNotesView _closingNotes;
+	private View[] _separators;
 
 	// Data
 	private Workorder _workorder;
@@ -38,6 +40,13 @@ public class TasksFragment extends WorkorderFragment {
 		_scope = (ScopeOfWorkView) view.findViewById(R.id.scope_view);
 		_timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
 		_timeLogged.setFragmentManager(getFragmentManager());
+		_closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
+
+		_separators = new View[3];
+
+		_separators[0] = view.findViewById(R.id.sep1);
+		_separators[1] = view.findViewById(R.id.sep2);
+		_separators[2] = view.findViewById(R.id.sep3);
 
 		configureUi();
 	}
@@ -66,14 +75,25 @@ public class TasksFragment extends WorkorderFragment {
 		if (_timeLogged != null)
 			_timeLogged.setWorkorder(_workorder);
 
+		if (_closingNotes != null)
+			_closingNotes.setWorkorder(_workorder);
+
 		if (_shipments != null && _timeLogged != null) {
 			WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
 			if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
-				_shipments.setVisibility(View.GONE);
 				_timeLogged.setVisibility(View.GONE);
+				_separators[0].setVisibility(View.GONE);
+				_separators[1].setVisibility(View.GONE);
+				_shipments.setVisibility(View.GONE);
+				_separators[2].setVisibility(View.GONE);
+				_closingNotes.setVisibility(View.GONE);
 			} else {
 				_shipments.setVisibility(View.VISIBLE);
+				_separators[0].setVisibility(View.VISIBLE);
+				_separators[1].setVisibility(View.VISIBLE);
 				_timeLogged.setVisibility(View.VISIBLE);
+				_separators[2].setVisibility(View.VISIBLE);
+				_closingNotes.setVisibility(View.VISIBLE);
 			}
 		}
 	}

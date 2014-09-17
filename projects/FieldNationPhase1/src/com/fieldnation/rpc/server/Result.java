@@ -39,12 +39,15 @@ public class Result {
 		return _responseMessage;
 	}
 
-	private void cacheResults(HttpURLConnection conn) throws IOException {
-		InputStream in = conn.getInputStream();
-
-		_baResults = misc.readAllFromStream(in, 1024, -1, 3000);
-
-		in.close();
+	private void cacheResults(HttpURLConnection conn) {
+		try {
+			InputStream in = conn.getInputStream();
+			_baResults = misc.readAllFromStream(in, 1024, -1, 3000);
+			in.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_baResults = null;
+		}
 	}
 
 	public byte[] getResultsAsByteArray() {

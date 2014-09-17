@@ -24,6 +24,10 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
 		String contentType = bundle.getString(KEY_PARAM_CONTENT_TYPE);
 		boolean allowCache = bundle.getBoolean(KEY_ALLOW_CACHE);
 
+		if (path.contains("messages")) {
+			Log.v(TAG, "BP");
+		}
+
 		Log.v(TAG, "doHttpRead");
 		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
 			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
@@ -45,26 +49,34 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
 				try {
 					Result result = ws.httpRead(method, path, options, contentType);
 
-					try {
-						// happy path
-						bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
+					if (result.getResponseCode() / 100 != 2) {
+						Log.v(TAG, "Error response: " + result.getResponseCode());
 						bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-						bundle.putBoolean(KEY_RESPONSE_CACHED, false);
-						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-						DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
-								bundle.getInt(KEY_RESPONSE_CODE));
-						Log.v(TAG, "web request success");
-					} catch (Exception ex) {
-						try {
-							// unhappy, but http error
-							bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
-							bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-						} catch (Exception ex1) {
-							// sad path
-							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
-							bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+						bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
 
+					} else {
+
+						try {
+							// happy path
+							bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
+							bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+							bundle.putBoolean(KEY_RESPONSE_CACHED, false);
+							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
+							DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+									bundle.getInt(KEY_RESPONSE_CODE));
+							Log.v(TAG, "web request success");
+						} catch (Exception ex) {
+							try {
+								// unhappy, but http error
+								bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+								bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+								bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+							} catch (Exception ex1) {
+								// sad path
+								bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+								bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+							}
 						}
 					}
 
@@ -77,5 +89,4 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
 			rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
 		}
 	}
-
 }

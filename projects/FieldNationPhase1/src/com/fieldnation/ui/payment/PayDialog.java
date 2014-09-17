@@ -103,10 +103,10 @@ public class PayDialog extends Dialog {
 			case 1:
 				_hourlyLayout.setVisibility(View.VISIBLE);
 				break;
-			case 2:
+			case 3:
 				_devicesLayout.setVisibility(View.VISIBLE);
 				break;
-			case 3:
+			case 2:
 				_blendedLayout.setVisibility(View.VISIBLE);
 				break;
 			}

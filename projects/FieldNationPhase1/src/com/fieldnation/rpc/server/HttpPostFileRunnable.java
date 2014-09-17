@@ -72,30 +72,37 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 		try {
 			result = ws.httpPostFile(path, options, fieldName, filename, new FileInputStream(file),
 					(int) file.length(), fields);
-
-			try {
-				// happy path
-				bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
+			if (result.getResponseCode() / 100 != 2) {
+				Log.v(TAG, "Error response: " + result.getResponseCode());
 				bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-				bundle.putBoolean(KEY_RESPONSE_CACHED, false);
-				bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-				DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
-						bundle.getInt(KEY_RESPONSE_CODE));
-				Log.v(TAG, "web request success");
-				noteBuilder.setContentText("Success!");
-				noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
-			} catch (Exception ex) {
-				noteBuilder.setContentText("Failed!");
-				noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
+				bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+				bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+
+			} else {
 				try {
-					// unhappy, but http error
+					// happy path
+					bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
 					bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-					bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
-					bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-				} catch (Exception ex1) {
-					// sad path
-					bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
-					bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+					bundle.putBoolean(KEY_RESPONSE_CACHED, false);
+					bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
+					DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+							bundle.getInt(KEY_RESPONSE_CODE));
+					Log.v(TAG, "web request success");
+					noteBuilder.setContentText("Success!");
+					noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
+				} catch (Exception ex) {
+					noteBuilder.setContentText("Failed!");
+					noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
+					try {
+						// unhappy, but http error
+						bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+						bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+					} catch (Exception ex1) {
+						// sad path
+						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+						bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+					}
 				}
 			}
 

@@ -1,15 +1,23 @@
 package com.fieldnation.ui.workorder.detail;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.WorkLogDialog;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebResourceResponse;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,6 +34,8 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
 	// Data
 	private Workorder _workorder;
+	private GlobalState _gs;
+	private WorkorderService _service;
 
 	public TimeLoggedView(Context context) {
 		super(context);
@@ -47,12 +57,12 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
 		if (isInEditMode())
 			return;
-
 		_logList = (LinearLayout) findViewById(R.id.log_list);
 		_totalTimeTextView = (TextView) findViewById(R.id.totaltime_textview);
 		_noTimeTextView = (TextView) findViewById(R.id.notime_textview);
 		_addLogLinearLayout = (LinearLayout) findViewById(R.id.addlog_linearlayout);
 		_addLogLinearLayout.setOnClickListener(_addLog_onClick);
+
 	}
 
 	public void setFragmentManager(FragmentManager _fm) {
@@ -63,7 +73,24 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 	@Override
 	public void setWorkorder(Workorder workorder) {
 		_workorder = workorder;
-		// TODO need to do something
+
+		LoggedWork[] logs = _workorder.getLoggedWork();
+
+		if (logs == null || logs.length == 0) {
+			_noTimeTextView.setVisibility(View.VISIBLE);
+			return;
+		}
+		_noTimeTextView.setVisibility(View.GONE);
+
+		_logList.removeAllViews();
+		for (int i = 0; i < logs.length; i++) {
+			LoggedWork log = logs[i];
+			ScheduleDetailView v = new ScheduleDetailView(getContext());
+			v.setLoggedWork(log);
+			_logList.addView(v);
+
+			// TODO hook up edit button onclick
+		}
 	}
 
 	/*-*************************-*/
