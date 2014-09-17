@@ -117,6 +117,9 @@ public class MessageFragment extends WorkorderFragment {
 			return;
 
 		_messages.clear();
+		if (_adapter != null)
+			_adapter.notifyDataSetChanged();
+
 		WEB_GET_MESSAGES = _rand.nextInt();
 		_gs.startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
 	}
