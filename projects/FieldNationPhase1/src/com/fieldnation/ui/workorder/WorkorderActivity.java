@@ -159,7 +159,6 @@ public class WorkorderActivity extends BaseActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			Log.v(TAG, "getItem(" + position + ") / " + _fragments.length);
 			_fragments[position].update();
 			return _fragments[position];
 		}
@@ -174,7 +173,6 @@ public class WorkorderActivity extends BaseActivity {
 		@Override
 		public void onPageSelected(int position) {
 			try {
-				Log.v(TAG, "onPageSelected(" + position + ") / " + _fragments.length);
 				_currentFragment = position;
 				_tabview.setSelected(position);
 				_fragments[position].update();
@@ -187,7 +185,6 @@ public class WorkorderActivity extends BaseActivity {
 	private WorkorderTabView.Listener _tabview_onChange = new WorkorderTabView.Listener() {
 		@Override
 		public void onChange(int index) {
-			Log.v(TAG, "onChange(" + index + ") / " + _fragments.length);
 			_currentFragment = index;
 			_fragments[index].update();
 			_viewPager.setCurrentItem(_currentFragment, true);
@@ -219,7 +216,6 @@ public class WorkorderActivity extends BaseActivity {
 			Log.v(TAG, resultData.toString());
 
 			try {
-				// TODO need to get data selector from REST API
 				String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 				Log.v(TAG, data);
 				_workorder = Workorder.fromJson(new JsonObject(data));
@@ -241,7 +237,7 @@ public class WorkorderActivity extends BaseActivity {
 					_fragments[i].setWorkorder(_workorder);
 				}
 
-				System.out.println("Have workorder");
+				Log.v(TAG, "Have workorder");
 				setLoading(false);
 			} catch (Exception ex) {
 				ex.printStackTrace();

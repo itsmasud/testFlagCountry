@@ -35,6 +35,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 	private LinearLayout _onSiteList;
 	private LinearLayout _postVisitLayout;
 	private LinearLayout _postVisitList;
+	private TextView _noDataTextView;
 
 	// Data
 	private GlobalState _gs;
@@ -72,6 +73,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 		_onSiteList = (LinearLayout) findViewById(R.id.onsite_list);
 		_postVisitLayout = (LinearLayout) findViewById(R.id.postvisit_layout);
 		_postVisitList = (LinearLayout) findViewById(R.id.postvisit_list);
+		_noDataTextView = (TextView) findViewById(R.id.nodata_textview);
 	}
 
 	@Override
@@ -95,8 +97,12 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 		if (_tasks == null)
 			return;
 
-		if (_tasks.size() == 0)
+		if (_tasks.size() == 0) {
+			_noDataTextView.setVisibility(View.VISIBLE);
 			return;
+		} else {
+			_noDataTextView.setVisibility(View.GONE);
+		}
 
 		boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage()) || "any".equals(_tasks.get(0).getStage());
 

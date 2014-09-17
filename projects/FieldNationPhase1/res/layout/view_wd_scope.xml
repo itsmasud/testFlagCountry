@@ -14,6 +14,15 @@
             android:layout_height="wrap_content"
             android:text="@string/scope_of_work" />
 
+        <TextView
+            android:id="@+id/nodata_textview"
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="No tasks available at this time"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
