@@ -28,6 +28,9 @@ import android.widget.TextView;
 public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.ScopeOfWorkView";
 
+	private int WEB_GET_TASKS = 1;
+	private int WEB_CHANGED = 2;
+
 	// UI
 	private TextView _preVisistTextView;
 	private LinearLayout _preVisistList;
@@ -36,6 +39,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 	private LinearLayout _postVisitLayout;
 	private LinearLayout _postVisitList;
 	private TextView _noDataTextView;
+	private ClosingNotesDialog _closingDialog;
 
 	// Data
 	private GlobalState _gs;
@@ -74,6 +78,8 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 		_postVisitLayout = (LinearLayout) findViewById(R.id.postvisit_layout);
 		_postVisitList = (LinearLayout) findViewById(R.id.postvisit_list);
 		_noDataTextView = (TextView) findViewById(R.id.nodata_textview);
+
+		_closingDialog = new ClosingNotesDialog(getContext());
 	}
 
 	@Override
@@ -90,7 +96,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 		if (_workorder == null)
 			return;
 
-		_gs.startService(_service.getTasks(0, _workorder.getWorkorderId(), false));
+		_gs.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), false));
 	}
 
 	private void populateUi() {
@@ -118,6 +124,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 
 				TaskRowView row = new TaskRowView(getContext());
 				row.setTask(task);
+				row.setOnTaskClickListener(_task_onClick);
 
 				_preVisistList.addView(row);
 			}
@@ -130,6 +137,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 
 				TaskRowView row = new TaskRowView(getContext());
 				row.setTask(task);
+				row.setOnTaskClickListener(_task_onClick);
 				if ("prep".equals(task.getStage())) {
 					_preVisistList.addView(row);
 				} else if ("onsite".equals(task.getStage())) {
@@ -144,6 +152,65 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/
+	private TaskRowView.Listener _task_onClick = new TaskRowView.Listener() {
+
+		@Override
+		public void onTaskClick(Task task) {
+			switch (task.getTaskType()) {
+			case CHECKIN:
+				getContext().startService(
+						_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), System.currentTimeMillis()));
+				break;
+			case CHECKOUT:
+				getContext().startService(
+						_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), System.currentTimeMillis()));
+				break;
+			case CLOSE_OUT_NOTES:
+				_closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+				break;
+			case CONFIRM_ASSIGNMENT:
+				// TODO get start time + durration from user
+				// _service.confirmAssignment(WEB_CONFIRM_ASSIGNMENT,
+				// _workorder.getWorkorderId(), startTimeMilliseconds,
+				// endTimeMilliseconds)
+				break;
+			case CUSTOM_FIELD:
+				// TODO, get custom field info, preset dialog
+				break;
+			case DOWNLOAD:
+				// TODO, download file and display it
+				break;
+			case EMAIL:
+				// TODO get e-mail address and send to email client
+				break;
+			case PHONE:
+				// TODO start up the phone app
+				break;
+			case SHPIMENT_TRACKING:
+				// TODO send to shipment section
+				break;
+			case SIGNATURE:
+				// TODO bring up signature library
+				break;
+			case UPLOAD_FILE:
+				// TODO send to attachments tab
+				break;
+			case UPLOAD_PICTURE:
+				// TODO send to attachments tab
+				break;
+			default:
+				break;
+			}
+		}
+	};
+
+	private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+		@Override
+		public void onOk(String message) {
+			getContext().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+		}
+	};
+
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthentication(String username, String authToken) {
@@ -166,24 +233,31 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			// TODO populate
-			String data = new String(resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA));
-			Log.v(TAG, data);
-			try {
-				JsonArray array = new JsonArray(data);
-				_tasks = new LinkedList<Task>();
-				for (int i = 0; i < array.size(); i++) {
-					try {
-						_tasks.add(Task.fromJson(array.getJsonObject(i)));
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
+
+			if (resultCode == WEB_CHANGED) {
+				_workorder.dispatchOnChange();
 			}
 
-			populateUi();
+			if (resultCode == WEB_GET_TASKS) {
+				// TODO populate
+				String data = new String(resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA));
+				Log.v(TAG, data);
+				try {
+					JsonArray array = new JsonArray(data);
+					_tasks = new LinkedList<Task>();
+					for (int i = 0; i < array.size(); i++) {
+						try {
+							_tasks.add(Task.fromJson(array.getJsonObject(i)));
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				populateUi();
+			}
 		}
 
 		@Override

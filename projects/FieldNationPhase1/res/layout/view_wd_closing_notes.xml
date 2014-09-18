@@ -12,7 +12,6 @@
 
     <TextView
         android:id="@+id/notes_textview"
-        style="@style/TextViewLink"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top"
@@ -45,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/edit_closing_notes" />
+            android:text="@string/edit" />
     </LinearLayout>
 
 </LinearLayout>
