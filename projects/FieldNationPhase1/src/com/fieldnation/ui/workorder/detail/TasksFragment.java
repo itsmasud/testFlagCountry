@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 public class TasksFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.TasksFragment";

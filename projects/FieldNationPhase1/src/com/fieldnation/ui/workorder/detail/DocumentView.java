@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import java.text.ParseException;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Deliverable;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;

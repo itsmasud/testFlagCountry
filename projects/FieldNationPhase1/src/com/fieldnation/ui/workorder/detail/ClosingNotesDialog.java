@@ -5,7 +5,6 @@ import com.fieldnation.utils.misc;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;

@@ -1,15 +1,10 @@
 package com.fieldnation.ui.workorder;
 
-import java.text.DecimalFormat;
-import java.text.Format;
 import java.text.NumberFormat;
-import java.text.ParseException;
-
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;

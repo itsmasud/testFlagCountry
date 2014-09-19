@@ -1,6 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.utils.misc;
 
@@ -240,7 +240,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 
 			if (resultCode == WEB_GET_TASKS) {
 				// TODO populate
-				String data = new String(resultData.getByteArray(WorkorderService.KEY_RESPONSE_DATA));
+				String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 				Log.v(TAG, data);
 				try {
 					JsonArray array = new JsonArray(data);

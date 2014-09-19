@@ -124,9 +124,9 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		case INPROGRESS:
 			_completeButton.setVisibility(View.VISIBLE);
 			break;
-		case NA:
-			break;
 		case PAID:
+			break;
+		case NA:
 			break;
 		default:
 			break;

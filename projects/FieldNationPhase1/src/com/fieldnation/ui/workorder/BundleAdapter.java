@@ -1,14 +1,7 @@
 package com.fieldnation.ui.workorder;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.fieldnation.data.workorder.Bundle;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
