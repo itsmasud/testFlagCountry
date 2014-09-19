@@ -56,10 +56,16 @@
             android:id="@+id/payment_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
+        <!--
         <View
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
+        -->
+
+        <com.fieldnation.ui.workorder.detail.ActionView
+            android:id="@+id/action_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </ScrollView>

@@ -1,56 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content" >
 
     <LinearLayout
+        android:id="@+id/button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/request_button"
+                style="@style/ButtonWhite"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="0.5"
+                android:text="@string/request_work"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <Button
+                android:id="@+id/not_interested_button"
+                style="@style/ButtonWhite"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="0.5"
+                android:text="@string/not_interested"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <Button
+                android:id="@+id/counteroffer_button"
+                style="@style/ButtonWhite"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="0.5"
+                android:text="@string/counter_offer"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
 
         <Button
-            android:id="@+id/request_button"
-            style="@style/ButtonWhite"
+            android:id="@+id/complete_button"
+            style="@style/ButtonOrange"
             android:layout_width="match_parent"
             android:layout_marginBottom="5dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
-            android:layout_weight="0.5"
-            android:text="@string/request_work"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <Button
-            android:id="@+id/not_interested_button"
-            style="@style/ButtonWhite"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="0.5"
-            android:text="@string/not_interested"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <Button
-            android:id="@+id/counteroffer_button"
-            style="@style/ButtonWhite"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="0.5"
-            android:text="@string/counter_offer"
+            android:text="@string/mark_work_as_complete"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/complete_button"
-        style="@style/ButtonOrange"
-        android:layout_width="match_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:text="@string/mark_work_as_complete"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
-</LinearLayout>
+</RelativeLayout>

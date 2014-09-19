@@ -1,13 +1,20 @@
 package com.fieldnation.ui.workorder.detail;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceResponse;
 
 public class DetailFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.DetailFragment";
@@ -18,6 +25,7 @@ public class DetailFragment extends WorkorderFragment {
 	private ScheduleSummaryView _scheduleView;
 	private PaymentView _payView;
 	private TaskSumView _taskView;
+	private ActionView _actionView;
 
 	// Data
 	private Workorder _workorder;
@@ -41,6 +49,7 @@ public class DetailFragment extends WorkorderFragment {
 		_scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
 		_payView = (PaymentView) view.findViewById(R.id.payment_view);
 		_payView.showDetails(false);
+		_actionView = (ActionView) view.findViewById(R.id.action_view);
 
 		if (_workorder != null) {
 			setWorkorder(_workorder);
@@ -77,6 +86,10 @@ public class DetailFragment extends WorkorderFragment {
 
 		if (_payView != null) {
 			_payView.setWorkorder(_workorder);
+		}
+
+		if (_actionView != null) {
+			_actionView.setWorkorder(_workorder);
 		}
 	}
 
