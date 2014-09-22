@@ -34,6 +34,8 @@ public class Location {
 	private Integer _contactPhoneExt;
 	@Json(name = "type")
 	private String _type;
+	@Json(name="checkInCheckOutMapUrl")
+	private String _checkInCheckOutMapUrl;
 	@Json(name = "contactName")
 	private String _contactName;
 
@@ -94,6 +96,10 @@ public class Location {
 
 	public String getType() {
 		return _type;
+	}
+
+	public String getCheckInCheckOutMapUrl(){
+		return _checkInCheckOutMapUrl;
 	}
 
 	public String getContactName() {

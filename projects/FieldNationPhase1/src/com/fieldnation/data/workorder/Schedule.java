@@ -9,16 +9,27 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class Schedule {
+	@Json(name="startTimeHours")
+	private String _startTimeHours;
 	@Json(name = "endTime")
 	private String _endTime;
+	@Json(name="endTimeHours")
+	private String _endTimeHours;
 	@Json(name = "startTime")
 	private String _startTime;
 
 	public Schedule() {
 	}
+	public String getStartTimeHours(){
+		return _startTimeHours;
+	}
 
 	public String getEndTime() {
 		return _endTime;
+	}
+
+	public String getEndTimeHours(){
+		return _endTimeHours;
 	}
 
 	public String getStartTime() {

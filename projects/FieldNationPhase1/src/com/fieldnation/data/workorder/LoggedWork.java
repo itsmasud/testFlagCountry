@@ -5,37 +5,79 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class LoggedWork{
+	@Json(name="checkoutLat")
+	private Double _checkoutLat;
+	@Json(name="checkoutLng")
+	private Double _checkoutLng;
+	@Json(name="startTime")
+	private String _startTime;
 	@Json(name="startDate")
 	private String _startDate;
-	@Json(name="hours")
-	private Double _hours;
 	@Json(name="noOfDevices")
 	private Integer _noOfDevices;
-	@Json(name="hoursType")
-	private Integer _hoursType;
 	@Json(name="endDate")
 	private String _endDate;
+	@Json(name="endTime")
+	private String _endTime;
+	@Json(name="hoursType")
+	private Integer _hoursType;
+	@Json(name="loggedHoursId")
+	private Integer _loggedHoursId;
+	@Json(name="hours")
+	private Double _hours;
+	@Json(name="checkinLat")
+	private Double _checkinLat;
+	@Json(name="checkinLng")
+	private Double _checkinLng;
 
 	public LoggedWork(){
 	}
-	public String getStartDate(){
-		return _startDate;
+	public Double getCheckoutLat(){
+		return _checkoutLat;
 	}
 
-	public Double getHours(){
-		return _hours;
+	public Double getCheckoutLng(){
+		return _checkoutLng;
+	}
+
+	public String getStartTime(){
+		return _startTime;
+	}
+
+	public String getStartDate(){
+		return _startDate;
 	}
 
 	public Integer getNoOfDevices(){
 		return _noOfDevices;
 	}
 
+	public String getEndDate(){
+		return _endDate;
+	}
+
+	public String getEndTime(){
+		return _endTime;
+	}
+
 	public Integer getHoursType(){
 		return _hoursType;
 	}
 
-	public String getEndDate(){
-		return _endDate;
+	public Integer getLoggedHoursId(){
+		return _loggedHoursId;
+	}
+
+	public Double getHours(){
+		return _hours;
+	}
+
+	public Double getCheckinLat(){
+		return _checkinLat;
+	}
+
+	public Double getCheckinLng(){
+		return _checkinLng;
 	}
 
 	public JsonObject toJson(){

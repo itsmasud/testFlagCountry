@@ -5,12 +5,19 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class EstimatedSchedule {
+	@Json(name="workorderScheduleId")
+	private Integer _workorderScheduleId;
 	@Json(name = "endTime")
 	private String _endTime;
 	@Json(name = "startTime")
 	private String _startTime;
+	@Json(name="duration")
+	private Double _duration;
 
 	public EstimatedSchedule() {
+	}
+	public Integer getWorkorderScheduleId(){
+		return _workorderScheduleId;
 	}
 
 	public String getEndTime() {
@@ -19,6 +26,10 @@ public class EstimatedSchedule {
 
 	public String getStartTime() {
 		return _startTime;
+	}
+
+	public Double getDuration(){
+		return _duration;
 	}
 
 	public JsonObject toJson() {

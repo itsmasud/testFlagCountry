@@ -13,6 +13,8 @@ public class Task {
 	private String _alertOnCompletionInput;
 	@Json(name = "alertOnCompletion")
 	private String[] _alertOnCompletion;
+	@Json(name="taskIsCompleted")
+	private Integer _taskIsCompleted;
 	@Json(name = "taskId")
 	private Integer _taskId;
 	@Json(name = "identifier")
@@ -27,16 +29,20 @@ public class Task {
 	private String _assignedTo;
 	@Json(name = "showAlertMenu")
 	private Boolean _showAlertMenu;
+	@Json(name="taskIdentifier")
+	private Integer _taskIdentifier;
 	@Json(name = "phoneNumber")
 	private String _phoneNumber;
 	@Json(name = "completedAtDate")
 	private String _completedAtDate;
+	@Json(name="workorderTaskId")
+	private Integer _workorderTaskId;
 	@Json(name = "isEditing")
 	private Boolean _isEditing;
-	@Json(name = "customField")
-	private Integer _customField;
 	@Json(name = "minutes")
 	private Integer _minutes;
+	@Json(name="customField")
+	private Integer _customField;
 	@Json(name = "canDelete")
 	private Boolean _canDelete;
 	@Json(name = "description")
@@ -71,6 +77,10 @@ public class Task {
 		return _alertOnCompletion;
 	}
 
+	public Integer getTaskIsCompleted(){
+		return _taskIsCompleted;
+	}
+
 	public Integer getTaskId() {
 		return _taskId;
 	}
@@ -99,7 +109,11 @@ public class Task {
 		return _showAlertMenu;
 	}
 
-	public String getPhoneNumber() {
+	public Integer getTaskIdentifier(){
+		return _taskIdentifier;
+	}
+
+	public Object getPhoneNumber(){
 		return _phoneNumber;
 	}
 
@@ -107,16 +121,20 @@ public class Task {
 		return _completedAtDate;
 	}
 
-	public Boolean getIsEditing() {
-		return _isEditing;
+	public Integer getWorkorderTaskId(){
+		return _workorderTaskId;
 	}
 
-	public Integer getCustomField() {
-		return _customField;
+	public Boolean getIsEditing(){
+		return _isEditing;
 	}
 
 	public Integer getMinutes() {
 		return _minutes;
+	}
+
+	public Integer getCustomField(){
+		return _customField;
 	}
 
 	public Boolean getCanDelete() {
@@ -147,10 +165,6 @@ public class Task {
 		return _isNew;
 	}
 
-	public TaskType getTaskType() {
-		return TaskType.fromId(_typeId);
-	}
-
 	public JsonObject toJson() {
 		return toJson(this);
 	}
@@ -171,6 +185,10 @@ public class Task {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	public TaskType getTaskType() {
+		return TaskType.fromId(_typeId);
 	}
 
 }

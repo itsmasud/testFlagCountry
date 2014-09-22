@@ -43,12 +43,15 @@
 
             <Button
                 android:id="@+id/upload_button"
-                style="@style/ButtonOrange"
-                android:background="@drawable/"
                 android:layout_width="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text="@string/upload_file" />
+                android:layout_height="48dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/dashed_border"
+                android:text="+"
+                android:textColor="#FFc7c7c2" />
         </LinearLayout>
     </ScrollView>
 

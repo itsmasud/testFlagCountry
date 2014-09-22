@@ -107,6 +107,7 @@ public class WorkorderActivity extends BaseActivity {
 
 	private void buildFragments(Bundle savedInstanceState) {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
+		_viewPager.setOffscreenPageLimit(4);
 
 		if (_fragments == null) {
 			_fragments = new WorkorderFragment[5];
@@ -184,9 +185,11 @@ public class WorkorderActivity extends BaseActivity {
 	private WorkorderTabView.Listener _tabview_onChange = new WorkorderTabView.Listener() {
 		@Override
 		public void onChange(int index) {
-			_currentFragment = index;
-			_fragments[index].update();
-			_viewPager.setCurrentItem(_currentFragment, true);
+			if (index != _currentFragment) {
+				_currentFragment = index;
+				_fragments[index].update();
+				_viewPager.setCurrentItem(_currentFragment, true);
+			}
 		}
 	};
 

@@ -115,14 +115,14 @@ public class DeliverableFragment extends WorkorderFragment {
 			return false;
 
 		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-			_uploadButton.setBackgroundResource(R.drawable.btn_orange);
-			_uploadButton.setTextColor(_gs.getResources().getColor(R.color.white));
-			_uploadButton.setText("Upload File");
+			// _uploadButton.setBackgroundResource(R.drawable.btn_orange);
+			// _uploadButton.setTextColor(_gs.getResources().getColor(R.color.black));
+			// _uploadButton.setText("Upload File");
 			return true;
 		} else {
-			_uploadButton.setBackgroundResource(R.drawable.btn_white);
+			// _uploadButton.setBackgroundResource(R.drawable.btn_white);
 			_uploadButton.setText("No Media");
-			_uploadButton.setTextColor(0xFF000000);
+			// _uploadButton.setTextColor(0xFF000000);
 			return false;
 		}
 	}
@@ -166,10 +166,12 @@ public class DeliverableFragment extends WorkorderFragment {
 	}
 
 	private void getData() {
-		if (_profileService != null && _profile == null) {
-			startLoading();
-			_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
-		}
+		if (_profileService == null)
+			return;
+
+		startLoading();
+		_profile = null;
+		_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
 	}
 
 	private void populateUi() {

@@ -11,7 +11,7 @@
         android:layout_height="48dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:paddingRight="5dp"
+        android:layout_marginRight="5dp"
         android:src="@null" />
 
     <TextView
@@ -23,6 +23,6 @@
         android:layout_toRightOf="@+id/icon_imageview"
         android:gravity="left"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#FF000000" />
+        android:textColor="#FFc7c7c2" />
 
 </RelativeLayout>
