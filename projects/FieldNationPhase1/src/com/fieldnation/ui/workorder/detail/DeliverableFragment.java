@@ -200,7 +200,7 @@ public class DeliverableFragment extends WorkorderFragment {
 		for (int i = 0; i < slots.length; i++) {
 			UploadSlot slot = slots[i];
 			UploadSlotView v = new UploadSlotView(getActivity());
-			v.setUploadSlot(_profile.getUserId(), slot);
+			v.setUploadSlot(_profile.getUserId(), slot, _uploaded_document_listener);
 			_filesLayout.addView(v);
 		}
 
@@ -422,7 +422,7 @@ public class DeliverableFragment extends WorkorderFragment {
 				}
 				populateUi();
 			} else if (resultCode == WEB_DELETE_DELIVERABLE || resultCode == WEB_SEND_DELIVERABLE) {
-				getData();
+				_workorder.dispatchOnChange();
 				// } else if (resultCode == WEB_GET_TASKS) {
 				// _tasks = null;
 				// try {

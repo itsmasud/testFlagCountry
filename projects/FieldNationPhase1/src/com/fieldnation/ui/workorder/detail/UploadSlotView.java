@@ -50,7 +50,7 @@ public class UploadSlotView extends RelativeLayout {
 		_docsList = (LinearLayout) findViewById(R.id.docs_list);
 	}
 
-	public void setUploadSlot(long profileId, UploadSlot slot) {
+	public void setUploadSlot(long profileId, UploadSlot slot, UploadedDocumentView.Listener listener) {
 		_slot = slot;
 
 		UploadedDocument[] docs = _slot.getUploadedDocuments();
@@ -61,16 +61,9 @@ public class UploadSlotView extends RelativeLayout {
 			UploadedDocument doc = docs[i];
 			UploadedDocumentView v = new UploadedDocumentView(getContext());
 			v.setDeliverable(profileId, doc);
-			v.setListener(_deliverableView_listener);
+			v.setListener(listener);
 			_docsList.addView(v);
 		}
 	}
 
-	private UploadedDocumentView.Listener _deliverableView_listener = new UploadedDocumentView.Listener() {
-		@Override
-		public void onDelete(UploadedDocumentView v, UploadedDocument document) {
-			// TODO Method Stub: onDelete()
-			Log.v(TAG, "Method Stub: onDelete()");
-		}
-	};
 }
