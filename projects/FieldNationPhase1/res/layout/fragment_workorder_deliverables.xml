@@ -19,8 +19,7 @@
                 android:id="@+id/review_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" >
+                android:orientation="vertical" >
 
                 <TextView
                     style="@style/WorkorderDetail_FieldTitle"
@@ -35,61 +34,17 @@
                     android:orientation="vertical" />
             </LinearLayout>
 
-            <View
-                android:id="@+id/bar1_view"
-                style="@style/WorkorderDetail_Separator"
-                android:layout_width="match_parent"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/upload_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" >
-
-                <TextView
-                    style="@style/WorkorderDetail_FieldTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/documents_to_upload" />
-
-                <LinearLayout
-                    android:id="@+id/upload_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </LinearLayout>
-
-            <View
-                android:id="@+id/bar2_view"
-                style="@style/WorkorderDetail_Separator"
-                android:layout_width="match_parent"
-                android:visibility="gone" />
-
             <LinearLayout
                 android:id="@+id/files_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" >
-
-                <TextView
-                    style="@style/WorkorderDetail_FieldTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/my_additional_files" />
-
-                <LinearLayout
-                    android:id="@+id/files_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                android:orientation="vertical" >
             </LinearLayout>
 
             <Button
                 android:id="@+id/upload_button"
                 style="@style/ButtonOrange"
+                android:background="@drawable/"
                 android:layout_width="match_parent"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"

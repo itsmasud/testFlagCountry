@@ -105,6 +105,8 @@
     <string name="on_site">On Site</string>
     <string name="post_visit">Post Visit</string>
     <string name="edit">Edit</string>
+    <string name="uploading">Uploading...</string>
+    <string name="deleting">Deleting...</string>
 
     <!-- /general strings -->
 

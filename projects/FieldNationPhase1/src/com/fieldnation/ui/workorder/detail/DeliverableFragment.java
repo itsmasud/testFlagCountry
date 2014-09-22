@@ -38,6 +38,8 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Deliverable;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Task;
+import com.fieldnation.data.workorder.UploadSlot;
+import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -57,21 +59,16 @@ public class DeliverableFragment extends WorkorderFragment {
 	private static final int RESULT_CODE_GET_ATTACHMENT = 1;
 	private static final int RESULT_CODE_GET_CAMERA_PIC = 2;
 
-	private static final int WEB_GET_DOCUMENTS = 1;
+	// private static final int WEB_GET_DOCUMENTS = 1;
 	private static final int WEB_GET_PROFILE = 2;
 	private static final int WEB_DELETE_DELIVERABLE = 3;
 	private static final int WEB_SEND_DELIVERABLE = 4;
-	private static final int WEB_GET_TASKS = 5;
 
 	// UI
 	private LinearLayout _reviewList;
-	private LinearLayout _uploadList;
-	private LinearLayout _filesList;
 	private LinearLayout _reviewLayout;
-	private LinearLayout _uploadLayout;
 	private LinearLayout _filesLayout;
 	private View _bar1View;
-	private View _bar2View;
 	private Button _uploadButton;
 	private AppPickerDialog _dialog;
 	private RelativeLayout _loadingLayout;
@@ -82,8 +79,8 @@ public class DeliverableFragment extends WorkorderFragment {
 	private WorkorderService _service;
 	private ProfileService _profileService;
 	private Profile _profile = null;
-	private List<Deliverable> _deliverables = null;
-	private List<Task> _tasks = null;
+	// private List<Deliverable> _deliverables = null;
+	// private List<Task> _tasks = null;
 	private int _loadingCounter = 0;
 	private SecureRandom _rand = new SecureRandom();
 
@@ -103,13 +100,9 @@ public class DeliverableFragment extends WorkorderFragment {
 		_gs.requestAuthentication(_authClient);
 
 		_reviewList = (LinearLayout) view.findViewById(R.id.review_list);
-		_uploadList = (LinearLayout) view.findViewById(R.id.upload_list);
-		_filesList = (LinearLayout) view.findViewById(R.id.files_list);
 		_reviewLayout = (LinearLayout) view.findViewById(R.id.review_layout);
-		_uploadLayout = (LinearLayout) view.findViewById(R.id.upload_layout);
 		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
 		_bar1View = view.findViewById(R.id.bar1_view);
-		_bar2View = view.findViewById(R.id.bar2_view);
 		_uploadButton = (Button) view.findViewById(R.id.upload_button);
 		_uploadButton.setOnClickListener(_upload_onClick);
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
@@ -177,60 +170,19 @@ public class DeliverableFragment extends WorkorderFragment {
 			startLoading();
 			_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
 		}
-
-		if (_service == null)
-			return;
-
-		if (_workorder == null || _workorder.getWorkorderId() == null)
-			return;
-
-		startLoading();
-		_gs.startService(_service.listDeliverables(WEB_GET_DOCUMENTS, _workorder.getWorkorderId(), false));
-
-		startLoading();
-		_gs.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), false));
 	}
 
 	private void populateUi() {
-		if (_deliverables == null)
-			return;
 		if (_profile == null)
 			return;
-		if (_tasks == null)
+
+		if (_workorder == null)
 			return;
+
 		if (getActivity() == null)
 			return;
 
 		_reviewList.removeAllViews();
-		_uploadList.removeAllViews();
-		_filesList.removeAllViews();
-		for (int i = 0; i < _deliverables.size(); i++) {
-			Deliverable deliv = _deliverables.get(i);
-			DeliverableView v = new DeliverableView(getActivity());
-			v.setDeliverable(_profile.getUserId(), deliv);
-			v.setListener(_deliverableListener);
-
-			if (deliv.getUploadedBy().getUserId() == _profile.getUserId()) {
-				boolean found = false;
-				for (int j = 0; j < _tasks.size(); j++) {
-					if (_tasks.get(j).getIdentifier() == null)
-						continue;
-
-					if (_tasks.get(j).getIdentifier().equals(deliv.getWorkorderUploadSlotId())) {
-						found = true;
-						break;
-					}
-				}
-				if (found) {
-					_uploadList.addView(v);
-				} else {
-					_filesList.addView(v);
-				}
-			} else {
-				_reviewList.addView(v);
-			}
-		}
-
 		Document[] docs = _workorder.getDocuments();
 		if (docs != null) {
 			for (int i = 0; i < docs.length; i++) {
@@ -240,32 +192,42 @@ public class DeliverableFragment extends WorkorderFragment {
 				v.setDocument(doc);
 			}
 		}
-		_bar1View.setVisibility(View.GONE);
-		_bar2View.setVisibility(View.GONE);
 
-		if (_reviewList.getChildCount() == 0) {
-			_reviewLayout.setVisibility(View.GONE);
-		} else {
-			_reviewLayout.setVisibility(View.VISIBLE);
+		_filesLayout.removeAllViews();
+		UploadSlot[] slots = _workorder.getUploadSlots();
+		for (int i = 0; i < slots.length; i++) {
+			UploadSlot slot = slots[i];
+			UploadSlotView v = new UploadSlotView(getActivity());
+			v.setUploadSlot(_profile.getUserId(), slot);
+			_filesLayout.addView(v);
 		}
 
-		if (_uploadList.getChildCount() == 0) {
-			_uploadLayout.setVisibility(View.GONE);
-		} else {
-			if (_reviewList.getChildCount() > 0) {
-				_bar1View.setVisibility(View.VISIBLE);
-			}
-			_uploadLayout.setVisibility(View.VISIBLE);
-		}
-
-		if (_filesList.getChildCount() == 0) {
-			_filesLayout.setVisibility(View.GONE);
-		} else {
-			if (_reviewList.getChildCount() > 0 || _uploadList.getChildCount() > 0) {
-				_bar2View.setVisibility(View.VISIBLE);
-			}
-			_filesLayout.setVisibility(View.VISIBLE);
-		}
+		// _bar1View.setVisibility(View.GONE);
+		//
+		// if (_reviewList.getChildCount() == 0) {
+		// _reviewLayout.setVisibility(View.GONE);
+		// } else {
+		// _reviewLayout.setVisibility(View.VISIBLE);
+		// }
+		//
+		// if (_uploadList.getChildCount() == 0) {
+		// _uploadLayout.setVisibility(View.GONE);
+		// } else {
+		// if (_reviewList.getChildCount() > 0) {
+		// _bar1View.setVisibility(View.VISIBLE);
+		// }
+		// _uploadLayout.setVisibility(View.VISIBLE);
+		// }
+		//
+		// if (_filesList.getChildCount() == 0) {
+		// _filesLayout.setVisibility(View.GONE);
+		// } else {
+		// if (_reviewList.getChildCount() > 0 || _uploadList.getChildCount() >
+		// 0) {
+		// _bar2View.setVisibility(View.VISIBLE);
+		// }
+		// _filesLayout.setVisibility(View.VISIBLE);
+		// }
 	}
 
 	@Override
@@ -317,7 +279,7 @@ public class DeliverableFragment extends WorkorderFragment {
 				c.moveToFirst();
 
 				// send to the service
-				startLoading();
+				// startLoading();
 				_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 2,
 						c.getString(nameIndex), tempfile, getNotificationIntent()));
 				c.close();
@@ -355,7 +317,7 @@ public class DeliverableFragment extends WorkorderFragment {
 					c.moveToFirst();
 
 					// send data to service
-					startLoading();
+					// startLoading();
 					_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 2,
 							c.getString(nameIndex), tempfile, getNotificationIntent()));
 
@@ -396,19 +358,31 @@ public class DeliverableFragment extends WorkorderFragment {
 			if (checkMedia()) {
 				_dialog.show();
 			} else {
-				Toast.makeText(getActivity(), "Need External Storage", Toast.LENGTH_LONG).show();
+				Toast.makeText(getActivity(), "Need External Storage, pleaswe insert storage device before continuing",
+						Toast.LENGTH_LONG).show();
 			}
 		}
 	};
 
-	private DeliverableView.Listener _deliverableListener = new DeliverableView.Listener() {
+	private UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
 		@Override
-		public void onDelete(Deliverable deliverable) {
-			startLoading();
+		public void onDelete(UploadedDocumentView v, UploadedDocument document) {
+			// startLoading();
 			_gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE, _workorder.getWorkorderId(),
-					deliverable.getWorkorderUploadId()));
+					document.getWorkorderUploadId()));
 		}
 	};
+
+	private DeliverableView.Listener _deliverable_listener = new DeliverableView.Listener() {
+
+		@Override
+		public void onDelete(DeliverableView v, Deliverable document) {
+			// TODO Method Stub: onDelete()
+			Log.v(TAG, "Method Stub: onDelete()");
+
+		}
+	};
+
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthentication(String username, String authToken) {
@@ -434,23 +408,7 @@ public class DeliverableFragment extends WorkorderFragment {
 			stopLoading();
 			// TODO Method Stub: onSuccess()
 			Log.v(TAG, "Method Stub: onSuccess()");
-			if (resultCode == WEB_GET_DOCUMENTS) {
-				_deliverables = null;
-				try {
-					_deliverables = new LinkedList<Deliverable>();
-
-					String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-					JsonArray ja = new JsonArray(data);
-					for (int i = 0; i < ja.size(); i++) {
-						Deliverable deliverable = Deliverable.fromJson(ja.getJsonObject(i));
-						_deliverables.add(deliverable);
-					}
-				} catch (Exception ex) {
-					// TODO mulligan?
-					ex.printStackTrace();
-					_deliverables = null;
-				}
-			} else if (resultCode == WEB_GET_PROFILE) {
+			if (resultCode == WEB_GET_PROFILE) {
 				_profile = null;
 				try {
 					_profile = Profile.fromJson(new JsonObject(new String(
@@ -460,26 +418,29 @@ public class DeliverableFragment extends WorkorderFragment {
 					e.printStackTrace();
 					_profile = null;
 				}
+				populateUi();
 			} else if (resultCode == WEB_DELETE_DELIVERABLE || resultCode == WEB_SEND_DELIVERABLE) {
 				getData();
-			} else if (resultCode == WEB_GET_TASKS) {
-				_tasks = null;
-				try {
-					_tasks = new LinkedList<Task>();
-
-					String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-					JsonArray ja = new JsonArray(data);
-					for (int i = 0; i < ja.size(); i++) {
-						Task task = Task.fromJson(ja.getJsonObject(i));
-						_tasks.add(task);
-					}
-				} catch (Exception ex) {
-					// TODO mulligan?
-					ex.printStackTrace();
-					_tasks = null;
-				}
+				// } else if (resultCode == WEB_GET_TASKS) {
+				// _tasks = null;
+				// try {
+				// _tasks = new LinkedList<Task>();
+				//
+				// String data = new
+				// String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+				// JsonArray ja = new JsonArray(data);
+				// for (int i = 0; i < ja.size(); i++) {
+				// Task task = Task.fromJson(ja.getJsonObject(i));
+				// _tasks.add(task);
+				// }
+				// } catch (Exception ex) {
+				// // TODO mulligan?
+				// ex.printStackTrace();
+				// _tasks = null;
+				// }
+				// populateUi();
 			}
-			populateUi();
+
 		}
 
 		@Override

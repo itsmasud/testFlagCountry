@@ -25,6 +25,9 @@ public class Config {
 		ClassNameMap.put("UpdatedBy", "User");
 		ClassNameMap.put("Documents", "Document");
 		ClassNameMap.put("Fees", "Fee");
+		ClassNameMap.put("UploadSlots", "UploadSlot");
+		ClassNameMap.put("UploadedDocuments", "UploadedDocument");
+		
 
 	}
 

@@ -15,6 +15,8 @@ public class UploadSlot {
 	private Integer _maxFiles;
 	@Json(name = "uploadedDocuments")
 	private UploadedDocument[] _uploadedDocuments;
+	@Json(name="tasks")
+	private Task _tasks;
 
 	public UploadSlot() {
 	}
@@ -37,6 +39,10 @@ public class UploadSlot {
 
 	public UploadedDocument[] getUploadedDocuments() {
 		return _uploadedDocuments;
+	}
+
+	public Task getTasks(){
+		return _tasks;
 	}
 
 	public JsonObject toJson() {

@@ -7,14 +7,12 @@ import com.fieldnation.json.annotations.Json;
 public class UploadedDocument {
 	@Json(name = "uploaderUserName")
 	private String _uploaderUserName;
-	@Json(name="fileSize")
-	private Integer _fileSize;
 	@Json(name = "workorderUploadId")
 	private Integer _workorderUploadId;
 	@Json(name = "fileName")
 	private String _fileName;
 	@Json(name = "uploadedTime")
-	private String _uploadedTime;
+	private Integer _uploadedTime;
 	@Json(name = "status")
 	private Integer _status;
 	@Json(name = "reviewComment")
@@ -37,18 +35,12 @@ public class UploadedDocument {
 	private Integer _uploaderUserId;
 	@Json(name = "workorderUploadSlotId")
 	private Integer _workorderUploadSlotId;
-	@Json(name="fileType")
-	private String _fileType;
 
 	public UploadedDocument() {
 	}
 
 	public String getUploaderUserName() {
 		return _uploaderUserName;
-	}
-
-	public Integer getFileSize(){
-		return _fileSize;
 	}
 
 	public Integer getWorkorderUploadId() {
@@ -59,7 +51,7 @@ public class UploadedDocument {
 		return _fileName;
 	}
 
-	public String getUploadedTime(){
+	public Integer getUploadedTime() {
 		return _uploadedTime;
 	}
 
@@ -105,10 +97,6 @@ public class UploadedDocument {
 
 	public Integer getWorkorderUploadSlotId() {
 		return _workorderUploadSlotId;
-	}
-
-	public String getFileType(){
-		return _fileType;
 	}
 
 	public JsonObject toJson() {

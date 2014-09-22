@@ -21,8 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class DeliverableView extends RelativeLayout {
-	private static final String TAG = "ui.workorder.detail.DeliverableView";
+public class UploadedDocumentView extends RelativeLayout {
+	private static final String TAG = "ui.workorder.detail.UploadedDocumentView";
 
 	// UI
 	private ImageView _fileTypeImageView;
@@ -35,7 +35,7 @@ public class DeliverableView extends RelativeLayout {
 	private LinearLayout _usernameLayout;
 
 	// Data
-	private Deliverable _doc;
+	private UploadedDocument _doc;
 	private long _profileId;
 	private Listener _listener;
 	private int _loadingCounter = 0;
@@ -43,17 +43,17 @@ public class DeliverableView extends RelativeLayout {
 	/*-*****************************-*/
 	/*-			Life Cycle			-*/
 	/*-*****************************-*/
-	public DeliverableView(Context context) {
+	public UploadedDocumentView(Context context) {
 		super(context);
 		init();
 	}
 
-	public DeliverableView(Context context, AttributeSet attrs) {
+	public UploadedDocumentView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
 	}
 
-	public DeliverableView(Context context, AttributeSet attrs, int defStyle) {
+	public UploadedDocumentView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		init();
 	}
@@ -99,7 +99,7 @@ public class DeliverableView extends RelativeLayout {
 
 	}
 
-	public void setDeliverable(long profileId, Deliverable deliverable) {
+	public void setDeliverable(long profileId, UploadedDocument deliverable) {
 		_doc = deliverable;
 		_profileId = profileId;
 		populateUi();
@@ -119,7 +119,7 @@ public class DeliverableView extends RelativeLayout {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		_usernameTextView.setText(_doc.getUploadedBy().getFirstname() + " " + _doc.getUploadedBy().getLastname());
+		_usernameTextView.setText(_doc.getUploaderUserName());
 
 		if (_profileId == _doc.getUploaderUserId()) {
 			_deleteButton.setVisibility(View.VISIBLE);
@@ -145,11 +145,11 @@ public class DeliverableView extends RelativeLayout {
 		public void onClick(View v) {
 			setLoading(true, R.string.deleting);
 			if (_listener != null)
-				_listener.onDelete(DeliverableView.this, _doc);
+				_listener.onDelete(UploadedDocumentView.this, _doc);
 		}
 	};
 
 	public interface Listener {
-		public void onDelete(DeliverableView v, Deliverable document);
+		public void onDelete(UploadedDocumentView v, UploadedDocument document);
 	}
 }

@@ -343,6 +343,7 @@ public class J2J {
 			getCounterOffers(details);
 			getWorkorderBundle(details);
 			getDeliverables(details);
+			getDiscounts(details);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -501,5 +502,29 @@ public class J2J {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private static void getDiscounts(JsonArray workorders) {
+		try {
+			for (int i = 0; i < workorders.size(); i++) {
+				JsonObject workorder = workorders.getJsonObject(i);
+
+				String url = "/api/rest/v1/workorder/" + workorder.getLong("workorderId") + "/discounts?access_token=" + authToken;
+
+				Log.println(url);
+				try {
+					Result result = Ws.httpGet(hostname, url);
+					JsonArray ja = result.getResultsAsJsonArray();
+
+					addData(ja, "com.fieldnation.data.workorder", "Discount");
+
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 	}
 }

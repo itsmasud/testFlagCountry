@@ -195,8 +195,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		@Override
 		public void onClick(View v) {
 			setLoading(true);
-			// TODO get complete REST call
-			// _service.
+			_gs.startService(_service.complete(WEB_REQUEST, _workorder.getWorkorderId()));
 		}
 	};
 

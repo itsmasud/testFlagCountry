@@ -82,7 +82,7 @@ public class Workorder {
 	private Status _status;
 	@Json(name = "isWorkPerformed")
 	private Boolean _isWorkPerformed;
-	@Json(name="uploadSlots")
+	@Json(name = "uploadSlots")
 	private UploadSlot[] _uploadSlots;
 	@Json(name = "title")
 	private String _title;
@@ -279,7 +279,7 @@ public class Workorder {
 		return _isWorkPerformed;
 	}
 
-	public UploadSlot[] getUploadSlots(){
+	public UploadSlot[] getUploadSlots() {
 		return _uploadSlots;
 	}
 
