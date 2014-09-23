@@ -222,14 +222,11 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		}
 
 		AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
-		if (expenses == null || expenses.length == 0) {
-			_expensesLabelTextView.setVisibility(GONE);
-			_expensesLinearLayout.setVisibility(GONE);
-		} else {
-			_expensesLabelTextView.setVisibility(VISIBLE);
-			_expensesLinearLayout.setVisibility(VISIBLE);
-			_expensesLinearLayout.removeAllViews();
+		_expensesLabelTextView.setVisibility(VISIBLE);
+		_expensesLinearLayout.setVisibility(VISIBLE);
+		_expensesLinearLayout.removeAllViews();
 
+		if (expenses != null && expenses.length > 0) {
 			for (int i = 0; i < expenses.length; i++) {
 				AdditionalExpense expense = expenses[i];
 				ExpenseView v = new ExpenseView(getContext());
@@ -240,14 +237,11 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		}
 
 		Discount[] discounts = _workorder.getDiscounts();
-		if (discounts == null || discounts.length == 0) {
-			_discountsLabelTextView.setVisibility(GONE);
-			_discountsLinearLayout.setVisibility(GONE);
-		} else {
-			_discountsLabelTextView.setVisibility(VISIBLE);
-			_discountsLinearLayout.setVisibility(VISIBLE);
-			_discountsLinearLayout.removeAllViews();
+		_discountsLabelTextView.setVisibility(VISIBLE);
+		_discountsLinearLayout.setVisibility(VISIBLE);
+		_discountsLinearLayout.removeAllViews();
 
+		if (discounts != null && discounts.length > 0) {
 			for (int i = 0; i < discounts.length; i++) {
 				Discount discount = discounts[i];
 				DiscountView v = new DiscountView(getContext());

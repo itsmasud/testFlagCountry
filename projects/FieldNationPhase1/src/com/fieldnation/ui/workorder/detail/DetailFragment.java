@@ -41,7 +41,7 @@ public class DetailFragment extends WorkorderFragment {
 		_locView = (LocationView) view.findViewById(R.id.location_view);
 		_scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
 		_payView = (PaymentView) view.findViewById(R.id.payment_view);
-		_payView.showDetails(false);
+		_payView.showDetails(true);
 		_actionView = (ActionView) view.findViewById(R.id.action_view);
 
 		if (_workorder != null) {
