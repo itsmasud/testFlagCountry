@@ -75,7 +75,7 @@ public class MessageCardView extends RelativeLayout {
 
 		_viewId = (int) (message.getMessageId() % Integer.MAX_VALUE);
 		try {
-			_titleTextView.setText(message.getMessageId() + "");
+			_titleTextView.setText(message.getWorkorderTitle() + "");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

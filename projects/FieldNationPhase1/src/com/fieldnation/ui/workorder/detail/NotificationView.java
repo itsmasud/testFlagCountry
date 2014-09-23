@@ -72,7 +72,8 @@ public class NotificationView extends RelativeLayout {
 			msg = msg.substring(0, 170) + "...";
 		}
 		_messageTextView.setText(msg);
-		_usernameTextView.setText("");
+
+		_usernameTextView.setText(_notification.getFromUser().getFirstname() + _notification.getFromUser().getLastname());
 		try {
 			_dateTextView.setText(misc.formatDateTime(ISO8601.toCalendar(_notification.getDate()), false));
 		} catch (Exception e) {

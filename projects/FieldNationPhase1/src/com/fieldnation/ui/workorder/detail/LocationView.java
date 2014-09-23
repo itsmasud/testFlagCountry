@@ -64,7 +64,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 			return;
 		}
 		String fullAddr = location.getFullAddress();
-		if (misc.isEmptyOrNull(fullAddr)) {
+		if (!misc.isEmptyOrNull(fullAddr)) {
 			_addressTextView.setText(fullAddr);
 			_addressTextView.setVisibility(View.VISIBLE);
 		} else {

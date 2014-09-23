@@ -170,6 +170,10 @@ public class misc {
 		return nc;
 	}
 
+	/*
+	 * http://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html#dt
+	 */
+
 	/**
 	 * 
 	 * @param calendar
@@ -200,6 +204,22 @@ public class misc {
 		int year = calendar.get(Calendar.YEAR);
 
 		return months + "/" + day + "/" + year;
+	}
+
+	public static String formatMessageTime(Calendar calendar) {
+		Calendar cal = applyTimeZone(calendar);
+
+		// today
+		if (calendar.getTimeInMillis() / 86400000 == Calendar.getInstance().getTimeInMillis() / 86400000) {
+			return "Today";
+		}
+
+		// > 1 year old
+		if (Calendar.getInstance().get(Calendar.YEAR) > calendar.get(Calendar.YEAR)) {
+			return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+		}
+		return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + formatTime(
+				cal, false);
 	}
 
 	/**

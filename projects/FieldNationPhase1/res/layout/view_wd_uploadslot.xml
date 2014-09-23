@@ -21,7 +21,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />
-    
-    <TextView style="@style/TextViewLink"/>
+
+    <TextView
+        android:id="@+id/upload_textview"
+        style="@style/TextViewLink"
+        android:layout_width="fill_parent"
+        android:text="Upload a File" />
 
 </LinearLayout>

@@ -42,13 +42,6 @@
             android:layout_height="wrap_content"
             android:text="Today 8:30 AM" />
 
-        <TextView
-            android:id="@+id/pending_textview"
-            style="@style/MessageView_Status_Pending"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pending" />
-
         <ImageView
             android:id="@+id/check_imageview"
             style="@style/MessageView_Status_Check" />

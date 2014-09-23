@@ -64,7 +64,7 @@ public class MessageSentView extends RelativeLayout {
 		_messageTextView = (TextView) findViewById(R.id.message_textview);
 		_profileImageView = (ImageView) findViewById(R.id.profile_imageview);
 		_timeTextView = (TextView) findViewById(R.id.time_textview);
-		_pendingTextView = (TextView) findViewById(R.id.pending_textview);
+		// _pendingTextView = (TextView) findViewById(R.id.pending_textview);
 		_checkImageView = (ImageView) findViewById(R.id.check_imageview);
 
 		_service = new PhotoService(_gs, _resultReceiver);
@@ -73,7 +73,6 @@ public class MessageSentView extends RelativeLayout {
 	public void setMessage(Message message) {
 		_message = message;
 
-		getPhoto();
 		populateUi();
 	}
 
@@ -97,10 +96,20 @@ public class MessageSentView extends RelativeLayout {
 
 		_messageTextView.setText(_message.getMessage());
 		try {
-			_timeTextView.setText(misc.formatDateTime(ISO8601.toCalendar(_message.getMsgCreateDate()), false));
+			_timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+
+		_profileImageView.setBackgroundResource(R.drawable.missing);
+
+		if (_message.getMsgRead() == 0) {
+			_checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
+		} else {
+			_checkImageView.setBackgroundResource(R.drawable.ic_check);
+		}
+
+		getPhoto();
 	}
 
 	private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
@@ -111,6 +120,7 @@ public class MessageSentView extends RelativeLayout {
 
 				if (data != null) {
 					Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+					bitmap = misc.extractCircle(bitmap);
 					if (bitmap != null) {
 						Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
 						_profileImageView.setBackgroundDrawable(draw);

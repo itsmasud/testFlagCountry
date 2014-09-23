@@ -1,6 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <color name="drawerBackground">#FFe7e8da</color>
+    <color name="drawerBackground">#FFf8f9f4</color>
     <color name="drawerHighlightBackground">#FFc0e4bc</color>
     <color name="drawerHighlightBorder">#FF5cc087</color>
     <color name="drawerForeground">#FFcecfc0</color>

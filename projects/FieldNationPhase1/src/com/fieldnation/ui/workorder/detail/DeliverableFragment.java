@@ -69,7 +69,6 @@ public class DeliverableFragment extends WorkorderFragment {
 	private LinearLayout _reviewLayout;
 	private LinearLayout _filesLayout;
 	private View _bar1View;
-	private Button _uploadButton;
 	private AppPickerDialog _dialog;
 	private RelativeLayout _loadingLayout;
 
@@ -83,6 +82,9 @@ public class DeliverableFragment extends WorkorderFragment {
 	// private List<Task> _tasks = null;
 	private int _loadingCounter = 0;
 	private SecureRandom _rand = new SecureRandom();
+	// temporary storage
+	private UploadSlot _uploadingSlot;
+	private UploadSlotView _uploadingSlotView;
 
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
@@ -103,26 +105,15 @@ public class DeliverableFragment extends WorkorderFragment {
 		_reviewLayout = (LinearLayout) view.findViewById(R.id.review_layout);
 		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
 		_bar1View = view.findViewById(R.id.bar1_view);
-		_uploadButton = (Button) view.findViewById(R.id.upload_button);
-		_uploadButton.setOnClickListener(_upload_onClick);
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
 
 		checkMedia();
 	}
 
 	private boolean checkMedia() {
-		if (_uploadButton == null)
-			return false;
-
 		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-			// _uploadButton.setBackgroundResource(R.drawable.btn_orange);
-			// _uploadButton.setTextColor(_gs.getResources().getColor(R.color.black));
-			// _uploadButton.setText("Upload File");
 			return true;
 		} else {
-			// _uploadButton.setBackgroundResource(R.drawable.btn_white);
-			_uploadButton.setText("No Media");
-			// _uploadButton.setTextColor(0xFF000000);
 			return false;
 		}
 	}
@@ -197,11 +188,14 @@ public class DeliverableFragment extends WorkorderFragment {
 
 		_filesLayout.removeAllViews();
 		UploadSlot[] slots = _workorder.getUploadSlots();
-		for (int i = 0; i < slots.length; i++) {
-			UploadSlot slot = slots[i];
-			UploadSlotView v = new UploadSlotView(getActivity());
-			v.setUploadSlot(_profile.getUserId(), slot, _uploaded_document_listener);
-			_filesLayout.addView(v);
+		if (slots != null) {
+			for (int i = 0; i < slots.length; i++) {
+				UploadSlot slot = slots[i];
+				UploadSlotView v = new UploadSlotView(getActivity());
+				v.setUploadSlot(_profile.getUserId(), slot, _uploaded_document_listener);
+				v.setListener(_uploadSlot_listener);
+				_filesLayout.addView(v);
+			}
 		}
 
 		// _bar1View.setVisibility(View.GONE);
@@ -282,8 +276,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
 				// send to the service
 				// startLoading();
-				_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 2,
-						c.getString(nameIndex), tempfile, getNotificationIntent()));
+				_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+						_uploadingSlot.getSlotId(), c.getString(nameIndex), tempfile, getNotificationIntent()));
 				c.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -320,8 +314,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
 					// send data to service
 					// startLoading();
-					_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), 2,
-							c.getString(nameIndex), tempfile, getNotificationIntent()));
+					_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+							_uploadingSlot.getSlotId(), c.getString(nameIndex), tempfile, getNotificationIntent()));
 
 					c.close();
 				} catch (Exception ex) {
@@ -336,6 +330,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+
 	private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
 
 		@Override
@@ -354,18 +349,6 @@ public class DeliverableFragment extends WorkorderFragment {
 		}
 	};
 
-	private View.OnClickListener _upload_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (checkMedia()) {
-				_dialog.show();
-			} else {
-				Toast.makeText(getActivity(), "Need External Storage, pleaswe insert storage device before continuing",
-						Toast.LENGTH_LONG).show();
-			}
-		}
-	};
-
 	private UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
 		@Override
 		public void onDelete(UploadedDocumentView v, UploadedDocument document) {
@@ -375,16 +358,20 @@ public class DeliverableFragment extends WorkorderFragment {
 		}
 	};
 
-	private DeliverableView.Listener _deliverable_listener = new DeliverableView.Listener() {
-
+	private UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
 		@Override
-		public void onDelete(DeliverableView v, Deliverable document) {
-			// TODO Method Stub: onDelete()
-			Log.v(TAG, "Method Stub: onDelete()");
-
+		public void onUploadClick(UploadSlotView view, UploadSlot slot) {
+			if (checkMedia()) {
+				_uploadingSlot = slot;
+				_dialog.show();
+			} else {
+				Toast.makeText(getActivity(), "Need External Storage, pleaswe insert storage device before continuing",
+						Toast.LENGTH_LONG).show();
+			}
 		}
 	};
 
+	// Web
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthentication(String username, String authToken) {

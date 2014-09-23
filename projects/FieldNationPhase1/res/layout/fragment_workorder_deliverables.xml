@@ -32,6 +32,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
+
+                <TextView
+                    style="@style/WorkorderDetail_Field_Bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No documents to view at this time"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout
@@ -40,18 +47,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
             </LinearLayout>
-
-            <Button
-                android:id="@+id/upload_button"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/dashed_border"
-                android:text="+"
-                android:textColor="#FFc7c7c2" />
         </LinearLayout>
     </ScrollView>
 

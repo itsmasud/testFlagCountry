@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -135,7 +136,9 @@ public class UploadedDocumentView extends RelativeLayout {
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent(Intent.ACTION_VIEW);
-			intent.setDataAndType(Uri.parse(_doc.getStorageSrc()), _doc.getFileType());
+			Log.v(TAG, _doc.getStorageSrc());
+			Log.v(TAG, _doc.getFileType());
+			intent.setDataAndType(Uri.parse(_doc.getDownloadLink()), _doc.getFileType());
 			getContext().startActivity(intent);
 		}
 	};

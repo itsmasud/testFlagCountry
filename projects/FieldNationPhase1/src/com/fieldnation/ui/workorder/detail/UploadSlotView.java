@@ -8,6 +8,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,9 +19,11 @@ public class UploadSlotView extends RelativeLayout {
 	// UI
 	private TextView _titleTextView;
 	private LinearLayout _docsList;
+	private TextView _uploadTextView;
 
 	// DATA
 	private UploadSlot _slot;
+	private Listener _listener;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -48,6 +51,8 @@ public class UploadSlotView extends RelativeLayout {
 
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
 		_docsList = (LinearLayout) findViewById(R.id.docs_list);
+		_uploadTextView = (TextView) findViewById(R.id.upload_textview);
+		_uploadTextView.setOnClickListener(_upload_onClick);
 	}
 
 	public void setUploadSlot(long profileId, UploadSlot slot, UploadedDocumentView.Listener listener) {
@@ -64,6 +69,25 @@ public class UploadSlotView extends RelativeLayout {
 			v.setListener(listener);
 			_docsList.addView(v);
 		}
+
+		if ((slot.getMaxFiles() > 0 && docs.length >= slot.getMaxFiles())) {
+			_uploadTextView.setVisibility(GONE);
+		}
 	}
 
+	public void setListener(Listener listener) {
+		_listener = listener;
+	}
+
+	private View.OnClickListener _upload_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null)
+				_listener.onUploadClick(UploadSlotView.this, _slot);
+		}
+	};
+
+	public interface Listener {
+		public void onUploadClick(UploadSlotView view, UploadSlot slot);
+	}
 }

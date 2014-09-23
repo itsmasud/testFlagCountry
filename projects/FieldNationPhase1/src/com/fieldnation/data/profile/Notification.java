@@ -8,10 +8,12 @@ import com.fieldnation.json.annotations.Json;
 public class Notification {
 	@Json(name = "viewed")
 	private Integer _viewed;
-	@Json(name="date")
-	private String _date;
-	@Json(name="fromUser")
+	@Json(name = "fromUser")
 	private User _fromUser;
+	@Json(name = "date")
+	private String _date;
+	@Json(name = "workorderId")
+	private Long _workorderId;
 	@Json(name = "workorder")
 	private Workorder _workorder;
 	@Json(name = "message")
@@ -28,12 +30,16 @@ public class Notification {
 		return _viewed;
 	}
 
+	public User getFromUser() {
+		return _fromUser;
+	}
+
 	public String getDate() {
 		return _date;
 	}
 
-	public User getFromUser(){
-		return _fromUser;
+	public Long getWorkorderId() {
+		return _workorderId;
 	}
 
 	public Workorder getWorkorder() {
