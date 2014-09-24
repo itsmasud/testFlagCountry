@@ -40,6 +40,7 @@ public class UploadedDocumentView extends RelativeLayout {
 	private long _profileId;
 	private Listener _listener;
 	private int _loadingCounter = 0;
+	private boolean _isLoading = false;
 
 	/*-*****************************-*/
 	/*-			Life Cycle			-*/
@@ -85,17 +86,20 @@ public class UploadedDocumentView extends RelativeLayout {
 	/*-*************************-*/
 
 	public void setLoading(boolean isloading, int messageResId) {
+		_isLoading = isloading;
 		if (isloading) {
 			_progressBar.setVisibility(View.VISIBLE);
 			_statusTextView.setVisibility(View.VISIBLE);
 			_usernameLayout.setVisibility(View.GONE);
 			_dateTextView.setVisibility(View.GONE);
+			_deleteButton.setVisibility(View.GONE);
 			_statusTextView.setText(messageResId);
 		} else {
 			_progressBar.setVisibility(View.GONE);
 			_statusTextView.setVisibility(View.GONE);
 			_usernameLayout.setVisibility(View.VISIBLE);
 			_dateTextView.setVisibility(View.VISIBLE);
+			_deleteButton.setVisibility(View.VISIBLE);
 		}
 
 	}
@@ -122,7 +126,7 @@ public class UploadedDocumentView extends RelativeLayout {
 		}
 		_usernameTextView.setText(_doc.getUploaderUserName());
 
-		if (_profileId == _doc.getUploaderUserId()) {
+		if (_profileId == _doc.getUploaderUserId() && !_isLoading) {
 			_deleteButton.setVisibility(View.VISIBLE);
 		} else {
 			_deleteButton.setVisibility(View.GONE);
@@ -135,6 +139,9 @@ public class UploadedDocumentView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			if (_isLoading)
+				return;
+
 			Intent intent = new Intent(Intent.ACTION_VIEW);
 			Log.v(TAG, _doc.getStorageSrc());
 			Log.v(TAG, _doc.getFileType());

@@ -39,6 +39,7 @@ public class DeliverableView extends RelativeLayout {
 	private long _profileId;
 	private Listener _listener;
 	private int _loadingCounter = 0;
+	private boolean _isLoading = false;
 
 	/*-*****************************-*/
 	/*-			Life Cycle			-*/
@@ -84,19 +85,21 @@ public class DeliverableView extends RelativeLayout {
 	/*-*************************-*/
 
 	public void setLoading(boolean isloading, int messageResId) {
+		_isLoading = isloading;
 		if (isloading) {
 			_progressBar.setVisibility(View.VISIBLE);
 			_statusTextView.setVisibility(View.VISIBLE);
 			_usernameLayout.setVisibility(View.GONE);
 			_dateTextView.setVisibility(View.GONE);
+			_deleteButton.setVisibility(View.GONE);
 			_statusTextView.setText(messageResId);
 		} else {
 			_progressBar.setVisibility(View.GONE);
 			_statusTextView.setVisibility(View.GONE);
 			_usernameLayout.setVisibility(View.VISIBLE);
 			_dateTextView.setVisibility(View.VISIBLE);
+			_deleteButton.setVisibility(View.VISIBLE);
 		}
-
 	}
 
 	public void setDeliverable(long profileId, Deliverable deliverable) {
@@ -121,7 +124,7 @@ public class DeliverableView extends RelativeLayout {
 		}
 		_usernameTextView.setText(_doc.getUploadedBy().getFirstname() + " " + _doc.getUploadedBy().getLastname());
 
-		if (_profileId == _doc.getUploaderUserId()) {
+		if (_profileId == _doc.getUploaderUserId() && !_isLoading) {
 			_deleteButton.setVisibility(View.VISIBLE);
 		} else {
 			_deleteButton.setVisibility(View.GONE);
@@ -134,6 +137,9 @@ public class DeliverableView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			if (_isLoading)
+				return;
+
 			Intent intent = new Intent(Intent.ACTION_VIEW);
 			intent.setDataAndType(Uri.parse(_doc.getStorageSrc()), _doc.getFileType());
 			getContext().startActivity(intent);

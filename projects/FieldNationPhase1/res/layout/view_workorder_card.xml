@@ -68,6 +68,11 @@
         android:layout_height="wrap_content"
         android:visibility="visible" >
 
+        <!-- stilt to set minimum height -->
+        <View
+            android:layout_width="1px"
+            android:layout_height="110dp" />
+
         <!-- status layout -->
 
         <com.fieldnation.ui.VerticalTextView

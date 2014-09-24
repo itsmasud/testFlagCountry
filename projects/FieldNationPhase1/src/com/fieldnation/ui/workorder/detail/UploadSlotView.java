@@ -79,6 +79,9 @@ public class UploadSlotView extends RelativeLayout {
 		_listener = listener;
 	}
 
+	/*-*************************-*/
+	/*-			Events			-*/
+	/*-*************************-*/
 	private View.OnClickListener _upload_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
