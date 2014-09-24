@@ -25,6 +25,15 @@
             android:text="Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. " />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/username_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/message_layout"
+        android:layout_below="@+id/message_layout"
+        android:layout_marginLeft="58dp"
+        android:text="Name" />
+
     <LinearLayout
         style="@style/MessageView_StatusBar"
         android:layout_width="wrap_content"

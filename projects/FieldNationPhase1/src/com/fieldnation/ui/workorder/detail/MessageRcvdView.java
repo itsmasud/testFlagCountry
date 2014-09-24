@@ -34,6 +34,7 @@ public class MessageRcvdView extends RelativeLayout {
 	private ImageView _profileImageView;
 	private TextView _timeTextView;
 	private ImageView _checkImageView;
+	private TextView _usernameTextView;
 
 	// Data
 	private GlobalState _gs;
@@ -65,6 +66,7 @@ public class MessageRcvdView extends RelativeLayout {
 		_profileImageView = (ImageView) findViewById(R.id.profile_imageview);
 		_timeTextView = (TextView) findViewById(R.id.time_textview);
 		_checkImageView = (ImageView) findViewById(R.id.check_imageview);
+		_usernameTextView = (TextView) findViewById(R.id.username_textview);
 
 		_service = new PhotoService(_gs, _resultReceiver);
 	}
@@ -107,6 +109,8 @@ public class MessageRcvdView extends RelativeLayout {
 		} else {
 			_checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
 		}
+
+		_usernameTextView.setText(_message.getFromUser().getFirstname());
 
 		getPhoto();
 	}

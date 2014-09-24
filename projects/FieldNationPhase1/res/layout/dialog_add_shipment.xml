@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="5dp" >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,6 +12,7 @@
 
         <EditText
             android:id="@+id/trackingid_edittext"
+            style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
@@ -19,14 +21,17 @@
             android:background="@drawable/edittext_bg"
             android:gravity="center_vertical"
             android:hint="@string/tracking_id"
+            android:imeOptions="actionNext"
+            android:inputType="text"
             android:paddingLeft="10dp" />
 
         <Spinner
             android:id="@+id/carrier_spinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_alignBottom="@+id/trackingid_edittext"
             android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/trackingid_edittext"
             android:text="@string/carrier" />
     </RelativeLayout>
 
@@ -34,13 +39,17 @@
         android:id="@+id/carrier_edittext"
         style="@style/EditText"
         android:layout_width="match_parent"
-        android:hint="@string/carrier_name" />
+        android:hint="@string/carrier_name"
+        android:imeOptions="actionNext"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/description_edittext"
         style="@style/EditText"
         android:layout_width="match_parent"
-        android:hint="@string/shipment_description" />
+        android:hint="@string/shipment_description"
+        android:imeOptions="actionDone"
+        android:inputType="text" />
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -48,23 +57,25 @@
         android:orientation="vertical" >
 
         <RadioButton
+            style="@style/RadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/shipping_from_size" />
+
+        <RadioButton
             android:id="@+id/shiptosite_radio"
             style="@style/RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="false"
             android:text="@string/shipping_to_site" />
-
-        <RadioButton
-            style="@style/RadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/shipping_from_size" />
     </RadioGroup>
 
     <Button
         android:id="@+id/add_button"
         style="@style/ButtonOrange"
         android:layout_gravity="right"
-        android:text="@string/add" />
+        android:text="@string/done" />
 
 </LinearLayout>
