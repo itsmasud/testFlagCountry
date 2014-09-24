@@ -20,6 +20,10 @@ public class DiscountView extends RelativeLayout {
 	private TextView _amountTextView;
 	private ImageButton _deleteButton;
 
+	// Data
+	private Discount _discount;
+	private Listener _listener;
+
 	public DiscountView(Context context) {
 		this(context, null, -1);
 	}
@@ -38,15 +42,29 @@ public class DiscountView extends RelativeLayout {
 		_titleTextView = (TextView) findViewById(R.id.title_textview);
 		_amountTextView = (TextView) findViewById(R.id.amount_textview);
 		_deleteButton = (ImageButton) findViewById(R.id.delete_imagebutton);
+		_deleteButton.setOnClickListener(_onDelete_onClick);
 	}
 
 	public void setDiscount(Discount discount) {
+		_discount = discount;
 		_titleTextView.setText(discount.getDescription());
 		_amountTextView.setText(misc.toCurrency(discount.getAmount()));
 	}
 
-	public void setDeleteOnClickListener(View.OnClickListener listener) {
-		_deleteButton.setOnClickListener(listener);
+	public void setListener(Listener listener) {
+		_listener = listener;
+	}
+
+	private View.OnClickListener _onDelete_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null)
+				_listener.onDelete(_discount);
+		}
+	};
+
+	public interface Listener {
+		public void onDelete(Discount discount);
 	}
 
 }

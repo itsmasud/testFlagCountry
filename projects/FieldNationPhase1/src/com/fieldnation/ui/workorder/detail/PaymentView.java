@@ -10,6 +10,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.DiscountDialog;
 import com.fieldnation.ui.ExpenseDialog;
 import com.fieldnation.ui.payment.PayDialog;
 
@@ -28,6 +29,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 	private static final int RESULT_ADD_EXPENSE = 1;
 	private static final int RESULT_DELETE_EXPENSE = 2;
+	private static final int RESULT_ADD_DISCOUNT = 3;
+	private static final int RESULT_DELETE_DISCOUNT = 4;
 
 	// UI
 	// TODO need to grab the description views at the top
@@ -44,6 +47,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private LinearLayout _counterOfferLayout;
 	private LinearLayout _detailLayout;
 	private PayDialog _payDialog;
+	private DiscountDialog _discountDialog;
 
 	// Data
 	private Workorder _workorder;
@@ -55,21 +59,27 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	/*-*************************************-*/
 
 	public PaymentView(Context context) {
-		this(context, null);
+		super(context);
+		init();
 	}
 
 	public PaymentView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_wd_payment, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_payment, this);
 
 		if (isInEditMode())
 			return;
-		_gs = (GlobalState) context.getApplicationContext();
+		_gs = (GlobalState) getContext().getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
 		_pay1TextView = (TextView) findViewById(R.id.pay1_textview);
 		_pay2TextView = (TextView) findViewById(R.id.pay2_textview);
 		_termsTextView = (TextView) findViewById(R.id.terms_textview);
+		_termsTextView.setOnClickListener(_terms_onClick);
 		_addExpenseLayout = (LinearLayout) findViewById(R.id.addexpense_layout);
 		_addExpenseLayout.setOnClickListener(_addExpense_onClick);
 
@@ -81,12 +91,13 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		_discountsLabelTextView = (TextView) findViewById(R.id.discountslabel_textview);
 		_discountsLinearLayout = (LinearLayout) findViewById(R.id.discounts_linearlayout);
 
-		_expenseDialog = new ExpenseDialog(context);
+		_expenseDialog = new ExpenseDialog(getContext());
 		_counterOfferLayout = (LinearLayout) findViewById(R.id.counteroffer_layout);
 		_counterOfferLayout.setOnClickListener(_counterOffer_onClick);
 		_detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
 
-		_payDialog = new PayDialog(context);
+		_payDialog = new PayDialog(getContext());
+		_discountDialog = new DiscountDialog(getContext());
 	}
 
 	/*-*********************************-*/
@@ -124,15 +135,38 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		}
 	};
 
-	private View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+	private ExpenseView.Listener _expenseView_listener = new ExpenseView.Listener() {
 
+		@Override
+		public void onDelete(ExpenseView view, AdditionalExpense expense) {
+			getContext().startService(
+					_service.deleteExpense(RESULT_DELETE_EXPENSE, _workorder.getWorkorderId(), expense.getExpenseId()));
 		}
 	};
 
+	private View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			_discountDialog.show("Add Discount", "", 0.0, _addDiscount_listener);
+		}
+	};
+
+	private DiscountDialog.Listener _addDiscount_listener = new DiscountDialog.Listener() {
+		@Override
+		public void onOk(String description, double amount) {
+			getContext().startService(
+					_service.addDiscount(RESULT_ADD_DISCOUNT, _workorder.getWorkorderId(), amount, description));
+		}
+	};
+
+	private DiscountView.Listener _discount_listener = new DiscountView.Listener() {
+		@Override
+		public void onDelete(Discount discount) {
+			getContext().startService(
+					_service.deleteDiscount(RESULT_DELETE_DISCOUNT, _workorder.getWorkorderId(),
+							discount.getDiscountId()));
+		}
+	};
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 
 		@Override
@@ -155,7 +189,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			if (resultCode == RESULT_ADD_EXPENSE || resultCode == RESULT_DELETE_EXPENSE) {
+			if (resultCode == RESULT_ADD_EXPENSE || resultCode == RESULT_DELETE_EXPENSE || resultCode == RESULT_ADD_DISCOUNT || resultCode == RESULT_DELETE_DISCOUNT) {
 				_workorder.dispatchOnChange();
 			}
 		}
@@ -167,15 +201,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 			}
 			_gs.requestAuthenticationDelayed(_authClient);
 			// TODO, toast failure, put ui in wait mode
-		}
-	};
-
-	private ExpenseView.Listener _expenseView_listener = new ExpenseView.Listener() {
-
-		@Override
-		public void onDelete(ExpenseView view, AdditionalExpense expense) {
-			getContext().startService(
-					_service.deleteExpense(RESULT_DELETE_EXPENSE, _workorder.getWorkorderId(), expense.getExpenseId()));
 		}
 	};
 
@@ -245,6 +270,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 			for (int i = 0; i < discounts.length; i++) {
 				Discount discount = discounts[i];
 				DiscountView v = new DiscountView(getContext());
+				v.setListener(_discount_listener);
 				_discountsLinearLayout.addView(v);
 				v.setDiscount(discount);
 			}

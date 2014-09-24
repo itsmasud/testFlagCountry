@@ -23,11 +23,6 @@
         android:imeOptions="actionDone"
         android:inputType="text" />
 
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <Button
         android:id="@+id/ok_button"
         style="@style/ButtonGreen"

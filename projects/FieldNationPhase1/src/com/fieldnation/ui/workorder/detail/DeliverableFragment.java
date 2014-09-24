@@ -66,7 +66,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
 	// UI
 	private LinearLayout _reviewList;
-	private LinearLayout _reviewLayout;
 	private LinearLayout _filesLayout;
 	private View _bar1View;
 	private AppPickerDialog _dialog;
@@ -78,10 +77,12 @@ public class DeliverableFragment extends WorkorderFragment {
 	private WorkorderService _service;
 	private ProfileService _profileService;
 	private Profile _profile = null;
+
 	// private List<Deliverable> _deliverables = null;
 	// private List<Task> _tasks = null;
 	private int _loadingCounter = 0;
 	private SecureRandom _rand = new SecureRandom();
+
 	// temporary storage
 	private UploadSlot _uploadingSlot;
 	private UploadSlotView _uploadingSlotView;
@@ -102,7 +103,6 @@ public class DeliverableFragment extends WorkorderFragment {
 		_gs.requestAuthentication(_authClient);
 
 		_reviewList = (LinearLayout) view.findViewById(R.id.review_list);
-		_reviewLayout = (LinearLayout) view.findViewById(R.id.review_layout);
 		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
 		_bar1View = view.findViewById(R.id.bar1_view);
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
@@ -197,33 +197,6 @@ public class DeliverableFragment extends WorkorderFragment {
 				_filesLayout.addView(v);
 			}
 		}
-
-		// _bar1View.setVisibility(View.GONE);
-		//
-		// if (_reviewList.getChildCount() == 0) {
-		// _reviewLayout.setVisibility(View.GONE);
-		// } else {
-		// _reviewLayout.setVisibility(View.VISIBLE);
-		// }
-		//
-		// if (_uploadList.getChildCount() == 0) {
-		// _uploadLayout.setVisibility(View.GONE);
-		// } else {
-		// if (_reviewList.getChildCount() > 0) {
-		// _bar1View.setVisibility(View.VISIBLE);
-		// }
-		// _uploadLayout.setVisibility(View.VISIBLE);
-		// }
-		//
-		// if (_filesList.getChildCount() == 0) {
-		// _filesLayout.setVisibility(View.GONE);
-		// } else {
-		// if (_reviewList.getChildCount() > 0 || _uploadList.getChildCount() >
-		// 0) {
-		// _bar2View.setVisibility(View.VISIBLE);
-		// }
-		// _filesLayout.setVisibility(View.VISIBLE);
-		// }
 	}
 
 	@Override
