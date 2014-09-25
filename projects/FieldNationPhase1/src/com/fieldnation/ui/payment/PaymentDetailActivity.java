@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PaymentDetailActivity extends BaseActivity {
@@ -38,6 +39,7 @@ public class PaymentDetailActivity extends BaseActivity {
 	private TextView _workorderCountTextView;
 	private TextView _feesCountTextView;
 	private ListView _listView;
+	private RelativeLayout _loadingLayout;
 
 	// Data
 	private GlobalState _gs;
@@ -75,8 +77,10 @@ public class PaymentDetailActivity extends BaseActivity {
 		_dateTextView = (TextView) findViewById(R.id.date_textview);
 		_workorderCountTextView = (TextView) findViewById(R.id.workordercount_textview);
 		_feesCountTextView = (TextView) findViewById(R.id.feescount_textview);
+		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
 		_listView = (ListView) findViewById(R.id.items_listview);
+		_loadingLayout.setVisibility(View.VISIBLE);
 		// TODO set loading info
 	}
 
@@ -102,7 +106,8 @@ public class PaymentDetailActivity extends BaseActivity {
 				when = misc.formatDate(cal);
 
 				_dateTextView.setVisibility(View.VISIBLE);
-				_dateTextView.setText(this.getString(R.string.estimated) + " " + when);
+				_dateTextView.setText(this.getString(R.string.estimated) + " "
+						+ when);
 			} else {
 				_dateTextView.setVisibility(View.GONE);
 			}
@@ -110,19 +115,26 @@ public class PaymentDetailActivity extends BaseActivity {
 			_dateTextView.setVisibility(View.GONE);
 		}
 
-		_workorderCountTextView.setText(_paid.getWorkorders().length + " " + this.getString(R.string.work_orders));
+		_workorderCountTextView.setText(_paid.getWorkorders().length + " "
+				+ this.getString(R.string.work_orders));
+		_workorderCountTextView.setVisibility(View.VISIBLE);
 
 		if (_paid.getFees() != null && _paid.getFees().length > 0) {
 			_feesCountTextView.setText(_paid.getFees().length + " Fees");
 		} else {
 			_feesCountTextView.setText("0 Fees");
 		}
+		_feesCountTextView.setVisibility(View.VISIBLE);
 
 		_adapter = new PaymentDetailAdapter(_paid);
 		_listView.setAdapter(_adapter);
 		_idTextView.setText("ID " + _paid.getPaymentId());
+		_idTextView.setVisibility(View.VISIBLE);
 		_paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
+		_paymentTextView.setVisibility(View.VISIBLE);
 		_paymentTypeTextView.setText(misc.capitalize(_paid.getPayMethod()));
+		_paymentTypeTextView.setVisibility(View.VISIBLE);
+		_loadingLayout.setVisibility(View.GONE);
 	}
 
 	/*-*********************************-*/
@@ -136,7 +148,8 @@ public class PaymentDetailActivity extends BaseActivity {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
+			_service = new PaymentService(PaymentDetailActivity.this, username,
+					authToken, _resultReceiver);
 			requestData();
 		}
 
@@ -146,11 +159,13 @@ public class PaymentDetailActivity extends BaseActivity {
 		}
 	};
 
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+			new Handler()) {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			if (resultCode == WEB_GET_PAY) {
-				byte[] data = resultData.getByteArray(PaymentService.KEY_RESPONSE_DATA);
+				byte[] data = resultData
+						.getByteArray(PaymentService.KEY_RESPONSE_DATA);
 
 				Log.v(TAG, new String(data));
 

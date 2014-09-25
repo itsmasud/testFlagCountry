@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/moneysymbol_textview"
-                android:text="1,748.00"
+                android:text="748.00"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="24sp" />
 
@@ -100,7 +100,9 @@
                 android:layout_alignRight="@+id/amount_textview"
                 android:layout_below="@+id/amount_textview"
                 android:gravity="right"
-                android:text="Check"
+                android:lines="1"
+                android:maxLines="1"
+                android:text="Direct Deposit"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </RelativeLayout>
     </RelativeLayout>
