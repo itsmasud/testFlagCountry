@@ -66,7 +66,7 @@ public class MessageCardView extends RelativeLayout {
 		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
 		_timeTextView = (TextView) findViewById(R.id.time_textview);
 		_profileImageView = (ImageView) findViewById(R.id.profile_imageview);
-		_statusView = (View) findViewById(R.id.status_view);
+		_statusView = findViewById(R.id.status_view);
 	}
 
 	public void setMessage(Message message) {
@@ -75,7 +75,7 @@ public class MessageCardView extends RelativeLayout {
 
 		_viewId = (int) (message.getMessageId() % Integer.MAX_VALUE);
 		try {
-			_titleTextView.setText(message.getMessageId() + "");
+			_titleTextView.setText(message.getWorkorderTitle() + "");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

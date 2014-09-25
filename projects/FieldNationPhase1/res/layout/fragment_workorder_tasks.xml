@@ -11,17 +11,38 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <com.fieldnation.ui.workorder.detail.PrereqView
-            android:id="@+id/prereq_view"
+        <com.fieldnation.ui.workorder.detail.TimeLoggedView
+            android:id="@+id/timelogged_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <View
+            android:id="@+id/sep1"
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.ui.workorder.detail.ScopeOfWorkView
+            android:id="@+id/scope_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/sep2"
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
         <com.fieldnation.ui.workorder.detail.ShipmentView
             android:id="@+id/shipment_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/sep3"
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <com.fieldnation.ui.workorder.detail.ClosingNotesView
+            android:id="@+id/closingnotes_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

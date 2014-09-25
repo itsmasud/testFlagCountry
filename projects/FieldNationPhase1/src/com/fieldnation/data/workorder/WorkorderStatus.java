@@ -3,11 +3,11 @@ package com.fieldnation.data.workorder;
 public enum WorkorderStatus {
 	AVAILABLE("STATUS_AVAILABLE"),
 	ASSIGNED("STATUS_ASSIGNED"),
-	INPROGRESS("STATUS_INPROGRESS"),
+	INPROGRESS("STATUS_INPROGRESS"), // == assigned
 	COMPLETED("STATUS_COMPLETED"),
 	CANCELLED("STATUS_CANCELLED"),
-	PAID("STATUS_PAID"), // completed
-	APPROVED("STATUS_APPROVED"), // completed
+	PAID("STATUS_PAID"), // == completed
+	APPROVED("STATUS_APPROVED"), // == completed
 	NA("NA");
 
 	private String _value;

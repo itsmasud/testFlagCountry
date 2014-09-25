@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="default_username">hexixtech</string>
+    <string name="default_password">hexixtech</string>
+
     <!-- connection info -->
     <string name="fn_hostname">dev.fieldnation.com</string>
     <string name="fn_grant_type">password</string>
@@ -39,6 +42,7 @@
     <string name="bundle">Bundle</string>
     <string name="tracking_id">Tracking ID</string>
     <string name="carrier_name">Carrier Name</string>
+    <string name="carrier">Carrier</string>
     <string name="shipment_description">Shipment Description</string>
     <string name="shipping_to_site">Shipping to site</string>
     <string name="shipping_from_size">Shipping from site</string>
@@ -52,6 +56,59 @@
     <string name="amount">Amount</string>
     <string name="description">Description</string>
     <string name="by">by</string>
+    <string name="fixed_pay_amount">Fixed Pay Amount</string>
+    <string name="hourly_rate">Hourly Rate</string>
+    <string name="max_hours">Max Hours</string>
+    <string name="per_device_rate">Per Device Rate</string>
+    <string name="max_devices">Max Devices</string>
+    <string name="pay_of">Pay of</string>
+    <string name="per_hour_for_the_first">per hour for the first</string>
+    <string name="hours">hours</string>
+    <string name="then">then</string>
+    <string name="per_hour_up_to">per hour up to</string>
+    <string name="additional_hours">additional hours</string>
+    <string name="documents_to_review">Documents to Review</string>
+    <string name="documents_to_upload">Documents to Upload</string>
+    <string name="my_additional_files">My Additional Files</string>
+    <string name="upload_file">Upload File</string>
+    <string name="status_colon">Status: </string>
+    <string name="send">Send</string>
+    <string name="continue_the_conversation">Continue the conversation...</string>
+    <string name="start_the_conversation">Start the conversation...</string>
+    <string name="pending">...pending</string>
+    <string name="add_shipment">Add Shipment</string>
+    <string name="shipment">Shipment</string>
+    <string name="schedule">Schedule</string>
+    <string name="work_performed">Work Performed: </string>
+    <string name="closing_notes">Closing Notes</string>
+    <string name="enter_closing_notes_here">Enter closing notes here...</string>
+    <string name="save">Save</string>
+    <string name="request_work">Request Work</string>
+    <string name="counter_offer">Counter Offer</string>
+    <string name="mark_work_as_complete">Mark Work as Complete</string>
+    <string name="view_customer_policies_and_procedures">View Customer Policies and Procedures</string>
+    <string name="view_confidential_information">View Confidential Information</string>
+    <string name="view_field_nation_terms">View Field Nation Terms</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="add_discount">Add Discount</string>
+    <string name="expenses_colon">Expenses:</string>
+    <string name="discounts_colon">Discounts:</string>
+    <string name="payment">Payment</string>
+    <string name="provider_must_have_the_following_skillsets">Provider must have the following skillsets:</string>
+    <string name="provider_must_confirm_assignment">Provider must confirm assignment</string>
+    <string name="prerequisites">Prerequisites</string>
+    <string name="this_work_order_as_no_notification_at_this_time">This work order as no notifications at this time.</string>
+    <string name="tasks_are_associated_with_this_work_order"> tasks are associated with this work order</string>
+    <string name="view_all_tasks">View All Tasks</string>
+    <string name="scope_of_work">Scope of Work</string>
+    <string name="pre_visit">Pre Visit</string>
+    <string name="on_site">On Site</string>
+    <string name="post_visit">Post Visit</string>
+    <string name="edit">Edit</string>
+    <string name="uploading">Uploading...</string>
+    <string name="deleting">Deleting...</string>
+    <string name="done">Done</string>
+
     <!-- /general strings -->
 
 
@@ -130,8 +187,8 @@
     <string-array name="pay_types">
         <item>Fixed</item>
         <item>Hourly</item>
-        <item>Per Device</item>
         <item>Bleneded</item>
+        <item>Per Device</item>
     </string-array>
 
     <!-- workorder status list -->
@@ -166,6 +223,22 @@
         <item>Fee Pending</item>
         <item>Fee Paid</item>
         <item>Unknown</item>
+    </string-array>
+    <string-array name="task_type">
+        <item>Reserved</item>
+        <item>Confirm Assignment</item>
+        <item>Enter close out notes</item>
+        <item>Check in</item>
+        <item>Check out</item>
+        <item>Upload a file</item>
+        <item>Upload or take a picture</item>
+        <item>Fill out custom field</item>
+        <item>Call phone number</item>
+        <item>Send an e-mail</item>
+        <item>Unique task</item>
+        <item>Collect a signature</item>
+        <item>Enter shipment tracking</item>
+        <item>Download a File</item>
     </string-array>
 
 </resources>

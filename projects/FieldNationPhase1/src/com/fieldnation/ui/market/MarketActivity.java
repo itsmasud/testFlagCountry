@@ -19,7 +19,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -65,8 +64,10 @@ public class MarketActivity extends DrawerActivity {
 
 		if (savedInstanceState != null) {
 			List<Fragment> fragments = getSupportFragmentManager().getFragments();
-			for (int i = 0; i < fragments.size(); i++) {
-				_fragments[i] = (WorkorderListFragment) fragments.get(i);
+			if (fragments != null) {
+				for (int i = 0; i < fragments.size(); i++) {
+					_fragments[i] = (WorkorderListFragment) fragments.get(i);
+				}
 			}
 		}
 

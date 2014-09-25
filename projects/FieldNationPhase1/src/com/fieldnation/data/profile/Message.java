@@ -33,6 +33,9 @@ public class Message {
 
 	public Message() {
 	}
+	public String getWorkorderTitle(){
+		return _workorderTitle;
+	}
 
 	public String getFileUrl() {
 		if (_fileUrl == null)

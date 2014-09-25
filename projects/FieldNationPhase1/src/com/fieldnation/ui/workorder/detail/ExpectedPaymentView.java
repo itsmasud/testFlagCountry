@@ -41,7 +41,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
 	}
 
 	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_detail_expected_payment, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_expected_payment, this);
 
 		if (isInEditMode())
 			return;

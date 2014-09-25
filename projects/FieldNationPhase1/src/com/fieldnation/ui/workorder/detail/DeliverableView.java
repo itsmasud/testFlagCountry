@@ -4,6 +4,7 @@ import java.text.ParseException;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Deliverable;
+import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,11 +30,16 @@ public class DeliverableView extends RelativeLayout {
 	private TextView _dateTextView;
 	private TextView _usernameTextView;
 	private ImageButton _deleteButton;
+	private ProgressBar _progressBar;
+	private TextView _statusTextView;
+	private LinearLayout _usernameLayout;
 
 	// Data
-	private Deliverable _deliverable;
+	private Deliverable _doc;
 	private long _profileId;
 	private Listener _listener;
+	private int _loadingCounter = 0;
+	private boolean _isLoading = false;
 
 	/*-*****************************-*/
 	/*-			Life Cycle			-*/
@@ -52,7 +60,7 @@ public class DeliverableView extends RelativeLayout {
 	}
 
 	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_detail_deliverable, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_document, this);
 
 		if (isInEditMode())
 			return;
@@ -64,14 +72,38 @@ public class DeliverableView extends RelativeLayout {
 		_deleteButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 		_deleteButton.setOnClickListener(_delete_onClick);
 
+		_progressBar = (ProgressBar) findViewById(R.id.progressBar);
+		_statusTextView = (TextView) findViewById(R.id.status_textview);
+		_usernameLayout = (LinearLayout) findViewById(R.id.username_layout);
+
 		setOnClickListener(_this_onClick);
+		setLoading(false, 0);
 	}
 
 	/*-*************************-*/
 	/*-			Methods			-*/
 	/*-*************************-*/
+
+	public void setLoading(boolean isloading, int messageResId) {
+		_isLoading = isloading;
+		if (isloading) {
+			_progressBar.setVisibility(View.VISIBLE);
+			_statusTextView.setVisibility(View.VISIBLE);
+			_usernameLayout.setVisibility(View.GONE);
+			_dateTextView.setVisibility(View.GONE);
+			_deleteButton.setVisibility(View.GONE);
+			_statusTextView.setText(messageResId);
+		} else {
+			_progressBar.setVisibility(View.GONE);
+			_statusTextView.setVisibility(View.GONE);
+			_usernameLayout.setVisibility(View.VISIBLE);
+			_dateTextView.setVisibility(View.VISIBLE);
+			_deleteButton.setVisibility(View.VISIBLE);
+		}
+	}
+
 	public void setDeliverable(long profileId, Deliverable deliverable) {
-		_deliverable = deliverable;
+		_doc = deliverable;
 		_profileId = profileId;
 		populateUi();
 	}
@@ -81,23 +113,22 @@ public class DeliverableView extends RelativeLayout {
 	}
 
 	private void populateUi() {
-		if (_deliverable == null)
+		if (_doc == null)
 			return;
 
-		_filenameTextView.setText(_deliverable.getFileName());
+		_filenameTextView.setText(_doc.getFileName());
 		try {
-			_dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_deliverable.getUploadedTime())));
-		} catch (ParseException e) {
+			_dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_doc.getUploadedTime())));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		_usernameTextView.setText(_deliverable.getUserId() + "");
+		_usernameTextView.setText(_doc.getUploadedBy().getFirstname() + " " + _doc.getUploadedBy().getLastname());
 
-		if (_profileId == _deliverable.getUserId().intValue()) {
+		if (_profileId == _doc.getUploaderUserId() && !_isLoading) {
 			_deleteButton.setVisibility(View.VISIBLE);
 		} else {
 			_deleteButton.setVisibility(View.GONE);
 		}
-
 	}
 
 	/*-*************************-*/
@@ -106,8 +137,11 @@ public class DeliverableView extends RelativeLayout {
 	private View.OnClickListener _this_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			if (_isLoading)
+				return;
+
 			Intent intent = new Intent(Intent.ACTION_VIEW);
-			intent.setDataAndType(Uri.parse(_deliverable.getStorageSrc()), _deliverable.getFileType());
+			intent.setDataAndType(Uri.parse(_doc.getStorageSrc()), _doc.getFileType());
 			getContext().startActivity(intent);
 		}
 	};
@@ -115,12 +149,13 @@ public class DeliverableView extends RelativeLayout {
 	private View.OnClickListener _delete_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			setLoading(true, R.string.deleting);
 			if (_listener != null)
-				_listener.onDelete(_deliverable);
+				_listener.onDelete(DeliverableView.this, _doc);
 		}
 	};
 
 	public interface Listener {
-		public void onDelete(Deliverable deliverable);
+		public void onDelete(DeliverableView v, Deliverable document);
 	}
 }

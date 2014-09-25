@@ -2,7 +2,6 @@ package com.fieldnation.ui;
 
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.ui.workorder.detail.NotificationView;
 
 import android.app.Activity;
 import android.content.Context;

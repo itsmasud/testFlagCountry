@@ -66,11 +66,17 @@ public class misc {
 				if (dist <= dist2 - 255) {
 					destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
 				} else if (dist <= dist2 - 127) {
-					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xE6000000;
+					int c = pixels[x + y * source.getWidth()];
+					int i = (x - xoff) + (y - yoff) * size;
+					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 115) / 128) << 56 & 0xFF000000);
 				} else if (dist <= dist2 - 63) {
-					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xCC000000;
+					int c = pixels[x + y * source.getWidth()];
+					int i = (x - xoff) + (y - yoff) * size;
+					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 51) / 64) << 56 & 0xFF000000);
 				} else if (dist <= dist2) {
-					destpix[(x - xoff) + (y - yoff) * size] = (pixels[x + y * source.getWidth()] & 0x00FFFFFF) + 0xB3000000;
+					int c = pixels[x + y * source.getWidth()];
+					int i = (x - xoff) + (y - yoff) * size;
+					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 179) / 256) << 56 & 0xFF000000);
 				}
 
 			}
@@ -164,6 +170,10 @@ public class misc {
 		return nc;
 	}
 
+	/*
+	 * http://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html#dt
+	 */
+
 	/**
 	 * 
 	 * @param calendar
@@ -194,6 +204,22 @@ public class misc {
 		int year = calendar.get(Calendar.YEAR);
 
 		return months + "/" + day + "/" + year;
+	}
+
+	public static String formatMessageTime(Calendar calendar) {
+		Calendar cal = applyTimeZone(calendar);
+
+		// today
+		if (calendar.getTimeInMillis() / 86400000 == Calendar.getInstance().getTimeInMillis() / 86400000) {
+			return "Today";
+		}
+
+		// > 1 year old
+		if (Calendar.getInstance().get(Calendar.YEAR) > calendar.get(Calendar.YEAR)) {
+			return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+		}
+		return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + formatTime(
+				cal, false);
 	}
 
 	/**
@@ -350,55 +376,12 @@ public class misc {
 	}
 
 	public static String escapeForURL(String Data) {
-		String[] srch = {
-				"\\x25",
-				"\\x2B",
-				"\\x20",
-				"\\x3C",
-				"\\x3E",
-				"\\x23",
-				"\\x7B",
-				"\\x7D",
-				"\\x7C",
-				"\\x5C",
-				"\\x5E",
-				"\\x7E",
-				"\\x5B",
-				"\\x5D",
-				"\\x60",
-				"\\x3B",
-				"\\x2F",
-				"\\x3F",
-				"\\x3A",
-				"\\x40",
-				"\\x3D",
-				"\\x26",
-				"\\x24" };
+		String[] srch = { "\\x25", "\\x2B", "\\x20", "\\x3C", "\\x3E", "\\x23", "\\x7B", "\\x7D", "\\x7C", "\\x5C",
+				"\\x5E", "\\x7E", "\\x5B", "\\x5D", "\\x60", "\\x3B", "\\x2F", "\\x3F", "\\x3A", "\\x40", "\\x3D",
+				"\\x26", "\\x24" };
 
-		String[] replace = {
-				"%25",
-				"%2B",
-				"%20",
-				"%3C",
-				"%3E",
-				"%23",
-				"%7B",
-				"%7D",
-				"%7C",
-				"%5C",
-				"%5E",
-				"%7E",
-				"%5B",
-				"%5D",
-				"%60",
-				"%3B",
-				"%2F",
-				"%3F",
-				"%3A",
-				"%40",
-				"%3D",
-				"%26",
-				"%24" };
+		String[] replace = { "%25", "%2B", "%20", "%3C", "%3E", "%23", "%7B", "%7D", "%7C", "%5C", "%5E", "%7E", "%5B",
+				"%5D", "%60", "%3B", "%2F", "%3F", "%3A", "%40", "%3D", "%26", "%24" };
 
 		for (int i = 0; i < srch.length; i++) {
 			Data = Data.replaceAll(srch[i], replace[i]);
@@ -577,53 +560,11 @@ public class misc {
 	}
 
 	public static String unescapeForURL(String Data) {
-		String[] replace = {
-				" ",
-				"<",
-				">",
-				"#",
-				"%",
-				"{",
-				"}",
-				"|",
-				"\\",
-				"^",
-				"~",
-				"[",
-				"]",
-				"`",
-				";",
-				"/",
-				"?",
-				":",
-				"@",
-				"=",
-				"&",
-				"$" };
+		String[] replace = { " ", "<", ">", "#", "%", "{", "}", "|", "\\", "^", "~", "[", "]", "`", ";", "/", "?", ":",
+				"@", "=", "&", "$" };
 
-		String[] srch = {
-				"%20",
-				"%3C",
-				"%3E",
-				"%23",
-				"%25",
-				"%7B",
-				"%7D",
-				"%7C",
-				"%5C",
-				"%5E",
-				"%7E",
-				"%5B",
-				"%5D",
-				"%60",
-				"%3B",
-				"%2F",
-				"%3F",
-				"%3A",
-				"%40",
-				"%3D",
-				"%26",
-				"%24" };
+		String[] srch = { "%20", "%3C", "%3E", "%23", "%25", "%7B", "%7D", "%7C", "%5C", "%5E", "%7E", "%5B", "%5D",
+				"%60", "%3B", "%2F", "%3F", "%3A", "%40", "%3D", "%26", "%24" };
 
 		for (int i = 0; i < srch.length; i++) {
 			Data = Data.replaceAll(srch[i], replace[i]);
@@ -709,6 +650,74 @@ public class misc {
 		return null;
 	}
 
+	public interface PacketListener {
+		public void onPacket(byte[] packet, int length);
+	}
+
+	public static void readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli,
+			PacketListener listener) throws IOException {
+		int read = 0;
+		int pos = 0;
+		int size = expectedSize;
+		long timeout = System.currentTimeMillis() + timeoutInMilli;
+
+		if (packetSize > expectedSize && expectedSize != -1) {
+			packetSize = expectedSize;
+		}
+
+		byte[] packet = new byte[packetSize];
+		boolean error = false;
+		boolean timedOut = false;
+		boolean complete = false;
+
+		try {
+			while (!error && !timedOut && !complete) {
+
+				/*
+				 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
+				 * break; }
+				 */
+
+				read = in.read(packet, 0, packetSize);
+
+				if (read > 0) {
+					pos += read;
+
+					if (size - pos < packetSize && size != -1) {
+						packetSize = size - pos;
+					}
+					listener.onPacket(packet, read);
+					timeout = System.currentTimeMillis() + timeoutInMilli;
+				} else if (read == 0) {
+					try {
+						Thread.sleep(100);
+					} catch (Exception ex) {
+					}
+				} else if (read == -1) {
+					// error, stop
+					error = true;
+				}
+
+				// finished, stop
+				if (pos == size && size != -1) {
+					complete = true;
+				}
+
+				// read too much!
+				if (pos > size && size != -1) {
+					error = true;
+				}
+
+				// timeout, stop
+				if (timeout < System.currentTimeMillis()) {
+					timedOut = true;
+				}
+
+			}
+		} catch (IOException e) {
+		}
+	}
+
 	public static void copyStream(InputStream source, OutputStream dest, int packetSize, int expectedSize,
 			long timeoutInMilli) throws IOException {
 		int read = 0;
@@ -726,9 +735,9 @@ public class misc {
 		boolean complete = false;
 
 		try {
-			if (!waitForData(source, timeoutInMilli)) {
-				return;
-			}
+			// if (!waitForData(source, timeoutInMilli)) {
+			// return;
+			// }
 
 			while (!error && !timedOut && !complete) {
 				read = source.read(packet, 0, packetSize);

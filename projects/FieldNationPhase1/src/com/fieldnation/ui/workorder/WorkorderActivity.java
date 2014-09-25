@@ -107,6 +107,7 @@ public class WorkorderActivity extends BaseActivity {
 
 	private void buildFragments(Bundle savedInstanceState) {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
+		_viewPager.setOffscreenPageLimit(4);
 
 		if (_fragments == null) {
 			_fragments = new WorkorderFragment[5];
@@ -176,6 +177,7 @@ public class WorkorderActivity extends BaseActivity {
 				_tabview.setSelected(position);
 				_fragments[position].update();
 			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		};
 	};
@@ -183,9 +185,11 @@ public class WorkorderActivity extends BaseActivity {
 	private WorkorderTabView.Listener _tabview_onChange = new WorkorderTabView.Listener() {
 		@Override
 		public void onChange(int index) {
-			_currentFragment = index;
-			_fragments[index].update();
-			_viewPager.setCurrentItem(_currentFragment, true);
+			if (index != _currentFragment) {
+				_currentFragment = index;
+				_fragments[index].update();
+				_viewPager.setCurrentItem(_currentFragment, true);
+			}
 		}
 	};
 
@@ -214,10 +218,9 @@ public class WorkorderActivity extends BaseActivity {
 			Log.v(TAG, resultData.toString());
 
 			try {
-				// TODO need to get data selector from REST API
 				String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 				Log.v(TAG, data);
-				_workorder = Workorder.fromJson(new JsonObject(data), WorkorderDataSelector.ASSIGNED);
+				_workorder = Workorder.fromJson(new JsonObject(data));
 
 				_workorder.addListener(_workorder_listener);
 				if (_workorder.getAlertCount() != null) {
@@ -236,7 +239,7 @@ public class WorkorderActivity extends BaseActivity {
 					_fragments[i].setWorkorder(_workorder);
 				}
 
-				System.out.println("Have workorder");
+				Log.v(TAG, "Have workorder");
 				setLoading(false);
 			} catch (Exception ex) {
 				ex.printStackTrace();

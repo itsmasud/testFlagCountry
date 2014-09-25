@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fieldnation"
-    android:versionCode="2"
-    android:versionName="0.002" >
+    android:versionCode="4"
+    android:versionName="0.004" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -17,6 +17,12 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:name="com.fieldnation.GlobalState"
@@ -116,8 +122,11 @@
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
+            <intent-filter>
+com.fieldnation.service
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />

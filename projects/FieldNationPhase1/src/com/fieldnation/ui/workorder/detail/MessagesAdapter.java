@@ -10,6 +10,7 @@ import com.fieldnation.data.workorder.Message;
 import com.fieldnation.utils.ISO8601;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -22,7 +23,6 @@ public class MessagesAdapter extends BaseAdapter {
 
 	public MessagesAdapter(Profile profile) {
 		super();
-
 		_profile = profile;
 	}
 
@@ -65,7 +65,6 @@ public class MessagesAdapter extends BaseAdapter {
 		_messages = messages;
 
 		notifyDataSetChanged();
-
 	}
 
 	@Override
@@ -85,8 +84,13 @@ public class MessagesAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Message message = _messages.get(position);
+		if (position >= _messages.size()) {
+			notifyDataSetChanged();
+			return convertView;
+		}
 
+		Log.v(TAG, "getView(" + position + ") / " + _messages.size());
+		Message message = _messages.get(position);
 		if (message.getFromUser().getUserId() == _profile.getUserId()) {
 			MessageSentView v = null;
 

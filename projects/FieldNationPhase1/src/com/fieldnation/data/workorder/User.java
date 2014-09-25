@@ -40,6 +40,8 @@ public class User {
 	}
 
 	public String getFirstname() {
+		if (_firstName != null)
+			return _firstName;
 		return _firstname;
 	}
 
@@ -48,25 +50,19 @@ public class User {
 	}
 
 	public String getLastname() {
+		if (_lastName != null)
+			return _lastName;
 		return _lastname;
 	}
 
-	public Integer getUserId() {
+	public int getUserId() {
 		if (_user_id != null)
 			return _user_id;
 		return _userId;
 	}
 
-	public String getFirstName() {
-		return _firstName;
-	}
-
 	public Integer getCompanyId() {
 		return _companyId;
-	}
-
-	public String getLastName() {
-		return _lastName;
 	}
 
 	public String getCompanyName() {

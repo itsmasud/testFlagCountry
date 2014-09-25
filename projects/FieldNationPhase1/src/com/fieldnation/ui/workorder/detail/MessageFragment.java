@@ -25,9 +25,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 public class MessageFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.MessageFragment";
@@ -38,8 +37,10 @@ public class MessageFragment extends WorkorderFragment {
 
 	// UI
 	private ListView _listview;
-	private EditText _messageEditText;
-	private Button _sendButton;
+	// private EditText _messageEditText;
+	// private Button _sendButton;
+	private RelativeLayout _loadingLayout;
+	private MessageInputView _inputView;
 
 	// Data
 	private Random _rand = new Random(System.currentTimeMillis());
@@ -63,17 +64,28 @@ public class MessageFragment extends WorkorderFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		Log.v(TAG, "onViewCreated");
 
 		_gs = (GlobalState) getActivity().getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
 		_listview = (ListView) view.findViewById(R.id.messages_listview);
+		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
+		_loadingLayout.setVisibility(View.VISIBLE);
+		_inputView = (MessageInputView) view.findViewById(R.id.input_view);
+		_inputView.setOnSendButtonClick(_send_onClick);
+	}
 
-		View input = LayoutInflater.from(_gs).inflate(R.layout.view_message_input, _listview, false);
-		_messageEditText = (EditText) input.findViewById(R.id.message_edittext);
-		_sendButton = (Button) input.findViewById(R.id.send_button);
-		_sendButton.setOnClickListener(_send_onClick);
-		_listview.addFooterView(input);
+	@Override
+	public void onPause() {
+		WEB_GET_MESSAGES = 1;
+		WEB_GET_PROFILE = 2;
+		WEB_NEW_MESSAGE = 3;
+		if (_adapter != null) {
+			_adapter.notifyDataSetInvalidated();
+			_adapter = null;
+		}
+		super.onPause();
 	}
 
 	@Override
@@ -101,12 +113,17 @@ public class MessageFragment extends WorkorderFragment {
 			return;
 
 		_messages.clear();
+		if (_adapter != null)
+			_adapter.notifyDataSetChanged();
+
 		WEB_GET_MESSAGES = _rand.nextInt();
 		_gs.startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
 	}
 
 	private void rebuildList() {
-		_adapter.setMessages(_messages);
+		if (getAdapter() != null)
+			getAdapter().setMessages(_messages);
+		_loadingLayout.setVisibility(View.GONE);
 	}
 
 	/*-*********************************-*/
@@ -117,7 +134,7 @@ public class MessageFragment extends WorkorderFragment {
 		public void onClick(View v) {
 			WEB_NEW_MESSAGE = _rand.nextInt();
 			_gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
-					_messageEditText.getText().toString()));
+					_inputView.getInputText()));
 		}
 	};
 
@@ -143,7 +160,6 @@ public class MessageFragment extends WorkorderFragment {
 	};
 
 	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
-
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			Log.v(TAG, "resultCode:" + resultCode);
@@ -156,8 +172,7 @@ public class MessageFragment extends WorkorderFragment {
 					_profile = Profile.fromJson(new JsonObject(new String(
 							resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
 
-					_adapter = new MessagesAdapter(_profile);
-					_listview.setAdapter(_adapter);
+					getAdapter();
 
 					getMessages();
 				} catch (Exception ex) {
@@ -178,20 +193,49 @@ public class MessageFragment extends WorkorderFragment {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+
+				if (_messages.size() == 0) {
+					_inputView.setHint(R.string.start_the_conversation);
+				} else {
+					_inputView.setHint(R.string.continue_the_conversation);
+				}
+
 			} else if (resultCode == WEB_NEW_MESSAGE) {
-				_messageEditText.setText("");
+				_inputView.clearText();
 				getMessages();
 			}
 		}
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
+			Log.v(TAG, "WS Fail");
+			_loadingLayout.setVisibility(View.GONE);
+			// _messageInputView.setHint(R.string.start_the_conversation);
 			if (_profileService != null) {
-//				_gs.invalidateAuthToken(_profileService.getAuthToken());
+				// _gs.invalidateAuthToken(_profileService.getAuthToken());
 			}
-//			_gs.requestAuthentication(_authClient);
-			
-			// TODO, a fail here probably means that this workroder is not assigned, therefore no messages.
+			// _gs.requestAuthentication(_authClient);
+			// TODO, a fail here probably means that this workroder is not
+			// assigned, therefore no messages.
 		}
 	};
+
+	private MessagesAdapter getAdapter() {
+		if (this.getActivity() == null)
+			return null;
+
+		if (_profile == null)
+			return null;
+
+		try {
+			if (_adapter == null) {
+				_adapter = new MessagesAdapter(_profile);
+				_listview.setAdapter(_adapter);
+			}
+			return _adapter;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
 }

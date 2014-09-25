@@ -1,12 +1,8 @@
 package com.fieldnation.ui.payment;
 
-import java.util.Calendar;
-
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Fee;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.data.accounting.Workorder;
-import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;

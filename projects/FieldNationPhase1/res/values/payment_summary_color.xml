@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <color name="payment_header_background">#FF3fcca9</color>
-    <color name="payment_header_bg_paid">#FF6a6a5e</color>
-
-</resources>

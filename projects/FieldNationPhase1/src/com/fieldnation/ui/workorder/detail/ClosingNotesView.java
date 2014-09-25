@@ -6,18 +6,18 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.payment.PayDialog;
+import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.ClosingNotesView";
@@ -25,18 +25,16 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	private static final int WEB_SAVE_NOTES = 1;
 
 	// UI
-	private EditText _notesEditText;
-	private Button _saveButton;
-	private Button _requestButton;
-	private Button _notInterestedButton;
-	private Button _completeButton;
-	private Button _counterOfferButton;
-	private PayDialog _payDialog;
+	private TextView _notesTextView;
+	private LinearLayout _editLayout;
+	private ImageView _editImageView;
+	private ClosingNotesDialog _dialog;
+	private ProgressBar _progressBar;
 
 	// Data
 	private GlobalState _gs;
 	private Workorder _workorder;
-	private WorkorderService _service;
+	private WorkorderService _service = null;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -48,70 +46,45 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
 	public ClosingNotesView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_closing_notes, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_closing_notes, this);
 
 		if (isInEditMode())
 			return;
+
 		_gs = (GlobalState) context.getApplicationContext();
+
+		_editLayout = (LinearLayout) findViewById(R.id.edit_layout);
+		_editLayout.setOnClickListener(_notes_onClick);
+		_editImageView = (ImageView) findViewById(R.id.edit_imageview);
+
+		_notesTextView = (TextView) findViewById(R.id.notes_textview);
+		_notesTextView.setOnClickListener(_notes_onClick);
+
+		_progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+		_dialog = new ClosingNotesDialog(getContext());
+
+		setLoading(true);
 		_gs.requestAuthentication(_authClient);
-
-		_notesEditText = (EditText) findViewById(R.id.notes_edittext);
-		_saveButton = (Button) findViewById(R.id.save_button);
-		_saveButton.setOnClickListener(_save_onClick);
-		_requestButton = (Button) findViewById(R.id.request_button);
-		_requestButton.setOnClickListener(_request_onClick);
-		_notInterestedButton = (Button) findViewById(R.id.not_interested_button);
-		_notInterestedButton.setOnClickListener(_notInterested_onClick);
-		_completeButton = (Button) findViewById(R.id.complete_button);
-		_completeButton.setOnClickListener(_complete_onClick);
-		_counterOfferButton = (Button) findViewById(R.id.counteroffer_button);
-		_counterOfferButton.setOnClickListener(_counter_onClick);
-
-		_payDialog = new PayDialog(getContext());
-
-		// TODO put UI into loading state
-		_saveButton.setText("Loading...");
-
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private View.OnClickListener _counter_onClick = new View.OnClickListener() {
+	private ClosingNotesDialog.Listener _closingNotes_listener = new ClosingNotesDialog.Listener() {
 		@Override
-		public void onClick(View v) {
-			_payDialog.show();
+		public void onOk(String message) {
+			_notesTextView.setText(message);
+			setLoading(true);
+			_gs.startService(_service.closingNotes(WEB_SAVE_NOTES, _workorder.getWorkorderId(), message));
 		}
 	};
-	private View.OnClickListener _request_onClick = new View.OnClickListener() {
+	private View.OnClickListener _notes_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-		}
-	};
-
-	private View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-		}
-	};
-
-	private View.OnClickListener _complete_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-		}
-	};
-	private View.OnClickListener _save_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			getContext().startService(
-					_service.closingNotes(WEB_SAVE_NOTES, _workorder.getWorkorderId(),
-							_notesEditText.getText().toString()));
+			if (_service != null) {
+				_dialog.show(_workorder.getClosingNotes(), _closingNotes_listener);
+			}
 		}
 	};
 
@@ -127,7 +100,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 		@Override
 		public void onAuthentication(String username, String authToken) {
 			_service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
-			_saveButton.setText("Save");
+			setLoading(false);
 		}
 
 		@Override
@@ -139,9 +112,8 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
+			setLoading(false);
 			_workorder.dispatchOnChange();
-			// TODO Method Stub: onSuccess()
-			Log.v(TAG, "Method Stub: onSuccess()");
 		}
 
 		@Override
@@ -150,7 +122,6 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 				_gs.invalidateAuthToken(_service.getAuthToken());
 			}
 			_gs.requestAuthentication(_authClient);
-			// TODO put UI into loading state
 		}
 	};
 
@@ -165,8 +136,18 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	}
 
 	private void refresh() {
-		_notesEditText.setText(_workorder.getClosingNotes());
-
+		if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
+			_notesTextView.setText(_workorder.getClosingNotes());
+		}
 	}
 
+	private void setLoading(boolean isLoading) {
+		if (isLoading) {
+			_editImageView.setVisibility(View.GONE);
+			_progressBar.setVisibility(View.VISIBLE);
+		} else {
+			_editImageView.setVisibility(View.VISIBLE);
+			_progressBar.setVisibility(View.GONE);
+		}
+	}
 }

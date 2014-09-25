@@ -25,7 +25,7 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
 		byte[] data = bundle.getByteArray(KEY_PARAM_DATA);
 		boolean allowCache = bundle.getBoolean(KEY_ALLOW_CACHE);
 
-		if (path.contains("shipments")) {
+		if (path.contains("messages/new")) {
 			Log.v(TAG, "BP");
 		}
 
@@ -47,25 +47,33 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
 				try {
 					result = ws.httpReadWrite(method, path, options, data, contentType);
 
-					try {
-						// happy path
-						bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
+					if (result.getResponseCode() / 100 != 2) {
+						Log.v(TAG, "Error response: " + result.getResponseCode());
 						bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-						bundle.putBoolean(KEY_RESPONSE_CACHED, false);
-						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-						DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
-								bundle.getInt(KEY_RESPONSE_CODE));
-						Log.v(TAG, "web request success");
-					} catch (Exception ex) {
+						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+						bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+
+					} else {
 						try {
-							// unhappy, but http error
+							// happy path
+							bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
 							bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
-							bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-						} catch (Exception ex1) {
-							// sad path
-							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
-							bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+							bundle.putBoolean(KEY_RESPONSE_CACHED, false);
+							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
+							DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+									bundle.getInt(KEY_RESPONSE_CODE));
+							Log.v(TAG, "web request success");
+						} catch (Exception ex) {
+							try {
+								// unhappy, but http error
+								bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+								bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+								bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+							} catch (Exception ex1) {
+								// sad path
+								bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+								bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+							}
 						}
 					}
 

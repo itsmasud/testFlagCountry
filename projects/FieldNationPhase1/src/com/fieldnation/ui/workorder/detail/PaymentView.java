@@ -10,7 +10,9 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.DiscountDialog;
 import com.fieldnation.ui.ExpenseDialog;
+import com.fieldnation.ui.payment.PayDialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -19,7 +21,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,12 +29,14 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 	private static final int RESULT_ADD_EXPENSE = 1;
 	private static final int RESULT_DELETE_EXPENSE = 2;
+	private static final int RESULT_ADD_DISCOUNT = 3;
+	private static final int RESULT_DELETE_DISCOUNT = 4;
 
 	// UI
 	// TODO need to grab the description views at the top
 	private TextView _pay1TextView;
 	private TextView _pay2TextView;
-	private Button _termsButton;
+	private TextView _termsTextView;
 	private LinearLayout _addExpenseLayout;
 	private LinearLayout _addDiscountLayout;
 	private TextView _expensesLabelTextView;
@@ -41,6 +44,10 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private TextView _discountsLabelTextView;
 	private LinearLayout _discountsLinearLayout;
 	private ExpenseDialog _expenseDialog;
+	private LinearLayout _counterOfferLayout;
+	private LinearLayout _detailLayout;
+	private PayDialog _payDialog;
+	private DiscountDialog _discountDialog;
 
 	// Data
 	private Workorder _workorder;
@@ -52,21 +59,27 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	/*-*************************************-*/
 
 	public PaymentView(Context context) {
-		this(context, null);
+		super(context);
+		init();
 	}
 
 	public PaymentView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_payment, this);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_payment, this);
 
 		if (isInEditMode())
 			return;
-		_gs = (GlobalState) context.getApplicationContext();
+		_gs = (GlobalState) getContext().getApplicationContext();
 		_gs.requestAuthentication(_authClient);
 
 		_pay1TextView = (TextView) findViewById(R.id.pay1_textview);
 		_pay2TextView = (TextView) findViewById(R.id.pay2_textview);
-		_termsButton = (Button) findViewById(R.id.terms_button);
+		_termsTextView = (TextView) findViewById(R.id.terms_textview);
+		_termsTextView.setOnClickListener(_terms_onClick);
 		_addExpenseLayout = (LinearLayout) findViewById(R.id.addexpense_layout);
 		_addExpenseLayout.setOnClickListener(_addExpense_onClick);
 
@@ -78,13 +91,27 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		_discountsLabelTextView = (TextView) findViewById(R.id.discountslabel_textview);
 		_discountsLinearLayout = (LinearLayout) findViewById(R.id.discounts_linearlayout);
 
-		_expenseDialog = new ExpenseDialog(context);
+		_expenseDialog = new ExpenseDialog(getContext());
+		_counterOfferLayout = (LinearLayout) findViewById(R.id.counteroffer_layout);
+		_counterOfferLayout.setOnClickListener(_counterOffer_onClick);
+		_detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
 
+		_payDialog = new PayDialog(getContext());
+		_discountDialog = new DiscountDialog(getContext());
 	}
 
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private View.OnClickListener _counterOffer_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+			_payDialog.show();
+		}
+	};
+
 	private View.OnClickListener _terms_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -108,15 +135,38 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		}
 	};
 
-	private View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+	private ExpenseView.Listener _expenseView_listener = new ExpenseView.Listener() {
 
+		@Override
+		public void onDelete(ExpenseView view, AdditionalExpense expense) {
+			getContext().startService(
+					_service.deleteExpense(RESULT_DELETE_EXPENSE, _workorder.getWorkorderId(), expense.getExpenseId()));
 		}
 	};
 
+	private View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			_discountDialog.show("Add Discount", "", 0.0, _addDiscount_listener);
+		}
+	};
+
+	private DiscountDialog.Listener _addDiscount_listener = new DiscountDialog.Listener() {
+		@Override
+		public void onOk(String description, double amount) {
+			getContext().startService(
+					_service.addDiscount(RESULT_ADD_DISCOUNT, _workorder.getWorkorderId(), amount, description));
+		}
+	};
+
+	private DiscountView.Listener _discount_listener = new DiscountView.Listener() {
+		@Override
+		public void onDelete(Discount discount) {
+			getContext().startService(
+					_service.deleteDiscount(RESULT_DELETE_DISCOUNT, _workorder.getWorkorderId(),
+							discount.getDiscountId()));
+		}
+	};
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 
 		@Override
@@ -139,7 +189,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			if (resultCode == RESULT_ADD_EXPENSE || resultCode == RESULT_DELETE_EXPENSE) {
+			if (resultCode == RESULT_ADD_EXPENSE || resultCode == RESULT_DELETE_EXPENSE || resultCode == RESULT_ADD_DISCOUNT || resultCode == RESULT_DELETE_DISCOUNT) {
 				_workorder.dispatchOnChange();
 			}
 		}
@@ -154,18 +204,17 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		}
 	};
 
-	private ExpenseView.Listener _expenseView_listener = new ExpenseView.Listener() {
-
-		@Override
-		public void onDelete(ExpenseView view, AdditionalExpense expense) {
-			getContext().startService(
-					_service.deleteExpense(RESULT_DELETE_EXPENSE, _workorder.getWorkorderId(), expense.getExpenseId()));
-		}
-	};
-
 	/*-*************************************-*/
 	/*-				Mutators				-*/
 	/*-*************************************-*/
+
+	public void showDetails(boolean enabled) {
+		if (enabled) {
+			_detailLayout.setVisibility(View.VISIBLE);
+		} else {
+			_detailLayout.setVisibility(View.GONE);
+		}
+	}
 
 	@Override
 	public void setWorkorder(Workorder workorder) {
@@ -198,14 +247,11 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		}
 
 		AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
-		if (expenses == null || expenses.length == 0) {
-			_expensesLabelTextView.setVisibility(GONE);
-			_expensesLinearLayout.setVisibility(GONE);
-		} else {
-			_expensesLabelTextView.setVisibility(VISIBLE);
-			_expensesLinearLayout.setVisibility(VISIBLE);
-			_expensesLinearLayout.removeAllViews();
+		_expensesLabelTextView.setVisibility(VISIBLE);
+		_expensesLinearLayout.setVisibility(VISIBLE);
+		_expensesLinearLayout.removeAllViews();
 
+		if (expenses != null && expenses.length > 0) {
 			for (int i = 0; i < expenses.length; i++) {
 				AdditionalExpense expense = expenses[i];
 				ExpenseView v = new ExpenseView(getContext());
@@ -216,17 +262,15 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		}
 
 		Discount[] discounts = _workorder.getDiscounts();
-		if (discounts == null || discounts.length == 0) {
-			_discountsLabelTextView.setVisibility(GONE);
-			_discountsLinearLayout.setVisibility(GONE);
-		} else {
-			_discountsLabelTextView.setVisibility(VISIBLE);
-			_discountsLinearLayout.setVisibility(VISIBLE);
-			_discountsLinearLayout.removeAllViews();
+		_discountsLabelTextView.setVisibility(VISIBLE);
+		_discountsLinearLayout.setVisibility(VISIBLE);
+		_discountsLinearLayout.removeAllViews();
 
+		if (discounts != null && discounts.length > 0) {
 			for (int i = 0; i < discounts.length; i++) {
 				Discount discount = discounts[i];
 				DiscountView v = new DiscountView(getContext());
+				v.setListener(_discount_listener);
 				_discountsLinearLayout.addView(v);
 				v.setDiscount(discount);
 			}

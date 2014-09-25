@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
@@ -20,7 +19,7 @@ public class PayDialog extends Dialog {
 	// UI
 	private Spinner _typeSpinner;
 
-	private FrameLayout _fixedLayout;
+	private LinearLayout _fixedLayout;
 	private EditText _fixedEditText;
 
 	private LinearLayout _hourlyLayout;
@@ -57,7 +56,7 @@ public class PayDialog extends Dialog {
 		_typeSpinner.setAdapter(adapter);
 
 		// fixed
-		_fixedLayout = (FrameLayout) findViewById(R.id.fixed_layout);
+		_fixedLayout = (LinearLayout) findViewById(R.id.fixed_layout);
 		_fixedEditText = (EditText) findViewById(R.id.fixed_edittext);
 
 		// hourly
@@ -103,10 +102,10 @@ public class PayDialog extends Dialog {
 			case 1:
 				_hourlyLayout.setVisibility(View.VISIBLE);
 				break;
-			case 2:
+			case 3:
 				_devicesLayout.setVisibility(View.VISIBLE);
 				break;
-			case 3:
+			case 2:
 				_blendedLayout.setVisibility(View.VISIBLE);
 				break;
 			}

@@ -8,10 +8,9 @@ import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
-import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 public class Workorder {
-	@Json(name="isAssignedToWorkorder")
+	@Json(name = "isAssignedToWorkorder")
 	private Boolean _isAssignedToWorkorder;
 	@Json(name = "discounts")
 	private Discount[] _discounts;
@@ -19,6 +18,8 @@ public class Workorder {
 	private String _typeOfWork;
 	@Json(name = "fullWorkDescription")
 	private String _fullWorkDescription;
+	@Json(name = "canRequestPayForThisWo")
+	private Boolean _canRequestPayForThisWo;
 	@Json(name = "workorderId")
 	private Long _workorderId;
 	@Json(name = "hasFund")
@@ -26,7 +27,7 @@ public class Workorder {
 	@Json(name = "pay")
 	private Pay _pay;
 	@Json(name = "bundleId")
-	private Integer _bundleId;
+	private Long _bundleId;
 	@Json(name = "customFields")
 	private CustomField[] _customFields;
 	@Json(name = "declinedWo")
@@ -35,16 +36,22 @@ public class Workorder {
 	private String _timezone;
 	@Json(name = "skillsets")
 	private Skillset[] _skillsets;
-	@Json(name="messageCount")
+	@Json(name = "messageCount")
 	private Integer _messageCount;
 	@Json(name = "identifier")
 	private String _identifier;
-	@Json(name="checkInOutInfo")
+	@Json(name = "showProviderWasLatePrompt")
+	private Boolean _showProviderWasLatePrompt;
+	@Json(name = "projectId")
+	private Integer _projectId;
+	@Json(name = "checkInOutInfo")
 	private CheckInOutInfo _checkInOutInfo;
 	@Json(name = "loggedWork")
 	private LoggedWork[] _loggedWork;
-	@Json(name="alertCount ")
-	private Integer _alertCount ;
+	@Json(name = "counterOfferInfo")
+	private CounterOfferInfo _counterOfferInfo;
+	@Json(name = "alertCount ")
+	private Integer _alertCount;
 	@Json(name = "customerPoliciesProcedures")
 	private String _customerPoliciesProcedures;
 	@Json(name = "location")
@@ -58,7 +65,9 @@ public class Workorder {
 	@Json(name = "standardInstructions")
 	private String _standardInstructions;
 	@Json(name = "provider")
-	private Provider[] _provider;
+	private Provider _provider;
+	@Json(name = "canViewServicePayRateInfo")
+	private Boolean _canViewServicePayRateInfo;
 	@Json(name = "isRemoteWork")
 	private Integer _isRemoteWork;
 	@Json(name = "distance")
@@ -67,34 +76,54 @@ public class Workorder {
 	private Integer _statusId;
 	@Json(name = "schedule")
 	private Schedule _schedule;
+	@Json(name = "days_since_approved_or_cancelled")
+	private Integer _daysSinceApprovedOrCancelled;
 	@Json(name = "deliverables")
 	private Deliverable[] _deliverables;
+	@Json(name = "standardInstruction")
+	private String _standardInstruction;
 	@Json(name = "expectedPayment")
 	private ExpectedPayment _expectedPayment;
+	@Json(name = "clientCompanyId")
+	private Integer _clientCompanyId;
 	@Json(name = "confidentialInformation")
 	private String _confidentialInformation;
 	@Json(name = "companyName")
 	private String _companyName;
 	@Json(name = "estimatedSchedule")
 	private EstimatedSchedule _estimatedSchedule;
-	@Json(name = "status")
-	private Status _status;
+	@Json(name = "managerName")
+	private String _managerName;
+	@Json(name = "managerId")
+	private Integer _managerId;
+	@Json(name = "paidDate")
+	private String _paidDate;
 	@Json(name = "isWorkPerformed")
 	private Boolean _isWorkPerformed;
+	@Json(name = "status")
+	private Status _status;
+	@Json(name = "uploadSlots")
+	private UploadSlot[] _uploadSlots;
+	@Json(name = "increaseRequestInfo")
+	private IncreaseRequestInfo _increaseRequestInfo;
 	@Json(name = "title")
 	private String _title;
 	@Json(name = "tasks")
 	private Task[] _tasks;
 	@Json(name = "w2")
 	private Integer _w2;
-	@Json(name = "companyId")
-	private Integer _companyId;
 	@Json(name = "isDeliverablesUploaded")
 	private Boolean _isDeliverablesUploaded;
+	@Json(name = "companyId")
+	private Integer _companyId;
+	@Json(name = "canEditFieldsForProviderToEnter")
+	private Boolean _canEditFieldsForProviderToEnter;
+	@Json(name = "approximatePaymentDate")
+	private String _approximatePaymentDate;
 	@Json(name = "alerts")
 	private Integer _alerts;
 	@Json(name = "cancelFee")
-	private Integer _cancelFee;
+	private Double _cancelFee;
 	@Json(name = "bundleCount")
 	private Integer _bundleCount;
 	@Json(name = "isRequest")
@@ -103,16 +132,31 @@ public class Workorder {
 	private Boolean _isCounter;
 	@Json(name = "documents")
 	private Document[] _documents;
+	@Json(name = "displayCounterOffer")
+	private Integer _displayCounterOffer;
+	@Json(name = "workorderPenaltyInfo")
+	private WorkorderPenaltyInfo[] _workorderPenaltyInfo;
 	@Json(name = "closingNotes")
 	private String _closingNotes;
-	// @Json(name = "label")
+	@Json(name = "time_since_published")
+	private Integer _timeSincePublished;
+	// @Json(name="label")
 	// private Label[] _label;
+	@Json(name = "clientCompanyName")
+	private String _clientCompanyName;
+	@Json(name = "workorderBonusInfo")
+	private WorkorderBonusInfo[] _workorderBonusInfo;
 	@Json(name = "shipmentTracking")
 	private ShipmentTracking[] _shipmentTracking;
+	@Json(name = "projectName")
+	private String _projectName;
+	@Json(name = "isWoOnHold")
+	private Boolean _isWoOnHold;
 
 	public Workorder() {
 	}
-	public Boolean getIsAssignedToWorkorder(){
+
+	public Boolean getIsAssignedToWorkorder() {
 		return _isAssignedToWorkorder;
 	}
 
@@ -140,7 +184,7 @@ public class Workorder {
 		return _pay;
 	}
 
-	public Integer getBundleId() {
+	public Long getBundleId() {
 		return _bundleId;
 	}
 
@@ -160,7 +204,7 @@ public class Workorder {
 		return _skillsets;
 	}
 
-	public Integer getMessageCount(){
+	public Integer getMessageCount() {
 		return _messageCount;
 	}
 
@@ -168,7 +212,15 @@ public class Workorder {
 		return _identifier;
 	}
 
-	public CheckInOutInfo getCheckInOutInfo(){
+	public Boolean getShowProviderWasLatePrompt() {
+		return _showProviderWasLatePrompt;
+	}
+
+	public Integer getProjectId() {
+		return _projectId;
+	}
+
+	public CheckInOutInfo getCheckInOutInfo() {
 		return _checkInOutInfo;
 	}
 
@@ -176,8 +228,12 @@ public class Workorder {
 		return _loggedWork;
 	}
 
-	public Integer getAlertCount (){
-		return _alertCount ;
+	public CounterOfferInfo getCounterOfferInfo() {
+		return _counterOfferInfo;
+	}
+
+	public Integer getAlertCount() {
+		return _alertCount;
 	}
 
 	public String getCustomerPoliciesProcedures() {
@@ -204,8 +260,12 @@ public class Workorder {
 		return _standardInstructions;
 	}
 
-	public Provider[] getProvider() {
+	public Provider getProvider() {
 		return _provider;
+	}
+
+	public Boolean getCanViewServicePayRateInfo() {
+		return _canViewServicePayRateInfo;
 	}
 
 	public Integer getIsRemoteWork() {
@@ -224,12 +284,24 @@ public class Workorder {
 		return _schedule;
 	}
 
+	public Integer getDaysSinceApprovedOrCancelled() {
+		return _daysSinceApprovedOrCancelled;
+	}
+
 	public Deliverable[] getDeliverables() {
 		return _deliverables;
 	}
 
+	public String getStandardInstruction() {
+		return _standardInstruction;
+	}
+
 	public ExpectedPayment getExpectedPayment() {
 		return _expectedPayment;
+	}
+
+	public Integer getClientCompanyId() {
+		return _clientCompanyId;
 	}
 
 	public String getConfidentialInformation() {
@@ -244,27 +316,28 @@ public class Workorder {
 		return _estimatedSchedule;
 	}
 
-	public Status getStatus() {
-		if (_status == null) {
-			String data = "Status is null: " + _workorderId;
-			System.out.println(data);
-		} else if (_status.getWorkorderStatus() == null) {
-			String data = "Could not get status: " + _workorderId + "\r\n";
-			data += _status.toJson().display();
+	public String getManagerName() {
+		return _managerName;
+	}
 
-			System.out.println(data);
-		} else if (_status.getWorkorderSubstatus() == null) {
-			String data = "Could not get substatus: " + _workorderId + "\r\n";
-			data += _status.toJson().display();
+	public Integer getManagerId() {
+		return _managerId;
+	}
 
-			System.out.println(data);
-		}
-
-		return _status;
+	public String getPaidDate() {
+		return _paidDate;
 	}
 
 	public Boolean getIsWorkPerformed() {
 		return _isWorkPerformed;
+	}
+
+	public UploadSlot[] getUploadSlots() {
+		return _uploadSlots;
+	}
+
+	public IncreaseRequestInfo getIncreaseRequestInfo() {
+		return _increaseRequestInfo;
 	}
 
 	public String getTitle() {
@@ -279,19 +352,27 @@ public class Workorder {
 		return _w2;
 	}
 
+	public Boolean getIsDeliverablesUploaded() {
+		return _isDeliverablesUploaded;
+	}
+
 	public Integer getCompanyId() {
 		return _companyId;
 	}
 
-	public Boolean getIsDeliverablesUploaded() {
-		return _isDeliverablesUploaded;
+	public Boolean getCanEditFieldsForProviderToEnter() {
+		return _canEditFieldsForProviderToEnter;
+	}
+
+	public String getApproximatePaymentDate() {
+		return _approximatePaymentDate;
 	}
 
 	public Integer getAlerts() {
 		return _alerts;
 	}
 
-	public Integer getCancelFee() {
+	public Double getCancelFee() {
 		return _cancelFee;
 	}
 
@@ -311,16 +392,40 @@ public class Workorder {
 		return _documents;
 	}
 
+	public Integer getDisplayCounterOffer() {
+		return _displayCounterOffer;
+	}
+
+	public WorkorderPenaltyInfo[] getWorkorderPenaltyInfo() {
+		return _workorderPenaltyInfo;
+	}
+
 	public String getClosingNotes() {
 		return _closingNotes;
 	}
 
-	// public Label[] getLabels() {
-	// return _label;
-	// }
+	public Integer getTimeSincePublished() {
+		return _timeSincePublished;
+	}
+
+	public String getClientCompanyName() {
+		return _clientCompanyName;
+	}
+
+	public WorkorderBonusInfo[] getWorkorderBonusInfo() {
+		return _workorderBonusInfo;
+	}
 
 	public ShipmentTracking[] getShipmentTracking() {
 		return _shipmentTracking;
+	}
+
+	public String getProjectName() {
+		return _projectName;
+	}
+
+	public Boolean getIsWoOnHold() {
+		return _isWoOnHold;
 	}
 
 	public JsonObject toJson() {
@@ -336,10 +441,9 @@ public class Workorder {
 		}
 	}
 
-	public static Workorder fromJson(JsonObject json, WorkorderDataSelector selector) {
+	public static Workorder fromJson(JsonObject json) {
 		try {
 			Workorder wo = Serializer.unserializeObject(Workorder.class, json);
-			wo._type = selector;
 			wo.buildStatus();
 			return wo;
 		} catch (Exception ex) {
@@ -366,33 +470,39 @@ public class Workorder {
 	public static final int NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT = 103;
 
 	// status colors lookuptable
-	private static final int[] _STATUS_LOOKUP_TABLE = {
-			R.drawable.card_status_white,
-			R.drawable.card_status_orange,
-			R.drawable.card_status_green,
-			R.drawable.card_status_gray };
-	private static final int[] _STATUS_TEXT_TABLE = {
-			R.color.woCardStatusLabel1,
-			R.color.woCardStatusLabel2,
-			R.color.woCardStatusLabel3,
-			R.color.woCardStatusLabel4 };
-	private static final int[] _STATUS_BUTTON_FG = {
-			R.color.btn_white_fg,
-			R.color.btn_orange_fg,
-			R.color.btn_green_fg,
+	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.card_status_white, R.drawable.card_status_orange,
+			R.drawable.card_status_green, R.drawable.card_status_gray };
+	private static final int[] _STATUS_TEXT_TABLE = { R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
+			R.color.woCardStatusLabel3, R.color.woCardStatusLabel4 };
+	private static final int[] _STATUS_BUTTON_FG = { R.color.btn_white_fg, R.color.btn_orange_fg, R.color.btn_green_fg,
 			R.color.btn_gray_fg };
-	private static final int[] _STATUS_BUTTON_BG = {
-			R.drawable.btn_white,
-			R.drawable.btn_orange,
-			R.drawable.btn_green,
+	private static final int[] _STATUS_BUTTON_BG = { R.drawable.btn_white, R.drawable.btn_orange, R.drawable.btn_green,
 			R.drawable.btn_white };
 
 	private int _buttonAction = 0;
 	private int _notInterestedAction = 0;
-	private WorkorderDataSelector _type;
 	// private Set<Integer> _labelIds = new HashSet<Integer>();
 
 	private Set<Listener> _listeners = new HashSet<Workorder.Listener>();
+
+	public Status getStatus() {
+		if (_status == null) {
+			String data = "Status is null: " + _workorderId;
+			System.out.println(data);
+		} else if (_status.getWorkorderStatus() == null) {
+			String data = "Could not get status: " + _workorderId + "\r\n";
+			data += _status.toJson().display();
+
+			System.out.println(data);
+		} else if (_status.getWorkorderSubstatus() == null) {
+			String data = "Could not get substatus: " + _workorderId + "\r\n";
+			data += _status.toJson().display();
+
+			System.out.println(data);
+		}
+
+		return _status;
+	}
 
 	public int getButtonAction() {
 		return _buttonAction;
@@ -400,10 +510,6 @@ public class Workorder {
 
 	public int getNotInterestedAction() {
 		return _notInterestedAction;
-	}
-
-	public WorkorderDataSelector getWorkorderDataSelector() {
-		return _type;
 	}
 
 	public int getStatusBG() {

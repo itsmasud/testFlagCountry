@@ -54,6 +54,6 @@ public class MessagesListAdapter extends PagingListAdapter<Message> {
 
 	@Override
 	public void executeWebService(int resultCode, int page, boolean allowCache) {
-		getContext().startService(_profileService.getUnreadMessages(resultCode, page, allowCache));
+		getContext().startService(_profileService.getAllMessages(resultCode, page, allowCache));
 	}
 }

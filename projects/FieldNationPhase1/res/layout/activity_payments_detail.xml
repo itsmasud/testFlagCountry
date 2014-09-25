@@ -6,123 +6,98 @@
 
     <!-- The main content view -->
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
         <LinearLayout
+            style="@style/PaymentDetailHeader"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal" >
 
             <LinearLayout
-                style="@style/PaymentDetailHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:orientation="horizontal" >
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.75"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/id_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ID 971"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:visibility="gone" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Processing "
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/payment_textview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="$1,748.00"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:visibility="gone" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/paymenttype_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Check"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/date_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Estimated 05/21/14"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.25"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/workordercount_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:text="3 Work Orders"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/feescount_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:text="2 Fees"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:visibility="gone" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <ListView
-                android:id="@+id/items_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:smoothScrollbar="false" />
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/loading_layout"
-            style="@style/WorkorderCard_LoadingLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" >
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-        </RelativeLayout>
-    </RelativeLayout>
+                android:layout_weight="0.75"
+                android:orientation="vertical" >
 
+                <TextView
+                    android:id="@+id/id_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ID 971"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Processing "
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <TextView
+                        android:id="@+id/payment_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$1,748.00"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/paymenttype_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Check"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/date_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Estimated 05/21/14"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.25"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/workordercount_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="3 Work Orders"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/feescount_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="2 Fees"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/items_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:smoothScrollbar="false" />
+    </LinearLayout>
     <!-- The navigation drawer -->
 
     <com.fieldnation.ui.DrawerView

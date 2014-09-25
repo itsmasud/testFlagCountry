@@ -15,8 +15,8 @@ import android.os.ResultReceiver;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
@@ -29,7 +29,7 @@ import android.widget.Toast;
  */
 public class AuthActivity extends AccountAuthenticatorActivity {
 	// UI
-	private LinearLayout _contentLayout;
+	private RelativeLayout _contentLayout;
 	private ProgressBar _loadingProgressBar;
 	private Button _loginButton;
 	private EditText _usernameEditText;
@@ -51,7 +51,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
 		_gs = (GlobalState) getApplicationContext();
 
-		_contentLayout = (LinearLayout) findViewById(R.id.content_layout);
+		_contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
 		_loginButton = (Button) findViewById(R.id.login_button);
 		_loginButton.setOnClickListener(_loginButton_onClick);
 		_usernameEditText = (EditText) findViewById(R.id.username_edittext);

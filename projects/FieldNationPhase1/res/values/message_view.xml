@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="MessageView">
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+    </style>
+
+    <style name="MessageView_MessageSent">
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">25dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:background">@drawable/message_sent</item>
+    </style>
+
+    <style name="MessageView_MessageRcvd">
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">25dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:background">@drawable/message_rcvd</item>
+    </style>
+
+    <style name="MessageView_ProfileImage">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@drawable/missing</item>
+    </style>
+
+    <style name="MessageView_StatusBar">
+        <item name="android:layout_marginTop">2dp</item>
+    </style>
+
+    <style name="MessageView_Status_Clock">
+        <item name="android:layout_width">12dp</item>
+        <item name="android:layout_height">12dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:background">@drawable/ic_clock</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="MessageView_Status_Time">
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+
+    <style name="MessageView_Status_Pending">
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+
+    <style name="MessageView_Status_Check">
+        <item name="android:layout_width">16dp</item>
+        <item name="android:layout_height">16dp</item>
+        <item name="android:background">@drawable/ic_check_grey</item>
+    </style>
+
+    <style name="MessageView_Status_Orange">
+        <item name="android:layout_width">16dp</item>
+        <item name="android:layout_height">16dp</item>
+        <item name="android:background">@drawable/ic_message_thumb</item>
+    </style>
+
+</resources>

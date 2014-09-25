@@ -9,29 +9,29 @@ public class ShipmentTracking {
 	private String _name;
 	@Json(name = "deleted")
 	private Integer _deleted;
-	@Json(name="dateProjectedToArrive")
-	private Object _dateProjectedToArrive;
-	@Json(name="workorderShipmentId")
+	@Json(name = "dateProjectedToArrive")
+	private String _dateProjectedToArrive;
+	@Json(name = "workorderShipmentId")
 	private Integer _workorderShipmentId;
-	@Json(name="userId")
+	@Json(name = "userId")
 	private Integer _userId;
 	@Json(name = "carrier")
 	private String _carrier;
-	@Json(name="carrierOther")
+	@Json(name = "carrierOther")
 	private String _carrierOther;
-	@Json(name="workorderId")
+	@Json(name = "workorderId")
 	private Integer _workorderId;
 	@Json(name = "direction")
 	private String _direction;
-	@Json(name="dateOfFirstTrackedActivity")
-	private Object _dateOfFirstTrackedActivity;
-	@Json(name="dateCreated")
+	@Json(name = "dateOfFirstTrackedActivity")
+	private String _dateOfFirstTrackedActivity;
+	@Json(name = "dateCreated")
 	private String _dateCreated;
-	@Json(name="trackingId")
+	@Json(name = "trackingId")
 	private String _trackingId;
-	@Json(name="dateArrived")
-	private Object _dateArrived;
-	@Json(name="currentStatus")
+	@Json(name = "dateArrived")
+	private String _dateArrived;
+	@Json(name = "currentStatus")
 	private String _currentStatus;
 
 	public ShipmentTracking() {
@@ -45,19 +45,19 @@ public class ShipmentTracking {
 		return _deleted;
 	}
 
-	public Object getDateProjectedToArrive(){
+	public String getDateProjectedToArrive() {
 		return _dateProjectedToArrive;
 	}
 
-	public Integer getWorkorderShipmentId(){
+	public Integer getWorkorderShipmentId() {
 		return _workorderShipmentId;
 	}
 
-	public Integer getUserId(){
+	public Integer getUserId() {
 		return _userId;
 	}
 
-	public String getCarrier(){
+	public String getCarrier() {
 		return _carrier;
 	}
 
@@ -65,31 +65,31 @@ public class ShipmentTracking {
 		return _carrierOther;
 	}
 
-	public Integer getWorkorderId(){
+	public Integer getWorkorderId() {
 		return _workorderId;
 	}
 
-	public String getDirection(){
+	public String getDirection() {
 		return _direction;
 	}
 
-	public Object getDateOfFirstTrackedActivity(){
+	public String getDateOfFirstTrackedActivity() {
 		return _dateOfFirstTrackedActivity;
 	}
 
-	public String getDateCreated(){
+	public String getDateCreated() {
 		return _dateCreated;
 	}
 
-	public String getTrackingId(){
+	public String getTrackingId() {
 		return _trackingId;
 	}
 
-	public Object getDateArrived(){
+	public String getDateArrived() {
 		return _dateArrived;
 	}
 
-	public String getCurrentStatus(){
+	public String getCurrentStatus() {
 		return _currentStatus;
 	}
 

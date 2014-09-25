@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 
 public class WorkorderListFragment extends Fragment {
-	private static final String TAG = "ui.workorder.MyWorkListFragment";
+	private static final String TAG = "ui.workorder.WorkorderListFragment";
 
 	// UI
 	private PullToRefreshListView _listView;
@@ -83,7 +83,7 @@ public class WorkorderListFragment extends Fragment {
 	@Override
 	public void onStart() {
 		Log.v(TAG, "onStart");
-		if (_listView != null) {
+		if (_listView != null && getAdapter() != null) {
 			_listView.setAdapter(getAdapter());
 		}
 		super.onStart();
@@ -92,8 +92,8 @@ public class WorkorderListFragment extends Fragment {
 	@Override
 	public void onPause() {
 		Log.v(TAG, "onPause()");
-		if (_adapter != null) {
-			_adapter.onPause();
+		if (getAdapter() != null) {
+			getAdapter().onPause();
 		}
 		super.onPause();
 	}
@@ -102,8 +102,8 @@ public class WorkorderListFragment extends Fragment {
 	public void onStop() {
 		Log.v(TAG, "Method Stub: onStop()");
 		super.onStop();
-		if (_adapter != null) {
-			_adapter.onStop();
+		if (getAdapter() != null) {
+			getAdapter().onStop();
 			_adapter = null;
 		}
 	}
@@ -169,40 +169,11 @@ public class WorkorderListFragment extends Fragment {
 		@Override
 		public void onPull(int pullPercent) {
 			if (_listView.getState() == PullToRefreshListView.State.PULL_TO_REFRESH) {
-				// _loadingBar.setIndeterminate(false);
-				// _loadingBar.setInterpolator(_customInterpolator);
-				// if (pullPercent < 50) {
-				// _loadingBar.setSmoothProgressDrawableReversed(true);
-				// } else {
-				// _loadingBar.setSmoothProgressDrawableReversed(false);
-				// }
-
 				float sep = 4f - 4 * Math.abs(pullPercent) / 100f;
 				if (sep < 0)
 					sep = 0f;
 				_loadingBar.setSmoothProgressDrawableSpeed(sep);
-
-				// _loadingBar.setSmoothProgressDrawableSeparatorLength(sep);
 			}
-		}
-
-		@Override
-		public void onStateChange(State state) {
-			if (state == State.RELEASE_TO_REFRESH) {
-				_adapter.update(false);
-				_loadingBar.progressiveStart();
-			}
-			// TODO Method Stub: onStateChange()
-			Log.v(TAG, "Method Stub: onStateChange()");
-		}
-
-		@Override
-		public void onStartPull() {
-			_loadingBar.setSmoothProgressDrawableSectionsCount(1);
-			_loadingBar.setSmoothProgressDrawableReversed(true);
-			_loadingBar.progressiveStart();
-			// TODO Method Stub: onStartPull()
-			Log.v(TAG, "Method Stub: onStartPull()");
 		}
 
 		@Override
@@ -212,21 +183,38 @@ public class WorkorderListFragment extends Fragment {
 			_loadingBar.setSmoothProgressDrawableSectionsCount(1);
 			_loadingBar.progressiveStop();
 			_loadingBar.setVisibility(View.GONE);
-			// TODO Method Stub: onStopPull()
-			Log.v(TAG, "Method Stub: onStopPull()");
 		}
+
+		@Override
+		public void onStateChange(State state) {
+			if (state == State.RELEASE_TO_REFRESH) {
+				if (getAdapter() != null)
+					getAdapter().update(false);
+				_loadingBar.progressiveStart();
+			}
+		}
+
+		@Override
+		public void onStartPull() {
+			_loadingBar.setSmoothProgressDrawableSectionsCount(1);
+			_loadingBar.setSmoothProgressDrawableReversed(true);
+			_loadingBar.progressiveStart();
+		}
+
 	};
 
 	/*-*********************************-*/
 	/*-				Util				-*/
 	/*-*********************************-*/
 	public void update() {
-		getAdapter().update(false);
+		if (getAdapter() != null)
+			getAdapter().update(false);
 		_listView.setRefreshing();
 	}
 
 	public void hiding() {
-		_adapter.onStop();
+		if (getAdapter() != null)
+			getAdapter().onStop();
 	}
 
 	private WorkorderListAdapter getAdapter() {

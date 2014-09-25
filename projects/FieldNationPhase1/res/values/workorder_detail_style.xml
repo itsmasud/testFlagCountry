@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- workorder detail colors -->
+    <color name="workorder_detail_bg">#FFf3f3eb</color>
+    <color name="workorder_detail_separator_color">#FFe9e9e7</color>
+
     <style name="WorkorderDetail">
         <item name="android:background">@color/workorder_detail_bg</item>
     </style>
@@ -28,6 +32,7 @@
     <style name="WorkorderDetail_Field_Bold">
         <item name="android:paddingBottom">15dp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FF2d2e00</item>
     </style>
 
     <style name="WorkorderDetail_FieldTitle" parent="WorkorderDetail_Field">
@@ -38,25 +43,20 @@
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="WorkorderDetail_CheckBox">
-        <item name="android:drawableLeft">@drawable/ic_checkbox_check</item>
-        <item name="android:button">@null</item>
-        <item name="android:background">@drawable/task_border</item>
-        <item name="android:layout_marginBottom">5dp</item>
+    <style name="WorkorderDetail_ProgressSep">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginLeft">32dp</item>
+        <item name="android:layout_marginRight">32dp</item>
+        <item name="android:background">@drawable/wo_detail_progress_sep</item>
     </style>
 
-    <style name="WorkorderDetail_EditText">
-        <item name="android:layout_height">48dp</item>
-        <item name="android:background">@drawable/wo_details_text_border</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:layout_marginBottom">10dp</item>
-    </style>
-
-    <style name="WorkorderDetail_RadioButton">
-        <item name="android:drawableLeft">@drawable/ic_radio_button</item>
-        <item name="android:button">@null</item>
-        <item name="android:background">@null</item>
+    <style name="WorkorderDetail_ProgressNode">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
 </resources>

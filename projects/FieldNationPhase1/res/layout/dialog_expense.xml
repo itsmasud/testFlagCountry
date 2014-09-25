@@ -2,20 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="5dp" >
 
     <EditText
         android:id="@+id/amount_edittext"
+        style="@style/EditText"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="@string/amount"
+        android:imeOptions="actionNext"
         android:inputType="numberDecimal" />
 
     <EditText
         android:id="@+id/description_edittext"
+        style="@style/EditText"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/description" />
+        android:layout_height="48dp"
+        android:hint="@string/description"
+        android:imeOptions="actionDone"
+        android:inputType="text" />
 
     <Spinner
         android:id="@+id/category_spinner"
@@ -25,9 +31,9 @@
     <Button
         android:id="@+id/ok_button"
         style="@style/ButtonGreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
         android:layout_gravity="right"
-        android:text="@string/ok" />
+        android:text="@string/done" />
 
 </LinearLayout>

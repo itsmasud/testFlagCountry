@@ -1,15 +1,19 @@
 package com.fieldnation.ui.workorder.detail;
 
 import com.fieldnation.R;
+
 import android.app.Dialog;
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class ShipmentAddDialog extends Dialog {
 	private static final String TAG = "ui.workorder.detail.ShipmentAddDialog";
@@ -34,6 +38,8 @@ public class ShipmentAddDialog extends Dialog {
 		setContentView(R.layout.dialog_add_shipment);
 
 		_trackingIdEditText = (EditText) findViewById(R.id.trackingid_edittext);
+		_trackingIdEditText.setOnEditorActionListener(_onEditor);
+
 		_carrierSpinner = (Spinner) findViewById(R.id.carrier_spinner);
 		_carrierSpinner.setOnItemSelectedListener(_carrier_selected);
 
@@ -43,8 +49,10 @@ public class ShipmentAddDialog extends Dialog {
 		_carrierSpinner.setAdapter(_carrierAdapter);
 
 		_carrierEditText = (EditText) findViewById(R.id.carrier_edittext);
+		_carrierEditText.setOnEditorActionListener(_onEditor);
 		_carrierEditText.setVisibility(View.GONE);
 		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
+		_descriptionEditText.setOnEditorActionListener(_onEditor);
 		_shipToSiteRadio = (RadioButton) findViewById(R.id.shiptosite_radio);
 
 		_addButton = (Button) findViewById(R.id.add_button);
@@ -55,6 +63,33 @@ public class ShipmentAddDialog extends Dialog {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private TextView.OnEditorActionListener _onEditor = new TextView.OnEditorActionListener() {
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			boolean handled = false;
+
+			if (actionId == EditorInfo.IME_ACTION_NEXT) {
+				if (v == _trackingIdEditText) {
+					if (_carrierEditText.getVisibility() == View.VISIBLE) {
+						_carrierEditText.requestFocus();
+						handled = true;
+					} else {
+						_descriptionEditText.requestFocus();
+						handled = true;
+					}
+				} else if (v == _carrierEditText) {
+					_descriptionEditText.requestFocus();
+					handled = true;
+				}
+			} else if (actionId == EditorInfo.IME_ACTION_DONE) {
+				_addButton_onClick.onClick(null);
+				handled = true;
+			}
+
+			return handled;
+		}
+	};
+
 	private AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

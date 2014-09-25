@@ -1,6 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -16,16 +15,17 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-
 import eu.erikw.PullToRefreshListView;
+import eu.erikw.PullToRefreshListView.State;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import android.app.Activity;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class NotificationFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.NotificationFragment";
@@ -34,6 +34,7 @@ public class NotificationFragment extends WorkorderFragment {
 	// UI
 	private PullToRefreshListView _listview;
 	private SmoothProgressBar _loadingProgress;
+	private TextView _emptyTextView;
 
 	// Data
 	private GlobalState _gs;
@@ -61,10 +62,22 @@ public class NotificationFragment extends WorkorderFragment {
 		_gs.requestAuthentication(_authclient);
 		_listview = (PullToRefreshListView) view.findViewById(R.id.listview);
 		_listview.setOnRefreshListener(_listview_onRefresh);
-		_adapter = new NotificationListAdapter();
-		_listview.setAdapter(_adapter);
+		_listview.setStateListener(_listview_stateListener);
 		_loadingProgress = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
+		_loadingProgress.setSmoothProgressDrawableCallbacks(_progressCallback);
+		_loadingProgress.setMax(100);
+		_emptyTextView = (TextView) view.findViewById(R.id.empty_textview);
 	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		WEB_LIST_NOTIFICATIONS = 0;
+		if (_adapter != null) {
+			_adapter.notifyDataSetInvalidated();
+			_adapter = null;
+		}
+	};
 
 	@Override
 	public void update() {
@@ -90,7 +103,12 @@ public class NotificationFragment extends WorkorderFragment {
 
 		Log.v(TAG, "populateUi");
 
-		_adapter.setNotifications(_notes);
+		if (getAdapter() != null)
+			getAdapter().setNotifications(_notes);
+
+		if (_notes.size() == 0) {
+			_emptyTextView.setVisibility(View.VISIBLE);
+		}
 
 		_loadingProgress.setVisibility(View.GONE);
 		_listview.onRefreshComplete();
@@ -109,6 +127,7 @@ public class NotificationFragment extends WorkorderFragment {
 		_loadingProgress.setVisibility(View.VISIBLE);
 		_notes = null;
 		WEB_LIST_NOTIFICATIONS = _rand.nextInt();
+		_emptyTextView.setVisibility(View.GONE);
 		try {
 			_gs.startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
 		} catch (Exception ex) {
@@ -120,11 +139,64 @@ public class NotificationFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private SmoothProgressDrawable.Callbacks _progressCallback = new SmoothProgressDrawable.Callbacks() {
+
+		@Override
+		public void onStop() {
+			_loadingProgress.setVisibility(View.GONE);
+		}
+
+		@Override
+		public void onStart() {
+			_loadingProgress.setVisibility(View.VISIBLE);
+		}
+
+	};
+
 	private PullToRefreshListView.OnRefreshListener _listview_onRefresh = new PullToRefreshListView.OnRefreshListener() {
 		@Override
 		public void onRefresh() {
 			getNotifications();
 		}
+	};
+
+	private PullToRefreshListView.StateListener _listview_stateListener = new PullToRefreshListView.StateListener() {
+		@Override
+		public void onPull(int pullPercent) {
+			if (_listview.getState() == PullToRefreshListView.State.PULL_TO_REFRESH) {
+				float sep = 4f - 4 * Math.abs(pullPercent) / 100f;
+				if (sep < 0)
+					sep = 0f;
+
+				_loadingProgress.setSmoothProgressDrawableSpeed(sep);
+			}
+		}
+
+		@Override
+		public void onStopPull() {
+			_loadingProgress.setSmoothProgressDrawableSpeed(2f);
+			_loadingProgress.setSmoothProgressDrawableReversed(true);
+			_loadingProgress.setSmoothProgressDrawableSectionsCount(1);
+			_loadingProgress.progressiveStop();
+			_loadingProgress.setVisibility(View.GONE);
+		}
+
+		@Override
+		public void onStateChange(State state) {
+			if (state == State.RELEASE_TO_REFRESH) {
+				// if (getAdapter() != null)
+				// getAdapter().update(false);
+				_loadingProgress.progressiveStart();
+			}
+		}
+
+		@Override
+		public void onStartPull() {
+			_loadingProgress.setSmoothProgressDrawableSectionsCount(1);
+			_loadingProgress.setSmoothProgressDrawableReversed(true);
+			_loadingProgress.progressiveStart();
+		}
+
 	};
 
 	private AuthenticationClient _authclient = new AuthenticationClient() {
@@ -171,11 +243,27 @@ public class NotificationFragment extends WorkorderFragment {
 					}
 
 					populateUi();
-				} catch (ParseException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
 	};
 
+	private NotificationListAdapter getAdapter() {
+		if (this.getActivity() == null)
+			return null;
+		try {
+			if (_adapter == null) {
+				_adapter = new NotificationListAdapter();
+				_listview.setAdapter(_adapter);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+
+		return _adapter;
+	}
 }

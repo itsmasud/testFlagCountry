@@ -1,10 +1,13 @@
 package com.fieldnation.rpc.client;
 
+import java.io.File;
+
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
@@ -111,6 +114,10 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 
 	public Intent acknowledgeHold(int resultCode, long workorderId) {
 		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/acknowledge-hold", null, false);
+	}
+
+	public Intent complete(int resultCode, long workorderId) {
+		return httpRead(resultCode, "POST", "api/rest/v1/workorder/" + workorderId + "/complete", null, false);
 	}
 
 	// messages
@@ -297,13 +304,15 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				false);
 	}
 
-	// public Intent uploadDeliverable(int resultCode, long workorderId, long
-	// deliverableId, byte[] blob) {
-	// return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId +
-	// "/deliverables/" + deliverableId, null, data, contentType,
-	// allowCache)
-	// return null;
-	// }
+	public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String filename,
+			File file, PendingIntent notificationIntent) {
+		if (deliverableSlotId <= 0) {
+			return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables", null, "file",
+					filename, file, null, notificationIntent);
+		}
+		return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
+				null, "file", filename, file, null, notificationIntent);
+	}
 
 	public Intent getDeliverableDetails(int resultCode, long workorderId, long deliverableId, boolean allowCache) {
 		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId,
@@ -318,4 +327,23 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	public Intent listNotifications(int resultCode, long workorderId, boolean allowCache) {
 		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/notifications", allowCache);
 	}
+
+	public Intent getTasks(int resultCode, long workorderId, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks", allowCache);
+	}
+
+	// discounts
+	public Intent deleteDiscount(int resultCode, long workorderId, long discountId) {
+		return httpDelete(resultCode, "api/rest/v1/workorder/" + workorderId + "/discounts/" + discountId, null, false);
+	}
+
+	public Intent listDiscounts(int resultCode, long workorderId, boolean allowCache) {
+		return httpGet(resultCode, "api/rest/v1/workroder/" + workorderId + "/discounts", null, allowCache);
+	}
+
+	public Intent addDiscount(int resultCode, long workorderId, double amount, String description) {
+		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/discount", null,
+				"amount=" + amount + "&description=" + description, "application/x-www-form-urlencoded", false);
+	}
+
 }

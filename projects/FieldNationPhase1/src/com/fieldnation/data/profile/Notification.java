@@ -1,50 +1,64 @@
 package com.fieldnation.data.profile;
 
+import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Notification{
-	@Json(name="viewed")
+public class Notification {
+	@Json(name = "viewed")
 	private Integer _viewed;
-	@Json(name="date")
+	@Json(name = "fromUser")
+	private User _fromUser;
+	@Json(name = "date")
 	private String _date;
-	@Json(name="workorderId")
-	private Integer _workorderId;
-	@Json(name="message")
+	@Json(name = "workorderId")
+	private Long _workorderId;
+	@Json(name = "workorder")
+	private Workorder _workorder;
+	@Json(name = "message")
 	private String _message;
-	@Json(name="notificationId")
+	@Json(name = "notificationId")
 	private Integer _notificationId;
-	@Json(name="notificationType")
+	@Json(name = "notificationType")
 	private String _notificationType;
 
-	public Notification(){
+	public Notification() {
 	}
-	public Integer getViewed(){
+
+	public Integer getViewed() {
 		return _viewed;
 	}
 
-	public String getDate(){
+	public User getFromUser() {
+		return _fromUser;
+	}
+
+	public String getDate() {
 		return _date;
 	}
 
-	public Integer getWorkorderId(){
+	public Long getWorkorderId() {
 		return _workorderId;
 	}
 
-	public String getMessage(){
+	public Workorder getWorkorder() {
+		return _workorder;
+	}
+
+	public String getMessage() {
 		return _message;
 	}
 
-	public Integer getNotificationId(){
+	public Integer getNotificationId() {
 		return _notificationId;
 	}
 
-	public String getNotificationType(){
+	public String getNotificationType() {
 		return _notificationType;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

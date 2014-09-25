@@ -6,9 +6,34 @@
 
     <ListView
         android:id="@+id/messages_listview"
+        style="@style/WorkorderDetail_Data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/input_view"
         android:layout_alignParentTop="true"
-        android:divider="@null" />
+        android:divider="@null"
+        android:scrollbarStyle="outsideOverlay" />
+
+    <com.fieldnation.ui.workorder.detail.MessageInputView
+        android:id="@+id/input_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+    <RelativeLayout
+        android:id="@+id/loading_layout"
+        style="@style/WorkorderCard_LoadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone" >
+
+        
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
 </RelativeLayout>

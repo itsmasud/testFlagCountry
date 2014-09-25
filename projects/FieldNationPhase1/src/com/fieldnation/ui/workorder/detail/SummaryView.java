@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,19 +17,17 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.SummaryView";
 
 	// UI
-	private TextView _substatusTextView;
-	private View _substatusProgress; // TODO, need to implement!
+	private WoProgressBar _progress;
 	private TextView _projectNameTextView;
 	private TextView _workorderIdTextView;
 	private TextView _worktypeTextView;
 	private TextView _companyTextView;
 	private TextView _descriptionTextView;
-	private Button _confidentialButton;
-	private Button _policiesButton;
+	private TextView _confidentialTextView;
+	private TextView _policiesTextView;
 
 	// Data
 	private Workorder _workorder;
-	private String[] _substatus;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -47,23 +44,20 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_detail_sum, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_sum, this);
 
 		if (isInEditMode())
 			return;
 
-		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
-		_substatusProgress = findViewById(R.id.substatus_progress);
+		_progress = (WoProgressBar) findViewById(R.id.substatus_progressbar);
 		_projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
 		_workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
 		_worktypeTextView = (TextView) findViewById(R.id.worktype_textview);
 		_companyTextView = (TextView) findViewById(R.id.company_textview);
 		_descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
-		_confidentialButton = (Button) findViewById(R.id.confidential_button);
-		_policiesButton = (Button) findViewById(R.id.policies_button);
-
-		_substatus = getResources().getStringArray(R.array.workorder_substatus);
+		_confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
+		_policiesTextView = (TextView) findViewById(R.id.policies_textview);
 	}
 
 	/*-*************************************-*/
@@ -78,13 +72,10 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void refresh() {
-		_substatusTextView.setText(_substatus[_workorder.getStatus().getWorkorderSubstatus().ordinal()]);
-		// TODO set progress bar here
+		_progress.setSubstatus(_workorder.getStatus().getWorkorderSubstatus());
 		_projectNameTextView.setText(_workorder.getTitle());
 
 		_workorderIdTextView.setText("ID " + _workorder.getWorkorderId());
-
-		_workorderIdTextView.setText(_workorder.getTypeOfWork());
 
 		if (misc.isEmptyOrNull(_workorder.getCompanyName()))
 			_companyTextView.setVisibility(GONE);
@@ -95,6 +86,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 		_descriptionTextView.setText(Html.fromHtml(_workorder.getFullWorkDescription()).toString());
 
+		_worktypeTextView.setText(_workorder.getTypeOfWork());
 		// TODO hook up policies
 		// TODO hook up confidential info
 	}

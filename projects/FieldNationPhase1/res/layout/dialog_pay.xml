@@ -2,25 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="10px" >
 
     <Spinner
         android:id="@+id/type_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <FrameLayout
+    <!-- fixed pay -->
+
+    <LinearLayout
         android:id="@+id/fixed_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:visibility="gone" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/fixed_pay_amount" />
 
         <EditText
             android:id="@+id/fixed_edittext"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Fixed Pay Amount" />
-    </FrameLayout>
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- hourly -->
 
     <LinearLayout
         android:id="@+id/hourly_layout"
@@ -29,18 +40,30 @@
         android:orientation="vertical"
         android:visibility="gone" >
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/hourly_rate" />
+
         <EditText
             android:id="@+id/hourlyrate_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Hourly Rate" />
+            android:minEms="4" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max_hours" />
 
         <EditText
             android:id="@+id/maxhours_edittext"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Max Hours" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
+
+    <!-- per device -->
 
     <LinearLayout
         android:id="@+id/devices_layout"
@@ -49,18 +72,28 @@
         android:orientation="vertical"
         android:visibility="gone" >
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/per_device_rate" />
+
         <EditText
             android:id="@+id/devicerate_edittext"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Per Device Rate" />
+            android:text="@string/max_devices" />
 
         <EditText
             android:id="@+id/maxdevices_edittext"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Max Devices" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
+
+    <!-- blended -->
 
     <LinearLayout
         android:id="@+id/blended_layout"
@@ -68,77 +101,68 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:text="Initial Pay" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pay of" />
-
-            <EditText
-                android:id="@+id/blendedhourlyrate_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="per hour for the first" />
-
-            <EditText
-                android:id="@+id/blendedmaxhours_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="hours" />
-        </LinearLayout>
-
-        <LinearLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:text="Hourly Rate" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="then" />
+        <EditText
+            android:id="@+id/blendedhourlyrate_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-            <EditText
-                android:id="@+id/extrahours_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Max Hours" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="per hour up to" />
+        <EditText
+            android:id="@+id/blendedmaxhours_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-            <EditText
-                android:id="@+id/extramaxhours_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="" />
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_marginLeft="10px"
+            android:layout_marginRight="10px" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="additional hours" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Additional Pay" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hourly Rate" />
+
+        <EditText
+            android:id="@+id/extrahours_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Max Hours" />
+
+        <EditText
+            android:id="@+id/extramaxhours_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <Button
         android:id="@+id/ok_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        style="@style/ButtonGreen"
+        android:layout_width="100dp"
         android:layout_gravity="right"
         android:text="@string/ok" />
 

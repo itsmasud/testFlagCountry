@@ -16,7 +16,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 public class ShipmentView extends LinearLayout implements WorkorderRenderer {
@@ -26,9 +25,9 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private static final int WEB_DEL_SHIPMENT = 2;
 
 	// UI
-	private Button _addButton;
 	private LinearLayout _shipmentsLayout;
 	private ShipmentAddDialog _addDialog;
+	private LinearLayout _addLayout;
 
 	// Data
 	private Workorder _workorder;
@@ -45,7 +44,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
 	public ShipmentView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_workorder_detail_shipment, this);
+		LayoutInflater.from(context).inflate(R.layout.view_wd_shipment, this);
 
 		if (isInEditMode())
 			return;
@@ -53,8 +52,8 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 		_gs = (GlobalState) context.getApplicationContext();
 		_gs.requestAuthentication(_authclient);
 
-		_addButton = (Button) findViewById(R.id.add_button);
-		_addButton.setOnClickListener(_addButton_onClick);
+		_addLayout = (LinearLayout) findViewById(R.id.add_layout);
+		_addLayout.setOnClickListener(_add_onClick);
 
 		_shipmentsLayout = (LinearLayout) findViewById(R.id.shipments_linearlayout);
 
@@ -88,7 +87,8 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, errorType);
 			Log.v(TAG, resultData.toString());
-			//Log.v(TAG, resultData.getString(WorkorderService.KEY_RESPONSE_DATA));
+			// Log.v(TAG,
+			// resultData.getString(WorkorderService.KEY_RESPONSE_DATA));
 			Log.v(TAG, resultData.getString(WebServiceConstants.KEY_RESPONSE_ERROR));
 			// if (_workorderService != null) {
 			// _gs.invalidateAuthToken(_workorderService.getAuthToken());
@@ -106,7 +106,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 		}
 	};
 
-	private View.OnClickListener _addButton_onClick = new View.OnClickListener() {
+	private View.OnClickListener _add_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			_addDialog.show(R.string.add, _addDialog_listener);

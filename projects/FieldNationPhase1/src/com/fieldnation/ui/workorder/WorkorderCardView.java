@@ -54,6 +54,7 @@ public class WorkorderCardView extends RelativeLayout {
 	private TextView _statusTextView;
 	// bundle
 	private RelativeLayout _bundleLayout;
+	private TextView _bundleTitleTextView;
 	/*-private ImageView _bundleImageView;-*/
 	private TextView _bundleTextView;
 
@@ -147,6 +148,7 @@ public class WorkorderCardView extends RelativeLayout {
 		_bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
 		/*-_bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);-*/
 		_bundleTextView = (TextView) findViewById(R.id.bundle_textview);
+		_bundleTitleTextView = (TextView) findViewById(R.id.bundle_title);
 
 		// center panel
 		// title box
@@ -247,6 +249,7 @@ public class WorkorderCardView extends RelativeLayout {
 			_basisTextView.setVisibility(GONE);
 			_paymentTextView.setVisibility(GONE);
 			_rightLayout.setVisibility(GONE);
+			_moneySymbolTextView.setVisibility(GONE);
 			showAlertIcon(false);
 			showMessageAlertIcon(false);
 		} else {
@@ -254,6 +257,7 @@ public class WorkorderCardView extends RelativeLayout {
 			_titleTextView.setVisibility(VISIBLE);
 			_basisTextView.setVisibility(VISIBLE);
 			_paymentTextView.setVisibility(VISIBLE);
+			_moneySymbolTextView.setVisibility(VISIBLE);
 			_rightLayout.setVisibility(VISIBLE);
 			showAlertIcon(true);
 			showMessageAlertIcon(true);
@@ -400,10 +404,13 @@ public class WorkorderCardView extends RelativeLayout {
 		_paymentTextView.setTextColor(color);
 		_statusTextView.setTextColor(color);
 		_moneySymbolTextView.setTextColor(color);
+		_bundleTextView.setTextColor(color);
+		_bundleTitleTextView.setTextColor(color);
 
 		_backgroundView.setBackgroundResource(R.drawable.card_right_selected);
 		_statusView.setBackgroundResource(R.drawable.card_status_black);
 		_statusTextView.setText(getResources().getString(R.string.workorder_selected));
+		_bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg_select);
 	}
 
 	private void refreshNormal() {
@@ -418,9 +425,12 @@ public class WorkorderCardView extends RelativeLayout {
 		_paymentTextView.setTextColor(color);
 		_statusTextView.setTextColor(color);
 		_moneySymbolTextView.setTextColor(color);
+		_bundleTextView.setTextColor(color);
+		_bundleTitleTextView.setTextColor(color);
 
 		_backgroundView.setBackgroundResource(R.drawable.card_right);
 		_statusView.setBackgroundResource(R.drawable.card_status_black);
+		_bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg);
 
 		try {
 			buildStatus();

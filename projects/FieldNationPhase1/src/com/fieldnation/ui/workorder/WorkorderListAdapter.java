@@ -60,10 +60,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		super(activity, Workorder.class);
 		_dataSelection = selection;
 
-		_rpcMethod = WorkorderService.class.getDeclaredMethod(selection.getCall(), new Class<?>[] {
-				int.class,
-				int.class,
-				boolean.class });
+		_rpcMethod = WorkorderService.class.getDeclaredMethod(selection.getCall(), new Class<?>[] { int.class,
+				int.class, boolean.class });
 		_rpcMethod.setAccessible(true);
 
 		_payDialog = new PayDialog(activity);
@@ -100,7 +98,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 	@Override
 	public Workorder fromJson(JsonObject obj) {
-		return Workorder.fromJson(obj, _dataSelection);
+		return Workorder.fromJson(obj);
 	}
 
 	@Override
@@ -250,6 +248,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			if (view.isBundle()) {
 				Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
 				intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+				intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, workorder.getBundleId());
 				getContext().startActivity(intent);
 
 			} else {

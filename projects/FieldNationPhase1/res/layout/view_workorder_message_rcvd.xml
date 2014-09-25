@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/MessageView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="5dp"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp"
-    android:layout_marginTop="5dp" >
+    android:layout_height="match_parent" >
 
     <RelativeLayout
         android:id="@+id/message_layout"
@@ -14,60 +11,49 @@
 
         <ImageView
             android:id="@+id/profile_imageview"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentLeft="true"
-            android:background="@drawable/missing" />
+            style="@style/MessageView_ProfileImage"
+            android:layout_alignParentLeft="true" />
 
         <TextView
             android:id="@+id/message_textview"
+            style="@style/MessageView_MessageRcvd"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/profile_imageview"
-            android:background="@drawable/message_rcvd"
-            android:paddingBottom="10dp"
-            android:paddingLeft="25dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
             android:text="Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. " />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/username_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/message_layout"
+        android:layout_below="@+id/message_layout"
+        android:layout_marginLeft="58dp"
+        android:text="Name" />
+
     <LinearLayout
+        style="@style/MessageView_StatusBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/message_layout"
-        android:layout_marginTop="2dp"
         android:orientation="horizontal" >
 
-        <ImageView
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/ic_clock" />
+        <ImageView style="@style/MessageView_Status_Clock" />
 
         <TextView
             android:id="@+id/time_textview"
+            style="@style/MessageView_Status_Time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
             android:text="Today 8:30 AM" />
-
-        <TextView
-            android:id="@+id/pending_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:text="...pending" />
 
         <ImageView
             android:id="@+id/check_imageview"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:background="@drawable/ic_check" />
+            style="@style/MessageView_Status_Check" />
     </LinearLayout>
 
 </RelativeLayout>

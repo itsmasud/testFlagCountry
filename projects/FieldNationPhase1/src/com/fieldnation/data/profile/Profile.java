@@ -24,7 +24,7 @@ public class Profile{
 	@Json(name="firstname")
 	private String _firstname;
 	@Json(name="userId")
-	private Integer _userId;
+	private int _userId;
 	@Json(name="lastname")
 	private String _lastname;
 	@Json(name="phone")
@@ -76,7 +76,7 @@ public class Profile{
 		return _firstname;
 	}
 
-	public Integer getUserId(){
+	public int getUserId(){
 		return _userId;
 	}
 
