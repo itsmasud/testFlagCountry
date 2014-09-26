@@ -79,6 +79,12 @@ public class UploadSlotView extends RelativeLayout {
 		_listener = listener;
 	}
 
+	public void addUploading(String filename) {
+		UploadedDocumentView v = new UploadedDocumentView(getContext());
+		v.setUploading(filename);
+		_docsList.addView(v);
+	}
+
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/

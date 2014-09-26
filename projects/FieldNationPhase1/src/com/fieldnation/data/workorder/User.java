@@ -91,4 +91,10 @@ public class User {
 		}
 	}
 
+	/*-*********************************************-*/
+	/*-				User Generated Code				-*/
+	/*-*********************************************-*/
+	public String getFullName() {
+		return getFirstname() + " " + getLastname();
+	}
 }

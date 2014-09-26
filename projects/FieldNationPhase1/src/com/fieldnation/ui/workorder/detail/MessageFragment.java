@@ -112,6 +112,8 @@ public class MessageFragment extends WorkorderFragment {
 		if (_gs == null)
 			return;
 
+		_loadingLayout.setVisibility(View.VISIBLE);
+
 		_messages.clear();
 		if (_adapter != null)
 			_adapter.notifyDataSetChanged();
@@ -121,8 +123,10 @@ public class MessageFragment extends WorkorderFragment {
 	}
 
 	private void rebuildList() {
-		if (getAdapter() != null)
+		if (getAdapter() != null) {
 			getAdapter().setMessages(_messages);
+			_listview.setSelection(getAdapter().getCount() - 1);
+		}
 		_loadingLayout.setVisibility(View.GONE);
 	}
 

@@ -83,7 +83,7 @@ public class DocumentView extends RelativeLayout {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		_usernameTextView.setText(_document.getUpdatedBy().getFirstname() + " " + _document.getUpdatedBy().getLastname());
+		_usernameTextView.setText(_document.getUpdatedBy().getFullName());
 
 	}
 
