@@ -17,6 +17,9 @@ public class MessageInputView extends RelativeLayout {
 
 	// Data
 
+	/*-*************************************-*/
+	/*-				LifeCycle				-*/
+	/*-*************************************-*/
 	public MessageInputView(Context context) {
 		super(context);
 		init();
@@ -57,5 +60,9 @@ public class MessageInputView extends RelativeLayout {
 	public void setHint(int resId) {
 		_messageEditText.setHint(resId);
 	}
+
+	/*-*********************************-*/
+	/*-				Events				-*/
+	/*-*********************************-*/
 
 }

@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
@@ -70,6 +71,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private View _bar1View;
 	private AppPickerDialog _dialog;
 	private RelativeLayout _loadingLayout;
+	private TextView _noDocsTextView;
 
 	// Data
 	private GlobalState _gs;
@@ -108,6 +110,7 @@ public class DeliverableFragment extends WorkorderFragment {
 		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
 		_bar1View = view.findViewById(R.id.bar1_view);
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
+		_noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
 
 		checkMedia();
 	}
@@ -179,13 +182,16 @@ public class DeliverableFragment extends WorkorderFragment {
 
 		_reviewList.removeAllViews();
 		Document[] docs = _workorder.getDocuments();
-		if (docs != null) {
+		if (docs != null && docs.length > 0) {
 			for (int i = 0; i < docs.length; i++) {
 				Document doc = docs[i];
 				DocumentView v = new DocumentView(getActivity());
 				_reviewList.addView(v);
 				v.setDocument(doc);
 			}
+			_noDocsTextView.setVisibility(View.GONE);
+		} else {
+			_noDocsTextView.setVisibility(View.VISIBLE);
 		}
 
 		_filesLayout.removeAllViews();
@@ -405,7 +411,6 @@ public class DeliverableFragment extends WorkorderFragment {
 				if (_deleteCount == 0 && _uploadCount == 0)
 					_workorder.dispatchOnChange();
 			}
-
 		}
 
 		@Override

@@ -37,19 +37,16 @@ public class MessageFragment extends WorkorderFragment {
 
 	// UI
 	private ListView _listview;
-	// private EditText _messageEditText;
-	// private Button _sendButton;
 	private RelativeLayout _loadingLayout;
 	private MessageInputView _inputView;
 
 	// Data
-	private Random _rand = new Random(System.currentTimeMillis());
-	private WorkorderTabView.Listener _tabViewListener;
 	private GlobalState _gs;
-	private ProfileService _profileService;
+	private Random _rand = new Random(System.currentTimeMillis());
 	private Profile _profile;
-	private WorkorderService _workorderService;
+	private ProfileService _profileService;
 	private Workorder _workorder;
+	private WorkorderService _workorderService;
 	private List<Message> _messages = new LinkedList<Message>();
 	private MessagesAdapter _adapter;
 
@@ -71,9 +68,10 @@ public class MessageFragment extends WorkorderFragment {
 
 		_listview = (ListView) view.findViewById(R.id.messages_listview);
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
-		_loadingLayout.setVisibility(View.VISIBLE);
 		_inputView = (MessageInputView) view.findViewById(R.id.input_view);
 		_inputView.setOnSendButtonClick(_send_onClick);
+
+		setLoading(true);
 	}
 
 	@Override
@@ -99,6 +97,14 @@ public class MessageFragment extends WorkorderFragment {
 		getMessages();
 	}
 
+	private void setLoading(boolean isLoading) {
+		if (isLoading) {
+			_loadingLayout.setVisibility(View.VISIBLE);
+		} else {
+			_loadingLayout.setVisibility(View.GONE);
+		}
+	}
+
 	private void getMessages() {
 		if (_workorderService == null)
 			return;
@@ -112,7 +118,7 @@ public class MessageFragment extends WorkorderFragment {
 		if (_gs == null)
 			return;
 
-		_loadingLayout.setVisibility(View.VISIBLE);
+		setLoading(true);
 
 		_messages.clear();
 		if (_adapter != null)
@@ -127,7 +133,26 @@ public class MessageFragment extends WorkorderFragment {
 			getAdapter().setMessages(_messages);
 			_listview.setSelection(getAdapter().getCount() - 1);
 		}
-		_loadingLayout.setVisibility(View.GONE);
+		setLoading(false);
+	}
+
+	private MessagesAdapter getAdapter() {
+		if (this.getActivity() == null)
+			return null;
+
+		if (_profile == null)
+			return null;
+
+		try {
+			if (_adapter == null) {
+				_adapter = new MessagesAdapter(_profile);
+				_listview.setAdapter(_adapter);
+			}
+			return _adapter;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 	/*-*********************************-*/
@@ -136,6 +161,8 @@ public class MessageFragment extends WorkorderFragment {
 	private View.OnClickListener _send_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			_inputView.clearText();
+			setLoading(true);
 			WEB_NEW_MESSAGE = _rand.nextInt();
 			_gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
 					_inputView.getInputText()));
@@ -189,7 +216,6 @@ public class MessageFragment extends WorkorderFragment {
 
 					for (int i = 0; i < messages.size(); i++) {
 						JsonObject obj = messages.getJsonObject(i);
-
 						_messages.add(Message.fromJson(obj));
 					}
 
@@ -213,33 +239,11 @@ public class MessageFragment extends WorkorderFragment {
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, "WS Fail");
-			_loadingLayout.setVisibility(View.GONE);
-			// _messageInputView.setHint(R.string.start_the_conversation);
+			setLoading(false);
 			if (_profileService != null) {
-				// _gs.invalidateAuthToken(_profileService.getAuthToken());
 			}
-			// _gs.requestAuthentication(_authClient);
 			// TODO, a fail here probably means that this workroder is not
 			// assigned, therefore no messages.
 		}
 	};
-
-	private MessagesAdapter getAdapter() {
-		if (this.getActivity() == null)
-			return null;
-
-		if (_profile == null)
-			return null;
-
-		try {
-			if (_adapter == null) {
-				_adapter = new MessagesAdapter(_profile);
-				_listview.setAdapter(_adapter);
-			}
-			return _adapter;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
 }
