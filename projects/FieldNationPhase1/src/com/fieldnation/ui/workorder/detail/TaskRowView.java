@@ -72,7 +72,7 @@ public class TaskRowView extends RelativeLayout {
 
 			if (_task.getCompleted())
 				// TODO at a later date we might do other things if the task is
-				// marked as compelte
+				// marked as complete
 				return;
 
 			if (_listener != null) {

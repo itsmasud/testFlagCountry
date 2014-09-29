@@ -15,6 +15,8 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -169,7 +171,7 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 				_closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
 				break;
 			case CONFIRM_ASSIGNMENT:
-				// TODO get start time + durration from user
+				// TODO get start time + duration from user
 				// _service.confirmAssignment(WEB_CONFIRM_ASSIGNMENT,
 				// _workorder.getWorkorderId(), startTimeMilliseconds,
 				// endTimeMilliseconds)
@@ -182,6 +184,10 @@ public class ScopeOfWorkView extends RelativeLayout implements WorkorderRenderer
 				break;
 			case EMAIL:
 				// TODO get e-mail address and send to email client
+				String email = task.getEmailAddress();
+				Intent intent = new Intent(Intent.ACTION_SENDTO);
+				intent.setData(Uri.parse("mailto:" + email));
+
 				break;
 			case PHONE:
 				// TODO start up the phone app
