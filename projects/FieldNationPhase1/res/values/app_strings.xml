@@ -136,6 +136,7 @@
     <string name="settings_title">Settings</string>
     <string name="settings_subtitle">Preferences and Switch Account</string>
     <string name="logout_title">Log Out</string>
+    <string name="signature_title">Signature</string>
 
     <!-- fragment strings -->
     <string name="no_data">No Data Available</string>

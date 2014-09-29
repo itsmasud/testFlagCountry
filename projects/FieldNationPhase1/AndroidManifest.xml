@@ -46,6 +46,11 @@
             android:label="@string/mywork_title" >
         </activity>
         <activity
+            android:name="com.fieldnation.ui.SignatureActivity"
+            android:exported="false"
+            android:label="@string/signature_title" >
+        </activity>
+        <activity
             android:name="com.fieldnation.auth.server.AuthActivity"
             android:exported="true"
             android:label="@string/activity_login_title" >
@@ -123,7 +128,7 @@
             android:exported="true"
             android:process=":sync" >
             <intent-filter>
-com.fieldnation.service
+com.fieldnation.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 

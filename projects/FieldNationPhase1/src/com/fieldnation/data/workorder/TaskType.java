@@ -14,8 +14,8 @@ public enum TaskType {
 	CUSTOM_FIELD(7),
 	PHONE(8),
 	EMAIL(9),
-	SIGNATURE(10),
-	SHPIMENT_TRACKING(11),
+	SHIPMENT_TRACKING(10),
+	SIGNATURE(11), // tested.. confirmed
 	DOWNLOAD(12);
 
 	private int _id;

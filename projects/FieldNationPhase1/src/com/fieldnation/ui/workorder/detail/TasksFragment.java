@@ -13,6 +13,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
 import android.content.Intent;
@@ -30,6 +31,7 @@ public class TasksFragment extends WorkorderFragment {
 	// Activity result codes
 	private static final int RESULT_CODE_BASE = 200;
 	private static final int RESULT_CODE_SEND_EMAIL = RESULT_CODE_BASE + 1;
+	private static final int RESULT_CODE_SIGNATURE = RESULT_CODE_BASE + 2;
 
 	// Web request result codes
 	private static final int WEB_CHANGED = 1;
@@ -184,7 +186,7 @@ public class TasksFragment extends WorkorderFragment {
 					return;
 				// TODO, download file and display it
 				break;
-			case EMAIL:
+			case EMAIL: {
 				String email = task.getEmailAddress();
 				Intent intent = new Intent(Intent.ACTION_SENDTO);
 				intent.setData(Uri.parse("mailto:" + email));
@@ -192,15 +194,19 @@ public class TasksFragment extends WorkorderFragment {
 
 				// TODO, mark this task as complete
 				break;
+			}
 			case PHONE:
 				// TODO start up the phone app
 				break;
-			case SHPIMENT_TRACKING:
+			case SHIPMENT_TRACKING:
 				// TODO send to shipment section
 				break;
-			case SIGNATURE:
+			case SIGNATURE: {
 				// TODO bring up signature library
+				Intent intent = new Intent(getActivity(), SignatureActivity.class);
+				startActivityForResult(intent, RESULT_CODE_SIGNATURE);
 				break;
+			}
 			case UPLOAD_FILE:
 				// TODO send to attachments tab
 				break;
