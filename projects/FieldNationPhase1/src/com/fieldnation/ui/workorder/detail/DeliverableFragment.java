@@ -57,8 +57,9 @@ import com.fieldnation.utils.misc;
 public class DeliverableFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.DeliverableFragment";
 
-	private static final int RESULT_CODE_GET_ATTACHMENT = 1;
-	private static final int RESULT_CODE_GET_CAMERA_PIC = 2;
+	private static final int RESULT_CODE_BASE = 100;
+	private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;
+	private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 2;
 
 	// private static final int WEB_GET_DOCUMENTS = 1;
 	private static final int WEB_GET_PROFILE = 2;

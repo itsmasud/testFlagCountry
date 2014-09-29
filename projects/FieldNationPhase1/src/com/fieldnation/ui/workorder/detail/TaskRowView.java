@@ -70,11 +70,6 @@ public class TaskRowView extends RelativeLayout {
 		public void onClick(View v) {
 			_checkbox.setChecked(_task.getCompleted());
 
-			if (_task.getCompleted())
-				// TODO at a later date we might do other things if the task is
-				// marked as complete
-				return;
-
 			if (_listener != null) {
 				_listener.onTaskClick(_task);
 			}
