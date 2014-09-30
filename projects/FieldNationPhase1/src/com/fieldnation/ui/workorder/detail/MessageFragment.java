@@ -240,10 +240,6 @@ public class MessageFragment extends WorkorderFragment {
 		public void onError(int resultCode, Bundle resultData, String errorType) {
 			Log.v(TAG, "WS Fail");
 			setLoading(false);
-			if (_profileService != null) {
-			}
-			// TODO, a fail here probably means that this workroder is not
-			// assigned, therefore no messages.
 		}
 	};
 }
