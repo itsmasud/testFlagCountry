@@ -21,7 +21,7 @@
             style="@style/WorkorderDetail_Separator"
             android:layout_width="match_parent" />
 
-        <com.fieldnation.ui.workorder.detail.ScopeOfWorkView
+        <com.fieldnation.ui.workorder.detail.TaskListView
             android:id="@+id/scope_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

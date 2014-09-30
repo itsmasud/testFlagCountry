@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.misc;
 
 public class User {
 	@Json(name = "userType")
@@ -91,4 +92,18 @@ public class User {
 		}
 	}
 
+	/*-*********************************************-*/
+	/*-				User Generated Code				-*/
+	/*-*********************************************-*/
+	public String getFullName() {
+		String firstName = getFirstname();
+		String lastName = getLastname();
+		if (misc.isEmptyOrNull(firstName))
+			firstName = "";
+
+		if (misc.isEmptyOrNull(lastName))
+			lastName = "";
+
+		return (firstName + " " + lastName).trim();
+	}
 }

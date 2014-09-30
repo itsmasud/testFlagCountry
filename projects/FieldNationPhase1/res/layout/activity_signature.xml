@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.fieldnation.ui.SignatureView
+        android:id="@+id/sig_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/ok_button"
+        style="@style/ButtonOrange"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/done" />
+
+</LinearLayout>

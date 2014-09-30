@@ -1,58 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <com.fieldnation.ui.workorder.detail.WoProgressBar
-        android:id="@+id/substatus_progressbar"
+    <LinearLayout
+        android:id="@+id/content_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone" >
 
-    <TextView
-        android:id="@+id/projectname_textview"
-        style="@style/WorkorderDetail_ProjectTitle"
+        <com.fieldnation.ui.workorder.detail.WoProgressBar
+            android:id="@+id/substatus_progressbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/projectname_textview"
+            style="@style/WorkorderDetail_ProjectTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name of project goes here" />
+
+        <TextView
+            android:id="@+id/workorderid_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Work Order ID" />
+
+        <TextView
+            android:id="@+id/worktype_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type of Work" />
+
+        <TextView
+            android:id="@+id/company_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Company Name" />
+
+        <TextView
+            android:id="@+id/description_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. " />
+
+        <TextView
+            android:id="@+id/confidential_textview"
+            style="@style/TextViewLink"
+            android:layout_width="match_parent"
+            android:text="@string/view_confidential_information" />
+
+        <TextView
+            android:id="@+id/policies_textview"
+            style="@style/TextViewLink"
+            android:layout_width="match_parent"
+            android:text="@string/view_customer_policies_and_procedures" />
+    </LinearLayout>
+
+    <!-- loading layout -->
+
+    <RelativeLayout
+        android:id="@+id/loading_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Name of project goes here" />
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="visible" >
 
-    <TextView
-        android:id="@+id/workorderid_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Work Order ID" />
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/worktype_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Type of Work" />
-
-    <TextView
-        android:id="@+id/company_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Company Name" />
-
-    <TextView
-        android:id="@+id/description_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. " />
-
-    <TextView
-        android:id="@+id/confidential_textview"
-        style="@style/TextViewLink"
-        android:layout_width="match_parent"
-        android:text="@string/view_confidential_information" />
-
-    <TextView
-        android:id="@+id/policies_textview"
-        style="@style/TextViewLink"
-        android:layout_width="match_parent"
-        android:text="@string/view_customer_policies_and_procedures" />
-
-</LinearLayout>
+</RelativeLayout>

@@ -122,7 +122,7 @@ public class DeliverableView extends RelativeLayout {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		_usernameTextView.setText(_doc.getUploadedBy().getFirstname() + " " + _doc.getUploadedBy().getLastname());
+		_usernameTextView.setText(_doc.getUploadedBy().getFullName());
 
 		if (_profileId == _doc.getUploaderUserId() && !_isLoading) {
 			_deleteButton.setVisibility(View.VISIBLE);

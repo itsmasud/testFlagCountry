@@ -69,6 +69,7 @@
         android:visibility="visible" >
 
         <!-- stilt to set minimum height -->
+
         <View
             android:layout_width="1px"
             android:layout_height="110dp" />
@@ -168,7 +169,8 @@
                 style="@style/WorkorderCard_Item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/error" />
+                android:text="@string/error"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/location_textview"

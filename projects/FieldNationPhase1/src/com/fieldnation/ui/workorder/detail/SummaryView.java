@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SummaryView extends LinearLayout implements WorkorderRenderer {
@@ -25,6 +26,8 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	private TextView _descriptionTextView;
 	private TextView _confidentialTextView;
 	private TextView _policiesTextView;
+	private LinearLayout _contentLayout;
+	private RelativeLayout _loadingLayout;
 
 	// Data
 	private Workorder _workorder;
@@ -49,6 +52,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 		if (isInEditMode())
 			return;
 
+		_contentLayout = (LinearLayout) findViewById(R.id.content_layout);
 		_progress = (WoProgressBar) findViewById(R.id.substatus_progressbar);
 		_projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
 		_workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
@@ -58,6 +62,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 		_confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
 		_policiesTextView = (TextView) findViewById(R.id.policies_textview);
+		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 	}
 
 	/*-*************************************-*/
@@ -67,8 +72,20 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	@Override
 	public void setWorkorder(Workorder workorder) {
 		_workorder = workorder;
+		_workorder.addListener(_workorder_listener);
 
 		refresh();
+	}
+
+	private void setLoading(boolean isLoading) {
+		if (isLoading) {
+			_loadingLayout.setVisibility(View.VISIBLE);
+			_contentLayout.setVisibility(View.GONE);
+		} else {
+			_loadingLayout.setVisibility(View.GONE);
+			_contentLayout.setVisibility(View.VISIBLE);
+
+		}
 	}
 
 	private void refresh() {
@@ -87,6 +104,8 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 		_descriptionTextView.setText(Html.fromHtml(_workorder.getFullWorkDescription()).toString());
 
 		_worktypeTextView.setText(_workorder.getTypeOfWork());
+		setLoading(false);
+
 		// TODO hook up policies
 		// TODO hook up confidential info
 	}
@@ -94,6 +113,13 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+	private Workorder.Listener _workorder_listener = new Workorder.Listener() {
+		@Override
+		public void onChange(Workorder workorder) {
+			setLoading(true);
+		}
+	};
+
 	private View.OnClickListener _confidential_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {

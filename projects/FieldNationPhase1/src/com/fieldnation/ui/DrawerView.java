@@ -183,26 +183,34 @@ public class DrawerView extends RelativeLayout {
 				JsonArray ja = new JsonArray(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
 
 				for (int i = 0; i < ja.size(); i++) {
-					Payment payment = Payment.fromJson(ja.getJsonObject(i));
+					try {
+						Payment payment = Payment.fromJson(ja.getJsonObject(i));
 
-					if (payment == null) {
-						continue;
-					}
-
-					long date = ISO8601.toUtc(payment.getDatePaid());
-
-					if ("paid".equals(payment.getStatus())) {
-						if (date >= _lastPaidDate) {
-							_lastPaidDate = date;
-							_paidAmount = payment.getAmount();
-							_hasPaid = true;
+						if (payment == null) {
+							continue;
 						}
-					} else {
-						if (date >= _lastEstimatedDate) {
-							_lastEstimatedDate = date;
-							_estimatedAmount = payment.getAmount();
-							_hasEstimated = true;
+
+						if (payment.getDatePaid() == null)
+							continue;
+
+						Log.v(TAG, payment.getDatePaid());
+						long date = ISO8601.toUtc(payment.getDatePaid());
+
+						if ("paid".equals(payment.getStatus())) {
+							if (date >= _lastPaidDate) {
+								_lastPaidDate = date;
+								_paidAmount = payment.getAmount();
+								_hasPaid = true;
+							}
+						} else {
+							if (date >= _lastEstimatedDate) {
+								_lastEstimatedDate = date;
+								_estimatedAmount = payment.getAmount();
+								_hasEstimated = true;
+							}
 						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 				}
 
@@ -231,6 +239,7 @@ public class DrawerView extends RelativeLayout {
 					_nextPage++;
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				getContext().startService(_dataService.getAll(1, 0, true));
 				_nextPage = 1;
 			}

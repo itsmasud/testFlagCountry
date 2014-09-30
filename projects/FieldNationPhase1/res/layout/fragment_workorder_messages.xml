@@ -28,7 +28,6 @@
         android:clickable="true"
         android:visibility="gone" >
 
-        
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"

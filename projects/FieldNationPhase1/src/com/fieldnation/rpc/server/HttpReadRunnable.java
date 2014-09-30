@@ -29,6 +29,7 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
 		}
 
 		Log.v(TAG, "doHttpRead");
+		Log.v(TAG, path);
 		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
 			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 

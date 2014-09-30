@@ -104,6 +104,11 @@ public class UploadedDocumentView extends RelativeLayout {
 
 	}
 
+	public void setUploading(String filename) {
+		setLoading(true, R.string.uploading);
+		_filenameTextView.setText(filename);
+	}
+
 	public void setDeliverable(long profileId, UploadedDocument deliverable) {
 		_doc = deliverable;
 		_profileId = profileId;
