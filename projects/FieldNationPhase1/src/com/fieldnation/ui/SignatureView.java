@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.gesture.GestureOverlayView;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,6 +14,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+/*
+ * This is a very stupid signature collection class. 
+ * TODO Improve speed by drawing the lines on a back buffer as we capture them. This way we only need to do all the calculations on the shapes once.
+ */
 public class SignatureView extends View {
 	private static final String TAG = "ui.SignatureView";
 
@@ -45,8 +50,16 @@ public class SignatureView extends View {
 		_myPaint.setStrokeWidth(2);
 	}
 
-	private float _min = 150;
-	private float _max = 8;
+	public Bitmap getSignature() {
+		setDrawingCacheEnabled(true);
+		// we make a copy, this ensures we don't screw up the canvas
+		Bitmap bmp = Bitmap.createBitmap(getDrawingCache());
+		setDrawingCacheEnabled(false);
+		return bmp;
+	}
+
+	private float _min = 0;
+	private float _max = 15;
 
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -60,23 +73,30 @@ public class SignatureView extends View {
 
 				for (int j = 1; j < shape.size(); j++) {
 					p = shape.get(j);
-					float stroke = (p.t - lp.t);
-					if (stroke > _max) {
-						_max = stroke;
-					}
-					if (stroke < _min) {
-						_min = stroke;
+					// this way we calculate the stroke for new points only
+					// makes rendering the drawing faster in the future
+					if (p.stroke == null) {
+						long dur = (p.t - lp.t);
+						float d1 = p.x - lp.x;
+						float d2 = p.y - lp.y;
+						float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
+						// inverted speed calc, we want thinner lines for faster
+						// speeds
+						float stroke = dur / dist;
+
+						// scale
+						stroke = ((stroke - _min) / _max) * 8 + 2;
+
+						// cap
+						if (stroke < 2) {
+							stroke = 2;
+						} else if (stroke > 10) {
+							stroke = 10;
+						}
+						p.stroke = stroke;
 					}
 
-					stroke = ((stroke - _min) / _max) * 8 + 2;
-
-					if (stroke < 2) {
-						stroke = 2;
-					} else if (stroke > 10) {
-						stroke = 10;
-					}
-
-					_myPaint.setStrokeWidth(stroke);
+					_myPaint.setStrokeWidth(p.stroke);
 					canvas.drawLine(lp.x, lp.y, p.x, p.y, _myPaint);
 					lp = p;
 				}
@@ -90,6 +110,7 @@ public class SignatureView extends View {
 	public void clear() {
 		_shapes = new LinkedList<List<Point>>();
 		_shape = new LinkedList<Point>();
+		_shapes.add(_shape);
 		invalidate();
 	}
 
@@ -98,18 +119,17 @@ public class SignatureView extends View {
 		int action = event.getAction();
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			// _shape.add(new Point(event));
-			// invalidate();
+			// must return true here otherwise we wont receive move/up events.
 			return true;
 		case MotionEvent.ACTION_MOVE:
 			int count = event.getHistorySize();
 			for (int i = 0; i < count; i++) {
-				_shape.add(new Point(event.getHistoricalX(i), event.getHistoricalY(i), event.getHistoricalEventTime(i)));
+				_shape.add(new Point(event.getHistoricalX(i), event
+						.getHistoricalY(i), event.getHistoricalEventTime(i)));
 			}
 			invalidate();
 			return true;
 		case MotionEvent.ACTION_UP:
-			_shape.add(new Point(event));
 			_shape = new LinkedList<Point>();
 			_shapes.add(_shape);
 			invalidate();
@@ -123,6 +143,7 @@ public class SignatureView extends View {
 		public float x;
 		public float y;
 		public long t;
+		public Float stroke = null;
 
 		public Point(MotionEvent event) {
 			x = event.getX();

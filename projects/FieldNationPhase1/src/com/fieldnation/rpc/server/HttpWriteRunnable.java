@@ -56,7 +56,6 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
 					} else {
 						try {
 							// happy path
-							bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
 							bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
 							bundle.putBoolean(KEY_RESPONSE_CACHED, false);
 							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);

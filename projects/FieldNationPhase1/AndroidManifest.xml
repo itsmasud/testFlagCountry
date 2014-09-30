@@ -85,18 +85,15 @@
             android:exported="false"
             android:label="@string/activity_bundle_detail" >
         </activity>
-
-        <provider
-            android:name="com.fieldnation.rpc.server.StubProvider"
-            android:authorities="com.fieldnation.service"
+        <activity
+            android:name="com.fieldnation.ui.SettingsActivity"
             android:exported="false"
-            android:syncable="true" >
-        </provider>
-
+            android:label="@string/settings" >
+        </activity>
+        
         <service
             android:name="com.fieldnation.auth.server.AuthService"
-            android:exported="true"
-            android:process="" >
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -105,43 +102,37 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-
-        <receiver
-            android:name="com.fieldnation.rpc.server.BootReciever"
-            android:process="" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.fieldnation.rpc.server.ClockReceiver"
-            android:process="" >
-        </receiver>
-
         <service
             android:name="com.fieldnation.rpc.server.DataService"
-            android:exported="false"
-            android:process="" >
+            android:exported="false" >
         </service>
         <service
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>
-com.fieldnation.service
-                <action android:name="android.content.SyncAdapter" />
+            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-
-        <activity
-            android:name="com.fieldnation.ui.SettingsActivity"
+        
+        <provider
+            android:name="com.fieldnation.rpc.server.StubProvider"
+            android:authorities="com.fieldnation.service"
             android:exported="false"
-            android:label="@string/settings" >
-        </activity>
+            android:syncable="true" >
+        </provider>
+        
+        <receiver android:name="com.fieldnation.rpc.server.BootReciever" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.fieldnation.rpc.server.ClockReceiver" >
+        </receiver>
+        
     </application>
 
 </manifest>

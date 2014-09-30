@@ -2,7 +2,9 @@ package com.fieldnation.ui;
 
 import com.fieldnation.R;
 
+import android.content.Intent;
 import android.gesture.GestureOverlayView;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -21,6 +23,8 @@ import android.widget.Button;
 public class SignatureActivity extends ActionBarActivity {
 	private static final String TAG = "ui.SignatureActivity";
 
+	public static final String RESULT_KEY_BITMAP = "com.fieldnation.ui.SignatureActivity:SIGNATURE";
+
 	// UI
 	private SignatureView _sigView;
 
@@ -30,7 +34,6 @@ public class SignatureActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_signature);
 
 		_sigView = (SignatureView) findViewById(R.id.sig_view);
-
 	}
 
 	@Override
@@ -43,13 +46,21 @@ public class SignatureActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.done_menuitem:
-			Log.v(TAG, "done!");
+			onDone();
 			break;
 		case R.id.clear_menuitem:
-			Log.v(TAG, "clear!");
 			_sigView.clear();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void onDone() {
+		Bitmap sig = _sigView.getSignature();
+
+		Intent intent = new Intent();
+		intent.putExtra(RESULT_KEY_BITMAP, sig);
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 }

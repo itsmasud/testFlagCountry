@@ -161,11 +161,11 @@ public class MessageFragment extends WorkorderFragment {
 	private View.OnClickListener _send_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_inputView.clearText();
 			setLoading(true);
 			WEB_NEW_MESSAGE = _rand.nextInt();
 			_gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
 					_inputView.getInputText()));
+			_inputView.clearText();
 		}
 	};
 
