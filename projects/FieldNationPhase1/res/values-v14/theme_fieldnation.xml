@@ -5,18 +5,21 @@
         <item name="android:actionBarStyle">@style/ActionBar.Solid.FieldNation</item>
         <item name="android:actionBarTabTextStyle">@style/ActionBar.TabTextStyle.FieldNation</item>
         <item name="android:actionBarTabStyle">@style/ActionBar.TabViewStyle.FieldNation</item>
+        <item name="android:actionMenuTextColor">#FFFFFFFF</item>
     </style>
 
     <style name="ActionBar.Solid.FieldNation" parent="@style/Widget.AppCompat.ActionBar.Solid">
         <item name="android:background">@drawable/actionbar_background</item>
         <item name="android:backgroundStacked">@drawable/actionbar_stacked_background</item>
         <item name="android:titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
+        <item name="android:actionMenuTextColor">#FFFFFFFF</item>
     </style>
 
     <style name="ActionBar.Transparent.FieldNation" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:background">@drawable/actionbar_background</item>
         <item name="android:backgroundStacked">@drawable/actionbar_stacked_background</item>
         <item name="android:titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
+        <item name="android:actionMenuTextColor">#FFFFFFFF</item>
     </style>
 
 </resources>

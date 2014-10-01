@@ -56,10 +56,8 @@ public class TasksFragment extends WorkorderFragment {
 	/*-				LifeCycle				-*/
 	/*-*************************************-*/
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_workorder_tasks, container,
-				false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_workorder_tasks, container, false);
 	}
 
 	@Override
@@ -73,8 +71,7 @@ public class TasksFragment extends WorkorderFragment {
 		_taskList = (TaskListView) view.findViewById(R.id.scope_view);
 		_timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
 		_timeLogged.setFragmentManager(getFragmentManager());
-		_closingNotes = (ClosingNotesView) view
-				.findViewById(R.id.closingnotes_view);
+		_closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
 
 		_separators = new View[3];
 
@@ -117,8 +114,7 @@ public class TasksFragment extends WorkorderFragment {
 			_closingNotes.setWorkorder(_workorder);
 
 		if (_shipments != null && _timeLogged != null) {
-			WorkorderStatus status = _workorder.getStatus()
-					.getWorkorderStatus();
+			WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
 			if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
 				_timeLogged.setVisibility(View.GONE);
 				_separators[0].setVisibility(View.GONE);
@@ -144,8 +140,7 @@ public class TasksFragment extends WorkorderFragment {
 		if (_workorder == null)
 			return;
 
-		_gs.startService(_service.getTasks(WEB_GET_TASKS,
-				_workorder.getWorkorderId(), false));
+		_gs.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), false));
 	}
 
 	/*-*************************************-*/
@@ -161,23 +156,18 @@ public class TasksFragment extends WorkorderFragment {
 					return;
 
 				getActivity().startService(
-						_service.checkin(WEB_CHANGED,
-								_workorder.getWorkorderId(),
-								System.currentTimeMillis()));
+						_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), System.currentTimeMillis()));
 				break;
 			case CHECKOUT:
 				if (task.getCompleted())
 					return;
 				getActivity().startService(
-						_service.checkout(WEB_CHANGED,
-								_workorder.getWorkorderId(),
-								System.currentTimeMillis()));
+						_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), System.currentTimeMillis()));
 				break;
 			case CLOSE_OUT_NOTES:
 				if (task.getCompleted())
 					return;
-				_closingDialog.show(_workorder.getClosingNotes(),
-						_closingNotes_onOk);
+				_closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
 				break;
 			case CONFIRM_ASSIGNMENT:
 				if (task.getCompleted())
@@ -214,8 +204,21 @@ public class TasksFragment extends WorkorderFragment {
 				break;
 			case SIGNATURE: {
 				// TODO bring up signature library
-				Intent intent = new Intent(getActivity(),
-						SignatureActivity.class);
+				Intent intent = new Intent(getActivity(), SignatureActivity.class);
+				try {
+					intent.putExtra(SignatureActivity.RESULT_KEY_ARRIVAL,
+							_workorder.getCheckInOutInfo().getCheckInTime());
+				} catch (Exception ex) {
+				}
+				try {
+					intent.putExtra(SignatureActivity.RESULT_KEY_DEPARTURE,
+							_workorder.getCheckInOutInfo().getCheckOutTime());
+				} catch (Exception ex) {
+				}
+				try {
+					intent.putExtra(SignatureActivity.RESULT_KEY_NAME, _workorder.getManagerName());
+				} catch (Exception ex) {
+				}
 				startActivityForResult(intent, RESULT_CODE_SIGNATURE);
 				break;
 			}
@@ -234,9 +237,7 @@ public class TasksFragment extends WorkorderFragment {
 	private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
 		@Override
 		public void onOk(String message) {
-			getActivity().startService(
-					_service.closingNotes(WEB_CHANGED,
-							_workorder.getWorkorderId(), message));
+			getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
 		}
 	};
 
@@ -247,8 +248,7 @@ public class TasksFragment extends WorkorderFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		if (requestCode == RESULT_CODE_SIGNATURE) {
-			Bitmap bmp = data.getExtras().getParcelable(
-					SignatureActivity.RESULT_KEY_BITMAP);
+			byte[] imagedata = data.getExtras().getByteArray(SignatureActivity.RESULT_KEY_BITMAP);
 
 			Log.v(TAG, "BP");
 
@@ -261,8 +261,7 @@ public class TasksFragment extends WorkorderFragment {
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(getActivity(), username, authToken,
-					_resultReceiver);
+			_service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
 			requestData();
 		}
 
@@ -277,8 +276,7 @@ public class TasksFragment extends WorkorderFragment {
 		}
 	};
 
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
-			new Handler()) {
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
@@ -290,9 +288,7 @@ public class TasksFragment extends WorkorderFragment {
 			/*-			Tasks			-*/
 			if (resultCode == WEB_GET_TASKS) {
 				// TODO populate
-				String data = new String(
-						resultData
-								.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+				String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 				Log.v(TAG, data);
 				try {
 					JsonArray array = new JsonArray(data);

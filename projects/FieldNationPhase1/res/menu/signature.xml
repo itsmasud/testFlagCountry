@@ -6,13 +6,13 @@
         android:id="@+id/done_menuitem"
         android:enabled="true"
         android:orderInCategory="200"
-        android:title="Done"
+        android:title="@string/done"
         app:showAsAction="always"/>
     <item
         android:id="@+id/clear_menuitem"
         android:enabled="true"
-        android:orderInCategory="200"
-        android:title="Clear"
+        android:orderInCategory="150"
+        android:title="@string/clear"
         app:showAsAction="always"/>
 
 </menu>

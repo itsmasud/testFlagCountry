@@ -108,6 +108,11 @@
     <string name="uploading">Uploading...</string>
     <string name="deleting">Deleting...</string>
     <string name="done">Done</string>
+    <string name="clear">Clear</string>
+    <string name="arrival_date_and_time">Arrival Date and Time:</string>
+    <string name="departure_date_and_time">Departure Date and Time:</string>
+    <string name="tap_to_set_a_time">Tap to set a time</string>
+    <string name="tap_to_set_name">Tap to set name</string>
 
     <!-- /general strings -->
 

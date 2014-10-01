@@ -48,7 +48,8 @@
         <activity
             android:name="com.fieldnation.ui.SignatureActivity"
             android:exported="false"
-            android:label="@string/signature_title" >
+            android:label="@string/signature_title"
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name="com.fieldnation.auth.server.AuthActivity"
@@ -90,7 +91,7 @@
             android:exported="false"
             android:label="@string/settings" >
         </activity>
-        
+
         <service
             android:name="com.fieldnation.auth.server.AuthService"
             android:exported="true" >
@@ -110,21 +111,23 @@
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
+            <intent-filter>
+com.fieldnation.service
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-        
+
         <provider
             android:name="com.fieldnation.rpc.server.StubProvider"
             android:authorities="com.fieldnation.service"
             android:exported="false"
             android:syncable="true" >
         </provider>
-        
+
         <receiver android:name="com.fieldnation.rpc.server.BootReciever" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -132,7 +135,6 @@
         </receiver>
         <receiver android:name="com.fieldnation.rpc.server.ClockReceiver" >
         </receiver>
-        
     </application>
 
 </manifest>
