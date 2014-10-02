@@ -1,10 +1,13 @@
 package com.fieldnation.ui;
 
+import java.util.Calendar;
+
 import com.fieldnation.R;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -38,11 +41,14 @@ public class SignatureActivity extends ActionBarActivity {
 	private LinearLayout _departureLayout;
 	private DatePickerDialog _datePicker;
 	private TimePickerDialog _timePicker;
+	private EditTextAlertDialog _textDialog;
 
 	// Data
 	private String _arrivalTime;
 	private String _depatureTime;
 	private String _name;
+	private Calendar _arriveCal = Calendar.getInstance();
+	private Calendar _departCal = Calendar.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +87,13 @@ public class SignatureActivity extends ActionBarActivity {
 		}
 
 		// TODO set up the date/time pickers
+		final Calendar c = Calendar.getInstance();
+		_datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+				c.get(Calendar.DAY_OF_MONTH));
+		_datePicker.setCloseOnSingleTapDay(true);
+		_timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+				false, false);
+
 	}
 
 	@Override
@@ -113,11 +126,51 @@ public class SignatureActivity extends ActionBarActivity {
 		finish();
 	}
 
+	private DialogInterface.OnClickListener _editText_onOk = new DialogInterface.OnClickListener() {
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			_name = _textDialog.getInput();
+			_nameTextView.setText(_name);
+		}
+	};
+
+	private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+		@Override
+		public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+			String tag = datePickerDialog.getTag();
+			if (tag.equals("arrive")) {
+				_arriveCal.set(year, month, day);
+			} else if (tag.equals("depart")) {
+				_departCal.set(year, month, day);
+			}
+
+			_timePicker.show(getSupportFragmentManager(), datePickerDialog.getTag());
+		}
+	};
+
+	private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+
+		@Override
+		public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+			String tag = view.getTag();
+			if (tag.equals("arrive")) {
+				_arriveCal.set(_arriveCal.get(Calendar.YEAR), _arriveCal.get(Calendar.MONTH),
+						_arriveCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+				_arrivalTextView.setText(misc.formatDateLong(_arriveCal));
+
+			} else if (tag.equals("depart")) {
+				_departCal.set(_departCal.get(Calendar.YEAR), _departCal.get(Calendar.MONTH),
+						_departCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+				_departureTextView.setText(misc.formatDateLong(_arriveCal));
+			}
+		}
+	};
+
 	private View.OnClickListener _arrival_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			_datePicker.show(getSupportFragmentManager(), "arrive");
 		}
 	};
 
@@ -125,8 +178,7 @@ public class SignatureActivity extends ActionBarActivity {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			_datePicker.show(getSupportFragmentManager(), "depart");
 		}
 	};
 
@@ -134,8 +186,9 @@ public class SignatureActivity extends ActionBarActivity {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			_textDialog = new EditTextAlertDialog(SignatureActivity.this, "Signee Name", "Please enter the signee name");
+			_textDialog.setPositiveButton("Ok", _editText_onOk);
+			_textDialog.show();
 		}
 	};
 }

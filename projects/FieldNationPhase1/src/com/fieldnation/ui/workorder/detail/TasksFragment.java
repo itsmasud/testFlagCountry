@@ -16,6 +16,7 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -247,7 +248,7 @@ public class TasksFragment extends WorkorderFragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		if (requestCode == RESULT_CODE_SIGNATURE) {
+		if (requestCode == RESULT_CODE_SIGNATURE && resultCode == Activity.RESULT_OK) {
 			byte[] imagedata = data.getExtras().getByteArray(SignatureActivity.RESULT_KEY_BITMAP);
 
 			Log.v(TAG, "BP");
