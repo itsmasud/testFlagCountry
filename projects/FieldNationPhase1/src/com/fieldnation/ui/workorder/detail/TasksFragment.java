@@ -15,6 +15,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.misc;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -35,6 +36,10 @@ public class TasksFragment extends WorkorderFragment {
 	private static final int RESULT_CODE_SEND_EMAIL = RESULT_CODE_BASE + 1;
 	private static final int RESULT_CODE_SIGNATURE = RESULT_CODE_BASE + 2;
 
+	// tags to put in sigature
+	private static final String SIGNATURE_WORKORDERID = "ui.workorder.detail.TasksFragment:SIGNATURE_WORKORDERID";
+	private static final String SIGNATURE_TASKID = "ui.workorder.detail.TasksFragment:SIGNATURE_TASKID";
+
 	// Web request result codes
 	private static final int WEB_CHANGED = 1;
 	private static final int WEB_GET_TASKS = 2;
@@ -49,9 +54,11 @@ public class TasksFragment extends WorkorderFragment {
 
 	// Data
 	private GlobalState _gs;
+
 	private Workorder _workorder;
 	private WorkorderService _service;
 	private List<Task> _tasks = null;
+	private Task _currentTask;
 
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
@@ -66,7 +73,6 @@ public class TasksFragment extends WorkorderFragment {
 		super.onViewCreated(view, savedInstanceState);
 
 		_gs = (GlobalState) view.getContext().getApplicationContext();
-		_gs.requestAuthentication(_authClient);
 
 		_shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
 		_taskList = (TaskListView) view.findViewById(R.id.scope_view);
@@ -82,7 +88,53 @@ public class TasksFragment extends WorkorderFragment {
 
 		_closingDialog = new ClosingNotesDialog(view.getContext());
 
+		if (savedInstanceState == null) {
+			_gs.requestAuthentication(_authClient);
+		} else {
+			if (savedInstanceState.containsKey("WORKORDER")) {
+				_workorder = savedInstanceState.getParcelable("WORKORDER");
+			}
+			if (savedInstanceState.containsKey("SERVICE")) {
+				_service = savedInstanceState.getParcelable("SERVICE");
+				_service.setContext(_gs);
+			}
+			if (savedInstanceState.containsKey("TASKS")) {
+				Task[] tasks = (Task[]) savedInstanceState.getParcelableArray("TASKS");
+				_tasks = new LinkedList<Task>();
+				for (int i = 0; i < tasks.length; i++) {
+					_tasks.add(tasks[i]);
+				}
+			}
+			if (savedInstanceState.containsKey("CURRENT_TASK")) {
+				_currentTask = savedInstanceState.getParcelable("CURRENT_TASK");
+			}
+		}
+
 		configureUi();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		if (_workorder != null) {
+			outState.putParcelable("WORKORDER", _workorder);
+		}
+		if (_service != null) {
+			outState.putParcelable("SERVICE", _service);
+		}
+
+		if (_tasks != null && _tasks.size() > 0) {
+			Task[] tasks = new Task[_tasks.size()];
+			for (int i = 0; i < _tasks.size(); i++) {
+				tasks[i] = _tasks.get(i);
+			}
+			outState.putParcelableArray("TASKS", tasks);
+		}
+
+		if (_currentTask != null) {
+			outState.putParcelable("CURRENT_TASK", _currentTask);
+		}
+
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -205,21 +257,29 @@ public class TasksFragment extends WorkorderFragment {
 				break;
 			case SIGNATURE: {
 				// TODO bring up signature library
+				_currentTask = task;
 				Intent intent = new Intent(getActivity(), SignatureActivity.class);
 				try {
-					intent.putExtra(SignatureActivity.RESULT_KEY_ARRIVAL,
-							_workorder.getCheckInOutInfo().getCheckInTime());
+					if (!misc.isEmptyOrNull(_workorder.getCheckInOutInfo().getCheckInTime()))
+						intent.putExtra(SignatureActivity.RESULT_KEY_ARRIVAL,
+								_workorder.getCheckInOutInfo().getCheckInTime());
 				} catch (Exception ex) {
 				}
 				try {
-					intent.putExtra(SignatureActivity.RESULT_KEY_DEPARTURE,
-							_workorder.getCheckInOutInfo().getCheckOutTime());
+					if (!misc.isEmptyOrNull(_workorder.getCheckInOutInfo().getCheckOutTime()))
+						intent.putExtra(SignatureActivity.RESULT_KEY_DEPARTURE,
+								_workorder.getCheckInOutInfo().getCheckOutTime());
 				} catch (Exception ex) {
 				}
 				try {
-					intent.putExtra(SignatureActivity.RESULT_KEY_NAME, _workorder.getManagerName());
+					if (!misc.isEmptyOrNull(_workorder.getManagerName()))
+						intent.putExtra(SignatureActivity.RESULT_KEY_NAME, _workorder.getManagerName());
 				} catch (Exception ex) {
 				}
+
+				intent.putExtra(SIGNATURE_TASKID, task.getTaskId());
+				intent.putExtra(SIGNATURE_WORKORDERID, _workorder.getWorkorderId());
+
 				startActivityForResult(intent, RESULT_CODE_SIGNATURE);
 				break;
 			}
@@ -249,11 +309,15 @@ public class TasksFragment extends WorkorderFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		if (requestCode == RESULT_CODE_SIGNATURE && resultCode == Activity.RESULT_OK) {
-			byte[] imagedata = data.getExtras().getByteArray(SignatureActivity.RESULT_KEY_BITMAP);
+			byte[] json_vector = data.getExtras().getByteArray(SignatureActivity.RESULT_KEY_BITMAP);
+			String name = data.getExtras().getString(SignatureActivity.RESULT_KEY_NAME);
+			String arrival = data.getExtras().getString(SignatureActivity.RESULT_KEY_ARRIVAL);
+			String depart = data.getExtras().getString(SignatureActivity.RESULT_KEY_DEPARTURE);
+			int taskid = data.getExtras().getInt(SIGNATURE_TASKID);
+			long workorderid = data.getExtras().getLong(SIGNATURE_WORKORDERID);
 
-			Log.v(TAG, "BP");
-
-			// TODO, do something with the bitmap.
+			getActivity().startService(
+					_service.completeSignatureTask(resultCode, workorderid, taskid, arrival, depart, name, json_vector));
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);
@@ -262,8 +326,12 @@ public class TasksFragment extends WorkorderFragment {
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
-			requestData();
+			try {
+				_service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+				requestData();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 
 		@Override

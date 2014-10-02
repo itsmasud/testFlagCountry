@@ -158,6 +158,10 @@ public class misc {
 
 	private static Calendar applyTimeZone(Calendar calendar) {
 		TimeZone tz = TimeZone.getDefault();
+
+		if (tz.equals(calendar.getTimeZone()))
+			return calendar;
+
 		Calendar nc = Calendar.getInstance(tz);
 
 		if (tz.useDaylightTime()) {

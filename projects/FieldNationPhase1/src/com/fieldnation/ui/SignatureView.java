@@ -27,6 +27,11 @@ public class SignatureView extends View {
 	private float _min = 0;
 	private float _max = 10;
 
+	private float _minX = Float.MAX_VALUE;
+	private float _minY = Float.MAX_VALUE;
+	private float _maxX = Float.MIN_VALUE;
+	private float _maxY = Float.MIN_VALUE;
+
 	public SignatureView(Context context) {
 		super(context);
 		init();
@@ -65,7 +70,11 @@ public class SignatureView extends View {
 
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("{");
+		float scale = Math.max((_maxX - _minX) / 605, (_maxY - _minY) / 115);
+		float xo = _minX;
+		float yo = _minY;
+
+		sb.append("[");
 		for (int i = 0; i < _shapes.size(); i++) {
 			List<Point> shape = _shapes.get(i);
 
@@ -75,13 +84,13 @@ public class SignatureView extends View {
 				for (int j = 1; j < shape.size(); j++) {
 					Point p = shape.get(j);
 					sb.append("{lx:");
-					sb.append((int) lp.x);
+					sb.append((int) (lp.x - xo) / scale);
 					sb.append(",ly:");
-					sb.append((int) lp.y);
+					sb.append((int) (lp.y - yo) / scale);
 					sb.append(",mx:");
-					sb.append((int) p.x);
+					sb.append((int) (p.x - xo) / scale);
 					sb.append(",my:");
-					sb.append((int) p.y);
+					sb.append((int) (p.y - yo) / scale);
 					sb.append("}");
 
 					if (j < shape.size() - 1) {
@@ -94,8 +103,7 @@ public class SignatureView extends View {
 				}
 			}
 		}
-		sb.append("}");
-
+		sb.append("]");
 		Log.v(TAG, sb.toString());
 
 		return sb.toString().getBytes();
@@ -158,6 +166,11 @@ public class SignatureView extends View {
 		_shapes = new LinkedList<List<Point>>();
 		_shape = new LinkedList<Point>();
 		_shapes.add(_shape);
+		_minX = Float.MAX_VALUE;
+		_minY = Float.MAX_VALUE;
+		_maxX = Float.MIN_VALUE;
+		_maxY = Float.MIN_VALUE;
+
 		invalidate();
 	}
 
@@ -201,6 +214,15 @@ public class SignatureView extends View {
 			this.x = x;
 			this.y = y;
 			this.t = t;
+
+			if (x < _minX)
+				_minX = x;
+			if (y < _minY)
+				_minY = y;
+			if (x > _maxX)
+				_maxX = x;
+			if (y > _maxY)
+				_maxY = y;
 		}
 	}
 }

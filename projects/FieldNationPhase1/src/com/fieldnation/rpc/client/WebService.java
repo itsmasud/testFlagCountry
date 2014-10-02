@@ -8,6 +8,9 @@ import java.util.Map;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.ResultReceiver;
 
 import com.fieldnation.json.JsonObject;
@@ -21,12 +24,15 @@ import com.fieldnation.rpc.server.DataService;
  * Provides a basic interface for making webservice calls to fieldnation's
  * servers. Other webservices like {@link WorkorderService} inherit from this
  * class.
+ * 
+ * Note, you need to manually set the context after this is loaded as a parcel
+ * to be useable
  * </p>
  * 
  * @author michael.carver
  * 
  */
-public class WebService implements WebServiceConstants {
+public class WebService implements WebServiceConstants, Parcelable {
 	private Context _context;
 	private ResultReceiver _callback;
 	private String _authToken;
@@ -47,6 +53,16 @@ public class WebService implements WebServiceConstants {
 		_username = username;
 		_authToken = authToken;
 		_callback = callback;
+	}
+
+	private WebService(String username, String authToken, ResultReceiver callback) {
+		_username = username;
+		_authToken = authToken;
+		_callback = callback;
+	}
+
+	public void setContext(Context context) {
+		_context = context;
 	}
 
 	public String getAuthToken() {
@@ -170,6 +186,47 @@ public class WebService implements WebServiceConstants {
 		return intent;
 	}
 
+	public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, String fileName,
+			byte[] filedata, Map<String, String> fields, String contentType, PendingIntent notificationIntent) {
+		Intent intent = new Intent(_context, DataService.class);
+		intent.setAction(DataServiceConstants.ACTION_RPC);
+		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+		intent.putExtra(KEY_PARAM_AUTH_TOKEN, _authToken);
+		intent.putExtra(KEY_PARAM_USERNAME, _username);
+		intent.putExtra(KEY_METHOD, METHOD_HTTP_POST_FILE);
+		intent.putExtra(KEY_PARAM_PATH, path);
+		intent.putExtra(KEY_PARAM_OPTIONS, options);
+		intent.putExtra(KEY_RESULT_CODE, resultCode);
+		intent.putExtra(KEY_PARAM_FILE_DATA, filedata);
+		intent.putExtra(KEY_PARAM_FILE_FIELD_NAME, fileFieldName);
+		intent.putExtra(KEY_PARAM_FILE_NAME, fileName);
+		intent.putExtra(KEY_PARAM_NOTIFICATION_INTENT, notificationIntent);
+		intent.putExtra(KEY_PARAM_CONTENT_TYPE, contentType);
+
+		if (fields != null && fields.size() > 0) {
+			JsonObject obj = new JsonObject();
+
+			Iterator<String> iter = fields.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				try {
+					obj.put(key, fields.get(key));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			intent.putExtra(KEY_PARAM_FIELD_MAP, obj.toString());
+		}
+
+		if (_callback != null) {
+			intent.putExtra(KEY_PARAM_CALLBACK, _callback);
+		}
+
+		return intent;
+	}
+
 	public Intent httpGet(int resultCode, String path, boolean allowCache) {
 		return httpGet(resultCode, path, null, allowCache);
 	}
@@ -196,4 +253,41 @@ public class WebService implements WebServiceConstants {
 			boolean allowCache) {
 		return httpWrite(resultCode, "PUT", path, options, data, contentType, allowCache);
 	}
+
+	/*-*****************************************-*/
+	/*-			Parcel Implementation			-*/
+	/*-*****************************************-*/
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		Bundle bundle = new Bundle();
+		bundle.putParcelable("RESULT_RECEIVER", _callback);
+		bundle.putString("AUTH_TOKEN", _authToken);
+		bundle.putString("USERNAME", _username);
+
+		dest.writeBundle(bundle);
+	}
+
+	public static final Parcelable.Creator<WebService> CREATOR = new Creator<WebService>() {
+
+		@Override
+		public WebService[] newArray(int size) {
+			return new WebService[size];
+		}
+
+		@Override
+		public WebService createFromParcel(Parcel source) {
+			Bundle bundle = source.readBundle();
+			ResultReceiver callback = bundle.getParcelable("RESULT_RECEIVER");
+			String authToken = bundle.getString("AUTH_TOKEN");
+			String username = bundle.getString("USERNAME");
+
+			return new WebService(username, authToken, callback);
+		}
+	};
 }

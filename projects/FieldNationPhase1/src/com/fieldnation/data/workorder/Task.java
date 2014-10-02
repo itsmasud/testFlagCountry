@@ -1,10 +1,15 @@
 package com.fieldnation.data.workorder;
 
+import java.text.ParseException;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Task {
+public class Task implements Parcelable {
 	@Json(name = "showTimeMenu")
 	private Boolean _showTimeMenu;
 	@Json(name = "timeRelativeTo")
@@ -13,7 +18,7 @@ public class Task {
 	private String _alertOnCompletionInput;
 	@Json(name = "alertOnCompletion")
 	private String[] _alertOnCompletion;
-	@Json(name="taskIsCompleted")
+	@Json(name = "taskIsCompleted")
 	private Integer _taskIsCompleted;
 	@Json(name = "taskId")
 	private Integer _taskId;
@@ -29,19 +34,19 @@ public class Task {
 	private String _assignedTo;
 	@Json(name = "showAlertMenu")
 	private Boolean _showAlertMenu;
-	@Json(name="taskIdentifier")
+	@Json(name = "taskIdentifier")
 	private Integer _taskIdentifier;
 	@Json(name = "phoneNumber")
 	private String _phoneNumber;
 	@Json(name = "completedAtDate")
 	private String _completedAtDate;
-	@Json(name="workorderTaskId")
+	@Json(name = "workorderTaskId")
 	private Integer _workorderTaskId;
 	@Json(name = "isEditing")
 	private Boolean _isEditing;
 	@Json(name = "minutes")
 	private Integer _minutes;
-	@Json(name="customField")
+	@Json(name = "customField")
 	private Integer _customField;
 	@Json(name = "canDelete")
 	private Boolean _canDelete;
@@ -77,7 +82,7 @@ public class Task {
 		return _alertOnCompletion;
 	}
 
-	public Integer getTaskIsCompleted(){
+	public Integer getTaskIsCompleted() {
 		return _taskIsCompleted;
 	}
 
@@ -109,11 +114,11 @@ public class Task {
 		return _showAlertMenu;
 	}
 
-	public Integer getTaskIdentifier(){
+	public Integer getTaskIdentifier() {
 		return _taskIdentifier;
 	}
 
-	public Object getPhoneNumber(){
+	public Object getPhoneNumber() {
 		return _phoneNumber;
 	}
 
@@ -121,11 +126,11 @@ public class Task {
 		return _completedAtDate;
 	}
 
-	public Integer getWorkorderTaskId(){
+	public Integer getWorkorderTaskId() {
 		return _workorderTaskId;
 	}
 
-	public Boolean getIsEditing(){
+	public Boolean getIsEditing() {
 		return _isEditing;
 	}
 
@@ -133,7 +138,7 @@ public class Task {
 		return _minutes;
 	}
 
-	public Integer getCustomField(){
+	public Integer getCustomField() {
 		return _customField;
 	}
 
@@ -190,5 +195,36 @@ public class Task {
 	public TaskType getTaskType() {
 		return TaskType.fromId(_typeId);
 	}
+
+	/*-*********************************************-*/
+	/*-				Not Generated Code				-*/
+	/*-*********************************************-*/
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(toJson().toString());
+	}
+
+	public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
+
+		@Override
+		public Task createFromParcel(Parcel source) {
+			try {
+				return Task.fromJson(new JsonObject(source.readString()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		public Task[] newArray(int size) {
+			return new Task[size];
+		}
+	};
 
 }

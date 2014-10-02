@@ -97,6 +97,24 @@ public class MultipartUtility {
 		writer.flush();
 	}
 
+	public void addFilePart(String fieldName, String filename, byte[] filedata, String contentType) throws IOException {
+		writer.append("--" + boundary).append(LINE_FEED);
+		writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + filename + "\"").append(
+				LINE_FEED);
+		writer.append("Content-Type: ").append(contentType).append(LINE_FEED);
+		writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+		writer.append("Content-Length: " + filedata.length).append(LINE_FEED);
+		writer.append(LINE_FEED);
+		writer.flush();
+
+		outputStream.write(filedata);
+
+		outputStream.flush();
+
+		writer.append(LINE_FEED);
+		writer.flush();
+	}
+
 	/**
 	 * Adds a header field to the request.
 	 * 

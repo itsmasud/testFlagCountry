@@ -1,6 +1,8 @@
 package com.fieldnation.rpc.client;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.rpc.common.WebServiceConstants;
@@ -346,4 +348,24 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"amount=" + amount + "&description=" + description, "application/x-www-form-urlencoded", false);
 	}
 
+	// tasks
+	public Intent completeSignatureTask(int resultCode, long workorderId, long taskId, String arrivalTime,
+			String departureTime, String printName, byte[] signatureJson) {
+		// Map<String, String> map = new HashMap<String, String>();
+		// map.put("arrival_time", arrivalTime);
+		// map.put("departure_time", departureTime);
+		// map.put("print_name", printName);
+		// return httpPostFile(resultCode, "api/rest/v1/workorder/" +
+		// workorderId + "/tasks/complete/" + taskId, null,
+		// "signature_json", "signature_json", signatureJson, map,
+		// "application/json", notificationIntent);
+		return httpPost(
+				resultCode,
+				"api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId,
+				null,
+				"arrival_time=" + arrivalTime + "&departure_time=" + departureTime + "&print_name=" + misc.escapeForURL(printName) + "&signature_json=" +
+				//misc.escapeForURL
+				(new String(signatureJson)), "application/x-www-form-urlencoded", false);
+
+	}
 }

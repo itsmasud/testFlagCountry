@@ -59,8 +59,9 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
 							bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
 							bundle.putBoolean(KEY_RESPONSE_CACHED, false);
 							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-							DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
-									bundle.getInt(KEY_RESPONSE_CODE));
+							if (allowCache)
+								DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+										bundle.getInt(KEY_RESPONSE_CODE));
 							Log.v(TAG, "web request success");
 						} catch (Exception ex) {
 							try {

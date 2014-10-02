@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import java.util.Calendar;
 
 import com.fieldnation.R;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -44,8 +45,6 @@ public class SignatureActivity extends ActionBarActivity {
 	private EditTextAlertDialog _textDialog;
 
 	// Data
-	private String _arrivalTime;
-	private String _depatureTime;
 	private String _name;
 	private Calendar _arriveCal = Calendar.getInstance();
 	private Calendar _departCal = Calendar.getInstance();
@@ -70,14 +69,27 @@ public class SignatureActivity extends ActionBarActivity {
 			Bundle bundle = intent.getExtras();
 
 			if (bundle.containsKey(RESULT_KEY_ARRIVAL)) {
-				_arrivalTime = bundle.getString(RESULT_KEY_ARRIVAL);
-				if (!misc.isEmptyOrNull(_arrivalTime))
-					_arrivalTextView.setText(_arrivalTime);
+				String arrivalTime = bundle.getString(RESULT_KEY_ARRIVAL);
+				if (!misc.isEmptyOrNull(arrivalTime)) {
+					try {
+						_arriveCal = ISO8601.toCalendar(arrivalTime);
+					} catch (Exception ex) {
+						_arriveCal = Calendar.getInstance();
+					}
+					_arrivalTextView.setText(misc.formatDateLong(_arriveCal) + " " + misc.formatTime(_arriveCal, false));
+				}
 			}
 			if (bundle.containsKey(RESULT_KEY_DEPARTURE)) {
-				_depatureTime = bundle.getString(RESULT_KEY_DEPARTURE);
-				if (!misc.isEmptyOrNull(_depatureTime))
-					_departureTextView.setText(_depatureTime);
+				String depatureTime = bundle.getString(RESULT_KEY_DEPARTURE);
+				_departCal = Calendar.getInstance();
+				if (!misc.isEmptyOrNull(depatureTime)) {
+					try {
+						_departCal = ISO8601.toCalendar(depatureTime);
+					} catch (Exception ex) {
+						_departCal = Calendar.getInstance();
+					}
+				}
+				_departureTextView.setText(misc.formatDateLong(_departCal) + " " + misc.formatTime(_departCal, false));
 			}
 			if (bundle.containsKey(RESULT_KEY_NAME)) {
 				_name = bundle.getString(RESULT_KEY_NAME);
@@ -86,14 +98,12 @@ public class SignatureActivity extends ActionBarActivity {
 			}
 		}
 
-		// TODO set up the date/time pickers
 		final Calendar c = Calendar.getInstance();
 		_datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
 				c.get(Calendar.DAY_OF_MONTH));
 		_datePicker.setCloseOnSingleTapDay(true);
 		_timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
 				false, false);
-
 	}
 
 	@Override
@@ -120,8 +130,21 @@ public class SignatureActivity extends ActionBarActivity {
 
 		Log.v(TAG, "Sig size: " + signature.length);
 
+		// validate input and ask for it
+		if (misc.isEmptyOrNull(_name)) {
+			_textDialog = new EditTextAlertDialog(SignatureActivity.this, "Signee Name", "Please enter the signee name");
+			_textDialog.setPositiveButton("Ok", _editText_onOk_onClose);
+			_textDialog.show();
+
+			return;
+		}
+
 		Intent intent = new Intent();
+		intent.putExtras(getIntent());
 		intent.putExtra(RESULT_KEY_BITMAP, signature);
+		intent.putExtra(RESULT_KEY_ARRIVAL, ISO8601.fromCalendar(_arriveCal));
+		intent.putExtra(RESULT_KEY_DEPARTURE, ISO8601.fromCalendar(_departCal));
+		intent.putExtra(RESULT_KEY_NAME, _name);
 		setResult(RESULT_OK, intent);
 		finish();
 	}
@@ -132,6 +155,17 @@ public class SignatureActivity extends ActionBarActivity {
 		public void onClick(DialogInterface dialog, int which) {
 			_name = _textDialog.getInput();
 			_nameTextView.setText(_name);
+		}
+	};
+
+	private DialogInterface.OnClickListener _editText_onOk_onClose = new DialogInterface.OnClickListener() {
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			_name = _textDialog.getInput();
+			_nameTextView.setText(_name);
+
+			onDone();
 		}
 	};
 
@@ -157,12 +191,11 @@ public class SignatureActivity extends ActionBarActivity {
 			if (tag.equals("arrive")) {
 				_arriveCal.set(_arriveCal.get(Calendar.YEAR), _arriveCal.get(Calendar.MONTH),
 						_arriveCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-				_arrivalTextView.setText(misc.formatDateLong(_arriveCal));
-
+				_arrivalTextView.setText(misc.formatDateLong(_arriveCal) + " " + misc.formatTime(_arriveCal, false));
 			} else if (tag.equals("depart")) {
 				_departCal.set(_departCal.get(Calendar.YEAR), _departCal.get(Calendar.MONTH),
 						_departCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-				_departureTextView.setText(misc.formatDateLong(_arriveCal));
+				_departureTextView.setText(misc.formatDateLong(_departCal) + " " + misc.formatTime(_departCal, false));
 			}
 		}
 	};
@@ -191,4 +224,5 @@ public class SignatureActivity extends ActionBarActivity {
 			_textDialog.show();
 		}
 	};
+
 }
