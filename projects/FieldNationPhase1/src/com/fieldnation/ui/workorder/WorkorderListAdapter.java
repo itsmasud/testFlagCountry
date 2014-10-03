@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+
 import com.cocosw.undobar.UndoBarController;
 import com.cocosw.undobar.UndoBarController.UndoBar;
 import com.fieldnation.R;
@@ -58,6 +59,17 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 	public WorkorderListAdapter(Activity activity, WorkorderDataSelector selection) throws NoSuchMethodException {
 		super(activity, Workorder.class);
+		_dataSelection = selection;
+
+		_rpcMethod = WorkorderService.class.getDeclaredMethod(selection.getCall(), new Class<?>[] { int.class,
+				int.class, boolean.class });
+		_rpcMethod.setAccessible(true);
+
+		_payDialog = new PayDialog(activity);
+	}
+
+	public WorkorderListAdapter(Activity activity, WorkorderDataSelector selection, List<Workorder> workorders) throws NoSuchMethodException {
+		super(activity, Workorder.class, workorders);
 		_dataSelection = selection;
 
 		_rpcMethod = WorkorderService.class.getDeclaredMethod(selection.getCall(), new Class<?>[] { int.class,

@@ -57,6 +57,18 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		_atEndOfList = false;
 	}
 
+	public PagingListAdapter(Activity activity, Class<T> clazz, List<T> objects) {
+		_activity = activity;
+		_clazz = clazz;
+
+		_gs = (GlobalState) _activity.getApplicationContext();
+		_objects = objects;
+
+		_isViable = true;
+		_nextPage = START_PAGE;
+		_atEndOfList = false;
+	}
+
 	/*-*********************************-*/
 	/*-			Getters/Setters			-*/
 	/*-*********************************-*/
@@ -78,6 +90,10 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 
 	public boolean isViable() {
 		return _isViable;
+	}
+
+	public List<T> getObjects() {
+		return _objects;
 	}
 
 	@Override

@@ -44,6 +44,13 @@ public class TasksFragment extends WorkorderFragment {
 	private static final int WEB_CHANGED = 1;
 	private static final int WEB_GET_TASKS = 2;
 
+	// saved state keys
+	private static final String WORKORDER = "WORKORDER";
+	private static final String AUTHTOKEN = "AUTHTOKEN";
+	private static final String USERNAME = "USERNAME";
+	private static final String TASKS = "TASKS";
+	private static final String CURRENT_TASK = "CURRENT_TASK";
+
 	// UI
 	private ShipmentView _shipments;
 	private TaskListView _taskList;
@@ -54,9 +61,11 @@ public class TasksFragment extends WorkorderFragment {
 
 	// Data
 	private GlobalState _gs;
-
-	private Workorder _workorder;
 	private WorkorderService _service;
+
+	private String _authToken;
+	private String _username;
+	private Workorder _workorder;
 	private List<Task> _tasks = null;
 	private Task _currentTask;
 
@@ -75,6 +84,7 @@ public class TasksFragment extends WorkorderFragment {
 		_gs = (GlobalState) view.getContext().getApplicationContext();
 
 		_shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
+		_shipments.setListener(_shipments_listener);
 		_taskList = (TaskListView) view.findViewById(R.id.scope_view);
 		_timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
 		_timeLogged.setFragmentManager(getFragmentManager());
@@ -91,22 +101,29 @@ public class TasksFragment extends WorkorderFragment {
 		if (savedInstanceState == null) {
 			_gs.requestAuthentication(_authClient);
 		} else {
-			if (savedInstanceState.containsKey("WORKORDER")) {
-				_workorder = savedInstanceState.getParcelable("WORKORDER");
+			if (savedInstanceState.containsKey(WORKORDER)) {
+				_workorder = savedInstanceState.getParcelable(WORKORDER);
 			}
-			if (savedInstanceState.containsKey("SERVICE")) {
-				_service = savedInstanceState.getParcelable("SERVICE");
-				_service.setContext(_gs);
+			if (savedInstanceState.containsKey(AUTHTOKEN)) {
+				_authToken = savedInstanceState.getString(AUTHTOKEN);
 			}
-			if (savedInstanceState.containsKey("TASKS")) {
-				Task[] tasks = (Task[]) savedInstanceState.getParcelableArray("TASKS");
+			if (savedInstanceState.containsKey(USERNAME)) {
+				_username = savedInstanceState.getString(USERNAME);
+			}
+			if (savedInstanceState.containsKey(TASKS)) {
+				Task[] tasks = (Task[]) savedInstanceState.getParcelableArray(TASKS);
 				_tasks = new LinkedList<Task>();
 				for (int i = 0; i < tasks.length; i++) {
 					_tasks.add(tasks[i]);
 				}
 			}
-			if (savedInstanceState.containsKey("CURRENT_TASK")) {
-				_currentTask = savedInstanceState.getParcelable("CURRENT_TASK");
+			if (savedInstanceState.containsKey(CURRENT_TASK)) {
+				_currentTask = savedInstanceState.getParcelable(CURRENT_TASK);
+			}
+			if (_authToken != null && _username != null) {
+				_service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
+			} else {
+				_gs.requestAuthentication(_authClient);
 			}
 		}
 
@@ -115,13 +132,15 @@ public class TasksFragment extends WorkorderFragment {
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		if (_authToken != null) {
+			outState.putString(AUTHTOKEN, _authToken);
+		}
+		if (_username != null) {
+			outState.putString(USERNAME, _username);
+		}
 		if (_workorder != null) {
-			outState.putParcelable("WORKORDER", _workorder);
+			outState.putParcelable(WORKORDER, _workorder);
 		}
-		if (_service != null) {
-			outState.putParcelable("SERVICE", _service);
-		}
-
 		if (_tasks != null && _tasks.size() > 0) {
 			Task[] tasks = new Task[_tasks.size()];
 			for (int i = 0; i < _tasks.size(); i++) {
@@ -156,9 +175,8 @@ public class TasksFragment extends WorkorderFragment {
 		if (_shipments != null)
 			_shipments.setWorkorder(_workorder);
 
-		if (_taskList != null) {
+		if (_taskList != null)
 			_taskList.setTaskListViewListener(_taskListView_listener);
-		}
 
 		if (_timeLogged != null)
 			_timeLogged.setWorkorder(_workorder);
@@ -302,6 +320,23 @@ public class TasksFragment extends WorkorderFragment {
 		}
 	};
 
+	private ShipmentView.Listener _shipments_listener = new ShipmentView.Listener() {
+
+		@Override
+		public void onDelete(Workorder workorder, int shipmentId) {
+			getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+		}
+
+		@Override
+		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+				String trackingId) {
+			getActivity().startService(
+					_service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
+							carrier, null, trackingId));
+			Log.v(TAG, "Method Stub: onAddShipmentDetails()");
+		}
+	};
+
 	/*-*************************************-*/
 	/*-				WEB Events				-*/
 	/*-*************************************-*/
@@ -327,6 +362,8 @@ public class TasksFragment extends WorkorderFragment {
 		@Override
 		public void onAuthentication(String username, String authToken) {
 			try {
+				_username = username;
+				_authToken = authToken;
 				_service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
 				requestData();
 			} catch (Exception ex) {
@@ -383,6 +420,8 @@ public class TasksFragment extends WorkorderFragment {
 				_gs.invalidateAuthToken(_service.getAuthToken());
 			}
 			_gs.requestAuthenticationDelayed(_authClient);
+			_username = null;
+			_authToken = null;
 		}
 	};
 

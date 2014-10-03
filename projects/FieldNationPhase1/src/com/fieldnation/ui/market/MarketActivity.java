@@ -19,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -120,6 +121,13 @@ public class MarketActivity extends DrawerActivity {
 		};
 	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Method Stub: onSaveInstanceState()
+		Log.v(TAG, "Method Stub: onSaveInstanceState()");
+		super.onSaveInstanceState(outState);
+	}
+
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
@@ -162,10 +170,14 @@ public class MarketActivity extends DrawerActivity {
 
 		@Override
 		public void onTabSelected(Tab arg0, FragmentTransaction arg1) {
-			_fragments[_currentFragment].onPause();
-			_currentFragment = arg0.getPosition();
-			_fragments[_currentFragment].onResume();
-			_viewPager.setCurrentItem(_currentFragment, true);
+			try {
+				_fragments[_currentFragment].onPause();
+				_currentFragment = arg0.getPosition();
+				_fragments[_currentFragment].onResume();
+				_viewPager.setCurrentItem(_currentFragment, true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 
 		@Override

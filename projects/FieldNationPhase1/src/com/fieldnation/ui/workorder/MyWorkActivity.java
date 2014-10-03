@@ -57,7 +57,7 @@ public class MyWorkActivity extends DrawerActivity {
 			List<Fragment> fragments = getSupportFragmentManager().getFragments();
 
 			for (int i = 0; i < fragments.size(); i++) {
-				_fragments[0] = (WorkorderListFragment) fragments.get(i);
+				_fragments[i] = (WorkorderListFragment) fragments.get(i);
 			}
 		}
 
@@ -158,9 +158,13 @@ public class MyWorkActivity extends DrawerActivity {
 
 		@Override
 		public void onTabSelected(Tab arg0, FragmentTransaction arg1) {
-			if (_currentFragment != arg0.getPosition()) {
-				_currentFragment = arg0.getPosition();
-				_viewPager.setCurrentItem(_currentFragment, true);
+			try {
+				if (_currentFragment != arg0.getPosition()) {
+					_currentFragment = arg0.getPosition();
+					_viewPager.setCurrentItem(_currentFragment, true);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		}
 

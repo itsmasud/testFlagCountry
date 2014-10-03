@@ -28,8 +28,6 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
 	// Data
 	private Workorder _workorder;
-	private GlobalState _gs;
-	private WorkorderService _service;
 
 	public TimeLoggedView(Context context) {
 		super(context);

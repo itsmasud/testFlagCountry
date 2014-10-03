@@ -32,7 +32,7 @@ import com.fieldnation.rpc.server.DataService;
  * @author michael.carver
  * 
  */
-public class WebService implements WebServiceConstants, Parcelable {
+public class WebService implements WebServiceConstants {
 	private Context _context;
 	private ResultReceiver _callback;
 	private String _authToken;
@@ -254,40 +254,4 @@ public class WebService implements WebServiceConstants, Parcelable {
 		return httpWrite(resultCode, "PUT", path, options, data, contentType, allowCache);
 	}
 
-	/*-*****************************************-*/
-	/*-			Parcel Implementation			-*/
-	/*-*****************************************-*/
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		Bundle bundle = new Bundle();
-		bundle.putParcelable("RESULT_RECEIVER", _callback);
-		bundle.putString("AUTH_TOKEN", _authToken);
-		bundle.putString("USERNAME", _username);
-
-		dest.writeBundle(bundle);
-	}
-
-	public static final Parcelable.Creator<WebService> CREATOR = new Creator<WebService>() {
-
-		@Override
-		public WebService[] newArray(int size) {
-			return new WebService[size];
-		}
-
-		@Override
-		public WebService createFromParcel(Parcel source) {
-			Bundle bundle = source.readBundle();
-			ResultReceiver callback = bundle.getParcelable("RESULT_RECEIVER");
-			String authToken = bundle.getString("AUTH_TOKEN");
-			String username = bundle.getString("USERNAME");
-
-			return new WebService(username, authToken, callback);
-		}
-	};
 }
