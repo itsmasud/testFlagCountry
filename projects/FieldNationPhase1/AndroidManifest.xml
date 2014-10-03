@@ -19,6 +19,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -111,9 +113,7 @@
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>
-com.fieldnation.service
-                <action android:name="android.content.SyncAdapter" />
+            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data

@@ -154,7 +154,11 @@ public class SignatureActivity extends ActionBarActivity {
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			_name = _textDialog.getInput();
-			_nameTextView.setText(_name);
+			if (misc.isEmptyOrNull(_name.trim())) {
+				_nameTextView.setText(R.string.tap_to_set_name);
+			} else {
+				_nameTextView.setText(_name);
+			}
 		}
 	};
 
@@ -163,8 +167,11 @@ public class SignatureActivity extends ActionBarActivity {
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			_name = _textDialog.getInput();
-			_nameTextView.setText(_name);
-
+			if (misc.isEmptyOrNull(_name.trim())) {
+				_nameTextView.setText(R.string.tap_to_set_name);
+			} else {
+				_nameTextView.setText(_name);
+			}
 			onDone();
 		}
 	};

@@ -70,9 +70,9 @@ public class SignatureView extends View {
 
 		StringBuilder sb = new StringBuilder();
 
-		float scale = Math.max((_maxX - _minX) / 605, (_maxY - _minY) / 115);
-		float xo = _minX;
-		float yo = _minY;
+		float scale = Math.max((_maxX) / 605, (_maxY) / 115);
+		float xo = ((605 * scale) - (_maxX + _minX)) / 2;
+		float yo = ((115 * scale) - (_maxY + _minY)) / 2;
 
 		sb.append("[");
 		for (int i = 0; i < _shapes.size(); i++) {
@@ -83,22 +83,23 @@ public class SignatureView extends View {
 
 				for (int j = 1; j < shape.size(); j++) {
 					Point p = shape.get(j);
-					sb.append("{lx:");
-					sb.append((int) (lp.x - xo) / scale);
-					sb.append(",ly:");
-					sb.append((int) (lp.y - yo) / scale);
-					sb.append(",mx:");
-					sb.append((int) (p.x - xo) / scale);
-					sb.append(",my:");
-					sb.append((int) (p.y - yo) / scale);
+					sb.append("{\"lx\":");
+					sb.append((int) ((lp.x + xo) / scale));
+					sb.append(",\"ly\":");
+					sb.append((int) ((lp.y + yo) / scale));
+					sb.append(",\"mx\":");
+					sb.append((int) ((p.x + xo) / scale));
+					sb.append(",\"my\":");
+					sb.append((int) ((p.y + yo) / scale));
 					sb.append("}");
 
 					if (j < shape.size() - 1) {
 						sb.append(",");
 					}
+					lp = p;
 				}
 
-				if (i < _shape.size() - 1) {
+				if (i < _shapes.size() - 2) {
 					sb.append(",");
 				}
 			}
