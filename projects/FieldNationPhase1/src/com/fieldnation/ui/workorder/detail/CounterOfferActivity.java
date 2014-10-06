@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -11,11 +12,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.BaseActivity;
 
 public class CounterOfferActivity extends ActionBarActivity {
 	private static final String TAG = "ui.workorder.detail.CounterOfferActivity";
 
+	// Key
+	public static final String INTENT_WORKORDER = "com.fieldnation.ui.workorder.detail:WORKORDER";
+
+	// UI
 	private TextView _basisOldTextView;
 	private TextView _basisNewTextView;
 	private TextView _hourlyOldTextView;
@@ -45,6 +52,9 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 	private Button _cancelButton;
 	private Button _sendButton;
+
+	// Data
+	private Workorder _workorder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +99,36 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		_sendButton = (Button) findViewById(R.id.send_button);
 		_sendButton.setOnClickListener(_sendButton_onClick);
+
+		if (savedInstanceState != null) {
+			if (savedInstanceState.containsKey(INTENT_WORKORDER)) {
+				_workorder = savedInstanceState.getParcelable(INTENT_WORKORDER);
+			}
+		}
+
+		Intent intent = getIntent();
+		if (intent != null && intent.getExtras() != null) {
+			Bundle extras = intent.getExtras();
+			if (extras.containsKey(INTENT_WORKORDER)) {
+				_workorder = extras.getParcelable(INTENT_WORKORDER);
+			}
+		}
+
+		if (_workorder != null)
+			populateUi();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		if (_workorder != null) {
+			outState.putParcelable(INTENT_WORKORDER, _workorder);
+		}
+		super.onSaveInstanceState(outState);
+	}
+
+	private void populateUi() {
+		Pay pay = _workorder.getPay();
+		_basisOldTextView.setText(pay.getPayRateBasis());
 	}
 
 	/*-*****************************-*/

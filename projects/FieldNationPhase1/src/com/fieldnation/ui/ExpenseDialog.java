@@ -36,6 +36,7 @@ public class ExpenseDialog extends Dialog {
 		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
 		_descriptionEditText.setOnEditorActionListener(_oneditor_listener);
 		_categorySpinner = (Spinner) findViewById(R.id.category_spinner);
+		_cancelButton = (Button) findViewById(R.id.cancel_button);
 		_cancelButton.setOnClickListener(_cancelButton_onClick);
 		ExpenseCategories.getInstance(getContext()).setListener(_categoriesListener);
 		setTitle("Add Expense");

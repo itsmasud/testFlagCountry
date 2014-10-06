@@ -93,6 +93,11 @@
             android:exported="false"
             android:label="@string/settings" >
         </activity>
+        <activity
+            android:name="com.fieldnation.ui.workorder.detail.CounterOfferActivity"
+            android:exported="false"
+            android:label="@string/counter_offers" >
+        </activity>
 
         <service
             android:name="com.fieldnation.auth.server.AuthService"
@@ -113,7 +118,9 @@
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
+            <intent-filter>
+com.fieldnation.service
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data

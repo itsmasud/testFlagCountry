@@ -10,6 +10,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -235,8 +236,10 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		@Override
 		public void onClick(View v) {
 			setLoading(true);
-			
-			// TODO show counter offer dialog
+
+			Intent intent = new Intent(getContext(), CounterOfferActivity.class);
+			intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
+			getContext().startActivity(intent);
 		}
 	};
 
