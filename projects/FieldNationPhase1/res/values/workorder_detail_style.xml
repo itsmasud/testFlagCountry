@@ -39,6 +39,10 @@
         <item name="android:textColor">#FF97976e</item>
     </style>
 
+    <style name="WorkorderDetail_Field_Gray" parent="WorkorderDetail_Field">
+        <item name="android:textColor">#FFc8c7c2</item>
+    </style>
+
     <style name="WorkorderDetail_FieldSubTitle" parent="WorkorderDetail_FieldTitle">
         <item name="android:textStyle">italic</item>
     </style>

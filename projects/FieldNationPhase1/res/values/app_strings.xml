@@ -114,6 +114,24 @@
     <string name="departure_date_and_time">Departure Date and Time:</string>
     <string name="tap_to_set_a_time">Tap to set a time</string>
     <string name="tap_to_set_name">Tap to set name</string>
+    <string name="request_payment_change">Request Payment Change</string>
+    <string name="request_schedule_change">Request Schedule Change</string>
+    <string name="expense">Expense</string>
+    <string name="add_expense_to_counter_offer">Add Expense to Counter Offer</string>
+    <string name="reason_for_counter_offer">Reason for Counter Offer:</string>
+    <string name="reason_for_request">Reason For Request</string>
+    <string name="delete_counter_if_not_accepted_within">Delete counter of not accepted within</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>
+    <string name="cancel">Cancel</string>
+    <string name="send_counter">Send Counter</string>
+    <string name="pay_rate_basis">Pay Rate Basis</string>
+    <string name="hourly">Hourly</string>
+    <string name="blended">Blended</string>
+    <string name="arrival_period">Arrival Period</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="date_and_time">Date and Time</string>
 
     <!-- /general strings -->
 

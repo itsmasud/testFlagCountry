@@ -18,6 +18,7 @@ import android.widget.TextView;
 public class ExpenseDialog extends Dialog {
 	private static String TAG = "ui.ExpenseDialog";
 	private Button _okButton;
+	private Button _cancelButton;
 	private EditText _amountEditText;
 	private EditText _descriptionEditText;
 	private Spinner _categorySpinner;
@@ -35,6 +36,7 @@ public class ExpenseDialog extends Dialog {
 		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
 		_descriptionEditText.setOnEditorActionListener(_oneditor_listener);
 		_categorySpinner = (Spinner) findViewById(R.id.category_spinner);
+		_cancelButton.setOnClickListener(_cancelButton_onClick);
 		ExpenseCategories.getInstance(getContext()).setListener(_categoriesListener);
 		setTitle("Add Expense");
 	}
@@ -63,7 +65,12 @@ public class ExpenseDialog extends Dialog {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-
+	private View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			ExpenseDialog.this.dismiss();
+		}
+	};
 	private ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
 		@Override
 		public void onHaveCategories(ExpenseCategory[] categories) {
