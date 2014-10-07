@@ -6,6 +6,7 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;

@@ -14,7 +14,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
-import com.fieldnation.ui.payment.PayDialog;
+import com.fieldnation.ui.dialog.PayDialog;
 
 import android.app.Activity;
 import android.content.Context;

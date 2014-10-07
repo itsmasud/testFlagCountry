@@ -10,11 +10,12 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.DiscountDialog;
-import com.fieldnation.ui.ExpenseDialog;
-import com.fieldnation.ui.payment.PayDialog;
+import com.fieldnation.ui.dialog.DiscountDialog;
+import com.fieldnation.ui.dialog.ExpenseDialog;
+import com.fieldnation.ui.dialog.PayDialog;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -46,7 +47,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private ExpenseDialog _expenseDialog;
 	private LinearLayout _counterOfferLayout;
 	private LinearLayout _detailLayout;
-	private PayDialog _payDialog;
 	private DiscountDialog _discountDialog;
 
 	// Data
@@ -96,7 +96,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		_counterOfferLayout.setOnClickListener(_counterOffer_onClick);
 		_detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
 
-		_payDialog = new PayDialog(getContext());
 		_discountDialog = new DiscountDialog(getContext());
 	}
 
@@ -106,9 +105,9 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private View.OnClickListener _counterOffer_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-			_payDialog.show();
+			Intent intent = new Intent(getContext(), CounterOfferActivity.class);
+			intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
+			getContext().startActivity(intent);
 		}
 	};
 

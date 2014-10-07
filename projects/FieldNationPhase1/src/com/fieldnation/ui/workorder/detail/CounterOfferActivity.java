@@ -1,5 +1,8 @@
 package com.fieldnation.ui.workorder.detail;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -8,13 +11,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.dialog.PayDialog;
+import com.fieldnation.ui.dialog.ScheduleDialog;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 public class CounterOfferActivity extends ActionBarActivity {
 	private static final String TAG = "ui.workorder.detail.CounterOfferActivity";
@@ -23,6 +32,10 @@ public class CounterOfferActivity extends ActionBarActivity {
 	public static final String INTENT_WORKORDER = "com.fieldnation.ui.workorder.detail:WORKORDER";
 
 	// UI
+	// labels
+	private TextView _labelHourlyRateTextView;
+	private TextView _labelMaxHoursTextView;
+	// data
 	private TextView _basisOldTextView;
 	private TextView _basisNewTextView;
 	private TextView _hourlyOldTextView;
@@ -31,6 +44,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 	private TextView _maxNewTextView;
 	private LinearLayout _editPaymentCounterLayout;
 	private TextView _editPaymentCounterTextView;
+	private ImageView _editPaymentCounterImageView;
 
 	private TextView _scheduleTypeOldTextView;
 	private TextView _scheduleTypeNewTextView;
@@ -40,11 +54,14 @@ public class CounterOfferActivity extends ActionBarActivity {
 	private TextView _scheduleTimeNewTextView;
 	private LinearLayout _editScheduleLayout;
 	private TextView _editScheduleTextView;
+	private ImageView _editScheduleImageView;
 
 	private TextView _noExpensesTextView;
 
 	private LinearLayout _addExpenseLayout;
 	private TextView _addExpenseTextView;
+
+	private LinearLayout _reasonsLayout;
 
 	private EditText _requestReasonEditText;
 	private CheckBox _deleteNotAcceptedCheckbox;
@@ -52,6 +69,9 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 	private Button _cancelButton;
 	private Button _sendButton;
+
+	private PayDialog _payDialog;
+	private ScheduleDialog _scheduleDialog;
 
 	// Data
 	private Workorder _workorder;
@@ -70,6 +90,10 @@ public class CounterOfferActivity extends ActionBarActivity {
 		_editPaymentCounterLayout = (LinearLayout) findViewById(R.id.edit_payment_counter_layout);
 		_editPaymentCounterLayout.setOnClickListener(_editPaymentLayout_onClick);
 		_editPaymentCounterTextView = (TextView) findViewById(R.id.edit_payment_counter_textview);
+		_editPaymentCounterImageView = (ImageView) findViewById(R.id.edit_payment_counter_imageview);
+
+		_labelHourlyRateTextView = (TextView) findViewById(R.id.hourly_rate_label_textview);
+		_labelMaxHoursTextView = (TextView) findViewById(R.id.max_hours_label_textview);
 
 		_scheduleTypeOldTextView = (TextView) findViewById(R.id.schedule_type_old_textview);
 		_scheduleTypeNewTextView = (TextView) findViewById(R.id.schedule_type_new_textview);
@@ -81,12 +105,15 @@ public class CounterOfferActivity extends ActionBarActivity {
 		_editScheduleLayout = (LinearLayout) findViewById(R.id.edit_schedule_layout);
 		_editScheduleLayout.setOnClickListener(_editScheduleLayout_onClick);
 		_editScheduleTextView = (TextView) findViewById(R.id.edit_schedule_textview);
+		_editScheduleImageView = (ImageView) findViewById(R.id.edit_schedule_imageview);
 
 		_noExpensesTextView = (TextView) findViewById(R.id.no_expenses_textview);
 
 		_addExpenseLayout = (LinearLayout) findViewById(R.id.add_expense_layout);
 		_addExpenseLayout.setOnClickListener(_addExpenseLayout_onClick);
 		_addExpenseTextView = (TextView) findViewById(R.id.add_expense_textview);
+
+		_reasonsLayout = (LinearLayout) findViewById(R.id.reasons_layout);
 
 		_requestReasonEditText = (EditText) findViewById(R.id.request_reason_edittext);
 		_deleteNotAcceptedCheckbox = (CheckBox) findViewById(R.id.delete_not_accepted_checkbox);
@@ -99,6 +126,9 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		_sendButton = (Button) findViewById(R.id.send_button);
 		_sendButton.setOnClickListener(_sendButton_onClick);
+
+		_payDialog = new PayDialog(this);
+		_scheduleDialog = new ScheduleDialog(this);
 
 		if (savedInstanceState != null) {
 			if (savedInstanceState.containsKey(INTENT_WORKORDER)) {
@@ -114,6 +144,10 @@ public class CounterOfferActivity extends ActionBarActivity {
 			}
 		}
 
+		showPayCounter(false);
+		showReason(false);
+		showScheduleCounter(false);
+
 		if (_workorder != null)
 			populateUi();
 	}
@@ -128,7 +162,108 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 	private void populateUi() {
 		Pay pay = _workorder.getPay();
+		// pay section
 		_basisOldTextView.setText(pay.getPayRateBasis());
+
+		// fixed rate
+		if (pay.isFixedRate()) {
+			_labelMaxHoursTextView.setText(" ");
+			_labelHourlyRateTextView.setText(R.string.total_amount);
+
+			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getFixedAmount()));
+			_maxOldTextView.setText(" ");
+
+		} else {
+			_labelMaxHoursTextView.setText(R.string.max_hours);
+			_labelHourlyRateTextView.setText(R.string.hourly_rate);
+		}
+
+		// blended
+		if (pay.isBlendedRate()) {
+			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedStartRate()) + " - " + pay.getBlendedFirstHours() + " Hours");
+
+			_maxOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedAdditionalRate()) + " - " + pay.getBlendedAdditionalHours() + " Hours");
+		}
+
+		// hourly
+		if (pay.isHourlyRate()) {
+
+		}
+
+		// per device
+		if (pay.isPerDeviceRate()) {
+
+		}
+
+		// schedule
+		Schedule schedule = _workorder.getSchedule();
+
+		if (schedule.isExact()) {
+			try {
+				_scheduleTypeOldTextView.setText("Exact");
+				Calendar cal = ISO8601.toCalendar(schedule.getStartTime());
+				_scheduleDateOldTextView.setText(misc.formatDateLong(cal));
+				_scheduleTimeOldTextView.setText(misc.formatTime(cal, false));
+
+				// _scheduleDateOldTextView.setText(misc);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			try {
+				_scheduleTypeOldTextView.setText("Range");
+				Calendar cal = ISO8601.toCalendar(schedule.getStartTime());
+				Calendar cal2 = ISO8601.toCalendar(schedule.getEndTime());
+
+				_scheduleDateOldTextView.setText(String.format(Locale.US, "%tB", cal) + " " + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal2.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR));
+
+				_scheduleTimeOldTextView.setText(misc.formatTime2(cal) + "-" + misc.formatTime(cal2, false));
+
+				// _scheduleDateOldTextView.setText(misc);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+	}
+
+	private void showPayCounter(boolean show) {
+		if (show) {
+			_basisNewTextView.setVisibility(View.VISIBLE);
+			_hourlyNewTextView.setVisibility(View.VISIBLE);
+			_maxNewTextView.setVisibility(View.VISIBLE);
+			_editPaymentCounterTextView.setText(R.string.edit_payment_counter);
+			_editPaymentCounterImageView.setBackgroundResource(R.drawable.ic_edit_12);
+		} else {
+			_basisNewTextView.setVisibility(View.GONE);
+			_hourlyNewTextView.setVisibility(View.GONE);
+			_maxNewTextView.setVisibility(View.GONE);
+			_editPaymentCounterTextView.setText(R.string.request_payment_change);
+			_editPaymentCounterImageView.setBackgroundResource(R.drawable.ic_wo_detail_counter_offer);
+		}
+	}
+
+	private void showScheduleCounter(boolean show) {
+		if (show) {
+			_scheduleTypeNewTextView.setVisibility(View.VISIBLE);
+			_scheduleDateNewTextView.setVisibility(View.VISIBLE);
+			_scheduleTimeNewTextView.setVisibility(View.VISIBLE);
+			_editScheduleTextView.setText(R.string.edit_schedule_counter);
+			_editScheduleImageView.setBackgroundResource(R.drawable.ic_edit_12);
+		} else {
+			_scheduleTypeNewTextView.setVisibility(View.GONE);
+			_scheduleDateNewTextView.setVisibility(View.GONE);
+			_scheduleTimeNewTextView.setVisibility(View.GONE);
+			_editScheduleTextView.setText(R.string.request_schedule_change);
+			_editScheduleImageView.setBackgroundResource(R.drawable.ic_clock_large);
+		}
+	}
+
+	private void showReason(boolean show) {
+		if (show)
+			_reasonsLayout.setVisibility(View.VISIBLE);
+		else
+			_reasonsLayout.setVisibility(View.GONE);
 	}
 
 	/*-*****************************-*/
@@ -137,6 +272,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 	private View.OnClickListener _editPaymentLayout_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			_payDialog.show();
 			// TODO Method Stub: onClick()
 			Log.v(TAG, "Method Stub: onClick()");
 		}
@@ -145,6 +281,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 	private View.OnClickListener _editScheduleLayout_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			_scheduleDialog.show();
 			// TODO Method Stub: onClick()
 			Log.v(TAG, "Method Stub: onClick()");
 		}

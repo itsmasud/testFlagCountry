@@ -235,8 +235,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 	private View.OnClickListener _counteroffer_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			setLoading(true);
-
 			Intent intent = new Intent(getContext(), CounterOfferActivity.class);
 			intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
 			getContext().startActivity(intent);

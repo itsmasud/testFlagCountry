@@ -9,7 +9,7 @@
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/pay_rate_basis" />
+        android:text="@string/pay_rate_basis_colon" />
 
     <Spinner
         android:id="@+id/type_spinner"
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:text="@string/fixed_pay_amount" />
+            android:text="@string/fixed_pay_amount_colon" />
 
         <EditText
             android:id="@+id/fixed_edittext"

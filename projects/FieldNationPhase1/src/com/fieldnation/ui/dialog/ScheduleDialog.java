@@ -1,4 +1,4 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.ui.dialog;
 
 import com.fieldnation.R;
 
@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -31,8 +33,16 @@ public class ScheduleDialog extends Dialog {
 
 	public ScheduleDialog(Context context) {
 		super(context);
+		setContentView(R.layout.dialog_schedule);
+		setTitle("Requested Schedule");
 
 		_typeSpinner = (Spinner) findViewById(R.id.type_spinner);
+		_typeSpinner.setOnItemSelectedListener(_type_selected);
+
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.schedule_types,
+				android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		_typeSpinner.setAdapter(adapter);
 
 		_rangeLayout = (LinearLayout) findViewById(R.id.range_layout);
 		_exactLayout = (LinearLayout) findViewById(R.id.exact_layout);
@@ -59,6 +69,27 @@ public class ScheduleDialog extends Dialog {
 	/*-*****************************-*/
 	/*-			UI Events			-*/
 	/*-*****************************-*/
+	private AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
+
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+			switch (position) {
+			case 0:
+				_rangeLayout.setVisibility(View.GONE);
+				_exactLayout.setVisibility(View.VISIBLE);
+				break;
+			case 1:
+				_rangeLayout.setVisibility(View.VISIBLE);
+				_exactLayout.setVisibility(View.GONE);
+				break;
+			}
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+		}
+
+	};
 	private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {

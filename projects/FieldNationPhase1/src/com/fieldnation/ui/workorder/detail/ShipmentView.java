@@ -8,6 +8,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.ShipmentAddDialog;
 
 import android.content.Context;
 import android.os.Bundle;

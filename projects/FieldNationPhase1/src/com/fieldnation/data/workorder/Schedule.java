@@ -9,18 +9,19 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class Schedule {
-	@Json(name="startTimeHours")
+	@Json(name = "startTimeHours")
 	private String _startTimeHours;
 	@Json(name = "endTime")
 	private String _endTime;
-	@Json(name="endTimeHours")
+	@Json(name = "endTimeHours")
 	private String _endTimeHours;
 	@Json(name = "startTime")
 	private String _startTime;
 
 	public Schedule() {
 	}
-	public String getStartTimeHours(){
+
+	public String getStartTimeHours() {
 		return _startTimeHours;
 	}
 
@@ -28,7 +29,7 @@ public class Schedule {
 		return _endTime;
 	}
 
-	public String getEndTimeHours(){
+	public String getEndTimeHours() {
 		return _endTimeHours;
 	}
 
@@ -89,7 +90,10 @@ public class Schedule {
 			ex.printStackTrace();
 			return null;
 		}
+	}
 
+	public boolean isExact() {
+		return misc.isEmptyOrNull(getEndTime());
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.ui.dialog;
 
 import com.fieldnation.R;
 import com.fieldnation.utils.misc;

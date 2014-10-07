@@ -32,6 +32,14 @@ public class misc {
 		return _currencyFormat.format(money);
 	}
 
+	public static String toCurrencyTrim(double money) {
+		String curr = _currencyFormat.format(money);
+
+		if (curr.endsWith(".00"))
+			return curr.substring(0, curr.length() - 3);
+		return curr;
+	}
+
 	/**
 	 * removes a circle from the source bitmap that is exactly centered
 	 * 
@@ -156,22 +164,22 @@ public class misc {
 		return requestPath;
 	}
 
-	private static Calendar applyTimeZone(Calendar calendar) {
-		TimeZone tz = TimeZone.getDefault();
+	public static Calendar applyTimeZone(Calendar fromCal) {
+		TimeZone fromTz = fromCal.getTimeZone();
+		TimeZone toTz = TimeZone.getDefault();
 
-		if (tz.equals(calendar.getTimeZone()))
-			return calendar;
+		if (toTz.equals(fromTz))
+			return fromCal;
 
-		Calendar nc = Calendar.getInstance(tz);
+		Calendar toCal = Calendar.getInstance(toTz);
 
-		if (tz.useDaylightTime()) {
-			nc.setTimeInMillis(calendar.getTimeInMillis() + tz.getRawOffset() - tz.getDSTSavings());
+		if (toTz.useDaylightTime()) {
+			toCal.setTimeInMillis(fromCal.getTimeInMillis() + toTz.getRawOffset() - toTz.getDSTSavings());
 		} else {
-			nc.setTimeInMillis(calendar.getTimeInMillis() + tz.getRawOffset());
+			toCal.setTimeInMillis(fromCal.getTimeInMillis() + toTz.getRawOffset());
 		}
-		// nc.setTimeZone(tz);
 
-		return nc;
+		return toCal;
 	}
 
 	/*
@@ -268,6 +276,30 @@ public class misc {
 			time += "am";
 		} else {
 			time += "pm";
+		}
+
+		return time;
+	}
+
+	public static String formatTime2(Calendar calendar) {
+		calendar = applyTimeZone(calendar);
+
+		String time = "";
+
+		int hours = calendar.get(Calendar.HOUR);
+
+		if (hours == 0) {
+			time += "12:";
+		} else {
+			time += hours + ":";
+		}
+
+		int min = calendar.get(Calendar.MINUTE);
+
+		if (min < 10) {
+			time += "0" + min;
+		} else {
+			time += min + "";
 		}
 
 		return time;

@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation.ui.dialog;
 
 import java.util.Calendar;
 

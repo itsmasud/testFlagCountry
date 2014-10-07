@@ -1,4 +1,4 @@
-package com.fieldnation.ui.payment;
+package com.fieldnation.ui.dialog;
 
 import com.fieldnation.R;
 
@@ -37,6 +37,7 @@ public class PayDialog extends Dialog {
 	private EditText _extraMaxHoursEditText;
 
 	private Button _okButton;
+	private Button _cancelButton;
 
 	// Data
 
@@ -46,6 +47,8 @@ public class PayDialog extends Dialog {
 	public PayDialog(Context context) {
 		super(context);
 		setContentView(R.layout.dialog_pay);
+
+		setTitle("Requested Payment");
 
 		_typeSpinner = (Spinner) findViewById(R.id.type_spinner);
 		_typeSpinner.setOnItemSelectedListener(_type_selected);
@@ -78,6 +81,9 @@ public class PayDialog extends Dialog {
 
 		_okButton = (Button) findViewById(R.id.ok_button);
 		_okButton.setOnClickListener(_ok_onClick);
+
+		_cancelButton = (Button) findViewById(R.id.cancel_button);
+		_cancelButton.setOnClickListener(_cancel_onClick);
 	}
 
 	/*-*********************************-*/
@@ -113,8 +119,15 @@ public class PayDialog extends Dialog {
 
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
-			// TODO Method Stub: onNothingSelected()
-			Log.v(TAG, "Method Stub: onNothingSelected()");
+		}
+	};
+
+	private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+
 		}
 	};
 

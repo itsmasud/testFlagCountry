@@ -20,7 +20,7 @@
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/work_performed" />
+        android:text="@string/work_performed_colon" />
 
     <LinearLayout
         android:id="@+id/worklog_linearlayout"

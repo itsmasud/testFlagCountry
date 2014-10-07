@@ -30,7 +30,7 @@ public class Pay {
 	private Double _expenses;
 	@Json(name = "payRateBasis")
 	private String _payRateBasis;
-	@Json(name="description")
+	@Json(name = "description")
 	private String _description;
 	@Json(name = "blendedAdditionalRate")
 	private Double _blendedAdditionalRate;
@@ -86,7 +86,7 @@ public class Pay {
 		return _payRateBasis;
 	}
 
-	public String getDescription(){
+	public String getDescription() {
 		return _description;
 	}
 
@@ -155,6 +155,22 @@ public class Pay {
 			return misc.toCurrency(getPerDevice());
 		}
 		return null;
+	}
+
+	public boolean isFixedRate() {
+		return "Fixed".equals(getPayRateBasis());
+	}
+
+	public boolean isHourlyRate() {
+		return "Hourly".equals(getPayRateBasis());
+	}
+
+	public boolean isBlendedRate() {
+		return "Blended".equals(getPayRateBasis());
+	}
+
+	public boolean isPerDeviceRate() {
+		return "Per Device".equals(getPayRateBasis());
 	}
 
 }

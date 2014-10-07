@@ -1,9 +1,12 @@
-package com.fieldnation.ui;
+package com.fieldnation.ui.dialog;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import com.fieldnation.ui.AppPickerAdapter;
+import com.fieldnation.ui.AppPickerPackage;
 
 import android.app.Activity;
 import android.app.AlertDialog;

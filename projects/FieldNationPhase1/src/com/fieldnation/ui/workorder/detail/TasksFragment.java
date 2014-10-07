@@ -14,6 +14,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.SignatureActivity;
+import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.misc;
 
