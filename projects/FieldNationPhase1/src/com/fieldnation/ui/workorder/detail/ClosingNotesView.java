@@ -79,6 +79,10 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 			setLoading(true);
 			_gs.startService(_service.closingNotes(WEB_SAVE_NOTES, _workorder.getWorkorderId(), message));
 		}
+
+		@Override
+		public void onCancel() {
+		}
 	};
 	private View.OnClickListener _notes_onClick = new View.OnClickListener() {
 		@Override

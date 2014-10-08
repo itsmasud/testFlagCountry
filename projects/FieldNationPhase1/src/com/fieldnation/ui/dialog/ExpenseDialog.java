@@ -9,6 +9,7 @@ import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,14 +18,19 @@ import android.widget.TextView;
 
 public class ExpenseDialog extends Dialog {
 	private static String TAG = "ui.ExpenseDialog";
+
+	// Ui
 	private Button _okButton;
 	private Button _cancelButton;
 	private EditText _amountEditText;
 	private EditText _descriptionEditText;
 	private Spinner _categorySpinner;
+
+	// Data
 	private Listener _listener;
 	private ExpenseCategory[] _categories;
 	private ArrayAdapter<ExpenseCategory> _adapter;
+	private InputMethodManager _imm;
 
 	public ExpenseDialog(Context context) {
 		super(context);
@@ -33,21 +39,21 @@ public class ExpenseDialog extends Dialog {
 		_okButton = (Button) findViewById(R.id.ok_button);
 		_okButton.setOnClickListener(_okButton_onClick);
 		_amountEditText = (EditText) findViewById(R.id.amount_edittext);
+		_amountEditText.setOnEditorActionListener(_oneditor_listener);
 		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
-		_descriptionEditText.setOnEditorActionListener(_oneditor_listener);
 		_categorySpinner = (Spinner) findViewById(R.id.category_spinner);
 		_cancelButton = (Button) findViewById(R.id.cancel_button);
 		_cancelButton.setOnClickListener(_cancelButton_onClick);
 		ExpenseCategories.getInstance(getContext()).setListener(_categoriesListener);
 		setTitle("Add Expense");
+
+		_imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
 
-	public void show(String title, String description, double amount, Listener listener) {
+	public void show(String title, Listener listener) {
 		_listener = listener;
 
 		setTitle(title);
-		_amountEditText.setText(amount + "");
-		_descriptionEditText.setText(description);
 		show();
 	}
 
@@ -89,8 +95,8 @@ public class ExpenseDialog extends Dialog {
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean handled = false;
-			if (actionId == EditorInfo.IME_ACTION_DONE) {
-				_okButton_onClick.onClick(null);
+			if (actionId == EditorInfo.IME_ACTION_NEXT) {
+				_imm.hideSoftInputFromWindow(_amountEditText.getWindowToken(), 0);
 				handled = true;
 			}
 			return handled;
@@ -107,5 +113,7 @@ public class ExpenseDialog extends Dialog {
 
 	public interface Listener {
 		public void onOk(String description, double amount, ExpenseCategory category);
+
+		public void onCancel();
 	}
 }

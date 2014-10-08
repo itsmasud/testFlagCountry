@@ -16,10 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.ScheduleDialog;
 import com.fieldnation.utils.ISO8601;
@@ -72,6 +74,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 	private PayDialog _payDialog;
 	private ScheduleDialog _scheduleDialog;
+	private ExpenseDialog _expenseDialog;
 
 	// Data
 	private Workorder _workorder;
@@ -129,6 +132,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		_payDialog = new PayDialog(this);
 		_scheduleDialog = new ScheduleDialog(this);
+		_expenseDialog = new ExpenseDialog(this);
 
 		if (savedInstanceState != null) {
 			if (savedInstanceState.containsKey(INTENT_WORKORDER)) {
@@ -164,6 +168,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 		Pay pay = _workorder.getPay();
 		// pay section
 		_basisOldTextView.setText(pay.getPayRateBasis());
+		_labelMaxHoursTextView.setText(R.string.max_hours);
+		_labelHourlyRateTextView.setText(R.string.hourly_rate);
 
 		// fixed rate
 		if (pay.isFixedRate()) {
@@ -172,27 +178,27 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getFixedAmount()));
 			_maxOldTextView.setText(" ");
-
-		} else {
-			_labelMaxHoursTextView.setText(R.string.max_hours);
-			_labelHourlyRateTextView.setText(R.string.hourly_rate);
 		}
 
 		// blended
 		if (pay.isBlendedRate()) {
-			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedStartRate()) + " - " + pay.getBlendedFirstHours() + " Hours");
 
+			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedStartRate()) + " - " + pay.getBlendedFirstHours() + " Hours");
 			_maxOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedAdditionalRate()) + " - " + pay.getBlendedAdditionalHours() + " Hours");
 		}
 
 		// hourly
 		if (pay.isHourlyRate()) {
-
+			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getPerHour()) + " per hour");
+			_maxOldTextView.setText(pay.getMaxHour() + " Hours Max");
 		}
 
 		// per device
 		if (pay.isPerDeviceRate()) {
-
+			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getPerDevice()) + " per device");
+			_maxOldTextView.setText(pay.getMaxDevice() + " Devices Max");
+			_labelMaxHoursTextView.setText("Device Rate");
+			_labelHourlyRateTextView.setText("Max Devices");
 		}
 
 		// schedule
@@ -269,29 +275,97 @@ public class CounterOfferActivity extends ActionBarActivity {
 	/*-*****************************-*/
 	/*-			UI Events			-*/
 	/*-*****************************-*/
+	private PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+		@Override
+		public void onPerDevices(double rate, double max) {
+			// TODO Method Stub: onPerDevices()
+			Log.v(TAG, "Method Stub: onPerDevices()");
+		}
+
+		@Override
+		public void onNothing() {
+			// TODO Method Stub: onNothing()
+			Log.v(TAG, "Method Stub: onNothing()");
+		}
+
+		@Override
+		public void onHourly(double rate, double max) {
+			// TODO Method Stub: onHourly()
+			Log.v(TAG, "Method Stub: onHourly()");
+		}
+
+		@Override
+		public void onFixed(double amount) {
+			// TODO Method Stub: onFixed()
+			Log.v(TAG, "Method Stub: onFixed()");
+		}
+
+		@Override
+		public void onBlended(double rate, double max, double rate2, double max2) {
+			// TODO Method Stub: onBlended()
+			Log.v(TAG, "Method Stub: onBlended()");
+		}
+	};
+
+	private ScheduleDialog.Listener _schedule_listener = new ScheduleDialog.Listener() {
+
+		@Override
+		public void onRange(String startDateTime, String endDateTime) {
+			// TODO Method Stub: onRange()
+			Log.v(TAG, "Method Stub: onRange()");
+
+		}
+
+		@Override
+		public void onExact(String startDateTime) {
+			// TODO Method Stub: onExact()
+			Log.v(TAG, "Method Stub: onExact()");
+
+		}
+
+		@Override
+		public void onCancel() {
+			// TODO Method Stub: onCancel()
+			Log.v(TAG, "Method Stub: onCancel()");
+
+		}
+	};
+
+	private ExpenseDialog.Listener _expense_listener = new ExpenseDialog.Listener() {
+
+		@Override
+		public void onOk(String description, double amount, ExpenseCategory category) {
+			// TODO Method Stub: onOk()
+			Log.v(TAG, "Method Stub: onOk()");
+
+		}
+
+		@Override
+		public void onCancel() {
+			// TODO Method Stub: onCancel()
+			Log.v(TAG, "Method Stub: onCancel()");
+
+		}
+	};
+
 	private View.OnClickListener _editPaymentLayout_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_payDialog.show();
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			_payDialog.show(_workorder.getPay(), _payDialog_listener);
 		}
 	};
 
 	private View.OnClickListener _editScheduleLayout_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_scheduleDialog.show();
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			_scheduleDialog.show(getSupportFragmentManager(), _workorder.getSchedule(), _schedule_listener);
 		}
 	};
 
 	private View.OnClickListener _addExpenseLayout_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			_expenseDialog.show("Add Additional Expense", _expense_listener);
 		}
 	};
 

@@ -275,7 +275,6 @@ public class TasksFragment extends WorkorderFragment {
 				// TODO send to shipment section
 				break;
 			case SIGNATURE: {
-				// TODO bring up signature library
 				_currentTask = task;
 				Intent intent = new Intent(getActivity(), SignatureActivity.class);
 				try {
@@ -318,6 +317,10 @@ public class TasksFragment extends WorkorderFragment {
 		@Override
 		public void onOk(String message) {
 			getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+		}
+
+		@Override
+		public void onCancel() {
 		}
 	};
 

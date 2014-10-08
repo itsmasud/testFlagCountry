@@ -122,7 +122,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_expenseDialog.show("Add Expense", "", 0.0, _addExpense_listener);
+			_expenseDialog.show("Add Expense", _addExpense_listener);
 		}
 	};
 
@@ -131,6 +131,12 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		public void onOk(String description, double amount, ExpenseCategory category) {
 			getContext().startService(
 					_service.addExpense(RESULT_ADD_EXPENSE, _workorder.getWorkorderId(), description, amount, category));
+		}
+
+		@Override
+		public void onCancel() {
+			// TODO Method Stub: onCancel()
+			Log.v(TAG, "Method Stub: onCancel()");
 		}
 	};
 
@@ -146,7 +152,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_discountDialog.show("Add Discount", "", 0.0, _addDiscount_listener);
+			_discountDialog.show("Add Discount", _addDiscount_listener);
 		}
 	};
 
@@ -155,6 +161,10 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		public void onOk(String description, double amount) {
 			getContext().startService(
 					_service.addDiscount(RESULT_ADD_DISCOUNT, _workorder.getWorkorderId(), amount, description));
+		}
+
+		@Override
+		public void onCacnel() {
 		}
 	};
 

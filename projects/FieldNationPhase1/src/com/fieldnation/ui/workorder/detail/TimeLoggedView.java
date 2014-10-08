@@ -1,5 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
+import java.util.Calendar;
+
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
@@ -10,6 +12,7 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -28,6 +31,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
 	// Data
 	private Workorder _workorder;
+	private FragmentManager _fm;
 
 	public TimeLoggedView(Context context) {
 		super(context);
@@ -55,11 +59,11 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 		_addLogLinearLayout = (LinearLayout) findViewById(R.id.addlog_linearlayout);
 		_addLogLinearLayout.setOnClickListener(_addLog_onClick);
 
+		_dialog = new WorkLogDialog(getContext());
 	}
 
-	public void setFragmentManager(FragmentManager _fm) {
-		_dialog = new WorkLogDialog(getContext());
-		_dialog.setFragmentManager(_fm);
+	public void setFragmentManager(FragmentManager fm) {
+		_fm = fm;
 	}
 
 	@Override
@@ -92,7 +96,22 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 	private View.OnClickListener _addLog_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_dialog.show();
+			_dialog.show(_fm, "Add Worklog", false, false, _worklogdialog_listener);
+		}
+	};
+
+	private WorkLogDialog.Listener _worklogdialog_listener = new WorkLogDialog.Listener() {
+
+		@Override
+		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime) {
+			// TODO Method Stub: onOk()
+			Log.v(TAG, "Method Stub: onOk()");
+		}
+
+		@Override
+		public void onCancel() {
+			// TODO Method Stub: onCancel()
+			Log.v(TAG, "Method Stub: onCancel()");
 		}
 	};
 }

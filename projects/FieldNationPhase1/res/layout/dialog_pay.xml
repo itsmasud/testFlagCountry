@@ -14,7 +14,8 @@
     <Spinner
         android:id="@+id/type_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp" />
 
     <!-- fixed pay -->
 
@@ -36,7 +37,8 @@
             android:id="@+id/fixed_edittext"
             style="@style/EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
     </LinearLayout>
 
     <!-- hourly -->
@@ -60,6 +62,7 @@
             style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
             android:minEms="4" />
 
         <TextView
@@ -72,7 +75,8 @@
             android:id="@+id/maxhours_edittext"
             style="@style/EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
     </LinearLayout>
 
     <!-- per device -->
@@ -94,7 +98,8 @@
             android:id="@+id/devicerate_edittext"
             style="@style/EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
 
         <TextView
             style="@style/WorkorderDetail_FieldSubTitle"
@@ -106,7 +111,8 @@
             android:id="@+id/maxdevices_edittext"
             style="@style/EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
     </LinearLayout>
 
     <!-- blended -->
@@ -134,7 +140,8 @@
                 style="@style/EditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:inputType="numberDecimal" />
 
             <TextView
                 style="@style/WorkorderDetail_Field"
@@ -149,7 +156,8 @@
                 style="@style/EditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:inputType="numberDecimal" />
         </LinearLayout>
 
         <TextView
@@ -168,7 +176,8 @@
                 style="@style/EditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:inputType="numberDecimal" />
 
             <TextView
                 style="@style/WorkorderDetail_Field"
@@ -183,7 +192,8 @@
                 style="@style/EditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:inputType="numberDecimal" />
         </LinearLayout>
     </LinearLayout>
 

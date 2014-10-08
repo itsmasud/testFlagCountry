@@ -88,6 +88,10 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId);
 			}
 		}
+
+		@Override
+		public void onCancel() {
+		}
 	};
 
 	public interface Listener {

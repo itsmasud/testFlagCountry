@@ -217,7 +217,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 					objects = new JsonArray(data);
 				} catch (Exception ex) {
 					WEB_REQUEST_UPDATE = -Math.abs(_rand.nextInt());
-					executeWebService(WEB_REQUEST_UPDATE, _nextPage, _allowCache);
+					executeWebService(WEB_REQUEST_UPDATE, --_nextPage, _allowCache);
 					notifyDataSetChanged();
 					return;
 				}

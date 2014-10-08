@@ -4,6 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
+    <TextView
+        style="@style/WorkorderDetail_FieldSubTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Closing Notes:" />
+
     <EditText
         android:id="@+id/notes_edittext"
         style="@style/EditText"
@@ -12,18 +18,38 @@
         android:layout_margin="5dp"
         android:gravity="top"
         android:hint="@string/enter_closing_notes_here"
+        android:imeOptions="actionDone"
         android:minLines="4"
         android:padding="5dp"
         android:selectAllOnFocus="true" />
 
-    <Button
-        android:id="@+id/save_button"
-        style="@style/ButtonOrange"
-        android:layout_width="96dp"
-        android:layout_gravity="right"
-        android:layout_margin="5dp"
-        android:gravity="center"
-        android:text="@string/save"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="@style/ButtonWhite"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_gravity="right"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/ok_button"
+            style="@style/ButtonWhite"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_gravity="right"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:text="@string/save" />
+    </LinearLayout>
 
 </LinearLayout>

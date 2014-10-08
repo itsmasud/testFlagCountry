@@ -11,6 +11,7 @@ import eu.erikw.PullToRefreshListView.State;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,18 +69,20 @@ public class WorkorderListFragment extends Fragment {
 			}
 
 			if (savedInstanceState.containsKey("WORKORDERS")) {
-				Workorder[] works = (Workorder[]) savedInstanceState.getParcelableArray("WORKORDERS");
+				Parcelable[] works = savedInstanceState.getParcelableArray("WORKORDERS");
 
-				List<Workorder> work = new LinkedList<Workorder>();
-				for (int i = 0; i < works.length; i++) {
-					work.add(works[i]);
-				}
-				try {
-					_adapter = new WorkorderListAdapter(this.getActivity(), _displayView, work);
-					_adapter.setLoadingListener(_workorderAdapter_listener);
-					_loadingBar.setVisibility(View.GONE);
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
+				if (works != null && works.length > 0) {
+					List<Workorder> work = new LinkedList<Workorder>();
+					for (int i = 0; i < works.length; i++) {
+						work.add((Workorder) works[i]);
+					}
+					try {
+						_adapter = new WorkorderListAdapter(this.getActivity(), _displayView, work);
+						_adapter.setLoadingListener(_workorderAdapter_listener);
+						_loadingBar.setVisibility(View.GONE);
+					} catch (NoSuchMethodException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -122,15 +125,15 @@ public class WorkorderListFragment extends Fragment {
 		super.onPause();
 	}
 
-//	@Override
-//	public void onStop() {
-//		Log.v(TAG, "Method Stub: onStop()");
-//		super.onStop();
-//		if (getAdapter() != null) {
-//			getAdapter().onStop();
-//			_adapter = null;
-//		}
-//	}
+	// @Override
+	// public void onStop() {
+	// Log.v(TAG, "Method Stub: onStop()");
+	// super.onStop();
+	// if (getAdapter() != null) {
+	// getAdapter().onStop();
+	// _adapter = null;
+	// }
+	// }
 
 	/*-*********************************-*/
 	/*-				Events				-*/

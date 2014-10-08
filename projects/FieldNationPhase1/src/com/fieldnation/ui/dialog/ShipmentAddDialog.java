@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,7 +26,9 @@ public class ShipmentAddDialog extends Dialog {
 	private EditText _carrierEditText;
 	private EditText _descriptionEditText;
 	private RadioButton _shipToSiteRadio;
-	private Button _addButton;
+	private Button _okButton;
+	private Button _cancelButton;
+	private LinearLayout _carrierNameLayout;
 
 	// Data
 	private Listener _listener;
@@ -48,16 +51,29 @@ public class ShipmentAddDialog extends Dialog {
 		_carrierAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		_carrierSpinner.setAdapter(_carrierAdapter);
 
+		_carrierNameLayout = (LinearLayout) findViewById(R.id.carriername_layout);
 		_carrierEditText = (EditText) findViewById(R.id.carrier_edittext);
 		_carrierEditText.setOnEditorActionListener(_onEditor);
-		_carrierEditText.setVisibility(View.GONE);
 		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
 		_descriptionEditText.setOnEditorActionListener(_onEditor);
 		_shipToSiteRadio = (RadioButton) findViewById(R.id.shiptosite_radio);
 
-		_addButton = (Button) findViewById(R.id.add_button);
-		_addButton.setOnClickListener(_addButton_onClick);
+		_okButton = (Button) findViewById(R.id.ok_button);
+		_okButton.setOnClickListener(_okButton_onClick);
 
+		_cancelButton = (Button) findViewById(R.id.cancel_button);
+		_cancelButton.setOnClickListener(_cancel_onClick);
+
+	}
+
+	public void show(int titleResId, Listener listener) {
+		show(getContext().getText(titleResId), listener);
+	}
+
+	public void show(CharSequence title, Listener listener) {
+		_listener = listener;
+		setTitle(title);
+		show();
 	}
 
 	/*-*********************************-*/
@@ -70,7 +86,7 @@ public class ShipmentAddDialog extends Dialog {
 
 			if (actionId == EditorInfo.IME_ACTION_NEXT) {
 				if (v == _trackingIdEditText) {
-					if (_carrierEditText.getVisibility() == View.VISIBLE) {
+					if (_carrierNameLayout.getVisibility() == View.VISIBLE) {
 						_carrierEditText.requestFocus();
 						handled = true;
 					} else {
@@ -82,7 +98,7 @@ public class ShipmentAddDialog extends Dialog {
 					handled = true;
 				}
 			} else if (actionId == EditorInfo.IME_ACTION_DONE) {
-				_addButton_onClick.onClick(null);
+				_okButton_onClick.onClick(null);
 				handled = true;
 			}
 
@@ -94,9 +110,9 @@ public class ShipmentAddDialog extends Dialog {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 			if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
-				_carrierEditText.setVisibility(View.VISIBLE);
+				_carrierNameLayout.setVisibility(View.VISIBLE);
 			} else {
-				_carrierEditText.setVisibility(View.GONE);
+				_carrierNameLayout.setVisibility(View.GONE);
 			}
 		}
 
@@ -105,7 +121,7 @@ public class ShipmentAddDialog extends Dialog {
 		}
 	};
 
-	private View.OnClickListener _addButton_onClick = new View.OnClickListener() {
+	private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			// TODO validate input
@@ -123,18 +139,17 @@ public class ShipmentAddDialog extends Dialog {
 		}
 	};
 
-	public void show(int titleResId, Listener listener) {
-		show(getContext().getText(titleResId), listener);
-	}
-
-	public void show(CharSequence title, Listener listener) {
-		_listener = listener;
-		setTitle(title);
-		show();
-	}
+	private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			dismiss();
+		}
+	};
 
 	public interface Listener {
 		public void onOk(String trackingId, String carrier, String description, boolean shipToSite);
+
+		public void onCancel();
 	}
 
 }

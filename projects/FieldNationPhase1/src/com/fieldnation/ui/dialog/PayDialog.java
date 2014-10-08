@@ -1,6 +1,7 @@
 package com.fieldnation.ui.dialog;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Pay;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -15,6 +16,12 @@ import android.widget.Spinner;
 
 public class PayDialog extends Dialog {
 	private static String TAG = "ui.payment.PayDialog";
+
+	// Modes
+	private static final int MODE_FIXED = 0;
+	private static final int MODE_HOURLY = 1;
+	private static final int MODE_PER_DEVICE = 2;
+	private static final int MODE_BLENDED = 3;
 
 	// UI
 	private Spinner _typeSpinner;
@@ -40,6 +47,9 @@ public class PayDialog extends Dialog {
 	private Button _cancelButton;
 
 	// Data
+	private Pay _pay;
+	private Listener _listener;
+	private int _mode = MODE_FIXED;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -86,9 +96,12 @@ public class PayDialog extends Dialog {
 		_cancelButton.setOnClickListener(_cancel_onClick);
 	}
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+	public void show(Pay pay, Listener listener) {
+		_listener = listener;
+		_pay = pay;
+		populateUi();
+		super.show();
+	}
 
 	private void clearUi() {
 		_fixedLayout.setVisibility(View.GONE);
@@ -97,24 +110,55 @@ public class PayDialog extends Dialog {
 		_blendedLayout.setVisibility(View.GONE);
 	}
 
+	private void setMode(int mode) {
+		_typeSpinner.setSelection(mode);
+		clearUi();
+		_mode = mode;
+		switch (mode) {
+		case MODE_FIXED:
+			_fixedLayout.setVisibility(View.VISIBLE);
+			break;
+		case MODE_HOURLY:
+			_hourlyLayout.setVisibility(View.VISIBLE);
+			break;
+		case MODE_PER_DEVICE:
+			_devicesLayout.setVisibility(View.VISIBLE);
+			break;
+		case MODE_BLENDED:
+			_blendedLayout.setVisibility(View.VISIBLE);
+			break;
+		}
+	}
+
+	private void populateUi() {
+		if (_pay.isBlendedRate()) {
+			setMode(MODE_BLENDED);
+			_blendedHourlyEditText.setText(_pay.getBlendedFirstHours() + "");
+			_blendedMaxHoursEditText.setText(_pay.getBlendedAdditionalRate() + "");
+			_extraHourlyEditText.setText(_pay.getBlendedAdditionalHours() + "");
+			_extraMaxHoursEditText.setText(_pay.getBlendedAdditionalHours() + "");
+		} else if (_pay.isFixedRate()) {
+			setMode(MODE_FIXED);
+			_fixedEditText.setText(_pay.getFixedAmount() + "");
+		} else if (_pay.isHourlyRate()) {
+			setMode(MODE_HOURLY);
+			_hourlyRateEditText.setText(_pay.getPerHour() + "");
+			_maxHoursEditText.setText(_pay.getMaxHour() + "");
+		} else if (_pay.isPerDeviceRate()) {
+			setMode(MODE_PER_DEVICE);
+			_deviceRateEditText.setText(_pay.getPerDevice() + "");
+			_maxDevicesEditText.setText(_pay.getMaxDevice() + "");
+		}
+	}
+
+	/*-*********************************-*/
+	/*-				Events				-*/
+	/*-*********************************-*/
+
 	private AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			clearUi();
-			switch (position) {
-			case 0:
-				_fixedLayout.setVisibility(View.VISIBLE);
-				break;
-			case 1:
-				_hourlyLayout.setVisibility(View.VISIBLE);
-				break;
-			case 3:
-				_devicesLayout.setVisibility(View.VISIBLE);
-				break;
-			case 2:
-				_blendedLayout.setVisibility(View.VISIBLE);
-				break;
-			}
+			setMode(position);
 		}
 
 		@Override
@@ -125,18 +169,51 @@ public class PayDialog extends Dialog {
 	private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-
+			dismiss();
+			if (_listener != null)
+				_listener.onNothing();
 		}
 	};
 
 	private View.OnClickListener _ok_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+			dismiss();
+			if (_listener == null)
+				return;
+
+			switch (_mode) {
+			case MODE_FIXED:
+				_listener.onFixed(Double.parseDouble(_fixedEditText.getText().toString()));
+				break;
+			case MODE_HOURLY:
+				_listener.onHourly(Double.parseDouble(_hourlyRateEditText.getText().toString()),
+						Double.parseDouble(_maxHoursEditText.getText().toString()));
+				break;
+			case MODE_PER_DEVICE:
+				_listener.onPerDevices(Double.parseDouble(_deviceRateEditText.getText().toString()),
+						Double.parseDouble(_maxDevicesEditText.getText().toString()));
+				break;
+			case MODE_BLENDED:
+				_listener.onBlended(Double.parseDouble(_blendedHourlyEditText.getText().toString()),
+						Double.parseDouble(_blendedMaxHoursEditText.getText().toString()),
+						Double.parseDouble(_extraHourlyEditText.getText().toString()),
+						Double.parseDouble(_extraMaxHoursEditText.getText().toString()));
+				break;
+			}
 		}
 	};
+
+	public interface Listener {
+		public void onFixed(double amount);
+
+		public void onHourly(double rate, double max);
+
+		public void onPerDevices(double rate, double max);
+
+		public void onBlended(double rate, double max, double rate2, double max2);
+
+		public void onNothing();
+	}
 
 }

@@ -22,123 +22,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <TextView
             style="@style/WorkorderDetail_FieldSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/date_colon" />
+            android:text="@string/between_colon" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/start_date_button"
+            style="?android:attr/spinnerStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:orientation="horizontal" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <TextView
-                    style="@style/WorkorderDetail_Field_Bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical|right"
-                    android:padding="0dp"
-                    android:text="Between" />
-
-                <TextView
-                    style="@style/WorkorderDetail_Field_Bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:gravity="center_vertical|right"
-                    android:padding="0dp"
-                    android:text="and" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <Button
-                    android:id="@+id/start_date_button"
-                    style="?android:attr/spinnerStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="10dp"
-                    android:hint="March 4, 2014" />
-
-                <Button
-                    android:id="@+id/end_date_button"
-                    style="?android:attr/spinnerStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="10dp"
-                    android:hint="March 6, 2014" />
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_height="48dp"
+            android:layout_marginLeft="10dp"
+            android:hint="March 4, 2014 @ 1:00 pm" />
 
         <TextView
             style="@style/WorkorderDetail_FieldSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/time_colon" />
+            android:text="@string/and_colon" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/end_date_button"
+            style="?android:attr/spinnerStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:orientation="horizontal" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <TextView
-                    style="@style/WorkorderDetail_Field_Bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical|right"
-                    android:padding="0dp"
-                    android:text="Between" />
-
-                <TextView
-                    style="@style/WorkorderDetail_Field_Bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:gravity="center_vertical|right"
-                    android:padding="0dp"
-                    android:text="and" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <Button
-                    android:id="@+id/start_time_button"
-                    style="?android:attr/spinnerStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="10dp"
-                    android:hint="1:00 pm" />
-
-                <Button
-                    android:id="@+id/end_time_button"
-                    style="?android:attr/spinnerStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="10dp"
-                    android:hint="3:00 pm" />
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_height="48dp"
+            android:layout_marginLeft="10dp"
+            android:hint="March 6, 2014 @ 1:00 pm" />
     </LinearLayout>
 
     <LinearLayout
@@ -146,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible" >
+        android:visibility="gone" >
 
         <TextView
             style="@style/WorkorderDetail_FieldSubTitle"

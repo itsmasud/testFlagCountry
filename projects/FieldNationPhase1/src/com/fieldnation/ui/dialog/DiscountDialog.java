@@ -17,9 +17,14 @@ import android.widget.TextView;
 
 public class DiscountDialog extends Dialog {
 	private static String TAG = "ui.DiscountDialog";
+
+	// UI
 	private Button _okButton;
+	private Button _cancelButton;
 	private EditText _amountEditText;
 	private EditText _descriptionEditText;
+
+	// Data
 	private Listener _listener;
 
 	public DiscountDialog(Context context) {
@@ -28,6 +33,8 @@ public class DiscountDialog extends Dialog {
 
 		_okButton = (Button) findViewById(R.id.ok_button);
 		_okButton.setOnClickListener(_okButton_onClick);
+		_cancelButton = (Button) findViewById(R.id.cancel_button);
+		_cancelButton.setOnClickListener(_cancelButton_onClick);
 		_amountEditText = (EditText) findViewById(R.id.amount_edittext);
 		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
 		_descriptionEditText.setOnEditorActionListener(_oneditor_listener);
@@ -35,20 +42,18 @@ public class DiscountDialog extends Dialog {
 		setTitle("Add Discount");
 	}
 
-	public void show(String title, String description, double amount, Listener listener) {
+	public void show(String title, Listener listener) {
 		_listener = listener;
 
 		setTitle(title);
-		_amountEditText.setText(amount + "");
-		_descriptionEditText.setText(description);
 		show();
 	}
 
-	public String getDescription() {
+	private String getDescription() {
 		return _descriptionEditText.getText().toString();
 	}
 
-	public Double getAmount() {
+	private Double getAmount() {
 		return Double.parseDouble(_amountEditText.getText().toString());
 	}
 
@@ -72,12 +77,24 @@ public class DiscountDialog extends Dialog {
 	private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_listener.onOk(getDescription(), getAmount());
 			DiscountDialog.this.dismiss();
+			if (_listener != null)
+				_listener.onOk(getDescription(), getAmount());
+		}
+	};
+
+	private View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			dismiss();
+			if (_listener != null)
+				_listener.onCacnel();
 		}
 	};
 
 	public interface Listener {
 		public void onOk(String description, double amount);
+
+		public void onCacnel();
 	}
 }

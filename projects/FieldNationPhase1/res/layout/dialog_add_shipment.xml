@@ -35,13 +35,33 @@
             android:text="@string/carrier" />
     </RelativeLayout>
 
-    <EditText
-        android:id="@+id/carrier_edittext"
-        style="@style/EditText"
+    <LinearLayout
+        android:id="@+id/carriername_layout"
         android:layout_width="match_parent"
-        android:hint="@string/carrier_name"
-        android:imeOptions="actionNext"
-        android:inputType="text" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            style="@style/WorkorderDetail_FieldSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Carrier Name:" />
+
+        <EditText
+            android:id="@+id/carrier_edittext"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:hint="@string/carrier_name"
+            android:imeOptions="actionNext"
+            android:inputType="text" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/WorkorderDetail_FieldSubTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description:" />
 
     <EditText
         android:id="@+id/description_edittext"
@@ -72,10 +92,33 @@
             android:text="@string/shipping_to_site" />
     </RadioGroup>
 
-    <Button
-        android:id="@+id/add_button"
-        style="@style/ButtonOrange"
-        android:layout_gravity="right"
-        android:text="@string/done" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="@style/ButtonWhite"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_gravity="right"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/ok_button"
+            style="@style/ButtonWhite"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_gravity="right"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:text="@string/save" />
+    </LinearLayout>
 
 </LinearLayout>

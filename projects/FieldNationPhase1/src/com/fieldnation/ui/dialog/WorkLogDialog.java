@@ -26,6 +26,7 @@ public class WorkLogDialog extends Dialog {
 	private RadioGroup _radioLayout;
 	private RadioButton _onsiteRadioButton;
 	private Button _okButton;
+	private Button _cancelButton;
 	private DatePickerDialog _datePicker;
 	private TimePickerDialog _timePicker;
 
@@ -53,6 +54,8 @@ public class WorkLogDialog extends Dialog {
 		_onsiteRadioButton = (RadioButton) findViewById(R.id.onsite_radio);
 		_okButton = (Button) findViewById(R.id.ok_button);
 		_okButton.setOnClickListener(_ok_onClick);
+		_cancelButton = (Button) findViewById(R.id.cancel_button);
+		_cancelButton.setOnClickListener(_cancel_onClick);
 
 		final Calendar c = Calendar.getInstance();
 		_datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
@@ -65,8 +68,33 @@ public class WorkLogDialog extends Dialog {
 		_endCalendar = Calendar.getInstance();
 	}
 
-	public void setFragmentManager(FragmentManager fm) {
+	public void show(FragmentManager fm, int titleResId, boolean showDeviceCount, boolean showWorkType,
+			Listener listener) {
+		show(fm, getContext().getText(titleResId), showDeviceCount, showWorkType, listener);
+	}
+
+	public void show(FragmentManager fm, CharSequence title, boolean showDeviceCount, boolean showWorkType,
+			Listener listener) {
+		_startIsSet = false;
+		_endIsSet = false;
+		_listener = listener;
 		_fm = fm;
+
+		setTitle(title);
+
+		if (showDeviceCount) {
+			_devicesEditText.setVisibility(View.VISIBLE);
+		} else {
+			_devicesEditText.setVisibility(View.GONE);
+		}
+
+		if (showWorkType) {
+			_radioLayout.setVisibility(View.VISIBLE);
+		} else {
+			_radioLayout.setVisibility(View.GONE);
+		}
+
+		show();
 	}
 
 	/*-*********************************-*/
@@ -125,6 +153,7 @@ public class WorkLogDialog extends Dialog {
 		@Override
 		public void onClick(View v) {
 			if (_startIsSet && _endIsSet) {
+				WorkLogDialog.this.dismiss();
 				if (_listener != null) {
 					int deviceCount = 0;
 					try {
@@ -135,39 +164,21 @@ public class WorkLogDialog extends Dialog {
 
 					_listener.onOk(_startCalendar, _endCalendar, deviceCount, isOnSiteTime);
 				}
-
-				WorkLogDialog.this.dismiss();
 			}
 		}
 	};
-
-	public void show(int titleResId, boolean showDeviceCount, boolean showWorkType, Listener listener) {
-		show(getContext().getText(titleResId), showDeviceCount, showWorkType, listener);
-	}
-
-	public void show(CharSequence title, boolean showDeviceCount, boolean showWorkType, Listener listener) {
-		_startIsSet = false;
-		_endIsSet = false;
-		_listener = listener;
-
-		setTitle(title);
-
-		if (showDeviceCount) {
-			_devicesEditText.setVisibility(View.VISIBLE);
-		} else {
-			_devicesEditText.setVisibility(View.GONE);
+	private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			dismiss();
+			if (_listener != null)
+				_listener.onCancel();
 		}
-
-		if (showWorkType) {
-			_radioLayout.setVisibility(View.VISIBLE);
-		} else {
-			_radioLayout.setVisibility(View.GONE);
-		}
-
-		show();
-	}
+	};
 
 	public interface Listener {
 		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime);
+
+		public void onCancel();
 	}
 }
