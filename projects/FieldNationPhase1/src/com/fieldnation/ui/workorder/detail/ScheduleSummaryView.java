@@ -83,7 +83,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 				dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
 				time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
 
-				_arriveTimeTextView.setText("You will need to arrive exactly on " + dayDate + " at exactly " + time + ".");
+				_arriveTimeTextView.setText("You will need to arrive exactly on " + dayDate + " at " + time + ".");
 
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block

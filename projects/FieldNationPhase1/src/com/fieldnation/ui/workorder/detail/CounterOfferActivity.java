@@ -27,6 +27,7 @@ import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.ScheduleDialog;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 public class CounterOfferActivity extends ActionBarActivity {
 	private static final String TAG = "ui.workorder.detail.CounterOfferActivity";
@@ -387,7 +388,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 		}
 	};
 
-	private View.OnClickListener _offerTimeButton_onClick = new View.OnClickListener() {
+	private View.OnClickListener _sendButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			// TODO Method Stub: onClick()
@@ -403,11 +404,12 @@ public class CounterOfferActivity extends ActionBarActivity {
 		}
 	};
 
-	private View.OnClickListener _sendButton_onClick = new View.OnClickListener() {
+	private View.OnClickListener _offerTimeButton_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			// TODO Method Stub: onClick()
 			Log.v(TAG, "Method Stub: onClick()");
 		}
 	};
+
 }
