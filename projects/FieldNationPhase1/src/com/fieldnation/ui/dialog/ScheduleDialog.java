@@ -24,8 +24,8 @@ public class ScheduleDialog extends Dialog {
 	private static final String TAG = "ui.workorder.detail.ScheduleDialog";
 
 	// Modes
-	private static final int MODE_EXACT = 1;
 	private static final int MODE_RANGE = 0;
+	private static final int MODE_EXACT = 1;
 
 	// UI
 	private Spinner _typeSpinner;
@@ -123,6 +123,8 @@ public class ScheduleDialog extends Dialog {
 
 	private void setMode(int mode) {
 		_mode = mode;
+
+		_typeSpinner.setSelection(_mode);
 
 		switch (_mode) {
 		case MODE_EXACT:

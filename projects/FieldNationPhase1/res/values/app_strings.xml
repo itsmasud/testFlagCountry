@@ -222,8 +222,8 @@
         <item>Blended</item>
     </string-array>
     <string-array name="schedule_types">
-        <item>Exact</item>
         <item>Range</item>
+        <item>Exact</item>
     </string-array>
 
     <!-- workorder status list -->

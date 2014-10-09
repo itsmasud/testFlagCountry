@@ -353,14 +353,6 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	// tasks
 	public Intent completeSignatureTask(int resultCode, long workorderId, long taskId, String arrivalTime,
 			String departureTime, String printName, byte[] signatureJson) {
-		// Map<String, String> map = new HashMap<String, String>();
-		// map.put("arrival_time", arrivalTime);
-		// map.put("departure_time", departureTime);
-		// map.put("print_name", printName);
-		// return httpPostFile(resultCode, "api/rest/v1/workorder/" +
-		// workorderId + "/tasks/complete/" + taskId, null,
-		// "signature_json", "signature_json", signatureJson, map,
-		// "application/json", notificationIntent);
 		return httpPost(
 				resultCode,
 				"api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId,
@@ -370,9 +362,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				(new String(signatureJson)), "application/x-www-form-urlencoded", false);
 
 	}
-	
+
 	public Intent completeCallTask(int resultCode, long workorderId, long taskId, boolean allowCache) {
-		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId, null,
-				"", "application/x-www-form-urlencoded", false);
+		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId, null, "",
+				"application/x-www-form-urlencoded", false);
 	}
 }

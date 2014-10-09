@@ -22,11 +22,13 @@ public class ExpenseView extends LinearLayout {
 	private TextView _categoryTextView;
 	private TextView _costTextView;
 	private ImageButton _deleteImageButton;
+	private TextView _indexTextView;
 
 	// Data
 	private Listener _listener;
 	private AdditionalExpense _expense = null;
 	private ExpenseCategory[] _categories;
+	private int _index;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -52,6 +54,7 @@ public class ExpenseView extends LinearLayout {
 		_costTextView = (TextView) findViewById(R.id.cost_textview);
 		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 		_deleteImageButton.setOnClickListener(_delete_onClick);
+		_indexTextView = (TextView) findViewById(R.id.index_textview);
 
 		ExpenseCategories categories = ExpenseCategories.getInstance(getContext());
 		categories.setListener(_categoriesListener);
@@ -78,14 +81,17 @@ public class ExpenseView extends LinearLayout {
 	/*-*************************************-*/
 	/*-				Mutators				-*/
 	/*-*************************************-*/
-	public void setAdditionalExpense(AdditionalExpense expense) {
+	public void setAdditionalExpense(AdditionalExpense expense, int index) {
 		_expense = expense;
+		_index = index;
 		refresh();
 	}
 
 	private void refresh() {
 		if (_expense == null)
 			return;
+
+		_indexTextView.setText("Expense " + _index + ":");
 
 		_descriptionTextView.setText(_expense.getDescription());
 		// TODO need to map the ID to a real string
@@ -98,7 +104,7 @@ public class ExpenseView extends LinearLayout {
 				}
 			}
 		}
-		// TODO, need to get quantity and priceper item numbers
+		// TODO, need to get quantity and price per item numbers
 		_costTextView.setText(misc.toCurrency(_expense.getPrice()));
 	}
 

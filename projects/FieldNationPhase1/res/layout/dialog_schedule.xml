@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible" >
+        android:visibility="gone" >
 
         <TextView
             style="@style/WorkorderDetail_FieldSubTitle"
@@ -33,7 +33,7 @@
         <Button
             android:id="@+id/start_date_button"
             style="?android:attr/spinnerStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginLeft="10dp"
             android:hint="March 4, 2014 @ 1:00 pm" />
@@ -47,7 +47,7 @@
         <Button
             android:id="@+id/end_date_button"
             style="?android:attr/spinnerStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginLeft="10dp"
             android:hint="March 6, 2014 @ 1:00 pm" />
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <TextView
             style="@style/WorkorderDetail_FieldSubTitle"
@@ -69,7 +69,7 @@
         <Button
             android:id="@+id/date_time_button"
             style="?android:attr/spinnerStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginLeft="10dp"
             android:hint="March 4, 2014 @ 1:00 pm" />

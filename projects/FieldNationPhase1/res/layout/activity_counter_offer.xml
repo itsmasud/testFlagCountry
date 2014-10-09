@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/fn_gray" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -335,7 +336,7 @@
             <Button
                 android:id="@+id/offer_time_button"
                 style="?android:attr/spinnerStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="40dp"
                 android:hint="1hr 30mins" />

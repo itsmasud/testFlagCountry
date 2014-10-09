@@ -55,7 +55,7 @@ public class WorkorderActivity extends BaseActivity {
 	private ViewPager _viewPager;
 	private WorkorderFragment[] _fragments;
 	private WorkorderTabView _tabview;
-	// private RelativeLayout _loadingLayout;
+	private RelativeLayout _loadingLayout;
 
 	// Data
 	private GlobalState _gs;
@@ -139,7 +139,7 @@ public class WorkorderActivity extends BaseActivity {
 			_created = true;
 		}
 
-		// _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 		setLoading(true);
 	}
 
@@ -311,13 +311,13 @@ public class WorkorderActivity extends BaseActivity {
 	/*-				Util				-*/
 	/*-*********************************-*/
 	private void setLoading(boolean loading) {
-		// if (loading) {
-		// _loadingLayout.setVisibility(View.VISIBLE);
-		// _viewPager.setVisibility(View.GONE);
-		// } else {
-		// _loadingLayout.setVisibility(View.GONE);
-		// _viewPager.setVisibility(View.VISIBLE);
-		// }
+		if (loading) {
+			_loadingLayout.setVisibility(View.VISIBLE);
+			_viewPager.setVisibility(View.GONE);
+		} else {
+			_loadingLayout.setVisibility(View.GONE);
+			_viewPager.setVisibility(View.VISIBLE);
+		}
 	}
 
 }

@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- workorder detail colors -->
-    <color name="workorder_detail_bg">#FFf3f3eb</color>
+    <color name="workorder_detail_bg">@color/fn_gray</color>
     <color name="workorder_detail_separator_color">#FFe9e9e7</color>
 
     <style name="WorkorderDetail">

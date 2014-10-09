@@ -266,7 +266,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 				ExpenseView v = new ExpenseView(getContext());
 				v.setListener(_expenseView_listener);
 				_expensesLinearLayout.addView(v);
-				v.setAdditionalExpense(expense);
+				v.setAdditionalExpense(expense, i + 1);
 			}
 		}
 

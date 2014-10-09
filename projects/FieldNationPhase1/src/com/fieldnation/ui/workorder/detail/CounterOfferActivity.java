@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -60,6 +61,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 	private TextView _noExpensesTextView;
 
+	private LinearLayout _expensesListLayout;
 	private LinearLayout _addExpenseLayout;
 	private TextView _addExpenseTextView;
 
@@ -112,6 +114,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		_noExpensesTextView = (TextView) findViewById(R.id.no_expenses_textview);
 
+		_expensesListLayout = (LinearLayout) findViewById(R.id.expenses_list_layout);
 		_addExpenseLayout = (LinearLayout) findViewById(R.id.add_expense_layout);
 		_addExpenseLayout.setOnClickListener(_addExpenseLayout_onClick);
 		_addExpenseTextView = (TextView) findViewById(R.id.add_expense_textview);
@@ -229,6 +232,21 @@ public class CounterOfferActivity extends ActionBarActivity {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+		}
+
+		// expenses
+		AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
+		if (expenses != null && expenses.length > 0) {
+			_noExpensesTextView.setVisibility(View.GONE);
+			_expensesListLayout.removeAllViews();
+			for (int i = 0; i < expenses.length; i++) {
+				AdditionalExpense expense = expenses[i];
+				ExpenseView v = new ExpenseView(this);
+				v.setAdditionalExpense(expense, i + 1);
+				_expensesListLayout.addView(v);
+			}
+		} else {
+			_noExpensesTextView.setVisibility(View.VISIBLE);
 		}
 
 	}

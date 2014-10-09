@@ -78,20 +78,18 @@ public class ExpenseDialog extends Dialog {
 			ExpenseDialog.this.dismiss();
 		}
 	};
+
 	private ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
 		@Override
 		public void onHaveCategories(ExpenseCategory[] categories) {
 			_categories = categories;
-
 			_adapter = new ArrayAdapter<ExpenseCategory>(getContext(), android.R.layout.simple_spinner_dropdown_item,
 					categories);
-
 			_categorySpinner.setAdapter(_adapter);
 		}
 	};
 
 	private TextView.OnEditorActionListener _oneditor_listener = new TextView.OnEditorActionListener() {
-
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			boolean handled = false;
