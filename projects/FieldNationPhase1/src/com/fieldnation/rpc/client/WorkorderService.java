@@ -370,4 +370,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				(new String(signatureJson)), "application/x-www-form-urlencoded", false);
 
 	}
+	
+	public Intent completeCallTask(int resultCode, long workorderId, long taskId, boolean allowCache) {
+		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId, null,
+				"", "application/x-www-form-urlencoded", false);
+	}
 }

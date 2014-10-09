@@ -269,7 +269,16 @@ public class TasksFragment extends WorkorderFragment {
 				break;
 			}
 			case PHONE:
-				// TODO start up the phone app
+				if (task.getCompleted())
+					return;
+				// TODO start up the phone app				
+				getActivity().startService(
+						_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId(), false));
+				
+				Intent callIntent = new Intent(Intent.ACTION_CALL);
+				String phNum = "tel:" + task.getPhoneNumber();
+			    callIntent.setData(Uri.parse(phNum));
+			    startActivity(callIntent);
 				break;
 			case SHIPMENT_TRACKING:
 				// TODO send to shipment section
