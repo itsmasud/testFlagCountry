@@ -16,6 +16,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
+import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.misc;
 
@@ -60,6 +61,7 @@ public class TasksFragment extends WorkorderFragment {
 	private ClosingNotesView _closingNotes;
 	private View[] _separators;
 	private ClosingNotesDialog _closingDialog;
+	private TaskShipmentAddDialog _taskShipmentAddDialog;
 
 	// Data
 	private GlobalState _gs;
@@ -99,6 +101,7 @@ public class TasksFragment extends WorkorderFragment {
 		_separators[2] = view.findViewById(R.id.sep3);
 
 		_closingDialog = new ClosingNotesDialog(view.getContext());
+		_taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());		
 
 		if (savedInstanceState == null) {
 			_gs.requestAuthentication(_authClient);
@@ -185,7 +188,10 @@ public class TasksFragment extends WorkorderFragment {
 
 		if (_closingNotes != null)
 			_closingNotes.setWorkorder(_workorder);
-
+		
+		if (_taskShipmentAddDialog != null)
+			_taskShipmentAddDialog.setWorkorder(_workorder);
+		
 		if (_shipments != null && _timeLogged != null) {
 			WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
 			if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
@@ -321,7 +327,12 @@ public class TasksFragment extends WorkorderFragment {
 				
 				break;
 			case SHIPMENT_TRACKING:
-				// TODO send to shipment section
+				if (task.getCompleted())
+					return;
+				//@TODO
+				_taskShipmentAddDialog.setWorkorder(_workorder);
+				_taskShipmentAddDialog.show();	
+				
 				break;
 			case SIGNATURE: {
 				_currentTask = task;
@@ -366,6 +377,18 @@ public class TasksFragment extends WorkorderFragment {
 		@Override
 		public void onOk(String message) {
 			getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+		}
+
+		@Override
+		public void onCancel() {
+		}
+	};
+	
+	private TaskShipmentAddDialog.Listener _add_onClick = new TaskShipmentAddDialog.Listener() {
+		@Override
+		public void onOk(String message) {
+			//@TODO
+			Log.v(TAG, "Action : _add_onClick");
 		}
 
 		@Override
