@@ -668,17 +668,6 @@ public class Workorder implements Parcelable {
 	/*-*********************************************-*/
 	/*-			Parcelable Implementation			-*/
 	/*-*********************************************-*/
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(toJson().toString());
-	}
-
 	public static final Parcelable.Creator<Workorder> CREATOR = new Parcelable.Creator<Workorder>() {
 
 		@Override
@@ -696,4 +685,15 @@ public class Workorder implements Parcelable {
 			return new Workorder[size];
 		}
 	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(toJson().toString());
+	}
+
 }

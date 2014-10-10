@@ -4,35 +4,48 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class CounterOfferInfo{
-	@Json(name="explanation")
+public class CounterOfferInfo {
+	@Json(name = "explanation")
 	private String _explanation;
-	@Json(name="expense")
-	private Object[] _expense;
-	@Json(name="pay")
+	@Json(name = "expense")
+	private AdditionalExpense[] _expense;
+	@Json(name = "pay")
 	private Pay _pay;
-	@Json(name="schedule")
-	private Object[] _schedule;
+	@Json(name = "schedule")
+	private Schedule _schedule;
+	@Json(name = "expiresAfter")
+	private Integer _expiresAfter;
+	@Json(name = "expires")
+	private Boolean _expires;
 
-	public CounterOfferInfo(){
+	public CounterOfferInfo() {
 	}
-	public String getExplanation(){
+
+	public String getExplanation() {
 		return _explanation;
 	}
 
-	public Object[] getExpense(){
+	public Integer getExpiresAfter() {
+		return _expiresAfter;
+	}
+
+	public Boolean getExpires() {
+		return _expires;
+	}
+
+	public AdditionalExpense[] getExpense() {
 		return _expense;
 	}
 
-	public Pay getPay(){
+	public Pay getPay() {
 		return _pay;
 	}
 
-	public Object[] getSchedule(){
+	public Schedule getSchedule() {
 		return _schedule;
 	}
 
-	public JsonObject toJson(){
+	public JsonObject toJson() {
 		return toJson(this);
 	}
 

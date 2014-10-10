@@ -1,15 +1,20 @@
 package com.fieldnation.ui.workorder.detail;
 
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +22,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.CounterOfferInfo;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -27,6 +33,7 @@ import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.ScheduleDialog;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 public class CounterOfferActivity extends ActionBarActivity {
@@ -34,6 +41,10 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 	// Key
 	public static final String INTENT_WORKORDER = "com.fieldnation.ui.workorder.detail:WORKORDER";
+	public static final String INTENT_COUNTER_PAY = "com.fieldnation.ui.workorder.detail:COUNTER_PAY";
+	public static final String INTENT_COUNTER_SCHEDULE = "com.fieldnation.ui.workorder.detail:COUNTER_SCHEDULE";
+	public static final String INTENT_COUNTER_EXPENSES = "com.fieldnation.ui.workorder.detail:COUNTER_EXPENSES";
+	public static final String INTENT_DELETE_COUNTER_EXPENSES = "com.fieldnation.ui.workorder.detail:DELETE_COUNTER_EXPENSES";
 
 	// UI
 	// labels
@@ -78,9 +89,16 @@ public class CounterOfferActivity extends ActionBarActivity {
 	private PayDialog _payDialog;
 	private ScheduleDialog _scheduleDialog;
 	private ExpenseDialog _expenseDialog;
+	private DatePickerDialog _datePicker;
+	private TimePickerDialog _timePicker;
 
 	// Data
 	private Workorder _workorder;
+	private Calendar _offerTime;
+	private Pay _counterPay;
+	private Schedule _counterSchedule;
+	private List<AdditionalExpense> _counterExpenses;
+	private List<AdditionalExpense> _deleteCounterExpenses;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +142,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		_requestReasonEditText = (EditText) findViewById(R.id.request_reason_edittext);
 		_deleteNotAcceptedCheckbox = (CheckBox) findViewById(R.id.delete_not_accepted_checkbox);
+		_deleteNotAcceptedCheckbox.setOnCheckedChangeListener(_deleteCheck_onChange);
 
 		_offerTimeButton = (Button) findViewById(R.id.offer_time_button);
 		_offerTimeButton.setOnClickListener(_offerTimeButton_onClick);
@@ -138,9 +157,32 @@ public class CounterOfferActivity extends ActionBarActivity {
 		_scheduleDialog = new ScheduleDialog(this);
 		_expenseDialog = new ExpenseDialog(this);
 
+		_counterPay = null;
+		_counterSchedule = null;
+		_counterExpenses = new LinkedList<AdditionalExpense>();
+		_deleteCounterExpenses = new LinkedList<AdditionalExpense>();
+
 		if (savedInstanceState != null) {
 			if (savedInstanceState.containsKey(INTENT_WORKORDER)) {
 				_workorder = savedInstanceState.getParcelable(INTENT_WORKORDER);
+			}
+			if (savedInstanceState.containsKey(INTENT_COUNTER_PAY)) {
+				_counterPay = savedInstanceState.getParcelable(INTENT_COUNTER_PAY);
+			}
+			if (savedInstanceState.containsKey(INTENT_COUNTER_SCHEDULE)) {
+				_counterSchedule = savedInstanceState.getParcelable(INTENT_COUNTER_SCHEDULE);
+			}
+			if (savedInstanceState.containsKey(INTENT_COUNTER_EXPENSES)) {
+				Parcelable[] parc = savedInstanceState.getParcelableArray(INTENT_COUNTER_EXPENSES);
+				for (int i = 0; i < parc.length; i++) {
+					_counterExpenses.add((AdditionalExpense) parc[i]);
+				}
+			}
+			if (savedInstanceState.containsKey(INTENT_DELETE_COUNTER_EXPENSES)) {
+				Parcelable[] parc = savedInstanceState.getParcelableArray(INTENT_DELETE_COUNTER_EXPENSES);
+				for (int i = 0; i < parc.length; i++) {
+					_deleteCounterExpenses.add((AdditionalExpense) parc[i]);
+				}
 			}
 		}
 
@@ -150,14 +192,42 @@ public class CounterOfferActivity extends ActionBarActivity {
 			if (extras.containsKey(INTENT_WORKORDER)) {
 				_workorder = extras.getParcelable(INTENT_WORKORDER);
 			}
+			if (extras.containsKey(INTENT_COUNTER_PAY)) {
+				_counterPay = extras.getParcelable(INTENT_COUNTER_PAY);
+			}
+			if (extras.containsKey(INTENT_COUNTER_SCHEDULE)) {
+				_counterSchedule = extras.getParcelable(INTENT_COUNTER_SCHEDULE);
+			}
+			if (extras.containsKey(INTENT_COUNTER_EXPENSES)) {
+				Parcelable[] parc = savedInstanceState.getParcelableArray(INTENT_COUNTER_EXPENSES);
+				for (int i = 0; i < parc.length; i++) {
+					_counterExpenses.add((AdditionalExpense) parc[i]);
+				}
+			}
+			if (extras.containsKey(INTENT_DELETE_COUNTER_EXPENSES)) {
+				Parcelable[] parc = savedInstanceState.getParcelableArray(INTENT_DELETE_COUNTER_EXPENSES);
+				for (int i = 0; i < parc.length; i++) {
+					_deleteCounterExpenses.add((AdditionalExpense) parc[i]);
+				}
+			}
 		}
 
 		showPayCounter(false);
-		showReason(false);
 		showScheduleCounter(false);
+		showReason(false);
 
 		if (_workorder != null)
 			populateUi();
+
+		final Calendar c = Calendar.getInstance();
+		_datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+				c.get(Calendar.DAY_OF_MONTH));
+		_datePicker.setCloseOnSingleTapDay(true);
+		_timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+				false, false);
+
+		_offerTime = Calendar.getInstance();
+
 	}
 
 	@Override
@@ -165,10 +235,32 @@ public class CounterOfferActivity extends ActionBarActivity {
 		if (_workorder != null) {
 			outState.putParcelable(INTENT_WORKORDER, _workorder);
 		}
+		if (_counterPay != null) {
+			outState.putParcelable(INTENT_COUNTER_PAY, _counterPay);
+		}
+		if (_counterSchedule != null) {
+			outState.putParcelable(INTENT_COUNTER_SCHEDULE, _counterSchedule);
+		}
+		if (_counterExpenses != null && _counterExpenses.size() > 0) {
+			Parcelable[] parc = new Parcelable[_counterExpenses.size()];
+			for (int i = 0; i < _counterExpenses.size(); i++) {
+				parc[i] = _counterExpenses.get(i);
+			}
+			outState.putParcelableArray(INTENT_COUNTER_EXPENSES, parc);
+		}
+		if (_deleteCounterExpenses != null && _deleteCounterExpenses.size() > 0) {
+			Parcelable[] parc = new Parcelable[_deleteCounterExpenses.size()];
+			for (int i = 0; i < _deleteCounterExpenses.size(); i++) {
+				parc[i] = _deleteCounterExpenses.get(i);
+			}
+			outState.putParcelableArray(INTENT_DELETE_COUNTER_EXPENSES, parc);
+		}
 		super.onSaveInstanceState(outState);
 	}
 
 	private void populateUi() {
+		showReason(false);
+		CounterOfferInfo info = _workorder.getCounterOfferInfo();
 		Pay pay = _workorder.getPay();
 		// pay section
 		_basisOldTextView.setText(pay.getPayRateBasis());
@@ -179,14 +271,12 @@ public class CounterOfferActivity extends ActionBarActivity {
 		if (pay.isFixedRate()) {
 			_labelMaxHoursTextView.setText(" ");
 			_labelHourlyRateTextView.setText(R.string.total_amount);
-
 			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getFixedAmount()));
 			_maxOldTextView.setText(" ");
 		}
 
 		// blended
 		if (pay.isBlendedRate()) {
-
 			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedStartRate()) + " - " + pay.getBlendedFirstHours() + " Hours");
 			_maxOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedAdditionalRate()) + " - " + pay.getBlendedAdditionalHours() + " Hours");
 		}
@@ -236,18 +326,173 @@ public class CounterOfferActivity extends ActionBarActivity {
 		}
 
 		// expenses
-		AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
-		if (expenses != null && expenses.length > 0) {
-			_noExpensesTextView.setVisibility(View.GONE);
-			_expensesListLayout.removeAllViews();
-			for (int i = 0; i < expenses.length; i++) {
-				AdditionalExpense expense = expenses[i];
+		if (info != null) {
+			AdditionalExpense[] aes = info.getExpense();
+			if (aes != null && aes.length > 0) {
+				_expensesListLayout.removeAllViews();
+				for (int i = 0; i < aes.length; i++) {
+					AdditionalExpense expense = aes[i];
+					if (_deleteCounterExpenses.contains(expense)) {
+						continue;
+					}
+					ExpenseView v = new ExpenseView(this);
+					v.setAdditionalExpense(expense, _expensesListLayout.getChildCount() + 1);
+					v.setListener(_expenseView_listener);
+					_expensesListLayout.addView(v);
+				}
+
+			}
+		}
+		if (_counterExpenses != null && _counterExpenses.size() > 0) {
+			for (int i = 0; i < _counterExpenses.size(); i++) {
+				AdditionalExpense expense = _counterExpenses.get(i);
 				ExpenseView v = new ExpenseView(this);
-				v.setAdditionalExpense(expense, i + 1);
+				v.setAdditionalExpense(expense, _expensesListLayout.getChildCount() + 1);
+				v.setListener(_expenseView_listener);
 				_expensesListLayout.addView(v);
 			}
-		} else {
+		}
+
+		if (_expensesListLayout.getChildCount() == 0) {
 			_noExpensesTextView.setVisibility(View.VISIBLE);
+		} else {
+			_noExpensesTextView.setVisibility(View.GONE);
+		}
+
+		// pay counter
+		if (_counterPay != null) {
+			showPayCounter(true);
+			// pay section
+			_basisNewTextView.setText(_counterPay.getPayRateBasis());
+
+			// fixed rate
+			if (_counterPay.isFixedRate()) {
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getFixedAmount()));
+				_maxNewTextView.setText(" ");
+			}
+
+			// blended
+			if (_counterPay.isBlendedRate()) {
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getBlendedStartRate()) + " - " + _counterPay.getBlendedFirstHours() + " Hours");
+				_maxNewTextView.setText(misc.toCurrencyTrim(_counterPay.getBlendedAdditionalRate()) + " - " + _counterPay.getBlendedAdditionalHours() + " Hours");
+			}
+
+			// hourly
+			if (_counterPay.isHourlyRate()) {
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getPerHour()) + " per hour");
+				_maxNewTextView.setText(_counterPay.getMaxHour() + " Hours Max");
+			}
+
+			// per device
+			if (_counterPay.isPerDeviceRate()) {
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getPerDevice()) + " per device");
+				_maxNewTextView.setText(_counterPay.getMaxDevice() + " Devices Max");
+			}
+		} else if (info.getPay() != null) {
+			Pay counter = info.getPay();
+			showPayCounter(true);
+			// pay section
+			_basisNewTextView.setText(counter.getPayRateBasis());
+
+			// fixed rate
+			if (counter.isFixedRate()) {
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getFixedAmount()));
+				_maxNewTextView.setText(" ");
+			}
+
+			// blended
+			if (counter.isBlendedRate()) {
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getBlendedStartRate()) + " - " + counter.getBlendedFirstHours() + " Hours");
+				_maxNewTextView.setText(misc.toCurrencyTrim(counter.getBlendedAdditionalRate()) + " - " + counter.getBlendedAdditionalHours() + " Hours");
+			}
+
+			// hourly
+			if (counter.isHourlyRate()) {
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getPerHour()) + " per hour");
+				_maxNewTextView.setText(counter.getMaxHour() + " Hours Max");
+			}
+
+			// per device
+			if (counter.isPerDeviceRate()) {
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getPerDevice()) + " per device");
+				_maxNewTextView.setText(counter.getMaxDevice() + " Devices Max");
+			}
+		} else {
+			showPayCounter(false);
+		}
+
+		// schedule counter
+		if (_counterSchedule != null) {
+			showScheduleCounter(true);
+
+			if (_counterSchedule.isExact()) {
+				try {
+					_scheduleTypeNewTextView.setText("Exact");
+					Calendar cal = ISO8601.toCalendar(_counterSchedule.getStartTime());
+					_scheduleDateNewTextView.setText(misc.formatDateLong(cal));
+					_scheduleTimeNewTextView.setText(misc.formatTime(cal, false));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			} else {
+				try {
+					_scheduleTypeNewTextView.setText("Range");
+					Calendar cal = ISO8601.toCalendar(_counterSchedule.getStartTime());
+					Calendar cal2 = ISO8601.toCalendar(_counterSchedule.getEndTime());
+					_scheduleDateNewTextView.setText(String.format(Locale.US, "%tB", cal) + " " + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal2.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR));
+					_scheduleTimeNewTextView.setText(misc.formatTime2(cal) + "-" + misc.formatTime(cal2, false));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		} else if (info.getSchedule() != null) {
+			Schedule sched = info.getSchedule();
+			showScheduleCounter(true);
+
+			if (sched.isExact()) {
+				try {
+					_scheduleTypeNewTextView.setText("Exact");
+					Calendar cal = ISO8601.toCalendar(sched.getStartTime());
+					_scheduleDateNewTextView.setText(misc.formatDateLong(cal));
+					_scheduleTimeNewTextView.setText(misc.formatTime(cal, false));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			} else {
+				try {
+					_scheduleTypeNewTextView.setText("Range");
+					Calendar cal = ISO8601.toCalendar(sched.getStartTime());
+					Calendar cal2 = ISO8601.toCalendar(sched.getEndTime());
+					_scheduleDateNewTextView.setText(String.format(Locale.US, "%tB", cal) + " " + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal2.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR));
+					_scheduleTimeNewTextView.setText(misc.formatTime2(cal) + "-" + misc.formatTime(cal2, false));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+		}
+
+		if (isDirty()) {
+			_sendButton.setVisibility(View.VISIBLE);
+			showReason(true);
+		} else {
+			_sendButton.setVisibility(View.GONE);
+		}
+
+		if (info != null) {
+			if (info.getExplanation() != null) {
+				showReason(true);
+				_requestReasonEditText.setText(info.getExplanation());
+			}
+
+			_deleteNotAcceptedCheckbox.setChecked(info.getExpires());
+			if (info.getExpires()) {
+				// TODO need to format the time
+				_offerTimeButton.setText(info.getExpiresAfter());
+				_offerTimeButton.setVisibility(View.VISIBLE);
+			} else {
+				_offerTimeButton.setVisibility(View.GONE);
+			}
 		}
 
 	}
@@ -291,38 +536,56 @@ public class CounterOfferActivity extends ActionBarActivity {
 			_reasonsLayout.setVisibility(View.GONE);
 	}
 
+	private boolean isDirty() {
+		return (_counterExpenses != null && _counterExpenses.size() > 0) || _counterPay != null || _counterSchedule != null || _deleteCounterExpenses.size() > 0;
+	}
+
 	/*-*****************************-*/
 	/*-			UI Events			-*/
 	/*-*****************************-*/
+	private ExpenseView.Listener _expenseView_listener = new ExpenseView.Listener() {
+		@Override
+		public void onDelete(ExpenseView view, AdditionalExpense expense) {
+			if (_counterExpenses.contains(expense)) {
+				_counterExpenses.remove(expense);
+			} else if (_workorder != null && _workorder.getAdditionalExpenses() != null) {
+				AdditionalExpense[] aes = _workorder.getAdditionalExpenses();
+				for (int i = 0; i < aes.length; i++) {
+					if (aes[i] == expense) {
+						_deleteCounterExpenses.add(expense);
+					}
+				}
+			}
+			populateUi();
+		}
+	};
 	private PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
 		@Override
 		public void onPerDevices(double rate, double max) {
-			// TODO Method Stub: onPerDevices()
-			Log.v(TAG, "Method Stub: onPerDevices()");
-		}
-
-		@Override
-		public void onNothing() {
-			// TODO Method Stub: onNothing()
-			Log.v(TAG, "Method Stub: onNothing()");
+			_counterPay = new Pay(rate, (int) max);
+			populateUi();
 		}
 
 		@Override
 		public void onHourly(double rate, double max) {
-			// TODO Method Stub: onHourly()
-			Log.v(TAG, "Method Stub: onHourly()");
+			_counterPay = new Pay(rate, max);
+			populateUi();
 		}
 
 		@Override
 		public void onFixed(double amount) {
-			// TODO Method Stub: onFixed()
-			Log.v(TAG, "Method Stub: onFixed()");
+			_counterPay = new Pay(amount);
+			populateUi();
 		}
 
 		@Override
 		public void onBlended(double rate, double max, double rate2, double max2) {
-			// TODO Method Stub: onBlended()
-			Log.v(TAG, "Method Stub: onBlended()");
+			_counterPay = new Pay(rate, max, rate2, max2);
+			populateUi();
+		}
+
+		@Override
+		public void onNothing() {
 		}
 	};
 
@@ -330,23 +593,18 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		@Override
 		public void onRange(String startDateTime, String endDateTime) {
-			// TODO Method Stub: onRange()
-			Log.v(TAG, "Method Stub: onRange()");
-
+			_counterSchedule = new Schedule(startDateTime, endDateTime);
+			populateUi();
 		}
 
 		@Override
 		public void onExact(String startDateTime) {
-			// TODO Method Stub: onExact()
-			Log.v(TAG, "Method Stub: onExact()");
-
+			_counterSchedule = new Schedule(startDateTime);
+			populateUi();
 		}
 
 		@Override
 		public void onCancel() {
-			// TODO Method Stub: onCancel()
-			Log.v(TAG, "Method Stub: onCancel()");
-
 		}
 	};
 
@@ -354,16 +612,44 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		@Override
 		public void onOk(String description, double amount, ExpenseCategory category) {
-			// TODO Method Stub: onOk()
-			Log.v(TAG, "Method Stub: onOk()");
-
+			AdditionalExpense ae = new AdditionalExpense(description, amount, category);
+			_counterExpenses.add(ae);
+			populateUi();
 		}
 
 		@Override
 		public void onCancel() {
-			// TODO Method Stub: onCancel()
-			Log.v(TAG, "Method Stub: onCancel()");
+		}
+	};
 
+	private View.OnClickListener _sendButton_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// TODO Method Stub: onClick()
+			Log.v(TAG, "Method Stub: onClick()");
+		}
+	};
+
+	private View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			CounterOfferActivity.this.finish();
+		}
+	};
+	private CompoundButton.OnCheckedChangeListener _deleteCheck_onChange = new CompoundButton.OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			if (isChecked)
+				_offerTimeButton.setVisibility(View.VISIBLE);
+			else
+				_offerTimeButton.setVisibility(View.GONE);
+		}
+	};
+
+	private View.OnClickListener _offerTimeButton_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			_datePicker.show(getSupportFragmentManager(), "");
 		}
 	};
 
@@ -388,27 +674,21 @@ public class CounterOfferActivity extends ActionBarActivity {
 		}
 	};
 
-	private View.OnClickListener _sendButton_onClick = new View.OnClickListener() {
+	private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
 		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+		public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+			_offerTime.set(year, month, day);
+			_timePicker.show(getSupportFragmentManager(), datePickerDialog.getTag());
 		}
 	};
 
-	private View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
-		}
-	};
+	private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
-	private View.OnClickListener _offerTimeButton_onClick = new View.OnClickListener() {
 		@Override
-		public void onClick(View v) {
-			// TODO Method Stub: onClick()
-			Log.v(TAG, "Method Stub: onClick()");
+		public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+			_offerTime.set(_offerTime.get(Calendar.YEAR), _offerTime.get(Calendar.MONTH),
+					_offerTime.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+			_offerTimeButton.setText(misc.formatDateTimeLong(_offerTime));
 		}
 	};
 

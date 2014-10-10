@@ -286,6 +286,8 @@
             android:id="@+id/add_expense_layout"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal" >
 
             <ImageView
@@ -331,7 +333,7 @@
                 android:id="@+id/delete_not_accepted_checkbox"
                 android:layout_width="fill_parent"
                 android:layout_height="48dp"
-                android:text="@string/delete_counter_if_not_accepted_within" />
+                android:text="@string/delete_counter_if_not_accepted_by" />
 
             <Button
                 android:id="@+id/offer_time_button"
@@ -339,7 +341,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="40dp"
-                android:hint="1hr 30mins" />
+                android:hint="Set time"
+                android:visibility="gone" />
 
             <TextView
                 style="@style/WorkorderDetail_Field_Bold"
@@ -348,36 +351,37 @@
                 android:text="@string/by_countering_warning" />
 
             <TextView
-                style="@style/WorkorderDetail_Field_Bold"
+                style="@style/TextViewLink"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
+                android:gravity="center"
                 android:text="@string/terms_and_conditions" />
+        </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
 
-                <Button
-                    android:id="@+id/cancel_button"
-                    style="@style/ButtonWhite"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:text="@string/cancel" />
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/ButtonWhite"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:text="@string/cancel" />
 
-                <Button
-                    android:id="@+id/send_button"
-                    style="@style/ButtonWhite"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:text="@string/send_counter" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/send_button"
+                style="@style/ButtonWhite"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:text="@string/send_counter" />
         </LinearLayout>
     </LinearLayout>
 

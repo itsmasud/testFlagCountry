@@ -123,7 +123,7 @@
     <string name="add_another_expense">Add Another Expense</string>
     <string name="reason_for_counter_offer_colon">Reason for Counter Offer:</string>
     <string name="reason_for_request">Reason For Request</string>
-    <string name="delete_counter_if_not_accepted_within">Delete counter of not accepted within</string>
+    <string name="delete_counter_if_not_accepted_by">Delete counter of not accepted by</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>
     <string name="cancel">Cancel</string>

@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CALL_PHONE" /> 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -34,7 +34,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.fieldnation.ui.market.MarketActivity"
+            android:name="com.fieldnation.ui.workorder.MyWorkActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,10 +43,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fieldnation.ui.workorder.MyWorkActivity"
-            android:configChanges="orientation"
-            android:exported="false"
-            android:label="@string/mywork_title" >
+            android:name="com.fieldnation.ui.market.MarketActivity"
+            android:exported="false" >
         </activity>
         <activity
             android:name="com.fieldnation.ui.SignatureActivity"
@@ -120,7 +118,7 @@
             android:exported="true"
             android:process=":sync" >
             <intent-filter>
-com.fieldnation.service
+com.fieldnation.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 

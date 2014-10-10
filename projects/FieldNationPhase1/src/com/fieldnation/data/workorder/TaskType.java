@@ -5,19 +5,6 @@ import android.content.Context;
 import com.fieldnation.R;
 
 public enum TaskType {
-	/*CONFIRM_ASSIGNMENT(1),
-	CLOSE_OUT_NOTES(2),
-	CHECKIN(3),
-	CHECKOUT(4),
-	UPLOAD_FILE(5),
-	UPLOAD_PICTURE(6),
-	CUSTOM_FIELD(7),
-	PHONE(8),
-	EMAIL(9),
-	SHIPMENT_TRACKING(10),
-	SIGNATURE(11), // tested.. confirmed
-	DOWNLOAD(12);*/
-	
 	CONFIRM_ASSIGNMENT(1),
 	CLOSE_OUT_NOTES(2),
 	CHECKIN(3),

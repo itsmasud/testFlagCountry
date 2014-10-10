@@ -38,6 +38,7 @@ public class MyWorkActivity extends DrawerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tabs);
+		setTitle(R.string.mywork_title);
 
 		if (!_created) {
 			addActionBarAndDrawer(R.id.container);

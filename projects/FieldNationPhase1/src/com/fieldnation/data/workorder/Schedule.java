@@ -1,6 +1,10 @@
 package com.fieldnation.data.workorder;
 
+import java.text.ParseException;
 import java.util.Calendar;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
@@ -8,7 +12,7 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-public class Schedule {
+public class Schedule implements Parcelable {
 	@Json(name = "startTimeHours")
 	private String _startTimeHours;
 	@Json(name = "endTime")
@@ -62,6 +66,15 @@ public class Schedule {
 	/*-*************************************************-*/
 	/*-				Human Generated Code				-*/
 	/*-*************************************************-*/
+	public Schedule(String startTime) {
+		_startTime = startTime;
+		_endTime = null;
+	}
+
+	public Schedule(String startTime, String endTime) {
+		_startTime = startTime;
+		_endTime = endTime;
+	}
 
 	public String getFormatedTime() {
 		try {
@@ -94,6 +107,37 @@ public class Schedule {
 
 	public boolean isExact() {
 		return misc.isEmptyOrNull(getEndTime());
+	}
+
+	/*-*********************************************-*/
+	/*-			Parcelable Implementation			-*/
+	/*-*********************************************-*/
+	public static final Parcelable.Creator<Schedule> CREATOR = new Parcelable.Creator<Schedule>() {
+
+		@Override
+		public Schedule createFromParcel(Parcel source) {
+			try {
+				return Schedule.fromJson(new JsonObject(source.readString()));
+			} catch (ParseException ex) {
+				ex.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		public Schedule[] newArray(int size) {
+			return new Schedule[size];
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(toJson().toString());
 	}
 
 }

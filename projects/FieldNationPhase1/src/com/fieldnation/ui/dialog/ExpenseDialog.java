@@ -86,6 +86,7 @@ public class ExpenseDialog extends Dialog {
 			_adapter = new ArrayAdapter<ExpenseCategory>(getContext(), android.R.layout.simple_spinner_dropdown_item,
 					categories);
 			_categorySpinner.setAdapter(_adapter);
+			_categorySpinner.setSelection(0);
 		}
 	};
 
