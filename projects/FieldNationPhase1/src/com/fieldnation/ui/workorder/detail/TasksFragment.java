@@ -6,6 +6,7 @@ import java.util.List;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
@@ -257,7 +258,40 @@ public class TasksFragment extends WorkorderFragment {
 			case DOWNLOAD:
 				if (task.getCompleted())
 					return;
-				// TODO, download file and display it
+				
+				Integer _identifier = task.getIdentifier();
+				Document[] docs = _workorder.getDocuments();
+				if (docs != null && docs.length > 0) {
+					for (int i = 0; i < docs.length; i++) {
+						Document doc = docs[i];						
+						String[] filePathSplit = doc.getFilePath().split("_");
+						if(filePathSplit.length > 0){
+							Integer _identifierChk =  Integer.valueOf(filePathSplit[filePathSplit.length-2]);
+							if(_identifierChk.equals(_identifier)){
+								//task completed here
+								getActivity().startService(
+										_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId(), false));
+								
+								try {
+									Intent intent = new Intent(Intent.ACTION_VIEW);
+									intent.setDataAndType(Uri.parse(doc.getFilePath()), doc.getFileType());
+									startActivity(intent);
+								} catch (Exception ex) {
+									try {
+										Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(doc.getFilePath()));
+										startActivity(intent);
+									} catch (Exception ex1) {
+										ex1.printStackTrace();
+									}
+								}
+								
+								break;
+							}
+						}
+										
+					} //end for
+				}
+				
 				break;
 			case EMAIL: {
 				String email = task.getEmailAddress();
@@ -268,17 +302,23 @@ public class TasksFragment extends WorkorderFragment {
 				// TODO, mark this task as complete
 				break;
 			}
-			case PHONE:
+			case PHONE:				
 				if (task.getCompleted())
 					return;
-				// TODO start up the phone app				
-				getActivity().startService(
-						_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId(), false));
 				
-				Intent callIntent = new Intent(Intent.ACTION_CALL);
-				String phNum = "tel:" + task.getPhoneNumber();
-			    callIntent.setData(Uri.parse(phNum));
-			    startActivity(callIntent);
+				try {
+					if(task.getPhoneNumber() != null) {						
+						getActivity().startService(
+								_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId(), false));
+						
+						Intent callIntent = new Intent(Intent.ACTION_CALL);
+						String phNum = "tel:" + task.getPhoneNumber();
+					    callIntent.setData(Uri.parse(phNum));
+					    startActivity(callIntent);
+					}
+					
+				} catch (Exception ex) {}
+				
 				break;
 			case SHIPMENT_TRACKING:
 				// TODO send to shipment section
