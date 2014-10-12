@@ -4,6 +4,7 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
+        android:id="@+id/gear_layout"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_centerInParent="true" >
@@ -14,6 +15,23 @@
             android:layout_height="96dp"
             android:layout_marginBottom="64dp"
             android:layout_marginRight="64dp"
+            android:src="@drawable/loading_gear" />
+
+        <ImageView
+            android:id="@+id/loading_gear2"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="80dp"
+            android:src="@drawable/loading_gear" />
+
+        <ImageView
+            android:id="@+id/loading_gear3"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="70dp"
+            android:layout_marginTop="90dp"
             android:src="@drawable/loading_gear" />
     </RelativeLayout>
 
@@ -40,6 +58,7 @@
                 android:background="@drawable/loading_border" />
 
             <ImageView
+                android:id="@+id/center_imageview"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:background="@drawable/loading_center" />
@@ -57,5 +76,22 @@
             android:layout_weight="1"
             android:background="@drawable/loading_border" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/message_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gear_layout"
+        android:gravity="center"
+        android:text="Loading..." />
+
+    <TextView
+        android:id="@+id/obstruct_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/gear_layout"
+        android:gravity="center"
+        android:text="Please Remove Obstruction"
+        android:visibility="gone" />
 
 </RelativeLayout>
