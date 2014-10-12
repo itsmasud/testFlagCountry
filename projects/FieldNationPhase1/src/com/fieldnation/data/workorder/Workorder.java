@@ -1,15 +1,20 @@
 package com.fieldnation.data.workorder;
 
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.os.ResultReceiver;
 
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Workorder {
+public class Workorder implements Parcelable {
 	@Json(name = "isAssignedToWorkorder")
 	private Boolean _isAssignedToWorkorder;
 	@Json(name = "discounts")
@@ -659,4 +664,36 @@ public class Workorder {
 			_buttonAction = BUTTON_ACTION_VIEW_PAYMENT;
 		}
 	}
+
+	/*-*********************************************-*/
+	/*-			Parcelable Implementation			-*/
+	/*-*********************************************-*/
+	public static final Parcelable.Creator<Workorder> CREATOR = new Parcelable.Creator<Workorder>() {
+
+		@Override
+		public Workorder createFromParcel(Parcel source) {
+			try {
+				return Workorder.fromJson(new JsonObject(source.readString()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		public Workorder[] newArray(int size) {
+			return new Workorder[size];
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(toJson().toString());
+	}
+
 }

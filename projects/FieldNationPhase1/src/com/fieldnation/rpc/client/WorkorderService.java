@@ -1,6 +1,8 @@
 package com.fieldnation.rpc.client;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.rpc.common.WebServiceConstants;
@@ -186,12 +188,14 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	// shipments
 	public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
 			String carrier, String carrierName, String trackingNumber) {
-		return httpPost(
-				resultCode,
-				"api/rest/v1/workorder/" + workorderId + "/shipments",
-				null,
-				"description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber,
-				"application/x-www-form-urlencoded", false);
+		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/shipments", null,
+				"description=" + misc.escapeForURL(description)
+				// n
+				+ "&direction=" + (isToSite ? "to_site" : "from_site")
+				// n
+				+ "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName))
+				// n
+				+ "&tracking_number=" + trackingNumber, "application/x-www-form-urlencoded", false);
 	}
 
 	public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
@@ -346,4 +350,21 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"amount=" + amount + "&description=" + description, "application/x-www-form-urlencoded", false);
 	}
 
+	// tasks
+	public Intent completeSignatureTask(int resultCode, long workorderId, long taskId, String arrivalTime,
+			String departureTime, String printName, byte[] signatureJson) {
+		return httpPost(
+				resultCode,
+				"api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId,
+				null,
+				"arrival_time=" + arrivalTime + "&departure_time=" + departureTime + "&print_name=" + misc.escapeForURL(printName) + "&signature_json=" +
+				// misc.escapeForURL
+				(new String(signatureJson)), "application/x-www-form-urlencoded", false);
+
+	}
+
+	public Intent completeCallTask(int resultCode, long workorderId, long taskId, boolean allowCache) {
+		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId, null, "",
+				"application/x-www-form-urlencoded", false);
+	}
 }

@@ -33,13 +33,11 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 		Bundle bundle = _intent.getExtras();
 		String path = bundle.getString(KEY_PARAM_PATH);
 		String options = bundle.getString(KEY_PARAM_OPTIONS);
-		String uri = bundle.getString(KEY_PARAM_FILE_URI);
 		String filename = bundle.getString(KEY_PARAM_FILE_NAME);
 		String fieldName = bundle.getString(KEY_PARAM_FILE_FIELD_NAME);
 		String fieldMapString = bundle.getString(KEY_PARAM_FIELD_MAP);
 		PendingIntent responseIntent = bundle.getParcelable(KEY_PARAM_NOTIFICATION_INTENT);
 		Map<String, String> fields = null;
-		File file = new File(uri);
 
 		NotificationCompat.Builder noteBuilder = new NotificationCompat.Builder(_context).setSmallIcon(
 				R.drawable.ic_action_upload).setContentTitle("Upload " + filename).setContentText("Uploading...").setContentIntent(
@@ -63,21 +61,29 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 				}
 
 			} catch (Exception ex) {
-
 			}
 		}
 
 		Ws ws = new Ws(_auth);
 		Result result = null;
 		try {
-			result = ws.httpPostFile(path, options, fieldName, filename, new FileInputStream(file),
-					(int) file.length(), fields);
+			if (bundle.containsKey(KEY_PARAM_FILE_URI)) {
+				String uri = bundle.getString(KEY_PARAM_FILE_URI);
+				File file = new File(uri);
+				result = ws.httpPostFile(path, options, fieldName, filename, new FileInputStream(file),
+						(int) file.length(), fields);
+			} else if (bundle.containsKey(KEY_PARAM_FILE_DATA)) {
+				byte[] filedata = bundle.getByteArray(KEY_PARAM_FILE_DATA);
+				String contentType = bundle.getString(KEY_PARAM_CONTENT_TYPE);
+				result = ws.httpPostFile(path, options, fieldName, filename, filedata, fields, contentType);
+			}
 			if (result.getResponseCode() / 100 != 2) {
 				Log.v(TAG, "Error response: " + result.getResponseCode());
 				bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
 				bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
 				bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-
+				noteBuilder.setContentText("Failed!");
+				noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
 			} else {
 				try {
 					// happy path

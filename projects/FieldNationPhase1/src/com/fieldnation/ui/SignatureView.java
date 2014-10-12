@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
-import android.gesture.GestureOverlayView;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,6 +23,14 @@ public class SignatureView extends View {
 	private Paint _myPaint;
 	private List<Point> _shape;
 	private List<List<Point>> _shapes;
+
+	private float _min = 0;
+	private float _max = 10;
+
+	private float _minX = Float.MAX_VALUE;
+	private float _minY = Float.MAX_VALUE;
+	private float _maxX = Float.MIN_VALUE;
+	private float _maxY = Float.MIN_VALUE;
 
 	public SignatureView(Context context) {
 		super(context);
@@ -47,23 +53,65 @@ public class SignatureView extends View {
 		_shapes.add(_shape);
 		_myPaint = new Paint();
 		_myPaint.setColor(Color.BLACK);
-		_myPaint.setStrokeWidth(2);
+		_myPaint.setStrokeWidth(3);
 	}
 
-	public Bitmap getSignature() {
-		setDrawingCacheEnabled(true);
-		// we make a copy, this ensures we don't screw up the canvas
-		Bitmap bmp = Bitmap.createBitmap(getDrawingCache());
-		setDrawingCacheEnabled(false);
-		return bmp;
-	}
+	public byte[] getSignature() {
+		// setDrawingCacheEnabled(true);
+		// // we make a copy, this ensures we don't screw up the canvas
+		// Bitmap bmp = Bitmap.createBitmap(getDrawingCache());
+		// setDrawingCacheEnabled(false);
+		//
+		// ByteArrayOutputStream out = new ByteArrayOutputStream();
+		//
+		// bmp.compress(CompressFormat.PNG, 100, out);
+		//
+		// return out.toByteArray();
 
-	private float _min = 0;
-	private float _max = 15;
+		StringBuilder sb = new StringBuilder();
+
+		float scale = Math.max((_maxX) / 605, (_maxY) / 115);
+		float xo = ((605 * scale) - (_maxX + _minX)) / 2;
+		float yo = ((115 * scale) - (_maxY + _minY)) / 2;
+
+		sb.append("[");
+		for (int i = 0; i < _shapes.size(); i++) {
+			List<Point> shape = _shapes.get(i);
+
+			if (shape.size() > 0) {
+				Point lp = shape.get(0);
+
+				for (int j = 1; j < shape.size(); j++) {
+					Point p = shape.get(j);
+					sb.append("{\"lx\":");
+					sb.append((int) ((lp.x + xo) / scale));
+					sb.append(",\"ly\":");
+					sb.append((int) ((lp.y + yo) / scale));
+					sb.append(",\"mx\":");
+					sb.append((int) ((p.x + xo) / scale));
+					sb.append(",\"my\":");
+					sb.append((int) ((p.y + yo) / scale));
+					sb.append("}");
+
+					if (j < shape.size() - 1) {
+						sb.append(",");
+					}
+					lp = p;
+				}
+
+				if (i < _shapes.size() - 2) {
+					sb.append(",");
+				}
+			}
+		}
+		sb.append("]");
+		Log.v(TAG, sb.toString());
+
+		return sb.toString().getBytes();
+	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-
 		// walk through the shapes list... draw those
 		for (int i = 0; i < _shapes.size(); i++) {
 			List<Point> shape = _shapes.get(i);
@@ -85,7 +133,7 @@ public class SignatureView extends View {
 						float stroke = dur / dist;
 
 						// scale
-						stroke = ((stroke - _min) / _max) * 8 + 2;
+						stroke = ((stroke - _min) / _max) * 8 + 3;
 
 						// cap
 						if (stroke < 2) {
@@ -93,6 +141,15 @@ public class SignatureView extends View {
 						} else if (stroke > 10) {
 							stroke = 10;
 						}
+
+						if (lp.stroke != null) {
+							if (stroke > lp.stroke + 1.0) {
+								stroke = lp.stroke + 1.0F;
+							} else if (stroke < lp.stroke - 1.0) {
+								stroke = lp.stroke - 1.0F;
+							}
+						}
+
 						p.stroke = stroke;
 					}
 
@@ -102,8 +159,7 @@ public class SignatureView extends View {
 				}
 			}
 		}
-		Log.v(TAG, "min: " + _min + "  max:" + _max);
-
+		// Log.v(TAG, "min: " + _min + "  max:" + _max);
 		super.onDraw(canvas);
 	}
 
@@ -111,6 +167,11 @@ public class SignatureView extends View {
 		_shapes = new LinkedList<List<Point>>();
 		_shape = new LinkedList<Point>();
 		_shapes.add(_shape);
+		_minX = Float.MAX_VALUE;
+		_minY = Float.MAX_VALUE;
+		_maxX = Float.MIN_VALUE;
+		_maxY = Float.MIN_VALUE;
+
 		invalidate();
 	}
 
@@ -124,8 +185,7 @@ public class SignatureView extends View {
 		case MotionEvent.ACTION_MOVE:
 			int count = event.getHistorySize();
 			for (int i = 0; i < count; i++) {
-				_shape.add(new Point(event.getHistoricalX(i), event
-						.getHistoricalY(i), event.getHistoricalEventTime(i)));
+				_shape.add(new Point(event.getHistoricalX(i), event.getHistoricalY(i), event.getHistoricalEventTime(i)));
 			}
 			invalidate();
 			return true;
@@ -148,7 +208,6 @@ public class SignatureView extends View {
 		public Point(MotionEvent event) {
 			x = event.getX();
 			y = event.getY();
-
 			t = event.getEventTime();
 		}
 
@@ -156,6 +215,15 @@ public class SignatureView extends View {
 			this.x = x;
 			this.y = y;
 			this.t = t;
+
+			if (x < _minX)
+				_minX = x;
+			if (y < _minY)
+				_minY = y;
+			if (x > _maxX)
+				_maxX = x;
+			if (y > _maxY)
+				_maxY = y;
 		}
 	}
 }

@@ -15,6 +15,13 @@ public class ProgressNode extends LinearLayout {
 	// UI
 	private ImageView _iconImageView;
 	private TextView _labelTextView;
+	
+	private static final int PROGRESSBAR_STEP_COMPLETED = 1;
+	private static final int PROGRESSBAR_STEP_ACTIVE = 2;
+	private static final int PROGRESSBAR_STEP_INACTIVE = 3;
+	private static final int PROGRESSBAR_ON_HOLD_ACKNOWLEDGEMENT = 4;
+	private static final int PROGRESSBAR_ON_HOLD_UNACKNOWLEDGEMENT = 5;
+	
 
 	// DATA
 
@@ -47,13 +54,32 @@ public class ProgressNode extends LinearLayout {
 	public int getIconWidth() {
 		return _iconImageView.getWidth();
 	}
-
-	public void setActive(boolean active) {
-		if (active) {
-			_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_active);
+	
+	public void setActive(Integer ProgressBarStep) {
+		switch(ProgressBarStep){
+			case PROGRESSBAR_STEP_COMPLETED:
+				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_done);
+				break;
+			case PROGRESSBAR_STEP_ACTIVE:
+				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_active);
+				break;			
+			case PROGRESSBAR_ON_HOLD_ACKNOWLEDGEMENT:
+				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_hold);
+				break;
+			case PROGRESSBAR_ON_HOLD_UNACKNOWLEDGEMENT:
+				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_hold_alert);
+				break;
+			default:
+				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_inactive);
+				break;
+		}
+		
+		/*if (active) {			
+			_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_active);			
 		} else {
 			_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_inactive);
-		}
+		}*/
+		
 		invalidate();
 
 	}

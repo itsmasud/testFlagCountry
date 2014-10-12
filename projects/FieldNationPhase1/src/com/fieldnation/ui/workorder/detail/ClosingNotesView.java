@@ -6,6 +6,7 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -77,6 +78,10 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 			_notesTextView.setText(message);
 			setLoading(true);
 			_gs.startService(_service.closingNotes(WEB_SAVE_NOTES, _workorder.getWorkorderId(), message));
+		}
+
+		@Override
+		public void onCancel() {
 		}
 	};
 	private View.OnClickListener _notes_onClick = new View.OnClickListener() {

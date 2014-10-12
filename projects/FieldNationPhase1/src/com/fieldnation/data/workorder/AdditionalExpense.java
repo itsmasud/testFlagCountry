@@ -1,15 +1,20 @@
 package com.fieldnation.data.workorder;
 
+import java.text.ParseException;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class AdditionalExpense {
-	@Json(name="statusDescription")
+public class AdditionalExpense implements Parcelable {
+	@Json(name = "statusDescription")
 	private String _statusDescription;
-	@Json(name="status")
+	@Json(name = "status")
 	private String _status;
-	@Json(name="expenseId")
+	@Json(name = "expenseId")
 	private Integer _expenseId;
 	@Json(name = "description")
 	private String _description;
@@ -17,20 +22,21 @@ public class AdditionalExpense {
 	private Double _price;
 	@Json(name = "approved")
 	private Boolean _approved;
-	@Json(name="categoryId")
+	@Json(name = "categoryId")
 	private Integer _categoryId;
 
 	public AdditionalExpense() {
 	}
-	public String getStatusDescription(){
+
+	public String getStatusDescription() {
 		return _statusDescription;
 	}
 
-	public String getStatus(){
+	public String getStatus() {
 		return _status;
 	}
 
-	public Integer getExpenseId(){
+	public Integer getExpenseId() {
 		return _expenseId;
 	}
 
@@ -46,7 +52,7 @@ public class AdditionalExpense {
 		return _approved;
 	}
 
-	public int getCategoryId(){
+	public int getCategoryId() {
 		return _categoryId;
 	}
 
@@ -70,6 +76,48 @@ public class AdditionalExpense {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	/*-*************************************************-*/
+	/*-				Human Generated Code				-*/
+	/*-*************************************************-*/
+	public AdditionalExpense(String description, double amount, ExpenseCategory category) {
+		_categoryId = category.getId();
+		_description = description;
+		_price = amount;
+		_status = "New";
+	}
+
+	/*-*********************************************-*/
+	/*-			Parcelable Implementation			-*/
+	/*-*********************************************-*/
+
+	public static final Parcelable.Creator<AdditionalExpense> CREATOR = new Parcelable.Creator<AdditionalExpense>() {
+
+		@Override
+		public AdditionalExpense createFromParcel(Parcel source) {
+			try {
+				return AdditionalExpense.fromJson(new JsonObject(source.readString()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		public AdditionalExpense[] newArray(int size) {
+			return new AdditionalExpense[size];
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(toJson().toString());
 	}
 
 }

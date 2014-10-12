@@ -1,11 +1,16 @@
 package com.fieldnation.data.workorder;
 
+import java.text.ParseException;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
-public class Pay {
+public class Pay implements Parcelable {
 	@Json(name = "maxDevice")
 	private Integer _maxDevice;
 	@Json(name = "fixedAmount")
@@ -30,7 +35,7 @@ public class Pay {
 	private Double _expenses;
 	@Json(name = "payRateBasis")
 	private String _payRateBasis;
-	@Json(name="description")
+	@Json(name = "description")
 	private String _description;
 	@Json(name = "blendedAdditionalRate")
 	private Double _blendedAdditionalRate;
@@ -86,7 +91,7 @@ public class Pay {
 		return _payRateBasis;
 	}
 
-	public String getDescription(){
+	public String getDescription() {
 		return _description;
 	}
 
@@ -119,6 +124,30 @@ public class Pay {
 	/*-*************************************************-*/
 	/*-				Human Generated Code				-*/
 	/*-*************************************************-*/
+	public Pay(double hourlyRate, double maxHours) {
+		_payRateBasis = "Hourly";
+		_perHour = hourlyRate;
+		_maxHour = maxHours;
+	}
+
+	public Pay(double fixedRate) {
+		_payRateBasis = "Fixed";
+		_fixedAmount = fixedRate;
+	}
+
+	public Pay(double deviceRate, int maxDevices) {
+		_payRateBasis = "Per Device";
+		_perDevice = deviceRate;
+		_maxDevice = maxDevices;
+	}
+
+	public Pay(double hourlyRate, double maxHours, double extraRate, double extraMax) {
+		_payRateBasis = "Blended";
+		_blendedAdditionalHours = extraMax;
+		_blendedAdditionalRate = extraRate;
+		_blendedFirstHours = maxHours;
+		_blendedStartRate = hourlyRate;
+	}
 
 	public String[] toDisplayStringLong() {
 		String line1 = null;
@@ -155,6 +184,53 @@ public class Pay {
 			return misc.toCurrency(getPerDevice());
 		}
 		return null;
+	}
+
+	public boolean isFixedRate() {
+		return "Fixed".equals(getPayRateBasis());
+	}
+
+	public boolean isHourlyRate() {
+		return "Hourly".equals(getPayRateBasis());
+	}
+
+	public boolean isBlendedRate() {
+		return "Blended".equals(getPayRateBasis());
+	}
+
+	public boolean isPerDeviceRate() {
+		return "Per Device".equals(getPayRateBasis());
+	}
+
+	/*-*********************************************-*/
+	/*-			Parcelable Implementation			-*/
+	/*-*********************************************-*/
+	public static final Parcelable.Creator<Pay> CREATOR = new Creator<Pay>() {
+
+		@Override
+		public Pay[] newArray(int size) {
+			return new Pay[size];
+		}
+
+		@Override
+		public Pay createFromParcel(Parcel source) {
+			try {
+				return Pay.fromJson(new JsonObject(source.readString()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(toJson().toString());
 	}
 
 }

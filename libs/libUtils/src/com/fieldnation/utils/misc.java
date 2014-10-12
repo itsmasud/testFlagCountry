@@ -32,6 +32,14 @@ public class misc {
 		return _currencyFormat.format(money);
 	}
 
+	public static String toCurrencyTrim(double money) {
+		String curr = _currencyFormat.format(money);
+
+		if (curr.endsWith(".00"))
+			return curr.substring(0, curr.length() - 3);
+		return curr;
+	}
+
 	/**
 	 * removes a circle from the source bitmap that is exactly centered
 	 * 
@@ -156,18 +164,22 @@ public class misc {
 		return requestPath;
 	}
 
-	private static Calendar applyTimeZone(Calendar calendar) {
-		TimeZone tz = TimeZone.getDefault();
-		Calendar nc = Calendar.getInstance(tz);
+	public static Calendar applyTimeZone(Calendar fromCal) {
+		TimeZone fromTz = fromCal.getTimeZone();
+		TimeZone toTz = TimeZone.getDefault();
 
-		if (tz.useDaylightTime()) {
-			nc.setTimeInMillis(calendar.getTimeInMillis() + tz.getRawOffset() - tz.getDSTSavings());
+		if (toTz.equals(fromTz))
+			return fromCal;
+
+		Calendar toCal = Calendar.getInstance(toTz);
+
+		if (toTz.useDaylightTime()) {
+			toCal.setTimeInMillis(fromCal.getTimeInMillis() + toTz.getRawOffset() - toTz.getDSTSavings());
 		} else {
-			nc.setTimeInMillis(calendar.getTimeInMillis() + tz.getRawOffset());
+			toCal.setTimeInMillis(fromCal.getTimeInMillis() + toTz.getRawOffset());
 		}
-		// nc.setTimeZone(tz);
 
-		return nc;
+		return toCal;
 	}
 
 	/*
@@ -191,6 +203,15 @@ public class misc {
 	 */
 	public static String formatDateTime(Calendar calendar, boolean seconds) {
 		return formatDate(calendar) + " " + formatTime(calendar, seconds);
+	}
+
+	/**
+	 * @param calendar
+	 * @param seconds
+	 * @return June 3, 2014 @ HH:MM am/pm
+	 */
+	public static String formatDateTimeLong(Calendar calendar) {
+		return formatDateLong(calendar) + " @ " + formatTime(calendar, false);
 	}
 
 	/**
@@ -264,6 +285,30 @@ public class misc {
 			time += "am";
 		} else {
 			time += "pm";
+		}
+
+		return time;
+	}
+
+	public static String formatTime2(Calendar calendar) {
+		calendar = applyTimeZone(calendar);
+
+		String time = "";
+
+		int hours = calendar.get(Calendar.HOUR);
+
+		if (hours == 0) {
+			time += "12:";
+		} else {
+			time += hours + ":";
+		}
+
+		int min = calendar.get(Calendar.MINUTE);
+
+		if (min < 10) {
+			time += "0" + min;
+		} else {
+			time += min + "";
 		}
 
 		return time;

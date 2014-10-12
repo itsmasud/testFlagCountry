@@ -10,7 +10,9 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.WorkLogDialog;
+import com.fieldnation.ui.dialog.WorkLogDialog;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -38,6 +40,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 	private GlobalState _gs;
 	private Workorder _workorder;
 	private WorkorderService _service;
+	private FragmentManager _fm;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -69,7 +72,27 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	public void setFragmentManager(FragmentManager fm) {
-		_workLogDialog.setFragmentManager(fm);
+		_fm = fm;
+	}
+
+	@Override
+	public void setWorkorder(Workorder workorder) {
+		_workorder = workorder;
+		refresh();
+	}
+
+	private void refresh() {
+		LoggedWork[] loggedWork = _workorder.getLoggedWork();
+
+		_workLogLinearLayout.removeAllViews();
+
+		if (loggedWork != null) {
+			for (int i = 0; i < loggedWork.length; i++) {
+				ScheduleDetailView v = new ScheduleDetailView(getContext());
+				_workLogLinearLayout.addView(v);
+				v.setLoggedWork(loggedWork[i]);
+			}
+		}
 	}
 
 	/*-*********************************-*/
@@ -79,7 +102,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 		@Override
 		public void onClick(View v) {
 			// TODO figure out the two display values here
-			_workLogDialog.show("Add a worklog", false, false, _worklogdialog_onOk);
+			_workLogDialog.show(_fm, "Add a worklog", false, false, _worklogdialog_onOk);
 		}
 	};
 
@@ -89,6 +112,10 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 			getContext().startService(
 					_service.logTime(WEB_SUBMIT_WORKLOG, _workorder.getWorkorderId(), start.getTimeInMillis(),
 							end.getTimeInMillis(), false));
+		}
+
+		@Override
+		public void onCancel() {
 		}
 	};
 
@@ -127,29 +154,5 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 			Log.v(TAG, resultData.getString(WebServiceConstants.KEY_RESPONSE_ERROR));
 		}
 	};
-
-	/*-*************************************-*/
-	/*-				Mutators				-*/
-	/*-*************************************-*/
-
-	@Override
-	public void setWorkorder(Workorder workorder) {
-		_workorder = workorder;
-		refresh();
-	}
-
-	private void refresh() {
-		LoggedWork[] loggedWork = _workorder.getLoggedWork();
-
-		_workLogLinearLayout.removeAllViews();
-
-		if (loggedWork != null) {
-			for (int i = 0; i < loggedWork.length; i++) {
-				ScheduleDetailView v = new ScheduleDetailView(getContext());
-				_workLogLinearLayout.addView(v);
-				v.setLoggedWork(loggedWork[i]);
-			}
-		}
-	}
 
 }

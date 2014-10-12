@@ -8,6 +8,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.ShipmentAddDialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -31,8 +32,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
 	// Data
 	private Workorder _workorder;
-	private GlobalState _gs;
-	private WorkorderService _workorderService;
+	private Listener _listener;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -49,9 +49,6 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 		if (isInEditMode())
 			return;
 
-		_gs = (GlobalState) context.getApplicationContext();
-		_gs.requestAuthentication(_authclient);
-
 		_addLayout = (LinearLayout) findViewById(R.id.add_layout);
 		_addLayout.setOnClickListener(_add_onClick);
 
@@ -61,51 +58,13 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
 	}
 
+	public void setListener(Listener listener) {
+		_listener = listener;
+	}
+
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-	private AuthenticationClient _authclient = new AuthenticationClient() {
-
-		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			_gs.requestAuthenticationDelayed(_authclient);
-		}
-
-		@Override
-		public void onAuthentication(String username, String authToken) {
-			_workorderService = new WorkorderService(getContext(), username, authToken, _resultReceiver);
-		}
-
-		@Override
-		public GlobalState getGlobalState() {
-			return _gs;
-		}
-	};
-
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
-		@Override
-		public void onError(int resultCode, Bundle resultData, String errorType) {
-			Log.v(TAG, errorType);
-			Log.v(TAG, resultData.toString());
-			// Log.v(TAG,
-			// resultData.getString(WorkorderService.KEY_RESPONSE_DATA));
-			Log.v(TAG, resultData.getString(WebServiceConstants.KEY_RESPONSE_ERROR));
-			// if (_workorderService != null) {
-			// _gs.invalidateAuthToken(_workorderService.getAuthToken());
-			// }
-			// _gs.requestAuthentication(_authclient);
-			_workorder.dispatchOnChange();
-		}
-
-		@Override
-		public void onSuccess(int resultCode, Bundle resultData) {
-			// TODO Method Stub: onSuccess()
-			Log.v(TAG, "Method Stub: onSuccess()");
-			Log.v(TAG, resultData.toString());
-			_workorder.dispatchOnChange();
-		}
-	};
-
 	private View.OnClickListener _add_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -116,20 +75,31 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
 		@Override
 		public void onDelete(ShipmentTracking shipment) {
-			getContext().startService(
-					_workorderService.deleteShipment(WEB_DEL_SHIPMENT, _workorder.getWorkorderId(),
-							shipment.getWorkorderShipmentId()));
+			if (_listener != null) {
+				_listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
+			}
 		}
 	};
 
 	private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
 		@Override
 		public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
-			getContext().startService(
-					_workorderService.addShipmentDetails(WEB_ADD_SHIPMENT, _workorder.getWorkorderId(), description,
-							shipToSite, carrier, null, trackingId));
+			if (_listener != null) {
+				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId);
+			}
+		}
+
+		@Override
+		public void onCancel() {
 		}
 	};
+
+	public interface Listener {
+		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+				String trackingId);
+
+		public void onDelete(Workorder workorder, int shipmentId);
+	}
 
 	/*-*************************************-*/
 	/*-				Mutators				-*/

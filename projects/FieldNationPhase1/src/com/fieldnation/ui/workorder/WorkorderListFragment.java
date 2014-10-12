@@ -1,5 +1,8 @@
 package com.fieldnation.ui.workorder;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 
@@ -8,12 +11,12 @@ import eu.erikw.PullToRefreshListView.State;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
 
 public class WorkorderListFragment extends Fragment {
 	private static final String TAG = "ui.workorder.WorkorderListFragment";
@@ -38,16 +41,7 @@ public class WorkorderListFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		Log.v(TAG, "onCreate: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
-
-		if (savedInstanceState != null) {
-			if (savedInstanceState.containsKey("_displayView")) {
-				Log.v(TAG, "Restoring state");
-				_displayView = WorkorderDataSelector.fromName(savedInstanceState.getString("_displayView"));
-			}
-		}
-		Log.v(TAG, "Display Type: " + _displayView.getCall());
 	}
 
 	@Override
@@ -65,25 +59,58 @@ public class WorkorderListFragment extends Fragment {
 		_listView.setStateListener(_listview_onPullListener);
 
 		_loadingBar = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
-		// _loadingBar.setSmoothProgressDrawableInterpolator(new
-		// AccelerateDecelerateInterpolator());
-		// _loadingBar.setSmoothProgressDrawableColors(getActivity().getResources().getIntArray(R.array.loading_bar_colors));
-		// _loadingBar.setSmoothProgressDrawableMirrorMode(true);
-		// _loadingBar.setSmoothProgressDrawableReversed(true);
-		// _loadingBar.setSmoothProgressDrawableSeparatorLength(0);
-		// _loadingBar.setSmoothProgressDrawableSpeed(2.0F);
-		// _loadingBar.setSmoothProgressDrawableProgressiveStartSpeed(2.0F);
-		// _loadingBar.setSmoothProgressDrawableProgressiveStopSpeed(2.0F);
-		// _loadingBar.setSmoothProgressDrawableStrokeWidth(8F);
-		// _loadingBar.setSmoothProgressDrawableSectionsCount(1);
 		_loadingBar.setSmoothProgressDrawableCallbacks(_progressCallback);
 		_loadingBar.setMax(100);
+
+		if (savedInstanceState != null) {
+			if (savedInstanceState.containsKey("_displayView")) {
+				Log.v(TAG, "Restoring state");
+				_displayView = WorkorderDataSelector.fromName(savedInstanceState.getString("_displayView"));
+			}
+
+			if (savedInstanceState.containsKey("WORKORDERS")) {
+				Parcelable[] works = savedInstanceState.getParcelableArray("WORKORDERS");
+
+				if (works != null && works.length > 0) {
+					List<Workorder> work = new LinkedList<Workorder>();
+					for (int i = 0; i < works.length; i++) {
+						work.add((Workorder) works[i]);
+					}
+					try {
+						_adapter = new WorkorderListAdapter(this.getActivity(), _displayView, work);
+						_adapter.setLoadingListener(_workorderAdapter_listener);
+						_loadingBar.setVisibility(View.GONE);
+					} catch (NoSuchMethodException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		Log.v(TAG, "Display Type: " + _displayView.getCall());
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putString("_displayView", _displayView.name());
+
+		if (_adapter != null) {
+			List<Workorder> work = _adapter.getObjects();
+			if (work != null && work.size() > 0) {
+				Workorder[] works = new Workorder[work.size()];
+				for (int i = 0; i < work.size(); i++) {
+					works[i] = work.get(i);
+				}
+				outState.putParcelableArray("WORKORDERS", works);
+			}
+		}
+
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
 	public void onStart() {
 		Log.v(TAG, "onStart");
-		if (_listView != null && getAdapter() != null) {
+		if (_listView != null && getAdapter() != null && _listView.getAdapter() == null) {
 			_listView.setAdapter(getAdapter());
 		}
 		super.onStart();
@@ -98,21 +125,15 @@ public class WorkorderListFragment extends Fragment {
 		super.onPause();
 	}
 
-	@Override
-	public void onStop() {
-		Log.v(TAG, "Method Stub: onStop()");
-		super.onStop();
-		if (getAdapter() != null) {
-			getAdapter().onStop();
-			_adapter = null;
-		}
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putString("_displayView", _displayView.name());
-		super.onSaveInstanceState(outState);
-	}
+	// @Override
+	// public void onStop() {
+	// Log.v(TAG, "Method Stub: onStop()");
+	// super.onStop();
+	// if (getAdapter() != null) {
+	// getAdapter().onStop();
+	// _adapter = null;
+	// }
+	// }
 
 	/*-*********************************-*/
 	/*-				Events				-*/
@@ -143,16 +164,6 @@ public class WorkorderListFragment extends Fragment {
 		public void onLoadComplete() {
 			_listView.onRefreshComplete();
 			_loadingBar.progressiveStop();
-		}
-	};
-
-	private Interpolator _customInterpolator = new Interpolator() {
-
-		@Override
-		public float getInterpolation(float input) {
-			// TODO Method Stub: getInterpolation()
-			Log.v(TAG, "Method Stub: getInterpolation()");
-			return 10;
 		}
 	};
 

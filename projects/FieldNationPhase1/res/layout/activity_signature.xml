@@ -1,19 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/SignatureActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
     <com.fieldnation.ui.SignatureView
         android:id="@+id/sig_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/ok_button"
-        style="@style/ButtonOrange"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/done" />
+    <RelativeLayout
+        style="@style/SignatureContents"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/arrival_layout"
+            style="@style/ArrivalStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arrival_date_and_time_colon"
+                android:textColor="@color/SignatureCardGrey" />
+
+            <TextView
+                android:id="@+id/arrival_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tap_to_set_a_time"
+                android:textColor="@color/SignatureCardGrey" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/departure_layout"
+            style="@style/DepartureStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/departure_date_and_time_colon"
+                android:textColor="@color/SignatureCardGrey" />
+
+            <TextView
+                android:id="@+id/departure_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/tap_to_set_a_time"
+                android:textColor="@color/SignatureCardGrey" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/SignatureLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/name_textview"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_grey_x" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="@color/SignatureCardGrey" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/name_textview"
+            style="@style/SignatureName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/tap_to_set_name" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -7,6 +7,7 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.auth.client.AuthenticationServer;
 import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.ui.market.MarketActivity;
+import com.fieldnation.ui.workorder.MyWorkActivity;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -139,7 +140,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			Intent gohome = new Intent(this, MarketActivity.class);
+			Intent gohome = new Intent(this, MyWorkActivity.class);
 			startActivity(gohome);
 			return true;
 		case R.id.action_settings:
@@ -182,7 +183,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 				_removing = false;
 				// restart the app to clear the backstack, and anything stored
 				// in the UI.
-				Intent activity = new Intent(BaseActivity.this, MarketActivity.class);
+				Intent activity = new Intent(BaseActivity.this, MyWorkActivity.class);
 				PendingIntent pendingIntent = PendingIntent.getActivity(BaseActivity.this, 1, activity,
 						PendingIntent.FLAG_CANCEL_CURRENT);
 				AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

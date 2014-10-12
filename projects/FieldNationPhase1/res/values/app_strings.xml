@@ -56,7 +56,7 @@
     <string name="amount">Amount</string>
     <string name="description">Description</string>
     <string name="by">by</string>
-    <string name="fixed_pay_amount">Fixed Pay Amount</string>
+    <string name="fixed_pay_amount_colon">Fixed Pay Amount:</string>
     <string name="hourly_rate">Hourly Rate</string>
     <string name="max_hours">Max Hours</string>
     <string name="per_device_rate">Per Device Rate</string>
@@ -79,11 +79,12 @@
     <string name="add_shipment">Add Shipment</string>
     <string name="shipment">Shipment</string>
     <string name="schedule">Schedule</string>
-    <string name="work_performed">Work Performed: </string>
+    <string name="work_performed_colon">Work Performed: </string>
     <string name="closing_notes">Closing Notes</string>
     <string name="enter_closing_notes_here">Enter closing notes here...</string>
     <string name="save">Save</string>
     <string name="request_work">Request Work</string>
+    <string name="accept_work">Accept Work</string>
     <string name="counter_offer">Counter Offer</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>
     <string name="view_customer_policies_and_procedures">View Customer Policies and Procedures</string>
@@ -94,7 +95,7 @@
     <string name="expenses_colon">Expenses:</string>
     <string name="discounts_colon">Discounts:</string>
     <string name="payment">Payment</string>
-    <string name="provider_must_have_the_following_skillsets">Provider must have the following skillsets:</string>
+    <string name="provider_must_have_the_following_skillsets_colon">Provider must have the following skillsets:</string>
     <string name="provider_must_confirm_assignment">Provider must confirm assignment</string>
     <string name="prerequisites">Prerequisites</string>
     <string name="this_work_order_as_no_notification_at_this_time">This work order as no notifications at this time.</string>
@@ -108,7 +109,36 @@
     <string name="uploading">Uploading...</string>
     <string name="deleting">Deleting...</string>
     <string name="done">Done</string>
-
+    <string name="clear">Clear</string>
+    <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
+    <string name="departure_date_and_time_colon">Departure Date and Time:</string>
+    <string name="tap_to_set_a_time">Tap to set a time</string>
+    <string name="tap_to_set_name">Tap to set name</string>
+    <string name="request_payment_change">Request Payment Change</string>
+    <string name="request_schedule_change">Request Schedule Change</string>
+    <string name="edit_payment_counter">Edit Payment Counter</string>
+    <string name="edit_schedule_counter">Edit Schedule Counter</string>
+    <string name="expense">Expense</string>
+    <string name="add_expense_to_counter_offer">Add Expense to Counter Offer</string>
+    <string name="add_another_expense">Add Another Expense</string>
+    <string name="reason_for_counter_offer_colon">Reason for Counter Offer:</string>
+    <string name="reason_for_request">Reason For Request</string>
+    <string name="delete_counter_if_not_accepted_by">Delete counter of not accepted by</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>
+    <string name="cancel">Cancel</string>
+    <string name="send_counter">Send Counter</string>
+    <string name="pay_rate_basis_colon">Pay Rate Basis:</string>
+    <string name="hourly">Hourly</string>
+    <string name="blended">Blended</string>
+    <string name="arrival_period_colon">Arrival Period:</string>
+    <string name="date_colon">Date:</string>
+    <string name="time_colon">Time:</string>
+    <string name="date_and_time_colon">Date and Time:</string>
+    <string name="counter_offers">Counter Offers</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="between_colon">Between</string>
+    <string name="and_colon">and</string>
     <!-- /general strings -->
 
 
@@ -188,8 +218,12 @@
     <string-array name="pay_types">
         <item>Fixed</item>
         <item>Hourly</item>
-        <item>Bleneded</item>
         <item>Per Device</item>
+        <item>Blended</item>
+    </string-array>
+    <string-array name="schedule_types">
+        <item>Range</item>
+        <item>Exact</item>
     </string-array>
 
     <!-- workorder status list -->

@@ -12,6 +12,12 @@ import android.widget.RelativeLayout;
 
 public class WoProgressBar extends RelativeLayout {
 	private static final String TAG = "ui.workorder.detail.WoProgressBar";
+	
+	private static final int PROGRESSBAR_STEP_COMPLETED = 1;
+	private static final int PROGRESSBAR_STEP_ACTIVE = 2;
+	private static final int PROGRESSBAR_STEP_INACTIVE = 3;
+	private static final int PROGRESSBAR_ON_HOLD_ACKNOWLEDGEMENT = 4;
+	private static final int PROGRESSBAR_ON_HOLD_UNACKNOWLEDGEMENT = 5;
 
 	// UI
 	private LinearLayout _nodeLayout;
@@ -58,11 +64,11 @@ public class WoProgressBar extends RelativeLayout {
 
 	public void setSubstatus(WorkorderSubstatus substatus) {
 		int ord = substatus.ordinal();
-
-		_nodes[0].setActive(ord >= WorkorderSubstatus.AVAILABLE.ordinal());
+		buildProgressBar(substatus);
+		/*_nodes[0].setActive(ord >= WorkorderSubstatus.AVAILABLE.ordinal());
 		_nodes[1].setActive(ord >= WorkorderSubstatus.REQUESTED.ordinal());
 		_nodes[2].setActive(ord >= WorkorderSubstatus.CONFIRMED.ordinal());
-		_nodes[3].setActive(ord >= WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED.ordinal());
+		_nodes[3].setActive(ord >= WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED.ordinal());*/
 
 		// hideLast();
 	}
@@ -94,5 +100,156 @@ public class WoProgressBar extends RelativeLayout {
 
 	public void setIcon(int index, int position) {
 
+	}
+	
+	private void buildProgressBar(WorkorderSubstatus substatus) {
+		switch (substatus) {
+			case AVAILABLE:
+				_nodes[0].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[1].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				break;
+			case ROUTED:
+				_nodes[0].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[1].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);				
+				hideLast();
+				_nodes[0].setLabel("Routed");
+				_nodes[1].setLabel("Accept");
+				_nodes[2].setLabel("Assigned");
+				break;
+			case REQUESTED:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				break;
+			case COUNTEROFFERED:
+				_nodes[0].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[1].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Counter Offer");
+				_nodes[1].setLabel("Assigned");
+				_nodes[2].setLabel("In Progress");
+				_nodes[3].setLabel("Completed");
+				break;
+			case UNCONFIRMED:
+				_nodes[0].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[1].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Confirm");
+				_nodes[1].setLabel("Assigned");
+				_nodes[2].setLabel("In Progress");
+				_nodes[3].setLabel("Completed");
+				break;
+			case CONFIRMED:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Confirm");
+				_nodes[1].setLabel("Assigned");
+				_nodes[2].setLabel("In Progress");
+				_nodes[3].setLabel("Completed");
+				break;
+			case ONHOLD_UNACKNOWLEDGED:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_ON_HOLD_UNACKNOWLEDGEMENT);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Confirm");
+				_nodes[1].setLabel("Assigned");
+				_nodes[2].setLabel("In Progress");
+				_nodes[3].setLabel("Completed");
+				break;
+			case ONHOLD_ACKNOWLEDGED:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_ON_HOLD_ACKNOWLEDGEMENT);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Confirm");
+				_nodes[1].setLabel("Assigned");
+				_nodes[2].setLabel("In Progress");
+				_nodes[3].setLabel("Completed");
+				break;
+			case CHECKEDIN:
+			case CHECKEDOUT:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[2].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Confirm");
+				_nodes[1].setLabel("Assigned");
+				_nodes[2].setLabel("In Progress");
+				_nodes[3].setLabel("Completed");
+				break;				
+			case PENDINGREVIEWED:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Completed");
+				_nodes[1].setLabel("In Review");
+				_nodes[2].setLabel("Approved");
+				_nodes[3].setLabel("Paid");
+			case INREVIEW:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Completed");
+				_nodes[1].setLabel("In Review");
+				_nodes[2].setLabel("Approved");
+				_nodes[3].setLabel("Paid");
+				break;	
+			case APPROVED_PROCESSINGPAYMENT:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[2].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Completed");
+				_nodes[1].setLabel("In Review");
+				_nodes[2].setLabel("Approved");
+				_nodes[3].setLabel("Paid");
+				break;	
+			case PAID:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[2].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[3].setActive(PROGRESSBAR_STEP_COMPLETED);
+				
+				_nodes[0].setLabel("Completed");
+				_nodes[1].setLabel("In Review");
+				_nodes[2].setLabel("Approved");
+				_nodes[3].setLabel("Paid");
+				break;	
+			case CANCELLED:
+			case CANCELLED_LATEFEEPROCESSING:
+			case CANCELLED_LATEFEEPAID:
+				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
+				_nodes[1].setActive(PROGRESSBAR_STEP_ACTIVE);
+				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
+				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
+				
+				_nodes[0].setLabel("Confirm");
+				_nodes[1].setLabel("Assigned");
+				_nodes[2].setLabel("In Progress");
+				_nodes[3].setLabel("Completed");
+				break;	
+			default:
+				return;
+		}
 	}
 }

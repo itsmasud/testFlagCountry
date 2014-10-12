@@ -17,7 +17,7 @@ public class ClockReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		ClockService.pulseClock(context);
 
-		// TODO, setup next clock
+		// setup next clock
 		if (intent.hasExtra("IS_ONE_TIME")) {
 			registerClock(context);
 		}

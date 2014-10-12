@@ -8,6 +8,7 @@ import com.fieldnation.utils.misc;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -22,11 +23,13 @@ public class ExpenseView extends LinearLayout {
 	private TextView _categoryTextView;
 	private TextView _costTextView;
 	private ImageButton _deleteImageButton;
+	private TextView _indexTextView;
 
 	// Data
 	private Listener _listener;
 	private AdditionalExpense _expense = null;
 	private ExpenseCategory[] _categories;
+	private int _index;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -52,6 +55,7 @@ public class ExpenseView extends LinearLayout {
 		_costTextView = (TextView) findViewById(R.id.cost_textview);
 		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 		_deleteImageButton.setOnClickListener(_delete_onClick);
+		_indexTextView = (TextView) findViewById(R.id.index_textview);
 
 		ExpenseCategories categories = ExpenseCategories.getInstance(getContext());
 		categories.setListener(_categoriesListener);
@@ -78,8 +82,9 @@ public class ExpenseView extends LinearLayout {
 	/*-*************************************-*/
 	/*-				Mutators				-*/
 	/*-*************************************-*/
-	public void setAdditionalExpense(AdditionalExpense expense) {
+	public void setAdditionalExpense(AdditionalExpense expense, int index) {
 		_expense = expense;
+		_index = index;
 		refresh();
 	}
 
@@ -87,18 +92,22 @@ public class ExpenseView extends LinearLayout {
 		if (_expense == null)
 			return;
 
+		_indexTextView.setText("Expense " + _index + ":");
+
 		_descriptionTextView.setText(_expense.getDescription());
 		// TODO need to map the ID to a real string
-
+		_categoryTextView.setVisibility(View.GONE);
+		Log.v(TAG, _expense.getCategoryId() + "");
 		if (_categories != null) {
 			for (int i = 0; i < _categories.length; i++) {
 				if (_categories[i].getId() == _expense.getCategoryId()) {
 					_categoryTextView.setText(_categories[i].getName());
+					_categoryTextView.setVisibility(View.VISIBLE);
 					break;
 				}
 			}
 		}
-		// TODO, need to get quantity and priceper item numbers
+		// TODO, need to get quantity and price per item numbers
 		_costTextView.setText(misc.toCurrency(_expense.getPrice()));
 	}
 

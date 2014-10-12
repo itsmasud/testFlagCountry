@@ -19,6 +19,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -31,7 +34,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.fieldnation.ui.market.MarketActivity"
+            android:name="com.fieldnation.ui.workorder.MyWorkActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,15 +43,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fieldnation.ui.workorder.MyWorkActivity"
-            android:configChanges="orientation"
-            android:exported="false"
-            android:label="@string/mywork_title" >
+            android:name="com.fieldnation.ui.market.MarketActivity"
+            android:exported="false" >
         </activity>
         <activity
             android:name="com.fieldnation.ui.SignatureActivity"
             android:exported="false"
-            android:label="@string/signature_title" >
+            android:label="@string/signature_title"
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name="com.fieldnation.auth.server.AuthActivity"
@@ -90,7 +92,12 @@
             android:exported="false"
             android:label="@string/settings" >
         </activity>
-        
+        <activity
+            android:name="com.fieldnation.ui.workorder.detail.CounterOfferActivity"
+            android:exported="false"
+            android:label="@string/counter_offers" >
+        </activity>
+
         <service
             android:name="com.fieldnation.auth.server.AuthService"
             android:exported="true" >
@@ -110,21 +117,23 @@
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>com.fieldnation.service<action android:name="android.content.SyncAdapter" />
+            <intent-filter>
+com.fieldnation.service
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-        
+
         <provider
             android:name="com.fieldnation.rpc.server.StubProvider"
             android:authorities="com.fieldnation.service"
             android:exported="false"
             android:syncable="true" >
         </provider>
-        
+
         <receiver android:name="com.fieldnation.rpc.server.BootReciever" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -132,7 +141,6 @@
         </receiver>
         <receiver android:name="com.fieldnation.rpc.server.ClockReceiver" >
         </receiver>
-        
     </application>
 
 </manifest>

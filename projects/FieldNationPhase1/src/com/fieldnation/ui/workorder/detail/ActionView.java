@@ -5,10 +5,12 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -107,31 +109,59 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		_completeButton.setVisibility(View.GONE);
 
 		switch (stat) {
-		case APPROVED:
-			break;
 		case ASSIGNED:
-			_completeButton.setVisibility(View.VISIBLE);
+			buildStatusAssigned();
 			break;
 		case AVAILABLE:
-			_requestButton.setVisibility(View.VISIBLE);
-			_notInterestedButton.setVisibility(View.VISIBLE);
-			_counterOfferButton.setVisibility(View.VISIBLE);
+			buildStatusAvailable();
 			break;
 		case CANCELLED:
+			buildStatusCancelled();
 			break;
 		case COMPLETED:
+		case APPROVED:
+		case PAID:
+			buildStatusCompleted();
 			break;
 		case INPROGRESS:
-			_completeButton.setVisibility(View.VISIBLE);
-			break;
-		case PAID:
-			break;
-		case NA:
+			buildStatusInProgress();
 			break;
 		default:
 			break;
 
 		}
+	}
+
+	private void buildStatusAssigned() {
+		_completeButton.setVisibility(View.VISIBLE);
+	}
+
+	private void buildStatusAvailable() {
+		WorkorderSubstatus substatus = _workorder.getStatus().getWorkorderSubstatus();
+
+		_requestButton.setVisibility(View.VISIBLE);
+		_notInterestedButton.setVisibility(View.VISIBLE);
+		_counterOfferButton.setVisibility(View.VISIBLE);
+
+		if (substatus == WorkorderSubstatus.ROUTED) {
+			_requestButton.setText(R.string.accept_work);
+		} else if (substatus == WorkorderSubstatus.REQUESTED) {
+			_requestButton.setVisibility(View.GONE);
+		} else {
+			_requestButton.setText(R.string.request_work);
+		}
+	}
+
+	private void buildStatusInProgress() {
+		_completeButton.setVisibility(View.VISIBLE);
+	}
+
+	private void buildStatusCancelled() {
+
+	}
+
+	private void buildStatusCompleted() {
+
 	}
 
 	/*-*************************-*/
@@ -178,8 +208,11 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		@Override
 		public void onClick(View v) {
 			setLoading(true);
-			// TODO get request timeout from client
-			_gs.startService(_service.request(WEB_REQUEST, _workorder.getWorkorderId(), 0));
+			if (_workorder.getStatus().getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
+				_gs.startService(_service.confirmAssignment(WEB_REQUEST, _workorder.getWorkorderId(), 0, 0));
+			} else {
+				_gs.startService(_service.request(WEB_REQUEST, _workorder.getWorkorderId(), 0));
+			}
 		}
 	};
 
@@ -202,8 +235,9 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 	private View.OnClickListener _counteroffer_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			setLoading(true);
-			// TODO show counter offer dialog
+			Intent intent = new Intent(getContext(), CounterOfferActivity.class);
+			intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
+			getContext().startActivity(intent);
 		}
 	};
 

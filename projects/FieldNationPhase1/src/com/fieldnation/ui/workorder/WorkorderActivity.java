@@ -43,22 +43,33 @@ public class WorkorderActivity extends BaseActivity {
 
 	private static final int RPC_GET_DETAIL = 1;
 
+	// SavedInstance fields
+	private static final String AUTHTOKEN = "AUTHTOKEN";
+	private static final String USERNAME = "USERNAME";
+	private static final String WORKORDERID = "WORKORDERID";
+	private static final String CURRENT_TAB = "CURRENT_TAB";
+	private static final String CURRENTFRAG = "CURRENT_FRAG";
+	private static final String WORKORDER = "WORKORDER";
+
 	// UI
 	private ViewPager _viewPager;
 	private WorkorderFragment[] _fragments;
 	private WorkorderTabView _tabview;
-	//private RelativeLayout _loadingLayout;
+	private RelativeLayout _loadingLayout;
 
 	// Data
 	private GlobalState _gs;
+
+	private String _authToken;
+	private String _username;
 	private long _workorderId = 0;
 	private int _currentTab = 0;
 	private int _currentFragment = 0;
 	private boolean _created = false;
-	private PagerAdapter _pagerAdapter;
 	private Workorder _workorder = null;
 
 	// Services
+	private PagerAdapter _pagerAdapter;
 	private WorkorderService _woRpc;
 
 	/*-*************************************-*/
@@ -74,6 +85,8 @@ public class WorkorderActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_workorder);
 
+		_gs = (GlobalState) getApplicationContext();
+
 		Intent intent = getIntent();
 		if (intent != null) {
 			if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
@@ -83,6 +96,34 @@ public class WorkorderActivity extends BaseActivity {
 				_currentTab = intent.getIntExtra(INTENT_FIELD_CURRENT_TAB, 0);
 			} else {
 				_currentTab = TAB_DETAILS;
+			}
+		}
+
+		if (savedInstanceState == null) {
+			_gs.requestAuthentication(_authClient);
+		} else {
+			if (savedInstanceState.containsKey(AUTHTOKEN)) {
+				_authToken = savedInstanceState.getString(AUTHTOKEN);
+			}
+			if (savedInstanceState.containsKey(USERNAME)) {
+				_username = savedInstanceState.getString(USERNAME);
+			}
+			if (savedInstanceState.containsKey(WORKORDERID)) {
+				_workorderId = savedInstanceState.getLong(WORKORDERID);
+			}
+			if (savedInstanceState.containsKey(CURRENT_TAB)) {
+				_currentTab = savedInstanceState.getInt(CURRENT_TAB);
+			}
+			if (savedInstanceState.containsKey(CURRENTFRAG)) {
+				_currentFragment = savedInstanceState.getInt(CURRENTFRAG);
+			}
+			if (savedInstanceState.containsKey(WORKORDER)) {
+				_workorder = savedInstanceState.getParcelable(WORKORDER);
+			}
+			if (_authToken != null && _username != null) {
+				_woRpc = new WorkorderService(this, _username, _authToken, _rpcReceiver);
+			} else {
+				_gs.requestAuthentication(_authClient);
 			}
 		}
 
@@ -98,11 +139,8 @@ public class WorkorderActivity extends BaseActivity {
 			_created = true;
 		}
 
-		//_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 		setLoading(true);
-
-		_gs = (GlobalState) getApplicationContext();
-		_gs.requestAuthentication(_authClient);
 	}
 
 	private void buildFragments(Bundle savedInstanceState) {
@@ -273,13 +311,13 @@ public class WorkorderActivity extends BaseActivity {
 	/*-				Util				-*/
 	/*-*********************************-*/
 	private void setLoading(boolean loading) {
-//		if (loading) {
-//			_loadingLayout.setVisibility(View.VISIBLE);
-//			_viewPager.setVisibility(View.GONE);
-//		} else {
-//			_loadingLayout.setVisibility(View.GONE);
-//			_viewPager.setVisibility(View.VISIBLE);
-//		}
+		if (loading) {
+			_loadingLayout.setVisibility(View.VISIBLE);
+			_viewPager.setVisibility(View.GONE);
+		} else {
+			_loadingLayout.setVisibility(View.GONE);
+			_viewPager.setVisibility(View.VISIBLE);
+		}
 	}
 
 }

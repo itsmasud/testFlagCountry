@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fn_gray" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <!-- Payment -->
+
+        <TextView
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/payment" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                style="@style/WorkorderDetail_FieldTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/pay_rate_basis_colon" />
+
+            <TextView
+                android:id="@+id/basis_old_textview"
+                style="@style/WorkorderDetail_Field_Gray"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/hourly" />
+
+            <TextView
+                android:id="@+id/basis_new_textview"
+                style="@style/WorkorderDetail_Field"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/blended" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/hourly_rate_label_textview"
+                style="@style/WorkorderDetail_FieldTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hourly_rate" />
+
+            <TextView
+                android:id="@+id/hourly_old_textview"
+                style="@style/WorkorderDetail_Field_Gray"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="$28 Per Hour" />
+
+            <TextView
+                android:id="@+id/hourly_new_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="$28 - 3 Hours" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/max_hours_label_textview"
+                style="@style/WorkorderDetail_FieldTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/max_hours" />
+
+            <TextView
+                android:id="@+id/max_old_textview"
+                style="@style/WorkorderDetail_Field_Gray"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="2 Hours Max" />
+
+            <TextView
+                android:id="@+id/max_new_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="$20 - 2 Hours" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/edit_payment_counter_layout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/edit_payment_counter_imageview"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/ic_wo_detail_counter_offer" />
+
+            <TextView
+                android:id="@+id/edit_payment_counter_textview"
+                style="@style/TextViewLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/request_payment_change" />
+        </LinearLayout>
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <!-- Schedule -->
+
+        <TextView
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/schedule" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                style="@style/WorkorderDetail_FieldTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/arrival_period_colon" />
+
+            <TextView
+                android:id="@+id/schedule_type_old_textview"
+                style="@style/WorkorderDetail_Field_Gray"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Exact" />
+
+            <TextView
+                android:id="@+id/schedule_type_new_textview"
+                style="@style/WorkorderDetail_Field"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Range" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                style="@style/WorkorderDetail_FieldTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/date_colon" />
+
+            <TextView
+                android:id="@+id/schedule_date_old_textview"
+                style="@style/WorkorderDetail_Field_Gray"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="March 4, 2014" />
+
+            <TextView
+                android:id="@+id/schedule_date_new_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="March 4-6, 2014" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                style="@style/WorkorderDetail_FieldTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/time_colon" />
+
+            <TextView
+                android:id="@+id/schedule_time_old_textview"
+                style="@style/WorkorderDetail_Field_Gray"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="11 am" />
+
+            <TextView
+                android:id="@+id/schedule_time_new_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="1:00 - 3:00 pm" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/edit_schedule_layout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/edit_schedule_imageview"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/ic_clock_large" />
+
+            <TextView
+                android:id="@+id/edit_schedule_textview"
+                style="@style/TextViewLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/request_schedule_change" />
+        </LinearLayout>
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
+
+        <!-- expense -->
+
+        <TextView
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/expense" />
+
+        <TextView
+            android:id="@+id/no_expenses_textview"
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="No expenses have been added at this time" />
+
+        <LinearLayout
+            android:id="@+id/expenses_list_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_expense_layout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/ic_wo_detail_expense" />
+
+            <TextView
+                android:id="@+id/add_expense_textview"
+                style="@style/TextViewLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/add_expense_to_counter_offer" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/reasons_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <View
+                style="@style/WorkorderDetail_Separator"
+                android:layout_width="match_parent" />
+
+            <!-- reasons -->
+
+            <TextView
+                style="@style/WorkorderDetail_FieldSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reason_for_counter_offer_colon" />
+
+            <EditText
+                android:id="@+id/request_reason_edittext"
+                style="@style/EditText"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:hint="@string/reason_for_request" />
+
+            <CheckBox
+                android:id="@+id/delete_not_accepted_checkbox"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:text="@string/delete_counter_if_not_accepted_by" />
+
+            <Button
+                android:id="@+id/offer_time_button"
+                style="?android:attr/spinnerStyle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginLeft="40dp"
+                android:hint="Set time"
+                android:visibility="gone" />
+
+            <TextView
+                style="@style/WorkorderDetail_Field_Bold"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/by_countering_warning" />
+
+            <TextView
+                style="@style/TextViewLink"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:gravity="center"
+                android:text="@string/terms_and_conditions" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/ButtonWhite"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/send_button"
+                style="@style/ButtonWhite"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:text="@string/send_counter" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
