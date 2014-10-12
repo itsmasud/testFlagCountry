@@ -112,7 +112,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 		_maxOldTextView = (TextView) findViewById(R.id.max_old_textview);
 		_maxNewTextView = (TextView) findViewById(R.id.max_new_textview);
 		_editPaymentCounterLayout = (LinearLayout) findViewById(R.id.edit_payment_counter_layout);
-		_editPaymentCounterLayout.setOnClickListener(_editPaymentLayout_onClick);
+		_editPaymentCounterLayout
+				.setOnClickListener(_editPaymentLayout_onClick);
 		_editPaymentCounterTextView = (TextView) findViewById(R.id.edit_payment_counter_textview);
 		_editPaymentCounterImageView = (ImageView) findViewById(R.id.edit_payment_counter_imageview);
 
@@ -142,7 +143,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		_requestReasonEditText = (EditText) findViewById(R.id.request_reason_edittext);
 		_deleteNotAcceptedCheckbox = (CheckBox) findViewById(R.id.delete_not_accepted_checkbox);
-		_deleteNotAcceptedCheckbox.setOnCheckedChangeListener(_deleteCheck_onChange);
+		_deleteNotAcceptedCheckbox
+				.setOnCheckedChangeListener(_deleteCheck_onChange);
 
 		_offerTimeButton = (Button) findViewById(R.id.offer_time_button);
 		_offerTimeButton.setOnClickListener(_offerTimeButton_onClick);
@@ -167,19 +169,23 @@ public class CounterOfferActivity extends ActionBarActivity {
 				_workorder = savedInstanceState.getParcelable(INTENT_WORKORDER);
 			}
 			if (savedInstanceState.containsKey(INTENT_COUNTER_PAY)) {
-				_counterPay = savedInstanceState.getParcelable(INTENT_COUNTER_PAY);
+				_counterPay = savedInstanceState
+						.getParcelable(INTENT_COUNTER_PAY);
 			}
 			if (savedInstanceState.containsKey(INTENT_COUNTER_SCHEDULE)) {
-				_counterSchedule = savedInstanceState.getParcelable(INTENT_COUNTER_SCHEDULE);
+				_counterSchedule = savedInstanceState
+						.getParcelable(INTENT_COUNTER_SCHEDULE);
 			}
 			if (savedInstanceState.containsKey(INTENT_COUNTER_EXPENSES)) {
-				Parcelable[] parc = savedInstanceState.getParcelableArray(INTENT_COUNTER_EXPENSES);
+				Parcelable[] parc = savedInstanceState
+						.getParcelableArray(INTENT_COUNTER_EXPENSES);
 				for (int i = 0; i < parc.length; i++) {
 					_counterExpenses.add((AdditionalExpense) parc[i]);
 				}
 			}
 			if (savedInstanceState.containsKey(INTENT_DELETE_COUNTER_EXPENSES)) {
-				Parcelable[] parc = savedInstanceState.getParcelableArray(INTENT_DELETE_COUNTER_EXPENSES);
+				Parcelable[] parc = savedInstanceState
+						.getParcelableArray(INTENT_DELETE_COUNTER_EXPENSES);
 				for (int i = 0; i < parc.length; i++) {
 					_deleteCounterExpenses.add((AdditionalExpense) parc[i]);
 				}
@@ -196,16 +202,19 @@ public class CounterOfferActivity extends ActionBarActivity {
 				_counterPay = extras.getParcelable(INTENT_COUNTER_PAY);
 			}
 			if (extras.containsKey(INTENT_COUNTER_SCHEDULE)) {
-				_counterSchedule = extras.getParcelable(INTENT_COUNTER_SCHEDULE);
+				_counterSchedule = extras
+						.getParcelable(INTENT_COUNTER_SCHEDULE);
 			}
 			if (extras.containsKey(INTENT_COUNTER_EXPENSES)) {
-				Parcelable[] parc = savedInstanceState.getParcelableArray(INTENT_COUNTER_EXPENSES);
+				Parcelable[] parc = savedInstanceState
+						.getParcelableArray(INTENT_COUNTER_EXPENSES);
 				for (int i = 0; i < parc.length; i++) {
 					_counterExpenses.add((AdditionalExpense) parc[i]);
 				}
 			}
 			if (extras.containsKey(INTENT_DELETE_COUNTER_EXPENSES)) {
-				Parcelable[] parc = savedInstanceState.getParcelableArray(INTENT_DELETE_COUNTER_EXPENSES);
+				Parcelable[] parc = savedInstanceState
+						.getParcelableArray(INTENT_DELETE_COUNTER_EXPENSES);
 				for (int i = 0; i < parc.length; i++) {
 					_deleteCounterExpenses.add((AdditionalExpense) parc[i]);
 				}
@@ -220,11 +229,13 @@ public class CounterOfferActivity extends ActionBarActivity {
 			populateUi();
 
 		final Calendar c = Calendar.getInstance();
-		_datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+		_datePicker = DatePickerDialog.newInstance(_date_onSet,
+				c.get(Calendar.YEAR), c.get(Calendar.MONTH),
 				c.get(Calendar.DAY_OF_MONTH));
 		_datePicker.setCloseOnSingleTapDay(true);
-		_timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-				false, false);
+		_timePicker = TimePickerDialog.newInstance(_time_onSet,
+				c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false,
+				false);
 
 		_offerTime = Calendar.getInstance();
 
@@ -271,25 +282,34 @@ public class CounterOfferActivity extends ActionBarActivity {
 		if (pay.isFixedRate()) {
 			_labelMaxHoursTextView.setText(" ");
 			_labelHourlyRateTextView.setText(R.string.total_amount);
-			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getFixedAmount()));
+			_hourlyOldTextView
+					.setText(misc.toCurrencyTrim(pay.getFixedAmount()));
 			_maxOldTextView.setText(" ");
 		}
 
 		// blended
 		if (pay.isBlendedRate()) {
-			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedStartRate()) + " - " + pay.getBlendedFirstHours() + " Hours");
-			_maxOldTextView.setText(misc.toCurrencyTrim(pay.getBlendedAdditionalRate()) + " - " + pay.getBlendedAdditionalHours() + " Hours");
+			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay
+					.getBlendedStartRate())
+					+ " - "
+					+ pay.getBlendedFirstHours() + " Hours");
+			_maxOldTextView.setText(misc.toCurrencyTrim(pay
+					.getBlendedAdditionalRate())
+					+ " - "
+					+ pay.getBlendedAdditionalHours() + " Hours");
 		}
 
 		// hourly
 		if (pay.isHourlyRate()) {
-			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getPerHour()) + " per hour");
+			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getPerHour())
+					+ " per hour");
 			_maxOldTextView.setText(pay.getMaxHour() + " Hours Max");
 		}
 
 		// per device
 		if (pay.isPerDeviceRate()) {
-			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getPerDevice()) + " per device");
+			_hourlyOldTextView.setText(misc.toCurrencyTrim(pay.getPerDevice())
+					+ " per device");
 			_maxOldTextView.setText(pay.getMaxDevice() + " Devices Max");
 			_labelMaxHoursTextView.setText("Device Rate");
 			_labelHourlyRateTextView.setText("Max Devices");
@@ -315,9 +335,17 @@ public class CounterOfferActivity extends ActionBarActivity {
 				Calendar cal = ISO8601.toCalendar(schedule.getStartTime());
 				Calendar cal2 = ISO8601.toCalendar(schedule.getEndTime());
 
-				_scheduleDateOldTextView.setText(String.format(Locale.US, "%tB", cal) + " " + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal2.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR));
+				_scheduleDateOldTextView.setText(String.format(Locale.US,
+						"%tB", cal)
+						+ " "
+						+ cal.get(Calendar.DAY_OF_MONTH)
+						+ "-"
+						+ cal2.get(Calendar.DAY_OF_MONTH)
+						+ ", "
+						+ cal.get(Calendar.YEAR));
 
-				_scheduleTimeOldTextView.setText(misc.formatTime2(cal) + "-" + misc.formatTime(cal2, false));
+				_scheduleTimeOldTextView.setText(misc.formatTime2(cal) + "-"
+						+ misc.formatTime(cal2, false));
 
 				// _scheduleDateOldTextView.setText(misc);
 			} catch (Exception ex) {
@@ -336,7 +364,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 						continue;
 					}
 					ExpenseView v = new ExpenseView(this);
-					v.setAdditionalExpense(expense, _expensesListLayout.getChildCount() + 1);
+					v.setAdditionalExpense(expense,
+							_expensesListLayout.getChildCount() + 1);
 					v.setListener(_expenseView_listener);
 					_expensesListLayout.addView(v);
 				}
@@ -347,7 +376,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 			for (int i = 0; i < _counterExpenses.size(); i++) {
 				AdditionalExpense expense = _counterExpenses.get(i);
 				ExpenseView v = new ExpenseView(this);
-				v.setAdditionalExpense(expense, _expensesListLayout.getChildCount() + 1);
+				v.setAdditionalExpense(expense,
+						_expensesListLayout.getChildCount() + 1);
 				v.setListener(_expenseView_listener);
 				_expensesListLayout.addView(v);
 			}
@@ -367,28 +397,39 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 			// fixed rate
 			if (_counterPay.isFixedRate()) {
-				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getFixedAmount()));
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay
+						.getFixedAmount()));
 				_maxNewTextView.setText(" ");
 			}
 
 			// blended
 			if (_counterPay.isBlendedRate()) {
-				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getBlendedStartRate()) + " - " + _counterPay.getBlendedFirstHours() + " Hours");
-				_maxNewTextView.setText(misc.toCurrencyTrim(_counterPay.getBlendedAdditionalRate()) + " - " + _counterPay.getBlendedAdditionalHours() + " Hours");
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay
+						.getBlendedStartRate())
+						+ " - "
+						+ _counterPay.getBlendedFirstHours() + " Hours");
+				_maxNewTextView.setText(misc.toCurrencyTrim(_counterPay
+						.getBlendedAdditionalRate())
+						+ " - "
+						+ _counterPay.getBlendedAdditionalHours() + " Hours");
 			}
 
 			// hourly
 			if (_counterPay.isHourlyRate()) {
-				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getPerHour()) + " per hour");
-				_maxNewTextView.setText(_counterPay.getMaxHour() + " Hours Max");
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay
+						.getPerHour()) + " per hour");
+				_maxNewTextView
+						.setText(_counterPay.getMaxHour() + " Hours Max");
 			}
 
 			// per device
 			if (_counterPay.isPerDeviceRate()) {
-				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getPerDevice()) + " per device");
-				_maxNewTextView.setText(_counterPay.getMaxDevice() + " Devices Max");
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay
+						.getPerDevice()) + " per device");
+				_maxNewTextView.setText(_counterPay.getMaxDevice()
+						+ " Devices Max");
 			}
-		} else if (info.getPay() != null) {
+		} else if (info != null && info.getPay() != null) {
 			Pay counter = info.getPay();
 			showPayCounter(true);
 			// pay section
@@ -396,26 +437,36 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 			// fixed rate
 			if (counter.isFixedRate()) {
-				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getFixedAmount()));
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter
+						.getFixedAmount()));
 				_maxNewTextView.setText(" ");
 			}
 
 			// blended
 			if (counter.isBlendedRate()) {
-				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getBlendedStartRate()) + " - " + counter.getBlendedFirstHours() + " Hours");
-				_maxNewTextView.setText(misc.toCurrencyTrim(counter.getBlendedAdditionalRate()) + " - " + counter.getBlendedAdditionalHours() + " Hours");
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter
+						.getBlendedStartRate())
+						+ " - "
+						+ counter.getBlendedFirstHours() + " Hours");
+				_maxNewTextView.setText(misc.toCurrencyTrim(counter
+						.getBlendedAdditionalRate())
+						+ " - "
+						+ counter.getBlendedAdditionalHours() + " Hours");
 			}
 
 			// hourly
 			if (counter.isHourlyRate()) {
-				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getPerHour()) + " per hour");
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter
+						.getPerHour()) + " per hour");
 				_maxNewTextView.setText(counter.getMaxHour() + " Hours Max");
 			}
 
 			// per device
 			if (counter.isPerDeviceRate()) {
-				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getPerDevice()) + " per device");
-				_maxNewTextView.setText(counter.getMaxDevice() + " Devices Max");
+				_hourlyNewTextView.setText(misc.toCurrencyTrim(counter
+						.getPerDevice()) + " per device");
+				_maxNewTextView
+						.setText(counter.getMaxDevice() + " Devices Max");
 			}
 		} else {
 			showPayCounter(false);
@@ -428,24 +479,36 @@ public class CounterOfferActivity extends ActionBarActivity {
 			if (_counterSchedule.isExact()) {
 				try {
 					_scheduleTypeNewTextView.setText("Exact");
-					Calendar cal = ISO8601.toCalendar(_counterSchedule.getStartTime());
+					Calendar cal = ISO8601.toCalendar(_counterSchedule
+							.getStartTime());
 					_scheduleDateNewTextView.setText(misc.formatDateLong(cal));
-					_scheduleTimeNewTextView.setText(misc.formatTime(cal, false));
+					_scheduleTimeNewTextView.setText(misc
+							.formatTime(cal, false));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			} else {
 				try {
 					_scheduleTypeNewTextView.setText("Range");
-					Calendar cal = ISO8601.toCalendar(_counterSchedule.getStartTime());
-					Calendar cal2 = ISO8601.toCalendar(_counterSchedule.getEndTime());
-					_scheduleDateNewTextView.setText(String.format(Locale.US, "%tB", cal) + " " + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal2.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR));
-					_scheduleTimeNewTextView.setText(misc.formatTime2(cal) + "-" + misc.formatTime(cal2, false));
+					Calendar cal = ISO8601.toCalendar(_counterSchedule
+							.getStartTime());
+					Calendar cal2 = ISO8601.toCalendar(_counterSchedule
+							.getEndTime());
+					_scheduleDateNewTextView.setText(String.format(Locale.US,
+							"%tB", cal)
+							+ " "
+							+ cal.get(Calendar.DAY_OF_MONTH)
+							+ "-"
+							+ cal2.get(Calendar.DAY_OF_MONTH)
+							+ ", "
+							+ cal.get(Calendar.YEAR));
+					_scheduleTimeNewTextView.setText(misc.formatTime2(cal)
+							+ "-" + misc.formatTime(cal2, false));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
-		} else if (info.getSchedule() != null) {
+		} else if (info != null && info.getSchedule() != null) {
 			Schedule sched = info.getSchedule();
 			showScheduleCounter(true);
 
@@ -454,7 +517,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 					_scheduleTypeNewTextView.setText("Exact");
 					Calendar cal = ISO8601.toCalendar(sched.getStartTime());
 					_scheduleDateNewTextView.setText(misc.formatDateLong(cal));
-					_scheduleTimeNewTextView.setText(misc.formatTime(cal, false));
+					_scheduleTimeNewTextView.setText(misc
+							.formatTime(cal, false));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -463,8 +527,16 @@ public class CounterOfferActivity extends ActionBarActivity {
 					_scheduleTypeNewTextView.setText("Range");
 					Calendar cal = ISO8601.toCalendar(sched.getStartTime());
 					Calendar cal2 = ISO8601.toCalendar(sched.getEndTime());
-					_scheduleDateNewTextView.setText(String.format(Locale.US, "%tB", cal) + " " + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal2.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR));
-					_scheduleTimeNewTextView.setText(misc.formatTime2(cal) + "-" + misc.formatTime(cal2, false));
+					_scheduleDateNewTextView.setText(String.format(Locale.US,
+							"%tB", cal)
+							+ " "
+							+ cal.get(Calendar.DAY_OF_MONTH)
+							+ "-"
+							+ cal2.get(Calendar.DAY_OF_MONTH)
+							+ ", "
+							+ cal.get(Calendar.YEAR));
+					_scheduleTimeNewTextView.setText(misc.formatTime2(cal)
+							+ "-" + misc.formatTime(cal2, false));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -503,13 +575,16 @@ public class CounterOfferActivity extends ActionBarActivity {
 			_hourlyNewTextView.setVisibility(View.VISIBLE);
 			_maxNewTextView.setVisibility(View.VISIBLE);
 			_editPaymentCounterTextView.setText(R.string.edit_payment_counter);
-			_editPaymentCounterImageView.setBackgroundResource(R.drawable.ic_edit_12);
+			_editPaymentCounterImageView
+					.setBackgroundResource(R.drawable.ic_edit_12);
 		} else {
 			_basisNewTextView.setVisibility(View.GONE);
 			_hourlyNewTextView.setVisibility(View.GONE);
 			_maxNewTextView.setVisibility(View.GONE);
-			_editPaymentCounterTextView.setText(R.string.request_payment_change);
-			_editPaymentCounterImageView.setBackgroundResource(R.drawable.ic_wo_detail_counter_offer);
+			_editPaymentCounterTextView
+					.setText(R.string.request_payment_change);
+			_editPaymentCounterImageView
+					.setBackgroundResource(R.drawable.ic_wo_detail_counter_offer);
 		}
 	}
 
@@ -525,7 +600,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 			_scheduleDateNewTextView.setVisibility(View.GONE);
 			_scheduleTimeNewTextView.setVisibility(View.GONE);
 			_editScheduleTextView.setText(R.string.request_schedule_change);
-			_editScheduleImageView.setBackgroundResource(R.drawable.ic_clock_large);
+			_editScheduleImageView
+					.setBackgroundResource(R.drawable.ic_clock_large);
 		}
 	}
 
@@ -537,7 +613,9 @@ public class CounterOfferActivity extends ActionBarActivity {
 	}
 
 	private boolean isDirty() {
-		return (_counterExpenses != null && _counterExpenses.size() > 0) || _counterPay != null || _counterSchedule != null || _deleteCounterExpenses.size() > 0;
+		return (_counterExpenses != null && _counterExpenses.size() > 0)
+				|| _counterPay != null || _counterSchedule != null
+				|| _deleteCounterExpenses.size() > 0;
 	}
 
 	/*-*****************************-*/
@@ -548,7 +626,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 		public void onDelete(ExpenseView view, AdditionalExpense expense) {
 			if (_counterExpenses.contains(expense)) {
 				_counterExpenses.remove(expense);
-			} else if (_workorder != null && _workorder.getAdditionalExpenses() != null) {
+			} else if (_workorder != null
+					&& _workorder.getAdditionalExpenses() != null) {
 				AdditionalExpense[] aes = _workorder.getAdditionalExpenses();
 				for (int i = 0; i < aes.length; i++) {
 					if (aes[i] == expense) {
@@ -611,8 +690,10 @@ public class CounterOfferActivity extends ActionBarActivity {
 	private ExpenseDialog.Listener _expense_listener = new ExpenseDialog.Listener() {
 
 		@Override
-		public void onOk(String description, double amount, ExpenseCategory category) {
-			AdditionalExpense ae = new AdditionalExpense(description, amount, category);
+		public void onOk(String description, double amount,
+				ExpenseCategory category) {
+			AdditionalExpense ae = new AdditionalExpense(description, amount,
+					category);
 			_counterExpenses.add(ae);
 			populateUi();
 		}
@@ -638,7 +719,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 	};
 	private CompoundButton.OnCheckedChangeListener _deleteCheck_onChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		public void onCheckedChanged(CompoundButton buttonView,
+				boolean isChecked) {
 			if (isChecked)
 				_offerTimeButton.setVisibility(View.VISIBLE);
 			else
@@ -663,7 +745,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 	private View.OnClickListener _editScheduleLayout_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_scheduleDialog.show(getSupportFragmentManager(), _workorder.getSchedule(), _schedule_listener);
+			_scheduleDialog.show(getSupportFragmentManager(),
+					_workorder.getSchedule(), _schedule_listener);
 		}
 	};
 
@@ -676,9 +759,11 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 	private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
 		@Override
-		public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+		public void onDateSet(DatePickerDialog datePickerDialog, int year,
+				int month, int day) {
 			_offerTime.set(year, month, day);
-			_timePicker.show(getSupportFragmentManager(), datePickerDialog.getTag());
+			_timePicker.show(getSupportFragmentManager(),
+					datePickerDialog.getTag());
 		}
 	};
 
@@ -686,7 +771,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		@Override
 		public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
-			_offerTime.set(_offerTime.get(Calendar.YEAR), _offerTime.get(Calendar.MONTH),
+			_offerTime.set(_offerTime.get(Calendar.YEAR),
+					_offerTime.get(Calendar.MONTH),
 					_offerTime.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 			_offerTimeButton.setText(misc.formatDateTimeLong(_offerTime));
 		}
