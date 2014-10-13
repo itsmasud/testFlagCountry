@@ -12,8 +12,6 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
-import com.fieldnation.ui.dialog.PayDialog;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -97,6 +95,86 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		_detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
 
 		_discountDialog = new DiscountDialog(getContext());
+	}
+
+	/*-*************************************-*/
+	/*-				Mutators				-*/
+	/*-*************************************-*/
+
+	public void showDetails(boolean enabled) {
+		if (enabled) {
+			_detailLayout.setVisibility(View.VISIBLE);
+		} else {
+			_detailLayout.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void setWorkorder(Workorder workorder) {
+		_workorder = workorder;
+		refresh();
+	}
+
+	private void refresh() {
+
+		Pay pay = _workorder.getPay();
+		if (pay != null) {
+			String[] paytext = pay.toDisplayStringLong();
+
+			if (paytext[0] != null) {
+				_pay1TextView.setText(paytext[0]);
+				_pay1TextView.setVisibility(VISIBLE);
+			} else {
+				_pay1TextView.setVisibility(GONE);
+			}
+
+			if (paytext[1] != null) {
+				_pay2TextView.setText(paytext[1]);
+				_pay2TextView.setVisibility(VISIBLE);
+			} else {
+				_pay2TextView.setVisibility(GONE);
+			}
+		} else {
+			_pay1TextView.setVisibility(GONE);
+			_pay2TextView.setVisibility(GONE);
+		}
+
+		AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
+		_expensesLabelTextView.setVisibility(VISIBLE);
+		_expensesLinearLayout.setVisibility(VISIBLE);
+		_expensesLinearLayout.removeAllViews();
+
+		if (expenses != null && expenses.length > 0) {
+			for (int i = 0; i < expenses.length; i++) {
+				AdditionalExpense expense = expenses[i];
+				ExpenseView v = new ExpenseView(getContext());
+				v.setListener(_expenseView_listener);
+				_expensesLinearLayout.addView(v);
+				v.setAdditionalExpense(expense, i + 1);
+			}
+		}
+
+		Discount[] discounts = _workorder.getDiscounts();
+		_discountsLabelTextView.setVisibility(VISIBLE);
+		_discountsLinearLayout.setVisibility(VISIBLE);
+		_discountsLinearLayout.removeAllViews();
+
+		if (discounts != null && discounts.length > 0) {
+			for (int i = 0; i < discounts.length; i++) {
+				Discount discount = discounts[i];
+				DiscountView v = new DiscountView(getContext());
+				v.setListener(_discount_listener);
+				_discountsLinearLayout.addView(v);
+				v.setDiscount(discount);
+			}
+		}
+
+		if (_workorder.canCounterOffer()) {
+			_counterOfferLayout.setVisibility(View.VISIBLE);
+		} else {
+			_counterOfferLayout.setVisibility(View.GONE);
+		}
+
 	}
 
 	/*-*********************************-*/
@@ -212,79 +290,5 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 			// TODO, toast failure, put ui in wait mode
 		}
 	};
-
-	/*-*************************************-*/
-	/*-				Mutators				-*/
-	/*-*************************************-*/
-
-	public void showDetails(boolean enabled) {
-		if (enabled) {
-			_detailLayout.setVisibility(View.VISIBLE);
-		} else {
-			_detailLayout.setVisibility(View.GONE);
-		}
-	}
-
-	@Override
-	public void setWorkorder(Workorder workorder) {
-		_workorder = workorder;
-		refresh();
-	}
-
-	private void refresh() {
-
-		Pay pay = _workorder.getPay();
-		if (pay != null) {
-			String[] paytext = pay.toDisplayStringLong();
-
-			if (paytext[0] != null) {
-				_pay1TextView.setText(paytext[0]);
-				_pay1TextView.setVisibility(VISIBLE);
-			} else {
-				_pay1TextView.setVisibility(GONE);
-			}
-
-			if (paytext[1] != null) {
-				_pay2TextView.setText(paytext[1]);
-				_pay2TextView.setVisibility(VISIBLE);
-			} else {
-				_pay2TextView.setVisibility(GONE);
-			}
-		} else {
-			_pay1TextView.setVisibility(GONE);
-			_pay2TextView.setVisibility(GONE);
-		}
-
-		AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
-		_expensesLabelTextView.setVisibility(VISIBLE);
-		_expensesLinearLayout.setVisibility(VISIBLE);
-		_expensesLinearLayout.removeAllViews();
-
-		if (expenses != null && expenses.length > 0) {
-			for (int i = 0; i < expenses.length; i++) {
-				AdditionalExpense expense = expenses[i];
-				ExpenseView v = new ExpenseView(getContext());
-				v.setListener(_expenseView_listener);
-				_expensesLinearLayout.addView(v);
-				v.setAdditionalExpense(expense, i + 1);
-			}
-		}
-
-		Discount[] discounts = _workorder.getDiscounts();
-		_discountsLabelTextView.setVisibility(VISIBLE);
-		_discountsLinearLayout.setVisibility(VISIBLE);
-		_discountsLinearLayout.removeAllViews();
-
-		if (discounts != null && discounts.length > 0) {
-			for (int i = 0; i < discounts.length; i++) {
-				Discount discount = discounts[i];
-				DiscountView v = new DiscountView(getContext());
-				v.setListener(_discount_listener);
-				_discountsLinearLayout.addView(v);
-				v.setDiscount(discount);
-			}
-		}
-
-	}
 
 }

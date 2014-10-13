@@ -5,7 +5,6 @@ import com.fieldnation.utils.misc;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;

@@ -2,11 +2,9 @@ package com.fieldnation.ui.workorder.detail;
 
 import java.util.Calendar;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 
 import android.content.Context;

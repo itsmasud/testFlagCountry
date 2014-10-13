@@ -1,20 +1,12 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -80,6 +72,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 			}
 		}
 		
+		@Override
 		public void onAssign(ShipmentTracking shipment) {
 			if (_listener != null) {
 				_listener.onAssign(_workorder, shipment.getWorkorderShipmentId());
@@ -95,6 +88,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 			}
 		}
 				
+		@Override
 		public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
 			if (_listener != null) {
 				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId, taskId);

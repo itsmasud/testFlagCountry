@@ -6,7 +6,6 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.auth.client.AuthenticationServer;
 import com.fieldnation.rpc.server.ClockReceiver;
-import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 
 import android.accounts.Account;

@@ -24,7 +24,6 @@ import com.fieldnation.utils.misc;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -405,6 +404,7 @@ public class TasksFragment extends WorkorderFragment {
 			getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
 		}
 
+		@Override
 		public void onAssign(Workorder workorder, int shipmentId, long taskId) {
 			// @TODO
 			Log.v(TAG, "Method Stub: onAssign()" + shipmentId + "=" + taskId);
@@ -440,6 +440,7 @@ public class TasksFragment extends WorkorderFragment {
 			getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
 		}
 
+		@Override
 		public void onAssign(Workorder workorder, int shipmentId) {
 		}
 

@@ -104,6 +104,7 @@ public class TaskShipmentAddDialog extends Dialog {
 			}
 		}
 		
+		@Override
 		public void onAssign(ShipmentTracking shipment) {
 			dismiss();
 			if (_listener != null) {

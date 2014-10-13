@@ -17,8 +17,6 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.ui.workorder.WorkorderTabView;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;

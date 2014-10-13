@@ -73,7 +73,7 @@ public class MessageCardView extends RelativeLayout {
 		_message = message;
 		_substatusTextView.setText(_substatus[_message.getStatus().getWorkorderSubstatus().ordinal()]);
 
-		_viewId = (int) (message.getMessageId() % Integer.MAX_VALUE);
+		_viewId = message.getMessageId() % Integer.MAX_VALUE;
 		try {
 			_titleTextView.setText(message.getWorkorderTitle() + "");
 		} catch (Exception e) {

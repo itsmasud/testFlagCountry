@@ -7,8 +7,6 @@ import java.util.Set;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.ResultReceiver;
-
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
@@ -463,6 +461,29 @@ public class Workorder implements Parcelable {
 
 	private Set<Listener> _listeners = new HashSet<Workorder.Listener>();
 
+	public void addListener(Listener listener) {
+		_listeners.add(listener);
+	}
+
+	public boolean canCounterOffer() {
+		return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE;
+	}
+
+	public void dispatchOnChange() {
+		Iterator<Listener> iter = _listeners.iterator();
+		while (iter.hasNext()) {
+			iter.next().onChange(this);
+		}
+	}
+
+	public int getButtonAction() {
+		return _buttonAction;
+	}
+
+	public int getNotInterestedAction() {
+		return _notInterestedAction;
+	}
+
 	public Status getStatus() {
 		if (_status == null) {
 			String data = "Status is null: " + _workorderId;
@@ -480,14 +501,6 @@ public class Workorder implements Parcelable {
 		}
 
 		return _status;
-	}
-
-	public int getButtonAction() {
-		return _buttonAction;
-	}
-
-	public int getNotInterestedAction() {
-		return _notInterestedAction;
 	}
 
 	public int getStatusBG() {
@@ -510,23 +523,8 @@ public class Workorder implements Parcelable {
 		return getStatus().getStatusIntent();
 	}
 
-	public void addListener(Listener listener) {
-		_listeners.add(listener);
-	}
-
 	public void removeListener(Listener listener) {
 		_listeners.remove(listener);
-	}
-
-	public void dispatchOnChange() {
-		Iterator<Listener> iter = _listeners.iterator();
-		while (iter.hasNext()) {
-			iter.next().onChange(this);
-		}
-	}
-
-	public interface Listener {
-		public void onChange(Workorder workorder);
 	}
 
 	private void buildStatus() {
@@ -636,6 +634,10 @@ public class Workorder implements Parcelable {
 		if (status.getWorkorderSubstatus() == WorkorderSubstatus.CANCELLED_LATEFEEPROCESSING) {
 			_buttonAction = BUTTON_ACTION_VIEW_PAYMENT;
 		}
+	}
+
+	public interface Listener {
+		public void onChange(Workorder workorder);
 	}
 
 	/*-*********************************************-*/

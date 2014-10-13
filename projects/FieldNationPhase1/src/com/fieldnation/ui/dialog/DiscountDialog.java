@@ -1,18 +1,13 @@
 package com.fieldnation.ui.dialog;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.data.workorder.ExpenseCategory;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 public class DiscountDialog extends Dialog {
