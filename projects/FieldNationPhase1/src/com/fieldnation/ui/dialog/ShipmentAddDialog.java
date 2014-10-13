@@ -32,6 +32,7 @@ public class ShipmentAddDialog extends Dialog {
 
 	// Data
 	private Listener _listener;
+	private long _taskId = 0;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -125,14 +126,26 @@ public class ShipmentAddDialog extends Dialog {
 		@Override
 		public void onClick(View v) {
 			// TODO validate input
-			if (_listener != null) {
-				if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
-					_listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
-							_descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked());
-				} else {
-					_listener.onOk(_trackingIdEditText.getText().toString(),
-							_carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
+			if (_listener != null) {				
+				if(_taskId != 0){
+					if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+						_listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
+								_descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked(), _taskId);
+					} else {
+						_listener.onOk(_trackingIdEditText.getText().toString(),
+								_carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
+								_shipToSiteRadio.isChecked(), _taskId);
+					}
+					
+				} else {				
+					if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+						_listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
+								_descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked());
+					} else {
+						_listener.onOk(_trackingIdEditText.getText().toString(),
+								_carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
 							_shipToSiteRadio.isChecked());
+				}
 				}
 			}
 			ShipmentAddDialog.this.dismiss();
@@ -147,9 +160,14 @@ public class ShipmentAddDialog extends Dialog {
 	};
 
 	public interface Listener {
+		public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId);
 		public void onOk(String trackingId, String carrier, String description, boolean shipToSite);
 
 		public void onCancel();
+	}
+	
+	public void setTaskId(long taskId){
+		_taskId = taskId;
 	}
 
 }

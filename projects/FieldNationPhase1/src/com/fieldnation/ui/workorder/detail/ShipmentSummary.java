@@ -7,6 +7,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ public class ShipmentSummary extends RelativeLayout {
 	private TextView _descTextView;
 	private TextView _directionTextView;
 	private ImageButton _deleteImageButton;
+	private Button _assignButton; 
 
 	// Data
 	private ShipmentTracking _shipment;
@@ -55,6 +57,8 @@ public class ShipmentSummary extends RelativeLayout {
 		_directionTextView = (TextView) findViewById(R.id.direction_textview);
 		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
 		_deleteImageButton.setOnClickListener(_delete_onClick);
+		_assignButton = (Button) findViewById(R.id.assign_button);
+		_assignButton.setOnClickListener(_assign_onClick);
 	}
 
 	public void setShipmentTracking(ShipmentTracking shipment) {
@@ -88,12 +92,30 @@ public class ShipmentSummary extends RelativeLayout {
 			}
 		}
 	};
+	
+	private View.OnClickListener _assign_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null) {
+				_listener.onAssign(_shipment);
+			}
+		}
+	};
 
 	public void setListener(Listener listener) {
 		_listener = listener;
 	}
+	
+	public void hideForTaskShipmentDialog() {
+		_deleteImageButton.setVisibility(GONE);
+		_trackingIdTextView.setVisibility(GONE);
+		_carrierTextView.setVisibility(GONE);
+		//_directionTextView.setVisibility(GONE);
+		_assignButton.setVisibility(VISIBLE);
+	}
 
 	public interface Listener {
 		public void onDelete(ShipmentTracking shipment);
+		public void onAssign(ShipmentTracking shipment);
 	}
 }

@@ -79,6 +79,12 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 				_listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
 			}
 		}
+		
+		public void onAssign(ShipmentTracking shipment) {
+			if (_listener != null) {
+				_listener.onAssign(_workorder, shipment.getWorkorderShipmentId());
+			}
+		}
 	};
 
 	private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
@@ -86,6 +92,12 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 		public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
 			if (_listener != null) {
 				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId);
+			}
+		}
+				
+		public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
+			if (_listener != null) {
+				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId, taskId);
 			}
 		}
 
@@ -97,8 +109,11 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	public interface Listener {
 		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
 				String trackingId);
+		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+				String trackingId, long taskId);
 
 		public void onDelete(Workorder workorder, int shipmentId);
+		public void onAssign(Workorder workorder, int shipmentId);
 	}
 
 	/*-*************************************-*/

@@ -367,4 +367,13 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId, null, "",
 				"application/x-www-form-urlencoded", false);
 	}
+	
+	//@TODO
+	//need to implement REST CALL
+	public Intent completeShipmentTask(int resultCode, long workorderId, long shipmentId, long taskId) {
+		return httpPost(
+				resultCode,
+				"api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId,
+				null, "shipment_id=" + shipmentId, "application/x-www-form-urlencoded", false);
+	}
 }

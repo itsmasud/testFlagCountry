@@ -40,8 +40,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Shipping to site" />
+        
     </LinearLayout>
-
+    
+    <Button
+        android:id="@+id/assign_button"
+        style="@style/ButtonGreen"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_weight="1"
+        android:visibility = "gone"
+        android:text="Assign" />
+    
     <ImageButton
         android:id="@+id/delete_imagebutton"
         android:layout_width="wrap_content"

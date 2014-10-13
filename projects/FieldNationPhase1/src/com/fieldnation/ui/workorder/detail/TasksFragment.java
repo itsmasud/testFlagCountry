@@ -7,6 +7,7 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
@@ -16,6 +17,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
+import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.misc;
@@ -62,6 +64,7 @@ public class TasksFragment extends WorkorderFragment {
 	private View[] _separators;
 	private ClosingNotesDialog _closingDialog;
 	private TaskShipmentAddDialog _taskShipmentAddDialog;
+	private ShipmentAddDialog _shipmentAddDialog;
 
 	// Data
 	private GlobalState _gs;
@@ -101,7 +104,8 @@ public class TasksFragment extends WorkorderFragment {
 		_separators[2] = view.findViewById(R.id.sep3);
 
 		_closingDialog = new ClosingNotesDialog(view.getContext());
-		_taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());		
+		_taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
+		_shipmentAddDialog = new ShipmentAddDialog(view.getContext());
 
 		if (savedInstanceState == null) {
 			_gs.requestAuthentication(_authClient);
@@ -330,8 +334,14 @@ public class TasksFragment extends WorkorderFragment {
 				if (task.getCompleted())
 					return;
 				//@TODO
-				_taskShipmentAddDialog.setWorkorder(_workorder);
-				_taskShipmentAddDialog.show();	
+				ShipmentTracking[] shipments = _workorder.getShipmentTracking();
+				if(shipments.length > 0){
+					//@TODO
+				} else {
+					_taskShipmentAddDialog.setWorkorder(_workorder);
+					_taskShipmentAddDialog.setTaskId(task.getTaskId());
+					_taskShipmentAddDialog.show("Assign/Add New", _add_onClick);
+				}
 				
 				break;
 			case SIGNATURE: {
@@ -386,21 +396,45 @@ public class TasksFragment extends WorkorderFragment {
 	
 	private TaskShipmentAddDialog.Listener _add_onClick = new TaskShipmentAddDialog.Listener() {
 		@Override
-		public void onOk(String message) {
-			//@TODO
-			Log.v(TAG, "Action : _add_onClick");
+		public void onDelete(Workorder workorder, int shipmentId) {			
+			getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
 		}
-
+		
+		public void onAssign(Workorder workorder, int shipmentId, long taskId) {
+			//@TODO
+			Log.v(TAG, "Method Stub: onAssign()"+shipmentId+"="+taskId);
+			getActivity().startService(_service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));			
+		}
+		
 		@Override
 		public void onCancel() {
+		}
+				
+		@Override
+		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+				String trackingId) {
+			getActivity().startService(
+					_service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
+							carrier, null, trackingId));
+		}
+		
+		@Override
+		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+				String trackingId, long taskId) {
+			getActivity().startService(
+					_service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
+							carrier, null, trackingId, taskId));
 		}
 	};
 
 	private ShipmentView.Listener _shipments_listener = new ShipmentView.Listener() {
 
 		@Override
-		public void onDelete(Workorder workorder, int shipmentId) {
+		public void onDelete(Workorder workorder, int shipmentId) {			
 			getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+		}
+		
+		public void onAssign(Workorder workorder, int shipmentId) {			
 		}
 
 		@Override
@@ -411,8 +445,16 @@ public class TasksFragment extends WorkorderFragment {
 							carrier, null, trackingId));
 			Log.v(TAG, "Method Stub: onAddShipmentDetails()");
 		}
+		
+		@Override
+		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+				String trackingId, long taskId) {
+			getActivity().startService(
+					_service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
+							carrier, null, trackingId, taskId));
+		}
 	};
-
+		
 	/*-*************************************-*/
 	/*-				WEB Events				-*/
 	/*-*************************************-*/
