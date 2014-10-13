@@ -5,51 +5,47 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class LoggedWork{
-	@Json(name="checkoutLat")
-	private Double _checkoutLat;
-	@Json(name="checkoutLng")
-	private Double _checkoutLng;
-	@Json(name="startTime")
-	private String _startTime;
-	@Json(name="startDate")
-	private String _startDate;
-	@Json(name="noOfDevices")
-	private Integer _noOfDevices;
-	@Json(name="endDate")
-	private String _endDate;
-	@Json(name="endTime")
-	private String _endTime;
-	@Json(name="hoursType")
-	private Integer _hoursType;
-	@Json(name="loggedHoursId")
-	private Integer _loggedHoursId;
-	@Json(name="hours")
-	private Double _hours;
 	@Json(name="checkinLat")
 	private Double _checkinLat;
 	@Json(name="checkinLng")
 	private Double _checkinLng;
+	@Json(name="checkoutLat")
+	private Double _checkoutLat;
+	@Json(name="checkoutLng")
+	private Double _checkoutLng;
+	@Json(name="endDate")
+	private String _endDate;
+	@Json(name="endTime")
+	private String _endTime;
+	@Json(name="hours")
+	private Double _hours;
+	@Json(name="hoursType")
+	private Integer _hoursType;
+	@Json(name="loggedHoursId")
+	private Integer _loggedHoursId;
+	@Json(name="noOfDevices")
+	private Integer _noOfDevices;
+	@Json(name="startDate")
+	private String _startDate;
+	@Json(name="startTime")
+	private String _startTime;
 
 	public LoggedWork(){
 	}
+	public Double getCheckinLat(){
+		return _checkinLat;
+	}
+
+	public Double getCheckinLng(){
+		return _checkinLng;
+	}
+
 	public Double getCheckoutLat(){
 		return _checkoutLat;
 	}
 
 	public Double getCheckoutLng(){
 		return _checkoutLng;
-	}
-
-	public String getStartTime(){
-		return _startTime;
-	}
-
-	public String getStartDate(){
-		return _startDate;
-	}
-
-	public Integer getNoOfDevices(){
-		return _noOfDevices;
 	}
 
 	public String getEndDate(){
@@ -60,6 +56,10 @@ public class LoggedWork{
 		return _endTime;
 	}
 
+	public Double getHours(){
+		return _hours;
+	}
+
 	public Integer getHoursType(){
 		return _hoursType;
 	}
@@ -68,16 +68,16 @@ public class LoggedWork{
 		return _loggedHoursId;
 	}
 
-	public Double getHours(){
-		return _hours;
+	public Integer getNoOfDevices(){
+		return _noOfDevices;
 	}
 
-	public Double getCheckinLat(){
-		return _checkinLat;
+	public String getStartDate(){
+		return _startDate;
 	}
 
-	public Double getCheckinLng(){
-		return _checkinLng;
+	public String getStartTime(){
+		return _startTime;
 	}
 
 	public JsonObject toJson(){

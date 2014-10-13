@@ -10,50 +10,50 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class AdditionalExpense implements Parcelable {
-	@Json(name = "statusDescription")
-	private String _statusDescription;
-	@Json(name = "status")
-	private String _status;
-	@Json(name = "expenseId")
-	private Integer _expenseId;
-	@Json(name = "description")
-	private String _description;
-	@Json(name = "price")
-	private Double _price;
+
 	@Json(name = "approved")
 	private Boolean _approved;
 	@Json(name = "categoryId")
 	private Integer _categoryId;
+	@Json(name="description")
+	private String _description;
+	@Json(name="expenseId")
+	private Integer _expenseId;
+	@Json(name="price")
+	private Double _price;
+	@Json(name="status")
+	private String _status;
+	@Json(name="statusDescription")
+	private String _statusDescription;
 
 	public AdditionalExpense() {
 	}
-
-	public String getStatusDescription() {
-		return _statusDescription;
+	public Boolean getApproved(){
+		return _approved;
 	}
 
-	public String getStatus() {
-		return _status;
+	public Integer getCategoryId(){
+		return _categoryId;
+	}
+
+	public String getDescription(){
+		return _description;
 	}
 
 	public Integer getExpenseId() {
 		return _expenseId;
 	}
 
-	public String getDescription() {
-		return _description;
-	}
-
 	public Double getPrice() {
 		return _price;
 	}
 
-	public Boolean getApproved() {
-		return _approved;
+	public String getStatus(){
+		return _status;
 	}
 
-	public int getCategoryId() {
-		return _categoryId;
+	public String getStatusDescription(){
+		return _statusDescription;
 	}
 
 	public JsonObject toJson() {

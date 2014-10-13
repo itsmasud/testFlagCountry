@@ -5,19 +5,19 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Photo{
-	@Json(name="thumb")
-	private String _thumb;
 	@Json(name="image")
 	private String _image;
+	@Json(name="thumb")
+	private String _thumb;
 
 	public Photo(){
 	}
-	public String getThumb(){
-		return _thumb;
-	}
-
 	public String getImage(){
 		return _image;
+	}
+
+	public String getThumb(){
+		return _thumb;
 	}
 
 	public JsonObject toJson(){

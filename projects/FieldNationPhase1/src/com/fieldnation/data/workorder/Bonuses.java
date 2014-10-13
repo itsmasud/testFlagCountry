@@ -5,19 +5,19 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Bonuses{
-	@Json(name="name")
-	private String _name;
 	@Json(name="amount")
 	private Double _amount;
+	@Json(name="name")
+	private String _name;
 
 	public Bonuses(){
 	}
-	public String getName(){
-		return _name;
-	}
-
 	public Double getAmount(){
 		return _amount;
+	}
+
+	public String getName(){
+		return _name;
 	}
 
 	public JsonObject toJson(){

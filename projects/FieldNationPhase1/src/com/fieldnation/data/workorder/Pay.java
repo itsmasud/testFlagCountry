@@ -11,92 +11,93 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class Pay implements Parcelable {
-	@Json(name = "maxDevice")
-	private Integer _maxDevice;
-	@Json(name = "fixedAmount")
-	private Double _fixedAmount;
-	@Json(name = "bonuses")
-	private Double _bonuses;
-	@Json(name = "maxHour")
-	private Double _maxHour;
+
 	@Json(name = "blendedAdditionalHours")
 	private Double _blendedAdditionalHours;
-	@Json(name = "perDevice")
-	private Double _perDevice;
-	@Json(name = "blendedFirstHours")
-	private Double _blendedFirstHours;
-	@Json(name = "perHour")
-	private Double _perHour;
-	@Json(name = "blendedStartRate")
-	private Double _blendedStartRate;
-	@Json(name = "maximumAmount")
-	private Double _maximumAmount;
-	@Json(name = "expenses")
-	private Double _expenses;
-	@Json(name = "payRateBasis")
-	private String _payRateBasis;
-	@Json(name = "description")
-	private String _description;
 	@Json(name = "blendedAdditionalRate")
 	private Double _blendedAdditionalRate;
+	@Json(name = "blendedFirstHours")
+	private Double _blendedFirstHours;
+	@Json(name = "blendedStartRate")
+	private Double _blendedStartRate;
+	@Json(name = "bonuses")
+	private Integer _bonuses;
+	@Json(name = "description")
+	private String _description;
+	@Json(name = "expenses")
+	private String _expenses;
+	@Json(name = "fixedAmount")
+	private Double _fixedAmount;
+	@Json(name = "maxDevice")
+	private Integer _maxDevice;
+	@Json(name = "maxHour")
+	private Double _maxHour;
+	@Json(name = "maximumAmount")
+	private Double _maximumAmount;
+	@Json(name = "payRateBasis")
+	private String _payRateBasis;
+	@Json(name = "perDevice")
+	private Double _perDevice;
+	@Json(name = "perHour")
+	private Double _perHour;
 
 	public Pay() {
-	}
-
-	public Integer getMaxDevice() {
-		return _maxDevice;
-	}
-
-	public Double getFixedAmount() {
-		return _fixedAmount;
-	}
-
-	public Double getBonuses() {
-		return _bonuses;
-	}
-
-	public Double getMaxHour() {
-		return _maxHour;
 	}
 
 	public Double getBlendedAdditionalHours() {
 		return _blendedAdditionalHours;
 	}
 
-	public Double getPerDevice() {
-		return _perDevice;
+	public Double getBlendedAdditionalRate() {
+		return _blendedAdditionalRate;
 	}
 
 	public Double getBlendedFirstHours() {
 		return _blendedFirstHours;
 	}
 
-	public Double getPerHour() {
-		return _perHour;
-	}
-
 	public Double getBlendedStartRate() {
 		return _blendedStartRate;
 	}
 
-	public Double getMaximumAmount() {
-		return _maximumAmount;
-	}
-
-	public Double getExpenses() {
-		return _expenses;
-	}
-
-	public String getPayRateBasis() {
-		return _payRateBasis;
+	public Integer getBonuses() {
+		return _bonuses;
 	}
 
 	public String getDescription() {
 		return _description;
 	}
 
-	public Double getBlendedAdditionalRate() {
-		return _blendedAdditionalRate;
+	public String getExpenses() {
+		return _expenses;
+	}
+
+	public Double getFixedAmount() {
+		return _fixedAmount;
+	}
+
+	public Integer getMaxDevice() {
+		return _maxDevice;
+	}
+
+	public Double getMaxHour() {
+		return _maxHour;
+	}
+
+	public Double getMaximumAmount() {
+		return _maximumAmount;
+	}
+
+	public String getPayRateBasis() {
+		return _payRateBasis;
+	}
+
+	public Double getPerDevice() {
+		return _perDevice;
+	}
+
+	public Double getPerHour() {
+		return _perHour;
 	}
 
 	public JsonObject toJson() {

@@ -6,35 +6,36 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Message {
-	@Json(name="workorderTitle")
-	private String _workorderTitle;
-	@Json(name = "file_url")
-	private String _file_Url;
 	@Json(name = "date")
 	private String _date;
-	@Json(name="status")
-	private Status _status;
-	@Json(name = "photoUrl")
-	private String _photoUrl;
-	@Json(name = "photoThumbUrl")
-	private String _photoThumbUrl;
-	@Json(name = "replies")
-	private Replies[] _replies;
+	@Json(name = "fileUrl")
+	private String _fileUrl;
+	@Json(name = "file_url")
+	private String _file_Url;
+	@Json(name = "message")
+	private String _message;
 	@Json(name = "messageFrom")
 	private String _messageFrom;
 	@Json(name = "messageId")
-	private Long _messageId;
+	private Integer _messageId;
+	@Json(name = "photoThumbUrl")
+	private String _photoThumbUrl;
+	@Json(name = "photoUrl")
+	private String _photoUrl;
+	@Json(name = "replies")
+	private Replies[] _replies;
+	@Json(name = "status")
+	private Status _status;
 	@Json(name = "workorderId")
 	private Integer _workorderId;
-	@Json(name = "fileUrl")
-	private String _fileUrl;
-	@Json(name = "message")
-	private String _message;
+	@Json(name = "workorderTitle")
+	private String _workorderTitle;
 
 	public Message() {
 	}
-	public String getWorkorderTitle(){
-		return _workorderTitle;
+
+	public String getDate() {
+		return _date;
 	}
 
 	public String getFileUrl() {
@@ -43,40 +44,40 @@ public class Message {
 		return _fileUrl;
 	}
 
-	public String getDate() {
-		return _date;
-	}
-
-	public Status getStatus(){
-		return _status;
-	}
-
-	public String getPhotoUrl() {
-		return _photoUrl;
-	}
-
-	public String getPhotoThumbUrl() {
-		return _photoThumbUrl;
-	}
-
-	public Replies[] getReplies() {
-		return _replies;
+	public String getMessage() {
+		return _message;
 	}
 
 	public String getMessageFrom() {
 		return _messageFrom;
 	}
 
-	public Long getMessageId() {
+	public Integer getMessageId() {
 		return _messageId;
+	}
+
+	public String getPhotoThumbUrl() {
+		return _photoThumbUrl;
+	}
+
+	public String getPhotoUrl() {
+		return _photoUrl;
+	}
+
+	public Replies[] getReplies() {
+		return _replies;
+	}
+
+	public Status getStatus() {
+		return _status;
 	}
 
 	public Integer getWorkorderId() {
 		return _workorderId;
 	}
 
-	public String getMessage() {
-		return _message;
+	public String getWorkorderTitle() {
+		return _workorderTitle;
 	}
 
 	public JsonObject toJson() {

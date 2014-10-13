@@ -114,11 +114,6 @@ public class NotificationView extends RelativeLayout {
 				intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_NOTIFICATIONS);
 				intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _note.getWorkorder().getWorkorderId());
 				getContext().startActivity(intent);
-			} else if (_note.getWorkorderId() != null) {
-				Intent intent = new Intent(getContext(), WorkorderActivity.class);
-				intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_NOTIFICATIONS);
-				intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _note.getWorkorderId());
-				getContext().startActivity(intent);
 			} else {
 				Toast.makeText(getContext(), "No workorder associated with this notification.", Toast.LENGTH_LONG).show();
 			}

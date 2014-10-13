@@ -6,104 +6,103 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class Location {
-	@Json(name = "name")
-	private String _name;
-	@Json(name = "distance")
-	private Double _distance;
-	@Json(name = "state")
-	private String _state;
-	@Json(name = "address2")
-	private String _address2;
 	@Json(name = "address1")
 	private String _address1;
-	@Json(name = "zip")
-	private String _zip;
+	@Json(name="address2")
+	private String _address2;
+	@Json(name="checkInCheckOutMapUrl")
+	private String _checkInCheckOutMapUrl;
+	@Json(name="city")
+	private String _city;
+	@Json(name="contactEmail")
+	private String _contactEmail;
+	@Json(name="contactName")
+	private String _contactName;
 	@Json(name = "contactPhone")
 	private String _contactPhone;
+	@Json(name="contactPhoneExt")
+	private Integer _contactPhoneExt;
 	@Json(name = "country")
 	private String _country;
-	@Json(name = "contactEmail")
-	private String _contactEmail;
-	@Json(name = "city")
-	private String _city;
+	@Json(name="distance")
+	private Double _distance;
 	@Json(name = "distanceMapUrl")
 	private String _distanceMapUrl;
+	@Json(name="name")
+	private String _name;
 	@Json(name = "notes")
 	private String _notes;
-	@Json(name = "contactPhoneExt")
-	private Integer _contactPhoneExt;
+	@Json(name="state")
+	private String _state;
 	@Json(name = "type")
 	private String _type;
-	@Json(name = "checkInCheckOutMapUrl")
-	private String _checkInCheckOutMapUrl;
-	@Json(name = "contactName")
-	private String _contactName;
+	@Json(name="zip")
+	private String _zip;
 
 	public Location() {
 	}
-
-	public String getName() {
-		return _name;
-	}
-
-	public Double getDistance() {
-		return _distance;
-	}
-
-	public String getState() {
-		return _state;
-	}
-
-	public String getAddress2() {
-		return _address2;
-	}
-
-	public String getAddress1() {
+	public String getAddress1(){
 		return _address1;
 	}
 
-	public String getZip() {
-		return _zip;
+	public String getAddress2(){
+		return _address2;
+	}
+
+	public String getCheckInCheckOutMapUrl(){
+		return _checkInCheckOutMapUrl;
+	}
+
+	public String getCity(){
+		return _city;
+	}
+
+	public String getContactEmail(){
+		return _contactEmail;
+	}
+
+	public String getContactName(){
+		return _contactName;
 	}
 
 	public String getContactPhone() {
 		return _contactPhone;
 	}
 
-	public String getCountry() {
+	public Integer getContactPhoneExt(){
+		return _contactPhoneExt;
+	}
+
+	public String getCountry(){
 		return _country;
 	}
 
-	public String getContactEmail() {
-		return _contactEmail;
-	}
-
-	public String getCity() {
-		return _city;
+	public Double getDistance(){
+		return _distance;
 	}
 
 	public String getDistanceMapUrl() {
 		return _distanceMapUrl;
 	}
 
+	public String getName(){
+		return _name;
+	}
+
 	public String getNotes() {
 		return _notes;
 	}
 
-	public Integer getContactPhoneExt() {
-		return _contactPhoneExt;
+	public String getState(){
+		return _state;
 	}
 
 	public String getType() {
 		return _type;
 	}
 
-	public String getCheckInCheckOutMapUrl() {
-		return _checkInCheckOutMapUrl;
-	}
-
-	public String getContactName() {
-		return _contactName;
+	public String getZip(){
+		return _zip;
 	}
 
 	public JsonObject toJson() {

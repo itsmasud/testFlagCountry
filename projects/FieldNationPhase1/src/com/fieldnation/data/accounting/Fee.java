@@ -5,49 +5,49 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Fee {
-	@Json(name="endTime")
-	private String _endTime;
 	@Json(name = "amount")
 	private Double _amount;
-	@Json(name="workorderId")
-	private Integer _workorderId;
 	@Json(name="clientName")
 	private String _clientName;
-	@Json(name="startTime")
-	private String _startTime;
 	@Json(name = "description")
 	private String _description;
+	@Json(name="endTime")
+	private String _endTime;
+	@Json(name="startTime")
+	private String _startTime;
 	@Json(name="title")
 	private String _title;
+	@Json(name="workorderId")
+	private Long _workorderId;
 
 	public Fee() {
 	}
-	public String getEndTime(){
-		return _endTime;
-	}
-
 	public Double getAmount() {
 		return _amount;
-	}
-
-	public Integer getWorkorderId(){
-		return _workorderId;
 	}
 
 	public String getClientName(){
 		return _clientName;
 	}
 
-	public String getStartTime(){
-		return _startTime;
-	}
-
 	public String getDescription() {
 		return _description;
 	}
 
+	public String getEndTime(){
+		return _endTime;
+	}
+
+	public String getStartTime(){
+		return _startTime;
+	}
+
 	public String getTitle(){
 		return _title;
+	}
+
+	public Long getWorkorderId(){
+		return _workorderId;
 	}
 
 	public JsonObject toJson() {

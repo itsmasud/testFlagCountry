@@ -5,43 +5,43 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CheckInOutInfo{
+	@Json(name="checkInDistance")
+	private Integer _checkInDistance;
 	@Json(name="checkInId")
 	private Integer _checkInId;
-	@Json(name="checkOutId")
-	private Integer _checkOutId;
 	@Json(name="checkInTime")
 	private String _checkInTime;
-	@Json(name="totalHours")
-	private Double _totalHours;
+	@Json(name="checkOutId")
+	private Integer _checkOutId;
 	@Json(name="checkOutTime")
 	private String _checkOutTime;
-	@Json(name="checkInDistance")
-	private Double _checkInDistance;
+	@Json(name="totalHours")
+	private Double _totalHours;
 
 	public CheckInOutInfo(){
 	}
-	public Integer getCheckInId(){
-		return _checkInId;
+	public Integer getCheckInDistance(){
+		return _checkInDistance;
 	}
 
-	public Integer getCheckOutId(){
-		return _checkOutId;
+	public Integer getCheckInId(){
+		return _checkInId;
 	}
 
 	public String getCheckInTime(){
 		return _checkInTime;
 	}
 
-	public Double getTotalHours(){
-		return _totalHours;
+	public Integer getCheckOutId(){
+		return _checkOutId;
 	}
 
 	public String getCheckOutTime(){
 		return _checkOutTime;
 	}
 
-	public Double getCheckInDistance(){
-		return _checkInDistance;
+	public Double getTotalHours(){
+		return _totalHours;
 	}
 
 	public JsonObject toJson(){

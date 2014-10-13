@@ -21,4 +21,11 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="-1dp" />
 
+    <com.fieldnation.ui.LoadingView
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone" />
+
 </RelativeLayout>

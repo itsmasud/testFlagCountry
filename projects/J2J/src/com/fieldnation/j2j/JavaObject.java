@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -15,7 +16,7 @@ public class JavaObject {
 
 	public String name;
 	public String packageName;
-	public Hashtable<String, JavaField> _fields = new Hashtable<String, JavaField>();
+	public TreeMap<String, JavaField> _fields = new TreeMap<String, JavaField>();
 
 	public static JavaObject getInstance(String packageName, String name) {
 		String classname = formatClassName(name);
@@ -73,18 +74,20 @@ public class JavaObject {
 
 		sb.append("public class " + name + "{\r\n");
 
-		Enumeration<String> keys = _fields.keys();
-		while (keys.hasMoreElements()) {
-			sb.append(_fields.get(keys.nextElement()).toString());
+		String key = _fields.firstKey();
+		while (key != null) {
+			sb.append(_fields.get(key).toString());
+			key = _fields.higherKey(key);
 		}
 
 		sb.append("\r\n");
 
 		sb.append("	public " + name + "(){\r\n	}\r\n");
 
-		keys = _fields.keys();
-		while (keys.hasMoreElements()) {
-			sb.append(_fields.get(keys.nextElement()).toGetter());
+		key = _fields.firstKey();
+		while (key != null) {
+			sb.append(_fields.get(key).toGetter());
+			key = _fields.higherKey(key);
 		}
 
 		sb.append("	public JsonObject toJson(){\r\n");
@@ -138,13 +141,13 @@ public class JavaObject {
 
 		sb.append("Package: " + packageName + "\r\n");
 		sb.append("Object: " + name + "\r\n");
-		Enumeration<String> keys = _fields.keys();
-		while (keys.hasMoreElements()) {
-			String key = keys.nextElement();
+		String key = _fields.firstKey();
+		while (key != null) {
 			JavaField field = _fields.get(key);
 			if (field.name.contains("_")) {
 				sb.append("\t" + field.name + "\r\n");
 			}
+			key = _fields.higherKey(key);
 		}
 
 		return sb.toString();

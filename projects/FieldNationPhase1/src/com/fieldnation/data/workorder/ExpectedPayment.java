@@ -7,24 +7,24 @@ import com.fieldnation.json.annotations.Json;
 public class ExpectedPayment {
 	@Json(name = "bonuses")
 	private Bonuses[] _bonuses;
-	@Json(name = "expectedTotal")
-	private Double _expectedTotal;
+	@Json(name="discounts")
+	private Integer _discounts;
 	@Json(name = "expectedAmount")
 	private Double _expectedAmount;
 	@Json(name = "expectedFee")
 	private Double _expectedFee;
-	@Json(name = "laborEarned")
-	private Double _laborEarned;
+	@Json(name="expectedTotal")
+	private Double _expectedTotal;
 	@Json(name = "expensesApproved")
 	private Double _expensesApproved;
-	@Json(name = "discounts")
-	private Double _discounts;
+	@Json(name="laborEarned")
+	private Double _laborEarned;
 	@Json(name="maxPayLimit")
 	private Double _maxPayLimit;
-	@Json(name = "penalties")
-	private Penalties[] _penalties;
 	@Json(name = "paymentStatus")
 	private String _paymentStatus;
+	@Json(name="penalties")
+	private Object _penalties;
 
 	public ExpectedPayment() {
 	}
@@ -33,8 +33,8 @@ public class ExpectedPayment {
 		return _bonuses;
 	}
 
-	public Double getExpectedTotal() {
-		return _expectedTotal;
+	public Integer getDiscounts(){
+		return _discounts;
 	}
 
 	public Double getExpectedAmount() {
@@ -45,28 +45,28 @@ public class ExpectedPayment {
 		return _expectedFee;
 	}
 
-	public Double getLaborEarned() {
-		return _laborEarned;
+	public Double getExpectedTotal(){
+		return _expectedTotal;
 	}
 
 	public Double getExpensesApproved() {
 		return _expensesApproved;
 	}
 
-	public Double getDiscounts() {
-		return _discounts;
+	public Double getLaborEarned(){
+		return _laborEarned;
 	}
 
 	public Double getMaxPayLimit(){
 		return _maxPayLimit;
 	}
 
-	public Penalties[] getPenalties() {
-		return _penalties;
-	}
-
 	public String getPaymentStatus() {
 		return _paymentStatus;
+	}
+
+	public Object getPenalties(){
+		return _penalties;
 	}
 
 	public JsonObject toJson() {

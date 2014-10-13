@@ -15,422 +15,395 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Workorder implements Parcelable {
-	@Json(name = "isAssignedToWorkorder")
-	private Boolean _isAssignedToWorkorder;
-	@Json(name = "discounts")
-	private Discount[] _discounts;
-	@Json(name = "typeOfWork")
-	private String _typeOfWork;
-	@Json(name = "fullWorkDescription")
-	private String _fullWorkDescription;
-	@Json(name = "canRequestPayForThisWo")
-	private Boolean _canRequestPayForThisWo;
-	@Json(name = "workorderId")
-	private Long _workorderId;
-	@Json(name = "hasFund")
-	private Boolean _hasFund;
-	@Json(name = "pay")
-	private Pay _pay;
-	@Json(name = "bundleId")
-	private Long _bundleId;
-	@Json(name = "customFields")
-	private CustomField[] _customFields;
-	@Json(name = "declinedWo")
-	private Integer _declinedWo;
-	@Json(name = "timezone")
-	private String _timezone;
-	@Json(name = "skillsets")
-	private Skillset[] _skillsets;
-	@Json(name = "messageCount")
-	private Integer _messageCount;
-	@Json(name = "identifier")
-	private String _identifier;
-	@Json(name = "showProviderWasLatePrompt")
-	private Boolean _showProviderWasLatePrompt;
-	@Json(name = "projectId")
-	private Integer _projectId;
-	@Json(name = "checkInOutInfo")
-	private CheckInOutInfo _checkInOutInfo;
-	@Json(name = "loggedWork")
-	private LoggedWork[] _loggedWork;
-	@Json(name = "counterOfferInfo")
-	private CounterOfferInfo _counterOfferInfo;
-	@Json(name = "alertCount ")
-	private Integer _alertCount;
-	@Json(name = "customerPoliciesProcedures")
-	private String _customerPoliciesProcedures;
-	@Json(name = "location")
-	private Location _location;
+
 	@Json(name = "additionalExpenses")
 	private AdditionalExpense[] _additionalExpenses;
-	@Json(name = "messages")
-	private Integer _messages;
-	@Json(name = "industry")
-	private String _industry;
-	@Json(name = "standardInstructions")
-	private String _standardInstructions;
-	@Json(name = "provider")
-	private Provider _provider;
-	@Json(name = "canViewServicePayRateInfo")
-	private Boolean _canViewServicePayRateInfo;
-	@Json(name = "isRemoteWork")
-	private Integer _isRemoteWork;
-	@Json(name = "distance")
-	private Double _distance;
-	@Json(name = "statusId")
-	private Integer _statusId;
-	@Json(name = "schedule")
-	private Schedule _schedule;
-	@Json(name = "days_since_approved_or_cancelled")
-	private Integer _daysSinceApprovedOrCancelled;
-	@Json(name = "deliverables")
-	private Deliverable[] _deliverables;
-	@Json(name = "standardInstruction")
-	private String _standardInstruction;
-	@Json(name = "expectedPayment")
-	private ExpectedPayment _expectedPayment;
-	@Json(name = "clientCompanyId")
-	private Integer _clientCompanyId;
-	@Json(name = "confidentialInformation")
-	private String _confidentialInformation;
-	@Json(name = "companyName")
-	private String _companyName;
-	@Json(name = "estimatedSchedule")
-	private EstimatedSchedule _estimatedSchedule;
-	@Json(name = "managerName")
-	private String _managerName;
-	@Json(name = "managerId")
-	private Integer _managerId;
-	@Json(name = "paidDate")
-	private String _paidDate;
-	@Json(name = "isWorkPerformed")
-	private Boolean _isWorkPerformed;
-	@Json(name = "status")
-	private Status _status;
-	@Json(name = "uploadSlots")
-	private UploadSlot[] _uploadSlots;
-	@Json(name = "increaseRequestInfo")
-	private IncreaseRequestInfo _increaseRequestInfo;
-	@Json(name = "title")
-	private String _title;
-	@Json(name = "tasks")
-	private Task[] _tasks;
-	@Json(name = "w2")
-	private Integer _w2;
-	@Json(name = "isDeliverablesUploaded")
-	private Boolean _isDeliverablesUploaded;
-	@Json(name = "companyId")
-	private Integer _companyId;
-	@Json(name = "canEditFieldsForProviderToEnter")
-	private Boolean _canEditFieldsForProviderToEnter;
-	@Json(name = "approximatePaymentDate")
-	private String _approximatePaymentDate;
+	@Json(name = "alertCount ")
+	private Integer _alertCount;
 	@Json(name = "alerts")
 	private Integer _alerts;
-	@Json(name = "cancelFee")
-	private Double _cancelFee;
+	@Json(name = "approximatePaymentDate")
+	private String _approximatePaymentDate;
 	@Json(name = "bundleCount")
 	private Integer _bundleCount;
-	@Json(name = "isRequest")
-	private Boolean _isRequest;
-	@Json(name = "isCounter")
-	private Boolean _isCounter;
-	@Json(name = "documents")
-	private Document[] _documents;
-	@Json(name = "displayCounterOffer")
-	private Integer _displayCounterOffer;
-	@Json(name = "workorderPenaltyInfo")
-	private WorkorderPenaltyInfo[] _workorderPenaltyInfo;
+	@Json(name = "bundleId")
+	private Integer _bundleId;
+	@Json(name = "canEditFieldsForProviderToEnter")
+	private Boolean _canEditFieldsForProviderToEnter;
+	@Json(name = "canRequestPayForThisWo")
+	private Boolean _canRequestPayForThisWo;
+	@Json(name = "canViewServicePayRateInfo")
+	private Boolean _canViewServicePayRateInfo;
+	@Json(name = "cancelFee")
+	private Double _cancelFee;
+	@Json(name = "checkInOutInfo")
+	private CheckInOutInfo _checkInOutInfo;
 	@Json(name = "closingNotes")
 	private String _closingNotes;
-	@Json(name = "time_since_published")
-	private Integer _timeSincePublished;
-	// @Json(name="label")
-	// private Label[] _label;
-	@Json(name = "clientCompanyName")
-	private String _clientCompanyName;
-	@Json(name = "workorderBonusInfo")
-	private WorkorderBonusInfo[] _workorderBonusInfo;
-	@Json(name = "shipmentTracking")
-	private ShipmentTracking[] _shipmentTracking;
-	@Json(name = "projectName")
-	private String _projectName;
+	@Json(name = "companyId")
+	private Integer _companyId;
+	@Json(name = "companyName")
+	private String _companyName;
+	@Json(name = "confidentialInformation")
+	private String _confidentialInformation;
+	@Json(name = "counterOfferInfo")
+	private CounterOfferInfo _counterOfferInfo;
+	@Json(name = "customDisplayFields")
+	private CustomDisplayFields[] _customDisplayFields;
+	@Json(name = "customFields")
+	private CustomField[] _customFields;
+	@Json(name = "customerPoliciesProcedures")
+	private String _customerPoliciesProcedures;
+	@Json(name = "days_since_approved_or_cancelled")
+	private Integer _daysSinceApprovedOrCancelled;
+	@Json(name = "declinedWo")
+	private Integer _declinedWo;
+	@Json(name = "deliverables")
+	private Deliverable[] _deliverables;
+	@Json(name = "discounts")
+	private Discount[] _discounts;
+	@Json(name = "displayCounterOffer")
+	private Integer _displayCounterOffer;
+	@Json(name = "distance")
+	private Double _distance;
+	@Json(name = "documents")
+	private Document[] _documents;
+	@Json(name = "estimatedSchedule")
+	private EstimatedSchedule _estimatedSchedule;
+	@Json(name = "expectedPayment")
+	private ExpectedPayment _expectedPayment;
+	@Json(name = "fullWorkDescription")
+	private String _fullWorkDescription;
+	@Json(name = "hasFund")
+	private Boolean _hasFund;
+	@Json(name = "identifier")
+	private String _identifier;
+	@Json(name = "increaseRequestInfo")
+	private IncreaseRequestInfo _increaseRequestInfo;
+	@Json(name = "industry")
+	private String _industry;
+	@Json(name = "isAssignedToWorkorder")
+	private Boolean _isAssignedToWorkorder;
+	@Json(name = "isCounter")
+	private Boolean _isCounter;
+	@Json(name = "isDeliverablesUploaded")
+	private Boolean _isDeliverablesUploaded;
+	@Json(name = "isRemoteWork")
+	private Integer _isRemoteWork;
+	@Json(name = "isRequest")
+	private Boolean _isRequest;
+	@Json(name = "isRequestedByProvider")
+	private Boolean _isRequestedByProvider;
 	@Json(name = "isWoOnHold")
 	private Boolean _isWoOnHold;
+	@Json(name = "isWorkPerformed")
+	private Boolean _isWorkPerformed;
+	@Json(name = "location")
+	private Location _location;
+	@Json(name = "loggedWork")
+	private LoggedWork[] _loggedWork;
+	@Json(name = "messageCount")
+	private Integer _messageCount;
+	@Json(name = "messages")
+	private Integer _messages;
+	@Json(name = "pay")
+	private Pay _pay;
+	@Json(name = "provider")
+	private Provider _provider;
+	@Json(name = "schedule")
+	private Schedule _schedule;
+	@Json(name = "shipmentTracking")
+	private ShipmentTracking[] _shipmentTracking;
+	@Json(name = "showProviderWasLatePrompt")
+	private Boolean _showProviderWasLatePrompt;
+	@Json(name = "skillsets")
+	private Skillset[] _skillsets;
+	@Json(name = "standardInstruction")
+	private String _standardInstruction;
+	@Json(name = "standardInstructions")
+	private String _standardInstructions;
+	@Json(name = "status")
+	private Status _status;
+	@Json(name = "statusId")
+	private Integer _statusId;
+	@Json(name = "tasks")
+	private Task[] _tasks;
+	@Json(name = "time_since_published")
+	private Integer _timeSincePublished;
+	@Json(name = "timezone")
+	private String _timezone;
+	@Json(name = "title")
+	private String _title;
+	@Json(name = "typeOfWork")
+	private String _typeOfWork;
+	@Json(name = "uploadSlots")
+	private UploadSlot[] _uploadSlots;
+	@Json(name = "w2")
+	private Integer _w2;
+	@Json(name = "workorderBonusInfo")
+	private WorkorderBonusInfo[] _workorderBonusInfo;
+	@Json(name = "workorderId")
+	private Long _workorderId;
+	@Json(name = "workorderPenaltyInfo")
+	private WorkorderPenaltyInfo[] _workorderPenaltyInfo;
 
 	public Workorder() {
-	}
-
-	public Boolean getIsAssignedToWorkorder() {
-		return _isAssignedToWorkorder;
-	}
-
-	public Discount[] getDiscounts() {
-		return _discounts;
-	}
-
-	public String getTypeOfWork() {
-		return _typeOfWork;
-	}
-
-	public String getFullWorkDescription() {
-		return _fullWorkDescription;
-	}
-
-	public Long getWorkorderId() {
-		return _workorderId;
-	}
-
-	public Boolean getHasFund() {
-		return _hasFund;
-	}
-
-	public Pay getPay() {
-		return _pay;
-	}
-
-	public Long getBundleId() {
-		return _bundleId;
-	}
-
-	public CustomField[] getCustomFields() {
-		return _customFields;
-	}
-
-	public Integer getDeclinedWo() {
-		return _declinedWo;
-	}
-
-	public String getTimezone() {
-		return _timezone;
-	}
-
-	public Skillset[] getSkillsets() {
-		return _skillsets;
-	}
-
-	public Integer getMessageCount() {
-		return _messageCount;
-	}
-
-	public String getIdentifier() {
-		return _identifier;
-	}
-
-	public Boolean getShowProviderWasLatePrompt() {
-		return _showProviderWasLatePrompt;
-	}
-
-	public Integer getProjectId() {
-		return _projectId;
-	}
-
-	public CheckInOutInfo getCheckInOutInfo() {
-		return _checkInOutInfo;
-	}
-
-	public LoggedWork[] getLoggedWork() {
-		return _loggedWork;
-	}
-
-	public CounterOfferInfo getCounterOfferInfo() {
-		return _counterOfferInfo;
-	}
-
-	public Integer getAlertCount() {
-		return _alertCount;
-	}
-
-	public String getCustomerPoliciesProcedures() {
-		return _customerPoliciesProcedures;
-	}
-
-	public Location getLocation() {
-		return _location;
 	}
 
 	public AdditionalExpense[] getAdditionalExpenses() {
 		return _additionalExpenses;
 	}
 
-	public Integer getMessages() {
-		return _messages;
-	}
-
-	public String getIndustry() {
-		return _industry;
-	}
-
-	public String getStandardInstructions() {
-		return _standardInstructions;
-	}
-
-	public Provider getProvider() {
-		return _provider;
-	}
-
-	public Boolean getCanViewServicePayRateInfo() {
-		return _canViewServicePayRateInfo;
-	}
-
-	public Integer getIsRemoteWork() {
-		return _isRemoteWork;
-	}
-
-	public Double getDistance() {
-		return _distance;
-	}
-
-	public Integer getStatusId() {
-		return _statusId;
-	}
-
-	public Schedule getSchedule() {
-		return _schedule;
-	}
-
-	public Integer getDaysSinceApprovedOrCancelled() {
-		return _daysSinceApprovedOrCancelled;
-	}
-
-	public Deliverable[] getDeliverables() {
-		return _deliverables;
-	}
-
-	public String getStandardInstruction() {
-		return _standardInstruction;
-	}
-
-	public ExpectedPayment getExpectedPayment() {
-		return _expectedPayment;
-	}
-
-	public Integer getClientCompanyId() {
-		return _clientCompanyId;
-	}
-
-	public String getConfidentialInformation() {
-		return _confidentialInformation;
-	}
-
-	public String getCompanyName() {
-		return _companyName;
-	}
-
-	public EstimatedSchedule getEstimatedSchedule() {
-		return _estimatedSchedule;
-	}
-
-	public String getManagerName() {
-		return _managerName;
-	}
-
-	public Integer getManagerId() {
-		return _managerId;
-	}
-
-	public String getPaidDate() {
-		return _paidDate;
-	}
-
-	public Boolean getIsWorkPerformed() {
-		return _isWorkPerformed;
-	}
-
-	public UploadSlot[] getUploadSlots() {
-		return _uploadSlots;
-	}
-
-	public IncreaseRequestInfo getIncreaseRequestInfo() {
-		return _increaseRequestInfo;
-	}
-
-	public String getTitle() {
-		return _title;
-	}
-
-	public Task[] getTasks() {
-		return _tasks;
-	}
-
-	public Integer getW2() {
-		return _w2;
-	}
-
-	public Boolean getIsDeliverablesUploaded() {
-		return _isDeliverablesUploaded;
-	}
-
-	public Integer getCompanyId() {
-		return _companyId;
-	}
-
-	public Boolean getCanEditFieldsForProviderToEnter() {
-		return _canEditFieldsForProviderToEnter;
-	}
-
-	public String getApproximatePaymentDate() {
-		return _approximatePaymentDate;
+	public Integer getAlertCount() {
+		return _alertCount;
 	}
 
 	public Integer getAlerts() {
 		return _alerts;
 	}
 
-	public Double getCancelFee() {
-		return _cancelFee;
+	public String getApproximatePaymentDate() {
+		return _approximatePaymentDate;
 	}
 
 	public Integer getBundleCount() {
 		return _bundleCount;
 	}
 
-	public Boolean getIsRequest() {
-		return _isRequest;
+	public Integer getBundleId() {
+		return _bundleId;
 	}
 
-	public Boolean getIsCounter() {
-		return _isCounter;
+	public Boolean getCanEditFieldsForProviderToEnter() {
+		return _canEditFieldsForProviderToEnter;
 	}
 
-	public Document[] getDocuments() {
-		return _documents;
+	public Boolean getCanRequestPayForThisWo() {
+		return _canRequestPayForThisWo;
 	}
 
-	public Integer getDisplayCounterOffer() {
-		return _displayCounterOffer;
+	public Boolean getCanViewServicePayRateInfo() {
+		return _canViewServicePayRateInfo;
 	}
 
-	public WorkorderPenaltyInfo[] getWorkorderPenaltyInfo() {
-		return _workorderPenaltyInfo;
+	public Double getCancelFee() {
+		return _cancelFee;
+	}
+
+	public CheckInOutInfo getCheckInOutInfo() {
+		return _checkInOutInfo;
 	}
 
 	public String getClosingNotes() {
 		return _closingNotes;
 	}
 
-	public Integer getTimeSincePublished() {
-		return _timeSincePublished;
+	public Integer getCompanyId() {
+		return _companyId;
 	}
 
-	public String getClientCompanyName() {
-		return _clientCompanyName;
+	public String getCompanyName() {
+		return _companyName;
 	}
 
-	public WorkorderBonusInfo[] getWorkorderBonusInfo() {
-		return _workorderBonusInfo;
+	public String getConfidentialInformation() {
+		return _confidentialInformation;
+	}
+
+	public CounterOfferInfo getCounterOfferInfo() {
+		return _counterOfferInfo;
+	}
+
+	public CustomDisplayFields[] getCustomDisplayFields() {
+		return _customDisplayFields;
+	}
+
+	public CustomField[] getCustomFields() {
+		return _customFields;
+	}
+
+	public String getCustomerPoliciesProcedures() {
+		return _customerPoliciesProcedures;
+	}
+
+	public Integer getDaysSinceApprovedOrCancelled() {
+		return _daysSinceApprovedOrCancelled;
+	}
+
+	public Integer getDeclinedWo() {
+		return _declinedWo;
+	}
+
+	public Deliverable[] getDeliverables() {
+		return _deliverables;
+	}
+
+	public Discount[] getDiscounts() {
+		return _discounts;
+	}
+
+	public Integer getDisplayCounterOffer() {
+		return _displayCounterOffer;
+	}
+
+	public Double getDistance() {
+		return _distance;
+	}
+
+	public Document[] getDocuments() {
+		return _documents;
+	}
+
+	public EstimatedSchedule getEstimatedSchedule() {
+		return _estimatedSchedule;
+	}
+
+	public ExpectedPayment getExpectedPayment() {
+		return _expectedPayment;
+	}
+
+	public String getFullWorkDescription() {
+		return _fullWorkDescription;
+	}
+
+	public Boolean getHasFund() {
+		return _hasFund;
+	}
+
+	public String getIdentifier() {
+		return _identifier;
+	}
+
+	public IncreaseRequestInfo getIncreaseRequestInfo() {
+		return _increaseRequestInfo;
+	}
+
+	public String getIndustry() {
+		return _industry;
+	}
+
+	public Boolean getIsAssignedToWorkorder() {
+		return _isAssignedToWorkorder;
+	}
+
+	public Boolean getIsCounter() {
+		return _isCounter;
+	}
+
+	public Boolean getIsDeliverablesUploaded() {
+		return _isDeliverablesUploaded;
+	}
+
+	public Integer getIsRemoteWork() {
+		return _isRemoteWork;
+	}
+
+	public Boolean getIsRequest() {
+		return _isRequest;
+	}
+
+	public Boolean getIsRequestedByProvider() {
+		return _isRequestedByProvider;
+	}
+
+	public Boolean getIsWoOnHold() {
+		return _isWoOnHold;
+	}
+
+	public Boolean getIsWorkPerformed() {
+		return _isWorkPerformed;
+	}
+
+	public Location getLocation() {
+		return _location;
+	}
+
+	public LoggedWork[] getLoggedWork() {
+		return _loggedWork;
+	}
+
+	public Integer getMessageCount() {
+		return _messageCount;
+	}
+
+	public Integer getMessages() {
+		return _messages;
+	}
+
+	public Pay getPay() {
+		return _pay;
+	}
+
+	public Provider getProvider() {
+		return _provider;
+	}
+
+	public Schedule getSchedule() {
+		return _schedule;
 	}
 
 	public ShipmentTracking[] getShipmentTracking() {
 		return _shipmentTracking;
 	}
 
-	public String getProjectName() {
-		return _projectName;
+	public Boolean getShowProviderWasLatePrompt() {
+		return _showProviderWasLatePrompt;
 	}
 
-	public Boolean getIsWoOnHold() {
-		return _isWoOnHold;
+	public Skillset[] getSkillsets() {
+		return _skillsets;
+	}
+
+	public String getStandardInstruction() {
+		return _standardInstruction;
+	}
+
+	public String getStandardInstructions() {
+		return _standardInstructions;
+	}
+
+	public Integer getStatusId() {
+		return _statusId;
+	}
+
+	public Task[] getTasks() {
+		return _tasks;
+	}
+
+	public Integer getTimeSincePublished() {
+		return _timeSincePublished;
+	}
+
+	public String getTimezone() {
+		return _timezone;
+	}
+
+	public String getTitle() {
+		return _title;
+	}
+
+	public String getTypeOfWork() {
+		return _typeOfWork;
+	}
+
+	public UploadSlot[] getUploadSlots() {
+		return _uploadSlots;
+	}
+
+	public Integer getW2() {
+		return _w2;
+	}
+
+	public WorkorderBonusInfo[] getWorkorderBonusInfo() {
+		return _workorderBonusInfo;
+	}
+
+	public Long getWorkorderId() {
+		return _workorderId;
+	}
+
+	public WorkorderPenaltyInfo[] getWorkorderPenaltyInfo() {
+		return _workorderPenaltyInfo;
 	}
 
 	public JsonObject toJson() {

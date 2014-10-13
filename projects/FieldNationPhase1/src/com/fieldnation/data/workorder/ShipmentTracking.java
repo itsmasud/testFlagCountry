@@ -5,92 +5,91 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ShipmentTracking {
-	@Json(name = "name")
-	private String _name;
-	@Json(name = "deleted")
-	private Integer _deleted;
-	@Json(name = "dateProjectedToArrive")
-	private String _dateProjectedToArrive;
-	@Json(name = "workorderShipmentId")
-	private Integer _workorderShipmentId;
-	@Json(name = "userId")
-	private Integer _userId;
 	@Json(name = "carrier")
 	private String _carrier;
 	@Json(name = "carrierOther")
 	private String _carrierOther;
-	@Json(name = "workorderId")
-	private Integer _workorderId;
+	@Json(name="currentStatus")
+	private String _currentStatus;
+	@Json(name="dateArrived")
+	private Object _dateArrived;
+	@Json(name="dateCreated")
+	private Integer _dateCreated;
+	@Json(name="dateOfFirstTrackedActivity")
+	private Object _dateOfFirstTrackedActivity;
+	@Json(name="dateProjectedToArrive")
+	private Object _dateProjectedToArrive;
+	@Json(name="deleted")
+	private Integer _deleted;
 	@Json(name = "direction")
 	private String _direction;
-	@Json(name = "dateOfFirstTrackedActivity")
-	private String _dateOfFirstTrackedActivity;
-	@Json(name = "dateCreated")
-	private String _dateCreated;
+	@Json(name="name")
+	private String _name;
 	@Json(name = "trackingId")
-	private String _trackingId;
-	@Json(name = "dateArrived")
-	private String _dateArrived;
-	@Json(name = "currentStatus")
-	private String _currentStatus;
+	private Integer _trackingId;
+	@Json(name="userId")
+	private Integer _userId;
+	@Json(name="workorderId")
+	private Integer _workorderId;
+	@Json(name="workorderShipmentId")
+	private Integer _workorderShipmentId;
 
 	public ShipmentTracking() {
 	}
-
-	public String getName() {
-		return _name;
-	}
-
-	public Integer getDeleted() {
-		return _deleted;
-	}
-
-	public String getDateProjectedToArrive() {
-		return _dateProjectedToArrive;
-	}
-
-	public Integer getWorkorderShipmentId() {
-		return _workorderShipmentId;
-	}
-
-	public Integer getUserId() {
-		return _userId;
-	}
-
-	public String getCarrier() {
+	public String getCarrier(){
 		return _carrier;
 	}
 
-	public String getCarrierOther() {
+	public String getCarrierOther(){
 		return _carrierOther;
 	}
 
-	public Integer getWorkorderId() {
-		return _workorderId;
+	public String getCurrentStatus(){
+		return _currentStatus;
+	}
+
+	public Object getDateArrived(){
+		return _dateArrived;
+	}
+
+	public Integer getDateCreated(){
+		return _dateCreated;
+	}
+
+	public Object getDateOfFirstTrackedActivity(){
+		return _dateOfFirstTrackedActivity;
+	}
+
+	public Object getDateProjectedToArrive(){
+		return _dateProjectedToArrive;
+	}
+
+	public Integer getDeleted(){
+		return _deleted;
 	}
 
 	public String getDirection() {
 		return _direction;
 	}
 
-	public String getDateOfFirstTrackedActivity() {
-		return _dateOfFirstTrackedActivity;
+	public String getName(){
+		return _name;
 	}
 
-	public String getDateCreated() {
-		return _dateCreated;
-	}
-
-	public String getTrackingId() {
+	public Integer getTrackingId(){
 		return _trackingId;
 	}
 
-	public String getDateArrived() {
-		return _dateArrived;
+	public Integer getUserId(){
+		return _userId;
 	}
 
-	public String getCurrentStatus() {
-		return _currentStatus;
+	public Integer getWorkorderId(){
+		return _workorderId;
+	}
+
+	public Integer getWorkorderShipmentId(){
+		return _workorderShipmentId;
 	}
 
 	public JsonObject toJson() {

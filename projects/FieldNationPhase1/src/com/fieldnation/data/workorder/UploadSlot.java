@@ -5,53 +5,52 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class UploadSlot {
-	@Json(name = "slotName")
-	private String _slotName;
-	@Json(name = "slotId")
-	private Integer _slotId;
-	@Json(name = "minFiles")
-	private Integer _minFiles;
 	@Json(name = "maxFiles")
 	private Integer _maxFiles;
-	@Json(name = "uploadedDocuments")
-	private UploadedDocument[] _uploadedDocuments;
+	@Json(name="minFiles")
+	private Integer _minFiles;
+	@Json(name="slotId")
+	private Integer _slotId;
+	@Json(name="slotName")
+	private String _slotName;
 	@Json(name="tasks")
 	private Task _tasks;
+	@Json(name="uploadedDocuments")
+	private UploadedDocument[] _uploadedDocuments;
 
 	public UploadSlot() {
 	}
+	public Integer getMaxFiles(){
+		return _maxFiles;
+	}
 
-	public String getSlotName() {
-		return _slotName;
+	public Integer getMinFiles(){
+		return _minFiles;
 	}
 
 	public Integer getSlotId() {
 		return _slotId;
 	}
 
-	public Integer getMinFiles() {
-		return _minFiles;
-	}
-
-	public Integer getMaxFiles() {
-		return _maxFiles;
-	}
-
-	public UploadedDocument[] getUploadedDocuments() {
-		return _uploadedDocuments;
+	public String getSlotName(){
+		return _slotName;
 	}
 
 	public Task getTasks(){
 		return _tasks;
 	}
 
+	public UploadedDocument[] getUploadedDocuments() {
+		return _uploadedDocuments;
+	}
+
 	public JsonObject toJson() {
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(UploadSlot uploadSlots) {
+	public static JsonObject toJson(UploadSlot uploadSlot) {
 		try {
-			return Serializer.serializeObject(uploadSlots);
+			return Serializer.serializeObject(uploadSlot);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

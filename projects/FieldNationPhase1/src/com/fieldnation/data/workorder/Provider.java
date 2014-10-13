@@ -5,122 +5,121 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Provider {
-	@Json(name = "firstName")
-	private String _firstName;
 	@Json(name = "cell")
 	private Double _cell;
-	@Json(name = "photo")
-	private Photo _photo;
-	@Json(name = "userId")
-	private Integer _userId;
+	@Json(name="city")
+	private String _city;
 	@Json(name = "distance")
 	private Double _distance;
-	@Json(name = "username")
-	private String _username;
-	@Json(name = "state")
-	private String _state;
+	@Json(name="email")
+	private String _email;
 	@Json(name = "ext")
-	private String _ext;
-	@Json(name = "phone")
-	private Double _phone;
-	@Json(name = "lastname")
-	private String _lastname;
-	@Json(name = "photoUrl")
-	private String _photoUrl;
-	@Json(name = "longitude")
-	private Double _longitude;
+	private Object _ext;
+	@Json(name="firstName")
+	private String _firstName;
+	@Json(name="firstname")
+	private String _firstname;
 	@Json(name = "lastName")
 	private String _lastName;
+	@Json(name="lastname")
+	private String _lastname;
 	@Json(name = "latitude")
 	private Double _latitude;
-	@Json(name = "email")
-	private String _email;
-	@Json(name = "city")
-	private String _city;
-	@Json(name = "firstname")
-	private String _firstname;
-	@Json(name = "zip")
-	private Integer _zip;
+	@Json(name="longitude")
+	private Double _longitude;
+	@Json(name="phone")
+	private Double _phone;
+	@Json(name="photo")
+	private Photo _photo;
 	@Json(name = "photoThumbUrl")
 	private String _photoThumbUrl;
+	@Json(name="photoUrl")
+	private String _photoUrl;
+	@Json(name="state")
+	private String _state;
+	@Json(name="userId")
+	private Integer _userId;
+	@Json(name="username")
+	private String _username;
+	@Json(name="zip")
+	private Integer _zip;
 
 	public Provider() {
 	}
-
-	public String getFirstName() {
-		return _firstName;
-	}
-
 	public Double getCell() {
 		return _cell;
 	}
 
-	public Photo getPhoto() {
-		return _photo;
-	}
-
-	public Integer getUserId() {
-		return _userId;
+	public String getCity(){
+		return _city;
 	}
 
 	public Double getDistance() {
 		return _distance;
 	}
 
-	public String getUsername() {
-		return _username;
+	public String getEmail(){
+		return _email;
 	}
 
-	public String getState() {
-		return _state;
-	}
-
-	public String getExt() {
+	public Object getExt(){
 		return _ext;
 	}
 
-	public Double getPhone() {
-		return _phone;
+	public String getFirstName(){
+		return _firstName;
+	}
+
+	public String getFirstname(){
+		return _firstname;
+	}
+
+	public String getLastName(){
+		return _lastName;
 	}
 
 	public String getLastname() {
 		return _lastname;
 	}
 
-	public String getPhotoUrl() {
-		return _photoUrl;
+	public Double getLatitude(){
+		return _latitude;
 	}
 
 	public Double getLongitude() {
 		return _longitude;
 	}
 
-	public String getLastName() {
-		return _lastName;
+	public Double getPhone(){
+		return _phone;
 	}
 
-	public Double getLatitude() {
-		return _latitude;
+	public Photo getPhoto(){
+		return _photo;
 	}
 
-	public String getEmail() {
-		return _email;
-	}
-
-	public String getCity() {
-		return _city;
-	}
-
-	public String getFirstname() {
-		return _firstname;
-	}
-
-	public Integer getZip() {
-		return _zip;
-	}
-
-	public String getPhotoThumbUrl() {
+	public String getPhotoThumbUrl(){
 		return _photoThumbUrl;
+	}
+
+	public String getPhotoUrl(){
+		return _photoUrl;
+	}
+
+	public String getState(){
+		return _state;
+	}
+
+	public Integer getUserId(){
+		return _userId;
+	}
+
+	public String getUsername(){
+		return _username;
+	}
+
+	public Integer getZip(){
+		return _zip;
 	}
 
 	public JsonObject toJson() {

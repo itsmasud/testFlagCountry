@@ -6,44 +6,29 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Notification {
-	@Json(name = "viewed")
-	private Integer _viewed;
-	@Json(name = "fromUser")
-	private User _fromUser;
 	@Json(name = "date")
 	private String _date;
-	@Json(name = "workorderId")
-	private Long _workorderId;
-	@Json(name = "workorder")
-	private Workorder _workorder;
+	@Json(name="fromUser")
+	private User _fromUser;
 	@Json(name = "message")
 	private String _message;
 	@Json(name = "notificationId")
 	private Integer _notificationId;
 	@Json(name = "notificationType")
 	private String _notificationType;
+	@Json(name="viewed")
+	private Integer _viewed;
+	@Json(name="workorder")
+	private Workorder _workorder;
 
 	public Notification() {
 	}
-
-	public Integer getViewed() {
-		return _viewed;
-	}
-
-	public User getFromUser() {
-		return _fromUser;
-	}
-
 	public String getDate() {
 		return _date;
 	}
 
-	public Long getWorkorderId() {
-		return _workorderId;
-	}
-
-	public Workorder getWorkorder() {
-		return _workorder;
+	public User getFromUser(){
+		return _fromUser;
 	}
 
 	public String getMessage() {
@@ -56,6 +41,14 @@ public class Notification {
 
 	public String getNotificationType() {
 		return _notificationType;
+	}
+
+	public Integer getViewed(){
+		return _viewed;
+	}
+
+	public Workorder getWorkorder(){
+		return _workorder;
 	}
 
 	public JsonObject toJson() {

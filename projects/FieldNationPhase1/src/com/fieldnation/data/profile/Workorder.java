@@ -8,10 +8,10 @@ import com.fieldnation.json.annotations.Json;
 public class Workorder {
 	@Json(name = "status")
 	private Status _status;
-	@Json(name = "workorderId")
-	private Long _workorderId;
 	@Json(name = "title")
 	private String _title;
+	@Json(name="workorderId")
+	private Integer _workorderId;
 
 	public Workorder() {
 	}
@@ -20,12 +20,12 @@ public class Workorder {
 		return _status;
 	}
 
-	public Long getWorkorderId() {
-		return _workorderId;
-	}
-
 	public String getTitle() {
 		return _title;
+	}
+
+	public Integer getWorkorderId(){
+		return _workorderId;
 	}
 
 	public JsonObject toJson() {

@@ -5,25 +5,25 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Discount{
-	@Json(name="discountId")
-	private Integer _discountId;
 	@Json(name = "amount")
 	private Double _amount;
 	@Json(name = "description")
 	private String _description;
+	@Json(name="discountId")
+	private Integer _discountId;
 
 	public Discount(){
 	}
-	public Integer getDiscountId(){
-		return _discountId;
-	}
-
 	public Double getAmount() {
 		return _amount;
 	}
 
 	public String getDescription() {
 		return _description;
+	}
+
+	public Integer getDiscountId(){
+		return _discountId;
 	}
 
 	public JsonObject toJson() {

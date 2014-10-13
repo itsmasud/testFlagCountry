@@ -5,25 +5,19 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class PredefinedValues{
-	@Json(name="2")
-	private Object _2;
-	@Json(name="1")
-	private String _1;
 	@Json(name="0")
 	private String _0;
+	@Json(name="1")
+	private String _1;
 
 	public PredefinedValues(){
 	}
-	public Object get2(){
-		return _2;
+	public String get0(){
+		return _0;
 	}
 
 	public String get1(){
 		return _1;
-	}
-
-	public String get0(){
-		return _0;
 	}
 
 	public JsonObject toJson(){

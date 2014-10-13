@@ -5,20 +5,19 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ExpenseCategory {
-	@Json(name = "name")
-	private String _name;
 	@Json(name = "id")
 	private Integer _id;
+	@Json(name="name")
+	private String _name;
 
 	public ExpenseCategory() {
+	}
+	public Integer getId(){
+		return _id;
 	}
 
 	public String getName() {
 		return _name;
-	}
-
-	public int getId() {
-		return _id;
 	}
 
 	public JsonObject toJson() {

@@ -7,27 +7,19 @@ import com.fieldnation.json.annotations.Json;
 public class Replies {
 	@Json(name = "date")
 	private String _date;
-	@Json(name="messageId")
-	private Integer _messageId;
-	@Json(name = "workorderId")
-	private Integer _workorderId;
 	@Json(name = "message")
 	private String _message;
 	@Json(name = "messageFrom")
 	private String _messageFrom;
+	@Json(name="messageId")
+	private Integer _messageId;
+	@Json(name="workorderId")
+	private Integer _workorderId;
 
 	public Replies() {
 	}
 	public String getDate(){
 		return _date;
-	}
-
-	public Integer getMessageId() {
-		return _messageId;
-	}
-
-	public Integer getWorkorderId() {
-		return _workorderId;
 	}
 
 	public String getMessage() {
@@ -36,6 +28,14 @@ public class Replies {
 
 	public String getMessageFrom() {
 		return _messageFrom;
+	}
+
+	public Integer getMessageId(){
+		return _messageId;
+	}
+
+	public Integer getWorkorderId(){
+		return _workorderId;
 	}
 
 	public JsonObject toJson() {

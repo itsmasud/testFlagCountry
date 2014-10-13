@@ -5,22 +5,21 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Status {
-	@Json(name = "status")
-	private String _status;
 	@Json(name = "colorIntent")
 	private String _colorIntent;
+	@Json(name="status")
+	private String _status;
 	@Json(name = "subStatus")
 	private String _subStatus;
 
 	public Status() {
 	}
+	public String getColorIntent(){
+		return _colorIntent;
+	}
 
 	public String getStatus() {
 		return _status;
-	}
-
-	public String getColorIntent() {
-		return _colorIntent;
 	}
 
 	public String getSubStatus() {

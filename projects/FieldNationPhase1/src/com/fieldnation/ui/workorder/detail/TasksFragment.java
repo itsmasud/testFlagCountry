@@ -192,10 +192,10 @@ public class TasksFragment extends WorkorderFragment {
 
 		if (_closingNotes != null)
 			_closingNotes.setWorkorder(_workorder);
-		
+
 		if (_taskShipmentAddDialog != null)
 			_taskShipmentAddDialog.setWorkorder(_workorder);
-		
+
 		if (_shipments != null && _timeLogged != null) {
 			WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
 			if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
@@ -268,20 +268,21 @@ public class TasksFragment extends WorkorderFragment {
 			case DOWNLOAD:
 				if (task.getCompleted())
 					return;
-				
+
 				Integer _identifier = task.getIdentifier();
 				Document[] docs = _workorder.getDocuments();
 				if (docs != null && docs.length > 0) {
 					for (int i = 0; i < docs.length; i++) {
-						Document doc = docs[i];						
+						Document doc = docs[i];
 						String[] filePathSplit = doc.getFilePath().split("_");
-						if(filePathSplit.length > 0){
-							Integer _identifierChk =  Integer.valueOf(filePathSplit[filePathSplit.length-2]);
-							if(_identifierChk.equals(_identifier)){
-								//task completed here
+						if (filePathSplit.length > 0) {
+							Integer _identifierChk = Integer.valueOf(filePathSplit[filePathSplit.length - 2]);
+							if (_identifierChk.equals(_identifier)) {
+								// task completed here
 								getActivity().startService(
-										_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId(), false));
-								
+										_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(),
+												task.getTaskId(), false));
+
 								try {
 									Intent intent = new Intent(Intent.ACTION_VIEW);
 									intent.setDataAndType(Uri.parse(doc.getFilePath()), doc.getFileType());
@@ -294,14 +295,14 @@ public class TasksFragment extends WorkorderFragment {
 										ex1.printStackTrace();
 									}
 								}
-								
+
 								break;
 							}
 						}
-										
-					} //end for
+
+					} // end for
 				}
-				
+
 				break;
 			case EMAIL: {
 				String email = task.getEmailAddress();
@@ -312,37 +313,39 @@ public class TasksFragment extends WorkorderFragment {
 				// TODO, mark this task as complete
 				break;
 			}
-			case PHONE:				
+			case PHONE:
 				if (task.getCompleted())
 					return;
-				
+
 				try {
-					if(task.getPhoneNumber() != null) {						
+					if (task.getPhoneNumber() != null) {
 						getActivity().startService(
-								_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId(), false));
-						
+								_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId(),
+										false));
+
 						Intent callIntent = new Intent(Intent.ACTION_CALL);
 						String phNum = "tel:" + task.getPhoneNumber();
-					    callIntent.setData(Uri.parse(phNum));
-					    startActivity(callIntent);
+						callIntent.setData(Uri.parse(phNum));
+						startActivity(callIntent);
 					}
-					
-				} catch (Exception ex) {}
-				
+
+				} catch (Exception ex) {
+				}
+
 				break;
 			case SHIPMENT_TRACKING:
 				if (task.getCompleted())
 					return;
-				//@TODO
+				// @TODO
 				ShipmentTracking[] shipments = _workorder.getShipmentTracking();
-				if(shipments.length > 0){
-					//@TODO
+				if (shipments.length > 0) {
+					// @TODO
 				} else {
 					_taskShipmentAddDialog.setWorkorder(_workorder);
 					_taskShipmentAddDialog.setTaskId(task.getTaskId());
 					_taskShipmentAddDialog.show("Assign/Add New", _add_onClick);
 				}
-				
+
 				break;
 			case SIGNATURE: {
 				_currentTask = task;
@@ -359,11 +362,13 @@ public class TasksFragment extends WorkorderFragment {
 								_workorder.getCheckInOutInfo().getCheckOutTime());
 				} catch (Exception ex) {
 				}
-				try {
-					if (!misc.isEmptyOrNull(_workorder.getManagerName()))
-						intent.putExtra(SignatureActivity.RESULT_KEY_NAME, _workorder.getManagerName());
-				} catch (Exception ex) {
-				}
+				// TODO this field used to exist, it no longer does
+				// try {
+				// if (!misc.isEmptyOrNull(_workorder.getManagerName()))
+				// intent.putExtra(SignatureActivity.RESULT_KEY_NAME,
+				// _workorder.getManagerName());
+				// } catch (Exception ex) {
+				// }
 
 				intent.putExtra(SIGNATURE_TASKID, task.getTaskId());
 				intent.putExtra(SIGNATURE_WORKORDERID, _workorder.getWorkorderId());
@@ -393,23 +398,24 @@ public class TasksFragment extends WorkorderFragment {
 		public void onCancel() {
 		}
 	};
-	
+
 	private TaskShipmentAddDialog.Listener _add_onClick = new TaskShipmentAddDialog.Listener() {
 		@Override
-		public void onDelete(Workorder workorder, int shipmentId) {			
+		public void onDelete(Workorder workorder, int shipmentId) {
 			getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
 		}
-		
+
 		public void onAssign(Workorder workorder, int shipmentId, long taskId) {
-			//@TODO
-			Log.v(TAG, "Method Stub: onAssign()"+shipmentId+"="+taskId);
-			getActivity().startService(_service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));			
+			// @TODO
+			Log.v(TAG, "Method Stub: onAssign()" + shipmentId + "=" + taskId);
+			getActivity().startService(
+					_service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));
 		}
-		
+
 		@Override
 		public void onCancel() {
 		}
-				
+
 		@Override
 		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
 				String trackingId) {
@@ -417,7 +423,7 @@ public class TasksFragment extends WorkorderFragment {
 					_service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
 							carrier, null, trackingId));
 		}
-		
+
 		@Override
 		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
 				String trackingId, long taskId) {
@@ -430,11 +436,11 @@ public class TasksFragment extends WorkorderFragment {
 	private ShipmentView.Listener _shipments_listener = new ShipmentView.Listener() {
 
 		@Override
-		public void onDelete(Workorder workorder, int shipmentId) {			
+		public void onDelete(Workorder workorder, int shipmentId) {
 			getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
 		}
-		
-		public void onAssign(Workorder workorder, int shipmentId) {			
+
+		public void onAssign(Workorder workorder, int shipmentId) {
 		}
 
 		@Override
@@ -445,7 +451,7 @@ public class TasksFragment extends WorkorderFragment {
 							carrier, null, trackingId));
 			Log.v(TAG, "Method Stub: onAddShipmentDetails()");
 		}
-		
+
 		@Override
 		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
 				String trackingId, long taskId) {
@@ -454,7 +460,7 @@ public class TasksFragment extends WorkorderFragment {
 							carrier, null, trackingId, taskId));
 		}
 	};
-		
+
 	/*-*************************************-*/
 	/*-				WEB Events				-*/
 	/*-*************************************-*/

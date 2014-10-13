@@ -38,6 +38,7 @@
             style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
             android:inputType="numberDecimal" />
     </LinearLayout>
 
@@ -62,6 +63,7 @@
             style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
             android:inputType="numberDecimal"
             android:minEms="4" />
 
@@ -76,6 +78,7 @@
             style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
             android:inputType="numberDecimal" />
     </LinearLayout>
 
@@ -99,6 +102,7 @@
             style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
             android:inputType="numberDecimal" />
 
         <TextView
@@ -112,6 +116,7 @@
             style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
             android:inputType="numberDecimal" />
     </LinearLayout>
 
@@ -141,6 +146,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:imeOptions="actionNext"
                 android:inputType="numberDecimal" />
 
             <TextView
@@ -157,6 +163,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:imeOptions="actionNext"
                 android:inputType="numberDecimal" />
         </LinearLayout>
 
@@ -177,6 +184,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:imeOptions="actionNext"
                 android:inputType="numberDecimal" />
 
             <TextView
@@ -193,6 +201,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:imeOptions="actionDone"
                 android:inputType="numberDecimal" />
         </LinearLayout>
     </LinearLayout>

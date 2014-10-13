@@ -5,20 +5,19 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ScheduleRange {
-	@Json(name = "startDate")
-	private String _startDate;
 	@Json(name = "endDate")
 	private String _endDate;
+	@Json(name="startDate")
+	private String _startDate;
 
 	public ScheduleRange() {
+	}
+	public String getEndDate(){
+		return _endDate;
 	}
 
 	public String getStartDate() {
 		return _startDate;
-	}
-
-	public String getEndDate() {
-		return _endDate;
 	}
 
 	public JsonObject toJson() {

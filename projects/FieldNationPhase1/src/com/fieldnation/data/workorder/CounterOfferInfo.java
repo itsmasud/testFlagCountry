@@ -5,36 +5,36 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CounterOfferInfo {
-	@Json(name = "explanation")
-	private String _explanation;
 	@Json(name = "expense")
 	private AdditionalExpense[] _expense;
+	@Json(name = "expires")
+	private Boolean _expires;
+	@Json(name = "expiresAfter")
+	private Integer _expiresAfter;
+	@Json(name = "explanation")
+	private String _explanation;
 	@Json(name = "pay")
 	private Pay _pay;
 	@Json(name = "schedule")
 	private Schedule _schedule;
-	@Json(name = "expiresAfter")
-	private Integer _expiresAfter;
-	@Json(name = "expires")
-	private Boolean _expires;
 
 	public CounterOfferInfo() {
 	}
 
-	public String getExplanation() {
-		return _explanation;
-	}
-
-	public Integer getExpiresAfter() {
-		return _expiresAfter;
+	public AdditionalExpense[] getExpense() {
+		return _expense;
 	}
 
 	public Boolean getExpires() {
 		return _expires;
 	}
 
-	public AdditionalExpense[] getExpense() {
-		return _expense;
+	public Integer getExpiresAfter() {
+		return _expiresAfter;
+	}
+
+	public String getExplanation() {
+		return _explanation;
 	}
 
 	public Pay getPay() {
