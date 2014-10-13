@@ -36,9 +36,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 	private ProgressBar _progressBar;
 
 	// DATA
-	private GlobalState _gs;
-	private WorkorderService _service;
 	private Workorder _workorder;
+	private Listener _listener;
 
 	/*-*****************************-*/
 	/*-			Life Cycle			-*/
@@ -64,8 +63,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		if (isInEditMode())
 			return;
 
-		_gs = (GlobalState) getContext().getApplicationContext();
-
 		_requestButton = (Button) findViewById(R.id.request_button);
 		_requestButton.setOnClickListener(_request_onClick);
 
@@ -81,18 +78,22 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		_buttonLayout = (LinearLayout) findViewById(R.id.button_layout);
 		_progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-		_gs.requestAuthentication(_authClient);
 		setLoading(true);
+		setVisibility(View.GONE);
 	}
 
 	private void setLoading(boolean isLoading) {
-		if (isLoading) {
-			_progressBar.setVisibility(View.VISIBLE);
-			_buttonLayout.setVisibility(View.GONE);
-		} else {
-			_progressBar.setVisibility(View.GONE);
-			_buttonLayout.setVisibility(View.VISIBLE);
-		}
+		// if (isLoading) {
+		// _progressBar.setVisibility(View.VISIBLE);
+		// _buttonLayout.setVisibility(View.GONE);
+		// } else {
+		// _progressBar.setVisibility(View.GONE);
+		// _buttonLayout.setVisibility(View.VISIBLE);
+		// }
+	}
+
+	public void setListener(Listener listener) {
+		_listener = listener;
 	}
 
 	@Override
@@ -130,6 +131,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 			break;
 
 		}
+
+		setVisibility(View.VISIBLE);
 	}
 
 	private void buildStatusAssigned() {
@@ -145,7 +148,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
 		if (substatus == WorkorderSubstatus.ROUTED) {
 			_requestButton.setText(R.string.accept_work);
-		} else if (substatus == WorkorderSubstatus.REQUESTED) {
+		} else if (substatus == WorkorderSubstatus.REQUESTED || substatus == WorkorderSubstatus.COUNTEROFFERED) {
 			_requestButton.setVisibility(View.GONE);
 		} else {
 			_requestButton.setText(R.string.request_work);
@@ -167,51 +170,17 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/
-	private AuthenticationClient _authClient = new AuthenticationClient() {
-
-		@Override
-		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
-			setLoading(false);
-		}
-
-		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			_gs.requestAuthenticationDelayed(_authClient);
-		}
-
-		@Override
-		public GlobalState getGlobalState() {
-			return _gs;
-		}
-	};
-
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
-
-		@Override
-		public void onSuccess(int resultCode, Bundle resultData) {
-			setLoading(false);
-			_workorder.dispatchOnChange();
-		}
-
-		@Override
-		public void onError(int resultCode, Bundle resultData, String errorType) {
-			setLoading(false);
-			if (_service != null) {
-				_gs.invalidateAuthToken(_service.getAuthToken());
-			}
-			_gs.requestAuthenticationDelayed(_authClient);
-		}
-	};
 
 	private View.OnClickListener _request_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			setLoading(true);
-			if (_workorder.getStatus().getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
-				_gs.startService(_service.confirmAssignment(WEB_REQUEST, _workorder.getWorkorderId(), 0, 0));
-			} else {
-				_gs.startService(_service.request(WEB_REQUEST, _workorder.getWorkorderId(), 0));
+			if (_listener != null) {
+				if (_workorder.getStatus().getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
+					_listener.onConfirmAssignment(_workorder);
+				} else {
+					_listener.onRequest(_workorder);
+				}
 			}
 		}
 	};
@@ -220,7 +189,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		@Override
 		public void onClick(View v) {
 			setLoading(true);
-			_gs.startService(_service.decline(WEB_REQUEST, _workorder.getWorkorderId()));
+			if (_listener != null)
+				_listener.onNotInterested(_workorder);
 		}
 	};
 
@@ -228,7 +198,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		@Override
 		public void onClick(View v) {
 			setLoading(true);
-			_gs.startService(_service.complete(WEB_REQUEST, _workorder.getWorkorderId()));
+			if (_listener != null)
+				_listener.onComplete(_workorder);
 		}
 	};
 
@@ -240,5 +211,15 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 			getContext().startActivity(intent);
 		}
 	};
+
+	public interface Listener {
+		public void onComplete(Workorder workorder);
+
+		public void onNotInterested(Workorder workorder);
+
+		public void onConfirmAssignment(Workorder workorder);
+
+		public void onRequest(Workorder workorder);
+	}
 
 }

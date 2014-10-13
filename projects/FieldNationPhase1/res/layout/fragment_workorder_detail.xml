@@ -10,16 +10,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <!-- top action bar -->
+
+        <com.fieldnation.ui.workorder.detail.ActionBarTopView
+            android:id="@+id/actiontop_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <!-- Summary -->
 
         <com.fieldnation.ui.workorder.detail.SummaryView
             android:id="@+id/summary_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
-        <View
-            style="@style/WorkorderDetail_Separator"
-            android:layout_width="match_parent" />
 
         <!-- tasks -->
 
@@ -28,10 +31,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <View
-            style="@style/WorkorderDetail_Separator"
-            android:layout_width="match_parent" />
-
         <!-- location -->
 
         <com.fieldnation.ui.workorder.detail.LocationView
@@ -39,28 +38,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <View
-            style="@style/WorkorderDetail_Separator"
-            android:layout_width="match_parent" />
-
         <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
             android:id="@+id/schedule_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <View
-            style="@style/WorkorderDetail_Separator"
-            android:layout_width="match_parent" />
-
         <com.fieldnation.ui.workorder.detail.PaymentView
             android:id="@+id/payment_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <!--
-        <View
-            style="@style/WorkorderDetail_Separator"
-            android:layout_width="match_parent" />
-        -->
 
         <com.fieldnation.ui.workorder.detail.ActionView
             android:id="@+id/action_view"

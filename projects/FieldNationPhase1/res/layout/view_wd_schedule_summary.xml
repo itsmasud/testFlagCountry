@@ -17,4 +17,8 @@
         android:layout_height="wrap_content"
         android:text="You will need to arrive exactly on Friday March 14, 2014 at exactly 11:00 am CST." />
 
+    <View
+        style="@style/WorkorderDetail_Separator"
+        android:layout_width="match_parent" />
+
 </LinearLayout>

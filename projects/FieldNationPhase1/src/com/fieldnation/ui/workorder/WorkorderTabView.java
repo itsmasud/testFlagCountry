@@ -69,8 +69,8 @@ public class WorkorderTabView extends RelativeLayout {
 		_buttons[0] = _detailLayout;
 		_buttons[1] = _tasksLayout;
 		_buttons[2] = _messagesLayout;
-		_buttons[3] = _alertLayout;
-		_buttons[4] = _attachmentsLayout;
+		_buttons[3] = _attachmentsLayout;
+		_buttons[4] = _alertLayout;
 
 		setSelected(0);
 	}

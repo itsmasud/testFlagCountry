@@ -11,6 +11,8 @@
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal" >
 
+        <!-- detail -->
+
         <RelativeLayout
             android:id="@+id/detail_layout"
             style="@style/WorkorderTabView_TabContainer" >
@@ -23,6 +25,8 @@
 
         <View style="@style/WorkorderTabView_Sep_Vert" />
 
+        <!-- tasks -->
+
         <RelativeLayout
             android:id="@+id/tasks_layout"
             style="@style/WorkorderTabView_TabContainer" >
@@ -34,6 +38,8 @@
         </RelativeLayout>
 
         <View style="@style/WorkorderTabView_Sep_Vert" />
+
+        <!-- messages -->
 
         <RelativeLayout
             android:id="@+id/messages_layout"
@@ -55,6 +61,22 @@
 
         <View style="@style/WorkorderTabView_Sep_Vert" />
 
+        <!-- attachments -->
+
+        <RelativeLayout
+            android:id="@+id/attachments_layout"
+            style="@style/WorkorderTabView_TabContainer" >
+
+            <ImageView
+                android:id="@+id/attachments_imageview"
+                style="@style/WorkorderTabView_Tab"
+                android:background="@drawable/ic_workorder_tab_attachments_button" />
+        </RelativeLayout>
+
+        <View style="@style/WorkorderTabView_Sep_Vert" />
+
+        <!-- alerts -->
+
         <RelativeLayout
             android:id="@+id/alert_layout"
             style="@style/WorkorderTabView_TabContainer" >
@@ -72,18 +94,6 @@
                 android:paddingTop="6dp"
                 android:textColor="@color/workorder_tab_textcolor"
                 android:visibility="gone" />
-        </RelativeLayout>
-
-        <View style="@style/WorkorderTabView_Sep_Vert" />
-
-        <RelativeLayout
-            android:id="@+id/attachments_layout"
-            style="@style/WorkorderTabView_TabContainer" >
-
-            <ImageView
-                android:id="@+id/attachments_imageview"
-                style="@style/WorkorderTabView_Tab"
-                android:background="@drawable/ic_workorder_tab_attachments_button" />
         </RelativeLayout>
     </LinearLayout>
 

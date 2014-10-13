@@ -43,6 +43,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 		_distanceTextView = (TextView) findViewById(R.id.distance_textview);
 		_contactInfoTextView = (TextView) findViewById(R.id.contactinfo_textview);
 		_descriptionTextView = (TextView) findViewById(R.id.description_textview);
+		setVisibility(View.GONE);
 	}
 
 	/*-*************************************-*/
@@ -95,6 +96,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 		} else {
 			_descriptionTextView.setVisibility(GONE);
 		}
+		setVisibility(View.VISIBLE);
 	}
 
 }

@@ -15,6 +15,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
 import com.fieldnation.ui.dialog.PayDialog;
+import com.fieldnation.ui.workorder.detail.CounterOfferActivity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -197,8 +198,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 		@Override
 		public void actionCheckout(Workorder workorder) {
-			Intent intent = _workorderService.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(),
-					System.currentTimeMillis());
+			Intent intent = _workorderService.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
 			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
@@ -206,8 +206,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 		@Override
 		public void actionCheckin(Workorder workorder) {
-			Intent intent = _workorderService.checkin(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(),
-					System.currentTimeMillis());
+			Intent intent = _workorderService.checkin(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
 			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
 			getContext().startService(intent);
 			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
@@ -233,8 +232,9 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 		@Override
 		public void viewCounter(Workorder workorder) {
-			// TODO this is not correct;
-			_payDialog.show();
+			Intent intent = new Intent(getContext(), CounterOfferActivity.class);
+			intent.putExtra(CounterOfferActivity.INTENT_WORKORDER_ID, workorder.getWorkorderId());
+			getContext().startActivity(intent);
 		}
 
 		@Override

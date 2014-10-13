@@ -52,7 +52,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	}
 
 	// interactions
-	public Intent request(int resultCode, long workorderId, int expireInSeconds) {
+	public Intent request(int resultCode, long workorderId, long expireInSeconds) {
 		if (expireInSeconds == -1)
 			return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/request", null, "",
 					"application/x-www-form-urlencoded", false);
@@ -95,15 +95,14 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"application/x-www-form-urlencoded", allowCache);
 	}
 
-	public Intent checkin(int resultCode, long workorderId, long checkinTime) {
+	public Intent checkin(int resultCode, long workorderId) {
 		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
-				"checkin_time=" + ISO8601.fromUTC(checkinTime), "application/x-www-form-urlencoded", false);
+				"checkin_time=" + ISO8601.now(), "application/x-www-form-urlencoded", false);
 	}
 
-	public Intent checkout(int resultCode, long workorderId, long checkoutTimeMilliseconds) {
+	public Intent checkout(int resultCode, long workorderId) {
 		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-				"checkout_time=" + ISO8601.fromUTC(checkoutTimeMilliseconds), "application/x-www-form-urlencoded",
-				false);
+				"checkout_time=" + ISO8601.now(), "application/x-www-form-urlencoded", false);
 	}
 
 	public Intent closingNotes(int resultCode, long workorderId, String notes) {
@@ -364,13 +363,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId, null, "",
 				"application/x-www-form-urlencoded", false);
 	}
-	
-	//@TODO
-	//need to implement REST CALL
+
+	// @TODO
+	// need to implement REST CALL
 	public Intent completeShipmentTask(int resultCode, long workorderId, long shipmentId, long taskId) {
-		return httpPost(
-				resultCode,
-				"api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId,
-				null, "shipment_id=" + shipmentId, "application/x-www-form-urlencoded", false);
+		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId, null,
+				"shipment_id=" + shipmentId, "application/x-www-form-urlencoded", false);
 	}
 }

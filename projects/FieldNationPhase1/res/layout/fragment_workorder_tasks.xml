@@ -11,6 +11,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <com.fieldnation.ui.workorder.detail.ActionBarTopView
+            android:id="@+id/topaction_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <com.fieldnation.ui.workorder.detail.TimeLoggedView
             android:id="@+id/timelogged_view"
             android:layout_width="match_parent"

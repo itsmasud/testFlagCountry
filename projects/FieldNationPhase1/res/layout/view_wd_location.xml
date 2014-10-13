@@ -38,4 +38,8 @@
         android:layout_height="wrap_content"
         android:text="Other stuff" />
 
+    <View
+        style="@style/WorkorderDetail_Separator"
+        android:layout_width="match_parent" />
+
 </LinearLayout>

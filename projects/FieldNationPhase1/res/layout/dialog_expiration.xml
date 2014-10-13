@@ -9,20 +9,15 @@
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Closing Notes:" />
+        android:text="Offer expires:" />
 
-    <EditText
-        android:id="@+id/notes_edittext"
-        style="@style/EditText"
+    <Button
+        android:id="@+id/expiration_button"
+        style="?android:attr/spinnerStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="top"
-        android:hint="@string/enter_closing_notes_here"
-        android:imeOptions="actionDone"
-        android:minLines="4"
-        android:padding="5dp"
-        android:selectAllOnFocus="true" />
+        android:layout_height="48dp"
+        android:layout_marginLeft="10dp"
+        android:text="Never" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,7 +45,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:text="@string/save" />
+            android:text="@string/ok" />
     </LinearLayout>
 
 </LinearLayout>

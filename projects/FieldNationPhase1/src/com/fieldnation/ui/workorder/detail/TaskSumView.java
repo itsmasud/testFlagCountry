@@ -19,9 +19,11 @@ public class TaskSumView extends RelativeLayout implements WorkorderRenderer {
 	private TextView _taskCountTextView;
 	private LinearLayout _contentLayout;
 	private RelativeLayout _loadingLayout;
+	private TextView _viewTasksTextView;
 
 	// Data
 	private Workorder _workorder;
+	private Listener _listener;
 
 	public TaskSumView(Context context) {
 		super(context);
@@ -47,16 +49,24 @@ public class TaskSumView extends RelativeLayout implements WorkorderRenderer {
 		_contentLayout = (LinearLayout) findViewById(R.id.content_layout);
 		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 		_taskCountTextView = (TextView) findViewById(R.id.taskcount_textview);
+		_viewTasksTextView = (TextView) findViewById(R.id.viewtasks_textview);
+		_viewTasksTextView.setOnClickListener(_viewtasks_onClick);
+
+		setVisibility(View.GONE);
 	}
 
 	private void setLoading(boolean isLoading) {
-		if (isLoading) {
-			_contentLayout.setVisibility(View.GONE);
-			_loadingLayout.setVisibility(View.VISIBLE);
-		} else {
-			_contentLayout.setVisibility(View.VISIBLE);
-			_loadingLayout.setVisibility(View.GONE);
-		}
+		// if (isLoading) {
+		// _contentLayout.setVisibility(View.GONE);
+		// _loadingLayout.setVisibility(View.VISIBLE);
+		// } else {
+		// _contentLayout.setVisibility(View.VISIBLE);
+		// _loadingLayout.setVisibility(View.GONE);
+		// }
+	}
+
+	public void setListener(Listener listener) {
+		_listener = listener;
 	}
 
 	@Override
@@ -72,13 +82,25 @@ public class TaskSumView extends RelativeLayout implements WorkorderRenderer {
 			_taskCountTextView.setText("0 ");
 		}
 		setLoading(false);
+		setVisibility(View.VISIBLE);
 	}
 
-	private Workorder.Listener _workorder_listener = new Workorder.Listener() {
+	private View.OnClickListener _viewtasks_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null)
+				_listener.onShowTasksTab();
+		}
+	};
 
+	private Workorder.Listener _workorder_listener = new Workorder.Listener() {
 		@Override
 		public void onChange(Workorder workorder) {
 			setLoading(true);
 		}
 	};
+
+	public interface Listener {
+		public void onShowTasksTab();
+	}
 }

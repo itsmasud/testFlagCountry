@@ -63,6 +63,8 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 		_confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
 		_policiesTextView = (TextView) findViewById(R.id.policies_textview);
 		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+
+		setVisibility(View.GONE);
 	}
 
 	/*-*************************************-*/
@@ -78,14 +80,13 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 	}
 
 	private void setLoading(boolean isLoading) {
-		if (isLoading) {
-			_loadingLayout.setVisibility(View.VISIBLE);
-			_contentLayout.setVisibility(View.GONE);
-		} else {
-			_loadingLayout.setVisibility(View.GONE);
-			_contentLayout.setVisibility(View.VISIBLE);
-
-		}
+		// if (isLoading) {
+		// _loadingLayout.setVisibility(View.VISIBLE);
+		// _contentLayout.setVisibility(View.GONE);
+		// } else {
+		// _loadingLayout.setVisibility(View.GONE);
+		// _contentLayout.setVisibility(View.VISIBLE);
+		// }
 	}
 
 	private void refresh() {
@@ -105,6 +106,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
 		_worktypeTextView.setText(_workorder.getTypeOfWork());
 		setLoading(false);
+		setVisibility(View.VISIBLE);
 
 		// TODO hook up policies
 		// TODO hook up confidential info

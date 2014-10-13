@@ -6,6 +6,7 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
@@ -38,8 +39,8 @@ public class WorkorderActivity extends BaseActivity {
 	public static final int TAB_DETAILS = 0;
 	public static final int TAB_TASKS = 1;
 	public static final int TAB_MESSAGE = 2;
-	public static final int TAB_NOTIFICATIONS = 3;
-	public static final int TAB_DELIVERABLES = 4;
+	public static final int TAB_DELIVERABLES = 3;
+	public static final int TAB_NOTIFICATIONS = 4;
 
 	private static final int RPC_GET_DETAIL = 1;
 
@@ -141,6 +142,7 @@ public class WorkorderActivity extends BaseActivity {
 
 		_loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 		setLoading(true);
+		populateUi();
 	}
 
 	private void buildFragments(Bundle savedInstanceState) {
@@ -152,10 +154,11 @@ public class WorkorderActivity extends BaseActivity {
 
 			if (savedInstanceState != null) {
 				List<Fragment> fragments = getSupportFragmentManager().getFragments();
-
-				for (int i = 0; i < fragments.size(); i++) {
-					Fragment frag = fragments.get(i);
-					_fragments[i] = (WorkorderFragment) frag;
+				if (fragments != null) {
+					for (int i = 0; i < fragments.size(); i++) {
+						Fragment frag = fragments.get(i);
+						_fragments[i] = (WorkorderFragment) frag;
+					}
 				}
 			}
 
@@ -166,9 +169,9 @@ public class WorkorderActivity extends BaseActivity {
 			if (_fragments[2] == null)
 				_fragments[2] = new MessageFragment();
 			if (_fragments[3] == null)
-				_fragments[3] = new NotificationFragment();
+				_fragments[3] = new DeliverableFragment();
 			if (_fragments[4] == null)
-				_fragments[4] = new DeliverableFragment();
+				_fragments[4] = new NotificationFragment();
 		}
 
 		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -179,6 +182,36 @@ public class WorkorderActivity extends BaseActivity {
 		_tabview.setListener(_tabview_onChange);
 
 		_viewPager.setCurrentItem(_currentTab, false);
+	}
+
+	private void populateUi() {
+		if (_workorder == null)
+			return;
+
+		if (_tabview == null)
+			return;
+
+		if (_workorder.getAlertCount() != null) {
+			_tabview.setAlertsCount(_workorder.getAlertCount());
+		} else {
+			_tabview.setAlertsCount(0);
+		}
+
+		if (_workorder.getMessageCount() != null) {
+			_tabview.setMessagesCount(_workorder.getMessageCount());
+		} else {
+			_tabview.setMessagesCount(0);
+		}
+
+		for (int i = 0; i < _fragments.length; i++) {
+			_fragments[i].setWorkorder(_workorder);
+		}
+
+		if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
+			_viewPager.setCurrentItem(TAB_TASKS, false);
+		}
+
+		setLoading(false);
 	}
 
 	/*-*************************-*/
@@ -261,22 +294,7 @@ public class WorkorderActivity extends BaseActivity {
 				_workorder = Workorder.fromJson(new JsonObject(data));
 
 				_workorder.addListener(_workorder_listener);
-				if (_workorder.getAlertCount() != null) {
-					_tabview.setAlertsCount(_workorder.getAlertCount());
-				} else {
-					_tabview.setAlertsCount(0);
-				}
-
-				if (_workorder.getMessageCount() != null) {
-					_tabview.setMessagesCount(_workorder.getMessageCount());
-				} else {
-					_tabview.setMessagesCount(0);
-				}
-
-				for (int i = 0; i < _fragments.length; i++) {
-					_fragments[i].setWorkorder(_workorder);
-				}
-
+				populateUi();
 				Log.v(TAG, "Have workorder");
 				setLoading(false);
 			} catch (Exception ex) {
@@ -297,7 +315,7 @@ public class WorkorderActivity extends BaseActivity {
 		@Override
 		public void onChange(Workorder workorder) {
 			startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
-			setLoading(true);
+			// setLoading(true);
 		}
 	};
 

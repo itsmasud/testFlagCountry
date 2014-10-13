@@ -64,6 +64,7 @@ public class TasksFragment extends WorkorderFragment {
 	private ClosingNotesDialog _closingDialog;
 	private TaskShipmentAddDialog _taskShipmentAddDialog;
 	private ShipmentAddDialog _shipmentAddDialog;
+	private ActionBarTopView _topBar;
 
 	// Data
 	private GlobalState _gs;
@@ -95,6 +96,8 @@ public class TasksFragment extends WorkorderFragment {
 		_timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
 		_timeLogged.setFragmentManager(getFragmentManager());
 		_closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
+		_topBar = (ActionBarTopView) view.findViewById(R.id.topaction_view);
+		_topBar.setListener(_actionBarTop_listener);
 
 		_separators = new View[3];
 
@@ -213,6 +216,9 @@ public class TasksFragment extends WorkorderFragment {
 				_closingNotes.setVisibility(View.VISIBLE);
 			}
 		}
+
+		if (_topBar != null)
+			_topBar.setWorkorder(_workorder);
 	}
 
 	private void requestData() {
@@ -228,6 +234,27 @@ public class TasksFragment extends WorkorderFragment {
 	/*-*************************************-*/
 	/*-				UI Events				-*/
 	/*-*************************************-*/
+	private ActionBarTopView.Listener _actionBarTop_listener = new ActionBarTopView.Listener() {
+		@Override
+		public void onComplete() {
+			getActivity().startService(_service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
+		}
+
+		@Override
+		public void onCheckOut() {
+			getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+		}
+
+		@Override
+		public void onCheckIn() {
+			getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+		}
+
+		@Override
+		public void onAcknowledge() {
+			getActivity().startService(_service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
+		}
+	};
 	private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
 
 		@Override
@@ -237,14 +264,12 @@ public class TasksFragment extends WorkorderFragment {
 				if (task.getCompleted())
 					return;
 
-				getActivity().startService(
-						_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), System.currentTimeMillis()));
+				getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
 				break;
 			case CHECKOUT:
 				if (task.getCompleted())
 					return;
-				getActivity().startService(
-						_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), System.currentTimeMillis()));
+				getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
 				break;
 			case CLOSE_OUT_NOTES:
 				if (task.getCompleted())

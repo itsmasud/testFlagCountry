@@ -119,7 +119,7 @@ public class TaskShipmentAddDialog extends Dialog {
 			dismiss();
 			if (_listener != null) {
 				_addDialog.setTaskId(_taskId);
-				_addDialog.show(R.string.add, _addDialog_listener);
+				_addDialog.show(R.string.add_shipment, _addDialog_listener);
 			}
 		}
 	};

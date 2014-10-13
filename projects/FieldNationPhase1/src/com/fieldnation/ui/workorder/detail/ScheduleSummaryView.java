@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
@@ -14,6 +15,7 @@ import com.fieldnation.utils.misc;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -49,6 +51,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 			return;
 
 		_arriveTimeTextView = (TextView) findViewById(R.id.arrivetime_view);
+		setVisibility(View.GONE);
 	}
 
 	/*-*************************************-*/
@@ -118,6 +121,6 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 				e.printStackTrace();
 			}
 		}
-
+		setVisibility(View.VISIBLE);
 	}
 }

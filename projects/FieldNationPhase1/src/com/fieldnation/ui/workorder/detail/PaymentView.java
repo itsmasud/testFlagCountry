@@ -1,21 +1,15 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,11 +19,6 @@ import android.widget.TextView;
 
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.PaymentView";
-
-	private static final int RESULT_ADD_EXPENSE = 1;
-	private static final int RESULT_DELETE_EXPENSE = 2;
-	private static final int RESULT_ADD_DISCOUNT = 3;
-	private static final int RESULT_DELETE_DISCOUNT = 4;
 
 	// UI
 	// TODO need to grab the description views at the top
@@ -49,8 +38,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 	// Data
 	private Workorder _workorder;
-	private GlobalState _gs;
-	private WorkorderService _service;
+	private Listener _listener;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -71,8 +59,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		if (isInEditMode())
 			return;
-		_gs = (GlobalState) getContext().getApplicationContext();
-		_gs.requestAuthentication(_authClient);
 
 		_pay1TextView = (TextView) findViewById(R.id.pay1_textview);
 		_pay2TextView = (TextView) findViewById(R.id.pay2_textview);
@@ -95,11 +81,16 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		_detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
 
 		_discountDialog = new DiscountDialog(getContext());
+		setVisibility(View.GONE);
 	}
 
 	/*-*************************************-*/
 	/*-				Mutators				-*/
 	/*-*************************************-*/
+
+	public void setListener(Listener listener) {
+		_listener = listener;
+	}
 
 	public void showDetails(boolean enabled) {
 		if (enabled) {
@@ -174,7 +165,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 		} else {
 			_counterOfferLayout.setVisibility(View.GONE);
 		}
-
+		setVisibility(View.VISIBLE);
 	}
 
 	/*-*********************************-*/
@@ -207,8 +198,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private ExpenseDialog.Listener _addExpense_listener = new ExpenseDialog.Listener() {
 		@Override
 		public void onOk(String description, double amount, ExpenseCategory category) {
-			getContext().startService(
-					_service.addExpense(RESULT_ADD_EXPENSE, _workorder.getWorkorderId(), description, amount, category));
+			if (_listener != null)
+				_listener.onAddExpense(_workorder, description, amount, category);
 		}
 
 		@Override
@@ -222,8 +213,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
 		@Override
 		public void onDelete(ExpenseView view, AdditionalExpense expense) {
-			getContext().startService(
-					_service.deleteExpense(RESULT_DELETE_EXPENSE, _workorder.getWorkorderId(), expense.getExpenseId()));
+			if (_listener != null)
+				_listener.onDeleteExpense(_workorder, expense);
 		}
 	};
 
@@ -237,8 +228,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private DiscountDialog.Listener _addDiscount_listener = new DiscountDialog.Listener() {
 		@Override
 		public void onOk(String description, double amount) {
-			getContext().startService(
-					_service.addDiscount(RESULT_ADD_DISCOUNT, _workorder.getWorkorderId(), amount, description));
+			if (_listener != null)
+				_listener.onAddDiscount(_workorder, amount, description);
 		}
 
 		@Override
@@ -249,46 +240,18 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private DiscountView.Listener _discount_listener = new DiscountView.Listener() {
 		@Override
 		public void onDelete(Discount discount) {
-			getContext().startService(
-					_service.deleteDiscount(RESULT_DELETE_DISCOUNT, _workorder.getWorkorderId(),
-							discount.getDiscountId()));
-		}
-	};
-	private AuthenticationClient _authClient = new AuthenticationClient() {
-
-		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			_gs.requestAuthenticationDelayed(_authClient);
-		}
-
-		@Override
-		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
-		}
-
-		@Override
-		public GlobalState getGlobalState() {
-			return _gs;
+			if (_listener != null)
+				_listener.onDeleteDiscount(_workorder, discount.getDiscountId());
 		}
 	};
 
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+	public interface Listener {
+		public void onDeleteDiscount(Workorder workorder, int discountId);
 
-		@Override
-		public void onSuccess(int resultCode, Bundle resultData) {
-			if (resultCode == RESULT_ADD_EXPENSE || resultCode == RESULT_DELETE_EXPENSE || resultCode == RESULT_ADD_DISCOUNT || resultCode == RESULT_DELETE_DISCOUNT) {
-				_workorder.dispatchOnChange();
-			}
-		}
+		public void onAddDiscount(Workorder workorder, Double amount, String description);
 
-		@Override
-		public void onError(int resultCode, Bundle resultData, String errorType) {
-			if (_service != null) {
-				_gs.invalidateAuthToken(_service.getAuthToken());
-			}
-			_gs.requestAuthenticationDelayed(_authClient);
-			// TODO, toast failure, put ui in wait mode
-		}
-	};
+		public void onDeleteExpense(Workorder workorder, AdditionalExpense expense);
 
+		public void onAddExpense(Workorder workorder, String description, double amount, ExpenseCategory category);
+	}
 }
