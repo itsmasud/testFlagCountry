@@ -10,12 +10,14 @@ import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -26,7 +28,7 @@ import android.view.ViewGroup;
 public class DetailFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.DetailFragment";
 
-	private static final int RESULT_CHANGE = 5;
+	private static final int WEB_CHANGE = 5;
 
 	// UI
 	private SummaryView _sumView;
@@ -37,6 +39,7 @@ public class DetailFragment extends WorkorderFragment {
 	private ActionView _actionView;
 	private ActionBarTopView _topBar;
 	private ExpiresDialog _expiresDialog;
+	private ConfirmDialog _confirmDialog;
 
 	// Data
 	private Workorder _workorder;
@@ -81,6 +84,8 @@ public class DetailFragment extends WorkorderFragment {
 		if (_workorder != null) {
 			setWorkorder(_workorder);
 		}
+
+		_confirmDialog = new ConfirmDialog(getActivity());
 	}
 
 	/*-*************************************-*/
@@ -140,22 +145,22 @@ public class DetailFragment extends WorkorderFragment {
 	private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
 		@Override
 		public void onComplete() {
-			getActivity().startService(_service.complete(RESULT_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(_service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onCheckOut() {
-			getActivity().startService(_service.checkout(RESULT_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(_service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onCheckIn() {
-			getActivity().startService(_service.checkin(RESULT_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(_service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onAcknowledge() {
-			getActivity().startService(_service.acknowledgeHold(RESULT_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(_service.acknowledgeHold(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 	};
 
@@ -164,24 +169,24 @@ public class DetailFragment extends WorkorderFragment {
 		@Override
 		public void onDeleteExpense(Workorder workorder, AdditionalExpense expense) {
 			getActivity().startService(
-					_service.deleteExpense(RESULT_CHANGE, _workorder.getWorkorderId(), expense.getExpenseId()));
+					_service.deleteExpense(WEB_CHANGE, _workorder.getWorkorderId(), expense.getExpenseId()));
 		}
 
 		@Override
 		public void onDeleteDiscount(Workorder workorder, int discountId) {
-			getActivity().startService(_service.deleteDiscount(RESULT_CHANGE, _workorder.getWorkorderId(), discountId));
+			getActivity().startService(_service.deleteDiscount(WEB_CHANGE, _workorder.getWorkorderId(), discountId));
 		}
 
 		@Override
 		public void onAddExpense(Workorder workorder, String description, double amount, ExpenseCategory category) {
 			getActivity().startService(
-					_service.addExpense(RESULT_CHANGE, workorder.getWorkorderId(), description, amount, category));
+					_service.addExpense(WEB_CHANGE, workorder.getWorkorderId(), description, amount, category));
 		}
 
 		@Override
 		public void onAddDiscount(Workorder workorder, Double amount, String description) {
 			getActivity().startService(
-					_service.addDiscount(RESULT_CHANGE, _workorder.getWorkorderId(), amount, description));
+					_service.addDiscount(WEB_CHANGE, _workorder.getWorkorderId(), amount, description));
 		}
 	};
 
@@ -194,18 +199,35 @@ public class DetailFragment extends WorkorderFragment {
 
 		@Override
 		public void onNotInterested(Workorder workorder) {
-			getActivity().startService(_service.decline(RESULT_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(_service.decline(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onConfirmAssignment(Workorder workorder) {
-			// TODO dialog to ask for start/end time
-			//getActivity().startService(_service.confirmAssignment(RESULT_CHANGE, workorder.getWorkorderId(), 0, 0));
+			final Workorder _workorder = workorder;
+			_confirmDialog.show(getActivity().getSupportFragmentManager(), workorder.getSchedule(),
+					new ConfirmDialog.Listener() {
+						@Override
+						public void onOk(String startDate, long durationMilliseconds) {
+							try {
+								long end = durationMilliseconds + ISO8601.toUtc(startDate);
+								getActivity().startService(
+										_service.confirmAssignment(WEB_CHANGE, _workorder.getWorkorderId(), startDate,
+												ISO8601.fromUTC(end)));
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
+						}
+
+						@Override
+						public void onCancel() {
+						}
+					});
 		}
 
 		@Override
 		public void onComplete(Workorder workorder) {
-			getActivity().startService(_service.complete(RESULT_CHANGE, workorder.getWorkorderId()));
+			getActivity().startService(_service.complete(WEB_CHANGE, workorder.getWorkorderId()));
 		}
 	};
 
@@ -215,7 +237,7 @@ public class DetailFragment extends WorkorderFragment {
 			try {
 				long seconds;
 				seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-				getActivity().startService(_service.request(RESULT_CHANGE, _workorder.getWorkorderId(), seconds));
+				getActivity().startService(_service.request(WEB_CHANGE, _workorder.getWorkorderId(), seconds));
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -245,7 +267,7 @@ public class DetailFragment extends WorkorderFragment {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
-			if (resultCode == RESULT_CHANGE) {
+			if (resultCode == WEB_CHANGE) {
 				_workorder.dispatchOnChange();
 			}
 		}

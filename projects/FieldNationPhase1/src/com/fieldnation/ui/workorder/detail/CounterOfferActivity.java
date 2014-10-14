@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -19,13 +20,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.CounterOfferInfo;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.LoadingView;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.ScheduleDialog;
@@ -39,11 +47,15 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 	// Key
 	public static final String INTENT_WORKORDER = "com.fieldnation.ui.workorder.detail:WORKORDER";
-	public static final String INTENT_WORKORDER_ID = "com.fieldnation.ui.workorder.detail:WORKORDER";
+	public static final String INTENT_WORKORDER_ID = "com.fieldnation.ui.workorder.detail:WORKORDER_ID";
 	public static final String INTENT_COUNTER_PAY = "com.fieldnation.ui.workorder.detail:COUNTER_PAY";
 	public static final String INTENT_COUNTER_SCHEDULE = "com.fieldnation.ui.workorder.detail:COUNTER_SCHEDULE";
 	public static final String INTENT_COUNTER_EXPENSES = "com.fieldnation.ui.workorder.detail:COUNTER_EXPENSES";
 	public static final String INTENT_DELETE_COUNTER_EXPENSES = "com.fieldnation.ui.workorder.detail:DELETE_COUNTER_EXPENSES";
+
+	// WEB
+	private static final int WEB_CHANGE = 1;
+	private static final int WEB_GOT_WORKORDER = 2;
 
 	// UI
 	// labels
@@ -91,18 +103,25 @@ public class CounterOfferActivity extends ActionBarActivity {
 	private DatePickerDialog _datePicker;
 	private TimePickerDialog _timePicker;
 
+	private LoadingView _loadingView;
+
 	// Data
+	private GlobalState _gs;
 	private Workorder _workorder;
 	private Calendar _offerTime;
 	private Pay _counterPay;
 	private Schedule _counterSchedule;
 	private List<AdditionalExpense> _counterExpenses;
 	private List<AdditionalExpense> _deleteCounterExpenses;
+	private WorkorderService _service;
+	private long _workorderId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_counter_offer);
+
+		_gs = (GlobalState) getApplicationContext();
 
 		_basisOldTextView = (TextView) findViewById(R.id.basis_old_textview);
 		_basisNewTextView = (TextView) findViewById(R.id.basis_new_textview);
@@ -152,6 +171,8 @@ public class CounterOfferActivity extends ActionBarActivity {
 		_sendButton = (Button) findViewById(R.id.send_button);
 		_sendButton.setOnClickListener(_sendButton_onClick);
 
+		_loadingView = (LoadingView) findViewById(R.id.loading_view);
+
 		_payDialog = new PayDialog(this);
 		_scheduleDialog = new ScheduleDialog(this);
 		_expenseDialog = new ExpenseDialog(this);
@@ -189,7 +210,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 		if (intent != null && intent.getExtras() != null) {
 			Bundle extras = intent.getExtras();
 			if (extras.containsKey(INTENT_WORKORDER_ID)) {
-				// TODO need to load workorder details
+				_workorderId = extras.getLong(INTENT_WORKORDER_ID);
 			}
 
 			if (extras.containsKey(INTENT_WORKORDER)) {
@@ -219,8 +240,10 @@ public class CounterOfferActivity extends ActionBarActivity {
 		showScheduleCounter(false);
 		showReason(false);
 
-		if (_workorder != null)
+		if (_workorder != null) {
+			_workorder.addListener(_workorder_listener);
 			populateUi();
+		}
 
 		final Calendar c = Calendar.getInstance();
 		_datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
@@ -231,6 +254,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 
 		_offerTime = Calendar.getInstance();
 
+		_gs.requestAuthentication(_authClient);
 	}
 
 	@Override
@@ -261,7 +285,23 @@ public class CounterOfferActivity extends ActionBarActivity {
 		super.onSaveInstanceState(outState);
 	}
 
+	private void getData() {
+		if (_service == null)
+			return;
+
+		if (_workorder != null)
+			return;
+
+		if (_loadingView != null)
+			_loadingView.setVisibility(View.VISIBLE);
+
+		startService(_service.getDetails(WEB_GOT_WORKORDER, _workorderId, false));
+	}
+
 	private void populateUi() {
+		if (_workorder == null)
+			return;
+
 		showReason(false);
 		CounterOfferInfo info = _workorder.getCounterOfferInfo();
 		Pay pay = _workorder.getPay();
@@ -491,13 +531,13 @@ public class CounterOfferActivity extends ActionBarActivity {
 			_deleteNotAcceptedCheckbox.setChecked(info.getExpires());
 			if (info.getExpires()) {
 				// TODO need to format the time
-				_offerTimeButton.setText(info.getExpiresAfter());
+				_offerTimeButton.setText(info.getExpiresAfter() + "");
 				_offerTimeButton.setVisibility(View.VISIBLE);
 			} else {
 				_offerTimeButton.setVisibility(View.GONE);
 			}
 		}
-
+		_loadingView.setVisibility(View.GONE);
 	}
 
 	private void showPayCounter(boolean show) {
@@ -695,4 +735,58 @@ public class CounterOfferActivity extends ActionBarActivity {
 		}
 	};
 
+	private Workorder.Listener _workorder_listener = new Workorder.Listener() {
+		@Override
+		public void onChange(Workorder workorder) {
+			getData();
+		}
+	};
+
+	private AuthenticationClient _authClient = new AuthenticationClient() {
+
+		@Override
+		public void onAuthenticationFailed(Exception ex) {
+			_gs.requestAuthenticationDelayed(_authClient);
+		}
+
+		@Override
+		public void onAuthentication(String username, String authToken) {
+			_service = new WorkorderService(CounterOfferActivity.this, username, authToken, _resultReceiver);
+			getData();
+		}
+
+		@Override
+		public GlobalState getGlobalState() {
+			return _gs;
+		}
+	};
+
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+
+		@Override
+		public void onSuccess(int resultCode, Bundle resultData) {
+			if (resultCode == WEB_CHANGE) {
+				_workorder.dispatchOnChange();
+			} else if (resultCode == WEB_GOT_WORKORDER) {
+				try {
+					String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+					Log.v(TAG, data);
+					_workorder = Workorder.fromJson(new JsonObject(data));
+					_workorder.addListener(_workorder_listener);
+
+					populateUi();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		public void onError(int resultCode, Bundle resultData, String errorType) {
+			if (_service != null) {
+				_gs.invalidateAuthToken(_service.getAuthToken());
+			}
+			_gs.requestAuthenticationDelayed(_authClient);
+		}
+	};
 }

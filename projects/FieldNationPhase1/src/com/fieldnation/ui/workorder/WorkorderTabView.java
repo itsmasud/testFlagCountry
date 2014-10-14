@@ -108,18 +108,18 @@ public class WorkorderTabView extends RelativeLayout {
 	private View.OnClickListener _alertLayout_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			setSelected(3);
+			setSelected(4);
 			if (_listener != null)
-				_listener.onChange(3);
+				_listener.onChange(4);
 		}
 	};
 
 	private View.OnClickListener _attachmentsLayout_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			setSelected(4);
+			setSelected(3);
 			if (_listener != null)
-				_listener.onChange(4);
+				_listener.onChange(3);
 		}
 	};
 

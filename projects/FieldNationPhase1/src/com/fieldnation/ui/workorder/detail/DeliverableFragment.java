@@ -149,6 +149,9 @@ public class DeliverableFragment extends WorkorderFragment {
 	@Override
 	public void setWorkorder(Workorder workorder) {
 		_workorder = workorder;
+
+		if (_topBar != null)
+			_topBar.setWorkorder(workorder);
 		getData();
 
 	}
