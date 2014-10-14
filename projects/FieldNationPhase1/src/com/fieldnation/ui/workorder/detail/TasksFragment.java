@@ -298,31 +298,33 @@ public class TasksFragment extends WorkorderFragment {
 				if (docs != null && docs.length > 0) {
 					for (int i = 0; i < docs.length; i++) {
 						Document doc = docs[i];
-						String[] filePathSplit = doc.getFilePath().split("_");
-						if (filePathSplit.length > 0) {
-							Integer _identifierChk = Integer.valueOf(filePathSplit[filePathSplit.length - 2]);
-							if (_identifierChk.equals(_identifier)) {
-								// task completed here
-								getActivity().startService(
-										_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(),
-												task.getTaskId(), false));
-
-								try {
-									Intent intent = new Intent(Intent.ACTION_VIEW);
-									intent.setDataAndType(Uri.parse(doc.getFilePath()), doc.getFileType());
-									startActivity(intent);
-								} catch (Exception ex) {
-									try {
-										Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(doc.getFilePath()));
-										startActivity(intent);
-									} catch (Exception ex1) {
-										ex1.printStackTrace();
-									}
-								}
-
-								break;
-							}
-						}
+						
+//						if (doc.)
+//						String[] filePathSplit = doc.getFilePath().split("_");
+//						if (filePathSplit.length > 0) {
+//							Integer _identifierChk = Integer.valueOf(filePathSplit[filePathSplit.length - 2]);
+//							if (_identifierChk.equals(_identifier)) {
+//								// task completed here
+//								getActivity().startService(
+//										_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(),
+//												task.getTaskId(), false));
+//
+//								try {
+//									Intent intent = new Intent(Intent.ACTION_VIEW);
+//									intent.setDataAndType(Uri.parse(doc.getFilePath()), doc.getFileType());
+//									startActivity(intent);
+//								} catch (Exception ex) {
+//									try {
+//										Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(doc.getFilePath()));
+//										startActivity(intent);
+//									} catch (Exception ex1) {
+//										ex1.printStackTrace();
+//									}
+//								}
+//
+//								break;
+//							}
+//						}
 
 					} // end for
 				}
@@ -360,7 +362,7 @@ public class TasksFragment extends WorkorderFragment {
 			case SHIPMENT_TRACKING:
 				if (task.getCompleted())
 					return;
-				
+
 				ShipmentTracking[] shipments = _workorder.getShipmentTracking();
 				if (shipments == null) {
 					_shipmentAddDialog.setTaskId(task.getTaskId());
@@ -423,11 +425,11 @@ public class TasksFragment extends WorkorderFragment {
 		public void onCancel() {
 		}
 	};
-	
+
 	private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
 		@Override
 		public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
-			
+
 		}
 
 		@Override
