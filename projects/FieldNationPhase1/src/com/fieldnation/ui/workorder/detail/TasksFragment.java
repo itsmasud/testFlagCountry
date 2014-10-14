@@ -360,10 +360,11 @@ public class TasksFragment extends WorkorderFragment {
 			case SHIPMENT_TRACKING:
 				if (task.getCompleted())
 					return;
-				// @TODO
+				
 				ShipmentTracking[] shipments = _workorder.getShipmentTracking();
-				if (shipments.length > 0) {
-					// @TODO
+				if (shipments == null) {
+					_shipmentAddDialog.setTaskId(task.getTaskId());
+					_shipmentAddDialog.show(R.string.add_shipment, _addDialog_listener);
 				} else {
 					_taskShipmentAddDialog.setWorkorder(_workorder);
 					_taskShipmentAddDialog.setTaskId(task.getTaskId());
@@ -416,6 +417,24 @@ public class TasksFragment extends WorkorderFragment {
 		@Override
 		public void onOk(String message) {
 			getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+		}
+
+		@Override
+		public void onCancel() {
+		}
+	};
+	
+	private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
+		@Override
+		public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
+			
+		}
+
+		@Override
+		public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
+			getActivity().startService(
+					_service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
+							carrier, null, trackingId, taskId));
 		}
 
 		@Override
