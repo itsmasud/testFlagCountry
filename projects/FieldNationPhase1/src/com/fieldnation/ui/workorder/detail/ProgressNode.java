@@ -15,6 +15,7 @@ public class ProgressNode extends LinearLayout {
 	// UI
 	private ImageView _iconImageView;
 	private TextView _labelTextView;
+	private LinearLayout _linearlayoutWoProgressBar;
 	
 	private static final int PROGRESSBAR_STEP_COMPLETED = 1;
 	private static final int PROGRESSBAR_STEP_ACTIVE = 2;
@@ -40,7 +41,8 @@ public class ProgressNode extends LinearLayout {
 
 		if (isInEditMode())
 			return;
-
+		
+		_linearlayoutWoProgressBar = (LinearLayout) findViewById(R.id.linearlayout_wo_progress_bar);
 		_iconImageView = (ImageView) findViewById(R.id.icon_imageview);
 		_labelTextView = (TextView) findViewById(R.id.label_textview);
 
@@ -73,13 +75,7 @@ public class ProgressNode extends LinearLayout {
 				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_inactive);
 				break;
 		}
-		
-		/*if (active) {			
-			_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_active);			
-		} else {
-			_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_inactive);
-		}*/
-		
+				
 		invalidate();
 
 	}
@@ -91,4 +87,9 @@ public class ProgressNode extends LinearLayout {
 	public void setLabel(String value) {
 		_labelTextView.setText(value);
 	}
+	
+	public void setOpacity() {
+		_linearlayoutWoProgressBar.setAlpha(.5f);
+	}
+	
 }

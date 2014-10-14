@@ -247,6 +247,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[1].setLabel("Assigned");
 				_nodes[2].setLabel("In Progress");
 				_nodes[3].setLabel("Completed");
+				_nodes[0].setOpacity();
+				_nodes[1].setOpacity();
+				_nodes[2].setOpacity();
+				_nodes[3].setOpacity();
 				break;	
 			default:
 				return;
