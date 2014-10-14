@@ -69,14 +69,10 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 		return httpDelete(resultCode, "/api/rest/v1/workorder/" + workorderId + "/request", null, false);
 	}
 
-	public Intent confirmAssignment(int resultCode, long workorderId, long startTimeMilliseconds,
-			long endTimeMilliseconds) {
-		return httpPost(
-				resultCode,
-				"/api/rest/v1/workorder/" + workorderId + "/assignment",
-				null,
-				"start_time=" + ISO8601.fromUTC(startTimeMilliseconds) + "&end_time=" + ISO8601.fromUTC(endTimeMilliseconds),
-				"application/x-www-form-urlencoded", false);
+	public Intent confirmAssignment(int resultCode, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+		return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/assignment", null,
+				"start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601, "application/x-www-form-urlencoded",
+				false);
 	}
 
 	public Intent cancelAssignment(int resultCode, long workorderId, CancelCategory category) {

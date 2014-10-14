@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -14,14 +15,20 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
+import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.PayDialog;
+import com.fieldnation.ui.dialog.ScheduleDialog;
 import com.fieldnation.ui.workorder.detail.CounterOfferActivity;
+import com.fieldnation.utils.ISO8601;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.util.Log;
@@ -53,12 +60,14 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	private ActionMode _actionMode = null;
 	private Hashtable<Long, Workorder> _selectedWorkorders = new Hashtable<Long, Workorder>();
 	private WorkorderUndoListener _wosumUndoListener;
+	private ExpiresDialog _expiresDialog;
+	private ConfirmDialog _confirmDialog;
 
 	/*-*****************************-*/
 	/*-			Lifecycle			-*/
 	/*-*****************************-*/
 
-	public WorkorderListAdapter(Activity activity, WorkorderDataSelector selection) throws NoSuchMethodException {
+	public WorkorderListAdapter(FragmentActivity activity, WorkorderDataSelector selection) throws NoSuchMethodException {
 		super(activity, Workorder.class);
 		_dataSelection = selection;
 
@@ -67,9 +76,11 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		_rpcMethod.setAccessible(true);
 
 		_payDialog = new PayDialog(activity);
+		_expiresDialog = new ExpiresDialog(activity);
+		_confirmDialog = new ConfirmDialog(activity);
 	}
 
-	public WorkorderListAdapter(Activity activity, WorkorderDataSelector selection, List<Workorder> workorders) throws NoSuchMethodException {
+	public WorkorderListAdapter(FragmentActivity activity, WorkorderDataSelector selection, List<Workorder> workorders) throws NoSuchMethodException {
 		super(activity, Workorder.class, workorders);
 		_dataSelection = selection;
 
@@ -78,6 +89,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		_rpcMethod.setAccessible(true);
 
 		_payDialog = new PayDialog(activity);
+		_expiresDialog = new ExpiresDialog(activity);
+		_confirmDialog = new ConfirmDialog(activity);
 	}
 
 	@Override
@@ -136,7 +149,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 		try {
 			if (!_dataSelection.allowCache())
 				allowCache = false;
-			// TODO need to query available and requested for market view
 			getContext().startService((Intent) _rpcMethod.invoke(_workorderService, resultCode, page, allowCache));
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -186,14 +198,29 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 	}
 
 	private WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
-
 		@Override
 		public void actionRequest(Workorder workorder) {
-			// TODO ask user for time.
-			Intent intent = _workorderService.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), 600);
-			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-			getContext().startService(intent);
-			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
+			final Workorder _workorder = workorder;
+
+			_expiresDialog.show(getActivity().getSupportFragmentManager(), new ExpiresDialog.Listener() {
+
+				@Override
+				public void onOk(String dateTime) {
+					long time = -1;
+					if (dateTime != null) {
+						try {
+							time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					Intent intent = _workorderService.request(WEB_CHANGING_WORKORDER, _workorder.getWorkorderId(), time);
+					intent.putExtra(KEY_WORKORDER_ID, _workorder.getWorkorderId());
+					getContext().startService(intent);
+					_requestWorkingWorkorders.put(_workorder.getWorkorderId(), _workorder);
+				}
+			});
 		}
 
 		@Override
@@ -214,12 +241,27 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 		@Override
 		public void actionAssignment(Workorder workorder) {
-			// TODO, get start/end time?
-			Intent intent = _workorderService.confirmAssignment(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(),
-					System.currentTimeMillis(), System.currentTimeMillis() + 86400000L);
-			intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-			getContext().startService(intent);
-			_requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
+			final Workorder _workorder = workorder;
+			_confirmDialog.show(getActivity().getSupportFragmentManager(), workorder.getSchedule(),
+					new ConfirmDialog.Listener() {
+						@Override
+						public void onOk(String startDate, long durationMilliseconds) {
+							try {
+								long end = durationMilliseconds + ISO8601.toUtc(startDate);
+								Intent intent = _workorderService.confirmAssignment(WEB_CHANGING_WORKORDER,
+										_workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
+								intent.putExtra(KEY_WORKORDER_ID, _workorder.getWorkorderId());
+								getContext().startService(intent);
+								_requestWorkingWorkorders.put(_workorder.getWorkorderId(), _workorder);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
+						}
+
+						@Override
+						public void onCancel() {
+						}
+					});
 		}
 
 		@Override

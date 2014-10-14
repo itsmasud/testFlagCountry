@@ -3,6 +3,7 @@ package com.fieldnation.ui.payment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.ResultReceiver;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,7 +16,7 @@ public class PaymentListAdapter extends PagingListAdapter<Payment> {
 
 	private PaymentService _service = null;
 
-	public PaymentListAdapter(Activity activity) {
+	public PaymentListAdapter(FragmentActivity activity) {
 		super(activity, Payment.class);
 	}
 

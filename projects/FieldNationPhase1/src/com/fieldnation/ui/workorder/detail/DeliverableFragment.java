@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
+
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -58,6 +59,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private static final int WEB_GET_PROFILE = 2;
 	private static final int WEB_DELETE_DELIVERABLE = 3;
 	private static final int WEB_SEND_DELIVERABLE = 4;
+	private static final int WEB_CHANGE = 5;
 
 	// UI
 	private LinearLayout _reviewList;
@@ -66,6 +68,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private AppPickerDialog _dialog;
 	private RelativeLayout _loadingLayout;
 	private TextView _noDocsTextView;
+	private ActionBarTopView _topBar;
 
 	// Data
 	private GlobalState _gs;
@@ -105,6 +108,9 @@ public class DeliverableFragment extends WorkorderFragment {
 		_bar1View = view.findViewById(R.id.bar1_view);
 		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
 		_noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
+
+		_topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
+		_topBar.setListener(_actionbartop_listener);
 
 		checkMedia();
 	}
@@ -309,6 +315,28 @@ public class DeliverableFragment extends WorkorderFragment {
 	/*-				Events				-*/
 	/*-*********************************-*/
 
+	private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
+		@Override
+		public void onComplete() {
+			getActivity().startService(_service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
+		}
+
+		@Override
+		public void onCheckOut() {
+			getActivity().startService(_service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+		}
+
+		@Override
+		public void onCheckIn() {
+			getActivity().startService(_service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
+		}
+
+		@Override
+		public void onAcknowledge() {
+			getActivity().startService(_service.acknowledgeHold(WEB_CHANGE, _workorder.getWorkorderId()));
+		}
+	};
+
 	private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
 
 		@Override
@@ -404,6 +432,8 @@ public class DeliverableFragment extends WorkorderFragment {
 				// TODO, update individual UI elements when complete.
 				if (_deleteCount == 0 && _uploadCount == 0)
 					_workorder.dispatchOnChange();
+			} else if (resultCode == WEB_CHANGE) {
+				_workorder.dispatchOnChange();
 			}
 		}
 

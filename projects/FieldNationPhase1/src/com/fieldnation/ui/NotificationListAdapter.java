@@ -6,6 +6,7 @@ import com.fieldnation.rpc.client.ProfileService;
 import android.app.Activity;
 import android.content.Context;
 import android.os.ResultReceiver;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,7 +15,7 @@ public class NotificationListAdapter extends PagingListAdapter<Notification> {
 
 	private ProfileService _profileService = null;
 
-	public NotificationListAdapter(Activity activity) {
+	public NotificationListAdapter(FragmentActivity activity) {
 		super(activity, Notification.class);
 	}
 

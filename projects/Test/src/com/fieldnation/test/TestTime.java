@@ -9,15 +9,20 @@ import com.fieldnation.utils.misc;
 public class TestTime {
 
 	public static void main(String[] args) {
-		try {
-			String startTime = "2014-10-07T12:00:00-04:00";
 
-			Calendar start = ISO8601.toCalendar(startTime);
+		String blah = "123456";
 
-			System.out.println(misc.formatDateTime(start, true));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		System.out.println(blah.substring(4, 6));
+
+		// try {
+		// String startTime = "2014-10-07T12:00:00-04:00";
+		//
+		// Calendar start = ISO8601.toCalendar(startTime);
+		//
+		// System.out.println(misc.formatDateTime(start, true));
+		// } catch (Exception ex) {
+		// ex.printStackTrace();
+		// }
 
 	}
 }

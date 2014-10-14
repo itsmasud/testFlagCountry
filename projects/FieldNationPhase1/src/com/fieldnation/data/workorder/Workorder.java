@@ -7,6 +7,8 @@ import java.util.Set;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.view.View;
+
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
@@ -467,6 +469,32 @@ public class Workorder implements Parcelable {
 
 	public boolean canCounterOffer() {
 		return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE;
+	}
+
+	public boolean canComplete() {
+		if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE) {
+			Task[] tasks = getTasks();
+			if (tasks != null) {
+				if (tasks.length > 0) {
+					boolean workToDo = false;
+					for (int i = 0; i < tasks.length; i++) {
+						if (!tasks[i].getCompleted()) {
+							workToDo = true;
+							break;
+						}
+					}
+
+					if (!workToDo) {
+						return true;
+					}
+				} else {
+					return true;
+				}
+			} else {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void dispatchOnChange() {

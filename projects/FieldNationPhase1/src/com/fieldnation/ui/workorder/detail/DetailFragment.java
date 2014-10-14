@@ -200,7 +200,7 @@ public class DetailFragment extends WorkorderFragment {
 		@Override
 		public void onConfirmAssignment(Workorder workorder) {
 			// TODO dialog to ask for start/end time
-			getActivity().startService(_service.confirmAssignment(RESULT_CHANGE, workorder.getWorkorderId(), 0, 0));
+			//getActivity().startService(_service.confirmAssignment(RESULT_CHANGE, workorder.getWorkorderId(), 0, 0));
 		}
 
 		@Override

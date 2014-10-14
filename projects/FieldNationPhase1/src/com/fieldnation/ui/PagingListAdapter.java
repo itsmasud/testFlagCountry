@@ -19,6 +19,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private int WEB_REQUEST_UPDATE = -1;
 
 	private GlobalState _gs;
-	private Activity _activity;
+	private FragmentActivity _activity;
 	private boolean _isViable;
 	private int _nextPage = START_PAGE;
 	private boolean _atEndOfList;
@@ -45,7 +46,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 	private Listener<T> _listener = null;
 	private Random _rand = new Random(System.currentTimeMillis());
 
-	public PagingListAdapter(Activity activity, Class<T> clazz) {
+	public PagingListAdapter(FragmentActivity activity, Class<T> clazz) {
 		_activity = activity;
 		_clazz = clazz;
 
@@ -57,7 +58,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		_atEndOfList = false;
 	}
 
-	public PagingListAdapter(Activity activity, Class<T> clazz, List<T> objects) {
+	public PagingListAdapter(FragmentActivity activity, Class<T> clazz, List<T> objects) {
 		_activity = activity;
 		_clazz = clazz;
 
@@ -84,7 +85,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 		return _activity;
 	}
 
-	public Activity getActivity() {
+	public FragmentActivity getActivity() {
 		return _activity;
 	}
 

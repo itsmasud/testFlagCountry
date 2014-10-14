@@ -80,7 +80,6 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 				Calendar cal;
 
 				cal = ISO8601.toCalendar(schedule.getStartTime());
-
 				dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
 				time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
 

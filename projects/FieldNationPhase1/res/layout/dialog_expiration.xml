@@ -9,7 +9,7 @@
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Offer expires:" />
+        android:text="@string/offer_expires_colon" />
 
     <Button
         android:id="@+id/expiration_button"
@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginLeft="10dp"
-        android:text="Never" />
+        android:text="@string/never" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
+import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.DurationDialog;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
@@ -47,6 +49,7 @@ public class MyWorkActivity extends DrawerActivity {
 		}
 		_currentFragment = getSupportActionBar().getSelectedNavigationIndex();
 		_viewPager.setCurrentItem(_currentFragment, false);
+
 	}
 
 	private void buildTabs(Bundle savedInstanceState) {

@@ -28,7 +28,7 @@
             style="@style/WorkorderDetail_FieldSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/between_colon" />
+            android:text="@string/between" />
 
         <Button
             android:id="@+id/start_date_button"
@@ -42,7 +42,7 @@
             style="@style/WorkorderDetail_FieldSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/and_colon" />
+            android:text="@string/and" />
 
         <Button
             android:id="@+id/end_date_button"

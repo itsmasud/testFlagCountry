@@ -12,6 +12,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;

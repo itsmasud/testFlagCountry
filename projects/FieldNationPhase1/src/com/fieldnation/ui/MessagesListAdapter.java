@@ -6,6 +6,7 @@ import com.fieldnation.rpc.client.ProfileService;
 import android.app.Activity;
 import android.content.Context;
 import android.os.ResultReceiver;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,7 +15,7 @@ public class MessagesListAdapter extends PagingListAdapter<Message> {
 
 	private ProfileService _profileService = null;
 
-	public MessagesListAdapter(Activity activity) {
+	public MessagesListAdapter(FragmentActivity activity) {
 		super(activity, Message.class);
 	}
 

@@ -903,6 +903,36 @@ public class misc {
 		return convertSecondsToDHMS(Seconds, false);
 	}
 
+	public static String convertMsToHuman(long milliseconds) {
+		String result = "";
+
+		long Seconds = milliseconds / 1000;
+		long days = Seconds / 86400;
+		Seconds = Seconds % 86400;
+		long hours = Seconds / 3600;
+		Seconds = Seconds % 3600;
+		long min = Seconds / 60;
+		Seconds = Seconds % 60;
+		long sec = Seconds;
+
+		result = "";
+
+		if (days > 0) {
+			result += days + " days ";
+		}
+		if (hours > 0) {
+			result += hours + " hrs ";
+		}
+		if (min > 0) {
+			result += min + " min ";
+		}
+		if (sec > 0) {
+			result += sec + " sec";
+		}
+
+		return result.trim();
+	}
+
 	public static String convertSecondsToDHMS(long Seconds, boolean only_available) {
 		String result = "";
 

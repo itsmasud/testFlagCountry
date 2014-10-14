@@ -107,7 +107,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 		_requestButton.setVisibility(View.GONE);
 		_notInterestedButton.setVisibility(View.GONE);
 		_counterOfferButton.setVisibility(View.GONE);
-		_completeButton.setVisibility(View.GONE);
 
 		switch (stat) {
 		case ASSIGNED:
@@ -132,11 +131,15 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
 		}
 
+		if (_workorder.canComplete()) {
+			_completeButton.setVisibility(View.VISIBLE);
+		} else {
+			_completeButton.setVisibility(View.GONE);
+		}
 		setVisibility(View.VISIBLE);
 	}
 
 	private void buildStatusAssigned() {
-		_completeButton.setVisibility(View.VISIBLE);
 	}
 
 	private void buildStatusAvailable() {
@@ -156,15 +159,12 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 	}
 
 	private void buildStatusInProgress() {
-		_completeButton.setVisibility(View.VISIBLE);
 	}
 
 	private void buildStatusCancelled() {
-
 	}
 
 	private void buildStatusCompleted() {
-
 	}
 
 	/*-*************************-*/

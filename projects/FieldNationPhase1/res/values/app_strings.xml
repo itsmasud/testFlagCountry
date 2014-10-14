@@ -137,8 +137,12 @@
     <string name="date_and_time_colon">Date and Time:</string>
     <string name="counter_offers">Counter Offers</string>
     <string name="total_amount">Total Amount</string>
-    <string name="between_colon">Between</string>
-    <string name="and_colon">and</string>
+    <string name="between">Between</string>
+    <string name="and">and</string>
+    <string name="offer_expires_colon">Offer Expires:</string>
+    <string name="never">Never</string>
+    <string name="confirm">Confirm</string>
+
     <!-- /general strings -->
 
 

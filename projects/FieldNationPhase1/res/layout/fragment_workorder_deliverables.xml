@@ -15,6 +15,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <!-- top action bar -->
+
+            <com.fieldnation.ui.workorder.detail.ActionBarTopView
+                android:id="@+id/actiontop_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <LinearLayout
                 android:id="@+id/review_layout"
                 android:layout_width="match_parent"

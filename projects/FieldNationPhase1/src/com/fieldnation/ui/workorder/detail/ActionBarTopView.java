@@ -121,27 +121,8 @@ public class ActionBarTopView extends RelativeLayout {
 			break;
 		}
 
-		if (status != WorkorderStatus.AVAILABLE) {
-			Task[] tasks = _workorder.getTasks();
-			if (tasks != null) {
-				if (tasks.length > 0) {
-					boolean workToDo = false;
-					for (int i = 0; i < tasks.length; i++) {
-						if (!tasks[i].getCompleted()) {
-							workToDo = true;
-							break;
-						}
-					}
-
-					if (!workToDo) {
-						_completeButton.setVisibility(View.VISIBLE);
-					}
-				} else {
-					_completeButton.setVisibility(View.VISIBLE);
-				}
-			} else {
-				_completeButton.setVisibility(View.VISIBLE);
-			}
+		if (_workorder.canCounterOffer()) {
+			_completeButton.setVisibility(View.VISIBLE);
 		}
 	}
 
