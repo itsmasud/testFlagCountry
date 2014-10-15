@@ -29,10 +29,10 @@ import android.widget.TextView;
 public class SignatureActivity extends ActionBarActivity {
 	private static final String TAG = "ui.SignatureActivity";
 
-	public static final String RESULT_KEY_BITMAP = "com.fieldnation.ui.SignatureActivity:SIGNATURE";
-	public static final String RESULT_KEY_ARRIVAL = "com.fieldnation.ui.SignatureActivity:ARRIVAL";
-	public static final String RESULT_KEY_DEPARTURE = "com.fieldnation.ui.SignatureActivity:DEPARTURE";
-	public static final String RESULT_KEY_NAME = "com.fieldnation.ui.SignatureActivity:NAME";
+	public static final String INTENT_KEY_BITMAP = "com.fieldnation.ui.SignatureActivity:SIGNATURE";
+	public static final String INTENT_KEY_ARRIVAL = "com.fieldnation.ui.SignatureActivity:ARRIVAL";
+	public static final String INTENT_KEY_DEPARTURE = "com.fieldnation.ui.SignatureActivity:DEPARTURE";
+	public static final String INTENT_KEY_NAME = "com.fieldnation.ui.SignatureActivity:NAME";
 
 	// UI
 	private SignatureView _sigView;
@@ -69,8 +69,8 @@ public class SignatureActivity extends ActionBarActivity {
 		if (intent != null && intent.getExtras() != null) {
 			Bundle bundle = intent.getExtras();
 
-			if (bundle.containsKey(RESULT_KEY_ARRIVAL)) {
-				String arrivalTime = bundle.getString(RESULT_KEY_ARRIVAL);
+			if (bundle.containsKey(INTENT_KEY_ARRIVAL)) {
+				String arrivalTime = bundle.getString(INTENT_KEY_ARRIVAL);
 				if (!misc.isEmptyOrNull(arrivalTime)) {
 					try {
 						_arriveCal = ISO8601.toCalendar(arrivalTime);
@@ -80,8 +80,8 @@ public class SignatureActivity extends ActionBarActivity {
 					_arrivalTextView.setText(misc.formatDateLong(_arriveCal) + " " + misc.formatTime(_arriveCal, false));
 				}
 			}
-			if (bundle.containsKey(RESULT_KEY_DEPARTURE)) {
-				String depatureTime = bundle.getString(RESULT_KEY_DEPARTURE);
+			if (bundle.containsKey(INTENT_KEY_DEPARTURE)) {
+				String depatureTime = bundle.getString(INTENT_KEY_DEPARTURE);
 				_departCal = Calendar.getInstance();
 				if (!misc.isEmptyOrNull(depatureTime)) {
 					try {
@@ -92,8 +92,8 @@ public class SignatureActivity extends ActionBarActivity {
 				}
 				_departureTextView.setText(misc.formatDateLong(_departCal) + " " + misc.formatTime(_departCal, false));
 			}
-			if (bundle.containsKey(RESULT_KEY_NAME)) {
-				_name = bundle.getString(RESULT_KEY_NAME);
+			if (bundle.containsKey(INTENT_KEY_NAME)) {
+				_name = bundle.getString(INTENT_KEY_NAME);
 				if (!misc.isEmptyOrNull(_name))
 					_nameTextView.setText(_name);
 			}
@@ -142,10 +142,10 @@ public class SignatureActivity extends ActionBarActivity {
 
 		Intent intent = new Intent();
 		intent.putExtras(getIntent());
-		intent.putExtra(RESULT_KEY_BITMAP, signature);
-		intent.putExtra(RESULT_KEY_ARRIVAL, ISO8601.fromCalendar(_arriveCal));
-		intent.putExtra(RESULT_KEY_DEPARTURE, ISO8601.fromCalendar(_departCal));
-		intent.putExtra(RESULT_KEY_NAME, _name);
+		intent.putExtra(INTENT_KEY_BITMAP, signature);
+		intent.putExtra(INTENT_KEY_ARRIVAL, ISO8601.fromCalendar(_arriveCal));
+		intent.putExtra(INTENT_KEY_DEPARTURE, ISO8601.fromCalendar(_departCal));
+		intent.putExtra(INTENT_KEY_NAME, _name);
 		setResult(RESULT_OK, intent);
 		finish();
 	}

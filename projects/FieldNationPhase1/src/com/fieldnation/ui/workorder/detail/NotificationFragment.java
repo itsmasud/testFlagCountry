@@ -266,4 +266,11 @@ public class NotificationFragment extends WorkorderFragment {
 
 		return _adapter;
 	}
+
+	@Override
+	public void doAction(Bundle bundle) {
+		// TODO Method Stub: doAction()
+		Log.v(TAG, "Method Stub: doAction()");
+		
+	}
 }

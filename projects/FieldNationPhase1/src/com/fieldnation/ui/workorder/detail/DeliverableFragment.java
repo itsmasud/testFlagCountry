@@ -51,6 +51,13 @@ import com.fieldnation.utils.misc;
 public class DeliverableFragment extends WorkorderFragment {
 	private static final String TAG = "ui.workorder.detail.DeliverableFragment";
 
+	// pageRequest parameters
+	public static final String PR_ACTION = "PR_ACTION";
+	public static final String PR_UPLOAD_PICTURE = "PR_UPLOAD_PICTURE";
+	public static final String PR_UPLOAD_FILE = "PR_UPLOAD_FILE";
+	public static final String PR_TASK_ID = "PR_TASK_ID";
+
+	// activity result codes
 	private static final int RESULT_CODE_BASE = 100;
 	private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;
 	private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 2;
@@ -454,4 +461,33 @@ public class DeliverableFragment extends WorkorderFragment {
 		}
 	};
 
+	@Override
+	public void doAction(Bundle bundle) {
+		// int taskId = bundle.getInt(PR_TASK_ID);
+		//
+		// // find slot
+		// UploadSlot[] slots = _workorder.getUploadSlots();
+		// UploadSlot slot = null;
+		// for (int i = 0; i < slots.length; i++) {
+		// if (slots[i].getSlotId().equals(taskId)) {
+		// slot = slots[i];
+		// break;
+		// }
+		// }
+		//
+		// for (int i = 0; i < _filesLayout.getChildCount(); i++) {
+		// View v = _filesLayout.getChildAt(i);
+		//
+		// if (v instanceof UploadSlotView) {
+		// UploadSlotView uv = (UploadSlotView) v;
+		// if (uv.getUploadSlotId() == taskId) {
+		// _uploadCount++;
+		// _uploadingSlot = slot;
+		// _uploadingSlotView = uv;
+		// _dialog.show();
+		// break;
+		// }
+		// }
+		// }
+	}
 }

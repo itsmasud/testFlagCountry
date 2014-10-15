@@ -83,23 +83,17 @@ public class Serializer {
 	}
 
 	/*-			From JsonStuff			-*/
-	private static Object unserialize(Class<?> destClass, Object source, Object init, Class<?> paramType) {
-		try {
-			if (isPrimitive(destClass)) {
-				return unserializePrimitive(destClass, source.toString());
-			}
-			if (isArray(destClass)) {
-				return unserializeArray(destClass, (JsonArray) source);
-			}
-			if (isCollection(destClass)) {
-				return unserializeCollection(destClass, (JsonArray) source, (Collection<Object>) init, paramType);
-			}
-			return unserializeObject(destClass, (JsonObject) source);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
+	private static Object unserialize(Class<?> destClass, Object source, Object init, Class<?> paramType) throws Exception {
+		if (isPrimitive(destClass)) {
+			return unserializePrimitive(destClass, source.toString());
 		}
-
+		if (isArray(destClass)) {
+			return unserializeArray(destClass, (JsonArray) source);
+		}
+		if (isCollection(destClass)) {
+			return unserializeCollection(destClass, (JsonArray) source, (Collection<Object>) init, paramType);
+		}
+		return unserializeObject(destClass, (JsonObject) source);
 	}
 
 	private static Object unserializePrimitive(Class<?> clazz, String source) throws UnsupportedDataTypeException {
@@ -190,16 +184,22 @@ public class Serializer {
 			CollectionParameterType collectionParameterType = field.getAnnotation(CollectionParameterType.class);
 			try {
 				if (source.has(jname) && source.get(jname) != null) {
-					//System.out.println("Parsing " + clazz.getName() + ":" + jname);
-					if (collectionParameterType != null) {
-						field.set(
-								dest,
-								unserialize(fieldclass, source.get(jname), field.get(dest),
-										collectionParameterType.param()));
-
-					} else {
-						field.set(dest, unserialize(fieldclass, source.get(jname), field.get(dest), null));
+					// System.out.println("Parsing " + clazz.getName() + ":" +
+					// jname);
+					Object value = null;
+					try {
+						if (collectionParameterType != null) {
+							value = unserialize(fieldclass, source.get(jname), field.get(dest),
+									collectionParameterType.param());
+						} else {
+							value = unserialize(fieldclass, source.get(jname), field.get(dest), null);
+						}
+					} catch (Exception ex) {
+						System.out.println("Failure parsing " + clazz.getName() + ":" + jname);
+						ex.printStackTrace();
 					}
+
+					field.set(dest, value);
 				}
 			} catch (Exception ex) {
 				System.out.println("Failure parsing " + clazz.getName() + ":" + jname);

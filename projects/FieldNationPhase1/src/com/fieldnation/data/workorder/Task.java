@@ -12,9 +12,9 @@ import com.fieldnation.json.annotations.Json;
 public class Task implements Parcelable {
 
 	@Json(name = "alertOnCompletion")
-	private Object[] _alertOnCompletion;
+	private String[] _alertOnCompletion;
 	@Json(name="alertOnCompletionInput")
-	private Object _alertOnCompletionInput;
+	private String _alertOnCompletionInput;
 	@Json(name = "assignedTo")
 	private String _assignedTo;
 	@Json(name="canDelete")
@@ -66,11 +66,11 @@ public class Task implements Parcelable {
 
 	public Task() {
 	}
-	public Object[] getAlertOnCompletion(){
+	public String[] getAlertOnCompletion(){
 		return _alertOnCompletion;
 	}
 
-	public Object getAlertOnCompletionInput(){
+	public String getAlertOnCompletionInput(){
 		return _alertOnCompletionInput;
 	}
 

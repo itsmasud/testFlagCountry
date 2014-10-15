@@ -12,13 +12,13 @@ public class CustomField {
 	@Json(name="data_field_type")
 	private String _dataFieldType;
 	@Json(name="dateEntered")
-	private Object _dateEntered;
+	private String _dateEntered;
 	@Json(name="dependsOnCustomLabelId")
 	private Integer _dependsOnCustomLabelId;
 	@Json(name="dependsOnCustomLabelOperator")
 	private Integer _dependsOnCustomLabelOperator;
 	@Json(name="dependsOnCustomLabelValue")
-	private Object _dependsOnCustomLabelValue;
+	private String _dependsOnCustomLabelValue;
 	@Json(name="isMatched")
 	private Boolean _isMatched;
 	@Json(name = "label")
@@ -46,7 +46,7 @@ public class CustomField {
 		return _dataFieldType;
 	}
 
-	public Object getDateEntered(){
+	public String getDateEntered(){
 		return _dateEntered;
 	}
 
@@ -58,7 +58,7 @@ public class CustomField {
 		return _dependsOnCustomLabelOperator;
 	}
 
-	public Object getDependsOnCustomLabelValue(){
+	public String getDependsOnCustomLabelValue(){
 		return _dependsOnCustomLabelValue;
 	}
 

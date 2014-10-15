@@ -17,9 +17,11 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
+import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import android.app.Activity;
@@ -40,7 +42,7 @@ public class TasksFragment extends WorkorderFragment {
 	private static final int RESULT_CODE_SEND_EMAIL = RESULT_CODE_BASE + 1;
 	private static final int RESULT_CODE_SIGNATURE = RESULT_CODE_BASE + 2;
 
-	// tags to put in sigature
+	// tags to put in signature to link the signature back to me
 	private static final String SIGNATURE_WORKORDERID = "ui.workorder.detail.TasksFragment:SIGNATURE_WORKORDERID";
 	private static final String SIGNATURE_TASKID = "ui.workorder.detail.TasksFragment:SIGNATURE_TASKID";
 
@@ -76,6 +78,8 @@ public class TasksFragment extends WorkorderFragment {
 	private List<Task> _tasks = null;
 	private Task _currentTask;
 
+	private ConfirmDialog _confirmDialog;
+
 	/*-*************************************-*/
 	/*-				LifeCycle				-*/
 	/*-*************************************-*/
@@ -108,6 +112,7 @@ public class TasksFragment extends WorkorderFragment {
 		_closingDialog = new ClosingNotesDialog(view.getContext());
 		_taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
 		_shipmentAddDialog = new ShipmentAddDialog(view.getContext());
+		_confirmDialog = new ConfirmDialog(view.getContext());
 
 		if (savedInstanceState == null) {
 			_gs.requestAuthentication(_authClient);
@@ -255,6 +260,25 @@ public class TasksFragment extends WorkorderFragment {
 			getActivity().startService(_service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
 		}
 	};
+
+	private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+
+		@Override
+		public void onOk(String startDate, long durationMilliseconds) {
+			try {
+				long end = durationMilliseconds + ISO8601.toUtc(startDate);
+				getActivity().startService(
+						_service.confirmAssignment(WEB_CHANGED, _workorder.getWorkorderId(), startDate,
+								ISO8601.fromUTC(end)));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		@Override
+		public void onCancel() {
+		}
+	};
 	private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
 
 		@Override
@@ -272,17 +296,13 @@ public class TasksFragment extends WorkorderFragment {
 				getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
 				break;
 			case CLOSE_OUT_NOTES:
-				if (task.getCompleted())
-					return;
 				_closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
 				break;
 			case CONFIRM_ASSIGNMENT:
 				if (task.getCompleted())
 					return;
-				// TODO get start time + duration from user
-				// _service.confirmAssignment(WEB_CONFIRM_ASSIGNMENT,
-				// _workorder.getWorkorderId(), startTimeMilliseconds,
-				// endTimeMilliseconds)
+
+				_confirmDialog.show(getFragmentManager(), _workorder.getSchedule(), _confirmListener);
 				break;
 			case CUSTOM_FIELD:
 				if (task.getCompleted())
@@ -290,42 +310,34 @@ public class TasksFragment extends WorkorderFragment {
 				// TODO, get custom field info, preset dialog
 				break;
 			case DOWNLOAD:
-				if (task.getCompleted())
-					return;
-
 				Integer _identifier = task.getIdentifier();
 				Document[] docs = _workorder.getDocuments();
 				if (docs != null && docs.length > 0) {
 					for (int i = 0; i < docs.length; i++) {
 						Document doc = docs[i];
-						
-//						if (doc.)
-//						String[] filePathSplit = doc.getFilePath().split("_");
-//						if (filePathSplit.length > 0) {
-//							Integer _identifierChk = Integer.valueOf(filePathSplit[filePathSplit.length - 2]);
-//							if (_identifierChk.equals(_identifier)) {
-//								// task completed here
-//								getActivity().startService(
-//										_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(),
-//												task.getTaskId(), false));
-//
-//								try {
-//									Intent intent = new Intent(Intent.ACTION_VIEW);
-//									intent.setDataAndType(Uri.parse(doc.getFilePath()), doc.getFileType());
-//									startActivity(intent);
-//								} catch (Exception ex) {
-//									try {
-//										Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(doc.getFilePath()));
-//										startActivity(intent);
-//									} catch (Exception ex1) {
-//										ex1.printStackTrace();
-//									}
-//								}
-//
-//								break;
-//							}
-//						}
 
+						if (doc.getDocumentId().equals(_identifier)) {
+							// task completed here
+							if (!task.getCompleted())
+								getActivity().startService(
+										_service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(),
+												task.getTaskId()));
+
+							try {
+								Intent intent = new Intent(Intent.ACTION_VIEW);
+								intent.setDataAndType(Uri.parse(doc.getFilePath()), doc.getFileType());
+								startActivity(intent);
+							} catch (Exception ex) {
+								try {
+									Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(doc.getFilePath()));
+									startActivity(intent);
+								} catch (Exception ex1) {
+									ex1.printStackTrace();
+								}
+							}
+
+							break;
+						}
 					} // end for
 				}
 
@@ -336,26 +348,25 @@ public class TasksFragment extends WorkorderFragment {
 				intent.setData(Uri.parse("mailto:" + email));
 				startActivityForResult(intent, RESULT_CODE_SEND_EMAIL);
 
-				// TODO, mark this task as complete
+				if (!task.getCompleted())
+					getActivity().startService(
+							_service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
 				break;
 			}
 			case PHONE:
-				if (task.getCompleted())
-					return;
-
 				try {
 					if (task.getPhoneNumber() != null) {
-						getActivity().startService(
-								_service.completeCallTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId(),
-										false));
+						if (!task.getCompleted())
+							getActivity().startService(
+									_service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
 
 						Intent callIntent = new Intent(Intent.ACTION_CALL);
 						String phNum = "tel:" + task.getPhoneNumber();
 						callIntent.setData(Uri.parse(phNum));
 						startActivity(callIntent);
 					}
-
 				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 
 				break;
@@ -379,23 +390,22 @@ public class TasksFragment extends WorkorderFragment {
 				Intent intent = new Intent(getActivity(), SignatureActivity.class);
 				try {
 					if (!misc.isEmptyOrNull(_workorder.getCheckInOutInfo().getCheckInTime()))
-						intent.putExtra(SignatureActivity.RESULT_KEY_ARRIVAL,
+						intent.putExtra(SignatureActivity.INTENT_KEY_ARRIVAL,
 								_workorder.getCheckInOutInfo().getCheckInTime());
 				} catch (Exception ex) {
 				}
 				try {
 					if (!misc.isEmptyOrNull(_workorder.getCheckInOutInfo().getCheckOutTime()))
-						intent.putExtra(SignatureActivity.RESULT_KEY_DEPARTURE,
+						intent.putExtra(SignatureActivity.INTENT_KEY_DEPARTURE,
 								_workorder.getCheckInOutInfo().getCheckOutTime());
 				} catch (Exception ex) {
 				}
-				// TODO this field used to exist, it no longer does
-				// try {
-				// if (!misc.isEmptyOrNull(_workorder.getManagerName()))
-				// intent.putExtra(SignatureActivity.RESULT_KEY_NAME,
-				// _workorder.getManagerName());
-				// } catch (Exception ex) {
-				// }
+				try {
+					if (!misc.isEmptyOrNull(task.getDescription())) {
+						intent.putExtra(SignatureActivity.INTENT_KEY_NAME, task.getDescription());
+					}
+				} catch (Exception ex) {
+				}
 
 				intent.putExtra(SIGNATURE_TASKID, task.getTaskId());
 				intent.putExtra(SIGNATURE_WORKORDERID, _workorder.getWorkorderId());
@@ -403,11 +413,29 @@ public class TasksFragment extends WorkorderFragment {
 				startActivityForResult(intent, RESULT_CODE_SIGNATURE);
 				break;
 			}
-			case UPLOAD_FILE:
-				// TODO send to attachments tab
+			case UPLOAD_FILE: {
+				if (task.getCompleted())
+					return;
+				Bundle bundle = new Bundle();
+				bundle.putInt(DeliverableFragment.PR_TASK_ID, task.getTaskId());
+				bundle.putString(DeliverableFragment.PR_ACTION, DeliverableFragment.PR_UPLOAD_FILE);
+				pageRequestListener.requestPage(DeliverableFragment.class, bundle);
 				break;
-			case UPLOAD_PICTURE:
-				// TODO send to attachments tab
+			}
+			case UPLOAD_PICTURE: {
+				if (task.getCompleted())
+					return;
+				Bundle bundle = new Bundle();
+				bundle.putInt(DeliverableFragment.PR_TASK_ID, task.getTaskId());
+				bundle.putString(DeliverableFragment.PR_ACTION, DeliverableFragment.PR_UPLOAD_PICTURE);
+				pageRequestListener.requestPage(DeliverableFragment.class, bundle);
+				break;
+			}
+			case UNIQUE_TASK:
+				if (task.getCompleted())
+					return;
+				getActivity().startService(
+						_service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
 				break;
 			default:
 				break;
@@ -515,10 +543,10 @@ public class TasksFragment extends WorkorderFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		if (requestCode == RESULT_CODE_SIGNATURE && resultCode == Activity.RESULT_OK) {
-			byte[] json_vector = data.getExtras().getByteArray(SignatureActivity.RESULT_KEY_BITMAP);
-			String name = data.getExtras().getString(SignatureActivity.RESULT_KEY_NAME);
-			String arrival = data.getExtras().getString(SignatureActivity.RESULT_KEY_ARRIVAL);
-			String depart = data.getExtras().getString(SignatureActivity.RESULT_KEY_DEPARTURE);
+			byte[] json_vector = data.getExtras().getByteArray(SignatureActivity.INTENT_KEY_BITMAP);
+			String name = data.getExtras().getString(SignatureActivity.INTENT_KEY_NAME);
+			String arrival = data.getExtras().getString(SignatureActivity.INTENT_KEY_ARRIVAL);
+			String depart = data.getExtras().getString(SignatureActivity.INTENT_KEY_DEPARTURE);
 			int taskid = data.getExtras().getInt(SIGNATURE_TASKID);
 			long workorderid = data.getExtras().getLong(SIGNATURE_WORKORDERID);
 
@@ -595,5 +623,10 @@ public class TasksFragment extends WorkorderFragment {
 			_authToken = null;
 		}
 	};
+
+	@Override
+	public void doAction(Bundle bundle) {
+		// do nothing
+	}
 
 }

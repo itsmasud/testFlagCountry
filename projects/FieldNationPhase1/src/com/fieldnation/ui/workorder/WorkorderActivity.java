@@ -159,6 +159,7 @@ public class WorkorderActivity extends BaseActivity {
 					for (int i = 0; i < fragments.size(); i++) {
 						Fragment frag = fragments.get(i);
 						_fragments[i] = (WorkorderFragment) frag;
+						_fragments[i].setPageRequestListener(_pageRequestListener);
 					}
 				}
 			}
@@ -173,6 +174,10 @@ public class WorkorderActivity extends BaseActivity {
 				_fragments[3] = new DeliverableFragment();
 			if (_fragments[4] == null)
 				_fragments[4] = new NotificationFragment();
+
+			for (int i = 0; i < _fragments.length; i++) {
+				_fragments[i].setPageRequestListener(_pageRequestListener);
+			}
 		}
 
 		_pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -208,16 +213,39 @@ public class WorkorderActivity extends BaseActivity {
 			_fragments[i].setWorkorder(_workorder);
 		}
 
-		if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
-			_viewPager.setCurrentItem(TAB_TASKS, false);
-		}
+//		if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
+//			_viewPager.setCurrentItem(TAB_TASKS, false);
+//		}
 
 		setLoading(false);
+	}
+
+	private void setLoading(boolean loading) {
+		if (loading) {
+			_loadingLayout.setVisibility(View.VISIBLE);
+			_viewPager.setVisibility(View.GONE);
+		} else {
+			_loadingLayout.setVisibility(View.GONE);
+			_viewPager.setVisibility(View.VISIBLE);
+		}
 	}
 
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/
+	private PageRequestListener _pageRequestListener = new PageRequestListener() {
+
+		@Override
+		public void requestPage(Class<? extends WorkorderFragment> clazz, Bundle request) {
+			for (int i = 0; i < _fragments.length; i++) {
+				WorkorderFragment fragment = _fragments[i];
+				if (clazz.isInstance(fragment)) {
+					_viewPager.setCurrentItem(i, true);
+					fragment.doAction(request);
+				}
+			}
+		}
+	};
 
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
@@ -326,17 +354,7 @@ public class WorkorderActivity extends BaseActivity {
 		setLoading(true);
 	}
 
-	/*-*********************************-*/
-	/*-				Util				-*/
-	/*-*********************************-*/
-	private void setLoading(boolean loading) {
-		if (loading) {
-			_loadingLayout.setVisibility(View.VISIBLE);
-			_viewPager.setVisibility(View.GONE);
-		} else {
-			_loadingLayout.setVisibility(View.GONE);
-			_viewPager.setVisibility(View.VISIBLE);
-		}
+	public interface PageRequestListener {
+		public void requestPage(Class<? extends WorkorderFragment> clazz, Bundle request);
 	}
-
 }

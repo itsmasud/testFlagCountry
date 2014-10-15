@@ -240,4 +240,11 @@ public class MessageFragment extends WorkorderFragment {
 			setLoading(false);
 		}
 	};
+
+	@Override
+	public void doAction(Bundle bundle) {
+		// TODO Method Stub: doAction()
+		Log.v(TAG, "Method Stub: doAction()");
+		
+	}
 }

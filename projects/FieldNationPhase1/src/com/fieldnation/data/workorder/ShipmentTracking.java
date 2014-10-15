@@ -26,7 +26,7 @@ public class ShipmentTracking {
 	@Json(name="name")
 	private String _name;
 	@Json(name = "trackingId")
-	private Integer _trackingId;
+	private String _trackingId;
 	@Json(name="userId")
 	private Integer _userId;
 	@Json(name="workorderId")
@@ -76,7 +76,7 @@ public class ShipmentTracking {
 		return _name;
 	}
 
-	public Integer getTrackingId(){
+	public String getTrackingId(){
 		return _trackingId;
 	}
 

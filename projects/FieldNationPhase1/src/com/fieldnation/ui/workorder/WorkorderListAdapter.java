@@ -21,6 +21,7 @@ import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.ScheduleDialog;
 import com.fieldnation.ui.workorder.detail.CounterOfferActivity;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.data.workorder.WorkorderStatus;
 
 import android.app.Activity;
 import android.content.Context;
@@ -308,6 +309,9 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 			} else {
 				Intent intent = new Intent(getContext(), WorkorderActivity.class);
 				intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+				if (workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
+					intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+				}
 				getContext().startActivity(intent);
 			}
 		}

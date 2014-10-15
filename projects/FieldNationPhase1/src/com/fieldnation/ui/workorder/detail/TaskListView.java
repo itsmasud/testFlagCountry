@@ -10,12 +10,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class TaskListView extends RelativeLayout {
-	private static final String TAG = "ui.workorder.detail.ScopeOfWorkView";
+	private static final String TAG = "ui.workorder.detail.TaskListView";
 
 	// UI
 	private TextView _preVisistTextView;
@@ -85,9 +86,10 @@ public class TaskListView extends RelativeLayout {
 		boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage()) || "any".equals(_tasks.get(0).getStage());
 
 		_preVisistList.removeAllViews();
-		_onSiteLayout.removeAllViews();
-		_postVisitLayout.removeAllViews();
+		_onSiteList.removeAllViews();
+		_postVisitList.removeAllViews();
 		if (nocategories) {
+			_preVisistTextView.setVisibility(View.GONE);
 			_onSiteLayout.setVisibility(View.GONE);
 			_postVisitLayout.setVisibility(View.GONE);
 
@@ -102,14 +104,15 @@ public class TaskListView extends RelativeLayout {
 			}
 		} else {
 			_preVisistTextView.setVisibility(View.VISIBLE);
-			_onSiteLayout.setVisibility(View.GONE);
-			_postVisitLayout.setVisibility(View.GONE);
+			_onSiteLayout.setVisibility(View.VISIBLE);
+			_postVisitLayout.setVisibility(View.VISIBLE);
 			for (int i = 0; i < _tasks.size(); i++) {
 				Task task = _tasks.get(i);
 
 				TaskRowView row = new TaskRowView(getContext());
 				row.setTask(task);
 				row.setOnTaskClickListener(_task_onClick);
+
 				if ("prep".equals(task.getStage())) {
 					_preVisistList.addView(row);
 				} else if ("onsite".equals(task.getStage())) {

@@ -54,6 +54,12 @@ public class UploadSlotView extends RelativeLayout {
 		_uploadTextView.setOnClickListener(_upload_onClick);
 	}
 
+	public int getUploadSlotId() {
+		if (_slot != null)
+			return _slot.getSlotId();
+		return -1;
+	}
+
 	public void setUploadSlot(long profileId, UploadSlot slot, UploadedDocumentView.Listener listener) {
 		_slot = slot;
 

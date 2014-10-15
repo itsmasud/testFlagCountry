@@ -14,7 +14,7 @@ public class Provider {
 	@Json(name="email")
 	private String _email;
 	@Json(name = "ext")
-	private Object _ext;
+	private String _ext;
 	@Json(name="firstName")
 	private String _firstName;
 	@Json(name="firstname")
@@ -62,7 +62,7 @@ public class Provider {
 		return _email;
 	}
 
-	public Object getExt(){
+	public String getExt(){
 		return _ext;
 	}
 

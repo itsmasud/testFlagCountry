@@ -89,7 +89,7 @@ public class Workorder implements Parcelable {
 	@Json(name = "isDeliverablesUploaded")
 	private Boolean _isDeliverablesUploaded;
 	@Json(name = "isRemoteWork")
-	private Integer _isRemoteWork;
+	private Boolean _isRemoteWork;
 	@Json(name = "isRequest")
 	private Boolean _isRequest;
 	@Json(name = "isRequestedByProvider")
@@ -294,7 +294,7 @@ public class Workorder implements Parcelable {
 		return _isDeliverablesUploaded;
 	}
 
-	public Integer getIsRemoteWork() {
+	public Boolean getIsRemoteWork() {
 		return _isRemoteWork;
 	}
 

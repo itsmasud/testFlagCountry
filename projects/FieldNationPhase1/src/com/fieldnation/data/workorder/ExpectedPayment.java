@@ -24,7 +24,7 @@ public class ExpectedPayment {
 	@Json(name = "paymentStatus")
 	private String _paymentStatus;
 	@Json(name="penalties")
-	private Object _penalties;
+	private String _penalties;
 
 	public ExpectedPayment() {
 	}

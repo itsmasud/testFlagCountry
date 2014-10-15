@@ -21,7 +21,7 @@ public class Pay implements Parcelable {
 	@Json(name = "blendedStartRate")
 	private Double _blendedStartRate;
 	@Json(name = "bonuses")
-	private Integer _bonuses;
+	private Double _bonuses;
 	@Json(name = "description")
 	private String _description;
 	@Json(name = "expenses")
@@ -60,7 +60,7 @@ public class Pay implements Parcelable {
 		return _blendedStartRate;
 	}
 
-	public Integer getBonuses() {
+	public Double getBonuses() {
 		return _bonuses;
 	}
 

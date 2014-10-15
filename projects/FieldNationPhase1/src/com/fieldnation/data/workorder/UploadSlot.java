@@ -7,24 +7,25 @@ import com.fieldnation.json.annotations.Json;
 public class UploadSlot {
 	@Json(name = "maxFiles")
 	private Integer _maxFiles;
-	@Json(name="minFiles")
+	@Json(name = "minFiles")
 	private Integer _minFiles;
-	@Json(name="slotId")
+	@Json(name = "slotId")
 	private Integer _slotId;
-	@Json(name="slotName")
+	@Json(name = "slotName")
 	private String _slotName;
-	@Json(name="tasks")
+	@Json(name = "tasks")
 	private Task _tasks;
-	@Json(name="uploadedDocuments")
+	@Json(name = "uploadedDocuments")
 	private UploadedDocument[] _uploadedDocuments;
 
 	public UploadSlot() {
 	}
-	public Integer getMaxFiles(){
+
+	public Integer getMaxFiles() {
 		return _maxFiles;
 	}
 
-	public Integer getMinFiles(){
+	public Integer getMinFiles() {
 		return _minFiles;
 	}
 
@@ -32,11 +33,11 @@ public class UploadSlot {
 		return _slotId;
 	}
 
-	public String getSlotName(){
+	public String getSlotName() {
 		return _slotName;
 	}
 
-	public Task getTasks(){
+	public Task getTasks() {
 		return _tasks;
 	}
 

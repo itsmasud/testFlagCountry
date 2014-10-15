@@ -5,28 +5,35 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Document {
-	@Json(name="fileName")
+	@Json(name = "documentId")
+	private Integer _documentId;
+	@Json(name = "fileName")
 	private String _fileName;
-	@Json(name="filePath")
+	@Json(name = "filePath")
 	private String _filePath;
 	@Json(name = "fileSize")
 	private Integer _fileSize;
 	@Json(name = "fileType")
 	private String _fileType;
-	@Json(name="lastUpdated")
+	@Json(name = "lastUpdated")
 	private String _lastUpdated;
-	@Json(name="thumbNail")
+	@Json(name = "thumbNail")
 	private String _thumbNail;
-	@Json(name="updatedBy")
+	@Json(name = "updatedBy")
 	private User _updatedBy;
 
 	public Document() {
 	}
-	public String getFileName(){
+
+	public Integer getDocumentId() {
+		return _documentId;
+	}
+
+	public String getFileName() {
 		return _fileName;
 	}
 
-	public String getFilePath(){
+	public String getFilePath() {
 		return _filePath;
 	}
 
@@ -38,7 +45,7 @@ public class Document {
 		return _fileType;
 	}
 
-	public String getLastUpdated(){
+	public String getLastUpdated() {
 		return _lastUpdated;
 	}
 
@@ -46,7 +53,7 @@ public class Document {
 		return _thumbNail;
 	}
 
-	public User getUpdatedBy(){
+	public User getUpdatedBy() {
 		return _updatedBy;
 	}
 

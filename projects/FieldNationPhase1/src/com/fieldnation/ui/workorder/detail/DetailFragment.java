@@ -2,6 +2,8 @@ package com.fieldnation.ui.workorder.detail;
 
 import java.text.ParseException;
 
+import org.w3c.dom.DocumentFragment;
+
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -13,6 +15,7 @@ import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.ui.workorder.WorkorderActivity.PageRequestListener;
 import com.fieldnation.utils.ISO8601;
 
 import android.app.AlertDialog;
@@ -136,9 +139,7 @@ public class DetailFragment extends WorkorderFragment {
 	private TaskSumView.Listener _taskSum_listener = new TaskSumView.Listener() {
 		@Override
 		public void onShowTasksTab() {
-			// TODO Method Stub: onShowTasksTab()
-			Log.v(TAG, "Method Stub: onShowTasksTab()");
-
+			pageRequestListener.requestPage(TasksFragment.class, null);
 		}
 	};
 
@@ -281,4 +282,11 @@ public class DetailFragment extends WorkorderFragment {
 			// TODO, toast failure, put ui in wait mode
 		}
 	};
+
+	@Override
+	public void doAction(Bundle bundle) {
+		// TODO Method Stub: doAction()
+		Log.v(TAG, "Method Stub: doAction()");
+		
+	}
 }
