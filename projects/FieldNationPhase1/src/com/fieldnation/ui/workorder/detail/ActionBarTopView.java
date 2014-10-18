@@ -23,6 +23,7 @@ public class ActionBarTopView extends RelativeLayout {
 	private Button _checkoutButton;
 	private Button _acknowledgeButton;
 	private Button _completeButton;
+	private Button _confirmButton;
 
 	// Data
 	private Listener _listener;
@@ -44,7 +45,8 @@ public class ActionBarTopView extends RelativeLayout {
 	}
 
 	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
+		LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top,
+				this);
 
 		if (isInEditMode())
 			return;
@@ -57,6 +59,8 @@ public class ActionBarTopView extends RelativeLayout {
 		_acknowledgeButton.setOnClickListener(_acknowledge_onClick);
 		_completeButton = (Button) findViewById(R.id.complete_button);
 		_completeButton.setOnClickListener(_complete_onClick);
+		_confirmButton = (Button) findViewById(R.id.confirm_button);
+		_confirmButton.setOnClickListener(_confirm_onClick);
 		setVisibility(View.GONE);
 	}
 
@@ -64,7 +68,8 @@ public class ActionBarTopView extends RelativeLayout {
 		_workorder = workorder;
 
 		WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
-		WorkorderSubstatus substatus = _workorder.getStatus().getWorkorderSubstatus();
+		WorkorderSubstatus substatus = _workorder.getStatus()
+				.getWorkorderSubstatus();
 
 		if (status == WorkorderStatus.AVAILABLE) {
 			setVisibility(View.GONE);
@@ -76,6 +81,7 @@ public class ActionBarTopView extends RelativeLayout {
 		_checkoutButton.setVisibility(View.GONE);
 		_acknowledgeButton.setVisibility(View.GONE);
 		_completeButton.setVisibility(View.GONE);
+		_confirmButton.setVisibility(View.GONE);
 
 		switch (substatus) {
 		case APPROVED_PROCESSINGPAYMENT:
@@ -95,6 +101,7 @@ public class ActionBarTopView extends RelativeLayout {
 			_checkinButton.setVisibility(View.VISIBLE);
 			break;
 		case CONFIRMED:
+			_checkinButton.setVisibility(View.VISIBLE);
 			break;
 		case COUNTEROFFERED:
 			break;
@@ -116,12 +123,13 @@ public class ActionBarTopView extends RelativeLayout {
 		case ROUTED:
 			break;
 		case UNCONFIRMED:
+			_confirmButton.setVisibility(View.VISIBLE);
 			break;
 		default:
 			break;
 		}
 
-		if (_workorder.canCounterOffer()) {
+		if (_workorder.canComplete()) {
 			_completeButton.setVisibility(View.VISIBLE);
 		}
 	}
@@ -133,6 +141,13 @@ public class ActionBarTopView extends RelativeLayout {
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/
+	private View.OnClickListener _confirm_onClick = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (_listener != null)
+				_listener.onConfirm();
+		}
+	};
 	private View.OnClickListener _checkin_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -161,8 +176,10 @@ public class ActionBarTopView extends RelativeLayout {
 		@Override
 		public void onClick(View v) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-			builder.setMessage("Are you sure you want to mark this workorder as complete?").setPositiveButton("Yes",
-					_complete_dialog).setNegativeButton("No", null).show();
+			builder.setMessage(
+					"Are you sure you want to mark this workorder as complete?")
+					.setPositiveButton("Yes", _complete_dialog)
+					.setNegativeButton("No", null).show();
 		}
 	};
 
@@ -183,5 +200,7 @@ public class ActionBarTopView extends RelativeLayout {
 		public void onAcknowledge();
 
 		public void onComplete();
+
+		public void onConfirm();
 	}
 }

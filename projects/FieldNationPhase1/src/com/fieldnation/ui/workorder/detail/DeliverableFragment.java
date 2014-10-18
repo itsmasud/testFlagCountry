@@ -44,8 +44,10 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.dialog.AppPickerDialog;
+import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -76,6 +78,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private RelativeLayout _loadingLayout;
 	private TextView _noDocsTextView;
 	private ActionBarTopView _topBar;
+	private ConfirmDialog _confirmDialog;
 
 	// Data
 	private GlobalState _gs;
@@ -99,8 +102,10 @@ public class DeliverableFragment extends WorkorderFragment {
 	/*-				LifeCycle				-*/
 	/*-*************************************-*/
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_workorder_deliverables, container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_workorder_deliverables,
+				container, false);
 	}
 
 	@Override
@@ -113,17 +118,23 @@ public class DeliverableFragment extends WorkorderFragment {
 		_reviewList = (LinearLayout) view.findViewById(R.id.review_list);
 		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
 		_bar1View = view.findViewById(R.id.bar1_view);
-		_loadingLayout = (RelativeLayout) view.findViewById(R.id.loading_layout);
+		_loadingLayout = (RelativeLayout) view
+				.findViewById(R.id.loading_layout);
 		_noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
 
 		_topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
 		_topBar.setListener(_actionbartop_listener);
 
+		_confirmDialog = new ConfirmDialog(view.getContext());
+
 		checkMedia();
+
+		populateUi();
 	}
 
 	private boolean checkMedia() {
-		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+		if (Environment.MEDIA_MOUNTED.equals(Environment
+				.getExternalStorageState())) {
 			return true;
 		} else {
 			return false;
@@ -157,18 +168,18 @@ public class DeliverableFragment extends WorkorderFragment {
 	public void setWorkorder(Workorder workorder) {
 		_workorder = workorder;
 
-		if (_topBar != null)
-			_topBar.setWorkorder(workorder);
 		getData();
-
 	}
 
 	private PendingIntent getNotificationIntent() {
 		Intent intent = new Intent(_gs, WorkorderActivity.class);
-		intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
-		intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+		intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
+				WorkorderActivity.TAB_DELIVERABLES);
+		intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
+				_workorder.getWorkorderId());
 
-		return PendingIntent.getActivity(_gs, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		return PendingIntent.getActivity(_gs, _rand.nextInt(), intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
 	}
 
 	private void getData() {
@@ -177,14 +188,18 @@ public class DeliverableFragment extends WorkorderFragment {
 
 		// startLoading();
 		_profile = null;
-		_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+		_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE,
+				true));
 	}
 
 	private void populateUi() {
-		if (_profile == null)
+		if (_workorder == null)
 			return;
 
-		if (_workorder == null)
+		if (_topBar != null)
+			_topBar.setWorkorder(_workorder);
+
+		if (_profile == null)
 			return;
 
 		if (getActivity() == null)
@@ -210,7 +225,8 @@ public class DeliverableFragment extends WorkorderFragment {
 			for (int i = 0; i < slots.length; i++) {
 				UploadSlot slot = slots[i];
 				UploadSlotView v = new UploadSlotView(getActivity());
-				v.setUploadSlot(_profile.getUserId(), slot, _uploaded_document_listener);
+				v.setUploadSlot(_profile.getUserId(), slot,
+						_uploaded_document_listener);
 				v.setListener(_uploadSlot_listener);
 				_filesLayout.addView(v);
 			}
@@ -227,7 +243,8 @@ public class DeliverableFragment extends WorkorderFragment {
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 			_dialog.addIntent(intent, "Get Content");
 
-			if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+			if (getActivity().getPackageManager().hasSystemFeature(
+					PackageManager.FEATURE_CAMERA)) {
 				intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 				_dialog.addIntent(intent, "Take Picture");
 
@@ -248,7 +265,8 @@ public class DeliverableFragment extends WorkorderFragment {
 				// get temp path
 				String packageName = _gs.getPackageName();
 				File externalPath = Environment.getExternalStorageDirectory();
-				File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+				File temppath = new File(externalPath.getAbsolutePath()
+						+ "/Android/data/" + packageName + "/temp");
 				temppath.mkdirs();
 
 				// create temp folder
@@ -261,7 +279,8 @@ public class DeliverableFragment extends WorkorderFragment {
 				out.close();
 				in.close();
 
-				Cursor c = _gs.getContentResolver().query(uri, null, null, null, null);
+				Cursor c = _gs.getContentResolver().query(uri, null, null,
+						null, null);
 				int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 				c.moveToFirst();
 
@@ -269,8 +288,10 @@ public class DeliverableFragment extends WorkorderFragment {
 				// startLoading();
 				_uploadingSlotView.addUploading(c.getString(nameIndex));
 
-				_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-						_uploadingSlot.getSlotId(), c.getString(nameIndex), tempfile, getNotificationIntent()));
+				_gs.startService(_service.uploadDeliverable(
+						WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+						_uploadingSlot.getSlotId(), c.getString(nameIndex),
+						tempfile, getNotificationIntent()));
 				c.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -279,37 +300,47 @@ public class DeliverableFragment extends WorkorderFragment {
 
 		} else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
 			ContentResolver cr = getActivity().getContentResolver();
-			String[] p1 = new String[] { BaseColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN };
-			Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, p1, null, null, p1[1] + " DESC");
+			String[] p1 = new String[] { BaseColumns._ID,
+					MediaStore.Images.ImageColumns.DATE_TAKEN };
+			Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+					p1, null, null, p1[1] + " DESC");
 			if (c1.moveToFirst()) {
-				String uristringpic = "content://media/external/images/media/" + c1.getInt(0);
+				String uristringpic = "content://media/external/images/media/"
+						+ c1.getInt(0);
 				Uri uri = Uri.parse(uristringpic);
 				try {
 					// find temp path
 					String packageName = _gs.getPackageName();
-					File externalPath = Environment.getExternalStorageDirectory();
-					File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+					File externalPath = Environment
+							.getExternalStorageDirectory();
+					File temppath = new File(externalPath.getAbsolutePath()
+							+ "/Android/data/" + packageName + "/temp");
 					temppath.mkdirs();
 
 					// open temp file
 					File tempfile = File.createTempFile("DATA", null, temppath);
 
 					// write the image
-					InputStream in = _gs.getContentResolver().openInputStream(uri);
+					InputStream in = _gs.getContentResolver().openInputStream(
+							uri);
 					OutputStream out = new FileOutputStream(tempfile);
 					misc.copyStream(in, out, 1024, -1, 500);
 					out.close();
 					in.close();
 
-					Cursor c = _gs.getContentResolver().query(uri, null, null, null, null);
-					int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+					Cursor c = _gs.getContentResolver().query(uri, null, null,
+							null, null);
+					int nameIndex = c
+							.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 					c.moveToFirst();
 
 					// send data to service
 					// startLoading();
 					_uploadingSlotView.addUploading(c.getString(nameIndex));
-					_gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-							_uploadingSlot.getSlotId(), c.getString(nameIndex), tempfile, getNotificationIntent()));
+					_gs.startService(_service.uploadDeliverable(
+							WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+							_uploadingSlot.getSlotId(), c.getString(nameIndex),
+							tempfile, getNotificationIntent()));
 
 					c.close();
 				} catch (Exception ex) {
@@ -328,22 +359,54 @@ public class DeliverableFragment extends WorkorderFragment {
 	private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
 		@Override
 		public void onComplete() {
-			getActivity().startService(_service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onCheckOut() {
-			getActivity().startService(_service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onCheckIn() {
-			getActivity().startService(_service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onAcknowledge() {
-			getActivity().startService(_service.acknowledgeHold(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.acknowledgeHold(WEB_CHANGE,
+							_workorder.getWorkorderId()));
+		}
+
+		@Override
+		public void onConfirm() {
+			final Workorder workorder = _workorder;
+			_confirmDialog.show(getActivity().getSupportFragmentManager(),
+					workorder.getSchedule(), new ConfirmDialog.Listener() {
+						@Override
+						public void onOk(String startDate,
+								long durationMilliseconds) {
+							try {
+								long end = durationMilliseconds
+										+ ISO8601.toUtc(startDate);
+								Intent intent = _service.confirmAssignment(
+										WEB_CHANGE,
+										_workorder.getWorkorderId(), startDate,
+										ISO8601.fromUTC(end));
+								getActivity().startService(intent);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
+						}
+
+						@Override
+						public void onCancel() {
+						}
+					});
 		}
 	};
 
@@ -355,7 +418,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
 			ResolveInfo info = pack.resolveInfo;
 
-			src.setComponent(new ComponentName(info.activityInfo.applicationInfo.packageName, info.activityInfo.name));
+			src.setComponent(new ComponentName(
+					info.activityInfo.applicationInfo.packageName,
+					info.activityInfo.name));
 
 			if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
 				startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
@@ -370,7 +435,8 @@ public class DeliverableFragment extends WorkorderFragment {
 		public void onDelete(UploadedDocumentView v, UploadedDocument document) {
 			_deleteCount++;
 			// startLoading();
-			_gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE, _workorder.getWorkorderId(),
+			_gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
+					_workorder.getWorkorderId(),
 					document.getWorkorderUploadId()));
 		}
 	};
@@ -384,7 +450,9 @@ public class DeliverableFragment extends WorkorderFragment {
 				_uploadingSlotView = view;
 				_dialog.show();
 			} else {
-				Toast.makeText(getActivity(), "Need External Storage, pleaswe insert storage device before continuing",
+				Toast.makeText(
+						getActivity(),
+						"Need External Storage, pleaswe insert storage device before continuing",
 						Toast.LENGTH_LONG).show();
 			}
 		}
@@ -394,8 +462,10 @@ public class DeliverableFragment extends WorkorderFragment {
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(_gs, username, authToken, _resultReceiver);
-			_profileService = new ProfileService(_gs, username, authToken, _resultReceiver);
+			_service = new WorkorderService(_gs, username, authToken,
+					_resultReceiver);
+			_profileService = new ProfileService(_gs, username, authToken,
+					_resultReceiver);
 			getData();
 		}
 
@@ -410,7 +480,8 @@ public class DeliverableFragment extends WorkorderFragment {
 		}
 	};
 
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+			new Handler()) {
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
 			// stopLoading();
@@ -419,15 +490,19 @@ public class DeliverableFragment extends WorkorderFragment {
 			if (resultCode == WEB_GET_PROFILE) {
 				_profile = null;
 				try {
-					_profile = Profile.fromJson(new JsonObject(new String(
-							resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+					_profile = Profile
+							.fromJson(new JsonObject(
+									new String(
+											resultData
+													.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
 				} catch (Exception e) {
 					// TODO mulligan?
 					e.printStackTrace();
 					_profile = null;
 				}
 				populateUi();
-			} else if (resultCode == WEB_DELETE_DELIVERABLE || resultCode == WEB_SEND_DELIVERABLE) {
+			} else if (resultCode == WEB_DELETE_DELIVERABLE
+					|| resultCode == WEB_SEND_DELIVERABLE) {
 				if (resultCode == WEB_DELETE_DELIVERABLE)
 					_deleteCount--;
 

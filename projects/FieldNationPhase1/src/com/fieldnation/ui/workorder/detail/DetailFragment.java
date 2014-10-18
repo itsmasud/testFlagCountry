@@ -54,8 +54,10 @@ public class DetailFragment extends WorkorderFragment {
 	/*-*************************************-*/
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_workorder_detail, container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_workorder_detail, container,
+				false);
 	}
 
 	@Override
@@ -70,7 +72,8 @@ public class DetailFragment extends WorkorderFragment {
 		_taskView.setListener(_taskSum_listener);
 
 		_locView = (LocationView) view.findViewById(R.id.location_view);
-		_scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
+		_scheduleView = (ScheduleSummaryView) view
+				.findViewById(R.id.schedule_view);
 
 		_payView = (PaymentView) view.findViewById(R.id.payment_view);
 		_payView.showDetails(true);
@@ -146,48 +149,90 @@ public class DetailFragment extends WorkorderFragment {
 	private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
 		@Override
 		public void onComplete() {
-			getActivity().startService(_service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onCheckOut() {
-			getActivity().startService(_service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onCheckIn() {
-			getActivity().startService(_service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onAcknowledge() {
-			getActivity().startService(_service.acknowledgeHold(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.acknowledgeHold(WEB_CHANGE,
+							_workorder.getWorkorderId()));
+		}
+
+		@Override
+		public void onConfirm() {
+			final Workorder workorder = _workorder;
+			_confirmDialog.show(getActivity().getSupportFragmentManager(),
+					workorder.getSchedule(), new ConfirmDialog.Listener() {
+						@Override
+						public void onOk(String startDate,
+								long durationMilliseconds) {
+							try {
+								long end = durationMilliseconds
+										+ ISO8601.toUtc(startDate);
+								Intent intent = _service.confirmAssignment(
+										WEB_CHANGE,
+										_workorder.getWorkorderId(), startDate,
+										ISO8601.fromUTC(end));
+								getActivity().startService(intent);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
+						}
+
+						@Override
+						public void onCancel() {
+						}
+					});
 		}
 	};
 
 	private PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
 
 		@Override
-		public void onDeleteExpense(Workorder workorder, AdditionalExpense expense) {
-			getActivity().startService(
-					_service.deleteExpense(WEB_CHANGE, _workorder.getWorkorderId(), expense.getExpenseId()));
+		public void onDeleteExpense(Workorder workorder,
+				AdditionalExpense expense) {
+			getActivity()
+					.startService(
+							_service.deleteExpense(WEB_CHANGE,
+									_workorder.getWorkorderId(),
+									expense.getExpenseId()));
 		}
 
 		@Override
 		public void onDeleteDiscount(Workorder workorder, int discountId) {
-			getActivity().startService(_service.deleteDiscount(WEB_CHANGE, _workorder.getWorkorderId(), discountId));
+			getActivity().startService(
+					_service.deleteDiscount(WEB_CHANGE,
+							_workorder.getWorkorderId(), discountId));
 		}
 
 		@Override
-		public void onAddExpense(Workorder workorder, String description, double amount, ExpenseCategory category) {
+		public void onAddExpense(Workorder workorder, String description,
+				double amount, ExpenseCategory category) {
 			getActivity().startService(
-					_service.addExpense(WEB_CHANGE, workorder.getWorkorderId(), description, amount, category));
+					_service.addExpense(WEB_CHANGE, workorder.getWorkorderId(),
+							description, amount, category));
 		}
 
 		@Override
-		public void onAddDiscount(Workorder workorder, Double amount, String description) {
+		public void onAddDiscount(Workorder workorder, Double amount,
+				String description) {
 			getActivity().startService(
-					_service.addDiscount(WEB_CHANGE, _workorder.getWorkorderId(), amount, description));
+					_service.addDiscount(WEB_CHANGE,
+							_workorder.getWorkorderId(), amount, description));
 		}
 	};
 
@@ -200,21 +245,29 @@ public class DetailFragment extends WorkorderFragment {
 
 		@Override
 		public void onNotInterested(Workorder workorder) {
-			getActivity().startService(_service.decline(WEB_CHANGE, _workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.decline(WEB_CHANGE, _workorder.getWorkorderId()));
 		}
 
 		@Override
 		public void onConfirmAssignment(Workorder workorder) {
 			final Workorder _workorder = workorder;
-			_confirmDialog.show(getActivity().getSupportFragmentManager(), workorder.getSchedule(),
-					new ConfirmDialog.Listener() {
+			_confirmDialog.show(getActivity().getSupportFragmentManager(),
+					workorder.getSchedule(), new ConfirmDialog.Listener() {
 						@Override
-						public void onOk(String startDate, long durationMilliseconds) {
+						public void onOk(String startDate,
+								long durationMilliseconds) {
 							try {
-								long end = durationMilliseconds + ISO8601.toUtc(startDate);
-								getActivity().startService(
-										_service.confirmAssignment(WEB_CHANGE, _workorder.getWorkorderId(), startDate,
-												ISO8601.fromUTC(end)));
+								long end = durationMilliseconds
+										+ ISO8601.toUtc(startDate);
+								getActivity()
+										.startService(
+												_service.confirmAssignment(
+														WEB_CHANGE,
+														_workorder
+																.getWorkorderId(),
+														startDate, ISO8601
+																.fromUTC(end)));
 							} catch (Exception ex) {
 								ex.printStackTrace();
 							}
@@ -228,7 +281,8 @@ public class DetailFragment extends WorkorderFragment {
 
 		@Override
 		public void onComplete(Workorder workorder) {
-			getActivity().startService(_service.complete(WEB_CHANGE, workorder.getWorkorderId()));
+			getActivity().startService(
+					_service.complete(WEB_CHANGE, workorder.getWorkorderId()));
 		}
 	};
 
@@ -238,7 +292,9 @@ public class DetailFragment extends WorkorderFragment {
 			try {
 				long seconds;
 				seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-				getActivity().startService(_service.request(WEB_CHANGE, _workorder.getWorkorderId(), seconds));
+				getActivity().startService(
+						_service.request(WEB_CHANGE,
+								_workorder.getWorkorderId(), seconds));
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -255,7 +311,8 @@ public class DetailFragment extends WorkorderFragment {
 
 		@Override
 		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+			_service = new WorkorderService(getActivity(), username, authToken,
+					_resultReceiver);
 		}
 
 		@Override
@@ -264,7 +321,8 @@ public class DetailFragment extends WorkorderFragment {
 		}
 	};
 
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+			new Handler()) {
 
 		@Override
 		public void onSuccess(int resultCode, Bundle resultData) {
@@ -287,6 +345,6 @@ public class DetailFragment extends WorkorderFragment {
 	public void doAction(Bundle bundle) {
 		// TODO Method Stub: doAction()
 		Log.v(TAG, "Method Stub: doAction()");
-		
+
 	}
 }

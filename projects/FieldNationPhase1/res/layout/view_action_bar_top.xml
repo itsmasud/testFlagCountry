@@ -50,4 +50,15 @@
         android:text="Complete"
         android:visibility="gone" />
 
+    <Button
+        android:id="@+id/confirm_button"
+        style="@style/ButtonGreen"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:text="Confirm"
+        android:visibility="gone" />
+
 </LinearLayout>

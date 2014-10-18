@@ -448,14 +448,16 @@ public class Workorder implements Parcelable {
 	public static final int NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT = 103;
 
 	// status colors lookuptable
-	private static final int[] _STATUS_LOOKUP_TABLE = { R.drawable.card_status_white, R.drawable.card_status_orange,
+	private static final int[] _STATUS_LOOKUP_TABLE = {
+			R.drawable.card_status_white, R.drawable.card_status_orange,
 			R.drawable.card_status_green, R.drawable.card_status_gray };
-	private static final int[] _STATUS_TEXT_TABLE = { R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
+	private static final int[] _STATUS_TEXT_TABLE = {
+			R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
 			R.color.woCardStatusLabel3, R.color.woCardStatusLabel4 };
-	private static final int[] _STATUS_BUTTON_FG = { R.color.btn_white_fg, R.color.btn_orange_fg, R.color.btn_green_fg,
-			R.color.btn_gray_fg };
-	private static final int[] _STATUS_BUTTON_BG = { R.drawable.btn_white, R.drawable.btn_orange, R.drawable.btn_green,
-			R.drawable.btn_white };
+	private static final int[] _STATUS_BUTTON_FG = { R.color.btn_white_fg,
+			R.color.btn_orange_fg, R.color.btn_green_fg, R.color.btn_gray_fg };
+	private static final int[] _STATUS_BUTTON_BG = { R.drawable.btn_white,
+			R.drawable.btn_orange, R.drawable.btn_green, R.drawable.btn_white };
 
 	private int _buttonAction = 0;
 	private int _notInterestedAction = 0;
@@ -472,7 +474,8 @@ public class Workorder implements Parcelable {
 	}
 
 	public boolean canComplete() {
-		if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE) {
+		if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
+				|| getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
 			Task[] tasks = getTasks();
 			if (tasks != null) {
 				if (tasks.length > 0) {
@@ -580,7 +583,8 @@ public class Workorder implements Parcelable {
 			buildStatusInProgress(status);
 			break;
 		default:
-			System.out.println("Unknown Status (" + _workorderId + "): " + status.toJson().toString());
+			System.out.println("Unknown Status (" + _workorderId + "): "
+					+ status.toJson().toString());
 			break;
 
 		}
