@@ -14,7 +14,7 @@ public class Config {
 		ClassNameMap.put("Tasks", "Task");
 		ClassNameMap.put("TaskDetail", "Task");
 		ClassNameMap.put("Skillsets", "Skillset");
-		ClassNameMap.put("AdditionalExpenses", "AdditionalExpense");
+		ClassNameMap.put("AdditionalExpenses", "Expense");
 		ClassNameMap.put("CustomFields", "CustomField");
 		ClassNameMap.put("Deliverables", "Deliverable");
 		ClassNameMap.put("Workorders", "Workorder");

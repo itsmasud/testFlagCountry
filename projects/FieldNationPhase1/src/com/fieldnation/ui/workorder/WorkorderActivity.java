@@ -99,6 +99,11 @@ public class WorkorderActivity extends BaseActivity {
 			} else {
 				_currentTab = TAB_DETAILS;
 			}
+			// taking a link from e-mail/browser
+			if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+				Log.v(TAG, intent.getDataString());
+				Log.v(TAG, "BP");
+			}
 		}
 
 		if (savedInstanceState == null) {
@@ -213,9 +218,10 @@ public class WorkorderActivity extends BaseActivity {
 			_fragments[i].setWorkorder(_workorder);
 		}
 
-//		if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
-//			_viewPager.setCurrentItem(TAB_TASKS, false);
-//		}
+		// if (_workorder.getStatus().getWorkorderStatus() ==
+		// WorkorderStatus.INPROGRESS) {
+		// _viewPager.setCurrentItem(TAB_TASKS, false);
+		// }
 
 		setLoading(false);
 	}

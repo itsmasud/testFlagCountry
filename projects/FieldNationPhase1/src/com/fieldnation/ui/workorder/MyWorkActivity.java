@@ -59,9 +59,10 @@ public class MyWorkActivity extends DrawerActivity {
 
 		if (savedInstanceState != null) {
 			List<Fragment> fragments = getSupportFragmentManager().getFragments();
-
-			for (int i = 0; i < fragments.size(); i++) {
-				_fragments[i] = (WorkorderListFragment) fragments.get(i);
+			if (fragments != null) {
+				for (int i = 0; i < fragments.size(); i++) {
+					_fragments[i] = (WorkorderListFragment) fragments.get(i);
+				}
 			}
 		}
 

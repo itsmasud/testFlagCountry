@@ -37,7 +37,7 @@ public class UploadSlot {
 		return _slotName;
 	}
 
-	public Task getTasks() {
+	public Task getTask() {
 		return _tasks;
 	}
 

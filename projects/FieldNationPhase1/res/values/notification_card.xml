@@ -8,6 +8,7 @@
         <item name="android:background">@drawable/notification_number_background</item>
         <item name="android:textColor">@color/notificationForeground</item>
         <item name="android:textAppearance">@android:attr/textAppearanceSmall</item>
+        <item name="android:textSize">10dp</item>
     </style>
 
     <style name="NotificationCard">

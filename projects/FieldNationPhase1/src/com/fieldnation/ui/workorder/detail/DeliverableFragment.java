@@ -34,6 +34,7 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
@@ -253,9 +254,12 @@ public class DeliverableFragment extends WorkorderFragment {
 		UploadSlot[] slots = _workorder.getUploadSlots();
 		UploadSlot slot = null;
 		for (int i = 0; i < slots.length; i++) {
-			if (slots[i].getSlotId().equals(taskId)) {
-				slot = slots[i];
-				break;
+			Task task = slots[i].getTask();
+			if (task != null){
+				if (task.getTaskId() == taskId) {
+					slot = slots[i];
+					break;
+				}
 			}
 		}
 

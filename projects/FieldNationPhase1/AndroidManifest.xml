@@ -60,8 +60,27 @@
         </activity>
         <activity
             android:name="com.fieldnation.ui.workorder.WorkorderActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/work_order_detail_title" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="fieldnation.com"
+                    android:pathPrefix="/wo/"
+                    android:scheme="http" />
+                <data
+                    android:host="dev.fieldnation.com"
+                    android:pathPrefix="/wo/"
+                    android:scheme="http" />
+                <data
+                    android:host="testlipo.fieldnation.com"
+                    android:pathPrefix="/wo/"
+                    android:scheme="http" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.fieldnation.ui.MessageListActivity"
@@ -119,7 +138,7 @@
             android:exported="true"
             android:process=":sync" >
             <intent-filter>
-com.fieldnation.service
+com.fieldnation.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
