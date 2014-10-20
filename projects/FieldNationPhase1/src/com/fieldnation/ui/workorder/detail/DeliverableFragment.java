@@ -86,6 +86,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private WorkorderService _service;
 	private ProfileService _profileService;
 	private Profile _profile = null;
+	private Bundle _delayedAction = null;
 
 	// private List<Deliverable> _deliverables = null;
 	// private List<Task> _tasks = null;
@@ -130,6 +131,7 @@ public class DeliverableFragment extends WorkorderFragment {
 		checkMedia();
 
 		populateUi();
+		executeDelayedAction();
 	}
 
 	private boolean checkMedia() {
@@ -162,6 +164,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	public void update() {
 		getData();
 		checkMedia();
+		executeDelayedAction();
 	}
 
 	@Override
@@ -169,6 +172,7 @@ public class DeliverableFragment extends WorkorderFragment {
 		_workorder = workorder;
 
 		getData();
+		executeDelayedAction();
 	}
 
 	private PendingIntent getNotificationIntent() {
@@ -231,6 +235,45 @@ public class DeliverableFragment extends WorkorderFragment {
 				_filesLayout.addView(v);
 			}
 		}
+	}
+
+	private void executeDelayedAction() {
+		if (_delayedAction == null)
+			return;
+
+		if (_workorder == null)
+			return;
+
+		if (_filesLayout == null)
+			return;
+
+		int taskId = _delayedAction.getInt(PR_TASK_ID);
+
+		// find slot
+		UploadSlot[] slots = _workorder.getUploadSlots();
+		UploadSlot slot = null;
+		for (int i = 0; i < slots.length; i++) {
+			if (slots[i].getSlotId().equals(taskId)) {
+				slot = slots[i];
+				break;
+			}
+		}
+
+		for (int i = 0; i < _filesLayout.getChildCount(); i++) {
+			View v = _filesLayout.getChildAt(i);
+
+			if (v instanceof UploadSlotView) {
+				UploadSlotView uv = (UploadSlotView) v;
+				if (uv.getUploadSlotId() == taskId) {
+					_uploadCount++;
+					_uploadingSlot = slot;
+					_uploadingSlotView = uv;
+					_dialog.show();
+					break;
+				}
+			}
+		}
+		_delayedAction = null;
 	}
 
 	@Override
@@ -538,31 +581,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 	@Override
 	public void doAction(Bundle bundle) {
-		// int taskId = bundle.getInt(PR_TASK_ID);
-		//
-		// // find slot
-		// UploadSlot[] slots = _workorder.getUploadSlots();
-		// UploadSlot slot = null;
-		// for (int i = 0; i < slots.length; i++) {
-		// if (slots[i].getSlotId().equals(taskId)) {
-		// slot = slots[i];
-		// break;
-		// }
-		// }
-		//
-		// for (int i = 0; i < _filesLayout.getChildCount(); i++) {
-		// View v = _filesLayout.getChildAt(i);
-		//
-		// if (v instanceof UploadSlotView) {
-		// UploadSlotView uv = (UploadSlotView) v;
-		// if (uv.getUploadSlotId() == taskId) {
-		// _uploadCount++;
-		// _uploadingSlot = slot;
-		// _uploadingSlotView = uv;
-		// _dialog.show();
-		// break;
-		// }
-		// }
-		// }
+		_delayedAction = bundle;
+		executeDelayedAction();
 	}
 }

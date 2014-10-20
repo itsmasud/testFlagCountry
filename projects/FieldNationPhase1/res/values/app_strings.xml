@@ -168,7 +168,7 @@
     <string name="mywork_title">My Work Orders</string>
     <string name="mywork_subtitle">Assigned, Completed, and Canceled Jobs</string>
     <string name="market_title">Marketplace</string>
-    <string name="market_subtitle">Available, Requested and Recruitment</string>
+    <string name="market_subtitle">Available, Requested Routed, and Recruitment</string>
     <string name="payment_title">Payment</string>
     <string name="payment_subtitle">Processing and Paid</string>
     <string name="settings_title">Settings</string>

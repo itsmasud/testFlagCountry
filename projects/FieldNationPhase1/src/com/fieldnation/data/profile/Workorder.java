@@ -11,7 +11,7 @@ public class Workorder {
 	@Json(name = "title")
 	private String _title;
 	@Json(name="workorderId")
-	private Integer _workorderId;
+	private Long _workorderId;
 
 	public Workorder() {
 	}
@@ -24,7 +24,7 @@ public class Workorder {
 		return _title;
 	}
 
-	public Integer getWorkorderId(){
+	public Long getWorkorderId(){
 		return _workorderId;
 	}
 
