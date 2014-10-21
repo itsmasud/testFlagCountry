@@ -2,6 +2,8 @@ package com.fieldnation.ui.workorder;
 
 import java.util.List;
 
+import org.xml.sax.Parser;
+
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -100,9 +102,24 @@ public class WorkorderActivity extends BaseActivity {
 				_currentTab = TAB_DETAILS;
 			}
 			// taking a link from e-mail/browser
-			if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-				Log.v(TAG, intent.getDataString());
-				Log.v(TAG, "BP");
+			if (Intent.ACTION_VIEW.equals(intent.getAction())) {				
+				try{
+					final List<String> segments = intent.getData().getPathSegments();
+			        if (segments.size() > 1) {
+			        	if(segments.get(0).equals("wo")){
+			        		_workorderId = Long.parseLong(segments.get(1));
+			        	}
+			        	if(segments.get(0).equals("workorder")){
+			        		_workorderId = Long.parseLong(segments.get(2));
+			        	}
+			        	if(segments.get(0).equals("marketplace")){
+			        		_workorderId = Long.parseLong(intent.getData().getQueryParameter("workorder_id"));
+			        	}			        	
+			        }
+				
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 

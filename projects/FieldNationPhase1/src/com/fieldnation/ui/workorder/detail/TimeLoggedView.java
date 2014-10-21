@@ -25,7 +25,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 	private TextView _totalTimeTextView;
 	private LinearLayout _addLogLinearLayout;
 	private TextView _noTimeTextView;
-	private WorkLogDialog _dialog;
+	private WorkLogDialog _dialog;	
 
 	// Data
 	private Workorder _workorder;
@@ -80,11 +80,13 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 		for (int i = 0; i < logs.length; i++) {
 			LoggedWork log = logs[i];
 			ScheduleDetailView v = new ScheduleDetailView(getContext());
-			v.setLoggedWork(log);
+			v.setLoggedWork(log);			
 			_logList.addView(v);
-
-			// TODO hook up edit button onclick
-		}
+			
+			// hook up edit button
+			v.setWorkorder(_workorder);
+			v.setFragmentManager(_fm);
+		}		
 	}
 
 	/*-*************************-*/
@@ -102,6 +104,12 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
 		@Override
 		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime) {
+			// TODO Method Stub: onOk()
+			Log.v(TAG, "Method Stub: onOk()");
+		}
+		
+		@Override
+		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId) {
 			// TODO Method Stub: onOk()
 			Log.v(TAG, "Method Stub: onOk()");
 		}

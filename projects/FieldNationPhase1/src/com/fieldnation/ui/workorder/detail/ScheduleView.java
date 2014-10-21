@@ -110,6 +110,10 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 					_service.logTime(WEB_SUBMIT_WORKLOG, _workorder.getWorkorderId(), start.getTimeInMillis(),
 							end.getTimeInMillis(), false));
 		}
+		
+		@Override
+		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId) {			
+		}
 
 		@Override
 		public void onCancel() {
