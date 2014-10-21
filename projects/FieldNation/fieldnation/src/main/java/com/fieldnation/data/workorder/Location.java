@@ -165,7 +165,7 @@ public class Location {
 	public String getFullAddress() {
 		String address = "";
 
-		if (misc.isEmptyOrNull(getTopAddressLine())) {
+		if (!misc.isEmptyOrNull(getTopAddressLine())) {
 			address = getTopAddressLine() + "\n";
 		}
 

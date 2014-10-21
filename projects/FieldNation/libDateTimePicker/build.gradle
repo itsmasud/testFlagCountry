@@ -3,11 +3,12 @@ apply plugin: 'android-library'
 android {
     compileSdkVersion 21
     buildToolsVersion '21.0.1'
+
     defaultConfig {
-        minSdkVersion 11
-        targetSdkVersion 21
+        minSdkVersion 8
+        targetSdkVersion 16
         versionCode 1
-        versionName '1.0'
+        versionName "1.0"
     }
     buildTypes {
         release {
@@ -15,15 +16,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-    compileOptions {
-    }
-    productFlavors {
-    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:+'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.nineoldandroids:library:2.4.+'
     compile 'com.android.support:support-v4:21.0.0'
 }
