@@ -18,8 +18,6 @@ import java.util.TimeZone;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 
 public class misc {
 	private static final String HEXES = "0123456789ABCDEF";
@@ -46,52 +44,52 @@ public class misc {
 	 * @param source
 	 * @return
 	 */
-	public static Bitmap extractCircle(Bitmap source) {
-		int[] pixels = new int[source.getWidth() * source.getHeight()];
-
-		source.getPixels(pixels, 0, source.getWidth(), 0, 0, source.getWidth(), source.getHeight());
-
-		int size = Math.min(source.getWidth(), source.getHeight());
-		int cx = source.getWidth() / 2;
-		int cy = source.getHeight() / 2;
-		int xoff = (source.getWidth() - size) / 2;
-		int yoff = (source.getHeight() - size) / 2;
-
-		int[] destpix = new int[size * size];
-
-		int dist2 = Math.min(cx, cy);
-		dist2 = dist2 * dist2;
-
-		int dx = 0;
-		int dy = 0;
-
-		for (int x = xoff; x < source.getWidth() - xoff; x++) {
-			for (int y = yoff; y < source.getHeight() - yoff; y++) {
-				dx = cx - x;
-				dy = cy - y;
-				int dist = dx * dx + dy * dy;
-
-				if (dist <= dist2 - 255) {
-					destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
-				} else if (dist <= dist2 - 127) {
-					int c = pixels[x + y * source.getWidth()];
-					int i = (x - xoff) + (y - yoff) * size;
-					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 115) / 128) << 56 & 0xFF000000);
-				} else if (dist <= dist2 - 63) {
-					int c = pixels[x + y * source.getWidth()];
-					int i = (x - xoff) + (y - yoff) * size;
-					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 51) / 64) << 56 & 0xFF000000);
-				} else if (dist <= dist2) {
-					int c = pixels[x + y * source.getWidth()];
-					int i = (x - xoff) + (y - yoff) * size;
-					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 179) / 256) << 56 & 0xFF000000);
-				}
-
-			}
-		}
-
-		return Bitmap.createBitmap(destpix, size, size, Config.ARGB_8888);
-	}
+//	public static Bitmap extractCircle(Bitmap source) {
+//		int[] pixels = new int[source.getWidth() * source.getHeight()];
+//
+//		source.getPixels(pixels, 0, source.getWidth(), 0, 0, source.getWidth(), source.getHeight());
+//
+//		int size = Math.min(source.getWidth(), source.getHeight());
+//		int cx = source.getWidth() / 2;
+//		int cy = source.getHeight() / 2;
+//		int xoff = (source.getWidth() - size) / 2;
+//		int yoff = (source.getHeight() - size) / 2;
+//
+//		int[] destpix = new int[size * size];
+//
+//		int dist2 = Math.min(cx, cy);
+//		dist2 = dist2 * dist2;
+//
+//		int dx = 0;
+//		int dy = 0;
+//
+//		for (int x = xoff; x < source.getWidth() - xoff; x++) {
+//			for (int y = yoff; y < source.getHeight() - yoff; y++) {
+//				dx = cx - x;
+//				dy = cy - y;
+//				int dist = dx * dx + dy * dy;
+//
+//				if (dist <= dist2 - 255) {
+//					destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
+//				} else if (dist <= dist2 - 127) {
+//					int c = pixels[x + y * source.getWidth()];
+//					int i = (x - xoff) + (y - yoff) * size;
+//					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 115) / 128) << 56 & 0xFF000000);
+//				} else if (dist <= dist2 - 63) {
+//					int c = pixels[x + y * source.getWidth()];
+//					int i = (x - xoff) + (y - yoff) * size;
+//					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 51) / 64) << 56 & 0xFF000000);
+//				} else if (dist <= dist2) {
+//					int c = pixels[x + y * source.getWidth()];
+//					int i = (x - xoff) + (y - yoff) * size;
+//					destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 179) / 256) << 56 & 0xFF000000);
+//				}
+//
+//			}
+//		}
+//
+//		return Bitmap.createBitmap(destpix, size, size, Config.ARGB_8888);
+//	}
 
 	public static boolean isEmptyOrNull(String str) {
 		if (str == null)
