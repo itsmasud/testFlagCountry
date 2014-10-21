@@ -176,6 +176,17 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				"startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&hoursType=" + (isOnSiteWork ? "0" : "1"),
 				"application/x-www-form-urlencoded", false);
 	}
+	
+	//REST API call have to implement
+	//@TODO
+	public Intent updateLogTime(int resultCode, Integer workorderHoursId, long startDate, long endDate, boolean isOnSiteWork) {
+		return httpPost(
+				resultCode,
+				"api/rest/v1/workorder/workorder-hours/" + workorderHoursId + "/updatelog",
+				null,
+				"startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&hoursType=" + (isOnSiteWork ? "0" : "1"),
+				"application/x-www-form-urlencoded", false);
+	}
 
 	// shipments
 	public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,

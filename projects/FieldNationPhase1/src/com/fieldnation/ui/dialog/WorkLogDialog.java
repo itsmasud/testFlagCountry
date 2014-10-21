@@ -1,8 +1,11 @@
 package com.fieldnation.ui.dialog;
 
+import java.text.ParseException;
 import java.util.Calendar;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.LoggedWork;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -37,6 +40,7 @@ public class WorkLogDialog extends Dialog {
 	private boolean _startIsSet = false;
 	private boolean _endIsSet = false;
 	private Listener _listener;
+	private LoggedWork _loggedWork;
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -96,7 +100,25 @@ public class WorkLogDialog extends Dialog {
 
 		show();
 	}
+	
+	public void setLoggedWork(LoggedWork loggedWork) {
+		_loggedWork = loggedWork;
+		
+		try {
+			String startDate = _loggedWork.getStartDate();
+			_startButton.setText(misc.formatDateTime(ISO8601.toCalendar(startDate), false));
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+		}
 
+		try {
+			String endDate = _loggedWork.getEndDate();
+			_endButton.setText(misc.formatDateTime(ISO8601.toCalendar(endDate), false));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
@@ -152,7 +174,7 @@ public class WorkLogDialog extends Dialog {
 	private View.OnClickListener _ok_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if (_startIsSet && _endIsSet) {
+			if ((_startIsSet && _endIsSet) || (_loggedWork != null && (_startIsSet || _endIsSet))) {
 				WorkLogDialog.this.dismiss();
 				if (_listener != null) {
 					int deviceCount = 0;
@@ -162,7 +184,13 @@ public class WorkLogDialog extends Dialog {
 					}
 					boolean isOnSiteTime = _onsiteRadioButton.isChecked();
 
-					_listener.onOk(_startCalendar, _endCalendar, deviceCount, isOnSiteTime);
+					if(_loggedWork != null ){
+						Integer _workorderHoursId = _loggedWork.getLoggedHoursId();
+						_listener.onOk(_startCalendar, _endCalendar, deviceCount, isOnSiteTime, _workorderHoursId);
+					} else {
+						_listener.onOk(_startCalendar, _endCalendar, deviceCount, isOnSiteTime);
+					}
+					
 				}
 			}
 		}
@@ -178,6 +206,7 @@ public class WorkLogDialog extends Dialog {
 
 	public interface Listener {
 		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime);
+		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId);
 
 		public void onCancel();
 	}
