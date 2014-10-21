@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <color name="fn_gray">#FFf3f3eb</color>
+    <color name="transparent">#00000000</color>
+    <color name="loading_bar_color_1">#FF47D3AF</color>
+    <color name="loading_bar_color_2">#FF42CFB2</color>
+    <color name="loading_bar_color_3">#FF54C5C8</color>
+    <color name="loading_bar_color_4">#FF68B8E1</color>
+    <color name="loading_bar_color_5">#FF7EAFF5</color>
+    <color name="black">#FF000000</color>
+
+    <integer-array name="loading_bar_colors">
+        <item>@color/loading_bar_color_1</item>
+        <item>@color/loading_bar_color_5</item>
+    </integer-array>
+
+    <color name="text_normal">#FF000000</color>
+    <color name="text_success">#FF48CEAD</color>
+    <color name="text_waiting">#FF6D6D62</color>
+    <color name="text_warning">#FFFC6102</color>
+
+    <integer-array name="status_text_colors">
+        <item>@color/text_normal</item>
+        <item>@color/text_success</item>
+        <item>@color/text_waiting</item>
+        <item>@color/text_warning</item>
+    </integer-array>
+
+    <!-- payments -->
+    <color name="payment_header_background">#FF3fcca9</color>
+    <color name="payment_header_bg_paid">#FF6a6a5e</color>
+
+</resources>

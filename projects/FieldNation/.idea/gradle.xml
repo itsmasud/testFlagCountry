@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="D:\dev\as_dev\FieldNation" />
+            <option value="D:\dev\as_dev\FieldNation\fieldnation" />
+            <option value="D:\dev\as_dev\FieldNation\libDateTimePicker" />
+            <option value="D:\dev\as_dev\FieldNation\libJson" />
+            <option value="D:\dev\as_dev\FieldNation\libPullToRefresh" />
+            <option value="D:\dev\as_dev\FieldNation\libSmoothProgressBar" />
+            <option value="D:\dev\as_dev\FieldNation\libUndobar" />
+            <option value="D:\dev\as_dev\FieldNation\libUtils" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
+

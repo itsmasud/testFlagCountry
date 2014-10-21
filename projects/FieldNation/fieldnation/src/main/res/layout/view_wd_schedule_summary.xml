@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        style="@style/WorkorderDetail_FieldTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/schedule" />
+
+    <TextView
+        android:id="@+id/arrivetime_view"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You will need to arrive exactly on Friday March 14, 2014 at exactly 11:00 am CST." />
+
+    <View
+        style="@style/WorkorderDetail_Separator"
+        android:layout_width="match_parent" />
+
+</LinearLayout>

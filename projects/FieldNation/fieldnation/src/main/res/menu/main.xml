@@ -1,0 +1,31 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fieldnation.MainActivity" >
+
+    <item
+        android:id="@+id/notifications_menuitem"
+        android:enabled="true"
+        android:orderInCategory="300"
+        android:title="Note"
+        app:actionViewClass="com.fieldnation.ui.NotificationActionBarView"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/messages_menuitem"
+        android:enabled="true"
+        android:orderInCategory="200"
+        android:title="Messages"
+        app:actionViewClass="com.fieldnation.ui.MessagesActionBarView"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/settings"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:title="@string/refresh"
+        app:showAsAction="never"/>
+
+</menu>

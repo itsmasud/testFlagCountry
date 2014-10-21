@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/MessageView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:id="@+id/message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/message_textview"
+            style="@style/MessageView_MessageSent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/profile_imageview"
+            android:text="Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. " />
+
+        <ImageView
+            android:id="@+id/profile_imageview"
+            style="@style/MessageView_ProfileImage"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <LinearLayout
+        style="@style/MessageView_StatusBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/message_layout"
+        android:orientation="horizontal" >
+
+        <ImageView style="@style/MessageView_Status_Clock" />
+
+        <TextView
+            android:id="@+id/time_textview"
+            style="@style/MessageView_Status_Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today 8:30 AM" />
+
+        <ImageView
+            android:id="@+id/check_imageview"
+            style="@style/MessageView_Status_Orange" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="10dp"
+    android:orientation="horizontal" >
+
+    <Button
+        android:id="@+id/checkin_button"
+        style="@style/ButtonWhite"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:text="Check In"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/checkout_button"
+        style="@style/ButtonGreen"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:text="Check Out"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/acknowledge_button"
+        style="@style/ButtonOrange"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:text="Acknowledge Hold"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/complete_button"
+        style="@style/ButtonOrange"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:text="Complete"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/confirm_button"
+        style="@style/ButtonGreen"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:text="Confirm"
+        android:visibility="gone" />
+
+</LinearLayout>

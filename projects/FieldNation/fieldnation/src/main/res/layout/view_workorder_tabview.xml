@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/WorkorderTabView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+        <!-- detail -->
+
+        <RelativeLayout
+            android:id="@+id/detail_layout"
+            style="@style/WorkorderTabView_TabContainer" >
+
+            <ImageView
+                android:id="@+id/detail_imageview"
+                style="@style/WorkorderTabView_Tab"
+                android:background="@drawable/ic_workorder_tab_detail_button" />
+        </RelativeLayout>
+
+        <View style="@style/WorkorderTabView_Sep_Vert" />
+
+        <!-- tasks -->
+
+        <RelativeLayout
+            android:id="@+id/tasks_layout"
+            style="@style/WorkorderTabView_TabContainer" >
+
+            <ImageView
+                android:id="@+id/tasks_imageview"
+                style="@style/WorkorderTabView_Tab"
+                android:background="@drawable/ic_workorder_tab_task_button" />
+        </RelativeLayout>
+
+        <View style="@style/WorkorderTabView_Sep_Vert" />
+
+        <!-- messages -->
+
+        <RelativeLayout
+            android:id="@+id/messages_layout"
+            style="@style/WorkorderTabView_TabContainer" >
+
+            <ImageView
+                android:id="@+id/messages_imageview"
+                style="@style/WorkorderTabView_Tab"
+                android:background="@drawable/ic_workorder_tab_messages_button" />
+
+            <TextView
+                android:id="@+id/messages_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/workorder_tab_textcolor"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <View style="@style/WorkorderTabView_Sep_Vert" />
+
+        <!-- attachments -->
+
+        <RelativeLayout
+            android:id="@+id/attachments_layout"
+            style="@style/WorkorderTabView_TabContainer" >
+
+            <ImageView
+                android:id="@+id/attachments_imageview"
+                style="@style/WorkorderTabView_Tab"
+                android:background="@drawable/ic_workorder_tab_attachments_button" />
+        </RelativeLayout>
+
+        <View style="@style/WorkorderTabView_Sep_Vert" />
+
+        <!-- alerts -->
+
+        <RelativeLayout
+            android:id="@+id/alert_layout"
+            style="@style/WorkorderTabView_TabContainer" >
+
+            <ImageView
+                android:id="@+id/alert_imageview"
+                style="@style/WorkorderTabView_Tab"
+                android:background="@drawable/ic_workorder_tab_alert_button" />
+
+            <TextView
+                android:id="@+id/alert_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingTop="6dp"
+                android:textColor="@color/workorder_tab_textcolor"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View style="@style/WorkorderTabView_Sep_Horz" />
+
+</LinearLayout>

@@ -1,0 +1,84 @@
+package com.fieldnation.ui.workorder.detail;
+
+import com.fieldnation.R;
+import com.fieldnation.data.workorder.ExpectedPayment;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.misc;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+public class ExpectedPaymentView extends LinearLayout implements WorkorderRenderer {
+	private static final String TAG = "ui.workorder.detail.ExpectedPaymentView";
+
+	// UI
+	private TextView _laborTextView;
+	private TextView _expensesTextView;
+	private TextView _discountsTextView;
+	private TextView _expectedTotalTextView;
+	private TextView _feeTextView;
+	private TextView _payTextView;
+	private TextView _payStatusTextView;
+
+	// Data
+	private Workorder _workorder;
+
+	/*-*************************************-*/
+	/*-				Life Cycle				-*/
+	/*-*************************************-*/
+
+	public ExpectedPaymentView(Context context) {
+		super(context);
+		init();
+	}
+
+	public ExpectedPaymentView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init();
+	}
+
+	private void init() {
+		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_expected_payment, this);
+
+		if (isInEditMode())
+			return;
+
+		_laborTextView = (TextView) findViewById(R.id.labor_textview);
+		_expensesTextView = (TextView) findViewById(R.id.expenses_textview);
+		_discountsTextView = (TextView) findViewById(R.id.discounts_textview);
+		_expectedTotalTextView = (TextView) findViewById(R.id.expectedtotal_textview);
+		_feeTextView = (TextView) findViewById(R.id.expectedfee_textview);
+		_payTextView = (TextView) findViewById(R.id.expectedpay_textview);
+		_payStatusTextView = (TextView) findViewById(R.id.paystatus_textview);
+	}
+
+	/*-*************************************-*/
+	/*-				Mutators				-*/
+	/*-*************************************-*/
+
+	@Override
+	public void setWorkorder(Workorder workorder) {
+		_workorder = workorder;
+		refresh();
+	}
+
+	private void refresh() {
+		ExpectedPayment pay = _workorder.getExpectedPayment();
+
+		if (pay == null) {
+			this.setVisibility(GONE);
+			return;
+		}
+
+		_laborTextView.setText(misc.toCurrency(pay.getLaborEarned()));
+		_expensesTextView.setText(misc.toCurrency(pay.getExpensesApproved()));
+		_discountsTextView.setText(misc.toCurrency(pay.getDiscounts()));
+		_expectedTotalTextView.setText(misc.toCurrency(pay.getExpectedTotal()));
+		_feeTextView.setText(misc.toCurrency(pay.getExpectedFee()));
+		_payTextView.setText(misc.toCurrency(pay.getExpectedAmount()));
+		_payStatusTextView.setText(misc.capitalize(pay.getPaymentStatus()));
+	}
+}

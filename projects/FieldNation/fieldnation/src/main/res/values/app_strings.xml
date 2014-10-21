@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!--
+    <string name="default_username">ralphthompson</string>
+    <string name="default_password">password</string>
+    -->
+    <string name="default_username">hexixtech</string>
+    <string name="default_password">hexixtech</string>
+
+    <!-- connection info -->
+    <string name="fn_hostname">dev.fieldnation.com</string>
+<!--
+    <string name="fn_hostname">testlipo.fieldnation.com</string>
+-->
+    <string name="fn_grant_type">password</string>
+    <string name="fn_client_id">demoapp</string>
+    <string name="fn_client_secret">demopass</string>
+    <string name="accounttype">com.fieldnation</string>
+    <string name="authority">com.fieldnation.service</string>
+    <!-- /connection info -->
+
+    <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
+    <string name="pull_to_refresh_release_label">Release to refresh...</string>
+    <string name="pull_to_refresh_refreshing_label">Loading...</string>
+    <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
+
+    <!-- general strings -->
+    <string name="app_name">Field Nation</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="activity_login_title">Field Nation Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="settings">Settings</string>
+    <string name="fieldnation_provider_name">Field Nation</string>
+    <string name="refresh">Refresh</string>
+    <string name="money">$</string>
+    <string name="error">ERROR!</string>
+    <string name="could_not_load_payment">Could not load payment!</string>
+    <string name="estimated">Estimated</string>
+    <string name="work_orders">Work Orders</string>
+    <string name="processing">Processing</string>
+    <string name="network_not_ready">Cannot yet make request, please wait.</string>
+    <string name="tap_to_undo">Tap to Undo</string>
+    <string name="success">Success!</string>
+    <string name="try_again">Action failed, please try again</string>
+    <string name="not_interested">Not Interested</string>
+    <string name="bundle">Bundle</string>
+    <string name="tracking_id">Tracking ID</string>
+    <string name="carrier_name">Carrier Name</string>
+    <string name="carrier">Carrier</string>
+    <string name="shipment_description">Shipment Description</string>
+    <string name="shipping_to_site">Shipping to site</string>
+    <string name="shipping_from_size">Shipping from site</string>
+    <string name="add">Add</string>
+    <string name="travel_time">Travel Time</string>
+    <string name="on_site_work">On Site Work</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="number_of_devices">Number of Devices</string>
+    <string name="ok">OK</string>
+    <string name="amount">Amount</string>
+    <string name="description">Description</string>
+    <string name="by">by</string>
+    <string name="fixed_pay_amount_colon">Fixed Pay Amount:</string>
+    <string name="hourly_rate">Hourly Rate</string>
+    <string name="max_hours">Max Hours</string>
+    <string name="per_device_rate">Per Device Rate</string>
+    <string name="max_devices">Max Devices</string>
+    <string name="pay_of">Pay of</string>
+    <string name="per_hour_for_the_first">per hour for the first</string>
+    <string name="hours">hours</string>
+    <string name="then">then</string>
+    <string name="per_hour_up_to">per hour up to</string>
+    <string name="additional_hours">additional hours</string>
+    <string name="documents_to_review">Documents to Review</string>
+    <string name="documents_to_upload">Documents to Upload</string>
+    <string name="my_additional_files">My Additional Files</string>
+    <string name="upload_file">Upload File</string>
+    <string name="status_colon">Status: </string>
+    <string name="send">Send</string>
+    <string name="continue_the_conversation">Continue the conversation...</string>
+    <string name="start_the_conversation">Start the conversation...</string>
+    <string name="pending">...pending</string>
+    <string name="add_shipment">Add Shipment</string>
+    <string name="shipment">Shipment</string>
+    <string name="schedule">Schedule</string>
+    <string name="work_performed_colon">Work Performed: </string>
+    <string name="closing_notes">Closing Notes</string>
+    <string name="enter_closing_notes_here">Enter closing notes here...</string>
+    <string name="save">Save</string>
+    <string name="request_work">Request Work</string>
+    <string name="accept_work">Accept Work</string>
+    <string name="counter_offer">Counter Offer</string>
+    <string name="mark_work_as_complete">Mark Work as Complete</string>
+    <string name="view_customer_policies_and_procedures">View Customer Policies and Procedures</string>
+    <string name="view_confidential_information">View Confidential Information</string>
+    <string name="view_field_nation_terms">View Field Nation Terms</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="add_discount">Add Discount</string>
+    <string name="expenses_colon">Expenses:</string>
+    <string name="discounts_colon">Discounts:</string>
+    <string name="payment">Payment</string>
+    <string name="provider_must_have_the_following_skillsets_colon">Provider must have the following skillsets:</string>
+    <string name="provider_must_confirm_assignment">Provider must confirm assignment</string>
+    <string name="prerequisites">Prerequisites</string>
+    <string name="this_work_order_as_no_notification_at_this_time">This work order as no notifications at this time.</string>
+    <string name="tasks_are_associated_with_this_work_order"> tasks are associated with this work order</string>
+    <string name="view_all_tasks">View All Tasks</string>
+    <string name="scope_of_work">Scope of Work</string>
+    <string name="pre_visit">Pre Visit</string>
+    <string name="on_site">On Site</string>
+    <string name="post_visit">Post Visit</string>
+    <string name="edit">Edit</string>
+    <string name="uploading">Uploading...</string>
+    <string name="deleting">Deleting...</string>
+    <string name="done">Done</string>
+    <string name="clear">Clear</string>
+    <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
+    <string name="departure_date_and_time_colon">Departure Date and Time:</string>
+    <string name="tap_to_set_a_time">Tap to set a time</string>
+    <string name="tap_to_set_name">Tap to set name</string>
+    <string name="request_payment_change">Request Payment Change</string>
+    <string name="request_schedule_change">Request Schedule Change</string>
+    <string name="edit_payment_counter">Edit Payment Counter</string>
+    <string name="edit_schedule_counter">Edit Schedule Counter</string>
+    <string name="expense">Expense</string>
+    <string name="add_expense_to_counter_offer">Add Expense to Counter Offer</string>
+    <string name="add_another_expense">Add Another Expense</string>
+    <string name="reason_for_counter_offer_colon">Reason for Counter Offer:</string>
+    <string name="reason_for_request">Reason For Request</string>
+    <string name="delete_counter_if_not_accepted_by">Delete counter of not accepted by</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>
+    <string name="cancel">Cancel</string>
+    <string name="send_counter">Send Counter</string>
+    <string name="pay_rate_basis_colon">Pay Rate Basis:</string>
+    <string name="hourly">Hourly</string>
+    <string name="blended">Blended</string>
+    <string name="arrival_period_colon">Arrival Period:</string>
+    <string name="date_colon">Date:</string>
+    <string name="time_colon">Time:</string>
+    <string name="date_and_time_colon">Date and Time:</string>
+    <string name="counter_offers">Counter Offers</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="between">Between</string>
+    <string name="and">and</string>
+    <string name="offer_expires_colon">Offer Expires:</string>
+    <string name="never">Never</string>
+    <string name="confirm">Confirm</string>
+
+    <!-- /general strings -->
+
+
+    <!-- main activity strings -->
+    <string name="launcher_open">I am Open</string>
+    <string name="work_order_detail_title">Work Order</string>
+
+    <!-- message list activity -->
+    <string name="activity_message_list_title">Messages</string>
+
+    <!-- payments list activity -->
+    <string name="activity_payments_list_title">Payments</string>
+
+    <!-- notifications list activity -->
+    <string name="activity_notifications_list_title">Notifications</string>
+    <string name="activity_bundle_detail">Bundle Details</string>
+
+    <!-- Drawer strings -->
+    <string name="mywork_title">My Work Orders</string>
+    <string name="mywork_subtitle">Assigned, Completed, and Canceled Jobs</string>
+    <string name="market_title">Marketplace</string>
+    <string name="market_subtitle">Available, Requested Routed, and Recruitment</string>
+    <string name="payment_title">Payment</string>
+    <string name="payment_subtitle">Processing and Paid</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Preferences and Switch Account</string>
+    <string name="logout_title">Log Out</string>
+    <string name="signature_title">Signature</string>
+
+    <!-- fragment strings -->
+    <string name="no_data">No Data Available</string>
+
+    <!-- my work categories -->
+    <string name="my_work_category1">In Progress</string>
+    <string name="my_work_category2">Assigned</string>
+    <string name="my_work_category3">Completed</string>
+    <string name="my_work_category4">Canceled</string>
+
+    <!-- market categories -->
+    <string name="market_requested">Requested</string>
+    <string name="market_available">Available</string>
+
+    <!-- Account Preferences -->
+    <string name="pref_sync">Sync Frequency</string>
+
+    <string-array name="pref_sync_titles">
+        <item>1 minute</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_values">
+        <item>1</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- login error messages -->
+    <string name="login_error_no_error">Success!</string>
+    <string name="login_error_not_found_in_db">Authentication Failed, check your network settings, and retry.[1]</string>
+    <string name="login_error_invalid_local_creds">Authentication Failed, check your network settings, and retry.[2]</string>
+    <string name="login_error_invalid_remote_creds">Authentication Failed, please check username and password</string>
+
+    <!-- shipment support list -->
+    <string-array name="carrier_list">
+        <item>Fedex</item>
+        <item>UPS</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="pay_types">
+        <item>Fixed</item>
+        <item>Hourly</item>
+        <item>Per Device</item>
+        <item>Blended</item>
+    </string-array>
+    <string-array name="schedule_types">
+        <item>Range</item>
+        <item>Exact</item>
+    </string-array>
+
+    <!-- workorder status list -->
+    <string-array name="workorder_status">
+        <item>Available</item>
+        <item>Assigned</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+        <item>Cancelled</item>
+        <item>Paid</item>
+        <item>Approved</item>
+    </string-array>
+
+    <string name="workorder_selected">Selected</string>
+    <!-- workorder substatus list -->
+    <string-array name="workorder_substatus">
+        <item>Available</item>
+        <item>Routed</item>
+        <item>Requested</item>
+        <item>Countered</item>
+        <item>Unconfirmed</item>
+        <item>Confirmed</item>
+        <item>On Hold</item>
+        <item>On Hold</item>
+        <item>Checked In</item>
+        <item>Checked Out</item>
+        <item>Pending</item>
+        <item>In Review</item>
+        <item>Processing</item>
+        <item>Paid</item>
+        <item>Cancelled</item>
+        <item>Fee Pending</item>
+        <item>Fee Paid</item>
+        <item>Unknown</item>
+    </string-array>
+    <string-array name="task_type">
+        <item>Reserved</item>
+        <item>Confirm Assignment</item>
+        <item>Enter close out notes</item>
+        <item>Check in</item>
+        <item>Check out</item>
+        <item>Upload a file</item>
+        <item>Upload or take a picture</item>
+        <item>Fill out custom field</item>
+        <item>Call phone number</item>
+        <item>Send an e-mail</item>
+        <item>Unique task</item>
+        <item>Collect a signature</item>
+        <item>Enter shipment tracking</item>
+        <item>Download a File</item>
+    </string-array>
+
+</resources>

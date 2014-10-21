@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        style="@style/WorkorderDetail_FieldTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Expected Payment Amount" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Labor Earnings" />
+
+        <TextView
+            android:id="@+id/labor_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="$0.00" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expenses Approved" />
+
+        <TextView
+            android:id="@+id/expenses_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="$0.00" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Discounts" />
+
+        <TextView
+            android:id="@+id/discounts_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="$0.00" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expected Total" />
+
+        <TextView
+            android:id="@+id/expectedtotal_textview"
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="$0.00" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expected Field Nation Fee (10%)" />
+
+        <TextView
+            android:id="@+id/expectedfee_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="$0.00" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expected Payment Amount" />
+
+        <TextView
+            android:id="@+id/expectedpay_textview"
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="$0.00" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Payment Status" />
+
+        <TextView
+            android:id="@+id/paystatus_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Processing" />
+    </RelativeLayout>
+
+</LinearLayout>

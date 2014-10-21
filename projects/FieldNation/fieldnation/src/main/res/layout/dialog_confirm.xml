@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <TextView
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="By confirming this assignment you will be expected to show up on-site at the scheduled time." />
+
+        <TextView
+            style="@style/WorkorderDetail_FieldSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current Schedule" />
+
+        <TextView
+            android:id="@+id/schedule1_textview"
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Between March 4, 2014 and March 5, 2015" />
+
+        <TextView
+            android:id="@+id/schedule2_textview"
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Between 11:00 am and 3:00 am" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent"
+            android:layout_height="2px" />
+
+        <TextView
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Estimated Schedule" />
+
+        <TextView
+            style="@style/WorkorderDetail_FieldSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Arrival Time:" />
+
+        <Button
+            android:id="@+id/start_date_button"
+            style="?android:attr/spinnerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:hint="Arrival Time" />
+
+        <TextView
+            style="@style/WorkorderDetail_FieldSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estimated Duration:" />
+
+        <Button
+            android:id="@+id/duration_button"
+            style="?android:attr/spinnerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:hint="Duration" />
+
+        <View
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="By confirming this workorder you agree to the scope, description, and the terms and conditions." />
+
+        <TextView
+            android:id="@+id/terms_textview"
+            style="@style/TextViewLink"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="Standard Work Order Terms and Conditions" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/ButtonWhite"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_gravity="right"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="@style/ButtonGreen"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_gravity="right"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:text="@string/confirm" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
