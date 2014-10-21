@@ -42,7 +42,7 @@ public class Task implements Parcelable {
 	@Json(name="order")
 	private Integer _order;
 	@Json(name="phoneNumber")
-	private Double _phoneNumber;
+	private String _phoneNumber;
 	@Json(name="showAlertMenu")
 	private Boolean _showAlertMenu;
 	@Json(name="showTimeMenu")
@@ -126,7 +126,7 @@ public class Task implements Parcelable {
 		return _order;
 	}
 
-	public Double getPhoneNumber(){
+	public String getPhoneNumber(){
 		return _phoneNumber;
 	}
 

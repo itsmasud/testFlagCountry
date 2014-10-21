@@ -474,7 +474,7 @@ public class Workorder implements Parcelable {
 	}
 
 	public boolean canComplete() {
-		if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE) {
+		if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE || getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
 			Task[] tasks = getTasks();
 			if (tasks != null) {
 				if (tasks.length > 0) {
