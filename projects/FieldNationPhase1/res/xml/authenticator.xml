@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountPreferences="@xml/pref_account"
-    android:accountType="com.fieldnation"
-    android:icon="@drawable/ic_launcher"
-    android:label="@string/fieldnation_provider_name"
-    android:smallIcon="@drawable/ic_launcher" />
