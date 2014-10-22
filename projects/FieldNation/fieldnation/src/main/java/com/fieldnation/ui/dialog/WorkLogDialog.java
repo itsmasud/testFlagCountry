@@ -185,8 +185,8 @@ public class WorkLogDialog extends Dialog {
 					boolean isOnSiteTime = _onsiteRadioButton.isChecked();
 
 					if(_loggedWork != null ){
-						Integer _workorderHoursId = _loggedWork.getLoggedHoursId();
-						_listener.onOk(_startCalendar, _endCalendar, deviceCount, isOnSiteTime, _workorderHoursId);
+						Integer loggedHoursId = _loggedWork.getLoggedHoursId();
+						_listener.onOk(_startCalendar, _endCalendar, deviceCount, isOnSiteTime, loggedHoursId);
 					} else {
 					_listener.onOk(_startCalendar, _endCalendar, deviceCount, isOnSiteTime);
 				}
@@ -206,7 +206,7 @@ public class WorkLogDialog extends Dialog {
 
 	public interface Listener {
 		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime);
-		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId);
+		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer loggedHoursId);
 
 		public void onCancel();
 	}

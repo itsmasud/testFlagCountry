@@ -1,20 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.text.ParseException;
-import java.util.Calendar;
-
-import com.fieldnation.GlobalState;
-import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
-import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.dialog.WorkLogDialog;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,162 +13,194 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.GlobalState;
+import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.workorder.LoggedWork;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.WorkLogDialog;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
+
+import java.text.ParseException;
+import java.util.Calendar;
+
 public class ScheduleDetailView extends RelativeLayout {
-	private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
+    private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
 
-	private static final int WEB_SUBMIT_WORKLOG = 1;
+    private static final int WEB_SUBMIT_WORKLOG = 1;
 
-	// UI
-	private TextView _hoursTextView;
-	private TextView _dateTextView;
-	private TextView _startTextView;
-	private TextView _endTextView;
-	private ImageView _editImageView;
-	private WorkLogDialog _workLogDialog;
-	
-	// Data
-	private GlobalState _gs;
-	private Workorder _workorder;
-	private FragmentManager _fm;
-	private WorkorderService _service;
+    // UI
+    private TextView _hoursTextView;
+    private TextView _dateTextView;
+    private TextView _startTextView;
+    private TextView _endTextView;
+    private ImageView _editImageView;
+    private WorkLogDialog _workLogDialog;
+
+    // Data
+    private GlobalState _gs;
+    private Workorder _workorder;
+    private FragmentManager _fm;
+    private WorkorderService _service;
+    private LoggedWork _loggedWork;
 
 	/*-*************************************-*/
-	/*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-				Life Cycle				-*/
+    /*-*************************************-*/
 
-	public ScheduleDetailView(Context context) {
-		super(context);
-		init();
-	}
+    public ScheduleDetailView(Context context) {
+        super(context);
+        init();
+    }
 
-	public ScheduleDetailView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init();
-	}
+    public ScheduleDetailView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
 
-	public ScheduleDetailView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init();
-	}
+    public ScheduleDetailView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
+    }
 
-	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_schedule_detail, this);
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.view_schedule_detail, this);
 
-		if (isInEditMode())
-			return;
+        if (isInEditMode())
+            return;
 
-		_hoursTextView = (TextView) findViewById(R.id.hours_textview);
-		_dateTextView = (TextView) findViewById(R.id.date_textview);
-		_startTextView = (TextView) findViewById(R.id.start_textview);
-		_endTextView = (TextView) findViewById(R.id.end_textview);
-		_editImageView = (ImageView) findViewById(R.id.edit_imageview);
-		_editImageView.setOnClickListener(_edit_onClick);
-		
-		_workLogDialog = new WorkLogDialog(getContext());
-	}
+        _hoursTextView = (TextView) findViewById(R.id.hours_textview);
+        _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _startTextView = (TextView) findViewById(R.id.start_textview);
+        _endTextView = (TextView) findViewById(R.id.end_textview);
+        _editImageView = (ImageView) findViewById(R.id.edit_imageview);
+        _editImageView.setOnClickListener(_edit_onClick);
 
-	public void setLoggedWork(LoggedWork loggedWork) {
-		String startDate = loggedWork.getStartDate();
+        _workLogDialog = new WorkLogDialog(getContext());
 
-		String date = "";
-		try {
-			date = misc.formatDateTime(ISO8601.toCalendar(startDate), false);
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-		}
+        populateUi();
+    }
 
-		try {
-			String endDate = loggedWork.getEndDate();
+    public void setFragmentManager(FragmentManager fm) {
+        _fm = fm;
+    }
 
-			endDate = misc.formatDateTime(ISO8601.toCalendar(endDate), false);
+    public void setData(Workorder workorder, LoggedWork loggedWork) {
+        _loggedWork = loggedWork;
+        _workorder = workorder;
+        populateUi();
+    }
 
-			date += " to " + endDate;
+    private void populateUi() {
+        if (_loggedWork == null)
+            return;
+        if (_dateTextView == null)
+            return;
+        if (_startTextView == null)
+            return;
+        if (_endTextView == null)
+            return;
+        if (_hoursTextView == null)
+            return;
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		// _timeTextView.setText(date);
+        String startDate = _loggedWork.getStartDate();
+        Calendar startCal = null;
+        String date;
 
-		// TODO if endtime is not set, then calculate duration if and only if
-		// the current time is still the same day as the start time.
+        try {
+            startCal = ISO8601.toCalendar(startDate);
+            _dateTextView.setText(misc.formatDate(startCal));
+            date = misc.formatTime2(startCal);
+            date += startCal.get(Calendar.AM_PM) == Calendar.AM ? " AM" : " PM";
+            _startTextView.setText(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-		if (loggedWork.getHours() != null) {
-			// _durationTextView.setText(loggedWork.getHours().intValue() +
-			// "hrs");
-		}
-		
-		//set work logged in work log dialog class
-		_workLogDialog.setLoggedWork(loggedWork);
-	}
-		
-	public void setFragmentManager(FragmentManager fm) {
-		_fm = fm;
-	}
-	
-	public void setWorkorder(Workorder workorder) {
-		_workorder = workorder;
-	}
+        try {
+            Calendar endCal = ISO8601.toCalendar(_loggedWork.getEndDate());
+            date = misc.formatTime2(endCal);
+            date += endCal.get(Calendar.AM_PM) == Calendar.AM ? " AM" : " PM";
+            _endTextView.setText(date);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
-	private View.OnClickListener _edit_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			_workLogDialog.show(_fm, "Edit Worklog", false, false, _worklogdialog_onOk);
-		}
-	};
-	
-	private WorkLogDialog.Listener _worklogdialog_onOk = new WorkLogDialog.Listener() {
-		@Override
-		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime) {
-		}
-		
-		@Override
-		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId) {	
-			Log.v(TAG, " onClick="+workorderHoursId+"="+start.getTimeInMillis()+"="+end.getTimeInMillis());
-			//@TODO
-			/*getContext().startService(
-					_service.updateLogTime(WEB_SUBMIT_WORKLOG, workorderHoursId, start.getTimeInMillis(),
+        if (_loggedWork.getHours() != null) {
+            _hoursTextView.setText(String.format("%.2f", _loggedWork.getHours()));
+        }
+    }
+
+    /*-******************************-*/
+    /*-             Events           -*/
+    /*-******************************-*/
+
+    private View.OnClickListener _edit_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _workLogDialog.setLoggedWork(_loggedWork);
+            _workLogDialog.show(_fm, "Edit Worklog", false, false, _worklogdialog_onOk);
+        }
+    };
+
+    private WorkLogDialog.Listener _worklogdialog_onOk = new WorkLogDialog.Listener() {
+        @Override
+        public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime) {
+        }
+
+        @Override
+        public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId) {
+            Log.v(TAG, " onClick=" + workorderHoursId + "=" + start.getTimeInMillis() + "=" + end.getTimeInMillis());
+            //@TODO
+            /*getContext().startService(
+                    _service.updateLogTime(WEB_SUBMIT_WORKLOG, workorderHoursId, start.getTimeInMillis(),
 							end.getTimeInMillis(), false));*/
-		}
+        }
 
-		@Override
-		public void onCancel() {
-		}
-	};
-	
-	private AuthenticationClient _authClient = new AuthenticationClient() {
+        @Override
+        public void onCancel() {
+        }
+    };
 
-		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			_gs.requestAuthenticationDelayed(_authClient);
-		}
+    // Todo move web stuff to parent
+    private AuthenticationClient _authClient = new AuthenticationClient() {
 
-		@Override
-		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
-		}
+        @Override
+        public void onAuthenticationFailed(Exception ex) {
+            _gs.requestAuthenticationDelayed(_authClient);
+        }
 
-		@Override
-		public GlobalState getGlobalState() {
-			return _gs;
-		}
-	};
+        @Override
+        public void onAuthentication(String username, String authToken) {
+            _service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
+        }
 
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+        @Override
+        public GlobalState getGlobalState() {
+            return _gs;
+        }
+    };
 
-		@Override
-		public void onSuccess(int resultCode, Bundle resultData) {
-			if (resultCode == WEB_SUBMIT_WORKLOG) {
-				Toast.makeText(getContext(), "Success!", Toast.LENGTH_LONG).show();
-				_workorder.dispatchOnChange();
-			}
-		}
+    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
 
-		@Override
-		public void onError(int resultCode, Bundle resultData, String errorType) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            if (resultCode == WEB_SUBMIT_WORKLOG) {
+                Toast.makeText(getContext(), "Success!", Toast.LENGTH_LONG).show();
+                _workorder.dispatchOnChange();
+            }
+        }
 
-			Log.v(TAG, "onError()");
-			Log.v(TAG, resultData.getString(WebServiceConstants.KEY_RESPONSE_ERROR));
-		}
-	};
+        @Override
+        public void onError(int resultCode, Bundle resultData, String errorType) {
+
+            Log.v(TAG, "onError()");
+            Log.v(TAG, resultData.getString(WebServiceConstants.KEY_RESPONSE_ERROR));
+        }
+    };
 
 }

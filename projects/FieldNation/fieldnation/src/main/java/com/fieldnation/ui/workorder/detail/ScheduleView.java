@@ -87,7 +87,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 			for (int i = 0; i < loggedWork.length; i++) {
 				ScheduleDetailView v = new ScheduleDetailView(getContext());
 				_workLogLinearLayout.addView(v);
-				v.setLoggedWork(loggedWork[i]);
+                v.setData(_workorder, loggedWork[i]);
 			}
 		}
 	}
@@ -119,6 +119,10 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 		public void onCancel() {
 		}
 	};
+
+    public interface Listener{
+        public void onAddWorklog(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime);
+    }
 
 	private AuthenticationClient _authClient = new AuthenticationClient() {
 

@@ -80,12 +80,9 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 		for (int i = 0; i < logs.length; i++) {
 			LoggedWork log = logs[i];
 			ScheduleDetailView v = new ScheduleDetailView(getContext());
-			v.setLoggedWork(log);
+            v.setFragmentManager(_fm);
+            v.setData(_workorder, log);
 			_logList.addView(v);
-
-			// hook up edit button
-			v.setWorkorder(_workorder);
-			v.setFragmentManager(_fm);
 		}
 	}
 

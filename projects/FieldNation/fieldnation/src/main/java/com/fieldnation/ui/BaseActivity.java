@@ -66,6 +66,9 @@ public abstract class BaseActivity extends ActionBarActivity {
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setDisplayHomeAsUpEnabled(true);
 		actionbar.setHomeButtonEnabled(true);
+        actionbar.setDisplayUseLogoEnabled(true);
+        //actionbar.setDisplayShowHomeEnabled(true);
+
 	}
 
 	@Override
@@ -139,8 +142,11 @@ public abstract class BaseActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
+/*
 			Intent gohome = new Intent(this, MyWorkActivity.class);
 			startActivity(gohome);
+*/
+            onBackPressed();
 			return true;
 		case R.id.action_settings:
 			Intent intent = new Intent(this, SettingsActivity.class);

@@ -17,10 +17,12 @@
         <item name="android:background">@drawable/actionbar_background</item>
         <item name="android:backgroundStacked">@drawable/actionbar_stacked_background</item>
         <item name="android:titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
+        <item name="android:icon">@drawable/ic_launcher</item>
         <item name="background">@drawable/actionbar_background</item>
         <item name="backgroundStacked">@drawable/actionbar_stacked_background</item>
         <item name="titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
         <item name="actionMenuTextColor">#FFFFFFFF</item>
+        <item name="icon">@drawable/ic_launcher</item>
 
         <item name="android:actionMenuTextColor">#FFFFFFFF</item>
     </style>
@@ -46,6 +48,9 @@
 
     <style name="ActionBar.TabViewStyle.FieldNation" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
         <item name="android:background">@drawable/actionbar_tab</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
+
     </style>
 
 </resources>
