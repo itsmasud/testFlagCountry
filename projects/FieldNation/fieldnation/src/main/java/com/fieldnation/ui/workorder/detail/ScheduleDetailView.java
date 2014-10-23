@@ -142,28 +142,29 @@ public class ScheduleDetailView extends RelativeLayout {
     private View.OnClickListener _edit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _workLogDialog.setLoggedWork(_loggedWork);
-            _workLogDialog.show(_fm, "Edit Worklog", false, false, _worklogdialog_onOk);
+            boolean showdevices = false;
+            try {
+                showdevices = _workorder.getPay().isPerDeviceRate();
+            } catch (Exception ex) {
+
+            }
+            _workLogDialog.show(_fm, "Edit Worklog", _loggedWork, showdevices, _worklogdialog_onOk);
         }
     };
 
     private WorkLogDialog.Listener _worklogdialog_onOk = new WorkLogDialog.Listener() {
         @Override
-        public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime) {
-        }
-
-        @Override
-		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId) {
-			//@TODO webservice call
-			getContext().startService(
-                    _service.updateLogTime(WEB_SUBMIT_WORKLOG, workorderHoursId, start.getTimeInMillis(),
-							end.getTimeInMillis(), false));
+        public void onOk(Calendar start, Calendar end, int deviceCount) {
+            getContext().startService(
+                    _service.updateLogTime(WEB_SUBMIT_WORKLOG, _workorder.getWorkorderId(), _loggedWork.getLoggedHoursId(), start.getTimeInMillis(),
+                            end.getTimeInMillis()));
         }
 
         @Override
         public void onCancel() {
         }
     };
+
 
     // Todo move web stuff to parent
     private AuthenticationClient _authClient = new AuthenticationClient() {
@@ -196,7 +197,6 @@ public class ScheduleDetailView extends RelativeLayout {
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
-
             Log.v(TAG, "onError()");
             Log.v(TAG, resultData.getString(WebServiceConstants.KEY_RESPONSE_ERROR));
         }

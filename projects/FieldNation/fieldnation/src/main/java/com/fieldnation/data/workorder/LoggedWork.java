@@ -22,7 +22,7 @@ public class LoggedWork{
 	@Json(name="hoursType")
 	private Integer _hoursType;
 	@Json(name="loggedHoursId")
-	private Integer _loggedHoursId;
+	private Long _loggedHoursId;
 	@Json(name="noOfDevices")
 	private Integer _noOfDevices;
 	@Json(name="startDate")
@@ -64,7 +64,7 @@ public class LoggedWork{
 		return _hoursType;
 	}
 
-	public Integer getLoggedHoursId(){
+	public Long getLoggedHoursId(){
 		return _loggedHoursId;
 	}
 
