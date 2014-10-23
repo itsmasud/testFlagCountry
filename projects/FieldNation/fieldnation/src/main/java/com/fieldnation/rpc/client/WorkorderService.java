@@ -153,7 +153,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 	}
 
 	// time
-	public Intent logTime(int resultCode, long workorderId, long startDate, long endDate) {
+    //Not used any where this two method
+	/*public Intent logTime(int resultCode, long workorderId, long startDate, long endDate) {
 		return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/log", null,
 				"startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate),
 				"application/x-www-form-urlencoded", false);
@@ -166,7 +167,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 				null,
 				"startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&noOfDevices=" + numberOfDevices,
 				"application/x-www-form-urlencoded", false);
-	}
+	}*/
 
 	public Intent logTime(int resultCode, long workorderId, long startDate, long endDate, boolean isOnSiteWork) {
 		return httpPost(

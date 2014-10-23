@@ -137,12 +137,11 @@ public class ScheduleDetailView extends RelativeLayout {
 		}
 		
 		@Override
-		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId) {	
-			Log.v(TAG, " onClick="+workorderHoursId+"="+start.getTimeInMillis()+"="+end.getTimeInMillis());
-			//@TODO
-			/*getContext().startService(
+		public void onOk(Calendar start, Calendar end, int deviceCount, boolean isOnSiteTime, Integer workorderHoursId) {
+			//@TODO webservice call
+			getContext().startService(
 					_service.updateLogTime(WEB_SUBMIT_WORKLOG, workorderHoursId, start.getTimeInMillis(),
-							end.getTimeInMillis(), false));*/
+							end.getTimeInMillis(), false));
 		}
 
 		@Override
