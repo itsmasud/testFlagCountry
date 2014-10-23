@@ -13,6 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.utils.misc;
 
 public class ActionBarTopView extends RelativeLayout {
     private static final String TAG = "ui.workorder.detail.ActionBarTopView";
@@ -134,9 +135,10 @@ public class ActionBarTopView extends RelativeLayout {
 
         if (_workorder.canComplete()) {
             _completeButton.setVisibility(View.VISIBLE);
-        }
-        if (_workorder.areTasksComplete() && substatus != WorkorderSubstatus.CHECKEDIN) {
-            _closingNotesButton.setVisibility(View.VISIBLE);
+        } else {
+            if (_workorder.areTasksComplete() && substatus != WorkorderSubstatus.CHECKEDIN && misc.isEmptyOrNull(_workorder.getClosingNotes())) {
+                _closingNotesButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 
