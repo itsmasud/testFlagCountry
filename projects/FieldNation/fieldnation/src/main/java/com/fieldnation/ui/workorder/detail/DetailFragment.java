@@ -16,6 +16,7 @@ import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -39,6 +40,7 @@ public class DetailFragment extends WorkorderFragment {
     private ExpectedPaymentView _exView;
     private ExpiresDialog _expiresDialog;
     private ConfirmDialog _confirmDialog;
+    private ClosingNotesDialog _closingDialog;
 
     // Data
     private Workorder _workorder;
@@ -83,13 +85,14 @@ public class DetailFragment extends WorkorderFragment {
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
-        _expiresDialog = new ExpiresDialog(getActivity());
+        _expiresDialog = new ExpiresDialog(view.getContext());
+        _closingDialog = new ClosingNotesDialog(view.getContext());
+        _confirmDialog = new ConfirmDialog(view.getContext());
 
         if (_workorder != null) {
             setWorkorder(_workorder);
         }
 
-        _confirmDialog = new ConfirmDialog(getActivity());
     }
 
 	/*-*************************************-*/
@@ -140,6 +143,16 @@ public class DetailFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+        @Override
+        public void onOk(String message) {
+            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
 
     private TaskSumView.Listener _taskSum_listener = new TaskSumView.Listener() {
         @Override
@@ -199,6 +212,11 @@ public class DetailFragment extends WorkorderFragment {
                         public void onCancel() {
                         }
                     });
+        }
+
+        @Override
+        public void onEnterClosingNotes() {
+            _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
         }
     };
 

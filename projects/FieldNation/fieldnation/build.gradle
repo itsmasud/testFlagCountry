@@ -1,5 +1,7 @@
 apply plugin: 'android'
 
+
+
 android {
     compileSdkVersion 21
     buildToolsVersion '21.0.1'
@@ -22,7 +24,20 @@ android {
     }
     compileOptions {
     }
+
+    productFlavors {
+        dev {
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
+        lipo {
+            buildConfigField "boolean", "USE_HTTPS", "false"
+        }
+        prod {
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
+    }
 }
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

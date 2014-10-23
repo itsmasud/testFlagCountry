@@ -473,6 +473,11 @@ public class TasksFragment extends WorkorderFragment {
                         }
                     });
         }
+
+        @Override
+        public void onEnterClosingNotes() {
+            _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+        }
     };
 
     private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {

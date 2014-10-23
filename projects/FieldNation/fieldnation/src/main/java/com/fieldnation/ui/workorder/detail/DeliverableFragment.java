@@ -45,6 +45,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.dialog.AppPickerDialog;
+import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -80,6 +81,7 @@ public class DeliverableFragment extends WorkorderFragment {
 	private TextView _noDocsTextView;
 	private ActionBarTopView _topBar;
 	private ConfirmDialog _confirmDialog;
+    private ClosingNotesDialog _closingDialog;
 
 	// Data
 	private GlobalState _gs;
@@ -128,7 +130,7 @@ public class DeliverableFragment extends WorkorderFragment {
 		_topBar.setListener(_actionbartop_listener);
 
 		_confirmDialog = new ConfirmDialog(view.getContext());
-
+        _closingDialog = new ClosingNotesDialog(view.getContext());
 		checkMedia();
 
 		populateUi();
@@ -402,6 +404,16 @@ public class DeliverableFragment extends WorkorderFragment {
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
+    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+        @Override
+        public void onOk(String message) {
+            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
 
 	private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
 		@Override
@@ -455,7 +467,12 @@ public class DeliverableFragment extends WorkorderFragment {
 						}
 					});
 		}
-	};
+
+        @Override
+        public void onEnterClosingNotes() {
+            _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+        }
+    };
 
 	private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
 

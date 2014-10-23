@@ -1,19 +1,18 @@
 package com.fieldnation.data.workorder;
 
-import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.view.View;
 
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
+
+import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class Workorder implements Parcelable {
 
@@ -433,7 +432,7 @@ public class Workorder implements Parcelable {
 
     /*-*********************************************-*/
     /*-				Not Generated Code				-*/
-	/*-*********************************************-*/
+    /*-*********************************************-*/
     public static final int BUTTON_ACTION_NONE = 0;
     public static final int BUTTON_ACTION_REQUEST = 1;
     public static final int BUTTON_ACTION_ASSIGNMENT = 2;
@@ -474,6 +473,22 @@ public class Workorder implements Parcelable {
         return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE;
     }
 
+    public boolean areTasksComplete() {
+        Task[] tasks = getTasks();
+        if (tasks == null || tasks.length == 0)
+            return true;
+
+        boolean workToDo = false;
+        for (int i = 0; i < tasks.length; i++) {
+            if (!tasks[i].getCompleted()) {
+                workToDo = true;
+                break;
+            }
+        }
+
+        return !workToDo;
+    }
+
     public boolean canComplete() {
         if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE || getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
             if (misc.isEmptyOrNull(getClosingNotes())) {
@@ -482,26 +497,8 @@ public class Workorder implements Parcelable {
             if (getStatus().getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN) {
                 return false;
             }
-            Task[] tasks = getTasks();
-            if (tasks != null) {
-                if (tasks.length > 0) {
-                    boolean workToDo = false;
-                    for (int i = 0; i < tasks.length; i++) {
-                        if (!tasks[i].getCompleted()) {
-                            workToDo = true;
-                            break;
-                        }
-                    }
 
-                    if (!workToDo) {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            } else {
-                return true;
-            }
+            return areTasksComplete();
         }
         return false;
     }

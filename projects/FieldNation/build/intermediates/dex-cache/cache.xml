@@ -44,17 +44,17 @@
         revision="21.0.1"
         sha1="686344a780033e4ba22b926cd225f8d4941247e6"/>
     <item
-        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-874b4885c4b19495d9c954f7680d3ba7f7eb1be8.jar"
-        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
-        jumboMode="false"
-        revision="21.0.1"
-        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
-    <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\debug\libUtils-72024576d9a0b8ec25f7bdb07b4259d4a706dde5.jar"
         jar="D:\dev\fn\projects\FieldNation\libUtils\build\libs\libUtils.jar"
         jumboMode="false"
         revision="21.0.1"
         sha1="e9d50ad399f1182af1674f7fbfae0e5b829a0b47"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-874b4885c4b19495d9c954f7680d3ba7f7eb1be8.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
     <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\debug\classes-48306ee339be4e0e6de715c528aa76c3c4af0103.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libUndobar\unspecified\classes.jar"
