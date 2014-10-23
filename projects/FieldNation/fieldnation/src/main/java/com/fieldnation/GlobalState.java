@@ -31,7 +31,7 @@ public class GlobalState extends Application {
 
 	public GlobalState() {
 		super();
-		Ws.USE_HTTPS = true;
+		Ws.USE_HTTPS = false;
 	}
 
 	@Override
