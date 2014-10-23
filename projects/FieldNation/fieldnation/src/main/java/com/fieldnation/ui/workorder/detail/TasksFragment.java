@@ -408,7 +408,7 @@ public class TasksFragment extends WorkorderFragment {
 
     /*-*************************************-*/
     /*-				UI Events				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
 
