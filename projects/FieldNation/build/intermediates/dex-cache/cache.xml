@@ -6,7 +6,7 @@
         jar="D:\dev\fn\projects\FieldNation\libUtils\build\libs\libUtils.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="26f65f75d339d76a4856c08ad1a64a499382783b"/>
+        sha1="b5a83b5d96ec18cff5c5034fc32280dff2614da1"/>
     <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-eb2c1ee3a0e248d5de892345863644d01b6a812a.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
