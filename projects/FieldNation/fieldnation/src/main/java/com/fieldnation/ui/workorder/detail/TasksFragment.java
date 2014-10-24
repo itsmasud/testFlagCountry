@@ -338,12 +338,11 @@ public class TasksFragment extends WorkorderFragment {
                 // startLoading();
                 //_uploadingSlotView.addUploading(c.getString(nameIndex));
 
-/*
+
                 _gs.startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _uploadingSlot.getSlotId(), c.getString(nameIndex),
-                        tempfile, getNotificationIntent()));
-*/
+                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), _currentTask.getSlotId(),
+                        c.getString(nameIndex), tempfile, getNotificationIntent()));
+
                 c.close();
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -389,10 +388,10 @@ public class TasksFragment extends WorkorderFragment {
                     // send data to service
                     // startLoading();
                     //_uploadingSlotView.addUploading(c.getString(nameIndex));
-//                    _gs.startService(_service.uploadDeliverable(
-//                            WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-//                            _uploadingSlot.getSlotId(), c.getString(nameIndex),
-//                            tempfile, getNotificationIntent()));
+                    _gs.startService(_service.uploadDeliverable(
+                            WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                            _currentTask.getSlotId(), c.getString(nameIndex),
+                            tempfile, getNotificationIntent()));
 
                     c.close();
                 } catch (Exception ex) {
@@ -622,10 +621,12 @@ public class TasksFragment extends WorkorderFragment {
                     break;
                 }
                 case UPLOAD_FILE: {
+                    _currentTask = task;
                     _appDialog.show();
                     break;
                 }
                 case UPLOAD_PICTURE: {
+                    _currentTask = task;
                     _appDialog.show();
                     break;
                 }
@@ -735,8 +736,8 @@ public class TasksFragment extends WorkorderFragment {
     };
 
     /*-*************************************-*/
-	/*-				WEB Events				-*/
-	/*-*************************************-*/
+    /*-				WEB Events				-*/
+    /*-*************************************-*/
 
     private AuthenticationClient _authClient = new AuthenticationClient() {
         @Override

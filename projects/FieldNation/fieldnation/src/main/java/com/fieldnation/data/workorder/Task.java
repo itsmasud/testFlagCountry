@@ -63,6 +63,8 @@ public class Task implements Parcelable {
     private String _type;
     @Json(name = "typeId")
     private Integer _typeId;
+    @Json(name = "workorderUploadSlotId")
+    private Long _workorderUploadSlotId;
     @Json(name = "workorderTaskId")
     private Integer _workorderTaskId;
 
@@ -142,6 +144,9 @@ public class Task implements Parcelable {
     }
 
     public Long getSlotId() {
+        if (_workorderUploadSlotId != null)
+            return _workorderUploadSlotId;
+
         return _slotId;
     }
 
@@ -202,7 +207,7 @@ public class Task implements Parcelable {
 
     /*-*********************************************-*/
     /*-				Not Generated Code				-*/
-	/*-*********************************************-*/
+    /*-*********************************************-*/
     public TaskType getTaskType() {
         return TaskType.fromId(_typeId);
     }
