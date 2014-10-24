@@ -622,17 +622,11 @@ public class TasksFragment extends WorkorderFragment {
                     break;
                 }
                 case UPLOAD_FILE: {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(DeliverableFragment.PR_TASK_ID, task.getTaskId());
-                    bundle.putString(DeliverableFragment.PR_ACTION, DeliverableFragment.PR_UPLOAD_FILE);
-                    pageRequestListener.requestPage(DeliverableFragment.class, bundle);
+                    _appDialog.show();
                     break;
                 }
                 case UPLOAD_PICTURE: {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(DeliverableFragment.PR_TASK_ID, task.getTaskId());
-                    bundle.putString(DeliverableFragment.PR_ACTION, DeliverableFragment.PR_UPLOAD_PICTURE);
-                    pageRequestListener.requestPage(DeliverableFragment.class, bundle);
+                    _appDialog.show();
                     break;
                 }
                 case UNIQUE_TASK:
