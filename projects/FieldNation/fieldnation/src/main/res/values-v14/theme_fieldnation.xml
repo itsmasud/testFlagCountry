@@ -2,24 +2,24 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Theme.FieldNation" parent="@style/Theme.AppCompat.Light">
-        <item name="actionBarStyle">@style/ActionBar.Solid.FieldNation</item>
-        <item name="actionBarTabTextStyle">@style/ActionBar.TabTextStyle.FieldNation</item>
-        <item name="actionBarTabStyle">@style/ActionBar.TabViewStyle.FieldNation</item>
-        <item name="actionMenuTextColor">#FFFFFFFF</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.FieldNation</item>
+        <item name="android:actionBarTabTextStyle">@style/ActionBar.TabTextStyle.FieldNation</item>
+        <item name="android:actionBarTabStyle">@style/ActionBar.TabViewStyle.FieldNation</item>
+        <item name="android:actionMenuTextColor">#FFFFFFFF</item>
     </style>
 
     <style name="ActionBar.Solid.FieldNation" parent="@style/Widget.AppCompat.ActionBar.Solid">
-        <item name="background">@drawable/actionbar_background</item>
-        <item name="backgroundStacked">@drawable/actionbar_stacked_background</item>
-        <item name="titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
-        <item name="actionMenuTextColor">#FFFFFFFF</item>
+        <item name="android:background">@drawable/actionbar_background</item>
+        <item name="android:backgroundStacked">@drawable/actionbar_stacked_background</item>
+        <item name="android:titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
+        <item name="android:actionMenuTextColor">#FFFFFFFF</item>
     </style>
 
     <style name="ActionBar.Transparent.FieldNation" parent="@style/Widget.AppCompat.Light.ActionBar">
-        <item name="background">@drawable/actionbar_background</item>
-        <item name="backgroundStacked">@drawable/actionbar_stacked_background</item>
-        <item name="titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
-        <item name="actionMenuTextColor">#FFFFFFFF</item>
+        <item name="android:background">@drawable/actionbar_background</item>
+        <item name="android:backgroundStacked">@drawable/actionbar_stacked_background</item>
+        <item name="android:titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>
+        <item name="android:actionMenuTextColor">#FFFFFFFF</item>
     </style>
 
     <style name="ActionBar.TextStyle.FieldNation" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
