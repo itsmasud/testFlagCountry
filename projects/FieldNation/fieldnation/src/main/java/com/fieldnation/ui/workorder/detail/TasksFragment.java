@@ -329,21 +329,21 @@ public class TasksFragment extends WorkorderFragment {
                 out.close();
                 in.close();
 
-                Cursor c = _gs.getContentResolver().query(uri, null, null,
-                        null, null);
-                int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                c.moveToFirst();
-
-                // send to the service
-                // startLoading();
-                //_uploadingSlotView.addUploading(c.getString(nameIndex));
-
+                String filename = "";
+                if (uri.getScheme().equals("file")) {
+                    filename = uri.getLastPathSegment();
+                } else {
+                    Cursor c = _gs.getContentResolver().query(uri, null, null,
+                            null, null);
+                    int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    c.moveToFirst();
+                    filename = c.getString(nameIndex);
+                    c.close();
+                }
 
                 _gs.startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        c.getString(nameIndex), tempfile, getNotificationIntent()));
-
-                c.close();
+                        filename, tempfile, getNotificationIntent()));
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
