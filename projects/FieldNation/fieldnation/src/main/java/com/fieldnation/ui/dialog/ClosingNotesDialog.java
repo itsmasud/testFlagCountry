@@ -20,9 +20,6 @@ import com.fieldnation.utils.misc;
 public class ClosingNotesDialog extends DialogFragment {
     private static final String TAG = "ui.workorder.detail.ClosingNotesDialog";
 
-    // saved state
-    private static final String STATE_RECEIVER = "com.fieldnation.ui.dialog.ClosingNotesDialog:STATE_RECEIVER";
-
     // UI
     private EditText _editText;
     private Button _okButton;
@@ -38,9 +35,6 @@ public class ClosingNotesDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
-        Log.v(TAG, "Closing OBJ: " + this.toString());
-
         View v = inflater.inflate(R.layout.dialog_closing_notes, container, false);
 
         _editText = (EditText) v.findViewById(R.id.notes_edittext);
@@ -50,7 +44,7 @@ public class ClosingNotesDialog extends DialogFragment {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        //setTitle(R.string.closing_notes);
+        getDialog().setTitle(R.string.closing_notes);
 
         populateUi();
 

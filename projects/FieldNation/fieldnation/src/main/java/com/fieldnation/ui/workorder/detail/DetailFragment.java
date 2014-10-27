@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.fieldnation.utils.ISO8601;
 
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.List;
 
 public class DetailFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DetailFragment";
@@ -87,8 +89,23 @@ public class DetailFragment extends WorkorderFragment {
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
+        List<Fragment> frags = getFragmentManager().getFragments();
+        if (frags != null) {
+            for (int i = 0; i < frags.size(); i++) {
+                Fragment frag = frags.get(i);
+                if (frag instanceof ClosingNotesDialog && frag.getTag().equals(TAG)) {
+                    _closingDialog = (ClosingNotesDialog) frag;
+                    _closingDialog.setListener(_closingNotes_onOk);
+                    break;
+                }
+            }
+        }
+
+        if (_closingDialog == null) {
+            _closingDialog = new ClosingNotesDialog();
+        }
+
         _expiresDialog = new ExpiresDialog(view.getContext());
-        _closingDialog = new ClosingNotesDialog();
         _confirmDialog = new ConfirmDialog(view.getContext());
 
         if (_workorder != null) {
@@ -98,8 +115,8 @@ public class DetailFragment extends WorkorderFragment {
     }
 
 	/*-*************************************-*/
-	/*-				Mutators				-*/
-	/*-*************************************-*/
+    /*-				Mutators				-*/
+    /*-*************************************-*/
 
     @Override
     public void update() {
@@ -145,16 +162,16 @@ public class DetailFragment extends WorkorderFragment {
     /*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-//    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
-//        @Override
-//        public void onOk(String message) {
-//            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
-//        }
-//
-//        @Override
-//        public void onCancel() {
-//        }
-//    };
+    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+        @Override
+        public void onOk(String message) {
+            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
 
     private TaskSumView.Listener _taskSum_listener = new TaskSumView.Listener() {
         @Override
@@ -219,7 +236,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onEnterClosingNotes() {
             if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                //_closingDialog.show(getFragmentManager(), "", _workorder.getClosingNotes(), _closingNotes_onOk);
+                _closingDialog.show(getFragmentManager(), TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
             }
         }
     };
@@ -230,8 +247,8 @@ public class DetailFragment extends WorkorderFragment {
         public void onDeleteExpense(Workorder workorder,
                                     AdditionalExpense expense) {
             getActivity().startService(_service.deleteExpense(WEB_CHANGE,
-                                    _workorder.getWorkorderId(),
-                                    expense.getExpenseId()));
+                    _workorder.getWorkorderId(),
+                    expense.getExpenseId()));
         }
 
         @Override

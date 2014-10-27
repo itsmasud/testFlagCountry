@@ -135,6 +135,7 @@ public class TasksFragment extends WorkorderFragment {
         _separators[1] = view.findViewById(R.id.sep2);
         _separators[2] = view.findViewById(R.id.sep3);
 
+        // re-wire dialogs
         List<Fragment> frags = getFragmentManager().getFragments();
         if (frags != null) {
             for (int i = 0; i < frags.size(); i++) {
@@ -142,6 +143,7 @@ public class TasksFragment extends WorkorderFragment {
                 if (frag instanceof ClosingNotesDialog && frag.getTag().equals(TAG)) {
                     _closingDialog = (ClosingNotesDialog) frag;
                     _closingDialog.setListener(_closingNotes_onOk);
+                    break;
                 }
             }
         }
@@ -673,22 +675,6 @@ public class TasksFragment extends WorkorderFragment {
         public void onCancel() {
         }
     };
-
-//    private MyClosingNotesResultReceiver _closingNotesDialog_onOk;
-//
-//    private class MyClosingNotesResultReceiver extends ResultReceiver {
-//        public MyClosingNotesResultReceiver(Handler handler) {
-//            super(handler);
-//        }
-//
-//        @Override
-//        protected void onReceiveResult(int resultCode, Bundle resultData) {
-//            getActivity().startService(
-//                    _service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), resultData.getString("MESSAGE")));
-//
-//            super.onReceiveResult(resultCode, resultData);
-//        }
-//    }
 
     private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
         @Override

@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
+import java.util.List;
 
 public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DeliverableFragment";
@@ -129,8 +131,22 @@ public class DeliverableFragment extends WorkorderFragment {
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
 
+        List<Fragment> frags = getFragmentManager().getFragments();
+        if (frags != null) {
+            for (int i = 0; i < frags.size(); i++) {
+                Fragment frag = frags.get(i);
+                if (frag instanceof ClosingNotesDialog && frag.getTag().equals(TAG)) {
+                    _closingDialog = (ClosingNotesDialog) frag;
+                    _closingDialog.setListener(_closingNotes_onOk);
+                    break;
+                }
+            }
+        }
+        if (_closingDialog == null) {
+            _closingDialog = new ClosingNotesDialog();
+        }
+
         _confirmDialog = new ConfirmDialog(view.getContext());
-        _closingDialog = new ClosingNotesDialog();
         checkMedia();
 
         populateUi();
@@ -410,18 +426,18 @@ public class DeliverableFragment extends WorkorderFragment {
     ;
 
     /*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
-//    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
-//        @Override
-//        public void onOk(String message) {
-//            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
-//        }
-//
-//        @Override
-//        public void onCancel() {
-//        }
-//    };
+    /*-				Events				-*/
+    /*-*********************************-*/
+    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+        @Override
+        public void onOk(String message) {
+            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
 
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
@@ -478,7 +494,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onEnterClosingNotes() {
-//            _closingDialog.show(getFragmentManager(), "", _workorder.getClosingNotes(), _closingNotes_onOk);
+            _closingDialog.show(getFragmentManager(), TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
         }
     };
 
