@@ -87,9 +87,9 @@ public class ProgressNode extends LinearLayout {
 	public void setLabel(String value) {
 		_labelTextView.setText(value);
 	}
-	
-	public void setOpacity() {
-		_linearlayoutWoProgressBar.setAlpha(.5f);
+
+	public void setBackground(int resId) {
+        _iconImageView.setBackgroundResource(resId);
 	}
-	
+
 }

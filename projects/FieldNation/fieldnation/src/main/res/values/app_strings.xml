@@ -167,10 +167,15 @@
     <string name="no_data">No Data Available</string>
 
     <!-- my work categories -->
+    <string name="routed">Routed</string>
     <string name="my_work_category1">In Progress</string>
     <string name="my_work_category2">Assigned</string>
     <string name="my_work_category3">Completed</string>
     <string name="my_work_category4">Canceled</string>
+    <string name="my_work_category5">In Review</string>
+    <string name="my_work_category6">Approved</string>
+    <string name="my_work_category7">Paid</string>
+
 
     <!-- market categories -->
     <string name="market_requested">Requested</string>
