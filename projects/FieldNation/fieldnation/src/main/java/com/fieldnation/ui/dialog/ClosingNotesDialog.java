@@ -1,105 +1,126 @@
 package com.fieldnation.ui.dialog;
 
-import com.fieldnation.R;
-import com.fieldnation.utils.misc;
-
-import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class ClosingNotesDialog extends Dialog {
-	private static final String TAG = "ui.workorder.detail.ClosingNotesDialog";
+import com.fieldnation.R;
+import com.fieldnation.utils.misc;
 
-	// UI
-	private EditText _editText;
-	private Button _okButton;
-	private Button _cancelButton;
+public class ClosingNotesDialog extends DialogFragment {
+    private static final String TAG = "ui.workorder.detail.ClosingNotesDialog";
 
-	// Data
-	private Listener _listener;
+    // saved state
+    private static final String STATE_RECEIVER = "com.fieldnation.ui.dialog.ClosingNotesDialog:STATE_RECEIVER";
 
-	/*-*****************************-*/
-	/*-			Life Cycle			-*/
-	/*-*****************************-*/
-	public ClosingNotesDialog(Context context, int theme) {
-		super(context, theme);
-		init();
-	}
+    // UI
+    private EditText _editText;
+    private Button _okButton;
+    private Button _cancelButton;
 
-	protected ClosingNotesDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
-		super(context, cancelable, cancelListener);
-		init();
-	}
+    // Data
+    private String _notes;
+    private Listener _listener;
 
-	public ClosingNotesDialog(Context context) {
-		super(context);
-		init();
-	}
+    /*-*****************************-*/
+    /*-			Life Cycle			-*/
+    /*-*****************************-*/
 
-	private void init() {
-		setContentView(R.layout.dialog_closing_notes);
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
+        Log.v(TAG, "Closing OBJ: " + this.toString());
 
-		_editText = (EditText) findViewById(R.id.notes_edittext);
-		_editText.setOnEditorActionListener(_onEditor_listener);
-		_okButton = (Button) findViewById(R.id.ok_button);
-		_okButton.setOnClickListener(_ok_onClick);
-		_cancelButton = (Button) findViewById(R.id.cancel_button);
-		_cancelButton.setOnClickListener(_cancel_onClick);
+        View v = inflater.inflate(R.layout.dialog_closing_notes, container, false);
 
-		setTitle(R.string.closing_notes);
-	}
+        _editText = (EditText) v.findViewById(R.id.notes_edittext);
+        _editText.setOnEditorActionListener(_onEditor_listener);
+        _okButton = (Button) v.findViewById(R.id.ok_button);
+        _okButton.setOnClickListener(_ok_onClick);
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _cancelButton.setOnClickListener(_cancel_onClick);
 
-	public void show(String notes, Listener listener) {
-		if (!misc.isEmptyOrNull(notes)) {
-			_editText.setText(notes);
-		}
-		_listener = listener;
-		show();
-	}
+        //setTitle(R.string.closing_notes);
 
-	/*-*************************-*/
-	/*-			Events			-*/
-	/*-*************************-*/
-	private TextView.OnEditorActionListener _onEditor_listener = new TextView.OnEditorActionListener() {
+        populateUi();
 
-		@Override
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			boolean handled = false;
-			if (actionId == EditorInfo.IME_ACTION_DONE) {
-				_ok_onClick.onClick(null);
-				handled = true;
-			}
-			return handled;
-		}
-	};
+        return v;
+    }
 
-	private View.OnClickListener _ok_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			dismiss();
-			if (_listener != null) {
-				_listener.onOk(_editText.getText().toString());
-			}
-		}
-	};
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
 
-	private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			dismiss();
-			if (_listener != null)
-				_listener.onCancel();
-		}
-	};
+    public void show(FragmentManager fm, String tag, String notes, Listener listener) {
+        if (!misc.isEmptyOrNull(notes)) {
+            _notes = notes;
+            populateUi();
+        }
+        _listener = listener;
+        show(fm, tag);
+    }
 
-	public interface Listener {
-		public void onOk(String message);
+    private void populateUi() {
+        if (_editText == null)
+            return;
+        if (_notes == null)
+            return;
 
-		public void onCancel();
-	}
+        if (!misc.isEmptyOrNull(_notes))
+            _editText.setText(_notes);
+    }
+
+    /*-*************************-*/
+    /*-			Events			-*/
+    /*-*************************-*/
+    private TextView.OnEditorActionListener _onEditor_listener = new TextView.OnEditorActionListener() {
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                _ok_onClick.onClick(null);
+                handled = true;
+            }
+            return handled;
+        }
+    };
+
+    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.v(TAG, "Closing OBJ: " + ClosingNotesDialog.this.toString());
+            dismiss();
+            if (_listener != null) {
+                _listener.onOk(_editText.getText().toString());
+            }
+        }
+    };
+
+    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            if (_listener != null) {
+                _listener.onCancel();
+            }
+        }
+    };
+
+    public interface Listener {
+        public void onOk(String message);
+
+        public void onCancel();
+
+    }
 }

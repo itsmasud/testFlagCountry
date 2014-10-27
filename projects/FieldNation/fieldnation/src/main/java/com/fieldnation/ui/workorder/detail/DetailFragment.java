@@ -47,11 +47,11 @@ public class DetailFragment extends WorkorderFragment {
     private Workorder _workorder;
     private GlobalState _gs;
     private WorkorderService _service;
-    private Integer[] woStatus = { 5, 6, 7 }; //work order status approved, paid, canceled
+    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,7 +88,7 @@ public class DetailFragment extends WorkorderFragment {
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
         _expiresDialog = new ExpiresDialog(view.getContext());
-        _closingDialog = new ClosingNotesDialog(view.getContext());
+        _closingDialog = new ClosingNotesDialog();
         _confirmDialog = new ConfirmDialog(view.getContext());
 
         if (_workorder != null) {
@@ -142,19 +142,19 @@ public class DetailFragment extends WorkorderFragment {
         }
     }
 
-	/*-*********************************-*/
+    /*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
-        @Override
-        public void onOk(String message) {
-            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
+//    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+//        @Override
+//        public void onOk(String message) {
+//            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
+//        }
+//
+//        @Override
+//        public void onCancel() {
+//        }
+//    };
 
     private TaskSumView.Listener _taskSum_listener = new TaskSumView.Listener() {
         @Override
@@ -219,7 +219,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onEnterClosingNotes() {
             if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+                //_closingDialog.show(getFragmentManager(), "", _workorder.getClosingNotes(), _closingNotes_onOk);
             }
         }
     };
@@ -229,9 +229,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onDeleteExpense(Workorder workorder,
                                     AdditionalExpense expense) {
-            getActivity()
-                    .startService(
-                            _service.deleteExpense(WEB_CHANGE,
+            getActivity().startService(_service.deleteExpense(WEB_CHANGE,
                                     _workorder.getWorkorderId(),
                                     expense.getExpenseId()));
         }

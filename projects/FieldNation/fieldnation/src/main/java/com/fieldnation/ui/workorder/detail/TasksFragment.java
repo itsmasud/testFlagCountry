@@ -16,6 +16,7 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,13 +73,12 @@ public class TasksFragment extends WorkorderFragment {
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
 
-
     // saved state keys
-    private static final String WORKORDER = "WORKORDER";
-    private static final String AUTHTOKEN = "AUTHTOKEN";
-    private static final String USERNAME = "USERNAME";
-    private static final String TASKS = "TASKS";
-    private static final String CURRENT_TASK = "CURRENT_TASK";
+    private static final String STATE_WORKORDER = "ui.workorder.detail.TasksFragment:STATE_WORKORDER";
+    private static final String STATE_AUTHTOKEN = "ui.workorder.detail.TasksFragment:STATE_AUTHTOKEN";
+    private static final String STATE_USERNAME = "ui.workorder.detail.TasksFragment:STATE_USERNAME";
+    private static final String STATE_TASKS = "ui.workorder.detail.TasksFragment:STATE_TASKS";
+    private static final String STATE_CURRENT_TASK = "ui.workorder.detail.TasksFragment:STATE_CURRENT_TASK";
 
     // UI
     private ShipmentView _shipments;
@@ -115,6 +115,7 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.v(TAG, "TasksFragment onViewCreated");
 
         _gs = (GlobalState) view.getContext().getApplicationContext();
 
@@ -124,6 +125,7 @@ public class TasksFragment extends WorkorderFragment {
         _timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
         _timeLogged.setFragmentManager(getFragmentManager());
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
+        _closingNotes.setListener(_clockingNotesView_listener);
         _topBar = (ActionBarTopView) view.findViewById(R.id.topaction_view);
         _topBar.setListener(_actionBarTop_listener);
 
@@ -133,7 +135,22 @@ public class TasksFragment extends WorkorderFragment {
         _separators[1] = view.findViewById(R.id.sep2);
         _separators[2] = view.findViewById(R.id.sep3);
 
-        _closingDialog = new ClosingNotesDialog(view.getContext());
+        List<Fragment> frags = getFragmentManager().getFragments();
+        if (frags != null) {
+            for (int i = 0; i < frags.size(); i++) {
+                Fragment frag = frags.get(i);
+                if (frag instanceof ClosingNotesDialog && frag.getTag().equals(TAG)) {
+                    _closingDialog = (ClosingNotesDialog) frag;
+                    _closingDialog.setListener(_closingNotes_onOk);
+                }
+            }
+        }
+
+        if (_closingDialog == null) {
+            _closingDialog = new ClosingNotesDialog();
+        }
+
+        Log.v(TAG, "Closing OBJ: " + _closingDialog.toString());
         _taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
         _shipmentAddDialog = new ShipmentAddDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
@@ -141,24 +158,24 @@ public class TasksFragment extends WorkorderFragment {
         if (savedInstanceState == null) {
             _gs.requestAuthentication(_authClient);
         } else {
-            if (savedInstanceState.containsKey(WORKORDER)) {
-                _workorder = savedInstanceState.getParcelable(WORKORDER);
+            if (savedInstanceState.containsKey(STATE_WORKORDER)) {
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
-            if (savedInstanceState.containsKey(AUTHTOKEN)) {
-                _authToken = savedInstanceState.getString(AUTHTOKEN);
+            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
+                _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
             }
-            if (savedInstanceState.containsKey(USERNAME)) {
-                _username = savedInstanceState.getString(USERNAME);
+            if (savedInstanceState.containsKey(STATE_USERNAME)) {
+                _username = savedInstanceState.getString(STATE_USERNAME);
             }
-            if (savedInstanceState.containsKey(TASKS)) {
-                Task[] tasks = (Task[]) savedInstanceState.getParcelableArray(TASKS);
+            if (savedInstanceState.containsKey(STATE_TASKS)) {
+                Task[] tasks = (Task[]) savedInstanceState.getParcelableArray(STATE_TASKS);
                 _tasks = new LinkedList<Task>();
                 for (int i = 0; i < tasks.length; i++) {
                     _tasks.add(tasks[i]);
                 }
             }
-            if (savedInstanceState.containsKey(CURRENT_TASK)) {
-                _currentTask = savedInstanceState.getParcelable(CURRENT_TASK);
+            if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
+                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
             }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
@@ -166,7 +183,6 @@ public class TasksFragment extends WorkorderFragment {
                 _gs.requestAuthentication(_authClient);
             }
         }
-
         configureUi();
     }
 
@@ -194,24 +210,24 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (_authToken != null) {
-            outState.putString(AUTHTOKEN, _authToken);
+            outState.putString(STATE_AUTHTOKEN, _authToken);
         }
         if (_username != null) {
-            outState.putString(USERNAME, _username);
+            outState.putString(STATE_USERNAME, _username);
         }
         if (_workorder != null) {
-            outState.putParcelable(WORKORDER, _workorder);
+            outState.putParcelable(STATE_WORKORDER, _workorder);
         }
         if (_tasks != null && _tasks.size() > 0) {
             Task[] tasks = new Task[_tasks.size()];
             for (int i = 0; i < _tasks.size(); i++) {
                 tasks[i] = _tasks.get(i);
             }
-            outState.putParcelableArray("TASKS", tasks);
+            outState.putParcelableArray(STATE_TASKS, tasks);
         }
 
         if (_currentTask != null) {
-            outState.putParcelable("CURRENT_TASK", _currentTask);
+            outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
         }
 
         super.onSaveInstanceState(outState);
@@ -403,12 +419,13 @@ public class TasksFragment extends WorkorderFragment {
         }
     }
 
-    ;
+    private void showClosingNotesDialog() {
+        _closingDialog.show(getFragmentManager(), TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+    }
 
     /*-*************************************-*/
     /*-				UI Events				-*/
     /*-*************************************-*/
-
     private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
 
         @Override
@@ -475,7 +492,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onEnterClosingNotes() {
-            _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+            showClosingNotesDialog();
         }
     };
 
@@ -509,7 +526,7 @@ public class TasksFragment extends WorkorderFragment {
                     getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                     break;
                 case CLOSE_OUT_NOTES:
-                    _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+                    showClosingNotesDialog();
                     break;
                 case CONFIRM_ASSIGNMENT:
                     _confirmDialog.show(getFragmentManager(), _workorder.getSchedule(), _confirmListener);
@@ -521,11 +538,12 @@ public class TasksFragment extends WorkorderFragment {
                     break;
                 case DOWNLOAD:
                     Integer _identifier = task.getIdentifier();
+                    Log.v(TAG, "_identifier: " + _identifier);
                     Document[] docs = _workorder.getDocuments();
                     if (docs != null && docs.length > 0) {
                         for (int i = 0; i < docs.length; i++) {
                             Document doc = docs[i];
-
+                            Log.v(TAG, "docid: " + doc.getDocumentId());
                             if (doc.getDocumentId().equals(_identifier)) {
                                 // task completed here
                                 if (!task.getCompleted())
@@ -645,13 +663,32 @@ public class TasksFragment extends WorkorderFragment {
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
-            getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+            Log.v(TAG, "On Ok");
+            getActivity().startService(
+                    _service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+
         }
 
         @Override
         public void onCancel() {
         }
     };
+
+//    private MyClosingNotesResultReceiver _closingNotesDialog_onOk;
+//
+//    private class MyClosingNotesResultReceiver extends ResultReceiver {
+//        public MyClosingNotesResultReceiver(Handler handler) {
+//            super(handler);
+//        }
+//
+//        @Override
+//        protected void onReceiveResult(int resultCode, Bundle resultData) {
+//            getActivity().startService(
+//                    _service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), resultData.getString("MESSAGE")));
+//
+//            super.onReceiveResult(resultCode, resultData);
+//        }
+//    }
 
     private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
@@ -735,6 +772,13 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
+    private ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
+        @Override
+        public void onChangeClosingNotes(String closingNotes) {
+            showClosingNotesDialog();
+        }
+    };
+
     /*-*************************************-*/
     /*-				WEB Events				-*/
     /*-*************************************-*/
@@ -764,7 +808,6 @@ public class TasksFragment extends WorkorderFragment {
     };
 
     private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
-
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
 
@@ -776,7 +819,6 @@ public class TasksFragment extends WorkorderFragment {
             if (resultCode == WEB_GET_TASKS) {
                 // TODO populate
                 String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                Log.v(TAG, data);
                 try {
                     JsonArray array = new JsonArray(data);
                     _tasks = new LinkedList<Task>();

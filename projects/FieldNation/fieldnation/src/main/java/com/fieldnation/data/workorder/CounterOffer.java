@@ -36,7 +36,7 @@ public class CounterOffer{
 	@Json(name="payPerDevice")
 	private Double _payPerDevice;
 	@Json(name="proposedExpense")
-	private Object[] _proposedExpense;
+	private AdditionalExpense[] _proposedExpense;
 	@Json(name="proposedSchedule")
 	private ProposedSchedule _proposedSchedule;
 	@Json(name="providerExplanation")
@@ -104,7 +104,7 @@ public class CounterOffer{
 		return _payPerDevice;
 	}
 
-	public Object[] getProposedExpense(){
+	public AdditionalExpense[] getProposedExpense(){
 		return _proposedExpense;
 	}
 

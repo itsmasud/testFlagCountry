@@ -104,7 +104,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -130,7 +130,7 @@ public class DeliverableFragment extends WorkorderFragment {
         _topBar.setListener(_actionbartop_listener);
 
         _confirmDialog = new ConfirmDialog(view.getContext());
-        _closingDialog = new ClosingNotesDialog(view.getContext());
+        _closingDialog = new ClosingNotesDialog();
         checkMedia();
 
         populateUi();
@@ -412,16 +412,16 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
-    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
-        @Override
-        public void onOk(String message) {
-            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
+//    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+//        @Override
+//        public void onOk(String message) {
+//            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
+//        }
+//
+//        @Override
+//        public void onCancel() {
+//        }
+//    };
 
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
@@ -478,7 +478,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onEnterClosingNotes() {
-            _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+//            _closingDialog.show(getFragmentManager(), "", _workorder.getClosingNotes(), _closingNotes_onOk);
         }
     };
 
