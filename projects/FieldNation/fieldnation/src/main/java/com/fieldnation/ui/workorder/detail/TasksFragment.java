@@ -175,6 +175,7 @@ public class TasksFragment extends WorkorderFragment {
                 for (int i = 0; i < tasks.length; i++) {
                     _tasks.add(tasks[i]);
                 }
+                _taskList.setTaskList(_tasks);
             }
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
                 _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
@@ -797,7 +798,7 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
 
-            if (resultCode == WEB_CHANGED) {
+            if (resultCode == WEB_CHANGED || resultCode == WEB_SEND_DELIVERABLE) {
                 _workorder.dispatchOnChange();
             }
 
