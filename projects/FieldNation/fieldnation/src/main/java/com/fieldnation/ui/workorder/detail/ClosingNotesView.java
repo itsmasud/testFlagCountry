@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
 public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.ClosingNotesView";
 
@@ -36,6 +38,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	private GlobalState _gs;
 	private Workorder _workorder;
 	private WorkorderService _service = null;
+    private Integer[] woStatus = { 5, 6, 7 }; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -87,7 +90,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 	private View.OnClickListener _notes_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if (_service != null) {
+			if (_service != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
 				_dialog.show(_workorder.getClosingNotes(), _closingNotes_listener);
 			}
 		}

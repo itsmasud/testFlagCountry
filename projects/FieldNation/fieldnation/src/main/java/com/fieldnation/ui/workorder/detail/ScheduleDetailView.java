@@ -26,6 +26,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class ScheduleDetailView extends RelativeLayout {
@@ -47,6 +48,7 @@ public class ScheduleDetailView extends RelativeLayout {
     private FragmentManager _fm;
     private WorkorderService _service;
     private LoggedWork _loggedWork;
+    private Integer[] woStatus = { 5, 6, 7 }; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -148,7 +150,10 @@ public class ScheduleDetailView extends RelativeLayout {
             } catch (Exception ex) {
 
             }
-            _workLogDialog.show(_fm, "Edit Worklog", _loggedWork, showdevices, _worklogdialog_onOk);
+
+            if(!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                _workLogDialog.show(_fm, "Edit Worklog", _loggedWork, showdevices, _worklogdialog_onOk);
+            }
         }
     };
 

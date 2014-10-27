@@ -17,6 +17,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.PaymentView";
 
@@ -39,6 +42,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	// Data
 	private Workorder _workorder;
 	private Listener _listener;
+    private Integer[] woStatus = { 5, 6, 7 }; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -191,7 +195,9 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_expenseDialog.show("Add Expense", _addExpense_listener);
+            if(!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                _expenseDialog.show("Add Expense", _addExpense_listener);
+            }
 		}
 	};
 
@@ -221,7 +227,9 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_discountDialog.show("Add Discount", _addDiscount_listener);
+            if(!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                _discountDialog.show("Add Discount", _addDiscount_listener);
+            }
 		}
 	};
 
@@ -240,8 +248,9 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 	private DiscountView.Listener _discount_listener = new DiscountView.Listener() {
 		@Override
 		public void onDelete(Discount discount) {
-			if (_listener != null)
-				_listener.onDeleteDiscount(_workorder, discount.getDiscountId());
+			if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                _listener.onDeleteDiscount(_workorder, discount.getDiscountId());
+            }
 		}
 	};
 

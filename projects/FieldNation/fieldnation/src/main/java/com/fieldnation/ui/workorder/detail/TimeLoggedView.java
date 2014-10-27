@@ -23,6 +23,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer {
@@ -42,6 +43,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
     private Workorder _workorder;
     private FragmentManager _fm;
     private WorkorderService _service;
+    private Integer[] woStatus = { 5, 6, 7 }; //work order status approved, paid, canceled
 
     public TimeLoggedView(Context context) {
         super(context);
@@ -113,7 +115,10 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
                 showdevices = _workorder.getPay().isPerDeviceRate();
             } catch (Exception ex) {
             }
-            _dialog.show(_fm, "Add Worklog", null, showdevices, _worklogdialog_listener);
+
+            if(!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                _dialog.show(_fm, "Add Worklog", null, showdevices, _worklogdialog_listener);
+            }
         }
     };
 

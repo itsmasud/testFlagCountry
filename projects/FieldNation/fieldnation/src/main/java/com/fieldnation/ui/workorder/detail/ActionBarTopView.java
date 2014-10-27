@@ -15,6 +15,8 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.utils.misc;
 
+import java.util.Arrays;
+
 public class ActionBarTopView extends RelativeLayout {
     private static final String TAG = "ui.workorder.detail.ActionBarTopView";
 
@@ -29,6 +31,7 @@ public class ActionBarTopView extends RelativeLayout {
     // Data
     private Listener _listener;
     private Workorder _workorder;
+    private Integer[] woStatus = { 5, 6, 7 }; //work order status approved, paid, canceled
 
     public ActionBarTopView(Context context) {
         super(context);
@@ -152,7 +155,7 @@ public class ActionBarTopView extends RelativeLayout {
     private View.OnClickListener _closing_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
+            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
                 _listener.onEnterClosingNotes();
             }
         }
@@ -160,14 +163,14 @@ public class ActionBarTopView extends RelativeLayout {
     private View.OnClickListener _confirm_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
+            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId()))
                 _listener.onConfirm();
         }
     };
     private View.OnClickListener _checkin_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
+            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId()))
                 _listener.onCheckIn();
         }
     };
@@ -175,7 +178,7 @@ public class ActionBarTopView extends RelativeLayout {
     private View.OnClickListener _checkout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
+            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId()))
                 _listener.onCheckOut();
         }
     };
@@ -183,7 +186,7 @@ public class ActionBarTopView extends RelativeLayout {
     private View.OnClickListener _acknowledge_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
+            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId()))
                 _listener.onAcknowledge();
         }
     };
@@ -203,7 +206,7 @@ public class ActionBarTopView extends RelativeLayout {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            if (_listener != null)
+            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId()))
                 _listener.onComplete();
         }
     };
