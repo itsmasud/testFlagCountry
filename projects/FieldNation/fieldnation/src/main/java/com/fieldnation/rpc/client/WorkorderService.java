@@ -102,6 +102,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "checkout_time=" + ISO8601.now(), "application/x-www-form-urlencoded", false);
     }
 
+    public Intent checkout(int resultCode, long workorderId, int deviceCount) {
+        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
+                "checkout_time=" + ISO8601.now() + "&device_count=" + deviceCount, "application/x-www-form-urlencoded", false);
+    }
+
     public Intent closingNotes(int resultCode, long workorderId, String notes) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/closing-notes", null,
                 "notes=" + misc.escapeForURL(notes), "application/x-www-form-urlencoded", false);

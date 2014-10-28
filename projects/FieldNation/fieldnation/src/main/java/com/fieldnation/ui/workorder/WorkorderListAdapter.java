@@ -17,12 +17,14 @@ import android.view.ViewGroup;
 import com.cocosw.undobar.UndoBarController;
 import com.cocosw.undobar.UndoBarController.UndoBar;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.workorder.detail.CounterOfferActivity;
@@ -60,6 +62,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
     private WorkorderUndoListener _wosumUndoListener;
     private ExpiresDialog _expiresDialog;
     private ConfirmDialog _confirmDialog;
+    private DeviceCountDialog _deviceCountDialog;
 
 	/*-*****************************-*/
     /*-			Lifecycle			-*/
@@ -179,7 +182,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 	/*-*********************************-*/
     /*-				Events				-*/
-	/*-*********************************-*/
+    /*-*********************************-*/
 
     @Override
     public void handleWebResult(int resultCode, Bundle resultData) {
@@ -202,6 +205,16 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             getContext().startActivity(intent);
         }
     }
+
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            Intent intent = _workorderService.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), count);
+            intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
+            getContext().startService(intent);
+            _requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
+        }
+    };
 
     private WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
         @Override
@@ -231,11 +244,18 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void actionCheckout(Workorder workorder) {
-            Intent intent = _workorderService.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
-            intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-            getContext().startService(intent);
-            _requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
+            Pay pay = workorder.getPay();
+            if (pay != null && pay.isPerDeviceRate()) {
+                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                _deviceCountDialog.show(TAG, workorder, pay.getMaxDevice(), _deviceCountListener);
+            } else {
+                Intent intent = _workorderService.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
+                intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
+                getContext().startService(intent);
+                _requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
+            }
         }
+
 
         @Override
         public void actionCheckin(Workorder workorder) {

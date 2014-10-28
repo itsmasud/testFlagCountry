@@ -16,7 +16,6 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +25,7 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
@@ -39,6 +39,7 @@ import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -92,6 +93,7 @@ public class TasksFragment extends WorkorderFragment {
     private ActionBarTopView _topBar;
     private AppPickerDialog _appDialog;
     private ConfirmDialog _confirmDialog;
+    private DeviceCountDialog _deviceCountDialog;
 
     // Data
     private GlobalState _gs;
@@ -135,24 +137,12 @@ public class TasksFragment extends WorkorderFragment {
         _separators[1] = view.findViewById(R.id.sep2);
         _separators[2] = view.findViewById(R.id.sep3);
 
-        // re-wire dialogs
-        List<Fragment> frags = getFragmentManager().getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof ClosingNotesDialog && frag.getTag().equals(TAG)) {
-                    _closingDialog = (ClosingNotesDialog) frag;
-                    _closingDialog.setListener(_closingNotes_onOk);
-                    break;
-                }
-            }
-        }
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _closingDialog.setListener(_closingNotes_onOk);
 
-        if (_closingDialog == null) {
-            _closingDialog = new ClosingNotesDialog();
-        }
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog.setListener(_deviceCountListener);
 
-        Log.v(TAG, "Closing OBJ: " + _closingDialog.toString());
         _taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
         _shipmentAddDialog = new ShipmentAddDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
@@ -425,7 +415,7 @@ public class TasksFragment extends WorkorderFragment {
     }
 
     private void showClosingNotesDialog() {
-        _closingDialog.show(getFragmentManager(), TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+        _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
     }
 
     /*-*************************************-*/
@@ -459,7 +449,14 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onCheckOut() {
-            getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+            Pay pay = _workorder.getPay();
+            if (pay != null && pay.isPerDeviceRate()) {
+                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+            }
         }
 
         @Override
@@ -519,8 +516,15 @@ public class TasksFragment extends WorkorderFragment {
         public void onCancel() {
         }
     };
-    private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
+        }
+    };
 
+    private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onTaskClick(Task task) {
             switch (task.getTaskType()) {
@@ -528,7 +532,14 @@ public class TasksFragment extends WorkorderFragment {
                     getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
                     break;
                 case CHECKOUT:
-                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+                    Pay pay = _workorder.getPay();
+                    if (pay != null && pay.isPerDeviceRate()) {
+                        _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                        _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+                    } else {
+                        getActivity().startService(
+                                _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+                    }
                     break;
                 case CLOSE_OUT_NOTES:
                     showClosingNotesDialog();

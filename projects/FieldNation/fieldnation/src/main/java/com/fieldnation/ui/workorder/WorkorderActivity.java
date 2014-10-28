@@ -21,6 +21,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -56,6 +57,7 @@ public class WorkorderActivity extends BaseActivity {
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
     private RelativeLayout _loadingLayout;
+    private DeviceCountDialog _deviceCountDialog;
 
     // Data
     private GlobalState _gs;

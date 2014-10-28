@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +28,7 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
@@ -42,6 +42,7 @@ import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
@@ -53,7 +54,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.List;
 
 public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DeliverableFragment";
@@ -85,6 +85,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private ActionBarTopView _topBar;
     private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
+    private DeviceCountDialog _deviceCountDialog;
 
     // Data
     private GlobalState _gs;
@@ -133,22 +134,12 @@ public class DeliverableFragment extends WorkorderFragment {
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
 
-        List<Fragment> frags = getFragmentManager().getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof ClosingNotesDialog && frag.getTag().equals(TAG)) {
-                    _closingDialog = (ClosingNotesDialog) frag;
-                    _closingDialog.setListener(_closingNotes_onOk);
-                    break;
-                }
-            }
-        }
-        if (_closingDialog == null) {
-            _closingDialog = new ClosingNotesDialog();
-        }
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _closingDialog.setListener(_closingNotes_onOk);
 
-        _confirmDialog = new ConfirmDialog(view.getContext());
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog.setListener(_deviceCountListener);
+
         checkMedia();
 
         populateUi();
@@ -240,7 +231,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 v.setDocument(doc);
 
                 //if work order completed or canceled then hide/disable any controls actions
-                if(_workorder != null && Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                if (_workorder != null && Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
                     v.hideDeleteButton();
                 }
             }
@@ -259,7 +250,7 @@ public class DeliverableFragment extends WorkorderFragment {
                         _uploaded_document_listener, _workorder);
 
                 //if work order completed or canceled then hide/disable any controls actions
-                if(_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                if (_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
                     v.setListener(_uploadSlot_listener);
                 }
 
@@ -451,6 +442,14 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
+        }
+    };
+
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onComplete() {
@@ -460,8 +459,14 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onCheckOut() {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+            Pay pay = _workorder.getPay();
+            if (pay != null && pay.isPerDeviceRate()) {
+                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+            }
         }
 
         @Override
@@ -506,7 +511,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onEnterClosingNotes() {
-            _closingDialog.show(getFragmentManager(), TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+            _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
         }
     };
 

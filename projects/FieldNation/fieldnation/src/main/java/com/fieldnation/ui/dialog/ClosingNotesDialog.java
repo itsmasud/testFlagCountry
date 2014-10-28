@@ -3,6 +3,7 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -17,8 +18,10 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.utils.misc;
 
+import java.util.List;
+
 public class ClosingNotesDialog extends DialogFragment {
-    private static final String TAG = "ui.workorder.detail.ClosingNotesDialog";
+    private static final String TAG = "ui.dialog.ClosingNotesDialog";
 
     // UI
     private EditText _editText;
@@ -28,6 +31,26 @@ public class ClosingNotesDialog extends DialogFragment {
     // Data
     private String _notes;
     private Listener _listener;
+    private FragmentManager _fm;
+
+    public static ClosingNotesDialog getInstance(FragmentManager fm, String tag) {
+        ClosingNotesDialog d = null;
+        List<Fragment> frags = fm.getFragments();
+        if (frags != null) {
+            for (int i = 0; i < frags.size(); i++) {
+                Fragment frag = frags.get(i);
+                if (frag instanceof ClosingNotesDialog && frag.getTag().equals(tag)) {
+                    d = (ClosingNotesDialog) frag;
+                    break;
+                }
+            }
+        }
+        if (d == null)
+            d = new ClosingNotesDialog();
+        d._fm = fm;
+        return d;
+    }
+
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
@@ -55,13 +78,13 @@ public class ClosingNotesDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(FragmentManager fm, String tag, String notes, Listener listener) {
+    public void show(String tag, String notes, Listener listener) {
         if (!misc.isEmptyOrNull(notes)) {
             _notes = notes;
             populateUi();
         }
         _listener = listener;
-        show(fm, tag);
+        show(_fm, tag);
     }
 
     private void populateUi() {

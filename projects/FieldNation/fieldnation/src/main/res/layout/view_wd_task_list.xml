@@ -8,7 +8,7 @@
         style="@style/WorkorderDetail_FieldTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/scope_of_work" />
+        android:text="@string/tasks" />
 
     <TextView
         android:id="@+id/nodata_textview"

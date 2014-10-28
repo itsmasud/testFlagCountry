@@ -46,12 +46,6 @@
             android:layout_height="wrap_content"
             android:text="Your Estimated Schedule" />
 
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Arrival Time:" />
-
         <Button
             android:id="@+id/start_date_button"
             style="?android:attr/spinnerStyle"
@@ -60,12 +54,6 @@
             android:layout_marginLeft="10dp"
             android:gravity="center"
             android:hint="Arrival Time" />
-
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Estimated Duration:" />
 
         <Button
             android:id="@+id/duration_button"

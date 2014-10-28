@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,19 +13,20 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.dialog.AcceptBundleWorkroder;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.List;
 
 public class DetailFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DetailFragment";
@@ -46,6 +46,7 @@ public class DetailFragment extends WorkorderFragment {
     private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
     private AcceptBundleWorkroder _acceptBundleWODialog;
+    private DeviceCountDialog _deviceCountDialog;
 
     // Data
     private Workorder _workorder;
@@ -91,21 +92,11 @@ public class DetailFragment extends WorkorderFragment {
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
-        List<Fragment> frags = getFragmentManager().getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof ClosingNotesDialog && frag.getTag().equals(TAG)) {
-                    _closingDialog = (ClosingNotesDialog) frag;
-                    _closingDialog.setListener(_closingNotes_onOk);
-                    break;
-                }
-            }
-        }
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _closingDialog.setListener(_closingNotes_onOk);
 
-        if (_closingDialog == null) {
-            _closingDialog = new ClosingNotesDialog();
-        }
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog.setListener(_deviceCountListener);
 
         _expiresDialog = new ExpiresDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
@@ -163,8 +154,8 @@ public class DetailFragment extends WorkorderFragment {
     }
 
     /*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
@@ -183,6 +174,14 @@ public class DetailFragment extends WorkorderFragment {
         }
     };
 
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
+        }
+    };
+
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onComplete() {
@@ -192,8 +191,14 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onCheckOut() {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+            Pay pay = _workorder.getPay();
+            if (pay != null && pay.isPerDeviceRate()) {
+                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+            }
         }
 
         @Override
@@ -239,7 +244,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onEnterClosingNotes() {
             if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                _closingDialog.show(getFragmentManager(), TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+                _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
             }
         }
     };
