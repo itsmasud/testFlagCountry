@@ -1,11 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.SecureRandom;
-
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -34,6 +28,7 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
@@ -47,363 +42,395 @@ import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.SecureRandom;
+import java.util.Arrays;
+
 public class DeliverableFragment extends WorkorderFragment {
-	private static final String TAG = "ui.workorder.detail.DeliverableFragment";
+    private static final String TAG = "ui.workorder.detail.DeliverableFragment";
 
-	// pageRequest parameters
-	public static final String PR_ACTION = "PR_ACTION";
-	public static final String PR_UPLOAD_PICTURE = "PR_UPLOAD_PICTURE";
-	public static final String PR_UPLOAD_FILE = "PR_UPLOAD_FILE";
-	public static final String PR_TASK_ID = "PR_TASK_ID";
+    // pageRequest parameters
+    public static final String PR_ACTION = "PR_ACTION";
+    public static final String PR_UPLOAD_PICTURE = "PR_UPLOAD_PICTURE";
+    public static final String PR_UPLOAD_FILE = "PR_UPLOAD_FILE";
+    public static final String PR_TASK_ID = "PR_TASK_ID";
 
-	// activity result codes
-	private static final int RESULT_CODE_BASE = 100;
-	private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;
-	private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 2;
+    // activity result codes
+    private static final int RESULT_CODE_BASE = 100;
+    private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;
+    private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 2;
 
-	// private static final int WEB_GET_DOCUMENTS = 1;
-	private static final int WEB_GET_PROFILE = 2;
-	private static final int WEB_DELETE_DELIVERABLE = 3;
-	private static final int WEB_SEND_DELIVERABLE = 4;
-	private static final int WEB_CHANGE = 5;
+    // private static final int WEB_GET_DOCUMENTS = 1;
+    private static final int WEB_GET_PROFILE = 2;
+    private static final int WEB_DELETE_DELIVERABLE = 3;
+    private static final int WEB_SEND_DELIVERABLE = 4;
+    private static final int WEB_CHANGE = 5;
 
-	// UI
-	private LinearLayout _reviewList;
-	private LinearLayout _filesLayout;
-	private View _bar1View;
-	private AppPickerDialog _dialog;
-	private RelativeLayout _loadingLayout;
-	private TextView _noDocsTextView;
-	private ActionBarTopView _topBar;
-	private ConfirmDialog _confirmDialog;
+    // UI
+    private LinearLayout _reviewList;
+    private LinearLayout _filesLayout;
+    private View _bar1View;
+    private AppPickerDialog _dialog;
+    private RelativeLayout _loadingLayout;
+    private TextView _noDocsTextView;
+    private ActionBarTopView _topBar;
+    private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
+    private DeviceCountDialog _deviceCountDialog;
 
-	// Data
-	private GlobalState _gs;
-	private Workorder _workorder;
-	private WorkorderService _service;
-	private ProfileService _profileService;
-	private Profile _profile = null;
-	private Bundle _delayedAction = null;
+    // Data
+    private GlobalState _gs;
+    private Workorder _workorder;
+    private WorkorderService _service;
+    private ProfileService _profileService;
+    private Profile _profile = null;
+    private Bundle _delayedAction = null;
+    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
-	// private List<Deliverable> _deliverables = null;
-	// private List<Task> _tasks = null;
-	// private int _loadingCounter = 0;
-	private SecureRandom _rand = new SecureRandom();
+    // private List<Deliverable> _deliverables = null;
+    // private List<Task> _tasks = null;
+    // private int _loadingCounter = 0;
+    private SecureRandom _rand = new SecureRandom();
 
-	// temporary storage
-	private UploadSlot _uploadingSlot;
-	private UploadSlotView _uploadingSlotView;
-	private int _uploadCount = 0;
-	private int _deleteCount = 0;
+    // temporary storage
+    private UploadSlot _uploadingSlot;
+    private UploadSlotView _uploadingSlotView;
+    private int _uploadCount = 0;
+    private int _deleteCount = 0;
 
-	/*-*************************************-*/
-	/*-				LifeCycle				-*/
-	/*-*************************************-*/
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_workorder_deliverables,
-				container, false);
-	}
+    /*-*************************************-*/
+    /*-				LifeCycle				-*/
+    /*-*************************************-*/
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_workorder_deliverables,
+                container, false);
+    }
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-		_gs = (GlobalState) getActivity().getApplicationContext();
-		_gs.requestAuthentication(_authClient);
+        _gs = (GlobalState) getActivity().getApplicationContext();
+        _gs.requestAuthentication(_authClient);
 
-		_reviewList = (LinearLayout) view.findViewById(R.id.review_list);
-		_filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
-		_bar1View = view.findViewById(R.id.bar1_view);
-		_loadingLayout = (RelativeLayout) view
-				.findViewById(R.id.loading_layout);
-		_noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
+        _reviewList = (LinearLayout) view.findViewById(R.id.review_list);
+        _filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
+        _bar1View = view.findViewById(R.id.bar1_view);
+        _loadingLayout = (RelativeLayout) view
+                .findViewById(R.id.loading_layout);
+        _noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
 
-		_topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
-		_topBar.setListener(_actionbartop_listener);
+        _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
+        _topBar.setListener(_actionbartop_listener);
 
-		_confirmDialog = new ConfirmDialog(view.getContext());
-        _closingDialog = new ClosingNotesDialog(view.getContext());
-		checkMedia();
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _closingDialog.setListener(_closingNotes_onOk);
 
-		populateUi();
-		executeDelayedAction();
-	}
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog.setListener(_deviceCountListener);
 
-	private boolean checkMedia() {
-		if (Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState())) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+        checkMedia();
 
-	// private void startLoading() {
-	// if (_loadingCounter == 0) {
-	// _loadingLayout.setVisibility(View.VISIBLE);
-	// }
-	// _loadingCounter++;
-	// Log.v(TAG, "startLoading(" + _loadingCounter + ")");
-	// }
-	//
-	// private void stopLoading() {
-	// _loadingCounter--;
-	// if (_loadingCounter <= 0) {
-	// _loadingCounter = 0;
-	// _loadingLayout.setVisibility(View.GONE);
-	// }
-	// Log.v(TAG, "stopLoading(" + _loadingCounter + ")");
-	// }
+        populateUi();
+        executeDelayedAction();
+    }
 
-	@Override
-	public void update() {
-		getData();
-		checkMedia();
-		executeDelayedAction();
-	}
+    private boolean checkMedia() {
+        if (Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	public void setWorkorder(Workorder workorder) {
-		_workorder = workorder;
+    // private void startLoading() {
+    // if (_loadingCounter == 0) {
+    // _loadingLayout.setVisibility(View.VISIBLE);
+    // }
+    // _loadingCounter++;
+    // Log.v(TAG, "startLoading(" + _loadingCounter + ")");
+    // }
+    //
+    // private void stopLoading() {
+    // _loadingCounter--;
+    // if (_loadingCounter <= 0) {
+    // _loadingCounter = 0;
+    // _loadingLayout.setVisibility(View.GONE);
+    // }
+    // Log.v(TAG, "stopLoading(" + _loadingCounter + ")");
+    // }
 
-		getData();
-		executeDelayedAction();
-	}
+    @Override
+    public void update() {
+        getData();
+        checkMedia();
+        executeDelayedAction();
+    }
 
-	private PendingIntent getNotificationIntent() {
-		Intent intent = new Intent(_gs, WorkorderActivity.class);
-		intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
-				WorkorderActivity.TAB_DELIVERABLES);
-		intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
-				_workorder.getWorkorderId());
+    @Override
+    public void setWorkorder(Workorder workorder) {
+        _workorder = workorder;
 
-		return PendingIntent.getActivity(_gs, _rand.nextInt(), intent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-	}
+        getData();
+        executeDelayedAction();
+    }
 
-	private void getData() {
-		if (_profileService == null)
-			return;
+    private PendingIntent getNotificationIntent() {
+        Intent intent = new Intent(_gs, WorkorderActivity.class);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
+                WorkorderActivity.TAB_DELIVERABLES);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
+                _workorder.getWorkorderId());
 
-		// startLoading();
-		_profile = null;
-		_gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE,
-				true));
-	}
+        return PendingIntent.getActivity(_gs, _rand.nextInt(), intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
 
-	private void populateUi() {
-		if (_workorder == null)
-			return;
+    private void getData() {
+        if (_profileService == null)
+            return;
 
-		if (_topBar != null)
-			_topBar.setWorkorder(_workorder);
+        // startLoading();
+        _profile = null;
+        _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE,
+                true));
+    }
 
-		if (_profile == null)
-			return;
+    private void populateUi() {
+        if (_workorder == null)
+            return;
 
-		if (getActivity() == null)
-			return;
+        if (_topBar != null)
+            _topBar.setWorkorder(_workorder);
 
-		_reviewList.removeAllViews();
-		Document[] docs = _workorder.getDocuments();
-		if (docs != null && docs.length > 0) {
-			for (int i = 0; i < docs.length; i++) {
-				Document doc = docs[i];
-				DocumentView v = new DocumentView(getActivity());
-				_reviewList.addView(v);
-				v.setDocument(doc);
-			}
-			_noDocsTextView.setVisibility(View.GONE);
-		} else {
-			_noDocsTextView.setVisibility(View.VISIBLE);
-		}
+        if (_profile == null)
+            return;
 
-		_filesLayout.removeAllViews();
-		UploadSlot[] slots = _workorder.getUploadSlots();
-		if (slots != null) {
-			for (int i = 0; i < slots.length; i++) {
-				UploadSlot slot = slots[i];
-				UploadSlotView v = new UploadSlotView(getActivity());
-				v.setUploadSlot(_profile.getUserId(), slot,
-						_uploaded_document_listener);
-				v.setListener(_uploadSlot_listener);
-				_filesLayout.addView(v);
-			}
-		}
-	}
+        if (getActivity() == null)
+            return;
 
-	private void executeDelayedAction() {
-		if (_delayedAction == null)
-			return;
+        _reviewList.removeAllViews();
+        Document[] docs = _workorder.getDocuments();
+        if (docs != null && docs.length > 0) {
+            for (int i = 0; i < docs.length; i++) {
+                Document doc = docs[i];
+                DocumentView v = new DocumentView(getActivity());
+                _reviewList.addView(v);
+                v.setDocument(doc);
 
-		if (_workorder == null)
-			return;
+                //if work order completed or canceled then hide/disable any controls actions
+                if (_workorder != null && Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                    v.hideDeleteButton();
+                }
+            }
+            _noDocsTextView.setVisibility(View.GONE);
+        } else {
+            _noDocsTextView.setVisibility(View.VISIBLE);
+        }
 
-		if (_filesLayout == null)
-			return;
+        _filesLayout.removeAllViews();
+        UploadSlot[] slots = _workorder.getUploadSlots();
+        if (slots != null) {
+            for (int i = 0; i < slots.length; i++) {
+                UploadSlot slot = slots[i];
+                UploadSlotView v = new UploadSlotView(getActivity());
+                v.setUploadSlot(_profile.getUserId(), slot,
+                        _uploaded_document_listener, _workorder);
 
-		int taskId = _delayedAction.getInt(PR_TASK_ID);
+                //if work order completed or canceled then hide/disable any controls actions
+                if (_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                    v.setListener(_uploadSlot_listener);
+                }
 
-		// find slot
-		UploadSlot[] slots = _workorder.getUploadSlots();
-		UploadSlot slot = null;
-		for (int i = 0; i < slots.length; i++) {
-			Task task = slots[i].getTask();
-			if (task != null){
-				if (task.getTaskId() == taskId) {
-					slot = slots[i];
-					break;
-				}
-			}
-		}
+                _filesLayout.addView(v);
+            }
+        }
+    }
 
-		for (int i = 0; i < _filesLayout.getChildCount(); i++) {
-			View v = _filesLayout.getChildAt(i);
+    private void executeDelayedAction() {
+        if (_delayedAction == null)
+            return;
 
-			if (v instanceof UploadSlotView) {
-				UploadSlotView uv = (UploadSlotView) v;
-				if (uv.getUploadSlotId() == taskId) {
-					_uploadCount++;
-					_uploadingSlot = slot;
-					_uploadingSlotView = uv;
-					_dialog.show();
-					break;
-				}
-			}
-		}
-		_delayedAction = null;
-	}
+        if (_workorder == null)
+            return;
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		if (_dialog == null) {
-			_dialog = new AppPickerDialog(getActivity(), _dialog_listener);
-			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-			intent.setType("*/*");
-			intent.addCategory(Intent.CATEGORY_OPENABLE);
-			_dialog.addIntent(intent, "Get Content");
+        if (_filesLayout == null)
+            return;
 
-			if (getActivity().getPackageManager().hasSystemFeature(
-					PackageManager.FEATURE_CAMERA)) {
-				intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				_dialog.addIntent(intent, "Take Picture");
+        int taskId = _delayedAction.getInt(PR_TASK_ID);
 
-			}
-			_dialog.finish();
-		}
-	}
+        // find slot
+        UploadSlot[] slots = _workorder.getUploadSlots();
+        UploadSlot slot = null;
+        for (int i = 0; i < slots.length; i++) {
+            Task task = slots[i].getTask();
+            if (task != null) {
+                if (task.getTaskId() == taskId) {
+                    slot = slots[i];
+                    break;
+                }
+            }
+        }
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
-		if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
-			if (data == null)
-				return;
+        for (int i = 0; i < _filesLayout.getChildCount(); i++) {
+            View v = _filesLayout.getChildAt(i);
 
-			Uri uri = data.getData();
-			try {
-				// get temp path
-				String packageName = _gs.getPackageName();
-				File externalPath = Environment.getExternalStorageDirectory();
-				File temppath = new File(externalPath.getAbsolutePath()
-						+ "/Android/data/" + packageName + "/temp");
-				temppath.mkdirs();
+            if (v instanceof UploadSlotView) {
+                UploadSlotView uv = (UploadSlotView) v;
+                if (uv.getUploadSlotId() == taskId) {
+                    _uploadCount++;
+                    _uploadingSlot = slot;
+                    _uploadingSlotView = uv;
+                    _dialog.show();
+                    break;
+                }
+            }
+        }
+        _delayedAction = null;
+    }
 
-				// create temp folder
-				File tempfile = File.createTempFile("DATA", null, temppath);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (_dialog == null) {
+            _dialog = new AppPickerDialog(getActivity(), _dialog_listener);
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("*/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            _dialog.addIntent(intent, "Get Content");
 
-				// copy the data
-				InputStream in = _gs.getContentResolver().openInputStream(uri);
-				OutputStream out = new FileOutputStream(tempfile);
-				misc.copyStream(in, out, 1024, -1, 500);
-				out.close();
-				in.close();
+            if (getActivity().getPackageManager().hasSystemFeature(
+                    PackageManager.FEATURE_CAMERA)) {
+                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                _dialog.addIntent(intent, "Take Picture");
 
-				Cursor c = _gs.getContentResolver().query(uri, null, null,
-						null, null);
-				int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-				c.moveToFirst();
+            }
+            _dialog.finish();
+        }
+    }
 
-				// send to the service
-				// startLoading();
-				_uploadingSlotView.addUploading(c.getString(nameIndex));
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+        if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
+            if (data == null)
+                return;
 
-				_gs.startService(_service.uploadDeliverable(
-						WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-						_uploadingSlot.getSlotId(), c.getString(nameIndex),
-						tempfile, getNotificationIntent()));
-				c.close();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            Uri uri = data.getData();
+            try {
+                // get temp path
+                String packageName = _gs.getPackageName();
+                File externalPath = Environment.getExternalStorageDirectory();
+                File temppath = new File(externalPath.getAbsolutePath()
+                        + "/Android/data/" + packageName + "/temp");
+                temppath.mkdirs();
 
-		} else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
-			ContentResolver cr = getActivity().getContentResolver();
-			String[] p1 = new String[] { BaseColumns._ID,
-					MediaStore.Images.ImageColumns.DATE_TAKEN };
-			Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-					p1, null, null, p1[1] + " DESC");
-			if (c1.moveToFirst()) {
-				String uristringpic = "content://media/external/images/media/"
-						+ c1.getInt(0);
-				Uri uri = Uri.parse(uristringpic);
-				try {
-					// find temp path
-					String packageName = _gs.getPackageName();
-					File externalPath = Environment
-							.getExternalStorageDirectory();
-					File temppath = new File(externalPath.getAbsolutePath()
-							+ "/Android/data/" + packageName + "/temp");
-					temppath.mkdirs();
+                // create temp folder
+                File tempfile = File.createTempFile("DATA", null, temppath);
 
-					// open temp file
-					File tempfile = File.createTempFile("DATA", null, temppath);
+                // copy the data
+                InputStream in = _gs.getContentResolver().openInputStream(uri);
+                OutputStream out = new FileOutputStream(tempfile);
+                misc.copyStream(in, out, 1024, -1, 500);
+                out.close();
+                in.close();
 
-					// write the image
-					InputStream in = _gs.getContentResolver().openInputStream(
-							uri);
-					OutputStream out = new FileOutputStream(tempfile);
-					misc.copyStream(in, out, 1024, -1, 500);
-					out.close();
-					in.close();
+                String filename = "";
+                if (uri.getScheme().equals("file")) {
+                    filename = uri.getLastPathSegment();
+                } else {
+                    Cursor c = _gs.getContentResolver().query(uri, null, null,
+                            null, null);
+                    int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    c.moveToFirst();
+                    filename = c.getString(nameIndex);
+                    c.close();
+                }
 
-					Cursor c = _gs.getContentResolver().query(uri, null, null,
-							null, null);
-					int nameIndex = c
-							.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-					c.moveToFirst();
+                // send to the service
+                // startLoading();
+                _uploadingSlotView.addUploading(filename);
 
-					// send data to service
-					// startLoading();
-					_uploadingSlotView.addUploading(c.getString(nameIndex));
-					_gs.startService(_service.uploadDeliverable(
-							WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-							_uploadingSlot.getSlotId(), c.getString(nameIndex),
-							tempfile, getNotificationIntent()));
+                _gs.startService(_service.uploadDeliverable(
+                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                        _uploadingSlot.getSlotId(), filename,
+                        tempfile, getNotificationIntent()));
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
-					c.close();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-			c1.close();
-			Log.v(TAG, "BP");
-		}
-	};
+        } else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
+            ContentResolver cr = getActivity().getContentResolver();
+            String[] p1 = new String[]{BaseColumns._ID,
+                    MediaStore.Images.ImageColumns.DATE_TAKEN};
+            Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    p1, null, null, p1[1] + " DESC");
+            if (c1.moveToFirst()) {
+                String uristringpic = "content://media/external/images/media/"
+                        + c1.getInt(0);
+                Uri uri = Uri.parse(uristringpic);
+                try {
+                    // find temp path
+                    String packageName = _gs.getPackageName();
+                    File externalPath = Environment
+                            .getExternalStorageDirectory();
+                    File temppath = new File(externalPath.getAbsolutePath()
+                            + "/Android/data/" + packageName + "/temp");
+                    temppath.mkdirs();
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+                    // open temp file
+                    File tempfile = File.createTempFile("DATA", null, temppath);
+
+                    // write the image
+                    InputStream in = _gs.getContentResolver().openInputStream(
+                            uri);
+                    OutputStream out = new FileOutputStream(tempfile);
+                    misc.copyStream(in, out, 1024, -1, 500);
+                    out.close();
+                    in.close();
+
+                    Cursor c = _gs.getContentResolver().query(uri, null, null,
+                            null, null);
+                    int nameIndex = c
+                            .getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    c.moveToFirst();
+
+                    // send data to service
+                    // startLoading();
+                    _uploadingSlotView.addUploading(c.getString(nameIndex));
+                    _gs.startService(_service.uploadDeliverable(
+                            WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                            _uploadingSlot.getSlotId(), c.getString(nameIndex),
+                            tempfile, getNotificationIntent()));
+
+                    c.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            c1.close();
+            Log.v(TAG, "BP");
+        }
+    }
+
+    ;
+
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
@@ -415,194 +442,208 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
-	private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
-		@Override
-		public void onComplete() {
-			getActivity().startService(
-					_service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
-		}
-
-		@Override
-		public void onCheckOut() {
-			getActivity().startService(
-					_service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
-		}
-
-		@Override
-		public void onCheckIn() {
-			getActivity().startService(
-					_service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
-		}
-
-		@Override
-		public void onAcknowledge() {
-			getActivity().startService(
-					_service.acknowledgeHold(WEB_CHANGE,
-							_workorder.getWorkorderId()));
-		}
-
-		@Override
-		public void onConfirm() {
-			final Workorder workorder = _workorder;
-			_confirmDialog.show(getActivity().getSupportFragmentManager(),
-					workorder.getSchedule(), new ConfirmDialog.Listener() {
-						@Override
-						public void onOk(String startDate,
-								long durationMilliseconds) {
-							try {
-								long end = durationMilliseconds
-										+ ISO8601.toUtc(startDate);
-								Intent intent = _service.confirmAssignment(
-										WEB_CHANGE,
-										_workorder.getWorkorderId(), startDate,
-										ISO8601.fromUTC(end));
-								getActivity().startService(intent);
-							} catch (Exception ex) {
-								ex.printStackTrace();
-							}
-						}
-
-						@Override
-						public void onCancel() {
-						}
-					});
-		}
-
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
-        public void onEnterClosingNotes() {
-            _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+        public void onOk(Workorder workorder, int count) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
         }
     };
 
-	private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
+    private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
+        @Override
+        public void onComplete() {
+            getActivity().startService(
+                    _service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
+        }
 
-		@Override
-		public void onClick(AppPickerPackage pack) {
-			Intent src = pack.intent;
+        @Override
+        public void onCheckOut() {
+            Pay pay = _workorder.getPay();
+            if (pay != null && pay.isPerDeviceRate()) {
+                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+            }
+        }
 
-			ResolveInfo info = pack.resolveInfo;
+        @Override
+        public void onCheckIn() {
+            getActivity().startService(
+                    _service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
+        }
 
-			src.setComponent(new ComponentName(
-					info.activityInfo.applicationInfo.packageName,
-					info.activityInfo.name));
+        @Override
+        public void onAcknowledge() {
+            getActivity().startService(
+                    _service.acknowledgeHold(WEB_CHANGE,
+                            _workorder.getWorkorderId()));
+        }
 
-			if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-				startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
-			} else {
-				startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
-			}
-		}
-	};
+        @Override
+        public void onConfirm() {
+            final Workorder workorder = _workorder;
+            _confirmDialog.show(getActivity().getSupportFragmentManager(),
+                    workorder.getSchedule(), new ConfirmDialog.Listener() {
+                        @Override
+                        public void onOk(String startDate,
+                                         long durationMilliseconds) {
+                            try {
+                                long end = durationMilliseconds
+                                        + ISO8601.toUtc(startDate);
+                                Intent intent = _service.confirmAssignment(
+                                        WEB_CHANGE,
+                                        _workorder.getWorkorderId(), startDate,
+                                        ISO8601.fromUTC(end));
+                                getActivity().startService(intent);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
 
-	private UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
-		@Override
-		public void onDelete(UploadedDocumentView v, UploadedDocument document) {
-			_deleteCount++;
-			// startLoading();
-			_gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
-					_workorder.getWorkorderId(),
-					document.getWorkorderUploadId()));
-		}
-	};
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+        }
 
-	private UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
-		@Override
-		public void onUploadClick(UploadSlotView view, UploadSlot slot) {
-			if (checkMedia()) {
-				_uploadCount++;
-				_uploadingSlot = slot;
-				_uploadingSlotView = view;
-				_dialog.show();
-			} else {
-				Toast.makeText(
-						getActivity(),
-						"Need External Storage, pleaswe insert storage device before continuing",
-						Toast.LENGTH_LONG).show();
-			}
-		}
-	};
+        @Override
+        public void onEnterClosingNotes() {
+            _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+        }
+    };
 
-	// Web
-	private AuthenticationClient _authClient = new AuthenticationClient() {
-		@Override
-		public void onAuthentication(String username, String authToken) {
-			_service = new WorkorderService(_gs, username, authToken,
-					_resultReceiver);
-			_profileService = new ProfileService(_gs, username, authToken,
-					_resultReceiver);
-			getData();
-		}
+    private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
 
-		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			_gs.requestAuthenticationDelayed(_authClient);
-		}
+        @Override
+        public void onClick(AppPickerPackage pack) {
+            Intent src = pack.intent;
 
-		@Override
-		public GlobalState getGlobalState() {
-			return _gs;
-		}
-	};
+            ResolveInfo info = pack.resolveInfo;
 
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
-			new Handler()) {
-		@Override
-		public void onSuccess(int resultCode, Bundle resultData) {
-			// stopLoading();
-			// TODO Method Stub: onSuccess()
-			Log.v(TAG, "Method Stub: onSuccess()");
-			if (resultCode == WEB_GET_PROFILE) {
-				_profile = null;
-				try {
-					_profile = Profile
-							.fromJson(new JsonObject(
-									new String(
-											resultData
-													.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
-				} catch (Exception e) {
-					// TODO mulligan?
-					e.printStackTrace();
-					_profile = null;
-				}
-				populateUi();
-			} else if (resultCode == WEB_DELETE_DELIVERABLE
-					|| resultCode == WEB_SEND_DELIVERABLE) {
-				if (resultCode == WEB_DELETE_DELIVERABLE)
-					_deleteCount--;
+            src.setComponent(new ComponentName(
+                    info.activityInfo.applicationInfo.packageName,
+                    info.activityInfo.name));
 
-				if (resultCode == WEB_SEND_DELIVERABLE)
-					_uploadCount--;
+            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
+            } else {
+                startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
+            }
+        }
+    };
 
-				if (_deleteCount < 0)
-					_deleteCount = 0;
-				if (_uploadCount < 0)
-					_uploadCount = 0;
+    private UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
+        @Override
+        public void onDelete(UploadedDocumentView v, UploadedDocument document) {
+            _deleteCount++;
+            // startLoading();
+            _gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
+                    _workorder.getWorkorderId(),
+                    document.getWorkorderUploadId()));
+        }
+    };
 
-				// TODO, update individual UI elements when complete.
-				if (_deleteCount == 0 && _uploadCount == 0)
-					_workorder.dispatchOnChange();
-			} else if (resultCode == WEB_CHANGE) {
-				_workorder.dispatchOnChange();
-			}
-		}
+    private UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
+        @Override
+        public void onUploadClick(UploadSlotView view, UploadSlot slot) {
+            if (checkMedia()) {
+                _uploadCount++;
+                _uploadingSlot = slot;
+                _uploadingSlotView = view;
+                _dialog.show();
+            } else {
+                Toast.makeText(
+                        getActivity(),
+                        "Need External Storage, pleaswe insert storage device before continuing",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 
-		@Override
-		public void onError(int resultCode, Bundle resultData, String errorType) {
-			// stopLoading();
-			if (_service != null) {
-				_gs.invalidateAuthToken(_service.getAuthToken());
-			} else if (_profileService != null) {
-				_gs.invalidateAuthToken(_profileService.getAuthToken());
-			}
-			_gs.requestAuthenticationDelayed(_authClient);
-			_service = null;
-			_profileService = null;
-		}
-	};
+    // Web
+    private AuthenticationClient _authClient = new AuthenticationClient() {
+        @Override
+        public void onAuthentication(String username, String authToken) {
+            _service = new WorkorderService(_gs, username, authToken,
+                    _resultReceiver);
+            _profileService = new ProfileService(_gs, username, authToken,
+                    _resultReceiver);
+            getData();
+        }
 
-	@Override
-	public void doAction(Bundle bundle) {
-		_delayedAction = bundle;
-		executeDelayedAction();
-	}
+        @Override
+        public void onAuthenticationFailed(Exception ex) {
+            _gs.requestAuthenticationDelayed(_authClient);
+        }
+
+        @Override
+        public GlobalState getGlobalState() {
+            return _gs;
+        }
+    };
+
+    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+            new Handler()) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            // stopLoading();
+            // TODO Method Stub: onSuccess()
+            Log.v(TAG, "Method Stub: onSuccess()");
+            if (resultCode == WEB_GET_PROFILE) {
+                _profile = null;
+                try {
+                    _profile = Profile
+                            .fromJson(new JsonObject(
+                                    new String(
+                                            resultData
+                                                    .getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+                } catch (Exception e) {
+                    // TODO mulligan?
+                    e.printStackTrace();
+                    _profile = null;
+                }
+                populateUi();
+            } else if (resultCode == WEB_DELETE_DELIVERABLE
+                    || resultCode == WEB_SEND_DELIVERABLE) {
+                if (resultCode == WEB_DELETE_DELIVERABLE)
+                    _deleteCount--;
+
+                if (resultCode == WEB_SEND_DELIVERABLE)
+                    _uploadCount--;
+
+                if (_deleteCount < 0)
+                    _deleteCount = 0;
+                if (_uploadCount < 0)
+                    _uploadCount = 0;
+
+                // TODO, update individual UI elements when complete.
+                if (_deleteCount == 0 && _uploadCount == 0)
+                    _workorder.dispatchOnChange();
+            } else if (resultCode == WEB_CHANGE) {
+                _workorder.dispatchOnChange();
+            }
+        }
+
+        @Override
+        public void onError(int resultCode, Bundle resultData, String errorType) {
+            // stopLoading();
+            if (_service != null) {
+                _gs.invalidateAuthToken(_service.getAuthToken());
+            } else if (_profileService != null) {
+                _gs.invalidateAuthToken(_profileService.getAuthToken());
+            }
+            _gs.requestAuthenticationDelayed(_authClient);
+            _service = null;
+            _profileService = null;
+        }
+    };
+
+    @Override
+    public void doAction(Bundle bundle) {
+        _delayedAction = bundle;
+        executeDelayedAction();
+    }
 }

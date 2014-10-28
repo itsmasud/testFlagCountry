@@ -80,7 +80,6 @@
             style="@style/RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:text="@string/shipping_from_size" />
 
         <RadioButton
@@ -88,7 +87,6 @@
             style="@style/RadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="false"
             android:text="@string/shipping_to_site" />
     </RadioGroup>
 

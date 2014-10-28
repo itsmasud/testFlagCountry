@@ -207,7 +207,6 @@ public class misc {
 
 	/**
 	 * @param calendar
-	 * @param seconds
 	 * @return June 3, 2014 @ HH:MM am/pm
 	 */
 	public static String formatDateTimeLong(Calendar calendar) {

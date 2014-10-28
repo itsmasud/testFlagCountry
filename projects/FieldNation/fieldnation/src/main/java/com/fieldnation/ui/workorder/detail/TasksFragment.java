@@ -25,6 +25,7 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
@@ -38,6 +39,7 @@ import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -72,13 +74,12 @@ public class TasksFragment extends WorkorderFragment {
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
 
-
     // saved state keys
-    private static final String WORKORDER = "WORKORDER";
-    private static final String AUTHTOKEN = "AUTHTOKEN";
-    private static final String USERNAME = "USERNAME";
-    private static final String TASKS = "TASKS";
-    private static final String CURRENT_TASK = "CURRENT_TASK";
+    private static final String STATE_WORKORDER = "ui.workorder.detail.TasksFragment:STATE_WORKORDER";
+    private static final String STATE_AUTHTOKEN = "ui.workorder.detail.TasksFragment:STATE_AUTHTOKEN";
+    private static final String STATE_USERNAME = "ui.workorder.detail.TasksFragment:STATE_USERNAME";
+    private static final String STATE_TASKS = "ui.workorder.detail.TasksFragment:STATE_TASKS";
+    private static final String STATE_CURRENT_TASK = "ui.workorder.detail.TasksFragment:STATE_CURRENT_TASK";
 
     // UI
     private ShipmentView _shipments;
@@ -92,6 +93,7 @@ public class TasksFragment extends WorkorderFragment {
     private ActionBarTopView _topBar;
     private AppPickerDialog _appDialog;
     private ConfirmDialog _confirmDialog;
+    private DeviceCountDialog _deviceCountDialog;
 
     // Data
     private GlobalState _gs;
@@ -115,6 +117,7 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.v(TAG, "TasksFragment onViewCreated");
 
         _gs = (GlobalState) view.getContext().getApplicationContext();
 
@@ -124,6 +127,7 @@ public class TasksFragment extends WorkorderFragment {
         _timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
         _timeLogged.setFragmentManager(getFragmentManager());
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
+        _closingNotes.setListener(_clockingNotesView_listener);
         _topBar = (ActionBarTopView) view.findViewById(R.id.topaction_view);
         _topBar.setListener(_actionBarTop_listener);
 
@@ -133,7 +137,12 @@ public class TasksFragment extends WorkorderFragment {
         _separators[1] = view.findViewById(R.id.sep2);
         _separators[2] = view.findViewById(R.id.sep3);
 
-        _closingDialog = new ClosingNotesDialog(view.getContext());
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _closingDialog.setListener(_closingNotes_onOk);
+
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog.setListener(_deviceCountListener);
+
         _taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
         _shipmentAddDialog = new ShipmentAddDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
@@ -141,24 +150,25 @@ public class TasksFragment extends WorkorderFragment {
         if (savedInstanceState == null) {
             _gs.requestAuthentication(_authClient);
         } else {
-            if (savedInstanceState.containsKey(WORKORDER)) {
-                _workorder = savedInstanceState.getParcelable(WORKORDER);
+            if (savedInstanceState.containsKey(STATE_WORKORDER)) {
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
-            if (savedInstanceState.containsKey(AUTHTOKEN)) {
-                _authToken = savedInstanceState.getString(AUTHTOKEN);
+            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
+                _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
             }
-            if (savedInstanceState.containsKey(USERNAME)) {
-                _username = savedInstanceState.getString(USERNAME);
+            if (savedInstanceState.containsKey(STATE_USERNAME)) {
+                _username = savedInstanceState.getString(STATE_USERNAME);
             }
-            if (savedInstanceState.containsKey(TASKS)) {
-                Task[] tasks = (Task[]) savedInstanceState.getParcelableArray(TASKS);
+            if (savedInstanceState.containsKey(STATE_TASKS)) {
+                Task[] tasks = (Task[]) savedInstanceState.getParcelableArray(STATE_TASKS);
                 _tasks = new LinkedList<Task>();
                 for (int i = 0; i < tasks.length; i++) {
                     _tasks.add(tasks[i]);
                 }
+                _taskList.setTaskList(_tasks);
             }
-            if (savedInstanceState.containsKey(CURRENT_TASK)) {
-                _currentTask = savedInstanceState.getParcelable(CURRENT_TASK);
+            if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
+                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
             }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
@@ -166,7 +176,6 @@ public class TasksFragment extends WorkorderFragment {
                 _gs.requestAuthentication(_authClient);
             }
         }
-
         configureUi();
     }
 
@@ -194,24 +203,24 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (_authToken != null) {
-            outState.putString(AUTHTOKEN, _authToken);
+            outState.putString(STATE_AUTHTOKEN, _authToken);
         }
         if (_username != null) {
-            outState.putString(USERNAME, _username);
+            outState.putString(STATE_USERNAME, _username);
         }
         if (_workorder != null) {
-            outState.putParcelable(WORKORDER, _workorder);
+            outState.putParcelable(STATE_WORKORDER, _workorder);
         }
         if (_tasks != null && _tasks.size() > 0) {
             Task[] tasks = new Task[_tasks.size()];
             for (int i = 0; i < _tasks.size(); i++) {
                 tasks[i] = _tasks.get(i);
             }
-            outState.putParcelableArray("TASKS", tasks);
+            outState.putParcelableArray(STATE_TASKS, tasks);
         }
 
         if (_currentTask != null) {
-            outState.putParcelable("CURRENT_TASK", _currentTask);
+            outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
         }
 
         super.onSaveInstanceState(outState);
@@ -236,8 +245,10 @@ public class TasksFragment extends WorkorderFragment {
         if (_shipments != null)
             _shipments.setWorkorder(_workorder);
 
-        if (_taskList != null)
+        if (_taskList != null) {
             _taskList.setTaskListViewListener(_taskListView_listener);
+            _taskList.setWorkorder(_workorder);
+        }
 
         if (_timeLogged != null)
             _timeLogged.setWorkorder(_workorder);
@@ -329,21 +340,21 @@ public class TasksFragment extends WorkorderFragment {
                 out.close();
                 in.close();
 
-                Cursor c = _gs.getContentResolver().query(uri, null, null,
-                        null, null);
-                int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                c.moveToFirst();
-
-                // send to the service
-                // startLoading();
-                //_uploadingSlotView.addUploading(c.getString(nameIndex));
-
+                String filename = "";
+                if (uri.getScheme().equals("file")) {
+                    filename = uri.getLastPathSegment();
+                } else {
+                    Cursor c = _gs.getContentResolver().query(uri, null, null,
+                            null, null);
+                    int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    c.moveToFirst();
+                    filename = c.getString(nameIndex);
+                    c.close();
+                }
 
                 _gs.startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        c.getString(nameIndex), tempfile, getNotificationIntent()));
-
-                c.close();
+                        filename, tempfile, getNotificationIntent()));
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -403,12 +414,13 @@ public class TasksFragment extends WorkorderFragment {
         }
     }
 
-    ;
+    private void showClosingNotesDialog() {
+        _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+    }
 
     /*-*************************************-*/
     /*-				UI Events				-*/
     /*-*************************************-*/
-
     private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
 
         @Override
@@ -437,7 +449,14 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onCheckOut() {
-            getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+            Pay pay = _workorder.getPay();
+            if (pay != null && pay.isPerDeviceRate()) {
+                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+            }
         }
 
         @Override
@@ -475,7 +494,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onEnterClosingNotes() {
-            _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+            showClosingNotesDialog();
         }
     };
 
@@ -497,8 +516,15 @@ public class TasksFragment extends WorkorderFragment {
         public void onCancel() {
         }
     };
-    private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
+        }
+    };
 
+    private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onTaskClick(Task task) {
             switch (task.getTaskType()) {
@@ -506,10 +532,17 @@ public class TasksFragment extends WorkorderFragment {
                     getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
                     break;
                 case CHECKOUT:
-                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+                    Pay pay = _workorder.getPay();
+                    if (pay != null && pay.isPerDeviceRate()) {
+                        _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                        _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+                    } else {
+                        getActivity().startService(
+                                _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+                    }
                     break;
                 case CLOSE_OUT_NOTES:
-                    _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+                    showClosingNotesDialog();
                     break;
                 case CONFIRM_ASSIGNMENT:
                     _confirmDialog.show(getFragmentManager(), _workorder.getSchedule(), _confirmListener);
@@ -521,11 +554,12 @@ public class TasksFragment extends WorkorderFragment {
                     break;
                 case DOWNLOAD:
                     Integer _identifier = task.getIdentifier();
+                    Log.v(TAG, "_identifier: " + _identifier);
                     Document[] docs = _workorder.getDocuments();
                     if (docs != null && docs.length > 0) {
                         for (int i = 0; i < docs.length; i++) {
                             Document doc = docs[i];
-
+                            Log.v(TAG, "docid: " + doc.getDocumentId());
                             if (doc.getDocumentId().equals(_identifier)) {
                                 // task completed here
                                 if (!task.getCompleted())
@@ -645,7 +679,10 @@ public class TasksFragment extends WorkorderFragment {
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
-            getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+            Log.v(TAG, "On Ok");
+            getActivity().startService(
+                    _service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+
         }
 
         @Override
@@ -735,6 +772,13 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
+    private ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
+        @Override
+        public void onChangeClosingNotes(String closingNotes) {
+            showClosingNotesDialog();
+        }
+    };
+
     /*-*************************************-*/
     /*-				WEB Events				-*/
     /*-*************************************-*/
@@ -764,11 +808,10 @@ public class TasksFragment extends WorkorderFragment {
     };
 
     private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
-
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
 
-            if (resultCode == WEB_CHANGED) {
+            if (resultCode == WEB_CHANGED || resultCode == WEB_SEND_DELIVERABLE) {
                 _workorder.dispatchOnChange();
             }
 
@@ -776,7 +819,6 @@ public class TasksFragment extends WorkorderFragment {
             if (resultCode == WEB_GET_TASKS) {
                 // TODO populate
                 String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                Log.v(TAG, data);
                 try {
                     JsonArray array = new JsonArray(data);
                     _tasks = new LinkedList<Task>();

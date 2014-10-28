@@ -74,7 +74,9 @@ public class ActionBarTopView extends RelativeLayout {
         WorkorderSubstatus substatus = _workorder.getStatus()
                 .getWorkorderSubstatus();
 
-        if (status == WorkorderStatus.AVAILABLE) {
+        if (status == WorkorderStatus.AVAILABLE
+                || status == WorkorderStatus.COMPLETED
+                || status == WorkorderStatus.CANCELLED) {
             setVisibility(View.GONE);
             return;
         } else {
@@ -193,7 +195,7 @@ public class ActionBarTopView extends RelativeLayout {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(
-                    "Are you sure you want to mark this workorder as complete?")
+                    "Are you sure you want to mark this work order as complete?")
                     .setPositiveButton("Yes", _complete_dialog)
                     .setNegativeButton("No", null).show();
         }

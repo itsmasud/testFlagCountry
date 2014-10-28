@@ -7,22 +7,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.AcceptBundleWorkroder;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 
 import java.text.ParseException;
+import java.util.Arrays;
 
 public class DetailFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DetailFragment";
@@ -41,15 +46,19 @@ public class DetailFragment extends WorkorderFragment {
     private ExpiresDialog _expiresDialog;
     private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
+    private AcceptBundleWorkroder _acceptBundleWODialog;
+    private DeviceCountDialog _deviceCountDialog;
+    private TextView _bundleWarningTextView;
 
     // Data
     private Workorder _workorder;
     private GlobalState _gs;
     private WorkorderService _service;
+    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,9 +94,17 @@ public class DetailFragment extends WorkorderFragment {
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _closingDialog.setListener(_closingNotes_onOk);
+
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog.setListener(_deviceCountListener);
+
         _expiresDialog = new ExpiresDialog(view.getContext());
-        _closingDialog = new ClosingNotesDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
+        _acceptBundleWODialog = new AcceptBundleWorkroder(view.getContext());
+
+        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning_textview);
 
         if (_workorder != null) {
             setWorkorder(_workorder);
@@ -96,8 +113,8 @@ public class DetailFragment extends WorkorderFragment {
     }
 
 	/*-*************************************-*/
-	/*-				Mutators				-*/
-	/*-*************************************-*/
+    /*-				Mutators				-*/
+    /*-*************************************-*/
 
     @Override
     public void update() {
@@ -138,11 +155,20 @@ public class DetailFragment extends WorkorderFragment {
         if (_exView != null) {
             _exView.setWorkorder(_workorder);
         }
+
+        if (_bundleWarningTextView != null) {
+            if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
+                _bundleWarningTextView.setVisibility(View.VISIBLE);
+                _bundleWarningTextView.setText("This is part of a bundle of " + _workorder.getBundleCount() + " work orders.");
+            } else {
+                _bundleWarningTextView.setVisibility(View.GONE);
+            }
+        }
     }
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
@@ -161,6 +187,14 @@ public class DetailFragment extends WorkorderFragment {
         }
     };
 
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
+        }
+    };
+
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onComplete() {
@@ -170,8 +204,14 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onCheckOut() {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+            Pay pay = _workorder.getPay();
+            if (pay != null && pay.isPerDeviceRate()) {
+                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+            }
         }
 
         @Override
@@ -216,7 +256,9 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onEnterClosingNotes() {
-            _closingDialog.show(_workorder.getClosingNotes(), _closingNotes_onOk);
+            if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+            }
         }
     };
 
@@ -225,11 +267,9 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onDeleteExpense(Workorder workorder,
                                     AdditionalExpense expense) {
-            getActivity()
-                    .startService(
-                            _service.deleteExpense(WEB_CHANGE,
-                                    _workorder.getWorkorderId(),
-                                    expense.getExpenseId()));
+            getActivity().startService(_service.deleteExpense(WEB_CHANGE,
+                    _workorder.getWorkorderId(),
+                    expense.getExpenseId()));
         }
 
         @Override
@@ -297,6 +337,8 @@ public class DetailFragment extends WorkorderFragment {
                         public void onCancel() {
                         }
                     });
+            /*Log.v(TAG, "Got!");
+            _acceptBundleWODialog.show(workorder);*/
         }
 
         @Override

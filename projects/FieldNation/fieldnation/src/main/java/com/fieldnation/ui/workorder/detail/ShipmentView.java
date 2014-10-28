@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import java.util.Arrays;
+
 public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private static final String TAG = "ui.workorder.detail.ShipmentView";
 
@@ -25,6 +27,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	// Data
 	private Workorder _workorder;
 	private Listener _listener;
+    private Integer[] woStatus = { 5, 6, 7 }; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -60,21 +63,23 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private View.OnClickListener _add_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			_addDialog.show(R.string.add_shipment, _addDialog_listener);
+            if(!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                _addDialog.show(R.string.add_shipment, _addDialog_listener);
+            }
 		}
 	};
 
 	private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
 		@Override
 		public void onDelete(ShipmentTracking shipment) {
-			if (_listener != null) {
+			if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
 				_listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
 			}
 		}
 
 		@Override
 		public void onAssign(ShipmentTracking shipment) {
-			if (_listener != null) {
+			if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
 				_listener.onAssign(_workorder, shipment.getWorkorderShipmentId());
 			}
 		}
@@ -83,14 +88,14 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 	private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
 		@Override
 		public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
-			if (_listener != null) {
+			if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
 				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId);
 			}
 		}
 
 		@Override
 		public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
-			if (_listener != null) {
+			if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
 				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId, taskId);
 			}
 		}

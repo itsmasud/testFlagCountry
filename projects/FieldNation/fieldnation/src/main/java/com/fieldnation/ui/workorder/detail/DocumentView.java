@@ -87,6 +87,10 @@ public class DocumentView extends RelativeLayout {
 
 	}
 
+    public void hideDeleteButton(){
+        _deleteButton.setVisibility(GONE);
+    }
+
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/

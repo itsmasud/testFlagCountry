@@ -133,6 +133,13 @@
     <string name="offer_expires_colon">Offer Expires:</string>
     <string name="never">Never</string>
     <string name="confirm">Confirm</string>
+    <string name="tasks">Tasks</string>
+    <string name="completed_devices_colon">Completed Devices:</string>
+    <string name="device_count">Device Count</string>
+    <string name="mark_completed">Mark Completed</string>
+    <string name="check_in">Check In</string>
+    <string name="check_out">Check Out</string>
+    <string name="acknowledge_hold">Acknowledge Hold</string>
 
     <!-- /general strings -->
 
@@ -155,7 +162,7 @@
     <string name="mywork_title">My Work Orders</string>
     <string name="mywork_subtitle">Assigned, Completed, and Canceled Jobs</string>
     <string name="market_title">Marketplace</string>
-    <string name="market_subtitle">Available, Requested Routed, and Recruitment</string>
+    <string name="market_subtitle">Available, Requested, Routed, and Recruitment</string>
     <string name="payment_title">Payment</string>
     <string name="payment_subtitle">Processing and Paid</string>
     <string name="settings_title">Settings</string>
@@ -167,10 +174,15 @@
     <string name="no_data">No Data Available</string>
 
     <!-- my work categories -->
+    <string name="routed">Routed</string>
     <string name="my_work_category1">In Progress</string>
     <string name="my_work_category2">Assigned</string>
     <string name="my_work_category3">Completed</string>
     <string name="my_work_category4">Canceled</string>
+    <string name="my_work_category5">In Review</string>
+    <string name="my_work_category6">Approved</string>
+    <string name="my_work_category7">Paid</string>
+
 
     <!-- market categories -->
     <string name="market_requested">Requested</string>

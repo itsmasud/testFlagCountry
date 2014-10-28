@@ -63,13 +63,7 @@ public class WoProgressBar extends RelativeLayout {
 	}
 
 	public void setSubstatus(WorkorderSubstatus substatus) {
-		int ord = substatus.ordinal();
 		buildProgressBar(substatus);
-		/*_nodes[0].setActive(ord >= WorkorderSubstatus.AVAILABLE.ordinal());
-		_nodes[1].setActive(ord >= WorkorderSubstatus.REQUESTED.ordinal());
-		_nodes[2].setActive(ord >= WorkorderSubstatus.CONFIRMED.ordinal());
-		_nodes[3].setActive(ord >= WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED.ordinal());*/
-
 		// hideLast();
 	}
 
@@ -115,9 +109,9 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[1].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);				
 				hideLast();
-				_nodes[0].setLabel("Routed");
-				_nodes[1].setLabel("Accept");
-				_nodes[2].setLabel("Assigned");
+				_nodes[0].setLabel(getResources().getString(R.string.routed)); //Routed
+				_nodes[1].setLabel(getResources().getString(R.string.accept)); //Accept
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category2)); //Assigned
 				break;
 			case REQUESTED:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
@@ -131,10 +125,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Counter Offer");
-				_nodes[1].setLabel("Assigned");
-				_nodes[2].setLabel("In Progress");
-				_nodes[3].setLabel("Completed");
+				_nodes[0].setLabel(getResources().getString(R.string.counter_offer)); //Counter Offer
+				_nodes[1].setLabel(getResources().getString(R.string.my_work_category2)); //Assigned
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category1)); //In Progress
+				_nodes[3].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
 				break;
 			case UNCONFIRMED:
 				_nodes[0].setActive(PROGRESSBAR_STEP_ACTIVE);
@@ -142,10 +136,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Confirm");
-				_nodes[1].setLabel("Assigned");
-				_nodes[2].setLabel("In Progress");
-				_nodes[3].setLabel("Completed");
+				_nodes[0].setLabel(getResources().getString(R.string.confirm)); //Confirm
+				_nodes[1].setLabel(getResources().getString(R.string.my_work_category2)); //Assigned
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category1)); //In Progress
+				_nodes[3].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
 				break;
 			case CONFIRMED:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
@@ -153,10 +147,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Confirm");
-				_nodes[1].setLabel("Assigned");
-				_nodes[2].setLabel("In Progress");
-				_nodes[3].setLabel("Completed");
+				_nodes[0].setLabel(getResources().getString(R.string.confirm)); //Confirm
+				_nodes[1].setLabel(getResources().getString(R.string.my_work_category2)); //Assigned
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category1)); //In Progress
+				_nodes[3].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
 				break;
 			case ONHOLD_UNACKNOWLEDGED:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
@@ -164,10 +158,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Confirm");
-				_nodes[1].setLabel("Assigned");
-				_nodes[2].setLabel("In Progress");
-				_nodes[3].setLabel("Completed");
+				_nodes[0].setLabel(getResources().getString(R.string.confirm)); //Confirm
+				_nodes[1].setLabel(getResources().getString(R.string.my_work_category2)); //Assigned
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category1)); //In Progress
+				_nodes[3].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
 				break;
 			case ONHOLD_ACKNOWLEDGED:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
@@ -175,10 +169,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Confirm");
-				_nodes[1].setLabel("Assigned");
-				_nodes[2].setLabel("In Progress");
-				_nodes[3].setLabel("Completed");
+				_nodes[0].setLabel(getResources().getString(R.string.confirm)); //Confirm
+				_nodes[1].setLabel(getResources().getString(R.string.my_work_category2)); //Assigned
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category1)); //In Progress
+				_nodes[3].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
 				break;
 			case CHECKEDIN:
 			case CHECKEDOUT:
@@ -187,10 +181,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_ACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Confirm");
-				_nodes[1].setLabel("Assigned");
-				_nodes[2].setLabel("In Progress");
-				_nodes[3].setLabel("Completed");
+				_nodes[0].setLabel(getResources().getString(R.string.confirm)); //Confirm
+				_nodes[1].setLabel(getResources().getString(R.string.my_work_category2)); //Assigned
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category1)); //In Progress
+				_nodes[3].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
 				break;				
 			case PENDINGREVIEWED:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
@@ -198,20 +192,20 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Completed");
-				_nodes[1].setLabel("In Review");
-				_nodes[2].setLabel("Approved");
-				_nodes[3].setLabel("Paid");
+				_nodes[0].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
+                _nodes[1].setLabel(getResources().getString(R.string.my_work_category5)); //In Review
+                _nodes[2].setLabel(getResources().getString(R.string.my_work_category6)); //Approved
+                _nodes[3].setLabel(getResources().getString(R.string.my_work_category7)); //Paid
 			case INREVIEW:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
 				_nodes[1].setActive(PROGRESSBAR_STEP_ACTIVE);
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Completed");
-				_nodes[1].setLabel("In Review");
-				_nodes[2].setLabel("Approved");
-				_nodes[3].setLabel("Paid");
+				_nodes[0].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
+				_nodes[1].setLabel(getResources().getString(R.string.my_work_category5)); //In Review
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category6)); //Approved
+				_nodes[3].setLabel(getResources().getString(R.string.my_work_category7)); //Paid
 				break;	
 			case APPROVED_PROCESSINGPAYMENT:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
@@ -219,10 +213,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_ACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Completed");
-				_nodes[1].setLabel("In Review");
-				_nodes[2].setLabel("Approved");
-				_nodes[3].setLabel("Paid");
+				_nodes[0].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
+                _nodes[1].setLabel(getResources().getString(R.string.my_work_category5)); //In Review
+                _nodes[2].setLabel(getResources().getString(R.string.my_work_category6)); //Approved
+                _nodes[3].setLabel(getResources().getString(R.string.my_work_category7)); //Paid
 				break;	
 			case PAID:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
@@ -230,10 +224,10 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_COMPLETED);
 				_nodes[3].setActive(PROGRESSBAR_STEP_COMPLETED);
 				
-				_nodes[0].setLabel("Completed");
-				_nodes[1].setLabel("In Review");
-				_nodes[2].setLabel("Approved");
-				_nodes[3].setLabel("Paid");
+				_nodes[0].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
+                _nodes[1].setLabel(getResources().getString(R.string.my_work_category5)); //In Review
+                _nodes[2].setLabel(getResources().getString(R.string.my_work_category6)); //Approved
+                _nodes[3].setLabel(getResources().getString(R.string.my_work_category7)); //Paid
 				break;	
 			case CANCELLED:
 			case CANCELLED_LATEFEEPROCESSING:
@@ -243,14 +237,12 @@ public class WoProgressBar extends RelativeLayout {
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);
 				_nodes[3].setActive(PROGRESSBAR_STEP_INACTIVE);
 				
-				_nodes[0].setLabel("Confirm");
-				_nodes[1].setLabel("Assigned");
-				_nodes[2].setLabel("In Progress");
-				_nodes[3].setLabel("Completed");
-				_nodes[0].setOpacity();
-				_nodes[1].setOpacity();
-				_nodes[2].setOpacity();
-				_nodes[3].setOpacity();
+				_nodes[0].setLabel(getResources().getString(R.string.confirm)); //Confirm
+				_nodes[1].setLabel(getResources().getString(R.string.my_work_category2)); //Assigned
+				_nodes[2].setLabel(getResources().getString(R.string.my_work_category1)); //In Progress
+				_nodes[3].setLabel(getResources().getString(R.string.my_work_category3)); //Completed
+				_nodes[0].setBackground(R.drawable.ic_wo_detail_progress_done_transparent);
+				_nodes[1].setBackground(R.drawable.ic_wo_detail_progress_active_transparent);
 				break;	
 			default:
 				return;
