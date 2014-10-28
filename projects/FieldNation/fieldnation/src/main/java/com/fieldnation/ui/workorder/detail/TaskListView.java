@@ -1,9 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Task;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
 import android.content.Context;
@@ -30,6 +32,8 @@ public class TaskListView extends RelativeLayout {
 	// Data
 	private List<Task> _tasks;
 	private Listener _listener;
+    private Workorder _workorder;
+    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
 	public TaskListView(Context context) {
 		super(context);
@@ -98,7 +102,11 @@ public class TaskListView extends RelativeLayout {
 
 				TaskRowView row = new TaskRowView(getContext());
 				row.setTask(task);
-				row.setOnTaskClickListener(_task_onClick);
+
+                //if work order completed or canceled then hide/disable any controls actions
+                if(_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                    row.setOnTaskClickListener(_task_onClick);
+                }
 
 				_preVisistList.addView(row);
 			}
@@ -111,7 +119,11 @@ public class TaskListView extends RelativeLayout {
 
 				TaskRowView row = new TaskRowView(getContext());
 				row.setTask(task);
-				row.setOnTaskClickListener(_task_onClick);
+
+                //if work order completed or canceled then hide/disable any controls actions
+                if(_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                    row.setOnTaskClickListener(_task_onClick);
+                }
 
 				if ("prep".equals(task.getStage())) {
 					_preVisistList.addView(row);
@@ -123,6 +135,10 @@ public class TaskListView extends RelativeLayout {
 			}
 		}
 	}
+
+    public void setWorkorder(Workorder workorder) {
+        _workorder = workorder;
+    }
 
 	/*-*************************-*/
 	/*-			Events			-*/

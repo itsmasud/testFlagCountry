@@ -3,14 +3,18 @@ package com.fieldnation.ui.workorder.detail;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
+import com.fieldnation.data.workorder.Workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.Arrays;
 
 public class UploadSlotView extends RelativeLayout {
 	private static final String TAG = "ui.workorder.detail.UploadSlotView";
@@ -23,6 +27,7 @@ public class UploadSlotView extends RelativeLayout {
 	// DATA
 	private UploadSlot _slot;
 	private Listener _listener;
+    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
 	/*-				Life Cycle				-*/
@@ -60,7 +65,7 @@ public class UploadSlotView extends RelativeLayout {
 		return -1;
 	}
 
-	public void setUploadSlot(long profileId, UploadSlot slot, UploadedDocumentView.Listener listener) {
+	public void setUploadSlot(long profileId, UploadSlot slot, UploadedDocumentView.Listener listener, Workorder _workorder) {
 		_slot = slot;
 
 		UploadedDocument[] docs = _slot.getUploadedDocuments();
@@ -71,7 +76,12 @@ public class UploadSlotView extends RelativeLayout {
 			UploadedDocument doc = docs[i];
 			UploadedDocumentView v = new UploadedDocumentView(getContext());
 			v.setDeliverable(profileId, doc);
-			v.setListener(listener);
+            v.setListener(listener);
+
+            //if work order completed or canceled then hide/disable any controls actions
+            if(_workorder != null && Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                v.hideDeleteButton();
+            }
 			_docsList.addView(v);
 		}
 

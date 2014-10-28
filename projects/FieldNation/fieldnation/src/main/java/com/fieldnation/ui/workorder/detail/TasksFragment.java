@@ -255,8 +255,10 @@ public class TasksFragment extends WorkorderFragment {
         if (_shipments != null)
             _shipments.setWorkorder(_workorder);
 
-        if (_taskList != null)
+        if (_taskList != null) {
             _taskList.setTaskListViewListener(_taskListView_listener);
+            _taskList.setWorkorder(_workorder);
+        }
 
         if (_timeLogged != null)
             _timeLogged.setWorkorder(_workorder);

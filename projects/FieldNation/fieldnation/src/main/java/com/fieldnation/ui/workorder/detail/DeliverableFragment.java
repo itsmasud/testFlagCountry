@@ -52,6 +52,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.List;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -92,6 +93,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private ProfileService _profileService;
     private Profile _profile = null;
     private Bundle _delayedAction = null;
+    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
     // private List<Deliverable> _deliverables = null;
     // private List<Task> _tasks = null;
@@ -236,6 +238,11 @@ public class DeliverableFragment extends WorkorderFragment {
                 DocumentView v = new DocumentView(getActivity());
                 _reviewList.addView(v);
                 v.setDocument(doc);
+
+                //if work order completed or canceled then hide/disable any controls actions
+                if(_workorder != null && Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                    v.hideDeleteButton();
+                }
             }
             _noDocsTextView.setVisibility(View.GONE);
         } else {
@@ -249,8 +256,13 @@ public class DeliverableFragment extends WorkorderFragment {
                 UploadSlot slot = slots[i];
                 UploadSlotView v = new UploadSlotView(getActivity());
                 v.setUploadSlot(_profile.getUserId(), slot,
-                        _uploaded_document_listener);
-                v.setListener(_uploadSlot_listener);
+                        _uploaded_document_listener, _workorder);
+
+                //if work order completed or canceled then hide/disable any controls actions
+                if(_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                    v.setListener(_uploadSlot_listener);
+                }
+
                 _filesLayout.addView(v);
             }
         }

@@ -135,6 +135,10 @@ public class UploadedDocumentView extends RelativeLayout {
 		}
 	}
 
+    public void hideDeleteButton(){
+        _deleteButton.setVisibility(View.GONE);
+    }
+
 	/*-*************************-*/
 	/*-			Events			-*/
 	/*-*************************-*/
