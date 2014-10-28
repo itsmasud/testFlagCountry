@@ -17,6 +17,7 @@ import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.dialog.AcceptBundleWorkroder;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
@@ -44,6 +45,7 @@ public class DetailFragment extends WorkorderFragment {
     private ExpiresDialog _expiresDialog;
     private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
+    private AcceptBundleWorkroder _acceptBundleWODialog;
 
     // Data
     private Workorder _workorder;
@@ -107,6 +109,7 @@ public class DetailFragment extends WorkorderFragment {
 
         _expiresDialog = new ExpiresDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
+        _acceptBundleWODialog = new AcceptBundleWorkroder(view.getContext());
 
         if (_workorder != null) {
             setWorkorder(_workorder);
@@ -316,6 +319,8 @@ public class DetailFragment extends WorkorderFragment {
                         public void onCancel() {
                         }
                     });
+            /*Log.v(TAG, "Got!");
+            _acceptBundleWODialog.show(workorder);*/
         }
 
         @Override
