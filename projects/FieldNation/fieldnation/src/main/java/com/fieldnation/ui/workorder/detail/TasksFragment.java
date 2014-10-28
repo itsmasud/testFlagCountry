@@ -86,7 +86,6 @@ public class TasksFragment extends WorkorderFragment {
     private TaskListView _taskList;
     private TimeLoggedView _timeLogged;
     private ClosingNotesView _closingNotes;
-    private View[] _separators;
     private ClosingNotesDialog _closingDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private ShipmentAddDialog _shipmentAddDialog;
@@ -130,12 +129,6 @@ public class TasksFragment extends WorkorderFragment {
         _closingNotes.setListener(_clockingNotesView_listener);
         _topBar = (ActionBarTopView) view.findViewById(R.id.topaction_view);
         _topBar.setListener(_actionBarTop_listener);
-
-        _separators = new View[3];
-
-        _separators[0] = view.findViewById(R.id.sep1);
-        _separators[1] = view.findViewById(R.id.sep2);
-        _separators[2] = view.findViewById(R.id.sep3);
 
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog.setListener(_closingNotes_onOk);
@@ -263,17 +256,11 @@ public class TasksFragment extends WorkorderFragment {
             WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
             if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
                 _timeLogged.setVisibility(View.GONE);
-                _separators[0].setVisibility(View.GONE);
-                _separators[1].setVisibility(View.GONE);
                 _shipments.setVisibility(View.GONE);
-                _separators[2].setVisibility(View.GONE);
                 _closingNotes.setVisibility(View.GONE);
             } else {
                 _shipments.setVisibility(View.VISIBLE);
-                _separators[0].setVisibility(View.VISIBLE);
-                _separators[1].setVisibility(View.VISIBLE);
                 _timeLogged.setVisibility(View.VISIBLE);
-                _separators[2].setVisibility(View.VISIBLE);
                 _closingNotes.setVisibility(View.VISIBLE);
             }
         }

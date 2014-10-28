@@ -27,7 +27,7 @@ public class Workorder implements Parcelable {
     @Json(name = "bundleCount")
     private Integer _bundleCount;
     @Json(name = "bundleId")
-    private Integer _bundleId;
+    private Long _bundleId;
     @Json(name = "canEditFieldsForProviderToEnter")
     private Boolean _canEditFieldsForProviderToEnter;
     @Json(name = "canRequestPayForThisWo")
@@ -170,7 +170,7 @@ public class Workorder implements Parcelable {
         return _bundleCount;
     }
 
-    public Integer getBundleId() {
+    public Long getBundleId() {
         return _bundleId;
     }
 

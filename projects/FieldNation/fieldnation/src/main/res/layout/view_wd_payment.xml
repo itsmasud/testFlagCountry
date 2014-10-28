@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
@@ -35,7 +35,7 @@
         android:id="@+id/counteroffer_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -55,18 +55,18 @@
         android:id="@+id/detail_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/addexpense_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -87,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -106,7 +106,7 @@
 
         <TextView
             android:id="@+id/expenseslabel_textview"
-            style="@style/WorkorderDetail_FieldSubTitle"
+            style="@style/WorkorderDetail_FieldTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/expenses_colon" />
@@ -115,12 +115,11 @@
             android:id="@+id/expenses_linearlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </LinearLayout>
+            android:orientation="vertical"></LinearLayout>
 
         <TextView
             android:id="@+id/discountslabel_textview"
-            style="@style/WorkorderDetail_FieldSubTitle"
+            style="@style/WorkorderDetail_FieldTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/discounts_colon" />
@@ -129,8 +128,7 @@
             android:id="@+id/discounts_linearlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </LinearLayout>
+            android:orientation="vertical"></LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

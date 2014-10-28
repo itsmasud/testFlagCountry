@@ -5,10 +5,10 @@
     android:orientation="vertical" >
 
     <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
+        style="@style/WorkorderDetail_FieldTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Time Logged:" />
+        android:text="Time Logged" />
 
     <LinearLayout
         android:layout_width="match_parent"

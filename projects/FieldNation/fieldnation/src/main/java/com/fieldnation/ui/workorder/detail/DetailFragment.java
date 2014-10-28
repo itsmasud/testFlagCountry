@@ -23,6 +23,7 @@ import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
+import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 
@@ -104,7 +105,8 @@ public class DetailFragment extends WorkorderFragment {
         _confirmDialog = new ConfirmDialog(view.getContext());
         _acceptBundleWODialog = new AcceptBundleWorkroder(view.getContext());
 
-        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning_textview);
+        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
+        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
 
         if (_workorder != null) {
             setWorkorder(_workorder);
@@ -169,6 +171,16 @@ public class DetailFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private View.OnClickListener _bundle_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
+            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
+            getActivity().startActivity(intent);
+        }
+    };
+
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
