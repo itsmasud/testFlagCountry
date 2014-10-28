@@ -160,7 +160,7 @@ public class PaymentDetailActivity extends BaseActivity {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-				Log.v(TAG, "skdjfhdskjfh");
+				Log.v(TAG, "BP");
 			}
 		}
 

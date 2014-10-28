@@ -13,6 +13,7 @@ android {
         targetSdkVersion 19
         versionCode 7
         versionName "0.007"
+        applicationId "com.fieldnation.FieldNation"
     }
     buildTypes {
         release {

@@ -3,6 +3,8 @@ package com.fieldnation;
 import android.app.Application;
 import android.os.Build;
 
+import com.fieldnation.BuildConfig;
+import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.auth.client.AuthenticationServer;
 import com.fieldnation.data.workorder.ExpenseCategories;

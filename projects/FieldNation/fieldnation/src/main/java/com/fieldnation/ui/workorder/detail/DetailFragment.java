@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -47,6 +48,7 @@ public class DetailFragment extends WorkorderFragment {
     private ClosingNotesDialog _closingDialog;
     private AcceptBundleWorkroder _acceptBundleWODialog;
     private DeviceCountDialog _deviceCountDialog;
+    private TextView _bundleWarningTextView;
 
     // Data
     private Workorder _workorder;
@@ -102,6 +104,8 @@ public class DetailFragment extends WorkorderFragment {
         _confirmDialog = new ConfirmDialog(view.getContext());
         _acceptBundleWODialog = new AcceptBundleWorkroder(view.getContext());
 
+        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning_textview);
+
         if (_workorder != null) {
             setWorkorder(_workorder);
         }
@@ -150,6 +154,15 @@ public class DetailFragment extends WorkorderFragment {
 
         if (_exView != null) {
             _exView.setWorkorder(_workorder);
+        }
+
+        if (_bundleWarningTextView != null) {
+            if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
+                _bundleWarningTextView.setVisibility(View.VISIBLE);
+                _bundleWarningTextView.setText("This is part of a bundle of " + _workorder.getBundleCount() + " work orders.");
+            } else {
+                _bundleWarningTextView.setVisibility(View.GONE);
+            }
         }
     }
 
