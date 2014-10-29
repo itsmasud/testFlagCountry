@@ -241,29 +241,12 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onConfirm() {
-            final Workorder workorder = _workorder;
-            _confirmDialog.show(getActivity().getSupportFragmentManager(),
-                    workorder.getSchedule(), new ConfirmDialog.Listener() {
-                        @Override
-                        public void onOk(String startDate,
-                                         long durationMilliseconds) {
-                            try {
-                                long end = durationMilliseconds
-                                        + ISO8601.toUtc(startDate);
-                                Intent intent = _service.confirmAssignment(
-                                        WEB_CHANGE,
-                                        _workorder.getWorkorderId(), startDate,
-                                        ISO8601.fromUTC(end));
-                                getActivity().startService(intent);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
+            if (_workorder.isBundle()) {
+                _acceptBundleWODialog.show(_workorder, _acceptBundleDialogListener);
+            } else {
+                _confirmDialog.show(getActivity().getSupportFragmentManager(),
+                        _workorder.getSchedule(), _confirmListener);
+            }
         }
 
         @Override
@@ -308,11 +291,32 @@ public class DetailFragment extends WorkorderFragment {
         }
     };
 
+    private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+        @Override
+        public void onOk(String startDate, long durationMilliseconds) {
+            try {
+                long end = durationMilliseconds + ISO8601.toUtc(startDate);
+                getActivity().startService(_service.confirmAssignment(WEB_CHANGE,
+                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end)));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
     private ActionView.Listener _actionView_listener = new ActionView.Listener() {
 
         @Override
         public void onRequest(Workorder workorder) {
-            _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
+            if (workorder.isBundle()) {
+                _acceptBundleWODialog.show(workorder, _acceptBundleDialogListener);
+            } else {
+                _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
+            }
         }
 
         @Override
@@ -323,47 +327,12 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Workorder workorder) {
-            final Workorder _workorder = workorder;
-            _confirmDialog.show(getActivity().getSupportFragmentManager(),
-                    workorder.getSchedule(), new ConfirmDialog.Listener() {
-                        @Override
-                        public void onOk(String startDate,
-                                         long durationMilliseconds) {
-                            try {
-                                long end = durationMilliseconds
-                                        + ISO8601.toUtc(startDate);
-                                getActivity()
-                                        .startService(
-                                                _service.confirmAssignment(
-                                                        WEB_CHANGE,
-                                                        _workorder
-                                                                .getWorkorderId(),
-                                                        startDate, ISO8601
-                                                                .fromUTC(end)));
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-        }
-
-        @Override
-        public void onAcceptWorkorder(Workorder workorder) {
-            final Workorder _workorder = workorder;
-            _acceptBundleWODialog.show(workorder, new AcceptBundleWorkroder.Listener() {
-                @Override
-                public void onOk(Workorder workorder) {
-                    onConfirmAssignment(_workorder);
-                }
-
-                @Override
-                public void onCancel() {
-                }
-            });
+            if (workorder.isBundle()) {
+                _acceptBundleWODialog.show(workorder, _acceptBundleDialogListener);
+            } else {
+                _confirmDialog.show(getActivity().getSupportFragmentManager(),
+                        workorder.getSchedule(), _confirmListener);
+            }
         }
 
         @Override
@@ -373,7 +342,17 @@ public class DetailFragment extends WorkorderFragment {
         }
     };
 
+    private AcceptBundleWorkroder.Listener _acceptBundleDialogListener = new AcceptBundleWorkroder.Listener() {
 
+        @Override
+        public void onOk(Workorder workorder) {
+            _confirmDialog.show(getFragmentManager(), workorder.getSchedule(), _confirmListener);
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
     private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
         public void onOk(String dateTime) {

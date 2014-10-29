@@ -1,6 +1,8 @@
 package com.fieldnation.ui.dialog;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -57,7 +59,21 @@ public class ClosingNotesDialog extends DialogFragment {
     /*-*****************************-*/
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
+        super.onCreate(savedInstanceState);
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateDialog");
+        return super.onCreateDialog(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_closing_notes, container, false);
 
         _editText = (EditText) v.findViewById(R.id.notes_edittext);
@@ -85,6 +101,12 @@ public class ClosingNotesDialog extends DialogFragment {
         }
         _listener = listener;
         show(_fm, tag);
+    }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        Log.v(TAG, "show");
+        super.show(manager, tag);
     }
 
     private void populateUi() {

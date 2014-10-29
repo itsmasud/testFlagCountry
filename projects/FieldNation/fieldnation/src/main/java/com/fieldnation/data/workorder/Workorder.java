@@ -557,6 +557,10 @@ public class Workorder implements Parcelable {
         return getStatus().getStatusIntent();
     }
 
+    public boolean isBundle(){
+        return getBundleId() != null;
+    }
+
     public void removeListener(Listener listener) {
         _listeners.remove(listener);
     }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DurationDialog;
 
 import android.support.v7.app.ActionBar;
@@ -27,6 +28,7 @@ public class MyWorkActivity extends DrawerActivity {
 	// UI
 	private ViewPager _viewPager;
 	private WorkorderListFragment[] _fragments;
+    private CustomFieldDialog _customFieldDialog;
 
 	// Data
 	private PagerAdapter _pagerAdapter;
@@ -50,6 +52,8 @@ public class MyWorkActivity extends DrawerActivity {
 		_currentFragment = getSupportActionBar().getSelectedNavigationIndex();
 		_viewPager.setCurrentItem(_currentFragment, false);
 
+//        _customFieldDialog = CustomFieldDialog.getInstance(getSupportFragmentManager(), TAG);
+//        _customFieldDialog.sho
 	}
 
 	private void buildTabs(Bundle savedInstanceState) {

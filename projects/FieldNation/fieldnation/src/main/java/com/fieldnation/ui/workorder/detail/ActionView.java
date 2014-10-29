@@ -169,7 +169,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
 	/*-*************************-*/
     /*-			Events			-*/
-	/*-*************************-*/
+    /*-*************************-*/
 
     private View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
@@ -177,8 +177,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
             setLoading(true);
             if (_listener != null) {
                 if (_workorder.getStatus().getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
-                    //_listener.onConfirmAssignment(_workorder);
-                    _listener.onAcceptWorkorder(_workorder);
+                    _listener.onConfirmAssignment(_workorder);
                 } else {
                     _listener.onRequest(_workorder);
                 }
@@ -232,8 +231,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         public void onNotInterested(Workorder workorder);
 
         public void onConfirmAssignment(Workorder workorder);
-
-        public void onAcceptWorkorder(Workorder workorder);
 
         public void onRequest(Workorder workorder);
     }

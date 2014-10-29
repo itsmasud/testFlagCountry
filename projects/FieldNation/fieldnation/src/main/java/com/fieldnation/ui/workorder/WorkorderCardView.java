@@ -556,7 +556,7 @@ public class WorkorderCardView extends RelativeLayout {
 		} else {
 			_statusTextView.setText("");
 		}
-		setIsBundle(_workorder.getBundleId() != null);
+		setIsBundle(_workorder.isBundle());
 
 		setNotInterestedEnabled(false);
 		_titleTextView.setVisibility(GONE);
