@@ -349,8 +349,21 @@ public class DetailFragment extends WorkorderFragment {
                         public void onCancel() {
                         }
                     });
-            /*Log.v(TAG, "Got!");
-            _acceptBundleWODialog.show(workorder);*/
+        }
+
+        @Override
+        public void onAcceptWorkorder(Workorder workorder) {
+            final Workorder _workorder = workorder;
+            _acceptBundleWODialog.show(workorder, new AcceptBundleWorkroder.Listener() {
+                @Override
+                public void onOk(Workorder workorder) {
+                    onConfirmAssignment(_workorder);
+                }
+
+                @Override
+                public void onCancel() {
+                }
+            });
         }
 
         @Override
@@ -359,6 +372,7 @@ public class DetailFragment extends WorkorderFragment {
                     _service.complete(WEB_CHANGE, workorder.getWorkorderId()));
         }
     };
+
 
     private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override

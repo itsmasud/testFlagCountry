@@ -2,6 +2,7 @@ package com.fieldnation.ui.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -10,22 +11,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 public class AcceptBundleWorkroder extends Dialog {
     private static final String TAG = "ui.workorder.detail.AcceptBundleWorkroder";
@@ -38,6 +29,9 @@ public class AcceptBundleWorkroder extends Dialog {
 
     // Data
     private Listener _listener;
+    private Workorder _workorder;
+    private Workorder[] _workorders;
+
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
@@ -58,13 +52,14 @@ public class AcceptBundleWorkroder extends Dialog {
         setTitle(R.string.activity_bundle_detail);
     }
 
-    public void show(Workorder _workorder) {
-        if(_workorder == null)
+    public void show(Workorder workorder, Listener listener) {
+        if(workorder == null)
             return;
 
-        _acceptWOText.setText("This workorder is part of a bundle of "+_workorder.getBundleId().toString()+" workorders. By accepting this workorder you are accepting all of them.");
-        //@TODO
+        _workorder = workorder;
+        _listener = listener;
 
+        _acceptWOText.setText("This workorder is part of a bundle of "+_workorder.getBundleCount().toString()+" workorders. By accepting this workorder you are accepting all of them.");
         show();
     }
 
@@ -79,10 +74,10 @@ public class AcceptBundleWorkroder extends Dialog {
         @Override
         public void onClick(View v) {
             dismiss();
-            //@TODO
-            if (_listener != null) {
-                _listener.onOk();
-            }
+            Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
+            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
+            getContext().startActivity(intent);
         }
     };
 
@@ -90,9 +85,8 @@ public class AcceptBundleWorkroder extends Dialog {
         @Override
         public void onClick(View v) {
             dismiss();
-            //@TODO
             if (_listener != null) {
-                _listener.onOk();
+                _listener.onOk(_workorder);
             }
         }
     };
@@ -108,8 +102,7 @@ public class AcceptBundleWorkroder extends Dialog {
     };
 
     public interface Listener {
-        //@TODO
-        public void onOk();
+        public void onOk(Workorder workorder);
 
         public void onCancel();
 
