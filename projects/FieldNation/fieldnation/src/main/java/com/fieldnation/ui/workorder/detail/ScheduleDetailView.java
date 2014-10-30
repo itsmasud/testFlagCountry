@@ -85,6 +85,9 @@ public class ScheduleDetailView extends RelativeLayout {
         _workLogDialog = new WorkLogDialog(getContext());
 
         populateUi();
+
+        _gs = (GlobalState) getContext().getApplicationContext();
+        _gs.requestAuthentication(_authClient);
     }
 
     public void setFragmentManager(FragmentManager fm) {
@@ -162,7 +165,7 @@ public class ScheduleDetailView extends RelativeLayout {
         public void onOk(Calendar start, Calendar end, int deviceCount) {
             getContext().startService(
                     _service.updateLogTime(WEB_SUBMIT_WORKLOG, _workorder.getWorkorderId(), _loggedWork.getLoggedHoursId(), start.getTimeInMillis(),
-                            end.getTimeInMillis()));
+                            end.getTimeInMillis(), deviceCount));
         }
 
         @Override
