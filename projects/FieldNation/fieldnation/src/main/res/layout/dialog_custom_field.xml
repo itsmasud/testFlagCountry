@@ -1,35 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
 
-    <TextView
-        android:id="@+id/title_textview"
-        style="@style/WorkorderDetail_FieldTitle"
+    <RelativeLayout
+        android:id="@+id/tip_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Custom Field Title" />
+        android:visibility="gone">
 
-    <EditText
-        android:id="@+id/text_edittext"
+        <TextView
+            android:layout_marginRight="5dp"
+            android:id="@+id/tiplabel_textview"
+            style="@style/WorkorderDetail_FieldSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tip_colon_space" />
+
+        <TextView
+            android:layout_toRightOf="@+id/tiplabel_textview"
+            android:id="@+id/tip_textview"
+            style="@style/WorkorderDetail_Field_Gray"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/text_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/datetime_button"
+            android:gravity="center_vertical"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/datetime_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/ic_calendar"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <Spinner
+        android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
-
-    <Button
-        android:id="@+id/datetime_button"
-        style="?android:attr/spinnerStyle"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="48dp" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <Button

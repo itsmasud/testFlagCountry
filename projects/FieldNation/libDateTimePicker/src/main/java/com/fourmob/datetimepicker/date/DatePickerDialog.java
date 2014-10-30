@@ -215,6 +215,11 @@ public class DatePickerDialog extends DialogFragment implements View.OnClickList
 		return new SimpleMonthAdapter.CalendarDay(mCalendar);
 	}
 
+    public void setDate(Calendar calendar){
+        initialize(mCallBack,calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH), mVibrate);
+    }
+
 	public void initialize(OnDateSetListener onDateSetListener, int year, int month, int day, boolean vibrate) {
 		if (year > MAX_YEAR)
 			throw new IllegalArgumentException("year end must < " + MAX_YEAR);

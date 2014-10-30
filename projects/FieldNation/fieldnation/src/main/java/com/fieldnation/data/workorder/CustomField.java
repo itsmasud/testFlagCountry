@@ -9,12 +9,14 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 import java.text.ParseException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CustomField implements Parcelable {
     @Json(name = "customFieldFormat")
     private String _customFieldFormat;
     @Json(name = "customLabelId")
-    private Integer _customLabelId;
+    private Long _customLabelId;
     @Json(name = "data_field_type")
     private String _dataFieldType;
     @Json(name = "dateEntered")
@@ -45,7 +47,7 @@ public class CustomField implements Parcelable {
         return _customFieldFormat;
     }
 
-    public Integer getCustomLabelId() {
+    public Long getCustomLabelId() {
         return _customLabelId;
     }
 
@@ -99,7 +101,20 @@ public class CustomField implements Parcelable {
 
     public static JsonObject toJson(CustomField customField) {
         try {
-            return Serializer.serializeObject(customField);
+            JsonObject predefinedValues = new JsonObject();
+
+            if (customField.getPredefinedValues() != null && customField.getPredefinedValues().length > 0) {
+                String[] predef = customField.getPredefinedValues();
+                for (int i = 0; i < predef.length; i++) {
+                    predefinedValues.put(i + "", predef[i]);
+                }
+            }
+
+            JsonObject obj = Serializer.serializeObject(customField);
+
+            obj.put("predefinedValues", predefinedValues);
+
+            return obj;
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -108,7 +123,23 @@ public class CustomField implements Parcelable {
 
     public static CustomField fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(CustomField.class, json);
+            CustomField cf = Serializer.unserializeObject(CustomField.class, json);
+
+            if (json.has("predefinedValues")) {
+                if (json.get("predefinedValues") instanceof JsonObject) {
+                    JsonObject pd = json.getJsonObject("predefinedValues");
+                    List<String> l = new LinkedList<String>();
+                    int count = 0;
+                    while (pd.has(count + "")) {
+                        l.add(pd.getString(count + ""));
+                    }
+
+                    //cf._predefinedValues = (String[]) l.toArray();
+                }
+            }
+
+            return cf;
+
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;

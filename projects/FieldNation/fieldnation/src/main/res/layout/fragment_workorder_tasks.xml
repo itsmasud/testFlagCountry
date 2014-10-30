@@ -3,13 +3,13 @@
     style="@style/WorkorderDetail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         style="@style/WorkorderDetail_Data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <com.fieldnation.ui.workorder.detail.ActionBarTopView
             android:id="@+id/topaction_view"
@@ -23,6 +23,11 @@
 
         <com.fieldnation.ui.workorder.detail.TaskListView
             android:id="@+id/scope_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.fieldnation.ui.workorder.detail.CustomFieldListView
+            android:id="@+id/customfields_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

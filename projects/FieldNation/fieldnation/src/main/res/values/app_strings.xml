@@ -140,6 +140,7 @@
     <string name="check_in">Check In</string>
     <string name="check_out">Check Out</string>
     <string name="acknowledge_hold">Acknowledge Hold</string>
+    <string name="tip_colon_space">Tip: </string>
 
     <!-- /general strings -->
 

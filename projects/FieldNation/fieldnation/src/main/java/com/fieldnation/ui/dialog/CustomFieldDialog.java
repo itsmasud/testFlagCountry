@@ -5,16 +5,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
+import com.fieldnation.utils.misc;
 
 import java.util.List;
 
@@ -28,9 +31,11 @@ public class CustomFieldDialog extends DialogFragment {
     private static final String STATE_CUSTOM_FIELD = "CustomFieldDialog:STATE_CUSTOM_FIELD";
 
     // UI
-    private TextView _titleTextView;
     private EditText _textEditText;
     private Button _dateTimeButton;
+    private Spinner _spinner;
+    private RelativeLayout _tipLayout;
+    private TextView _tipTextView;
     private Button _okButton;
     private Button _cancelButton;
 
@@ -80,51 +85,24 @@ public class CustomFieldDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        CustomField.FieldType type = _customField.getFieldType();
-
         View v = null;
-        if (type == CustomField.FieldType.LIST) {
-            v = inflater.inflate(R.layout.dialog_custom_field_list, container, false);
-        } else {
-            v = inflater.inflate(R.layout.dialog_custom_field, container, false);
-            _textEditText = (EditText) v.findViewById(R.id.text_edittext);
-            _textEditText.setVisibility(View.GONE);
-            _dateTimeButton = (Button) v.findViewById(R.id.datetime_button);
-            _dateTimeButton.setVisibility(View.GONE);
-        }
+        v = inflater.inflate(R.layout.dialog_custom_field, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
+        _textEditText = (EditText) v.findViewById(R.id.text_edittext);
+        _dateTimeButton = (Button) v.findViewById(R.id.datetime_button);
+        _dateTimeButton.setOnClickListener(_dateTime_onClick);
+        _spinner = (Spinner) v.findViewById(R.id.spinner);
+        _tipLayout = (RelativeLayout) v.findViewById(R.id.tip_layout);
+        _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
+
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        switch (type) {
-            case TEXT:
-                _textEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                _textEditText.setVisibility(View.VISIBLE);
-                break;
-            case DATE:
-                _dateTimeButton.setVisibility(View.VISIBLE);
-                break;
-            case DATETIME:
-                _dateTimeButton.setVisibility(View.VISIBLE);
-                break;
-            case NUMBER:
-                _textEditText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-                _textEditText.setVisibility(View.VISIBLE);
-                break;
-            case PHONE:
-                _textEditText.setRawInputType(InputType.TYPE_CLASS_PHONE);
-                _textEditText.setVisibility(View.VISIBLE);
-                break;
-            case TIME:
-                _dateTimeButton.setVisibility(View.VISIBLE);
-                break;
-            case LIST:
-                break;
-        }
-        return super.onCreateView(inflater, container, savedInstanceState);
+        populateUi();
+
+        return v;
     }
 
     public void setListener(Listener listener) {
@@ -134,27 +112,103 @@ public class CustomFieldDialog extends DialogFragment {
     public void show(String tag, CustomField customField, Listener listener) {
         _customField = customField;
         _listener = listener;
+
         show(_fm, tag);
+
+        populateUi();
     }
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private void populateUi() {
+        if (_textEditText == null || _dateTimeButton == null || _spinner == null ||
+                _tipLayout == null || _tipTextView == null || _customField == null)
+            return;
 
+        if (getDialog() == null)
+            return;
+
+        CustomField.FieldType type = _customField.getFieldType();
+
+        getDialog().setTitle(_customField.getLabel());
+
+        _textEditText.setVisibility(View.GONE);
+        _dateTimeButton.setVisibility(View.GONE);
+        _spinner.setVisibility(View.GONE);
+        _tipLayout.setVisibility(View.GONE);
+
+        if (!misc.isEmptyOrNull(_customField.getTip())) {
+            _tipLayout.setVisibility(View.VISIBLE);
+            _tipTextView.setText(_customField.getTip());
+        }
+
+        switch (type) {
+            case DATE:
+            case DATETIME:
+            case TIME:
+                //_dateTimeButton.setVisibility(View.VISIBLE);
+            case TEXT:
+            case NUMBER:
+            case PHONE:
+                _textEditText.setVisibility(View.VISIBLE);
+                _textEditText.setText("hj,klkhj");
+                if (!misc.isEmptyOrNull(_customField.getValue())) {
+                    _textEditText.setText(_customField.getValue());
+                }
+                break;
+            case LIST:
+                _spinner.setVisibility(View.VISIBLE);
+                if (_customField.getPredefinedValues() != null) {
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                            android.R.layout.simple_spinner_dropdown_item,
+                            _customField.getPredefinedValues());
+
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                    _spinner.setAdapter(adapter);
+                    if (!misc.isEmptyOrNull(_customField.getValue())) {
+                        String val = _customField.getValue();
+                        String[] values = _customField.getPredefinedValues();
+
+                        for (int i = 0; i < values.length; i++) {
+                            if (val.equals(values[i])) {
+                                _spinner.setSelection(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    private View.OnClickListener _dateTime_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            // TODO need to get date/time
+        }
+    };
 
+    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            switch (_customField.getFieldType()) {
+                case LIST:
+                    _listener.onOk(_customField, (String) _spinner.getSelectedItem());
+                    break;
+            }
+
+            _listener.onOk(_customField, _textEditText.getText().toString());
         }
     };
 
     private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
-
+            dismiss();
         }
     };
 
 
     public interface Listener {
-
+        public void onOk(CustomField field, String value);
     }
 }
