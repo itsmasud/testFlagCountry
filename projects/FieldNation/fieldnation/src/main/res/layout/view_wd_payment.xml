@@ -31,6 +31,31 @@
         android:layout_width="match_parent"
         android:text="@string/view_field_nation_terms" />
 
+    <TextView
+        android:id="@+id/counteroffer_textview"
+        style="@style/WorkorderDetail_FieldTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/counter_offer"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/co1_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$5,000 Fixed for 4 hours"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/co2_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$75.00 per extra hour up to 5 hours"
+        android:visibility="gone" />
+
+
     <LinearLayout
         android:id="@+id/counteroffer_layout"
         android:layout_width="wrap_content"

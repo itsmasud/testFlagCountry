@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
@@ -16,6 +16,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="You will need to arrive exactly on Friday March 14, 2014 at exactly 11:00 am CST." />
+
+    <TextView
+        android:id="@+id/colabel_textview"
+        style="@style/WorkorderDetail_FieldTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/counter_offer"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/co_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You will need to arrive exactly on Friday March 14, 2014 at exactly 11:00 am CST."
+        android:visibility="gone" />
 
     <View
         style="@style/WorkorderDetail_Separator"

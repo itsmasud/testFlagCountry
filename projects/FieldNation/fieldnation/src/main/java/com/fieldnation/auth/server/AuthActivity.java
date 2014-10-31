@@ -35,6 +35,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
     private EditText _usernameEditText;
     private EditText _passwordEditText;
 
+
     // data
     private String _username;
     private String _password;
@@ -42,7 +43,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         _contentLayout.setVisibility(View.VISIBLE);
 
     }
+
 
 	/*-*********************************-*/
 	/*-				Events				-*/

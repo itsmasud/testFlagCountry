@@ -150,7 +150,7 @@ public class CustomFieldDialog extends DialogFragment {
         if (!misc.isEmptyOrNull(_customField.getTip())) {
             _tipLayout.setVisibility(View.VISIBLE);
             if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-                _tipTextView.setText(_customField.getTip() + "\n(" + _customField.getCustomFieldFormat() + ")");
+                _tipTextView.setText(_customField.getTip() + "\n(Format: " + _customField.getCustomFieldFormat() + ")");
             } else {
                 _tipTextView.setText(_customField.getTip());
             }

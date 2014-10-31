@@ -50,7 +50,7 @@ public class ExpiresDialog extends Dialog {
 
         _calendar = Calendar.getInstance();
 
-        setTitle("When does the offer expire?");
+        setTitle("Request Workorder");
     }
 
     public void show(FragmentManager fm, Listener listener) {
