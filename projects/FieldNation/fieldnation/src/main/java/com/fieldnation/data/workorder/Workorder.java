@@ -557,8 +557,8 @@ public class Workorder implements Parcelable {
         return getStatus().getStatusIntent();
     }
 
-    public boolean isBundle(){
-        return getBundleId() != null;
+    public boolean isBundle() {
+        return getBundleId() != null && getBundleId() > 0;
     }
 
     public void removeListener(Listener listener) {
@@ -680,7 +680,7 @@ public class Workorder implements Parcelable {
     }
 
     /*-*********************************************-*/
-	/*-			Parcelable Implementation			-*/
+    /*-			Parcelable Implementation			-*/
 	/*-*********************************************-*/
     public static final Parcelable.Creator<Workorder> CREATOR = new Parcelable.Creator<Workorder>() {
 

@@ -5,12 +5,6 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/offer_expires_colon" />
-
     <Button
         android:id="@+id/expiration_button"
         style="?android:attr/spinnerStyle"

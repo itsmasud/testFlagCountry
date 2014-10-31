@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,8 +67,12 @@ public class CustomFieldDialog extends DialogFragment {
     /*-         Life Cycle          -*/
     /*-*****************************-*/
 
+    public CustomFieldDialog() {
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setRetainInstance(true);
         if (savedInstanceState != null) {
             //TODO if it doesn't contain this, then we are in an error state
             if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD))
@@ -85,24 +90,34 @@ public class CustomFieldDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = null;
-        v = inflater.inflate(R.layout.dialog_custom_field, container, false);
+
+        View v = inflater.inflate(R.layout.dialog_custom_field, container);
 
         _textEditText = (EditText) v.findViewById(R.id.text_edittext);
+        Log.v(TAG, "onCreateView() _textEditText = " + _textEditText.toString());
+
         _dateTimeButton = (Button) v.findViewById(R.id.datetime_button);
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
+
         _spinner = (Spinner) v.findViewById(R.id.spinner);
+
         _tipLayout = (RelativeLayout) v.findViewById(R.id.tip_layout);
+
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
+
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        populateUi();
-
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateUi();
     }
 
     public void setListener(Listener listener) {
@@ -114,8 +129,6 @@ public class CustomFieldDialog extends DialogFragment {
         _listener = listener;
 
         show(_fm, tag);
-
-        populateUi();
     }
 
     private void populateUi() {
@@ -123,12 +136,11 @@ public class CustomFieldDialog extends DialogFragment {
                 _tipLayout == null || _tipTextView == null || _customField == null)
             return;
 
-        if (getDialog() == null)
-            return;
+        if (getDialog() != null) {
+            getDialog().setTitle(_customField.getLabel());
+        }
 
         CustomField.FieldType type = _customField.getFieldType();
-
-        getDialog().setTitle(_customField.getLabel());
 
         _textEditText.setVisibility(View.GONE);
         _dateTimeButton.setVisibility(View.GONE);
@@ -149,9 +161,10 @@ public class CustomFieldDialog extends DialogFragment {
             case NUMBER:
             case PHONE:
                 _textEditText.setVisibility(View.VISIBLE);
-                _textEditText.setText("hj,klkhj");
+                _textEditText.getEditableText().clear();
+                //_textEditText.setText("", TextView.BufferType.EDITABLE);
                 if (!misc.isEmptyOrNull(_customField.getValue())) {
-                    _textEditText.setText(_customField.getValue());
+                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
                 }
                 break;
             case LIST:
@@ -195,7 +208,7 @@ public class CustomFieldDialog extends DialogFragment {
                     _listener.onOk(_customField, (String) _spinner.getSelectedItem());
                     break;
             }
-
+            Log.v(TAG, "_ok_onClick _textEditText = " + _textEditText.toString());
             _listener.onOk(_customField, _textEditText.getText().toString());
         }
     };

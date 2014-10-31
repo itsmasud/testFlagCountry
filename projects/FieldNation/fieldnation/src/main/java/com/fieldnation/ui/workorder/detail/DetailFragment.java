@@ -18,7 +18,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.dialog.AcceptBundleWorkroder;
+import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
@@ -47,7 +47,7 @@ public class DetailFragment extends WorkorderFragment {
     private ExpiresDialog _expiresDialog;
     private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
-    private AcceptBundleWorkroder _acceptBundleWODialog;
+    private AcceptBundleDialog _acceptBundleWODialog;
     private DeviceCountDialog _deviceCountDialog;
     private TextView _bundleWarningTextView;
 
@@ -103,7 +103,7 @@ public class DetailFragment extends WorkorderFragment {
 
         _expiresDialog = new ExpiresDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
-        _acceptBundleWODialog = new AcceptBundleWorkroder(view.getContext());
+        _acceptBundleWODialog = new AcceptBundleDialog(view.getContext());
 
         _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -242,7 +242,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onConfirm() {
             if (_workorder.isBundle()) {
-                _acceptBundleWODialog.show(_workorder, _acceptBundleDialogListener);
+                _acceptBundleWODialog.show(_workorder, _acceptBundleDialogConfirmListener);
             } else {
                 _confirmDialog.show(getActivity().getSupportFragmentManager(),
                         _workorder.getSchedule(), _confirmListener);
@@ -313,7 +313,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onRequest(Workorder workorder) {
             if (workorder.isBundle()) {
-                _acceptBundleWODialog.show(workorder, _acceptBundleDialogListener);
+                _acceptBundleWODialog.show(workorder, _acceptBundleDialogExpiresListener);
             } else {
                 _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
             }
@@ -328,7 +328,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onConfirmAssignment(Workorder workorder) {
             if (workorder.isBundle()) {
-                _acceptBundleWODialog.show(workorder, _acceptBundleDialogListener);
+                _acceptBundleWODialog.show(workorder, _acceptBundleDialogConfirmListener);
             } else {
                 _confirmDialog.show(getActivity().getSupportFragmentManager(),
                         workorder.getSchedule(), _confirmListener);
@@ -342,17 +342,20 @@ public class DetailFragment extends WorkorderFragment {
         }
     };
 
-    private AcceptBundleWorkroder.Listener _acceptBundleDialogListener = new AcceptBundleWorkroder.Listener() {
+    private AcceptBundleDialog.Listener _acceptBundleDialogConfirmListener = new AcceptBundleDialog.Listener() {
 
         @Override
         public void onOk(Workorder workorder) {
             _confirmDialog.show(getFragmentManager(), workorder.getSchedule(), _confirmListener);
         }
-
+    };
+    private AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
-        public void onCancel() {
+        public void onOk(Workorder workorder) {
+            _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
         }
     };
+
     private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
         public void onOk(String dateTime) {
@@ -370,7 +373,6 @@ public class DetailFragment extends WorkorderFragment {
     };
 
     private AuthenticationClient _authClient = new AuthenticationClient() {
-
         @Override
         public void onAuthenticationFailed(Exception ex) {
             _gs.requestAuthenticationDelayed(_authClient);
