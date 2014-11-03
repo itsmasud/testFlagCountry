@@ -141,6 +141,8 @@
     <string name="check_out">Check Out</string>
     <string name="acknowledge_hold">Acknowledge Hold</string>
     <string name="tip_colon_space">Tip: </string>
+    <string name="counter_offer_schedule">Counter Offer Schedule</string>
+    <string name="please_change_the_schedule_or_tap_cancel">Please change the schedule or tap Cancel</string>
 
     <!-- /general strings -->
 

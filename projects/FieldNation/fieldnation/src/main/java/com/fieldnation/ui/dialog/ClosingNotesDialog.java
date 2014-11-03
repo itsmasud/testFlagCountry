@@ -1,13 +1,10 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,23 +54,8 @@ public class ClosingNotesDialog extends DialogFragment {
     /*-*****************************-*/
     /*-			Life Cycle			-*/
     /*-*****************************-*/
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreate");
-        super.onCreate(savedInstanceState);
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateDialog");
-        return super.onCreateDialog(savedInstanceState);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_closing_notes, container, false);
 
         _editText = (EditText) v.findViewById(R.id.notes_edittext);
@@ -85,9 +67,13 @@ public class ClosingNotesDialog extends DialogFragment {
 
         getDialog().setTitle(R.string.closing_notes);
 
-        populateUi();
-
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateUi();
     }
 
     public void setListener(Listener listener) {
@@ -105,7 +91,6 @@ public class ClosingNotesDialog extends DialogFragment {
 
     @Override
     public void show(FragmentManager manager, String tag) {
-        Log.v(TAG, "show");
         super.show(manager, tag);
     }
 
@@ -138,7 +123,6 @@ public class ClosingNotesDialog extends DialogFragment {
     private View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.v(TAG, "Closing OBJ: " + ClosingNotesDialog.this.toString());
             dismiss();
             if (_listener != null) {
                 _listener.onOk(_editText.getText().toString());

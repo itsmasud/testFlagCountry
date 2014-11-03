@@ -4,6 +4,9 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -14,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -34,12 +38,17 @@ public class AuthActivity extends AccountAuthenticatorActivity {
     private Button _loginButton;
     private EditText _usernameEditText;
     private EditText _passwordEditText;
+//    private SurfaceView _surfaceView;
+//    private SurfaceHolder _surfaceHolder;
+
+    private VideoView _videoView;
 
 
     // data
     private String _username;
     private String _password;
     private GlobalState _gs;
+    //private MediaPlayer _mp;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -49,6 +58,8 @@ public class AuthActivity extends AccountAuthenticatorActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        getWindow().setFormat(PixelFormat.UNKNOWN);
+
         if (getActionBar() != null) {
             getActionBar().hide();
         }
@@ -64,14 +75,29 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         _loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
         _loadingProgressBar.setVisibility(View.GONE);
         _contentLayout.setVisibility(View.VISIBLE);
+        _videoView = (VideoView) findViewById(R.id.video_view);
 
+//getResources().openRawResourceFd(R.raw.loading_vid).
+        Uri video = Uri.parse("android.resource://com.fieldnation.FieldNation/raw/loading_vid");
+        _videoView.setVideoURI(video);
+        _videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+            }
+        });
+        _videoView.start();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        _videoView.stopPlayback();
+    }
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
-
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
     private View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

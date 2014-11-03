@@ -34,7 +34,7 @@ public class CustomField implements Parcelable {
     @Json(name = "predefinedValues")
     private String[] _predefinedValues;
     @Json(name = "required")
-    private Integer _required;
+    private Boolean _required;
     @Json(name = "tip")
     private String _tip;
     @Json(name = "value")
@@ -83,7 +83,7 @@ public class CustomField implements Parcelable {
         return _predefinedValues;
     }
 
-    public Integer getRequired() {
+    public Boolean getRequired() {
         return _required;
     }
 

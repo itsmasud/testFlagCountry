@@ -75,7 +75,7 @@ public class CustomFieldRowView extends RelativeLayout {
             _checkbox.setText(_customField.getLabel() + "\n" + _customField.getValue());
         }
 
-        if (_customField.getRequired() == 1) {
+        if (_customField.getRequired()) {
             _optionalTextView.setVisibility(View.GONE);
         } else {
             _optionalTextView.setVisibility(View.VISIBLE);

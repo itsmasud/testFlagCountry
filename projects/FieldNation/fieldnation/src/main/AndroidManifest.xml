@@ -54,7 +54,6 @@
         <activity
             android:name="com.fieldnation.auth.server.AuthActivity"
             android:exported="true"
-            android:hardwareAccelerated="false"
             android:label="@string/activity_login_title" />
         <activity
             android:name="com.fieldnation.ui.workorder.WorkorderActivity"

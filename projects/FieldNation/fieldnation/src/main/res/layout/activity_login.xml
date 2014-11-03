@@ -12,8 +12,22 @@
         android:src="@drawable/loginscreen" />
 
     <!--<com.fieldnation.auth.server.MoviePlayerView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" />-->
+
+    <!--<SurfaceView-->
+    <!--android:id="@+id/video_surface"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" />-->
+
+    <com.fieldnation.auth.server.FnVideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
