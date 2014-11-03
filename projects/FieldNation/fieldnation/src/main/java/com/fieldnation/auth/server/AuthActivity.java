@@ -78,7 +78,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         _videoView = (VideoView) findViewById(R.id.video_view);
 
 //getResources().openRawResourceFd(R.raw.loading_vid).
-        Uri video = Uri.parse("android.resource://com.fieldnation.FieldNation/raw/loading_vid");
+        Uri video = Uri.parse("android.resource://com.fieldnation.FieldNation/raw/login_vid");
         _videoView.setVideoURI(video);
         _videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override

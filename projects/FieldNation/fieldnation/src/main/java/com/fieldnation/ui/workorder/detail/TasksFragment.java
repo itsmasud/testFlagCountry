@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -164,10 +165,10 @@ public class TasksFragment extends WorkorderFragment {
                 _username = savedInstanceState.getString(STATE_USERNAME);
             }
             if (savedInstanceState.containsKey(STATE_TASKS)) {
-                Task[] tasks = (Task[]) savedInstanceState.getParcelableArray(STATE_TASKS);
+                Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
                 _tasks = new LinkedList<Task>();
                 for (int i = 0; i < tasks.length; i++) {
-                    _tasks.add(tasks[i]);
+                    _tasks.add((Task)tasks[i]);
                 }
                 _taskList.setTaskList(_tasks);
             }

@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
+import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -304,6 +307,68 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                     "payBasis=blended&perHourRate=" + perHourRate + "&maxHours=" + maxHours + "&additionalHourRate=" + additionalHourRate + "&additionalHours=" + additionalHours + "&explanation=" + explanation,
                     "application/x-www-form-urlencoded", false);
         }
+    }
+
+    public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterMin, Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+        String payload = "";
+        // reason/expire
+        if (expires)
+            payload += "expire=true&expireAfterMinutes=" + expiresAfterMin;
+        else
+            payload += "expire=false";
+
+        if (!misc.isEmptyOrNull(reason)) {
+            payload += "&explanation=" + reason;
+        }
+
+        // pay counter
+        if (pay != null) {
+            if (pay.isPerDeviceRate()) {
+                payload += "&perDeviceRate=" + pay.getPerDevice();
+                payload += "&maxDevice=" + pay.getMaxDevice();
+            } else if (pay.isBlendedRate()) {
+                payload += "&perHourRate=" + pay.getBlendedFirstHours();
+                payload += "&maxHours=" + pay.getBlendedStartRate();
+                payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
+                payload += "&additionalHours=" + pay.getBlendedAdditionalHours();
+            } else if (pay.isFixedRate()) {
+                payload += "&fixedTotalAmount=" + pay.getFixedAmount();
+            } else if (pay.isHourlyRate()) {
+                payload += "&perHourRate=" + pay.getPerHour();
+                payload += "&maxHours=" + pay.getMaxHour();
+            }
+        }
+        // schedule counter
+        if (schedule != null) {
+            if (schedule.isExact()) {
+                payload += "&startTime=" + schedule.getStartTime();
+            } else {
+                payload += "&startTime=" + schedule.getStartTime();
+                payload += "&endTime=" + schedule.getEndTime();
+            }
+        }
+        // expenses counter
+        if (expenses != null && expenses.length > 0) {
+            String json = "[";
+            for (int i = 0; i < expenses.length; i++) {
+                AdditionalExpense expense = expenses[i];
+                json += "{\"description\":\"" + expense.getDescription() + "\",";
+                json += "\"price\":\"" + expense.getPrice() + "\",";
+                json += "\"categoryId:\":\"" + expense.getCategoryId() + "\"}";
+            }
+            json += "]";
+
+            payload += "&expenses=" + json;
+        }
+
+        System.out.println(payload);
+
+        return httpPost(
+                resultCode,
+                "api/rest/v1/workorder/" + workorderId + "/counter_offer",
+                null,
+                payload,
+                "application/x-www-form-urlencoded", false);
     }
 
     // deliverables

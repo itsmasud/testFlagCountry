@@ -40,7 +40,7 @@ public class MoviePlayerView extends View {
 
 
     public void init() {
-        _movie = Movie.decodeStream(getResources().openRawResource(R.raw.loading_vid));
+        _movie = Movie.decodeStream(getResources().openRawResource(R.raw.login_vid));
 
         _mw = _movie.width();
         _mh = _movie.height();

@@ -56,6 +56,7 @@ public class CounterOfferActivity extends ActionBarActivity {
     // WEB
     private static final int WEB_CHANGE = 1;
     private static final int WEB_GOT_WORKORDER = 2;
+    private static final int WEB_SENDING_COUNTER = 3;
 
     // UI
     // labels
@@ -670,8 +671,24 @@ public class CounterOfferActivity extends ActionBarActivity {
     private View.OnClickListener _sendButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO Method Stub: onClick()
-            Log.v(TAG, "Method Stub: onClick()");
+            boolean expires = _deleteNotAcceptedCheckbox.isChecked();
+            long min = 0;
+
+            String reason = _requestReasonEditText.getText().toString();
+
+            if (expires) {
+                min = _offerTime.getTimeInMillis() - System.currentTimeMillis() / 60000;
+            }
+            AdditionalExpense[] expenses = new AdditionalExpense[_counterExpenses.size()];
+            for (int i = 0; i < _counterExpenses.size(); i++) {
+                expenses[i] = _counterExpenses.get(i);
+            }
+
+            startService(
+                    _service.setCounterOffer(WEB_SENDING_COUNTER, _workorder.getWorkorderId(),
+                            expires, reason, (int) min, _counterPay, _counterSchedule, expenses));
+
+            _loadingView.setVisibility(View.VISIBLE);
         }
     };
 
@@ -780,6 +797,8 @@ public class CounterOfferActivity extends ActionBarActivity {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+            } else if (resultCode == WEB_SENDING_COUNTER) {
+                CounterOfferActivity.this.finish();
             }
         }
 
