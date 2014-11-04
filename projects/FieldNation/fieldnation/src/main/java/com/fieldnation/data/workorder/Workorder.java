@@ -489,6 +489,23 @@ public class Workorder implements Parcelable {
         return !workToDo;
     }
 
+    public boolean areCustomFieldsDone() {
+        CustomField[] fields = getCustomFields();
+
+        if (fields == null || fields.length == 0)
+            return true;
+
+        boolean fieldsToDo = false;
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i].getRequired() && misc.isEmptyOrNull(fields[i].getValue())) {
+                fieldsToDo = true;
+                break;
+            }
+        }
+
+        return !fieldsToDo;
+    }
+
     public boolean canComplete() {
         if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE || getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
             if (misc.isEmptyOrNull(getClosingNotes())) {
@@ -498,7 +515,15 @@ public class Workorder implements Parcelable {
                 return false;
             }
 
-            return areTasksComplete();
+            if (!areTasksComplete()) {
+                return false;
+            }
+
+            if (!areCustomFieldsDone()) {
+                return false;
+            }
+
+            return true;
         }
         return false;
     }
@@ -681,7 +706,7 @@ public class Workorder implements Parcelable {
 
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
-	/*-*********************************************-*/
+    /*-*********************************************-*/
     public static final Parcelable.Creator<Workorder> CREATOR = new Parcelable.Creator<Workorder>() {
 
         @Override

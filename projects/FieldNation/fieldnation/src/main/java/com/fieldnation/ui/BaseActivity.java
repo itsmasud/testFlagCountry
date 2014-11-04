@@ -69,7 +69,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         //actionbar.setDisplayShowHomeEnabled(true);
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setDisplayShowHomeEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_back_arrow);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
     }
 
     @Override

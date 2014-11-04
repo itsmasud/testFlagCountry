@@ -101,20 +101,7 @@ public class CustomField implements Parcelable {
 
     public static JsonObject toJson(CustomField customField) {
         try {
-            JsonObject predefinedValues = new JsonObject();
-
-            if (customField.getPredefinedValues() != null && customField.getPredefinedValues().length > 0) {
-                String[] predef = customField.getPredefinedValues();
-                for (int i = 0; i < predef.length; i++) {
-                    predefinedValues.put(i + "", predef[i]);
-                }
-            }
-
-            JsonObject obj = Serializer.serializeObject(customField);
-
-            obj.put("predefinedValues", predefinedValues);
-
-            return obj;
+            return Serializer.serializeObject(customField);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -123,23 +110,7 @@ public class CustomField implements Parcelable {
 
     public static CustomField fromJson(JsonObject json) {
         try {
-            CustomField cf = Serializer.unserializeObject(CustomField.class, json);
-
-            if (json.has("predefinedValues")) {
-                if (json.get("predefinedValues") instanceof JsonObject) {
-                    JsonObject pd = json.getJsonObject("predefinedValues");
-                    List<String> l = new LinkedList<String>();
-                    int count = 0;
-                    while (pd.has(count + "")) {
-                        l.add(pd.getString(count + ""));
-                    }
-
-                    //cf._predefinedValues = (String[]) l.toArray();
-                }
-            }
-
-            return cf;
-
+            return Serializer.unserializeObject(CustomField.class, json);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
