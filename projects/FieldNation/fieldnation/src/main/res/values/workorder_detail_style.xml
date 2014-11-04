@@ -3,7 +3,7 @@
 
     <!-- workorder detail colors -->
     <color name="workorder_detail_bg">@color/fn_gray</color>
-    <color name="workorder_detail_separator_color">#FFe9e9e7</color>
+    <color name="workorder_detail_separator_color">#FFe6e6e6</color>
 
     <style name="WorkorderDetail">
         <item name="android:background">@color/workorder_detail_bg</item>

@@ -73,7 +73,7 @@
     <string name="work_performed_colon">Work Performed: </string>
     <string name="closing_notes">Closing Notes</string>
     <string name="enter_closing_notes_here">Enter closing notes here...</string>
-    <string name="save">Save</string>
+    <string name="save">SAVE</string>
     <string name="request_work">Request Work</string>
     <string name="accept_work">Accept Work</string>
     <string name="counter_offer">Counter Offer</string>
@@ -117,7 +117,7 @@
     <string name="delete_counter_if_not_accepted_by">Delete counter of not accepted by</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">CANCEL</string>
     <string name="send_counter">Send Counter</string>
     <string name="pay_rate_basis_colon">Pay Rate Basis:</string>
     <string name="hourly">Hourly</string>

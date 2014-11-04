@@ -2,19 +2,243 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fn_gray" >
+    android:background="@color/fn_gray">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp" >
+            android:padding="10dp">
 
             <!-- Payment -->
+
+            <LinearLayout
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/card_full"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/WorkorderDetail_FieldTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:text="@string/payment" />
+
+
+                    <TextView
+                        style="@style/WorkorderDetail_FieldTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="(Counter Offered)" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/WorkorderDetail_Field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Blended $50 for the first 3 hours" />
+
+                        <TextView
+                            style="@style/WorkorderDetail_Field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="$20/hour for up to 2 hours" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="right|bottom"
+                        android:background="@drawable/ic_delete" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/card_full"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/WorkorderDetail_FieldTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:text="@string/payment" />
+
+
+                    <TextView
+                        style="@style/WorkorderDetail_FieldSubTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textScaleX="0.75"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="Current Pay" />
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/WorkorderDetail_Field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Blended $50 for the first 3 hours" />
+
+                <TextView
+                    style="@style/WorkorderDetail_Field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="$20/hour for up to 2 hours" />
+
+                <View
+                    style="@style/WorkorderDetail_Separator"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_height="1px" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:background="@null"
+                        android:textColor="@color/text_link_color"
+                        style="@android:style/Widget.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center"
+                        android:text="COUNTER PAY" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/card_full"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="16dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_height="16dp"
+                        android:background="@drawable/ic_more_details_active" />
+
+                    <TextView
+                        style="@style/WorkorderDetail_FieldTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:text="Schedule" />
+
+                    <TextView
+                        style="@style/WorkorderDetail_FieldSubTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textScaleX="0.75"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="Counter Offered" />
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/WorkorderDetail_Field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Between 3/5/2014 @ 1am and 3/6/2014 @ 4am" />
+
+                <View
+                    style="@style/WorkorderDetail_Separator"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_height="1px" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:background="@null"
+                        android:textColor="@color/text_link_color"
+                        style="@android:style/Widget.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:gravity="center"
+                        android:text="DELETE" />
+
+                    <Button
+                        android:background="@null"
+                        android:textColor="@color/text_link_color"
+                        style="@android:style/Widget.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="EDIT" />
+                </LinearLayout>
+
+
+            </LinearLayout>
 
             <TextView
                 style="@style/WorkorderDetail_FieldTitle"
@@ -25,7 +249,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     style="@style/WorkorderDetail_FieldTitle"
@@ -56,7 +280,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/hourly_rate_label_textview"
@@ -87,7 +311,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/max_hours_label_textview"
@@ -112,14 +336,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="$20 - 2 Hours" />
+                    android:text="$20 - 2 Hours" />o
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/edit_payment_counter_layout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/edit_payment_counter_imageview"
@@ -151,7 +375,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     style="@style/WorkorderDetail_FieldTitle"
@@ -182,7 +406,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     style="@style/WorkorderDetail_FieldTitle"
@@ -212,7 +436,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     style="@style/WorkorderDetail_FieldTitle"
@@ -243,7 +467,7 @@
                 android:id="@+id/edit_schedule_layout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/edit_schedule_imageview"
@@ -283,8 +507,7 @@
                 android:id="@+id/expenses_list_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
-            </LinearLayout>
+                android:orientation="vertical"></LinearLayout>
 
             <LinearLayout
                 android:id="@+id/add_expense_layout"
@@ -292,7 +515,7 @@
                 android:layout_height="48dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="48dp"
@@ -312,7 +535,7 @@
                 android:id="@+id/reasons_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <View
                     style="@style/WorkorderDetail_Separator"
@@ -365,7 +588,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/cancel_button"
@@ -395,6 +618,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
 </RelativeLayout>

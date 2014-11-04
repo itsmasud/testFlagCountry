@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+<!--
 
     <style name="Theme.FieldNation" parent="@style/Theme.AppCompat.Light">
         <item name="android:actionBarStyle">@style/ActionBar.Solid.FieldNation</item>
@@ -35,5 +36,6 @@
         <item name="android:paddingLeft">0dp</item>
         <item name="android:layout_marginLeft">0dp</item>
     </style>
+-->
 
 </resources>

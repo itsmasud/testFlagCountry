@@ -6,19 +6,49 @@
         jar="D:\dev\fn\projects\FieldNation\libUtils\build\libs\libUtils.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="046dd34525926f354807c28ba66c0a3caa706e25"/>
+        sha1="6c172797bf768e31ee5935a428ef448f9d00121d"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\library-2.4.0-02af723547a0f8bec5a243d122572a6b2074c6d8.jar"
+        jar="C:\Users\michael.carver\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-5c7feaba9c61ce10ecd24add85e9f372100c8616.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.1.11\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="0f700f6802ba1a1f1fa7ac26d5db0666a89d75a6"/>
     <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-eb2c1ee3a0e248d5de892345863644d01b6a812a.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="4bc638e71c659eaadcd6a9f0d7e7077695acb71c"/>
+        sha1="59af8fa8b584bff298a02470c56f01fd2f213989"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-849cf110ac703d1c38aaa8fe2d281d7dba510387.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.0\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="95fd37732ec852e99f07eeb516a3650172f1d136"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-6494d8a7f1e5fd36aa813a1103775e7c41815ecb.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libSmoothProgressBar\unspecified\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="ab88fa8c356bc5c3f9448d3c6a1b2bbf1b89f0b8"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\support-annotations-21.0.0-953b488ce41dbbf8f60c6546d92077c0216854dd.jar"
+        jar="D:\dev\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.0\support-annotations-21.0.0.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e"/>
     <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-48306ee339be4e0e6de715c528aa76c3c4af0103.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libUndobar\unspecified\classes.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="60273a0afdaf36ba79fbc8e7e76d372f94be544c"/>
+        sha1="49ebb908a6205af163c357dc2b3c08258de70d0e"/>
     <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-e4d3dde75161a3efdd78d34c44f299d51f5dedc5.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\classes.jar"
@@ -26,17 +56,23 @@
         revision="19.1.0"
         sha1="686344a780033e4ba22b926cd225f8d4941247e6"/>
     <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\libJson-b43012cbbf7e3961edef567c9d79e1aa9c375890.jar"
+        jar="D:\dev\fn\projects\FieldNation\libJson\build\libs\libJson.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="c1cc1ffab05b17240c3c97e1c850ba3a06e0d63b"/>
+    <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-9b72560355773bd9ca4805bb4b91197247a970eb.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\21.0.0\classes.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="6c6b497aa9e3aadbaabf975379e7914fa9e65523"/>
     <item
-        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-e12f3bb57d6b4e9c67a22e6c225b9eb1f42f4b62.jar"
-        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\classes.jar"
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-e4d3dde75161a3efdd78d34c44f299d51f5dedc5.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\classes.jar"
         jumboMode="false"
-        revision="19.1.0"
-        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28"/>
+        revision="21.0.1"
+        sha1="686344a780033e4ba22b926cd225f8d4941247e6"/>
     <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-5c7feaba9c61ce10ecd24add85e9f372100c8616.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.1.11\classes.jar"
@@ -44,17 +80,35 @@
         revision="19.1.0"
         sha1="0f700f6802ba1a1f1fa7ac26d5db0666a89d75a6"/>
     <item
-        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-8cceaccca30dcf8957651f751f0ad52bf34b896e.jar"
-        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libPullToRefresh\unspecified\classes.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="945cf1f594592170c29152871920d0006d952f7a"/>
-    <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\internal_impl-21.0.0-874b4885c4b19495d9c954f7680d3ba7f7eb1be8.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-8cceaccca30dcf8957651f751f0ad52bf34b896e.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libPullToRefresh\unspecified\classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="f6f0ffa65da0b4c03a1eef81c2e3fcc4c7422c75"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\internal_impl-21.0.0-874b4885c4b19495d9c954f7680d3ba7f7eb1be8.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\libUtils-72024576d9a0b8ec25f7bdb07b4259d4a706dde5.jar"
+        jar="D:\dev\fn\projects\FieldNation\libUtils\build\libs\libUtils.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="a6b516d7f9c350150baf6897805b082ca78b291b"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-48306ee339be4e0e6de715c528aa76c3c4af0103.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libUndobar\unspecified\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="c9277b437342cbe9841c5a97dbdabcd08520ac0e"/>
     <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\support-annotations-21.0.0-953b488ce41dbbf8f60c6546d92077c0216854dd.jar"
         jar="D:\dev\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.0\support-annotations-21.0.0.jar"
@@ -68,16 +122,34 @@
         revision="19.1.0"
         sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb"/>
     <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-eb2c1ee3a0e248d5de892345863644d01b6a812a.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="3e766f22b9b21c3917e0b85bda04b8092b2c1fe4"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-9b72560355773bd9ca4805bb4b91197247a970eb.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\21.0.0\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="6c6b497aa9e3aadbaabf975379e7914fa9e65523"/>
+    <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\libJson-b43012cbbf7e3961edef567c9d79e1aa9c375890.jar"
         jar="D:\dev\fn\projects\FieldNation\libJson\build\libs\libJson.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="8b416a751f8167d56694c4d95e1ec9c1ec6004d4"/>
+        sha1="1c86c1d43c9329d9c1f59e936082eae8985ed5af"/>
     <item
         dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-6494d8a7f1e5fd36aa813a1103775e7c41815ecb.jar"
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libSmoothProgressBar\unspecified\classes.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="62c779c851fb47f0ccded1a8fe2d984809619c8d"/>
+        sha1="ab0b93e958308fdfd60d951660e3c306f19dae2b"/>
+    <item
+        dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\dev\debug\classes-8cceaccca30dcf8957651f751f0ad52bf34b896e.jar"
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libPullToRefresh\unspecified\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="b1689831d6654944f81f3c7a47362e5c8663b7b3"/>
 
 </pre-dex-items>

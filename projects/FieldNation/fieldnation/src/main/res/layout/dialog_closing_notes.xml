@@ -6,10 +6,10 @@
     android:padding="10dp">
 
     <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
+        style="@style/WorkorderDetail_FieldTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Closing Notes:" />
+        android:text="Closing Notes" />
 
     <EditText
         android:id="@+id/notes_edittext"
@@ -28,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:gravity="right"
         android:orientation="horizontal">
 
         <Button
