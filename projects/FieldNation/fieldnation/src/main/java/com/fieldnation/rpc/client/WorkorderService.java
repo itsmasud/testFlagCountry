@@ -309,31 +309,35 @@ public class WorkorderService extends WebService implements WebServiceConstants 
         }
     }
 
-    public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterMin, Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+    public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
         String payload = "";
         // reason/expire
         if (expires)
-            payload += "expire=true&expireAfterMinutes=" + expiresAfterMin;
+            payload += "expires=true&expiresAfterInSecond=" + expiresAfterInSecond;
         else
-            payload += "expire=false";
+            payload += "expires=false";
 
         if (!misc.isEmptyOrNull(reason)) {
-            payload += "&explanation=" + reason;
+            payload += "&providerExplanation=" + reason;
         }
 
         // pay counter
         if (pay != null) {
             if (pay.isPerDeviceRate()) {
-                payload += "&perDeviceRate=" + pay.getPerDevice();
-                payload += "&maxDevice=" + pay.getMaxDevice();
+                payload += "&payBasis=per_device";
+                payload += "&payPerDevice=" + pay.getPerDevice();
+                payload += "&maxDevices=" + pay.getMaxDevice();
             } else if (pay.isBlendedRate()) {
-                payload += "&perHourRate=" + pay.getBlendedFirstHours();
+                payload += "&payBasis=blended";
+                payload += "&hourlyRate=" + pay.getBlendedFirstHours();
                 payload += "&maxHours=" + pay.getBlendedStartRate();
                 payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
-                payload += "&additionalHours=" + pay.getBlendedAdditionalHours();
+                payload += "&additionalMaxHours=" + pay.getBlendedAdditionalHours();
             } else if (pay.isFixedRate()) {
+                payload += "&payBasis=fixed";
                 payload += "&fixedTotalAmount=" + pay.getFixedAmount();
             } else if (pay.isHourlyRate()) {
+                payload += "&payBasis=per_hour";
                 payload += "&perHourRate=" + pay.getPerHour();
                 payload += "&maxHours=" + pay.getMaxHour();
             }
@@ -349,16 +353,17 @@ public class WorkorderService extends WebService implements WebServiceConstants 
         }
         // expenses counter
         if (expenses != null && expenses.length > 0) {
-            String json = "[";
+            StringBuilder json = new StringBuilder();
+            json.append("[");
             for (int i = 0; i < expenses.length; i++) {
                 AdditionalExpense expense = expenses[i];
-                json += "{\"description\":\"" + expense.getDescription() + "\",";
-                json += "\"price\":\"" + expense.getPrice() + "\",";
-                json += "\"categoryId:\":\"" + expense.getCategoryId() + "\"}";
+                json.append("{\"description\":\"").append(expense.getDescription()).append("\",");
+                json.append("\"price\":\"").append(expense.getPrice()).append("\",");
+                json.append("\"categoryId:\":\"").append(expense.getCategoryId()).append("\"}");
             }
-            json += "]";
+            json.append("]");
 
-            payload += "&expenses=" + json;
+            payload += "&expenses=" + json.toString();
         }
 
         System.out.println(payload);

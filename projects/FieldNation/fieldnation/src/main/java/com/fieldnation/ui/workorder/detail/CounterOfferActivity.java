@@ -677,7 +677,7 @@ public class CounterOfferActivity extends ActionBarActivity {
             String reason = _requestReasonEditText.getText().toString();
 
             if (expires) {
-                min = _offerTime.getTimeInMillis() - System.currentTimeMillis() / 60000;
+                min = _offerTime.getTimeInMillis() - System.currentTimeMillis() / 1000;
             }
             AdditionalExpense[] expenses = new AdditionalExpense[_counterExpenses.size()];
             for (int i = 0; i < _counterExpenses.size(); i++) {
