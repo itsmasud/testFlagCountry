@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp">
-
-    <TextView
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Closing Notes" />
-
-    <EditText
-        android:id="@+id/notes_edittext"
-        style="@style/EditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="top"
-        android:hint="@string/enter_closing_notes_here"
-        android:imeOptions="actionDone"
-        android:minLines="4"
-        android:padding="5dp"
-        android:selectAllOnFocus="true" />
+    android:orientation="vertical">
 
     <LinearLayout
+        style="@style/Dialog_Container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="right"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/Dialog_Title"
+            android:text="Closing Notes" />
+
+        <EditText
+            android:id="@+id/notes_edittext"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="@string/enter_closing_notes_here"
+            android:imeOptions="actionDone"
+            android:minLines="4"
+            android:padding="5dp"
+            android:selectAllOnFocus="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Dialog_ActionBar"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
-            style="@style/DialogCancelButton"
+            style="@style/Dialog_Cancel_Button"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok_button"
-            style="@style/DialogOkButton"
+            style="@style/Dialog_Ok_Button"
             android:text="@string/save" />
     </LinearLayout>
 

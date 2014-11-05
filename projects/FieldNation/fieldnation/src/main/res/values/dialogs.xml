@@ -25,4 +25,45 @@
         <item name="android:textSize">10sp</item>
     </style>
 
+    <style name="Dialog_Container">
+        <item name="android:paddingLeft">@dimen/Dialog_Gutter</item>
+        <item name="android:paddingRight">@dimen/Dialog_Gutter</item>
+        <item name="android:paddingTop">@dimen/Dialog_Gutter</item>
+        <item name="android:paddingBottom">@dimen/Dialog_ActionBar_Padding</item>
+    </style>
+
+    <style name="Dialog_Title" parent="@style/Text_Headline">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Dialog_ActionBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/Dialog_Button_Touch_Target</item>
+        <item name="android:layout_marginBottom">@dimen/Dialog_ActionBar_Bottom_Margin</item>
+        <item name="android:paddingLeft">@dimen/Dialog_ActionBar_Gutter</item>
+        <item name="android:paddingRight">@dimen/Dialog_ActionBar_Gutter</item>
+        <item name="android:gravity">right</item>
+    </style>
+
+    <style name="Dialog_Cancel_Button" parent="ButtonFlat">
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:layout_marginRight">4dp</item>
+    </style>
+
+    <style name="Dialog_Ok_Button" parent="ButtonFlat">
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:layout_marginLeft">4dp</item>
+    </style>
+
+    <style name="Dialog_Ok_Button_Green" parent="ButtonGreen">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
 </resources>

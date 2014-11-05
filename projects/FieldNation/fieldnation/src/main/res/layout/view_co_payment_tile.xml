@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Tile"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/container_view"
+        style="@style/Tile_Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/Tile_Content_Padding"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Text_Headline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="@string/payment" />
+
+
+            <TextView
+                style="@style/Text_Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Current Pay" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/Text_Body_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Blended $50 for the first 3 hours" />
+
+        <TextView
+            style="@style/Text_Body_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="$20/hour for up to 2 hours" />
+
+        <View
+            style="@style/DividerFull"
+            android:layout_marginBottom="@dimen/Tile_Content_Padding"
+            android:layout_marginTop="@dimen/Tile_Content_Padding" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:orientation="horizontal">
+
+            <Button
+                style="@style/ButtonFlat"
+                android:layout_width="wrap_content"
+                android:text="COUNTER PAY" />
+
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        style="@style/DividerFull"
+        android:layout_alignBottom="@+id/container_view" />
+
+</RelativeLayout>

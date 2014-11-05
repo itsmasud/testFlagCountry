@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Text_Display_4">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="Text_Display_3">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text_Display_2">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text_Display_1">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text_Headline">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text_Title">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text_Subhead">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text_Body_2">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text_Body_1">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text_Caption">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text_Menu">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text_Button">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+
+</resources>

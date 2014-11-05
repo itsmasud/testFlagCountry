@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -42,7 +44,8 @@ public class AcceptBundleDialog extends Dialog {
         _cancelButton = (Button) findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        setTitle(R.string.activity_bundle_detail);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
     }
 
     public void show(Workorder workorder, Listener listener) {

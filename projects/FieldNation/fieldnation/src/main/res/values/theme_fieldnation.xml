@@ -14,6 +14,10 @@
         <item name="colorPrimaryDark">#FF00FF00</item>
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="colorAccent">#FFFF00FF</item>
+
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+
     </style>
 
     <style name="ActionBar.Solid.FieldNation" parent="@style/Widget.AppCompat.ActionBar.Solid">
