@@ -241,7 +241,7 @@ public class CounterOfferActivity extends ActionBarActivity {
 
         showPayCounter(false);
         showScheduleCounter(false);
-        showReason(false);
+        //showReason(false);
 
         if (_workorder != null) {
             _workorder.addListener(_workorder_listener);
@@ -305,7 +305,7 @@ public class CounterOfferActivity extends ActionBarActivity {
         if (_workorder == null)
             return;
 
-        showReason(false);
+        //showReason(false);
         CounterOfferInfo info = _workorder.getCounterOfferInfo();
         Pay pay = _workorder.getPay();
         // pay section
@@ -519,15 +519,15 @@ public class CounterOfferActivity extends ActionBarActivity {
         }
 
         if (isDirty()) {
-            _sendButton.setVisibility(View.VISIBLE);
-            showReason(true);
+            _sendButton.setEnabled(true);
+            //showReason(true);
         } else {
-            _sendButton.setVisibility(View.GONE);
+            _sendButton.setEnabled(false);
         }
 
         if (info != null) {
             if (info.getExplanation() != null) {
-                showReason(true);
+                //showReason(true);
                 _requestReasonEditText.setText(info.getExplanation());
             }
 
@@ -535,9 +535,11 @@ public class CounterOfferActivity extends ActionBarActivity {
             if (info.getExpires()) {
                 // TODO need to format the time
                 _offerTimeButton.setText(info.getExpiresAfter() + "");
-                _offerTimeButton.setVisibility(View.VISIBLE);
+                //_offerTimeButton.setVisibility(View.VISIBLE);
+                _offerTimeButton.setEnabled(true);
             } else {
-                _offerTimeButton.setVisibility(View.GONE);
+                _offerTimeButton.setEnabled(false);
+                //_offerTimeButton.setVisibility(View.GONE);
             }
         }
         _loadingView.setVisibility(View.GONE);
@@ -575,12 +577,12 @@ public class CounterOfferActivity extends ActionBarActivity {
         }
     }
 
-    private void showReason(boolean show) {
-        if (show)
-            _reasonsLayout.setVisibility(View.VISIBLE);
-        else
-            _reasonsLayout.setVisibility(View.GONE);
-    }
+//    private void showReason(boolean show) {
+//        if (show)
+//            _reasonsLayout.setVisibility(View.VISIBLE);
+//        else
+//            _reasonsLayout.setVisibility(View.GONE);
+//    }
 
     private boolean isDirty() {
         return (_counterExpenses != null && _counterExpenses.size() > 0) || _counterPay != null || _counterSchedule != null || _deleteCounterExpenses.size() > 0;
@@ -702,9 +704,9 @@ public class CounterOfferActivity extends ActionBarActivity {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked)
-                _offerTimeButton.setVisibility(View.VISIBLE);
+                _offerTimeButton.setEnabled(true);
             else
-                _offerTimeButton.setVisibility(View.GONE);
+                _offerTimeButton.setEnabled(false);
         }
     };
 
