@@ -24,10 +24,10 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.PayDialog;
-import com.fieldnation.ui.workorder.detail.CounterOfferActivity;
 import com.fieldnation.utils.ISO8601;
 
 import java.lang.reflect.InvocationTargetException;
@@ -63,6 +63,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
     private ExpiresDialog _expiresDialog;
     private ConfirmDialog _confirmDialog;
     private DeviceCountDialog _deviceCountDialog;
+    private CounterOfferDialog _counterOfferDialog;
 
 	/*-*****************************-*/
     /*-			Lifecycle			-*/
@@ -300,9 +301,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void viewCounter(Workorder workorder) {
-            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
-            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER_ID, workorder.getWorkorderId());
-            getContext().startActivity(intent);
+            _counterOfferDialog = CounterOfferDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+            _counterOfferDialog.show(TAG);
         }
 
         @Override

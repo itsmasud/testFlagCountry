@@ -63,6 +63,7 @@
 
     <style name="Text_Button">
         <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">1</item>
     </style>
 
 

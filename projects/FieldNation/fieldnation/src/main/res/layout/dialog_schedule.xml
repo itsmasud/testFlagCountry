@@ -76,19 +76,19 @@
     </LinearLayout>
 
     <LinearLayout
+        style="@style/Dialog_ActionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
-            style="@style/DialogCancelButton"
+            style="@style/Dialog_Cancel_Button"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok_button"
-            style="@style/DialogOkButton"
+            style="@style/Dialog_Ok_Button"
             android:text="@string/save" />
     </LinearLayout>
 

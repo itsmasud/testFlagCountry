@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TabHost
+            android:id="@+id/tabhost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <FrameLayout
+                    android:id="@android:id/tabcontent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp">
+
+                    <com.fieldnation.ui.dialog.PaymentCoView
+                        android:id="@+id/payment_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <com.fieldnation.ui.dialog.ScheduleCoView
+                        android:id="@+id/schedule_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <com.fieldnation.ui.dialog.ScheduleCoView
+                        android:id="@+id/expenses_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </FrameLayout>
+            </LinearLayout>
+        </TabHost>
+
+        <com.fieldnation.ui.dialog.ReasonsCoView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/actionbar_view"
+            style="@style/Dialog_ActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/Dialog_Cancel_Button"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/send_button"
+                style="@style/Dialog_Ok_Button"
+                android:text="@string/send" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.fieldnation.ui.LoadingView
+        android:id="@+id/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

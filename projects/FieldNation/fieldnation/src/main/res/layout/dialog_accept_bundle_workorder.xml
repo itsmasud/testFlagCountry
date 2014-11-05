@@ -14,14 +14,14 @@
             style="@style/Dialog_Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/activity_bundle_detail" />
+            android:text="Bundle Request" />
 
         <TextView
             android:id="@+id/accept_description"
             style="@style/Text_Body_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This workorder is part of a bundle of 10  workorders. By accepting this workorder you are accepting all of them." />
+            android:text="This workorder is part of a bundle of 10 workorders. By accepting this workorder you are accepting all of them." />
 
     </LinearLayout>
 
@@ -30,7 +30,7 @@
         android:orientation="horizontal">
 
         <Button
-            style="@style/Dialog_Ok_Button"
+            style="@style/ButtonFlat"
             android:gravity="center_vertical|left"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -40,7 +40,7 @@
             android:layout_gravity="center_vertical|right"
             android:gravity="right"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.50"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -52,7 +52,7 @@
             <Button
                 android:id="@+id/ok_button"
                 style="@style/Dialog_Ok_Button"
-                android:text="@string/ok" />
+                android:text="ACCEPT" />
         </LinearLayout>
     </LinearLayout>
 

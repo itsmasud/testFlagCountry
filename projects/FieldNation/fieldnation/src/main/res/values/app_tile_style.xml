@@ -9,4 +9,17 @@
         <item name="android:padding">8dp</item>
         <item name="android:background">@color/white</item>
     </style>
+
+    <style name="Tile_Text_Title" parent="@style/Text_Headline">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Tile_Text_Body" parent="@style/Text_Body_2">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Tile_Text_Status" parent="@style/Text_Caption">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>

@@ -18,7 +18,7 @@ public class AcceptBundleDialog extends Dialog {
 
     // UI
     private TextView _acceptWOText;
-    private TextView _viewBundle;
+//    private TextView _viewBundle;
     private Button _okButton;
     private Button _cancelButton;
 
@@ -37,8 +37,8 @@ public class AcceptBundleDialog extends Dialog {
         setContentView(R.layout.dialog_accept_bundle_workorder);
 
         _acceptWOText = (TextView) findViewById(R.id.accept_description);
-        _viewBundle = (TextView) findViewById(R.id.view_bundle);
-        _viewBundle.setOnClickListener(_viewBundle_onClick);
+        //_viewBundle = (TextView) findViewById(R.id.view_bundle);
+        //_viewBundle.setOnClickListener(_viewBundle_onClick);
         _okButton = (Button) findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
         _cancelButton = (Button) findViewById(R.id.cancel_button);
