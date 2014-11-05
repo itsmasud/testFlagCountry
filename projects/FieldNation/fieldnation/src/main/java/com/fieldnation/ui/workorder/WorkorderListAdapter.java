@@ -234,6 +234,11 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
                             e.printStackTrace();
                         }
                     }
+
+                    //set  loading mode
+                    WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
+                    woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+
                     Intent intent = _workorderService.request(WEB_CHANGING_WORKORDER, _workorder.getWorkorderId(), time);
                     intent.putExtra(KEY_WORKORDER_ID, _workorder.getWorkorderId());
                     getContext().startService(intent);
@@ -244,6 +249,10 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void actionCheckout(Workorder workorder) {
+            //set  loading mode
+            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
+            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+
             Pay pay = workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
@@ -259,6 +268,10 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void actionCheckin(Workorder workorder) {
+            //set  loading mode
+            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
+            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+
             Intent intent = _workorderService.checkin(WEB_CHECKING_IN, workorder.getWorkorderId());
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getContext().startService(intent);
@@ -272,6 +285,10 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
                     new ConfirmDialog.Listener() {
                         @Override
                         public void onOk(String startDate, long durationMilliseconds) {
+                            //set  loading mode
+                            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
+                            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+
                             try {
                                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                                 Intent intent = _workorderService.confirmAssignment(WEB_CHANGING_WORKORDER,
@@ -292,6 +309,10 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void actionAcknowledgeHold(Workorder workorder) {
+            //set  loading mode
+            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
+            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+
             Intent intent = _workorderService.acknowledgeHold(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getContext().startService(intent);
@@ -300,6 +321,10 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void viewCounter(Workorder workorder) {
+            //set  loading mode
+            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
+            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+
             Intent intent = new Intent(getContext(), CounterOfferActivity.class);
             intent.putExtra(CounterOfferActivity.INTENT_WORKORDER_ID, workorder.getWorkorderId());
             getContext().startActivity(intent);
@@ -345,6 +370,10 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void onViewPayments(WorkorderCardView view, Workorder workorder) {
+            //set  loading mode
+            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
+            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+
             // TODO Method Stub: onViewPayments()
             Log.v(TAG, "Method Stub: onViewPayments()");
 
