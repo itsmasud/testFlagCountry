@@ -569,7 +569,7 @@
 
             <!-- reasons -->
 
-            <!--<include layout="@layout/view_co_reasons" />-->
+            <!--<include layout="@layout/view_co_reasons_tile" />-->
 
             <LinearLayout
                 style="@style/Dialog_ActionBar"

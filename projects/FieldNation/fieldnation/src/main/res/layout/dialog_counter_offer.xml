@@ -1,78 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/white">
 
-    <LinearLayout
+    <TabHost
+        android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_above="@+id/actionbar_view"
+        android:layout_alignParentTop="true">
 
-
-        <TabHost
-            android:id="@+id/tabhost"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <HorizontalScrollView
+                android:id="@+id/tabscroll_view"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:fillViewport="true"
+                android:scrollbars="none">
 
                 <TabWidget
                     android:id="@android:id/tabs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+            </HorizontalScrollView>
 
-                <FrameLayout
-                    android:id="@android:id/tabcontent"
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
+
+                <ScrollView
+                    android:id="@+id/scrollview1"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp">
+                    android:layout_height="match_parent">
 
                     <com.fieldnation.ui.dialog.PaymentCoView
                         android:id="@+id/payment_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+                </ScrollView>
+
+                <ScrollView
+                    android:id="@+id/scrollview2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                     <com.fieldnation.ui.dialog.ScheduleCoView
                         android:id="@+id/schedule_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+                </ScrollView>
 
-                    <com.fieldnation.ui.dialog.ScheduleCoView
+                <ScrollView
+                    android:id="@+id/scrollview3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.fieldnation.ui.dialog.ExpenseCoView
                         android:id="@+id/expenses_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+                </ScrollView>
 
-                </FrameLayout>
-            </LinearLayout>
-        </TabHost>
+                <ScrollView
+                    android:id="@+id/scrollview4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-        <com.fieldnation.ui.dialog.ReasonsCoView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <LinearLayout
-            android:id="@+id/actionbar_view"
-            style="@style/Dialog_ActionBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/cancel_button"
-                style="@style/Dialog_Cancel_Button"
-                android:text="@string/cancel" />
-
-            <Button
-                android:id="@+id/send_button"
-                style="@style/Dialog_Ok_Button"
-                android:text="@string/send" />
+                    <com.fieldnation.ui.dialog.ReasonCoView
+                        android:id="@+id/reasons_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </ScrollView>
+            </FrameLayout>
         </LinearLayout>
+    </TabHost>
+
+
+    <LinearLayout
+        android:id="@+id/actionbar_view"
+        style="@style/Dialog_ActionBar"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/back_button"
+            style="@style/Dialog_Cancel_Button"
+            android:text="BACK" />
+
+        <Button
+            android:id="@+id/ok_button"
+            style="@style/Dialog_Ok_Button"
+            android:text="NEXT" />
     </LinearLayout>
+
+    <View
+        style="@style/DividerFull"
+        android:layout_alignTop="@+id/actionbar_view" />
 
     <com.fieldnation.ui.LoadingView
         android:id="@+id/loading_view"

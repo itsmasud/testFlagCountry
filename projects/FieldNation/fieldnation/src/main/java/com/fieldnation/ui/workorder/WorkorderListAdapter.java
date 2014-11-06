@@ -326,9 +326,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
             woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
 
-            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
-            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER_ID, workorder.getWorkorderId());
-            getContext().startActivity(intent);
+            _counterOfferDialog = CounterOfferDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+            _counterOfferDialog.show(TAG);
         }
 
         @Override

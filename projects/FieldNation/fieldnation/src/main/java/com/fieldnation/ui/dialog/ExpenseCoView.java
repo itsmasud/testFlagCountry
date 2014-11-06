@@ -10,24 +10,24 @@ import com.fieldnation.R;
 /**
  * Created by michael.carver on 11/5/2014.
  */
-public class ReasonsCoView extends RelativeLayout {
-    public ReasonsCoView(Context context) {
+public class ExpenseCoView extends RelativeLayout {
+    public ExpenseCoView(Context context) {
         super(context);
         init();
     }
 
-    public ReasonsCoView(Context context, AttributeSet attrs) {
+    public ExpenseCoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ReasonsCoView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ExpenseCoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_co_reasons, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_co_expenses_tile, this);
 
         if (isInEditMode())
             return;

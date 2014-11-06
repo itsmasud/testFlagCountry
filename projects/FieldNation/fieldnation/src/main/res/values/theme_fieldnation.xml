@@ -13,7 +13,7 @@
         <!--   darker variant for the status bar and contextual app bars -->
         <item name="colorPrimaryDark">#FF00FF00</item>
         <!--   theme UI controls like checkboxes and text fields -->
-        <item name="colorAccent">#FFFF00FF</item>
+        <item name="colorAccent">#FF3fcca9</item>
 
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>

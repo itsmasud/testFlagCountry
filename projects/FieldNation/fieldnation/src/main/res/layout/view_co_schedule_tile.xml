@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     style="@style/Tile"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -26,7 +25,6 @@
                 android:layout_weight="1"
                 android:text="@string/schedule" />
 
-
             <TextView
                 style="@style/Text_Caption"
                 android:layout_width="0dp"
@@ -34,8 +32,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Offered Pay" />
-
+                android:text="Buyer's Suggestion" />
         </LinearLayout>
 
         <TextView
@@ -43,29 +40,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Between 3/5/2014 @ 1am and 3/6/2014 @ 4am" />
-
-        <!--<View-->
-            <!--style="@style/DividerFull"-->
-            <!--android:layout_marginBottom="@dimen/Tile_Content_Padding"-->
-            <!--android:layout_marginTop="@dimen/Tile_Content_Padding" />-->
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:orientation="horizontal">
-
-            <Button
-                style="@style/ButtonFlat"
-                android:layout_width="wrap_content"
-                android:text="CHANGE SCHEDULE" />
-
-        </LinearLayout>
-
     </LinearLayout>
 
-    <View
-        style="@style/DividerFull"
-        android:layout_alignBottom="@+id/container_view" />
+    <LinearLayout
+        android:id="@+id/actionbar_view"
+        android:layout_below="@+id/container_view"
+        style="@style/Tile_ActionBar"
+        android:orientation="horizontal">
+
+        <Button
+            style="@style/ButtonFlat"
+            android:layout_width="wrap_content"
+            android:text="CHANGE SCHEDULE" />
+    </LinearLayout>
 
 </RelativeLayout>

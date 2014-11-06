@@ -17,30 +17,17 @@
             style="@style/Tile_Text_Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/reason_for_counter_offer_colon" />
+            android:text="@string/reason_for_counter_offer" />
 
         <EditText
             android:id="@+id/request_reason_edittext"
-            style="@style/EditText"
-            android:layout_width="fill_parent"
-            android:layout_height="36dp"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="6dp"
+            style="@style/Tile_EditText_OneLine"
             android:hint="@string/reason_for_request" />
 
         <CheckBox
             android:id="@+id/delete_not_accepted_checkbox"
-            android:layout_width="fill_parent"
-            android:layout_height="48dp"
-            android:text="@string/delete_counter_if_not_accepted_by" />
-
-        <Button
-            android:id="@+id/offer_time_button"
-            style="?android:attr/spinnerStyle"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginLeft="40dp"
-            android:hint="Never" />
+            style="@style/Tile_CheckBox"
+            android:text="Offer expires?" />
 
         <TextView
             style="@style/WorkorderDetail_Field_Bold"
@@ -55,9 +42,5 @@
             android:gravity="center"
             android:text="@string/terms_and_conditions" />
     </LinearLayout>
-
-    <View
-        style="@style/DividerFull"
-        android:layout_alignBottom="@+id/container_view" />
 
 </RelativeLayout>

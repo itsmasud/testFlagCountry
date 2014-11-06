@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,7 +17,7 @@ public class AcceptBundleDialog extends Dialog {
 
     // UI
     private TextView _acceptWOText;
-//    private TextView _viewBundle;
+    //    private TextView _viewBundle;
     private Button _okButton;
     private Button _cancelButton;
 
@@ -34,6 +33,7 @@ public class AcceptBundleDialog extends Dialog {
 
     public AcceptBundleDialog(Context context) {
         super(context);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_accept_bundle_workorder);
 
         _acceptWOText = (TextView) findViewById(R.id.accept_description);
@@ -43,9 +43,6 @@ public class AcceptBundleDialog extends Dialog {
         _okButton.setOnClickListener(_ok_onClick);
         _cancelButton = (Button) findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
-
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
     }
 
     public void show(Workorder workorder, Listener listener) {

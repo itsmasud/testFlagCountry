@@ -124,47 +124,47 @@ public class CounterOfferActivity extends ActionBarActivity {
 
         _gs = (GlobalState) getApplicationContext();
 
-        _basisOldTextView = (TextView) findViewById(R.id.basis_old_textview);
-        _basisNewTextView = (TextView) findViewById(R.id.basis_new_textview);
-        _hourlyOldTextView = (TextView) findViewById(R.id.hourly_old_textview);
-        _hourlyNewTextView = (TextView) findViewById(R.id.hourly_new_textview);
-        _maxOldTextView = (TextView) findViewById(R.id.max_old_textview);
-        _maxNewTextView = (TextView) findViewById(R.id.max_new_textview);
-        _editPaymentCounterLayout = (LinearLayout) findViewById(R.id.edit_payment_counter_layout);
-        _editPaymentCounterLayout.setOnClickListener(_editPaymentLayout_onClick);
-        _editPaymentCounterTextView = (TextView) findViewById(R.id.edit_payment_counter_textview);
-        _editPaymentCounterImageView = (ImageView) findViewById(R.id.edit_payment_counter_imageview);
+//        _basisOldTextView = (TextView) findViewById(R.id.basis_old_textview);
+//        _basisNewTextView = (TextView) findViewById(R.id.basis_new_textview);
+//        _hourlyOldTextView = (TextView) findViewById(R.id.hourly_old_textview);
+//        _hourlyNewTextView = (TextView) findViewById(R.id.hourly_new_textview);
+//        _maxOldTextView = (TextView) findViewById(R.id.max_old_textview);
+//        _maxNewTextView = (TextView) findViewById(R.id.max_new_textview);
+//        _editPaymentCounterLayout = (LinearLayout) findViewById(R.id.edit_payment_counter_layout);
+//        _editPaymentCounterLayout.setOnClickListener(_editPaymentLayout_onClick);
+//        _editPaymentCounterTextView = (TextView) findViewById(R.id.edit_payment_counter_textview);
+//        _editPaymentCounterImageView = (ImageView) findViewById(R.id.edit_payment_counter_imageview);
 
-        _labelHourlyRateTextView = (TextView) findViewById(R.id.hourly_rate_label_textview);
-        _labelMaxHoursTextView = (TextView) findViewById(R.id.max_hours_label_textview);
+//        _labelHourlyRateTextView = (TextView) findViewById(R.id.hourly_rate_label_textview);
+//        _labelMaxHoursTextView = (TextView) findViewById(R.id.max_hours_label_textview);
 
-        _scheduleTypeOldTextView = (TextView) findViewById(R.id.schedule_type_old_textview);
-        _scheduleTypeNewTextView = (TextView) findViewById(R.id.schedule_type_new_textview);
-        _scheduleDateOldTextView = (TextView) findViewById(R.id.schedule_date_old_textview);
-        _scheduleDateNewTextView = (TextView) findViewById(R.id.schedule_date_new_textview);
-        _scheduleTimeOldTextView = (TextView) findViewById(R.id.schedule_time_old_textview);
-        _scheduleTimeNewTextView = (TextView) findViewById(R.id.schedule_time_new_textview);
+//        _scheduleTypeOldTextView = (TextView) findViewById(R.id.schedule_type_old_textview);
+//        _scheduleTypeNewTextView = (TextView) findViewById(R.id.schedule_type_new_textview);
+//        _scheduleDateOldTextView = (TextView) findViewById(R.id.schedule_date_old_textview);
+//        _scheduleDateNewTextView = (TextView) findViewById(R.id.schedule_date_new_textview);
+//        _scheduleTimeOldTextView = (TextView) findViewById(R.id.schedule_time_old_textview);
+//        _scheduleTimeNewTextView = (TextView) findViewById(R.id.schedule_time_new_textview);
 
-        _editScheduleLayout = (LinearLayout) findViewById(R.id.edit_schedule_layout);
-        _editScheduleLayout.setOnClickListener(_editScheduleLayout_onClick);
-        _editScheduleTextView = (TextView) findViewById(R.id.edit_schedule_textview);
-        _editScheduleImageView = (ImageView) findViewById(R.id.edit_schedule_imageview);
+//        _editScheduleLayout = (LinearLayout) findViewById(R.id.edit_schedule_layout);
+//        _editScheduleLayout.setOnClickListener(_editScheduleLayout_onClick);
+//        _editScheduleTextView = (TextView) findViewById(R.id.edit_schedule_textview);
+//        _editScheduleImageView = (ImageView) findViewById(R.id.edit_schedule_imageview);
 
-        _noExpensesTextView = (TextView) findViewById(R.id.no_expenses_textview);
+//        _noExpensesTextView = (TextView) findViewById(R.id.no_expenses_textview);
 
-        _expensesListLayout = (LinearLayout) findViewById(R.id.expenses_list_layout);
-        _addExpenseLayout = (LinearLayout) findViewById(R.id.add_expense_layout);
-        _addExpenseLayout.setOnClickListener(_addExpenseLayout_onClick);
-        _addExpenseTextView = (TextView) findViewById(R.id.add_expense_textview);
+//        _expensesListLayout = (LinearLayout) findViewById(R.id.expenses_list_layout);
+//        _addExpenseLayout = (LinearLayout) findViewById(R.id.add_expense_layout);
+//        _addExpenseLayout.setOnClickListener(_addExpenseLayout_onClick);
+//        _addExpenseTextView = (TextView) findViewById(R.id.add_expense_textview);
 
-        _reasonsLayout = (LinearLayout) findViewById(R.id.reasons_layout);
+//        _reasonsLayout = (LinearLayout) findViewById(R.id.reasons_layout);
 
         _requestReasonEditText = (EditText) findViewById(R.id.request_reason_edittext);
         _deleteNotAcceptedCheckbox = (CheckBox) findViewById(R.id.delete_not_accepted_checkbox);
         _deleteNotAcceptedCheckbox.setOnCheckedChangeListener(_deleteCheck_onChange);
 
-        _offerTimeButton = (Button) findViewById(R.id.offer_time_button);
-        _offerTimeButton.setOnClickListener(_offerTimeButton_onClick);
+        //_offerTimeButton = (Button) findViewById(R.id.offer_time_button);
+        //_offerTimeButton.setOnClickListener(_offerTimeButton_onClick);
 
         _cancelButton = (Button) findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancelButton_onClick);
