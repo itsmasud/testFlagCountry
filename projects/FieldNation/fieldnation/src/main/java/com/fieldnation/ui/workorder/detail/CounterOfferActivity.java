@@ -307,6 +307,14 @@ public class CounterOfferActivity extends ActionBarActivity {
 
         //showReason(false);
         CounterOfferInfo info = _workorder.getCounterOfferInfo();
+
+        if (info != null) {
+            if (info.getSchedule() != null)
+                _counterSchedule = info.getSchedule();
+
+            if (info.getPay() != null)
+                _counterPay = info.getPay();
+        }
         Pay pay = _workorder.getPay();
         // pay section
         _basisOldTextView.setText(pay.getPayRateBasis());
@@ -372,10 +380,10 @@ public class CounterOfferActivity extends ActionBarActivity {
         }
 
         // expenses
+        _expensesListLayout.removeAllViews();
         if (info != null) {
             AdditionalExpense[] aes = info.getExpense();
             if (aes != null && aes.length > 0) {
-                _expensesListLayout.removeAllViews();
                 for (int i = 0; i < aes.length; i++) {
                     AdditionalExpense expense = aes[i];
                     if (_deleteCounterExpenses.contains(expense)) {
@@ -720,14 +728,22 @@ public class CounterOfferActivity extends ActionBarActivity {
     private View.OnClickListener _editPaymentLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _payDialog.show(_workorder.getPay(), _payDialog_listener);
+            if (_counterPay != null) {
+                _payDialog.show(_counterPay, _payDialog_listener);
+            } else {
+                _payDialog.show(_workorder.getPay(), _payDialog_listener);
+            }
         }
     };
 
     private View.OnClickListener _editScheduleLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _scheduleDialog.show(TAG, _workorder.getSchedule());
+            if (_counterSchedule != null) {
+                _scheduleDialog.show(TAG, _counterSchedule);
+            } else {
+                _scheduleDialog.show(TAG, _workorder.getSchedule());
+            }
         }
     };
 
