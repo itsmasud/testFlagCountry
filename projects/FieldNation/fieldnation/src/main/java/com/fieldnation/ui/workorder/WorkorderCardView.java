@@ -344,7 +344,6 @@ public class WorkorderCardView extends RelativeLayout {
 				}
 				break;
 			}
-			setDisplayMode(MODE_DOING_WORK);
 		}
 	};
 

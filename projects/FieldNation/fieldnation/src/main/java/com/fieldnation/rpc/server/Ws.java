@@ -1,5 +1,7 @@
 package com.fieldnation.rpc.server;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,313 +21,320 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import android.util.Log;
-
 /**
  * Provides a simple Http wrapper
- * 
+ *
  * @author michael.carver
- * 
  */
 public class Ws {
-	private static final String TAG = "rpc.server.Ws";
+    private static final String TAG = "rpc.server.Ws";
 
-	/**
-	 * Set to true to enable HTTPS, set to false to disable HTTPS. Default =
-	 * True
-	 */
-	public static boolean USE_HTTPS = true;
-	/**
-	 * Set to true to enable debug mode, set to false to disable it.
-	 */
-	public static final boolean DEBUG = true;
+    /**
+     * Set to true to enable HTTPS, set to false to disable HTTPS. Default =
+     * True
+     */
+    public static boolean USE_HTTPS = true;
+    /**
+     * Set to true to enable debug mode, set to false to disable it.
+     */
+    public static final boolean DEBUG = true;
 
-	private OAuth _accessToken = null;
+    private OAuth _accessToken = null;
 
-	public Ws(OAuth oAuth) {
-		_accessToken = oAuth;
-	}
+    public Ws(OAuth oAuth) {
+        _accessToken = oAuth;
+    }
 
-	protected Ws() {
-	}
+    protected Ws() {
+    }
 
-	public Result httpRead(String method, String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
-		if (!path.startsWith("/"))
-			path = "/" + path;
+    public Result httpRead(String method, String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
+        if (!path.startsWith("/"))
+            path = "/" + path;
 
-		if (_accessToken != null)
-			options = _accessToken.applyToUrlOptions(options);
+        if (_accessToken != null)
+            options = _accessToken.applyToUrlOptions(options);
 
-		Log.v(TAG, path + options);
+        Log.v(TAG, path + options);
 
-		HttpURLConnection conn = null;
-		if (USE_HTTPS) {
-			// only disabled if debugging
-			if (DEBUG)
-				trustAllHosts();
+        HttpURLConnection conn = null;
+        if (USE_HTTPS) {
+            // only disabled if debugging
+            if (DEBUG)
+                trustAllHosts();
 
-			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+            conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
-			if (DEBUG)
-				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+            if (DEBUG)
+                ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 
-		} else {
-			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
-		}
+        } else {
+            conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+        }
 
-		conn.setRequestMethod(method);
-		if (contentType != null)
-			conn.setRequestProperty("ContentType", contentType);
+        conn.setRequestMethod(method);
+        if (contentType != null)
+            conn.setRequestProperty("ContentType", contentType);
 
-		conn.setDoInput(true);
+        conn.setDoInput(true);
 
-		try {
-			return new Result(conn);
-		} finally {
-			conn.disconnect();
-		}
-	}
+        try {
+            return new Result(conn);
+        } finally {
+            conn.disconnect();
+        }
+    }
 
-	public Result httpGet(String path) throws MalformedURLException, IOException, ParseException {
-		return httpGet(path, null, null);
-	}
+    public Result httpGet(String path) throws MalformedURLException, IOException, ParseException {
+        return httpGet(path, null, null);
+    }
 
-	public Result httpGet(String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
-		return httpRead("GET", path, options, contentType);
-	}
+    public Result httpGet(String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
+        return httpRead("GET", path, options, contentType);
+    }
 
-	public Result httpDelete(String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
-		return httpRead("DELETE", path, options, contentType);
-	}
+    public Result httpDelete(String path, String options, String contentType) throws MalformedURLException, IOException, ParseException {
+        return httpRead("DELETE", path, options, contentType);
+    }
 
-	public Result httpReadWrite(String method, String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
+    public Result httpReadWrite(String method, String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
 
-		if (!path.startsWith("/"))
-			path = "/" + path;
+        if (!path.startsWith("/"))
+            path = "/" + path;
 
-		if (_accessToken != null)
-			options = _accessToken.applyToUrlOptions(options);
+        if (_accessToken != null)
+            options = _accessToken.applyToUrlOptions(options);
 
-		Log.v(TAG, path + options);
+        Log.v(TAG, path + options);
 
-		HttpURLConnection conn = null;
-		if (USE_HTTPS) {
-			// only enabled if debugging
-			if (DEBUG)
-				trustAllHosts();
-			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+        HttpURLConnection conn = null;
+        if (USE_HTTPS) {
+            // only enabled if debugging
+            if (DEBUG)
+                trustAllHosts();
+            conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
-			if (DEBUG)
-				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
-		} else {
-			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
-		}
+            if (DEBUG)
+                ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+        } else {
+            conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+        }
 
-		conn.setRequestMethod(method);
-		conn.setRequestProperty("ContentType", contentType);
+        conn.setRequestMethod(method);
+        conn.setRequestProperty("ContentType", contentType);
 
-		conn.setDoInput(true);
-		conn.setReadTimeout(10000);
+        conn.setDoInput(true);
+        conn.setReadTimeout(10000);
 
-		if (data != null) {
-			conn.setDoOutput(true);
-			OutputStream out = conn.getOutputStream();
-			out.write(data);
-			out.flush();
-			out.close();
-		}
+        if (data != null) {
+            conn.setDoOutput(true);
+            OutputStream out = conn.getOutputStream();
+            out.write(data);
+            out.flush();
+            out.close();
+            try {
+                System.out.println("Output:" + new String(data));
+            } catch (Exception ex) {
+                System.out.println("Can't show data");
+            }
+        }
 
-		try {
-			return new Result(conn);
-		} finally {
-			conn.disconnect();
-		}
-	}
+        try {
+            return new Result(conn);
+        } finally {
+            conn.disconnect();
+        }
+    }
 
-	public Result httpWrite(String method, String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
+    public Result httpWrite(String method, String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
 
-		if (!path.startsWith("/"))
-			path = "/" + path;
+        if (!path.startsWith("/"))
+            path = "/" + path;
 
-		if (_accessToken != null)
-			options = _accessToken.applyToUrlOptions(options);
+        if (_accessToken != null)
+            options = _accessToken.applyToUrlOptions(options);
 
-		Log.v(TAG, path + options);
+        Log.v(TAG, path + options);
 
-		HttpURLConnection conn = null;
-		if (USE_HTTPS) {
-			// only enabled if debugging
-			if (DEBUG)
-				trustAllHosts();
-			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+        HttpURLConnection conn = null;
+        if (USE_HTTPS) {
+            // only enabled if debugging
+            if (DEBUG)
+                trustAllHosts();
+            conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
-			if (DEBUG)
-				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
-		} else {
-			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
-		}
+            if (DEBUG)
+                ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+        } else {
+            conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+        }
 
-		conn.setRequestMethod(method);
-		conn.setRequestProperty("ContentType", contentType);
+        conn.setRequestMethod(method);
+        conn.setRequestProperty("ContentType", contentType);
 
-		conn.setDoInput(false);
-		conn.setReadTimeout(10000);
+        conn.setDoInput(false);
+        conn.setReadTimeout(10000);
 
-		if (data != null) {
-			conn.setDoOutput(true);
-			OutputStream out = conn.getOutputStream();
-			out.write(data);
-			out.flush();
-			out.close();
-		}
+        if (data != null) {
+            conn.setDoOutput(true);
+            OutputStream out = conn.getOutputStream();
+            out.write(data);
+            out.flush();
+            out.close();
+            try {
+                System.out.println("Output:" + new String(data));
+            } catch (Exception ex) {
+                System.out.println("Can't show data");
+            }
+        }
 
-		try {
-			return new Result(conn);
-		} finally {
-			conn.disconnect();
-		}
-	}
+        try {
+            return new Result(conn);
+        } finally {
+            conn.disconnect();
+        }
+    }
 
-	public Result httpPost(String path, String options, String data, String contentType) throws MalformedURLException, IOException, ParseException {
-		return httpPost(path, options, data.getBytes(), contentType);
-	}
+    public Result httpPost(String path, String options, String data, String contentType) throws MalformedURLException, IOException, ParseException {
+        return httpPost(path, options, data.getBytes(), contentType);
+    }
 
-	public Result httpPost(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
-		return httpReadWrite("POST", path, options, data, contentType);
-	}
+    public Result httpPost(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
+        return httpReadWrite("POST", path, options, data, contentType);
+    }
 
-	public Result httpPut(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
-		return httpReadWrite("PUT", path, options, data, contentType);
-	}
+    public Result httpPut(String path, String options, byte[] data, String contentType) throws MalformedURLException, IOException, ParseException {
+        return httpReadWrite("PUT", path, options, data, contentType);
+    }
 
-	public Result httpPostFile(String path, String options, String fieldName, String filename, InputStream inputStream,
-			int length, Map<String, String> map) throws ParseException, MalformedURLException, IOException {
-		if (!path.startsWith("/"))
-			path = "/" + path;
+    public Result httpPostFile(String path, String options, String fieldName, String filename, InputStream inputStream,
+                               int length, Map<String, String> map) throws ParseException, MalformedURLException, IOException {
+        if (!path.startsWith("/"))
+            path = "/" + path;
 
-		if (_accessToken != null)
-			options = _accessToken.applyToUrlOptions(options);
+        if (_accessToken != null)
+            options = _accessToken.applyToUrlOptions(options);
 
-		Log.v(TAG, path + options);
+        Log.v(TAG, path + options);
 
-		HttpURLConnection conn = null;
-		if (USE_HTTPS) {
-			// only enabled if debugging
-			if (DEBUG)
-				trustAllHosts();
-			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+        HttpURLConnection conn = null;
+        if (USE_HTTPS) {
+            // only enabled if debugging
+            if (DEBUG)
+                trustAllHosts();
+            conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
-			if (DEBUG)
-				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
-		} else {
-			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
-		}
-		conn.setReadTimeout(10000);
+            if (DEBUG)
+                ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+        } else {
+            conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+        }
+        conn.setReadTimeout(10000);
 
-		MultipartUtility util = new MultipartUtility(conn, "UTF-8");
-		if (map != null) {
-			Iterator<String> iter = map.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
-				util.addFormField(key, map.get(key));
-			}
-		}
+        MultipartUtility util = new MultipartUtility(conn, "UTF-8");
+        if (map != null) {
+            Iterator<String> iter = map.keySet().iterator();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                util.addFormField(key, map.get(key));
+            }
+        }
 
-		util.addFilePart(fieldName, filename, inputStream, length);
+        util.addFilePart(fieldName, filename, inputStream, length);
 
-		try {
-			return new Result(util.finish());
-		} finally {
-			conn.disconnect();
-		}
-	}
+        try {
+            return new Result(util.finish());
+        } finally {
+            conn.disconnect();
+        }
+    }
 
-	public Result httpPostFile(String path, String options, String fieldName, String filename, byte[] filedata,
-			Map<String, String> map, String contentType) throws ParseException, MalformedURLException, IOException {
-		if (!path.startsWith("/"))
-			path = "/" + path;
+    public Result httpPostFile(String path, String options, String fieldName, String filename, byte[] filedata,
+                               Map<String, String> map, String contentType) throws ParseException, MalformedURLException, IOException {
+        if (!path.startsWith("/"))
+            path = "/" + path;
 
-		if (_accessToken != null)
-			options = _accessToken.applyToUrlOptions(options);
+        if (_accessToken != null)
+            options = _accessToken.applyToUrlOptions(options);
 
-		Log.v(TAG, path + options);
+        Log.v(TAG, path + options);
 
-		HttpURLConnection conn = null;
-		if (USE_HTTPS) {
-			// only enabled if debugging
-			if (DEBUG)
-				trustAllHosts();
-			conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+        HttpURLConnection conn = null;
+        if (USE_HTTPS) {
+            // only enabled if debugging
+            if (DEBUG)
+                trustAllHosts();
+            conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
 
-			if (DEBUG)
-				((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
-		} else {
-			conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
-		}
-		conn.setReadTimeout(10000);
+            if (DEBUG)
+                ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+        } else {
+            conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+        }
+        conn.setReadTimeout(10000);
 
-		MultipartUtility util = new MultipartUtility(conn, "UTF-8");
-		if (map != null) {
-			Iterator<String> iter = map.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
-				util.addFormField(key, map.get(key));
-			}
-		}
+        MultipartUtility util = new MultipartUtility(conn, "UTF-8");
+        if (map != null) {
+            Iterator<String> iter = map.keySet().iterator();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                util.addFormField(key, map.get(key));
+            }
+        }
 
-		util.addFilePart(fieldName, filename, filedata, contentType);
+        util.addFilePart(fieldName, filename, filedata, contentType);
 
-		try {
-			return new Result(util.finish());
-		} finally {
-			conn.disconnect();
-		}
-	}
+        try {
+            return new Result(util.finish());
+        } finally {
+            conn.disconnect();
+        }
+    }
 
-	// always verify the host - don't check for certificate
-	protected final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
-		@Override
-		public boolean verify(String hostname, SSLSession session) {
-			if (DEBUG)
-				return true;
-			else
-				// disable all if not debugging
-				// (this class shouldn't be used anyway)
-				return false;
-		}
-	};
+    // always verify the host - don't check for certificate
+    protected final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            if (DEBUG)
+                return true;
+            else
+                // disable all if not debugging
+                // (this class shouldn't be used anyway)
+                return false;
+        }
+    };
 
-	/**
-	 * Trust every server - dont check for any certificate
-	 */
-	protected static void trustAllHosts() {
-		// disable this if not debugging
-		if (!DEBUG)
-			return;
+    /**
+     * Trust every server - dont check for any certificate
+     */
+    protected static void trustAllHosts() {
+        // disable this if not debugging
+        if (!DEBUG)
+            return;
 
-		// Create a trust manager that does not validate certificate chains
-		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-			@Override
-			public X509Certificate[] getAcceptedIssuers() {
-				return new X509Certificate[] {};
-			}
+        // Create a trust manager that does not validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[]{};
+            }
 
-			@Override
-			public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-			}
+            @Override
+            public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+            }
 
-			@Override
-			public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-			}
-		} };
+            @Override
+            public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+            }
+        }};
 
-		// Install the all-trusting trust manager
-		try {
-			SSLContext sc = SSLContext.getInstance("TLS");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        // Install the all-trusting trust manager
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

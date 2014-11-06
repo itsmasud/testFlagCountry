@@ -217,10 +217,15 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 				try {
 					objects = new JsonArray(data);
 				} catch (Exception ex) {
-					WEB_REQUEST_UPDATE = -Math.abs(_rand.nextInt());
-					executeWebService(WEB_REQUEST_UPDATE, --_nextPage, _allowCache);
-					notifyDataSetChanged();
-					return;
+                    ex.printStackTrace();
+					//WEB_REQUEST_UPDATE = -Math.abs(_rand.nextInt());
+					//executeWebService(WEB_REQUEST_UPDATE, --_nextPage, _allowCache);
+					//notifyDataSetChanged();
+                    // Todo we are failling silently now, not sure why this was working before and not now.
+                    _atEndOfList = true;
+                    dispatchOnLoadComplete();
+                    notifyDataSetChanged();
+                    return;
 				}
 				for (int i = 0; i < objects.size(); i++) {
 					try {
