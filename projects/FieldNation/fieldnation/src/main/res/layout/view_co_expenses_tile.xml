@@ -41,6 +41,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/add_button"
             style="@style/ButtonFlat"
             android:text="ADD EXPENSE" />
 
