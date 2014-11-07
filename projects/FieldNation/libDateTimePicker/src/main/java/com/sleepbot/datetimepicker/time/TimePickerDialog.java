@@ -40,6 +40,7 @@ import com.fourmob.datetimepicker.Utils;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 /**
@@ -141,6 +142,10 @@ public class TimePickerDialog extends DialogFragment implements RadialPickerLayo
 		ret.initialize(callback, hourOfDay, minute, is24HourMode, vibrate);
 		return ret;
 	}
+
+    public void setTime(Calendar calendar){
+        initialize(mCallback, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), mIs24HourMode, mVibrate);
+    }
 
 	public void initialize(OnTimeSetListener callback, int hourOfDay, int minute, boolean is24HourMode, boolean vibrate) {
 		mCallback = callback;

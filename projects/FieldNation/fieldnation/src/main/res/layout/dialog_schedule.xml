@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp" >
+    android:padding="10dp">
 
     <TextView
         style="@style/WorkorderDetail_FieldSubTitle"
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <TextView
             style="@style/WorkorderDetail_FieldSubTitle"
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible" >
+        android:visibility="visible">
 
         <TextView
             style="@style/WorkorderDetail_FieldSubTitle"
@@ -79,28 +79,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
-            style="@style/ButtonWhite"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_gravity="right"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1"
+            style="@style/DialogCancelButton"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok_button"
-            style="@style/ButtonWhite"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_gravity="right"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1"
+            style="@style/DialogOkButton"
             android:text="@string/save" />
     </LinearLayout>
 

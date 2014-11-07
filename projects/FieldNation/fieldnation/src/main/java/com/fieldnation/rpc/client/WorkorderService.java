@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
+import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -120,6 +123,12 @@ public class WorkorderService extends WebService implements WebServiceConstants 
         return httpRead(resultCode, "POST", "api/rest/v1/workorder/" + workorderId + "/complete", null, false);
     }
 
+    // custom fields
+    public Intent setCustomField(int resultCode, long workorderId, long customFieldId, String value) {
+        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/custom-fields/" + customFieldId, null,
+                "value=" + value, "application/x-www-form-urlencoded", false);
+    }
+
     // messages
     public Intent listMessages(int resultCode, long workorderId, boolean allowCache) {
         return httpGet(resultCode, "/api/rest/v1/workorder/" + workorderId + "/messages", allowCache);
@@ -159,7 +168,6 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     }
 
     // time
-    //Not used any where this two method
     public Intent logTime(int resultCode, long workorderId, long startDate, long endDate) {
         return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/log", null,
                 "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate),
@@ -175,15 +183,12 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "application/x-www-form-urlencoded", false);
     }
 
-
-    //REST API call have to implement
-    //@TODO
-    public Intent updateLogTime(int resultCode, long workorderId, long loggedHoursId, long startDate, long endDate) {
+    public Intent updateLogTime(int resultCode, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
         return httpPost(
                 resultCode,
-                "api/rest/v1/workorder/" + workorderId + "/log/logged_hours_id/" + loggedHoursId,
+                "api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId,
                 null,
-                "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate),
+                "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&noOfDevices=" + numberOfDevices,
                 "application/x-www-form-urlencoded", false);
     }
 
@@ -302,6 +307,73 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                     "payBasis=blended&perHourRate=" + perHourRate + "&maxHours=" + maxHours + "&additionalHourRate=" + additionalHourRate + "&additionalHours=" + additionalHours + "&explanation=" + explanation,
                     "application/x-www-form-urlencoded", false);
         }
+    }
+
+    public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+        String payload = "";
+        // reason/expire
+        if (expires)
+            payload += "expires=true&expiresAfterInSecond=" + expiresAfterInSecond;
+        else
+            payload += "expires=false";
+
+        if (!misc.isEmptyOrNull(reason)) {
+            payload += "&providerExplanation=" + reason;
+        }
+
+        // pay counter
+        if (pay != null) {
+            if (pay.isPerDeviceRate()) {
+                payload += "&payBasis=per_device";
+                payload += "&payPerDevice=" + pay.getPerDevice();
+                payload += "&maxDevices=" + pay.getMaxDevice();
+            } else if (pay.isBlendedRate()) {
+                payload += "&payBasis=blended";
+                payload += "&hourlyRate=" + pay.getBlendedFirstHours();
+                payload += "&maxHours=" + pay.getBlendedStartRate();
+                payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
+                payload += "&additionalMaxHours=" + pay.getBlendedAdditionalHours();
+            } else if (pay.isFixedRate()) {
+                payload += "&payBasis=fixed";
+                payload += "&fixedTotalAmount=" + pay.getFixedAmount();
+            } else if (pay.isHourlyRate()) {
+                payload += "&payBasis=per_hour";
+                payload += "&perHourRate=" + pay.getPerHour();
+                payload += "&maxHours=" + pay.getMaxHour();
+            }
+        }
+        // schedule counter
+        if (schedule != null) {
+            if (schedule.isExact()) {
+                payload += "&startTime=" + schedule.getStartTime();
+            } else {
+                payload += "&startTime=" + schedule.getStartTime();
+                payload += "&endTime=" + schedule.getEndTime();
+            }
+        }
+        // expenses counter
+        if (expenses != null && expenses.length > 0) {
+            StringBuilder json = new StringBuilder();
+            json.append("[");
+            for (int i = 0; i < expenses.length; i++) {
+                AdditionalExpense expense = expenses[i];
+                json.append("{\"description\":\"").append(expense.getDescription()).append("\",");
+                json.append("\"price\":\"").append(expense.getPrice()).append("\",");
+                json.append("\"categoryId:\":\"").append(expense.getCategoryId()).append("\"}");
+            }
+            json.append("]");
+
+            payload += "&expenses=" + json.toString();
+        }
+
+        System.out.println(payload);
+
+        return httpPost(
+                resultCode,
+                "api/rest/v1/workorder/" + workorderId + "/counter_offer",
+                null,
+                payload,
+                "application/x-www-form-urlencoded", false);
     }
 
     // deliverables

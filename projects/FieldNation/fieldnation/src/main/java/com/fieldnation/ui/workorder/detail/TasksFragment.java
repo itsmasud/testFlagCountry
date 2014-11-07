@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.ShipmentTracking;
@@ -39,6 +41,7 @@ import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
@@ -82,18 +85,19 @@ public class TasksFragment extends WorkorderFragment {
     private static final String STATE_CURRENT_TASK = "ui.workorder.detail.TasksFragment:STATE_CURRENT_TASK";
 
     // UI
-    private ShipmentView _shipments;
-    private TaskListView _taskList;
+    private ActionBarTopView _topBar;
     private TimeLoggedView _timeLogged;
+    private TaskListView _taskList;
+    private CustomFieldListView _customFields;
+    private ShipmentView _shipments;
     private ClosingNotesView _closingNotes;
-    private View[] _separators;
     private ClosingNotesDialog _closingDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private ShipmentAddDialog _shipmentAddDialog;
-    private ActionBarTopView _topBar;
     private AppPickerDialog _appDialog;
     private ConfirmDialog _confirmDialog;
     private DeviceCountDialog _deviceCountDialog;
+    private CustomFieldDialog _customFieldDialog;
 
     // Data
     private GlobalState _gs;
@@ -131,11 +135,8 @@ public class TasksFragment extends WorkorderFragment {
         _topBar = (ActionBarTopView) view.findViewById(R.id.topaction_view);
         _topBar.setListener(_actionBarTop_listener);
 
-        _separators = new View[3];
-
-        _separators[0] = view.findViewById(R.id.sep1);
-        _separators[1] = view.findViewById(R.id.sep2);
-        _separators[2] = view.findViewById(R.id.sep3);
+        _customFields = (CustomFieldListView) view.findViewById(R.id.customfields_view);
+        _customFields.setListener(_customFields_listener);
 
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog.setListener(_closingNotes_onOk);
@@ -143,9 +144,13 @@ public class TasksFragment extends WorkorderFragment {
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog.setListener(_deviceCountListener);
 
+        _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
+        _customFieldDialog.setListener(_customFieldDialog_listener);
+
         _taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
         _shipmentAddDialog = new ShipmentAddDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
+
 
         if (savedInstanceState == null) {
             _gs.requestAuthentication(_authClient);
@@ -160,10 +165,10 @@ public class TasksFragment extends WorkorderFragment {
                 _username = savedInstanceState.getString(STATE_USERNAME);
             }
             if (savedInstanceState.containsKey(STATE_TASKS)) {
-                Task[] tasks = (Task[]) savedInstanceState.getParcelableArray(STATE_TASKS);
+                Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
                 _tasks = new LinkedList<Task>();
                 for (int i = 0; i < tasks.length; i++) {
-                    _tasks.add(tasks[i]);
+                    _tasks.add((Task)tasks[i]);
                 }
                 _taskList.setTaskList(_tasks);
             }
@@ -263,23 +268,21 @@ public class TasksFragment extends WorkorderFragment {
             WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
             if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
                 _timeLogged.setVisibility(View.GONE);
-                _separators[0].setVisibility(View.GONE);
-                _separators[1].setVisibility(View.GONE);
                 _shipments.setVisibility(View.GONE);
-                _separators[2].setVisibility(View.GONE);
                 _closingNotes.setVisibility(View.GONE);
             } else {
                 _shipments.setVisibility(View.VISIBLE);
-                _separators[0].setVisibility(View.VISIBLE);
-                _separators[1].setVisibility(View.VISIBLE);
                 _timeLogged.setVisibility(View.VISIBLE);
-                _separators[2].setVisibility(View.VISIBLE);
                 _closingNotes.setVisibility(View.VISIBLE);
             }
         }
 
         if (_topBar != null)
             _topBar.setWorkorder(_workorder);
+
+        if (_customFields != null) {
+            _customFields.setData(_workorder.getCustomFields());
+        }
     }
 
     private void requestData() {
@@ -421,25 +424,10 @@ public class TasksFragment extends WorkorderFragment {
     /*-*************************************-*/
     /*-				UI Events				-*/
     /*-*************************************-*/
-    private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
 
-        @Override
-        public void onClick(AppPickerPackage pack) {
-            Intent src = pack.intent;
-
-            ResolveInfo info = pack.resolveInfo;
-
-            src.setComponent(new ComponentName(
-                    info.activityInfo.applicationInfo.packageName,
-                    info.activityInfo.name));
-
-            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
-            } else {
-                startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
-            }
-        }
-    };
+    /*-************************************-*/
+    /*-         ActionBarTopView           -*/
+    /*-************************************-*/
 
     private ActionBarTopView.Listener _actionBarTop_listener = new ActionBarTopView.Listener() {
         @Override
@@ -498,32 +486,13 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
-    private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+    /*-*******************************-*/
+    /*-         Time Logged           -*/
+    /*-*******************************-*/
 
-        @Override
-        public void onOk(String startDate, long durationMilliseconds) {
-            try {
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                getActivity().startService(
-                        _service.confirmAssignment(WEB_CHANGED, _workorder.getWorkorderId(), startDate,
-                                ISO8601.fromUTC(end)));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, int count) {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
-        }
-    };
-
+    /*-*************************-*/
+    /*-         Tasks           -*/
+    /*-*************************-*/
     private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onTaskClick(Task task) {
@@ -676,38 +645,6 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
-    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
-        @Override
-        public void onOk(String message) {
-            Log.v(TAG, "On Ok");
-            getActivity().startService(
-                    _service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
-
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
-        @Override
-        public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
-
-        }
-
-        @Override
-        public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
-                            carrier, null, trackingId, taskId));
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
     private TaskShipmentAddDialog.Listener _add_onClick = new TaskShipmentAddDialog.Listener() {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
@@ -743,6 +680,45 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
+    /*-*********************************-*/
+    /*-         Custom Fields           -*/
+    /*-*********************************-*/
+    private CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
+        @Override
+        public void onClick(CustomFieldRowView view, CustomField field) {
+            _customFieldDialog.show(TAG, field, _customFieldDialog_listener);
+        }
+    };
+
+    private CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
+        @Override
+        public void onOk(CustomField field, String value) {
+            getActivity().startService(
+                    _service.setCustomField(WEB_CHANGED, _workorder.getWorkorderId(), field.getCustomLabelId(), value));
+        }
+    };
+
+    /*-*****************************-*/
+    /*-         Shipments           -*/
+    /*-*****************************-*/
+    private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
+        @Override
+        public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
+
+        }
+
+        @Override
+        public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
+            getActivity().startService(
+                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
+                            carrier, null, trackingId, taskId));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
     private ShipmentView.Listener _shipments_listener = new ShipmentView.Listener() {
 
         @Override
@@ -772,10 +748,77 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
+    /*-*********************************-*/
+    /*-         Closing Notes           -*/
+    /*-*********************************-*/
+    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+        @Override
+        public void onOk(String message) {
+            Log.v(TAG, "On Ok");
+            getActivity().startService(
+                    _service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
     private ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
         public void onChangeClosingNotes(String closingNotes) {
             showClosingNotesDialog();
+        }
+    };
+
+    /*-*****************************-*/
+    /*-         MISC Events         -*/
+    /*-*****************************-*/
+
+    private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
+
+        @Override
+        public void onClick(AppPickerPackage pack) {
+            Intent src = pack.intent;
+
+            ResolveInfo info = pack.resolveInfo;
+
+            src.setComponent(new ComponentName(
+                    info.activityInfo.applicationInfo.packageName,
+                    info.activityInfo.name));
+
+            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
+            } else {
+                startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
+            }
+        }
+    };
+
+    private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+        @Override
+        public void onOk(String startDate, long durationMilliseconds) {
+            try {
+                long end = durationMilliseconds + ISO8601.toUtc(startDate);
+                getActivity().startService(
+                        _service.confirmAssignment(WEB_CHANGED, _workorder.getWorkorderId(), startDate,
+                                ISO8601.fromUTC(end)));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
         }
     };
 

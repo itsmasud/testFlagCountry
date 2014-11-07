@@ -22,6 +22,9 @@ import java.util.List;
 public class DeviceCountDialog extends DialogFragment {
     private static final String TAG = "ui.dialog.DeviceCountDialog";
 
+    // State
+    private static final String MAX_COUNT = "STATE_MAX_COUNT";
+
     // UI
     private NumberPicker _devicePicker;
     private Button _okButton;
@@ -33,6 +36,7 @@ public class DeviceCountDialog extends DialogFragment {
     private Workorder _workorder;
     private int _maxCount;
 
+    // grabs the dialog from the fragment stack if it already exists
     public static DeviceCountDialog getInstance(FragmentManager fm, String tag) {
         DeviceCountDialog d = null;
         List<Fragment> frags = fm.getFragments();
@@ -56,6 +60,20 @@ public class DeviceCountDialog extends DialogFragment {
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            _maxCount = savedInstanceState.getInt(MAX_COUNT, 0);
+        }
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(MAX_COUNT, _maxCount);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

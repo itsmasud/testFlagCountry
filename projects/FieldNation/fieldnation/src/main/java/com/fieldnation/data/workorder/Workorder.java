@@ -27,7 +27,7 @@ public class Workorder implements Parcelable {
     @Json(name = "bundleCount")
     private Integer _bundleCount;
     @Json(name = "bundleId")
-    private Integer _bundleId;
+    private Long _bundleId;
     @Json(name = "canEditFieldsForProviderToEnter")
     private Boolean _canEditFieldsForProviderToEnter;
     @Json(name = "canRequestPayForThisWo")
@@ -170,7 +170,7 @@ public class Workorder implements Parcelable {
         return _bundleCount;
     }
 
-    public Integer getBundleId() {
+    public Long getBundleId() {
         return _bundleId;
     }
 
@@ -489,6 +489,23 @@ public class Workorder implements Parcelable {
         return !workToDo;
     }
 
+    public boolean areCustomFieldsDone() {
+        CustomField[] fields = getCustomFields();
+
+        if (fields == null || fields.length == 0)
+            return true;
+
+        boolean fieldsToDo = false;
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i].getRequired() && misc.isEmptyOrNull(fields[i].getValue())) {
+                fieldsToDo = true;
+                break;
+            }
+        }
+
+        return !fieldsToDo;
+    }
+
     public boolean canComplete() {
         if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE || getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
             if (misc.isEmptyOrNull(getClosingNotes())) {
@@ -498,7 +515,15 @@ public class Workorder implements Parcelable {
                 return false;
             }
 
-            return areTasksComplete();
+            if (!areTasksComplete()) {
+                return false;
+            }
+
+            if (!areCustomFieldsDone()) {
+                return false;
+            }
+
+            return true;
         }
         return false;
     }
@@ -555,6 +580,10 @@ public class Workorder implements Parcelable {
 
     public StatusIntent getStatusIntent() {
         return getStatus().getStatusIntent();
+    }
+
+    public boolean isBundle() {
+        return getBundleId() != null && getBundleId() > 0;
     }
 
     public void removeListener(Listener listener) {
@@ -676,8 +705,8 @@ public class Workorder implements Parcelable {
     }
 
     /*-*********************************************-*/
-	/*-			Parcelable Implementation			-*/
-	/*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
     public static final Parcelable.Creator<Workorder> CREATOR = new Parcelable.Creator<Workorder>() {
 
         @Override

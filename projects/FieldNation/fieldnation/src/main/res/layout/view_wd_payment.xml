@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
@@ -31,11 +31,36 @@
         android:layout_width="match_parent"
         android:text="@string/view_field_nation_terms" />
 
+    <TextView
+        android:id="@+id/counteroffer_textview"
+        style="@style/WorkorderDetail_FieldTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/counter_offer"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/co1_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$5,000 Fixed for 4 hours"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/co2_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$75.00 per extra hour up to 5 hours"
+        android:visibility="gone" />
+
+
     <LinearLayout
         android:id="@+id/counteroffer_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -55,18 +80,18 @@
         android:id="@+id/detail_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/addexpense_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -87,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -106,7 +131,7 @@
 
         <TextView
             android:id="@+id/expenseslabel_textview"
-            style="@style/WorkorderDetail_FieldSubTitle"
+            style="@style/WorkorderDetail_FieldTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/expenses_colon" />
@@ -115,12 +140,11 @@
             android:id="@+id/expenses_linearlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </LinearLayout>
+            android:orientation="vertical"></LinearLayout>
 
         <TextView
             android:id="@+id/discountslabel_textview"
-            style="@style/WorkorderDetail_FieldSubTitle"
+            style="@style/WorkorderDetail_FieldTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/discounts_colon" />
@@ -129,8 +153,7 @@
             android:id="@+id/discounts_linearlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </LinearLayout>
+            android:orientation="vertical"></LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

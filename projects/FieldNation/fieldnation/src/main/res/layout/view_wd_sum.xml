@@ -24,7 +24,8 @@
 
         <TextView
             android:id="@+id/bundlewarning_textview"
-            style="@style/WorkorderDetail_Field_Bold"
+            android:gravity="center"
+            style="@style/TextViewLink"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

@@ -344,7 +344,6 @@ public class WorkorderCardView extends RelativeLayout {
 				}
 				break;
 			}
-			setDisplayMode(MODE_DOING_WORK);
 		}
 	};
 
@@ -556,7 +555,7 @@ public class WorkorderCardView extends RelativeLayout {
 		} else {
 			_statusTextView.setText("");
 		}
-		setIsBundle(_workorder.getBundleId() != null);
+		setIsBundle(_workorder.isBundle());
 
 		setNotInterestedEnabled(false);
 		_titleTextView.setVisibility(GONE);

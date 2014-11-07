@@ -140,6 +140,9 @@
     <string name="check_in">Check In</string>
     <string name="check_out">Check Out</string>
     <string name="acknowledge_hold">Acknowledge Hold</string>
+    <string name="tip_colon_space">Tip: </string>
+    <string name="counter_offer_schedule">Counter Offer Schedule</string>
+    <string name="please_change_the_schedule_or_tap_cancel">Please change the schedule or tap Cancel</string>
 
     <!-- /general strings -->
 
@@ -162,7 +165,7 @@
     <string name="mywork_title">My Work Orders</string>
     <string name="mywork_subtitle">Assigned, Completed, and Canceled Jobs</string>
     <string name="market_title">Marketplace</string>
-    <string name="market_subtitle">Available, Requested, Routed, and Recruitment</string>
+    <string name="market_subtitle">Available, Requested, and Routed</string>
     <string name="payment_title">Payment</string>
     <string name="payment_subtitle">Processing and Paid</string>
     <string name="settings_title">Settings</string>

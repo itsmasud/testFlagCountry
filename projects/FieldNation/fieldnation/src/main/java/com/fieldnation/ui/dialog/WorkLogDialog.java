@@ -111,6 +111,12 @@ public class WorkLogDialog extends Dialog {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+
+            try {
+                _devicesEditText.setText(_loggedWork.getNoOfDevices().toString());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         show();
     }
@@ -169,14 +175,15 @@ public class WorkLogDialog extends Dialog {
     private View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if ((_startIsSet && _endIsSet) || (_loggedWork != null && (_startIsSet || _endIsSet))) {
+            int deviceCount = -1;
+            try {
+                deviceCount = Integer.parseInt(_devicesEditText.getText().toString());
+            } catch (Exception ex) {
+            }
+
+            if ((_startIsSet && _endIsSet) || (_loggedWork != null && (_startIsSet || _endIsSet)) || (_loggedWork != null && _showDevicesCount && deviceCount != _loggedWork.getNoOfDevices())) {
                 WorkLogDialog.this.dismiss();
                 if (_listener != null) {
-                    int deviceCount = -1;
-                    try {
-                        deviceCount = Integer.parseInt(_devicesEditText.getText().toString());
-                    } catch (Exception ex) {
-                    }
                     _listener.onOk(_startCalendar, _endCalendar, deviceCount);
                 }
             }

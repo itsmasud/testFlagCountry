@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.utils.misc;
 
 public class SummaryView extends LinearLayout implements WorkorderRenderer {
@@ -66,13 +68,14 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
         _bundleWarningTextView = (TextView) findViewById(R.id.bundlewarning_textview);
+        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
 
         setVisibility(View.GONE);
     }
 
 	/*-*************************************-*/
     /*-				Mutators				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     @Override
     public void setWorkorder(Workorder workorder) {
@@ -121,6 +124,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         // TODO hook up policies
         if (!misc.isEmptyOrNull(_workorder.getCustomerPoliciesProcedures())) {
             _policiesTextView.setVisibility(View.VISIBLE);
+            //_policiesTextView.setText(_workorder.getCustomerPoliciesProcedures());
         } else {
             _policiesTextView.setVisibility(View.GONE);
         }
@@ -128,14 +132,25 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         // TODO hook up confidential info
         if (!misc.isEmptyOrNull(_workorder.getConfidentialInformation())) {
             _confidentialTextView.setVisibility(View.VISIBLE);
+            //_confidentialTextView.setText(_workorder.getConfidentialInformation());
         } else {
             _confidentialTextView.setVisibility(View.GONE);
         }
     }
 
     /*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
+    private OnClickListener _bundle_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
+            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
+            getContext().startActivity(intent);
+        }
+    };
+
     private Workorder.Listener _workorder_listener = new Workorder.Listener() {
         @Override
         public void onChange(Workorder workorder) {

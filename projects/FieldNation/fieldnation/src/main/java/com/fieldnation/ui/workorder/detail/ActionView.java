@@ -169,7 +169,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
 	/*-*************************-*/
     /*-			Events			-*/
-	/*-*************************-*/
+    /*-*************************-*/
 
     private View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
