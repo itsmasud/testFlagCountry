@@ -70,8 +70,8 @@ public class CounterOfferActivity extends ActionBarActivity {
     private TextView _maxOldTextView;
     private TextView _maxNewTextView;
     private LinearLayout _editPaymentCounterLayout;
-    private TextView _editPaymentCounterTextView;
     private ImageView _editPaymentCounterImageView;
+    private LinearLayout _paymentDeleteLayout;
 
     private TextView _scheduleTypeOldTextView;
     private TextView _scheduleTypeNewTextView;
@@ -80,7 +80,7 @@ public class CounterOfferActivity extends ActionBarActivity {
     private TextView _scheduleTimeOldTextView;
     private TextView _scheduleTimeNewTextView;
     private LinearLayout _editScheduleLayout;
-    private TextView _editScheduleTextView;
+    private LinearLayout _scheduleDeleteLayout;
     private ImageView _editScheduleImageView;
 
     private TextView _noExpensesTextView;
@@ -132,8 +132,9 @@ public class CounterOfferActivity extends ActionBarActivity {
         _maxNewTextView = (TextView) findViewById(R.id.max_new_textview);
         _editPaymentCounterLayout = (LinearLayout) findViewById(R.id.edit_payment_counter_layout);
         _editPaymentCounterLayout.setOnClickListener(_editPaymentLayout_onClick);
-        _editPaymentCounterTextView = (TextView) findViewById(R.id.edit_payment_counter_textview);
         _editPaymentCounterImageView = (ImageView) findViewById(R.id.edit_payment_counter_imageview);
+        _paymentDeleteLayout = (LinearLayout) findViewById(R.id.edit_payment_delete_layout);
+        _paymentDeleteLayout.setOnClickListener(_payment_delete_onClick);
 
         _labelHourlyRateTextView = (TextView) findViewById(R.id.hourly_rate_label_textview);
         _labelMaxHoursTextView = (TextView) findViewById(R.id.max_hours_label_textview);
@@ -147,8 +148,9 @@ public class CounterOfferActivity extends ActionBarActivity {
 
         _editScheduleLayout = (LinearLayout) findViewById(R.id.edit_schedule_layout);
         _editScheduleLayout.setOnClickListener(_editScheduleLayout_onClick);
-        _editScheduleTextView = (TextView) findViewById(R.id.edit_schedule_textview);
         _editScheduleImageView = (ImageView) findViewById(R.id.edit_schedule_imageview);
+        _scheduleDeleteLayout = (LinearLayout) findViewById(R.id.schedule_delete_layout);
+        _scheduleDeleteLayout.setOnClickListener(_schedule_delete_onClick);
 
         _noExpensesTextView = (TextView) findViewById(R.id.no_expenses_textview);
 
@@ -301,11 +303,14 @@ public class CounterOfferActivity extends ActionBarActivity {
         startService(_service.getDetails(WEB_GOT_WORKORDER, _workorderId, false));
     }
 
-    private void populateUi() {
+    private void setWorkorder(Workorder workorder) {
+        _workorder = workorder;
+
         if (_workorder == null)
             return;
 
-        //showReason(false);
+        _workorder.addListener(_workorder_listener);
+
         CounterOfferInfo info = _workorder.getCounterOfferInfo();
 
         if (info != null) {
@@ -315,6 +320,42 @@ public class CounterOfferActivity extends ActionBarActivity {
             if (info.getPay() != null)
                 _counterPay = info.getPay();
         }
+
+
+        if (info != null) {
+            AdditionalExpense[] aes = info.getExpense();
+            if (aes != null && aes.length > 0) {
+                for (int i = 0; i < aes.length; i++) {
+                    _counterExpenses.add(aes[i]);
+                }
+            }
+
+        }
+
+        if (info.getExplanation() != null) {
+            //showReason(true);
+            _requestReasonEditText.setText(info.getExplanation());
+        }
+
+        _deleteNotAcceptedCheckbox.setChecked(info.getExpires());
+        if (info.getExpires()) {
+            // TODO need to format the time
+            _offerTimeButton.setText(info.getExpiresAfter() + "");
+            //_offerTimeButton.setVisibility(View.VISIBLE);
+            _offerTimeButton.setEnabled(true);
+        } else {
+            _offerTimeButton.setEnabled(false);
+            //_offerTimeButton.setVisibility(View.GONE);
+        }
+    }
+
+    private void populateUi() {
+        if (_workorder == null)
+            return;
+
+        //showReason(false);
+        //CounterOfferInfo info = _workorder.getCounterOfferInfo();
+
         Pay pay = _workorder.getPay();
         // pay section
         _basisOldTextView.setText(pay.getPayRateBasis());
@@ -381,22 +422,6 @@ public class CounterOfferActivity extends ActionBarActivity {
 
         // expenses
         _expensesListLayout.removeAllViews();
-        if (info != null) {
-            AdditionalExpense[] aes = info.getExpense();
-            if (aes != null && aes.length > 0) {
-                for (int i = 0; i < aes.length; i++) {
-                    AdditionalExpense expense = aes[i];
-                    if (_deleteCounterExpenses.contains(expense)) {
-                        continue;
-                    }
-                    ExpenseView v = new ExpenseView(this);
-                    v.setAdditionalExpense(expense, _expensesListLayout.getChildCount() + 1);
-                    v.setListener(_expenseView_listener);
-                    _expensesListLayout.addView(v);
-                }
-
-            }
-        }
         if (_counterExpenses != null && _counterExpenses.size() > 0) {
             for (int i = 0; i < _counterExpenses.size(); i++) {
                 AdditionalExpense expense = _counterExpenses.get(i);
@@ -442,35 +467,6 @@ public class CounterOfferActivity extends ActionBarActivity {
                 _hourlyNewTextView.setText(misc.toCurrencyTrim(_counterPay.getPerDevice()) + " per device");
                 _maxNewTextView.setText(_counterPay.getMaxDevice() + " Devices Max");
             }
-        } else if (info != null && info.getPay() != null) {
-            Pay counter = info.getPay();
-            showPayCounter(true);
-            // pay section
-            _basisNewTextView.setText(counter.getPayRateBasis());
-
-            // fixed rate
-            if (counter.isFixedRate()) {
-                _hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getFixedAmount()));
-                _maxNewTextView.setText(" ");
-            }
-
-            // blended
-            if (counter.isBlendedRate()) {
-                _hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getBlendedStartRate()) + " - " + counter.getBlendedFirstHours() + " Hours");
-                _maxNewTextView.setText(misc.toCurrencyTrim(counter.getBlendedAdditionalRate()) + " - " + counter.getBlendedAdditionalHours() + " Hours");
-            }
-
-            // hourly
-            if (counter.isHourlyRate()) {
-                _hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getPerHour()) + " per hour");
-                _maxNewTextView.setText(counter.getMaxHour() + " Hours Max");
-            }
-
-            // per device
-            if (counter.isPerDeviceRate()) {
-                _hourlyNewTextView.setText(misc.toCurrencyTrim(counter.getPerDevice()) + " per device");
-                _maxNewTextView.setText(counter.getMaxDevice() + " Devices Max");
-            }
         } else {
             showPayCounter(false);
         }
@@ -499,57 +495,17 @@ public class CounterOfferActivity extends ActionBarActivity {
                     ex.printStackTrace();
                 }
             }
-        } else if (info != null && info.getSchedule() != null) {
-            Schedule sched = info.getSchedule();
-            showScheduleCounter(true);
-
-            if (sched.isExact()) {
-                try {
-                    _scheduleTypeNewTextView.setText("Exact");
-                    Calendar cal = ISO8601.toCalendar(sched.getStartTime());
-                    _scheduleDateNewTextView.setText(misc.formatDateLong(cal));
-                    _scheduleTimeNewTextView.setText(misc.formatTime(cal, false));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            } else {
-                try {
-                    _scheduleTypeNewTextView.setText("Range");
-                    Calendar cal = ISO8601.toCalendar(sched.getStartTime());
-                    Calendar cal2 = ISO8601.toCalendar(sched.getEndTime());
-                    _scheduleDateNewTextView.setText(String.format(Locale.US, "%tB", cal) + " " + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal2.get(Calendar.DAY_OF_MONTH) + ", " + cal.get(Calendar.YEAR));
-                    _scheduleTimeNewTextView.setText(misc.formatTime2(cal) + "-" + misc.formatTime(cal2, false));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
+        } else {
+            showScheduleCounter(false);
         }
 
         if (isDirty()) {
-            _sendButton.setEnabled(true);
+//            _sendButton.setEnabled(true);
             //showReason(true);
         } else {
-            _sendButton.setEnabled(false);
+//            _sendButton.setEnabled(false);
         }
 
-        if (info != null) {
-            if (info.getExplanation() != null) {
-                //showReason(true);
-                _requestReasonEditText.setText(info.getExplanation());
-            }
-
-            _deleteNotAcceptedCheckbox.setChecked(info.getExpires());
-            if (info.getExpires()) {
-                // TODO need to format the time
-                _offerTimeButton.setText(info.getExpiresAfter() + "");
-                //_offerTimeButton.setVisibility(View.VISIBLE);
-                _offerTimeButton.setEnabled(true);
-            } else {
-                _offerTimeButton.setEnabled(false);
-                //_offerTimeButton.setVisibility(View.GONE);
-            }
-        }
         _loadingView.setVisibility(View.GONE);
     }
 
@@ -558,13 +514,13 @@ public class CounterOfferActivity extends ActionBarActivity {
             _basisNewTextView.setVisibility(View.VISIBLE);
             _hourlyNewTextView.setVisibility(View.VISIBLE);
             _maxNewTextView.setVisibility(View.VISIBLE);
-            _editPaymentCounterTextView.setText(R.string.edit_payment_counter);
+            //_editPaymentCounterTextView.setText(R.string.edit_payment_counter);
             _editPaymentCounterImageView.setBackgroundResource(R.drawable.ic_edit_12);
         } else {
             _basisNewTextView.setVisibility(View.GONE);
             _hourlyNewTextView.setVisibility(View.GONE);
             _maxNewTextView.setVisibility(View.GONE);
-            _editPaymentCounterTextView.setText(R.string.request_payment_change);
+            //_editPaymentCounterTextView.setText(R.string.request_payment_change);
             _editPaymentCounterImageView.setBackgroundResource(R.drawable.ic_wo_detail_counter_offer);
         }
     }
@@ -574,13 +530,13 @@ public class CounterOfferActivity extends ActionBarActivity {
             _scheduleTypeNewTextView.setVisibility(View.VISIBLE);
             _scheduleDateNewTextView.setVisibility(View.VISIBLE);
             _scheduleTimeNewTextView.setVisibility(View.VISIBLE);
-            _editScheduleTextView.setText(R.string.edit_schedule_counter);
+//            _editScheduleTextView.setText(R.string.edit_schedule_counter);
             _editScheduleImageView.setBackgroundResource(R.drawable.ic_edit_12);
         } else {
             _scheduleTypeNewTextView.setVisibility(View.GONE);
             _scheduleDateNewTextView.setVisibility(View.GONE);
             _scheduleTimeNewTextView.setVisibility(View.GONE);
-            _editScheduleTextView.setText(R.string.request_schedule_change);
+//            _editScheduleTextView.setText(R.string.request_schedule_change);
             _editScheduleImageView.setBackgroundResource(R.drawable.ic_clock_large);
         }
     }
@@ -747,6 +703,22 @@ public class CounterOfferActivity extends ActionBarActivity {
         }
     };
 
+    private View.OnClickListener _schedule_delete_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _counterSchedule = null;
+            populateUi();
+        }
+    };
+
+    private View.OnClickListener _payment_delete_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _counterPay = null;
+            populateUi();
+        }
+    };
+
     private View.OnClickListener _addExpenseLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -808,9 +780,8 @@ public class CounterOfferActivity extends ActionBarActivity {
                 try {
                     String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
                     Log.v(TAG, data);
-                    _workorder = Workorder.fromJson(new JsonObject(data));
-                    _workorder.addListener(_workorder_listener);
-
+                    Workorder workorder = Workorder.fromJson(new JsonObject(data));
+                    setWorkorder(workorder);
                     populateUi();
                 } catch (Exception ex) {
                     ex.printStackTrace();
