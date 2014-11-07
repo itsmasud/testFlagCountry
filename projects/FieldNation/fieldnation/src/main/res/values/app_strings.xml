@@ -261,9 +261,9 @@
         <item>On Hold</item>
         <item>Checked In</item>
         <item>Checked Out</item>
-        <item>Pending</item>
         <item>In Review</item>
-        <item>Processing</item>
+        <item>In Review</item>
+        <item>Approved</item>
         <item>Paid</item>
         <item>Cancelled</item>
         <item>Fee Pending</item>
