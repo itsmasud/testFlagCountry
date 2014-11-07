@@ -7,6 +7,7 @@
 
     <dimen name="Dialog_ActionBar_Padding">16dp</dimen>
     <dimen name="Dialog_ActionBar_Gutter">16dp</dimen>
+    <dimen name="Dialog_Content_Padding">16dp</dimen>
     <dimen name="Dialog_ActionBar_Bottom_Margin">8dp</dimen>
     <dimen name="Dialog_Button_Touch_Target">@dimen/Button_Touch_Target</dimen>
 

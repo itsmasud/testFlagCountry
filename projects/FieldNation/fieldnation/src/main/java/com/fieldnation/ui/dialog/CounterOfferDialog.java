@@ -13,10 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.CounterOfferInfo;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Workorder;
 
 import java.util.List;
 
@@ -24,15 +26,21 @@ import java.util.List;
  * Created by michael.carver on 11/5/2014.
  */
 public class CounterOfferDialog extends DialogFragment {
+    private static final String TAG = "ui.dialog.CounterOfferDialog";
 
     // Ui
     private TabHost _tabHost;
     private Button _backButton;
     private Button _okButton;
-    private HorizontalScrollView _scrollView;
+
+    private PaymentCoView _paymentView;
+
+    private PayDialog _payDialog;
 
     // Data
     private FragmentManager _fm;
+    private Workorder _workorder;
+    private Pay _counterPay;
 
     public static CounterOfferDialog getInstance(FragmentManager fm, String tag) {
         CounterOfferDialog d = null;
@@ -86,12 +94,16 @@ public class CounterOfferDialog extends DialogFragment {
 
         _tabHost.setOnTabChangedListener(_tab_changeListener);
 
+        _paymentView = (PaymentCoView) v.findViewById(R.id.payment_view);
+        _paymentView.setListener(_payment_listener);
+
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
         _backButton = (Button) v.findViewById(R.id.back_button);
         _backButton.setOnClickListener(_back_onClick);
 
-        _scrollView = (HorizontalScrollView) v.findViewById(R.id.tabscroll_view);
+        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
+
 
         for (int i = 0; i < 4; i++) {
             _tabHost.getTabWidget().getChildAt(i).setFocusableInTouchMode(true);
@@ -107,7 +119,6 @@ public class CounterOfferDialog extends DialogFragment {
         super.onResume();
 
         Dialog d = getDialog();
-
         if (d == null)
             return;
 
@@ -119,13 +130,82 @@ public class CounterOfferDialog extends DialogFragment {
         } else {
             window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
         }
-        //window.setGravity(Gravity.TOP);
 
+        populateUi();
     }
 
-    public void show(String tag) {
+    private void populateUi() {
+        if (_workorder == null)
+            return;
+
+        if (_paymentView == null)
+            return;
+
+
+        if (_counterPay != null)
+            _paymentView.setPay(_counterPay, true);
+        else
+            _paymentView.setPay(_workorder.getPay(), false);
+    }
+
+    public void show(String tag, Workorder workorder) {
+        _workorder = workorder;
+
+        CounterOfferInfo info = _workorder.getCounterOfferInfo();
+
+        if (info != null && info.getPay() != null) {
+            _counterPay = info.getPay();
+        }
+
         super.show(_fm, tag);
     }
+
+    /*-*********************************-*/
+    /*-             Events              -*/
+    /*-*********************************-*/
+    private PaymentCoView.Listener _payment_listener = new PaymentCoView.Listener() {
+        @Override
+        public void onClearClick() {
+            _counterPay = null;
+            populateUi();
+        }
+
+        @Override
+        public void onChangeClick(Pay pay) {
+            _payDialog.show(TAG, pay, _payDialog_listener);
+        }
+    };
+
+    private PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+        @Override
+        public void onPerDevices(double rate, double max) {
+            _counterPay = new Pay(rate, (int) max);
+            populateUi();
+        }
+
+        @Override
+        public void onHourly(double rate, double max) {
+            _counterPay = new Pay(rate, max);
+            populateUi();
+        }
+
+        @Override
+        public void onFixed(double amount) {
+            _counterPay = new Pay(amount);
+            populateUi();
+        }
+
+        @Override
+        public void onBlended(double rate, double max, double rate2, double max2) {
+            _counterPay = new Pay(rate, max, rate2, max2);
+            populateUi();
+        }
+
+        @Override
+        public void onNothing() {
+        }
+    };
+
 
     private TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
         @Override

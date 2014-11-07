@@ -98,7 +98,7 @@ public class CounterOfferActivity extends ActionBarActivity {
     private Button _cancelButton;
     private Button _sendButton;
 
-    private PayDialog _payDialog;
+    //private PayDialog _payDialog;
     private ScheduleDialog _scheduleDialog;
     private ExpenseDialog _expenseDialog;
     private DatePickerDialog _datePicker;
@@ -177,7 +177,7 @@ public class CounterOfferActivity extends ActionBarActivity {
         _scheduleDialog = ScheduleDialog.getInstance(getSupportFragmentManager(), TAG);
         _scheduleDialog.setListener(_schedule_listener);
 
-        _payDialog = new PayDialog(this);
+//        _payDialog = new PayDialog(this);
         _expenseDialog = new ExpenseDialog(this);
 
         _counterPay = null;
@@ -728,11 +728,11 @@ public class CounterOfferActivity extends ActionBarActivity {
     private View.OnClickListener _editPaymentLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_counterPay != null) {
-                _payDialog.show(_counterPay, _payDialog_listener);
-            } else {
-                _payDialog.show(_workorder.getPay(), _payDialog_listener);
-            }
+//            if (_counterPay != null) {
+//                _payDialog.show(_counterPay, _payDialog_listener);
+//            } else {
+//                _payDialog.show(_workorder.getPay(), _payDialog_listener);
+//            }
         }
     };
 

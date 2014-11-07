@@ -56,7 +56,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
     private WorkorderDataSelector _dataSelection;
     private Hashtable<Long, Workorder> _pendingNotInterestedWorkorders = new Hashtable<Long, Workorder>();
     private Hashtable<Long, Workorder> _requestWorkingWorkorders = new Hashtable<Long, Workorder>();
-    private PayDialog _payDialog;
+    //private PayDialog _payDialog;
     private ActionMode _actionMode = null;
     private Hashtable<Long, Workorder> _selectedWorkorders = new Hashtable<Long, Workorder>();
     private WorkorderUndoListener _wosumUndoListener;
@@ -77,7 +77,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
                 int.class, boolean.class});
         _rpcMethod.setAccessible(true);
 
-        _payDialog = new PayDialog(activity);
+        //_payDialog = new PayDialog(activity);
         _expiresDialog = new ExpiresDialog(activity);
         _confirmDialog = new ConfirmDialog(activity);
     }
@@ -90,7 +90,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
                 int.class, boolean.class});
         _rpcMethod.setAccessible(true);
 
-        _payDialog = new PayDialog(activity);
+        //_payDialog = new PayDialog(activity);
         _expiresDialog = new ExpiresDialog(activity);
         _confirmDialog = new ConfirmDialog(activity);
     }
@@ -327,7 +327,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
 
             _counterOfferDialog = CounterOfferDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-            _counterOfferDialog.show(TAG);
+            _counterOfferDialog.show(TAG, workorder);
         }
 
         @Override

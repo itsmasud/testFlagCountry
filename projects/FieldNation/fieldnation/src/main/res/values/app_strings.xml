@@ -47,7 +47,7 @@
     <string name="amount">Amount</string>
     <string name="description">Description</string>
     <string name="by">by</string>
-    <string name="fixed_pay_amount_colon">Fixed Pay Amount:</string>
+    <string name="fixed_pay_amount">Fixed Pay Amount</string>
     <string name="hourly_rate">Hourly Rate</string>
     <string name="max_hours">Max Hours</string>
     <string name="per_device_rate">Per Device Rate</string>
@@ -119,7 +119,7 @@
     <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>
     <string name="cancel">CANCEL</string>
     <string name="send_counter">SEND COUNTER</string>
-    <string name="pay_rate_basis_colon">Pay Rate Basis:</string>
+    <string name="pay_rate_basis">Pay Rate Basis</string>
     <string name="hourly">Hourly</string>
     <string name="blended">Blended</string>
     <string name="arrival_period_colon">Arrival Period:</string>
