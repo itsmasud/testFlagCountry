@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Tile">
-
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="Tile_Container">
@@ -48,8 +48,8 @@
         <item name="android:layout_marginBottom">6dp</item>
     </style>
 
-     <style name="Tile_SpinnerButton" parent="@android:style/Widget.Spinner">
+    <style name="Tile_SpinnerButton" parent="@android:style/Widget.Spinner">
 
-     </style>
+    </style>
 
 </resources>

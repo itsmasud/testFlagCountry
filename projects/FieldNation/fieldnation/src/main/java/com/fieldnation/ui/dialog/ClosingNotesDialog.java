@@ -92,12 +92,11 @@ public class ClosingNotesDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag, String notes, Listener listener) {
+    public void show(String tag, String notes) {
         if (!misc.isEmptyOrNull(notes)) {
             _notes = notes;
             populateUi();
         }
-        _listener = listener;
         show(_fm, tag);
     }
 

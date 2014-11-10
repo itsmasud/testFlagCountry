@@ -24,23 +24,9 @@ import java.util.List;
 public class PayDialog extends DialogFragment {
     private static String TAG = "ui.dialog.PayDialog";
 
-    public static PayDialog getInstance(FragmentManager fm, String tag) {
-        PayDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof PayDialog && frag.getTag().equals(tag)) {
-                    d = (PayDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new PayDialog();
-        d._fm = fm;
-        return d;
-    }
+    // State
+    private static final String STATE_MODE = "STATE_MODE";
+    private static final String STATE_PAY = "STATE_PAY";
 
     // Modes
     private static final int MODE_FIXED = 0;
@@ -81,16 +67,45 @@ public class PayDialog extends DialogFragment {
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
+    public static PayDialog getInstance(FragmentManager fm, String tag) {
+        PayDialog d = null;
+        List<Fragment> frags = fm.getFragments();
+        if (frags != null) {
+            for (int i = 0; i < frags.size(); i++) {
+                Fragment frag = frags.get(i);
+                if (frag instanceof PayDialog && frag.getTag().equals(tag)) {
+                    d = (PayDialog) frag;
+                    break;
+                }
+            }
+        }
+        if (d == null)
+            d = new PayDialog();
+        d._fm = fm;
+        return d;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_PAY))
+                _pay = savedInstanceState.getParcelable(STATE_PAY);
+
+            if (savedInstanceState.containsKey(STATE_MODE))
+                _mode = savedInstanceState.getInt(STATE_MODE);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        if (_pay != null)
+            outState.putParcelable(STATE_PAY, _pay);
 
+        outState.putInt(STATE_MODE, _mode);
 
         super.onSaveInstanceState(outState);
     }
@@ -134,7 +149,6 @@ public class PayDialog extends DialogFragment {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        //getDialog()setTitle("Requested Payment");
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -147,8 +161,11 @@ public class PayDialog extends DialogFragment {
         populateUi();
     }
 
-    public void show(String tag, Pay pay, Listener listener) {
+    public void setListener(Listener listener) {
         _listener = listener;
+    }
+
+    public void show(String tag, Pay pay) {
         _pay = pay;
         super.show(_fm, tag);
     }

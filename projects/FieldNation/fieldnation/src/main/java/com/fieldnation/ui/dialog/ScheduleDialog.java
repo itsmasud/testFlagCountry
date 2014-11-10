@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -63,6 +64,9 @@ public class ScheduleDialog extends DialogFragment {
     private Listener _listener;
 
 
+    /*-*****************************-*/
+    /*-         Life Cycle          -*/
+    /*-*****************************-*/
     public static ScheduleDialog getInstance(FragmentManager fm, String tag) {
         ScheduleDialog d = null;
         List<Fragment> frags = fm.getFragments();
@@ -82,10 +86,6 @@ public class ScheduleDialog extends DialogFragment {
 
     }
 
-    /*-*****************************-*/
-    /*-         Life Cycle          -*/
-    /*-*****************************-*/
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -93,8 +93,9 @@ public class ScheduleDialog extends DialogFragment {
                 _sched = savedInstanceState.getParcelable(STATE_SCHEDULE);
             }
         }
-
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -103,6 +104,8 @@ public class ScheduleDialog extends DialogFragment {
             outState.putParcelable(STATE_SCHEDULE, _sched);
 
         super.onSaveInstanceState(outState);
+
+        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -143,7 +146,8 @@ public class ScheduleDialog extends DialogFragment {
         _startCal = Calendar.getInstance();
         _endCal = Calendar.getInstance();
 
-        getDialog().setTitle(R.string.counter_offer_schedule);
+        //getDialog().setTitle(R.string.counter_offer_schedule);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }

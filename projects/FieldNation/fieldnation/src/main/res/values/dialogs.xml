@@ -59,7 +59,7 @@
     <style name="Dialog_EditText" parent="@style/EditText">
         <item name="android:layout_marginTop">6dp</item>
         <item name="android:layout_marginBottom">6dp</item>
-        <item name="android:height">36dp</item>
+        <item name="android:layout_height">36dp</item>
     </style>
 
     <style name="Dialog_ActionBar">
@@ -88,8 +88,7 @@
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="Dialog_SpinnerButton" parent="@android:style/Widget.Spinner">
-
+    <style name="Dialog_SpinnerButton" parent="@style/ButtonSpinner">
     </style>
 
 </resources>

@@ -178,7 +178,8 @@ public class CounterOfferActivity extends ActionBarActivity {
         _scheduleDialog.setListener(_schedule_listener);
 
 //        _payDialog = new PayDialog(this);
-        _expenseDialog = new ExpenseDialog(this);
+        _expenseDialog = ExpenseDialog.getInstance(getSupportFragmentManager(), TAG);
+        _expenseDialog.setListener(_expense_listener);
 
         _counterPay = null;
         _counterSchedule = null;
@@ -390,7 +391,7 @@ public class CounterOfferActivity extends ActionBarActivity {
                         continue;
                     }
                     ExpenseView v = new ExpenseView(this);
-                    v.setAdditionalExpense(expense, _expensesListLayout.getChildCount() + 1);
+                    v.setAdditionalExpense(expense);
                     v.setListener(_expenseView_listener);
                     _expensesListLayout.addView(v);
                 }
@@ -401,7 +402,7 @@ public class CounterOfferActivity extends ActionBarActivity {
             for (int i = 0; i < _counterExpenses.size(); i++) {
                 AdditionalExpense expense = _counterExpenses.get(i);
                 ExpenseView v = new ExpenseView(this);
-                v.setAdditionalExpense(expense, _expensesListLayout.getChildCount() + 1);
+                v.setAdditionalExpense(expense);
                 v.setListener(_expenseView_listener);
                 _expensesListLayout.addView(v);
             }
@@ -750,7 +751,7 @@ public class CounterOfferActivity extends ActionBarActivity {
     private View.OnClickListener _addExpenseLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _expenseDialog.show("Add Additional Expense", _expense_listener);
+            _expenseDialog.show(TAG);
         }
     };
 

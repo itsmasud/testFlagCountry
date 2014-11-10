@@ -1,52 +1,54 @@
 package com.fieldnation.ui;
 
-import java.util.List;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import java.util.List;
+
 public class AppPickerAdapter extends BaseAdapter {
-	private static String TAG = "com.fieldnation.ui.AppPickerAdapter";
+    private static String TAG = "com.fieldnation.ui.AppPickerAdapter";
 
-	private List<AppPickerPackage> _appList;
+    private List<AppPickerPackage> _appList;
+    private AppPickerRowView.OnClickListener _listener;
 
-	public AppPickerAdapter(List<AppPickerPackage> list) {
-		super();
-		_appList = list;
-	}
+    public AppPickerAdapter(List<AppPickerPackage> list, AppPickerRowView.OnClickListener listener) {
+        super();
+        _appList = list;
+        _listener = listener;
+    }
 
-	@Override
-	public int getCount() {
-		return _appList.size();
-	}
+    @Override
+    public int getCount() {
+        return _appList.size();
+    }
 
-	@Override
-	public Object getItem(int position) {
-		return _appList.get(position);
-	}
+    @Override
+    public Object getItem(int position) {
+        return _appList.get(position);
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		AppPickerRowView view = null;
-		if (convertView == null) {
-			view = new AppPickerRowView(parent.getContext());
-		} else if (convertView instanceof AppPickerRowView) {
-			view = (AppPickerRowView) convertView;
-		} else {
-			view = new AppPickerRowView(parent.getContext());
-		}
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        AppPickerRowView view = null;
+        if (convertView == null) {
+            view = new AppPickerRowView(parent.getContext());
+        } else if (convertView instanceof AppPickerRowView) {
+            view = (AppPickerRowView) convertView;
+        } else {
+            view = new AppPickerRowView(parent.getContext());
+        }
 
-		AppPickerPackage pack = _appList.get(position);
+        AppPickerPackage pack = _appList.get(position);
+        view.setInfo(pack);
+        view.setListener(_listener);
 
-		view.setInfo(pack);
-
-		return view;
-	}
+        return view;
+    }
 
 }

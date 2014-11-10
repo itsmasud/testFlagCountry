@@ -257,7 +257,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             Pay pay = workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, workorder, pay.getMaxDevice(), _deviceCountListener);
+                _deviceCountDialog.show(TAG, workorder, pay.getMaxDevice());
             } else {
                 Intent intent = _workorderService.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
                 intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());

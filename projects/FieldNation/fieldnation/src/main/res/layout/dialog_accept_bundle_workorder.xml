@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Dialog"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -29,12 +30,18 @@
         style="@style/Dialog_ActionBar"
         android:orientation="horizontal">
 
-        <Button
-            style="@style/ButtonFlat"
-            android:gravity="center_vertical|left"
-            android:layout_width="0dp"
+        <LinearLayout
             android:layout_weight="1"
-            android:text="VIEW BUNDLE" />
+            android:layout_width="0dp"
+            android:layout_gravity=""
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/bundle_button"
+                style="@style/ButtonFlat"
+                android:text="VIEW BUNDLE" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_gravity="center_vertical|right"
