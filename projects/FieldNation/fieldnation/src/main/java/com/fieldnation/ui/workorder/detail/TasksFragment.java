@@ -1,5 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
+import com.google.android.gms.location.LocationClient;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -8,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,6 +40,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
@@ -109,6 +113,8 @@ public class TasksFragment extends WorkorderFragment {
     private List<Task> _tasks = null;
     private Task _currentTask;
     private SecureRandom _rand = new SecureRandom();
+    GPSLocationService _gPSLocationService;
+    LocationClient _locationClient;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -181,6 +187,9 @@ public class TasksFragment extends WorkorderFragment {
                 _gs.requestAuthentication(_authClient);
             }
         }
+
+        _gPSLocationService = new GPSLocationService(getView().getContext());
+
         configureUi();
     }
 
@@ -449,6 +458,14 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onCheckIn() {
+            //@TODO
+            /*Double lat = 0.0;
+            if(_gPSLocationService != null) {
+                Location _location = _gPSLocationService.getLatestLocation();
+                lat = _location.getLatitude();
+            }
+            Log.v(TAG, "bilas="+lat.toString());*/
+
             getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
         }
 
