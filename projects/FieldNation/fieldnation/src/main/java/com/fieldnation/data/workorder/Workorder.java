@@ -54,7 +54,7 @@ public class Workorder implements Parcelable {
     private CustomField[] _customFields;
     @Json(name = "customerPoliciesProcedures")
     private String _customerPoliciesProcedures;
-    @Json(name = "days_since_approved_or_canceled")
+    @Json(name = "days_since_approved_or_cancelled")
     private Integer _daysSinceApprovedOrCanceled;
     @Json(name = "declinedWo")
     private Integer _declinedWo;
