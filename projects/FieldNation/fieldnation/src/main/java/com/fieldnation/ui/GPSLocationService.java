@@ -1,184 +1,140 @@
 package com.fieldnation.ui;
 
-import android.app.Dialog;
-import android.app.Service;
-import android.content.Context;
+
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.location.Criteria;
 import android.location.Location;
-import android.net.Uri;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-public class GPSLocationService extends Service implements
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener{
+public class GPSLocationService implements
+        LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
-    private final Context mContext;
     private static final String TAG = "GPSLocationService";
 
-    private boolean currentlyProcessingLocation = false;
+    private static final long INTERVAL = 1000 * 30;
+    private static final long FASTEST_INTERVAL = 1000 * 5;
+    private static final long ONE_MIN = 1000 * 60;
+    private static final long REFRESH_TIME = ONE_MIN * 5;
+    private static final float MINIMUM_ACCURACY = 50.0f;
+
+    Activity locationActivity;
     private LocationRequest locationRequest;
-    private LocationClient locationClient;
+    private GoogleApiClient googleApiClient;
+    private Location location;
+    private FusedLocationProviderApi fusedLocationProviderApi = LocationServices.FusedLocationApi;
 
-    public GPSLocationService(Context context) {
-        this.mContext = context;
-        //turnGPSOn(this.mContext);
-        startTracking();
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void turnGPSOn(Context context)
-    {
-        Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
-        intent.putExtra("enabled", true);
-        context.sendBroadcast(intent);
-
-        String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-        if (! provider.contains("gps"))
-        { //if gps is disabled
-            final Intent poke = new Intent();
-            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            poke.setData(Uri.parse("3"));
-            context.sendBroadcast(poke);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void turnGPSOff(Context context)
-    {
-        String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-        if (provider.contains("gps"))
-        { //if gps is enabled
-            final Intent poke = new Intent();
-            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            poke.setData(Uri.parse("3"));
-            context.sendBroadcast(poke);
-        }
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        // if we are currently trying to get a location and the alarm manager has called this again,
-        // no need to start processing a new location.
-        if (!currentlyProcessingLocation) {
-            currentlyProcessingLocation = true;
-            startTracking();
-        }
-
-        return START_NOT_STICKY;
-    }
-
-    public void startTracking() {
-        Log.d(TAG, "startTracking");
-
-        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.mContext) == ConnectionResult.SUCCESS) {
-            locationClient = new LocationClient(this.mContext,this,this);
-
-            if (!locationClient.isConnected() || !locationClient.isConnecting()) {
-                locationClient.connect();
-            }
-        } else {
-            Log.e(TAG, "unable to connect to google play services.");
-        }
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-
-    /**
-     * Called by Location Services when the request to connect the
-     * client finishes successfully. At this point, you can
-     * request the current location or start periodic updates
-     */
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected");
-
+    public GPSLocationService(Activity locationActivity) {
         locationRequest = LocationRequest.create();
-    }
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(INTERVAL);
+        locationRequest.setFastestInterval(FASTEST_INTERVAL);
+        this.locationActivity = locationActivity;
 
-    public boolean isGoogleServiceAvailable(){
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.mContext);
+        googleApiClient = new GoogleApiClient.Builder(locationActivity)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
-        boolean serviceConnected;
-        if(ConnectionResult.SUCCESS == resultCode){
-            serviceConnected = true;
-        }else if(resultCode == ConnectionResult.SERVICE_MISSING){
-            //TODO: Handle missing service. Display toast maybe.
-            serviceConnected = false;
-        }else{
-            serviceConnected = false;
+        if (googleApiClient != null) {
+            googleApiClient.connect();
         }
-        return serviceConnected;
     }
 
-    /**
-     * Called by Location Services if the connection to the
-     * location client drops because of an error.
-     */
     @Override
-    public void onDisconnected() {
-        Log.e(TAG, "onDisconnected");
+    public void onConnected(Bundle connectionHint) {
+        Location currentLocation = fusedLocationProviderApi.getLastLocation(googleApiClient);
+        if (currentLocation != null && currentLocation.getTime() > REFRESH_TIME) {
+            location = currentLocation;
+        } else {
+            fusedLocationProviderApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+            // Schedule a Thread to unregister location listeners
+            Executors.newScheduledThreadPool(1).schedule(new Runnable() {
+                @Override
+                public void run() {
+                    fusedLocationProviderApi.removeLocationUpdates(googleApiClient,
+                            GPSLocationService.this);
+                }
+            }, ONE_MIN, TimeUnit.MILLISECONDS);
 
-        stopSelf();
+            location = fusedLocationProviderApi.getLastLocation(googleApiClient);
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        //the current location accuracy is greater than existing accuracy
+        //then store the current location
+        if (null == this.location || location.getAccuracy() < this.location.getAccuracy()) {
+            this.location = location;
+            //if the accuracy is not better, remove all location updates for this listener
+            if (this.location.getAccuracy() < MINIMUM_ACCURACY) {
+                fusedLocationProviderApi.removeLocationUpdates(googleApiClient, this);
+            }
+        }
+    }
+
+    public Location getLocation() {
+        return this.location;
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(TAG, "onConnectionFailed");
 
-        stopSelf();
     }
 
-    public double getLatitude(){
-        double _latitude = 0.0;
-        if(locationClient != null && locationClient.isConnected()){
-            _latitude = locationClient.getLastLocation().getLatitude();
-        }
-
-        return _latitude;
+    public boolean isLocationServiceEnabled() {
+        LocationManager lm = (LocationManager)
+                locationActivity.getApplicationContext().getSystemService(locationActivity.getApplicationContext().LOCATION_SERVICE);
+        String provider = lm.getBestProvider(new Criteria(), true);
+        return (!LocationManager.PASSIVE_PROVIDER.equals(provider));
     }
 
-    public double getLongitude(){
-        double _longitude = 0.0;
-        if(locationClient != null && locationClient.isConnected()){
-            _longitude = locationClient.getLastLocation().getLatitude();
-        }
-
-        return _longitude;
+    public boolean isGpsEnabled()
+    {
+        LocationManager service = (LocationManager) locationActivity.getApplicationContext().getSystemService(locationActivity.getApplicationContext().LOCATION_SERVICE);
+        return service.isProviderEnabled(LocationManager.GPS_PROVIDER)&&service.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    public Location getLatestLocation(){
-        if(locationClient.isConnected() && isGoogleServiceAvailable()){
-            return locationClient.getLastLocation();
-        }else{
-            return null;
+    public void turnOnGPS(){
+        if(!isLocationServiceEnabled()) {
+            final LocationManager manager = (LocationManager) locationActivity.getApplicationContext().getSystemService(locationActivity.getApplicationContext().LOCATION_SERVICE)
+            ;
+            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationActivity.getApplicationContext().startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
         }
     }
 
-    public LocationClient getLocationClient() {
-        return locationClient;
+    public boolean isGooglePlayServicesAvailable() {
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(locationActivity.getApplicationContext());
+        if (ConnectionResult.SUCCESS == status) {
+            return true;
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(status, locationActivity, 0).show();
+            return false;
+        }
     }
+
 }

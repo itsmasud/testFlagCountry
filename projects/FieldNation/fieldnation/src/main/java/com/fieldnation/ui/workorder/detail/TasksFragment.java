@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -62,6 +63,7 @@ import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class TasksFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.TasksFragment";
 
@@ -114,7 +116,6 @@ public class TasksFragment extends WorkorderFragment {
     private Task _currentTask;
     private SecureRandom _rand = new SecureRandom();
     GPSLocationService _gPSLocationService;
-    LocationClient _locationClient;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -188,7 +189,7 @@ public class TasksFragment extends WorkorderFragment {
             }
         }
 
-        _gPSLocationService = new GPSLocationService(getView().getContext());
+        _gPSLocationService = new GPSLocationService(getActivity());
 
         configureUi();
     }
@@ -459,12 +460,19 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onCheckIn() {
             //@TODO
-            /*Double lat = 0.0;
-            if(_gPSLocationService != null) {
-                Location _location = _gPSLocationService.getLatestLocation();
-                lat = _location.getLatitude();
-            }
-            Log.v(TAG, "bilas="+lat.toString());*/
+            /*if(_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()){
+                if(_gPSLocationService.isGpsEnabled()){
+                    Location location = _gPSLocationService.getLocation();
+                    double lat = location.getLatitude();
+                    Log.v(TAG, "Latitude = "+lat);
+                } else {
+                    _gPSLocationService.turnOnGPS();
+                }
+
+            } else {
+                Log.v(TAG, "isLocationServiceEnabled=false");
+                //getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+            }*/
 
             getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
         }
