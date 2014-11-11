@@ -76,7 +76,7 @@ public class ActionBarTopView extends RelativeLayout {
 
         if (status == WorkorderStatus.AVAILABLE
                 || status == WorkorderStatus.COMPLETED
-                || status == WorkorderStatus.CANCELLED) {
+                || status == WorkorderStatus.CANCELED) {
             setVisibility(View.GONE);
             return;
         } else {
@@ -94,11 +94,11 @@ public class ActionBarTopView extends RelativeLayout {
                 break;
             case AVAILABLE:
                 break;
-            case CANCELLED:
+            case CANCELED:
                 break;
-            case CANCELLED_LATEFEEPAID:
+            case CANCELED_LATEFEEPAID:
                 break;
-            case CANCELLED_LATEFEEPROCESSING:
+            case CANCELED_LATEFEEPROCESSING:
                 break;
             case CHECKEDIN:
                 _checkoutButton.setVisibility(View.VISIBLE);

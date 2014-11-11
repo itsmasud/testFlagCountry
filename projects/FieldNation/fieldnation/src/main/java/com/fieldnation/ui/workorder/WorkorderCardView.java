@@ -573,8 +573,8 @@ public class WorkorderCardView extends RelativeLayout {
 		case AVAILABLE:
 			buildStatusAvailable();
 			break;
-		case CANCELLED:
-			buildStatusCancelled();
+		case CANCELED:
+			buildStatusCanceled();
 			break;
 		case COMPLETED:
 		case APPROVED:
@@ -797,7 +797,7 @@ public class WorkorderCardView extends RelativeLayout {
 		}
 	}
 
-	private void buildStatusCancelled() {
+	private void buildStatusCanceled() {
 		_titleTextView.setVisibility(VISIBLE);
 		_clientNameTextView.setVisibility(VISIBLE);
 		_whenTextView.setVisibility(VISIBLE);
@@ -805,11 +805,11 @@ public class WorkorderCardView extends RelativeLayout {
 		_actionButton.setVisibility(GONE);
 
 		switch (_workorder.getStatus().getWorkorderSubstatus()) {
-		case CANCELLED:
+		case CANCELED:
 			break;
-		case CANCELLED_LATEFEEPAID:
+		case CANCELED_LATEFEEPAID:
 			break;
-		case CANCELLED_LATEFEEPROCESSING:
+		case CANCELED_LATEFEEPROCESSING:
 			_actionButton.setVisibility(VISIBLE);
 			_actionButton.setText("Payments");
 			break;

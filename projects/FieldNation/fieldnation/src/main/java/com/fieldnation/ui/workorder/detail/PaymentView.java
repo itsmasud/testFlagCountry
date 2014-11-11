@@ -1,7 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -227,9 +226,10 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private View.OnClickListener _counterOffer_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
-            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
-            getContext().startActivity(intent);
+            // TODO implement counteroffer dialog
+//            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
+//            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
+//            getContext().startActivity(intent);
         }
     };
 

@@ -227,7 +227,6 @@ public class ScheduleDialog extends DialogFragment {
     };
 
     private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
-
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
             String tag = view.getTag();

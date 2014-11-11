@@ -1,12 +1,9 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -31,7 +28,6 @@ public class ExpenseView extends LinearLayout {
     private Listener _listener;
     private AdditionalExpense _expense = null;
     private ExpenseCategory[] _categories;
-    private GestureDetectorCompat _gest;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -60,32 +56,11 @@ public class ExpenseView extends LinearLayout {
 
         ExpenseCategories categories = ExpenseCategories.getInstance(getContext());
         categories.setListener(_categoriesListener);
-
-        _gest = new GestureDetectorCompat(getContext(), _gest_listener);
-
     }
 
     /*-*********************************-*/
     /*-				Event				-*/
     /*-*********************************-*/
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        _gest.onTouchEvent(event);
-        return super.onTouchEvent(event);
-    }
-
-    private GestureDetector.OnGestureListener _gest_listener = new GestureDetector.SimpleOnGestureListener() {
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-            Log.v(TAG, "Fling " + velocityX);
-
-            // TODO STUB .onFling()
-            Log.v(TAG, "STUB .onFling()");
-            return super.onFling(e1, e2, velocityX, velocityY);
-        }
-    };
 
     private ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override

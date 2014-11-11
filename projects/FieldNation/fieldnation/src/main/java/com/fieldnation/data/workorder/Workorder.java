@@ -54,8 +54,8 @@ public class Workorder implements Parcelable {
     private CustomField[] _customFields;
     @Json(name = "customerPoliciesProcedures")
     private String _customerPoliciesProcedures;
-    @Json(name = "days_since_approved_or_cancelled")
-    private Integer _daysSinceApprovedOrCancelled;
+    @Json(name = "days_since_approved_or_canceled")
+    private Integer _daysSinceApprovedOrCanceled;
     @Json(name = "declinedWo")
     private Integer _declinedWo;
     @Json(name = "deliverables")
@@ -226,8 +226,8 @@ public class Workorder implements Parcelable {
         return _customerPoliciesProcedures;
     }
 
-    public Integer getDaysSinceApprovedOrCancelled() {
-        return _daysSinceApprovedOrCancelled;
+    public Integer getDaysSinceApprovedOrCanceled() {
+        return _daysSinceApprovedOrCanceled;
     }
 
     public Integer getDeclinedWo() {
@@ -603,8 +603,8 @@ public class Workorder implements Parcelable {
             case AVAILABLE:
                 buildStatusAvailable(status);
                 break;
-            case CANCELLED:
-                buildStatusCancelled(status);
+            case CANCELED:
+                buildStatusCanceled(status);
                 break;
             case COMPLETED:
             case APPROVED:
@@ -694,8 +694,8 @@ public class Workorder implements Parcelable {
         }
     }
 
-    private void buildStatusCancelled(Status status) {
-        if (status.getWorkorderSubstatus() == WorkorderSubstatus.CANCELLED_LATEFEEPROCESSING) {
+    private void buildStatusCanceled(Status status) {
+        if (status.getWorkorderSubstatus() == WorkorderSubstatus.CANCELED_LATEFEEPROCESSING) {
             _buttonAction = BUTTON_ACTION_VIEW_PAYMENT;
         }
     }

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,11 @@ import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.ISO8601;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,10 +51,13 @@ public class CounterOfferDialog extends DialogFragment {
     private PaymentCoView _paymentView;
     private ScheduleCoView _scheduleView;
     private ExpenseCoView _expenseView;
+    private ReasonCoView _reasonView;
 
     private PayDialog _payDialog;
     private ScheduleDialog _scheduleDialog;
     private ExpenseDialog _expenseDialog;
+    private DatePickerDialog _datePicker;
+    private TimePickerDialog _timePicker;
 
     // Data
     private FragmentManager _fm;
@@ -57,6 +65,12 @@ public class CounterOfferDialog extends DialogFragment {
     private Pay _counterPay;
     private Schedule _counterSchedule;
     private List<AdditionalExpense> _expenses = new LinkedList<AdditionalExpense>();
+    private String _counterReason;
+    private boolean _expires;
+    private String _expirationDate;
+    private boolean _tacAccpet;
+
+    private Calendar _pickerCal;
 
 
     /*-*****************************-*/
@@ -151,6 +165,10 @@ public class CounterOfferDialog extends DialogFragment {
 
         _tabHost.setOnTabChangedListener(_tab_changeListener);
 
+        for (int i = 0; i < 4; i++) {
+            _tabHost.getTabWidget().getChildAt(i).setFocusableInTouchMode(true);
+        }
+
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
 
@@ -166,6 +184,9 @@ public class CounterOfferDialog extends DialogFragment {
         _expenseView = (ExpenseCoView) v.findViewById(R.id.expenses_view);
         _expenseView.setListener(_expenseView_listener);
 
+        _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
+        _reasonView.setListener(_reason_listener);
+
         _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
         _payDialog.setListener(_payDialog_listener);
 
@@ -175,9 +196,16 @@ public class CounterOfferDialog extends DialogFragment {
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
         _expenseDialog.setListener(_expenseDialog_listener);
 
-        for (int i = 0; i < 4; i++) {
-            _tabHost.getTabWidget().getChildAt(i).setFocusableInTouchMode(true);
-        }
+
+        final Calendar c = Calendar.getInstance();
+        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH));
+        _datePicker.setCloseOnSingleTapDay(true);
+        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+                false, false);
+
+        _pickerCal = Calendar.getInstance();
+
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
@@ -226,6 +254,8 @@ public class CounterOfferDialog extends DialogFragment {
         }
 
         _expenseView.setExpenses(_expenses);
+
+        _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate);
     }
 
 
@@ -250,6 +280,10 @@ public class CounterOfferDialog extends DialogFragment {
                     _expenses.add(exp[i]);
                 }
             }
+
+            _counterReason = info.getExplanation();
+            _expires = info.getExpires();
+            _expirationDate = ISO8601.fromUTC(Calendar.getInstance().getTimeInMillis() + info.getExpiresAfter() * 1000);
         }
 
         super.show(_fm, tag);
@@ -258,6 +292,27 @@ public class CounterOfferDialog extends DialogFragment {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
+    private ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
+        @Override
+        public void onTacClick() {
+            // TODO STUB .onTacClick()
+            Log.v(TAG, "STUB .onTacClick()");
+
+        }
+
+        @Override
+        public void onTacChange(boolean isChecked) {
+            _tacAccpet = isChecked;
+            // TODO STUB .onTacChange()
+            Log.v(TAG, "STUB .onTacChange()");
+        }
+
+        @Override
+        public void showDateTimePicker() {
+            _datePicker.show(getFragmentManager(), TAG);
+        }
+    };
+
     private ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
@@ -370,6 +425,27 @@ public class CounterOfferDialog extends DialogFragment {
         }
     };
 
+    private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+            _pickerCal.set(year, month, day);
+            _timePicker.show(_fm, datePickerDialog.getTag());
+        }
+    };
+
+    private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+
+        @Override
+        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+            String tag = view.getTag();
+            _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
+                    _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+            _expirationDate = ISO8601.fromCalendar(_pickerCal);
+            _expires = true;
+            populateUi();
+        }
+    };
 
     private TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
         @Override
@@ -394,7 +470,8 @@ public class CounterOfferDialog extends DialogFragment {
             } else if (_tabHost.getCurrentTabTag().startsWith("mid")) {
                 _tabHost.setCurrentTab(_tabHost.getCurrentTab() + 1);
             } else if (_tabHost.getCurrentTabTag().equals("end")) {
-                // todo finish
+
+
             }
         }
     };

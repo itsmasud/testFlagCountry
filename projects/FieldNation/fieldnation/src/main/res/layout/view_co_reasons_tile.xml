@@ -24,23 +24,48 @@
             style="@style/Tile_EditText_OneLine"
             android:hint="@string/reason_for_request" />
 
+
         <CheckBox
-            android:id="@+id/delete_not_accepted_checkbox"
+            android:id="@+id/expires_checkbox"
             style="@style/Tile_CheckBox"
-            android:text="Offer expires?" />
+            android:layout_width="wrap_content"
+            android:text="Offer expires" />
 
-        <TextView
-            style="@style/WorkorderDetail_Field_Bold"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/by_countering_warning" />
+            android:layout_marginLeft="32dp"
+            android:orientation="horizontal">
 
-        <TextView
-            style="@style/TextViewLink"
-            android:layout_width="fill_parent"
-            android:layout_height="48dp"
-            android:gravity="center"
+            <TextView
+                android:id="@+id/expiresspace_textview"
+                style="@style/Tile_Text_Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="  \@" />
+
+            <Button
+                android:id="@+id/expires_button"
+                style="@style/ButtonFlat"
+                android:layout_width="wrap_content"
+                android:text="10/20/2014 11:11am" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/tac_checkbox"
+            style="@style/Tile_CheckBox"
+            android:layout_width="wrap_content"
+            android:text="I agree with the" />
+
+        <Button
+            android:id="@+id/tac_button"
+            style="@style/ButtonFlat"
+            android:layout_gravity="left"
+            android:layout_marginLeft="32dp"
             android:text="@string/terms_and_conditions" />
+
+
     </LinearLayout>
 
 </RelativeLayout>

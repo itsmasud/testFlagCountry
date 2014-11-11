@@ -127,10 +127,6 @@
             android:name="com.fieldnation.ui.SettingsActivity"
             android:exported="false"
             android:label="@string/settings" />
-        <activity
-            android:name="com.fieldnation.ui.workorder.detail.CounterOfferActivity"
-            android:exported="false"
-            android:label="@string/counter_offers" />
 
         <service
             android:name="com.fieldnation.auth.server.AuthService"

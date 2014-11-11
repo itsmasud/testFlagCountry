@@ -193,12 +193,12 @@ public class TasksFragment extends WorkorderFragment {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appDialog.addIntent(intent, "Get Content");
+        _appDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
         if (getActivity().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appDialog.addIntent(intent, "Take Picture");
+            _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
 
         }
     }

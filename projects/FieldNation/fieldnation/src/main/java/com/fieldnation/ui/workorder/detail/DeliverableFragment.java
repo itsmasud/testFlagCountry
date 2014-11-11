@@ -312,12 +312,12 @@ public class DeliverableFragment extends WorkorderFragment {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appPickerDialog.addIntent(intent, "Get Content");
+        _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
         if (getActivity().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appPickerDialog.addIntent(intent, "Take Picture");
+            _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
     }
 

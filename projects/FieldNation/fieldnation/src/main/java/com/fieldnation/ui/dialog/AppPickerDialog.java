@@ -65,9 +65,7 @@ public class AppPickerDialog extends DialogFragment {
         return v;
     }
 
-    public void addIntent(Intent intent, String postfix) {
-        PackageManager pm = getActivity().getPackageManager();
-
+    public void addIntent(PackageManager pm, Intent intent, String postfix) {
         List<ResolveInfo> infos = pm.queryIntentActivities(intent, 0);
 
         for (int i = 0; i < infos.size(); i++) {

@@ -75,7 +75,7 @@ public class MyWorkActivity extends DrawerActivity {
 		if (_fragments[1] == null)
 			_fragments[1] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.COMPLETED);
 		if (_fragments[2] == null)
-			_fragments[2] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.CANCELLED);
+			_fragments[2] = new WorkorderListFragment().setDisplayType(WorkorderDataSelector.CANCELED);
 
 		ActionBar actionbar = getSupportActionBar();
 		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
