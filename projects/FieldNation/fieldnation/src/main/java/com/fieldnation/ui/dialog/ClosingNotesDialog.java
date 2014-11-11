@@ -9,6 +9,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,6 +56,14 @@ public class ClosingNotesDialog extends DialogFragment {
     /*-*****************************-*/
     /*-			Life Cycle			-*/
     /*-*****************************-*/
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_closing_notes, container, false);
@@ -65,7 +75,8 @@ public class ClosingNotesDialog extends DialogFragment {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        getDialog().setTitle(R.string.closing_notes);
+        //getDialog().setTitle(R.string.closing_notes);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }
@@ -76,22 +87,17 @@ public class ClosingNotesDialog extends DialogFragment {
         populateUi();
     }
 
+
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
-    public void show(String tag, String notes, Listener listener) {
+    public void show(String tag, String notes) {
         if (!misc.isEmptyOrNull(notes)) {
             _notes = notes;
             populateUi();
         }
-        _listener = listener;
         show(_fm, tag);
-    }
-
-    @Override
-    public void show(FragmentManager manager, String tag) {
-        super.show(manager, tag);
     }
 
     private void populateUi() {

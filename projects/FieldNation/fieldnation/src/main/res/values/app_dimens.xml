@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="Button_Touch_Target">48dp</dimen>
+
+
+    <dimen name="Dialog_Gutter">24dp</dimen>
+
+    <dimen name="Dialog_ActionBar_Padding">16dp</dimen>
+    <dimen name="Dialog_ActionBar_Gutter">16dp</dimen>
+    <dimen name="Dialog_Content_Padding">16dp</dimen>
+    <dimen name="Dialog_ActionBar_Bottom_Margin">8dp</dimen>
+    <dimen name="Dialog_Button_Touch_Target">@dimen/Button_Touch_Target</dimen>
+
+    <dimen name="Dialog_Button_Height">36dp</dimen>
+
+    <dimen name="Tile_Content_Padding">16dp</dimen>
+    <dimen name="Tile_ActionBar_Gutters">8dp</dimen>
+</resources>

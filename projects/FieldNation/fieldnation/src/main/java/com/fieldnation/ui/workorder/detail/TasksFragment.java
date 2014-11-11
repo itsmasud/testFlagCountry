@@ -154,6 +154,9 @@ public class TasksFragment extends WorkorderFragment {
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog.setListener(_customFieldDialog_listener);
 
+        _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
+        _appDialog.setListener(_appdialog_listener);
+
         _taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
         _shipmentAddDialog = new ShipmentAddDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
@@ -175,7 +178,7 @@ public class TasksFragment extends WorkorderFragment {
                 Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
                 _tasks = new LinkedList<Task>();
                 for (int i = 0; i < tasks.length; i++) {
-                    _tasks.add((Task)tasks[i]);
+                    _tasks.add((Task) tasks[i]);
                 }
                 _taskList.setTaskList(_tasks);
             }
@@ -197,20 +200,15 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (_appDialog == null) {
-            _appDialog = new AppPickerDialog(getActivity(), _dialog_listener);
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            _appDialog.addIntent(intent, "Get Content");
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
-            if (getActivity().getPackageManager().hasSystemFeature(
-                    PackageManager.FEATURE_CAMERA)) {
-                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                _appDialog.addIntent(intent, "Take Picture");
-
-            }
-            _appDialog.finish();
+        if (getActivity().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
 
         }
     }
@@ -428,7 +426,7 @@ public class TasksFragment extends WorkorderFragment {
     }
 
     private void showClosingNotesDialog() {
-        _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+        _closingDialog.show(TAG, _workorder.getClosingNotes());
     }
 
     /*-*************************************-*/
@@ -450,7 +448,7 @@ public class TasksFragment extends WorkorderFragment {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
@@ -529,7 +527,7 @@ public class TasksFragment extends WorkorderFragment {
                     Pay pay = _workorder.getPay();
                     if (pay != null && pay.isPerDeviceRate()) {
                         _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                        _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+                        _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
                     } else {
                         getActivity().startService(
                                 _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
@@ -650,12 +648,12 @@ public class TasksFragment extends WorkorderFragment {
                 }
                 case UPLOAD_FILE: {
                     _currentTask = task;
-                    _appDialog.show();
+                    _appDialog.show(TAG);
                     break;
                 }
                 case UPLOAD_PICTURE: {
                     _currentTask = task;
-                    _appDialog.show();
+                    _appDialog.show(TAG);
                     break;
                 }
                 case UNIQUE_TASK:
@@ -711,7 +709,7 @@ public class TasksFragment extends WorkorderFragment {
     private CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override
         public void onClick(CustomFieldRowView view, CustomField field) {
-            _customFieldDialog.show(TAG, field, _customFieldDialog_listener);
+            _customFieldDialog.show(TAG, field);
         }
     };
 
@@ -801,7 +799,7 @@ public class TasksFragment extends WorkorderFragment {
     /*-         MISC Events         -*/
     /*-*****************************-*/
 
-    private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
+    private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
         @Override
         public void onClick(AppPickerPackage pack) {

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <color name="text_link_color">#FF7cb0f4</color>
-
+    
     <style name="TextViewLink">
         <item name="android:textColor">@color/text_link_color</item>
         <item name="android:layout_height">48dp</item>

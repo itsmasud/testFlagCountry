@@ -6,6 +6,18 @@
         <item name="actionBarTabTextStyle">@style/ActionBar.TabTextStyle.FieldNation</item>
         <item name="actionBarTabStyle">@style/ActionBar.TabViewStyle.FieldNation</item>
         <item name="actionMenuTextColor">#FFFFFFFF</item>
+
+        <!-- Main theme colors -->
+        <!--   your app branding color for the app bar -->
+        <!--<item name="colorPrimary">#FFFF0000</item>-->
+        <!--   darker variant for the status bar and contextual app bars -->
+        <!--<item name="colorPrimaryDark">#FF00FF00</item>-->
+        <!--   theme UI controls like checkboxes and text fields -->
+        <!--<item name="colorAccent">#FF3fcca9</item>-->
+
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+
     </style>
 
     <style name="ActionBar.Solid.FieldNation" parent="@style/Widget.AppCompat.ActionBar.Solid">
@@ -15,7 +27,7 @@
         <item name="actionMenuTextColor">#FFFFFFFF</item>
     </style>
 
-    <style name="ActionBar.Transparent.FieldNation" parent="@style/Widget.AppCompat.Light.ActionBar">
+    <style name="ActionBar.Transparent.FieldNation" parent="@style/Widget.AppCompat.ActionBar">
         <item name="background">@drawable/actionbar_background</item>
         <item name="backgroundStacked">@drawable/actionbar_stacked_background</item>
         <item name="titleTextStyle">@style/ActionBar.TextStyle.FieldNation</item>

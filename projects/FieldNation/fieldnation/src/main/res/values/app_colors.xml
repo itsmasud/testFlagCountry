@@ -9,6 +9,7 @@
     <color name="loading_bar_color_4">#FF68B8E1</color>
     <color name="loading_bar_color_5">#FF7EAFF5</color>
     <color name="black">#FF000000</color>
+    <color name="text_link_color">#FF7cb0f4</color>
 
     <integer-array name="loading_bar_colors">
         <item>@color/loading_bar_color_1</item>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Tile"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/container_view"
+        style="@style/Tile_Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/Tile_Content_Padding"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Tile_Text_Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="@string/payment" />
+
+
+            <TextView
+                android:id="@+id/status_textview"
+                style="@style/Text_Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Buyer's Offer" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/body1_textview"
+            style="@style/Tile_Text_Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Blended $50 for the first 3 hours" />
+
+        <TextView
+            android:id="@+id/body2_textview"
+            style="@style/Tile_Text_Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="$20/hour for up to 2 hours" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/actionbar_view"
+        android:layout_below="@+id/container_view"
+        style="@style/Tile_ActionBar"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/clear_button"
+            style="@style/ButtonFlat"
+            android:layout_width="wrap_content"
+            android:text="CLEAR" />
+
+        <Button
+            android:id="@+id/change_button"
+            style="@style/ButtonFlat"
+            android:layout_width="wrap_content"
+            android:text="CHANGE PAY" />
+
+    </LinearLayout>
+
+</RelativeLayout>

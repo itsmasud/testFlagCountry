@@ -1,7 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,7 +40,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private TextView _co1TextView;
     private TextView _co2TextView;
     // TODO move these dialogs out of this view
-    private ExpenseDialog _expenseDialog;
+    //private ExpenseDialog _expenseDialog;
     private DiscountDialog _discountDialog;
 
     // Data
@@ -84,7 +83,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         _discountsLabelTextView = (TextView) findViewById(R.id.discountslabel_textview);
         _discountsLinearLayout = (LinearLayout) findViewById(R.id.discounts_linearlayout);
 
-        _expenseDialog = new ExpenseDialog(getContext());
+        //_expenseDialog = new ExpenseDialog(getContext());
+        //_expenseDialog = ExpenseDialog.getInstance(_f)
         _counterOfferLayout = (LinearLayout) findViewById(R.id.counteroffer_layout);
         _counterOfferLayout.setOnClickListener(_counterOffer_onClick);
         _detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
@@ -186,7 +186,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
                     ExpenseView v = new ExpenseView(getContext());
                     v.setListener(_expenseView_listener);
                     _expensesLinearLayout.addView(v);
-                    v.setAdditionalExpense(expense, i + 1);
+                    v.setAdditionalExpense(expense);
                 }
             } else {
                 _expensesLabelTextView.setVisibility(View.GONE);
@@ -226,9 +226,10 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private View.OnClickListener _counterOffer_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
-            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
-            getContext().startActivity(intent);
+            // TODO implement counteroffer dialog
+//            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
+//            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
+//            getContext().startActivity(intent);
         }
     };
 
@@ -244,7 +245,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                _expenseDialog.show("Add Expense", _addExpense_listener);
+//                _expenseDialog.show("Add Expense", _addExpense_listener);
             }
         }
     };

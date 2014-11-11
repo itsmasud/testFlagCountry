@@ -101,9 +101,12 @@ public class DetailFragment extends WorkorderFragment {
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog.setListener(_deviceCountListener);
 
+        _acceptBundleWODialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
+        _acceptBundleWODialog.setListener(_acceptBundleDialogConfirmListener);
+
         _expiresDialog = new ExpiresDialog(view.getContext());
         _confirmDialog = new ConfirmDialog(view.getContext());
-        _acceptBundleWODialog = new AcceptBundleDialog(view.getContext());
+
 
         _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -219,7 +222,7 @@ public class DetailFragment extends WorkorderFragment {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
@@ -242,7 +245,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onConfirm() {
             if (_workorder.isBundle()) {
-                _acceptBundleWODialog.show(_workorder, _acceptBundleDialogConfirmListener);
+                _acceptBundleWODialog.show(TAG, _workorder);
             } else {
                 _confirmDialog.show(getActivity().getSupportFragmentManager(),
                         _workorder.getSchedule(), _confirmListener);
@@ -252,7 +255,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onEnterClosingNotes() {
             if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+                _closingDialog.show(TAG, _workorder.getClosingNotes());
             }
         }
     };
@@ -313,7 +316,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onRequest(Workorder workorder) {
             if (workorder.isBundle()) {
-                _acceptBundleWODialog.show(workorder, _acceptBundleDialogExpiresListener);
+                _acceptBundleWODialog.show(TAG, workorder);
             } else {
                 _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
             }
@@ -328,7 +331,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onConfirmAssignment(Workorder workorder) {
             if (workorder.isBundle()) {
-                _acceptBundleWODialog.show(workorder, _acceptBundleDialogConfirmListener);
+                _acceptBundleWODialog.show(TAG, workorder);
             } else {
                 _confirmDialog.show(getActivity().getSupportFragmentManager(),
                         workorder.getSchedule(), _confirmListener);
