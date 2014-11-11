@@ -1,5 +1,8 @@
 package com.fieldnation.ui.workorder.detail;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -8,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,6 +41,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
@@ -57,6 +62,7 @@ import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
+
 
 public class TasksFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.TasksFragment";
@@ -109,6 +115,7 @@ public class TasksFragment extends WorkorderFragment {
     private List<Task> _tasks = null;
     private Task _currentTask;
     private SecureRandom _rand = new SecureRandom();
+    GPSLocationService _gPSLocationService;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -184,6 +191,9 @@ public class TasksFragment extends WorkorderFragment {
                 _gs.requestAuthentication(_authClient);
             }
         }
+
+        _gPSLocationService = new GPSLocationService(getActivity());
+
         configureUi();
     }
 
@@ -447,6 +457,21 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onCheckIn() {
+            //@TODO
+            /*if(_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()){
+                if(_gPSLocationService.isGpsEnabled()){
+                    Location location = _gPSLocationService.getLocation();
+                    double lat = location.getLatitude();
+                    Log.v(TAG, "Latitude = "+lat);
+                } else {
+                    _gPSLocationService.turnOnGPS();
+                }
+
+            } else {
+                Log.v(TAG, "isLocationServiceEnabled=false");
+                //getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+            }*/
+
             getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
         }
 
