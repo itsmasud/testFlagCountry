@@ -235,7 +235,11 @@ public class ScheduleDialog extends DialogFragment {
                         _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
                 _startIsSet = true;
 
-                _startDateButton.setText(misc.formatDateTimeLong(_startCal));
+                if (_mode == MODE_EXACT) {
+                    _dateTimeButton.setText(misc.formatDateTimeLong(_startCal));
+                } else {
+                    _startDateButton.setText(misc.formatDateTimeLong(_startCal));
+                }
 
             } else if (tag.equals("end")) {
                 _endCal.set(_endCal.get(Calendar.YEAR), _endCal.get(Calendar.MONTH),

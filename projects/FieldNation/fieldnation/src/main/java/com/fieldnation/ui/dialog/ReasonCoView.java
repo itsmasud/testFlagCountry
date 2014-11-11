@@ -78,6 +78,10 @@ public class ReasonCoView extends RelativeLayout {
         populateUi();
     }
 
+    public String getReason() {
+        return _requestReasonEditText.getText().toString();
+    }
+
     public void setListener(Listener listener) {
         _listener = listener;
     }

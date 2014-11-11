@@ -91,8 +91,13 @@ public class AppPickerDialog extends DialogFragment {
     }
 
     public void show(String tag) {
-        _items.setAdapter(new AppPickerAdapter(_activityList, _app_onClick));
         show(_fm, tag);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        _items.setAdapter(new AppPickerAdapter(_activityList, _app_onClick));
     }
 
     private AppPickerRowView.OnClickListener _app_onClick = new AppPickerRowView.OnClickListener() {

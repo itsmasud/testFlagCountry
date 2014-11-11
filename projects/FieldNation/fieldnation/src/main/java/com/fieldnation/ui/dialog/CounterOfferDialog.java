@@ -69,6 +69,7 @@ public class CounterOfferDialog extends DialogFragment {
     private boolean _expires;
     private String _expirationDate;
     private boolean _tacAccpet;
+    private Listener _listener;
 
     private Calendar _pickerCal;
 
@@ -96,8 +97,6 @@ public class CounterOfferDialog extends DialogFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER))
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -113,6 +112,7 @@ public class CounterOfferDialog extends DialogFragment {
                 }
             }
         }
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -258,6 +258,9 @@ public class CounterOfferDialog extends DialogFragment {
         _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate);
     }
 
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
 
     public void show(String tag, Workorder workorder) {
         _workorder = workorder;
@@ -470,8 +473,25 @@ public class CounterOfferDialog extends DialogFragment {
             } else if (_tabHost.getCurrentTabTag().startsWith("mid")) {
                 _tabHost.setCurrentTab(_tabHost.getCurrentTab() + 1);
             } else if (_tabHost.getCurrentTabTag().equals("end")) {
+                // Todo need to do some data validation
+                if (_listener != null) {
+                    AdditionalExpense[] exp = new AdditionalExpense[_expenses.size()];
+                    for (int i = 0; i < _expenses.size(); i++) {
+                        exp[i] = _expenses.get(i);
+                    }
+                    int seconds = 0;
 
+                    _counterReason = _reasonView.getReason();
 
+                    try {
+                        seconds = (int) (Calendar.getInstance().getTimeInMillis() - ISO8601.toUtc(_expirationDate)) / 1000;
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    _listener.onOk(_workorder, _counterReason, _expires, seconds, _counterPay, _counterSchedule, exp);
+                    dismiss();
+                }
             }
         }
     };
@@ -482,4 +502,9 @@ public class CounterOfferDialog extends DialogFragment {
             _tabHost.setCurrentTab(_tabHost.getCurrentTab() - 1);
         }
     };
+
+    public interface Listener {
+        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, AdditionalExpense[] expenses);
+    }
+
 }
