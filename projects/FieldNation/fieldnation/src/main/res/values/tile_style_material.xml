@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- material style -->
+    <color name="tileTextColor_Material">@color/black</color>
+    <color name="tileBackGroundColor_Material">@color/white</color>
+    <dimen name="tileContentPadding_Material">16dp</dimen>
+    <dimen name="tileActionBarBottom_Material">8dp</dimen>
+    <dimen name="tileActionBarMargins_material">8dp</dimen>
+
+    <style name="Tile.Material">
+        <item name="android:background">@color/tileBackGroundColor_Material</item>
+    </style>
+
+    <style name="TileContainer.Material">
+        <item name="android:padding">@dimen/tileContentPadding_Material</item>
+        <item name="android:background">@color/tileBackGroundColor</item>
+    </style>
+
+    <style name="TileTextTitle.Material" parent="@style/Text_Headline">
+        <item name="android:textColor">@color/tileTextColor_Material</item>
+    </style>
+
+    <style name="TileTextBody.Material" parent="@style/Text_Body_2">
+        <item name="android:textColor">@color/tileTextColor_Material</item>
+    </style>
+
+    <style name="TileTextStatus.Material" parent="@style/Text_Caption">
+        <item name="android:textColor">@color/tileTextColor_Material</item>
+    </style>
+
+    <style name="TileActionBar.Material">
+        <item name="android:background">@color/tileBackGroundColor_Material</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/Button_Touch_Target</item>
+        <item name="android:layout_marginBottom">@dimen/tileActionBarBottom_Material</item>
+        <item name="android:paddingLeft">@dimen/tileActionBarMargins_material</item>
+        <item name="android:paddingRight">@dimen/tileActionBarMargins_material</item>
+        <item name="android:gravity">left</item>
+
+    </style>
+
+    <style name="TileEditTextOneLine.Material" parent="@style/EditText">
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="TileCheckBox.Material">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+    </style>
+
+    <style name="TileSpinnerButton.Material" parent="@android:style/Widget.Spinner">
+
+    </style>
+
+</resources>

@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
-        style="@style/Dialog_Container"
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            style="@style/Dialog_Title"
+            style="?attr/dialogTitleStyle"
             android:text="Closing Notes" />
 
         <EditText
@@ -28,17 +29,17 @@
     </LinearLayout>
 
     <LinearLayout
-        style="@style/Dialog_ActionBar"
+        style="?attr/dialogActionBarStyle"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
-            style="@style/Dialog_Cancel_Button"
+            style="?attr/dialogCancelButtonStyle"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok_button"
-            style="@style/Dialog_Ok_Button"
+            style="?attr/dialogOkButtonStyle"
             android:text="@string/save" />
     </LinearLayout>
 

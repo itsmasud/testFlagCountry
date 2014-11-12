@@ -132,7 +132,7 @@
     <string name="and">and</string>
     <string name="offer_expires_colon">Offer Expires:</string>
     <string name="never">Never</string>
-    <string name="confirm">Confirm</string>
+    <string name="confirm">CONFIRM</string>
     <string name="tasks">Tasks</string>
     <string name="completed_devices_colon">Completed Devices:</string>
     <string name="device_count">Device Count</string>

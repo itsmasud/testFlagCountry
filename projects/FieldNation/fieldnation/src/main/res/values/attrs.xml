@@ -4,4 +4,43 @@
     <declare-styleable name="WorkorderDetail_ProgressLabel">
         <attr name="text" format="string"></attr>
     </declare-styleable>
-</resources>
+
+
+    <declare-styleable name="TileTheme">
+        <attr name="tileStyle" format="reference" />
+        <attr name="tileContainerStyle" format="reference" />
+        <attr name="tileTextTitleStyle" format="reference" />
+        <attr name="tileTextBodyStyle" format="reference" />
+        <attr name="tileTextStatusStyle" format="reference" />
+        <attr name="tileActionBarStyle" format="reference" />
+        <attr name="tileEditTextOneLineStyle" format="reference" />
+        <attr name="tileCheckBoxStyle" format="reference" />
+        <attr name="tileSpinnerButtonStyle" format="reference" />
+        <attr name="tileButtonStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="ButtonTheme">
+        <attr name="buttonDefaultStyle" format="reference" />
+        <attr name="buttonWhiteStyle" format="reference" />
+        <attr name="buttonOrangeStyle" format="reference" />
+        <attr name="buttonGreenStyle" format="reference" />
+        <attr name="buttonGrayStyle" format="reference" />
+        <attr name="buttonSpinnerStyle" format="reference" />
+        <attr name="buttonTextLinkStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="DialogThemes">
+        <attr name="dialogStyle" format="reference" />
+        <attr name="dialogContainerStyle" format="reference" />
+        <attr name="dialogTitleStyle" format="reference" />
+        <attr name="dialogLabelStyle" format="reference" />
+        <attr name="dialogCaptionStyle" format="reference" />
+        <attr name="dialogEditTextStyle" format="reference" />
+        <attr name="dialogActionBarStyle" format="reference" />
+        <attr name="dialogCancelButtonStyle" format="reference" />
+        <attr name="dialogOkButtonStyle" format="reference" />
+        <attr name="dialogOkButtonGreenStyle" format="reference" />
+        <attr name="dialogSpinnerButtonStyle" format="reference" />
+    </declare-styleable>
+
+</resources>

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Dialog"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
-        style="@style/Dialog_Container"
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            style="@style/Dialog_Title"
+            style="?attr/dialogTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Change Pay" />
 
         <TextView
-            style="@style/Dialog_Label"
+            style="?attr/dialogLabelStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pay_rate_basis" />
@@ -27,7 +27,7 @@
             android:id="@+id/type_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/Dialog_Content_Padding" />
+            android:layout_marginBottom="@dimen/dialogContentPadding" />
 
         <!-- fixed pay -->
 
@@ -39,14 +39,14 @@
             android:visibility="gone">
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/fixed_pay_amount" />
 
             <EditText
                 android:id="@+id/fixed_edittext"
-                style="@style/Dialog_EditText"
+                style="?attr/dialogEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
@@ -63,7 +63,7 @@
             android:visibility="gone">
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
@@ -71,7 +71,7 @@
 
             <EditText
                 android:id="@+id/hourlyrate_edittext"
-                style="@style/Dialog_EditText"
+                style="?attr/dialogEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -79,14 +79,14 @@
                 android:minEms="4" />
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/max_hours" />
 
             <EditText
                 android:id="@+id/maxhours_edittext"
-                style="@style/Dialog_EditText"
+                style="?attr/dialogEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
@@ -103,28 +103,28 @@
             android:visibility="gone">
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/per_device_rate" />
 
             <EditText
                 android:id="@+id/devicerate_edittext"
-                style="@style/Dialog_EditText"
+                style="?attr/dialogEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal" />
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/max_devices" />
 
             <EditText
                 android:id="@+id/maxdevices_edittext"
-                style="@style/Dialog_EditText"
+                style="?attr/dialogEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
@@ -141,20 +141,20 @@
             android:visibility="visible">
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hourly_rate" />
 
             <LinearLayout
-                android:layout_marginBottom="@dimen/Dialog_Content_Padding"
+                android:layout_marginBottom="@dimen/dialogContentPadding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/blendedhourlyrate_edittext"
-                    style="@style/Dialog_EditText"
+                    style="?attr/dialogEditTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -162,7 +162,7 @@
                     android:inputType="numberDecimal" />
 
                 <TextView
-                    style="@style/Dialog_Caption"
+                    style="?attr/dialogCaptionStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
@@ -171,7 +171,7 @@
 
                 <EditText
                     android:id="@+id/blendedmaxhours_edittext"
-                    style="@style/Dialog_EditText"
+                    style="?attr/dialogEditTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -180,7 +180,7 @@
             </LinearLayout>
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hourly_rate" />
@@ -192,7 +192,7 @@
 
                 <EditText
                     android:id="@+id/extrahours_edittext"
-                    style="@style/Dialog_EditText"
+                    style="?attr/dialogEditTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -200,7 +200,7 @@
                     android:inputType="numberDecimal" />
 
                 <TextView
-                    style="@style/Dialog_Caption"
+                    style="?attr/dialogCaptionStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
@@ -209,7 +209,7 @@
 
                 <EditText
                     android:id="@+id/extramaxhours_edittext"
-                    style="@style/Dialog_EditText"
+                    style="?attr/dialogEditTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -220,20 +220,20 @@
     </LinearLayout>
 
     <LinearLayout
-        style="@style/Dialog_ActionBar"
-        android:layout_marginTop="@dimen/Dialog_ActionBar_Padding"
+        style="?attr/dialogActionBarStyle"
+        android:layout_marginTop="@dimen/dialogActionBarPadding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
-            style="@style/Dialog_Cancel_Button"
+            style="?attr/dialogCancelButtonStyle"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok_button"
-            style="@style/Dialog_Ok_Button"
+            style="?attr/dialogOkButtonStyle"
             android:text="@string/save" />
     </LinearLayout>
 

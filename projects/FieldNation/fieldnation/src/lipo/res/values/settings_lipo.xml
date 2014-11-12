@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <bool name="use_https">false</bool>
     <string name="default_username">ralphthompson</string>
     <string name="default_password">password</string>
     <string name="fn_hostname">testlipo.fieldnation.com</string>

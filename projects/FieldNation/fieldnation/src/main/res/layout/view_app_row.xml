@@ -15,7 +15,7 @@
         android:src="@null" />
 
     <TextView
-        style="@style/Tile_Text_Title"
+        style="?attr/tileTextTitleStyle"
         android:id="@+id/name_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

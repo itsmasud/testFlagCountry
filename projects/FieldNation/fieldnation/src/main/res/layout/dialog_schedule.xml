@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Dialog"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
-        style="@style/Dialog_Container"
+        style="?attr/dialogContainerStyle"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            style="@style/Dialog_Title"
+            style="?attr/dialogTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Schedule" />
 
         <TextView
-            style="@style/Dialog_Label"
+            style="?attr/dialogLabelStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/arrival_period_colon" />
@@ -27,7 +27,7 @@
             android:id="@+id/type_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/Dialog_Content_Padding" />
+            android:layout_marginBottom="@dimen/dialogContentPadding" />
 
         <LinearLayout
             android:id="@+id/range_layout"
@@ -37,26 +37,26 @@
             android:visibility="gone">
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/between" />
 
             <Button
                 android:id="@+id/start_date_button"
-                style="@style/Dialog_SpinnerButton"
+                style="?attr/dialogSpinnerButtonStyle"
                 android:layout_width="match_parent"
                 android:hint="March 4, 2014 @ 1:00 pm" />
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/and" />
 
             <Button
                 android:id="@+id/end_date_button"
-                style="@style/Dialog_SpinnerButton"
+                style="?attr/dialogSpinnerButtonStyle"
                 android:layout_width="match_parent"
                 android:hint="March 6, 2014 @ 1:00 pm" />
         </LinearLayout>
@@ -69,33 +69,33 @@
             android:visibility="visible">
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date_and_time_colon" />
 
             <Button
                 android:id="@+id/date_time_button"
-                style="@style/Dialog_SpinnerButton"
+                style="?attr/dialogSpinnerButtonStyle"
                 android:layout_width="match_parent"
                 android:hint="March 4, 2014 @ 1:00 pm" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        style="@style/Dialog_ActionBar"
+        style="?attr/dialogActionBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
-            style="@style/Dialog_Cancel_Button"
+            style="?attr/dialogCancelButtonStyle"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok_button"
-            style="@style/Dialog_Ok_Button"
+            style="?attr/dialogOkButtonStyle"
             android:text="@string/save" />
     </LinearLayout>
 

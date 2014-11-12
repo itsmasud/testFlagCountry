@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -86,19 +87,19 @@
             android:text="Standard Work Order Terms and Conditions" />
 
         <LinearLayout
-            style="@style/Dialog_ActionBar"
+            style="?attr/dialogActionBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/cancel_button"
-                style="@style/Dialog_Cancel_Button"
+                style="?attr/dialogCancelButtonStyle"
                 android:text="@string/cancel" />
 
             <Button
                 android:id="@+id/ok_button"
-                style="@style/Dialog_Ok_Button"
+                style="?attr/dialogOkButtonStyle"
                 android:text="@string/confirm" />
         </LinearLayout>
     </LinearLayout>

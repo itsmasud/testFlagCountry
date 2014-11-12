@@ -4,53 +4,53 @@
     android:layout_width="match_parent">
 
     <LinearLayout
-        style="@style/Dialog"
+        style="?attr/dialogStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
-            style="@style/Dialog_Container"
+            style="?attr/dialogContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
-                style="@style/Dialog_Title"
+                style="?attr/dialogTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Expense" />
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Expense Description" />
 
             <EditText
                 android:id="@+id/description_edittext"
-                style="@style/Dialog_EditText"
+                style="?attr/dialogEditTextStyle"
                 android:layout_width="fill_parent"
-                android:layout_marginBottom="@dimen/Dialog_Content_Padding"
+                android:layout_marginBottom="@dimen/dialogContentPadding"
                 android:imeOptions="actionNext"
                 android:inputType="text" />
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Price" />
 
             <EditText
                 android:id="@+id/amount_edittext"
-                style="@style/Dialog_EditText"
+                style="?attr/dialogEditTextStyle"
                 android:layout_width="fill_parent"
-                android:layout_marginBottom="@dimen/Dialog_Content_Padding"
+                android:layout_marginBottom="@dimen/dialogContentPadding"
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal" />
 
             <TextView
-                style="@style/Dialog_Label"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Category" />
@@ -63,19 +63,19 @@
 
         <LinearLayout
             android:id="@+id/actionbar_view"
-            style="@style/Dialog_ActionBar"
+            style="?attr/dialogActionBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/cancel_button"
-                style="@style/Dialog_Cancel_Button"
+                style="?attr/dialogCancelButtonStyle"
                 android:text="@string/cancel" />
 
             <Button
                 android:id="@+id/ok_button"
-                style="@style/Dialog_Ok_Button"
+                style="?attr/dialogOkButtonStyle"
                 android:text="@string/save" />
         </LinearLayout>
 

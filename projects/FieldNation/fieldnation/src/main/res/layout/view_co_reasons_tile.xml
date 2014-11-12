@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Tile"
+    style="?attr/tileStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/container_view"
-        style="@style/Tile_Container"
+        style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            style="@style/Tile_Text_Title"
+            style="?attr/tileTextTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/reason_for_counter_offer" />
 
         <EditText
             android:id="@+id/request_reason_edittext"
-            style="@style/Tile_EditText_OneLine"
+            style="?attr/tileEditTextOneLineStyle"
             android:hint="@string/reason_for_request" />
 
 
         <CheckBox
             android:id="@+id/expires_checkbox"
-            style="@style/Tile_CheckBox"
+            style="?attr/tileCheckBoxStyle"
             android:layout_width="wrap_content"
             android:text="Offer expires" />
 
@@ -39,7 +39,7 @@
 
             <TextView
                 android:id="@+id/expiresspace_textview"
-                style="@style/Tile_Text_Body"
+                style="?attr/tileTextBodyStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -47,20 +47,20 @@
 
             <Button
                 android:id="@+id/expires_button"
-                style="@style/ButtonFlat"
+                style="?attr/buttonTextLinkStyle"
                 android:layout_width="wrap_content"
                 android:text="10/20/2014 11:11am" />
         </LinearLayout>
 
         <CheckBox
             android:id="@+id/tac_checkbox"
-            style="@style/Tile_CheckBox"
+            style="?attr/tileCheckBoxStyle"
             android:layout_width="wrap_content"
             android:text="I agree with the" />
 
         <Button
             android:id="@+id/tac_button"
-            style="@style/ButtonFlat"
+            style="?attr/buttonTextLinkStyle"
             android:layout_gravity="left"
             android:layout_marginLeft="32dp"
             android:text="@string/terms_and_conditions" />
