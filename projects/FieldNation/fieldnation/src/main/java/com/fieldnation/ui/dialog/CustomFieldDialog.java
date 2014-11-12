@@ -67,9 +67,6 @@ public class CustomFieldDialog extends DialogFragment {
     /*-         Life Cycle          -*/
     /*-*****************************-*/
 
-    public CustomFieldDialog() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setRetainInstance(true);
@@ -124,9 +121,8 @@ public class CustomFieldDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag, CustomField customField, Listener listener) {
+    public void show(String tag, CustomField customField) {
         _customField = customField;
-        _listener = listener;
 
         show(_fm, tag);
     }

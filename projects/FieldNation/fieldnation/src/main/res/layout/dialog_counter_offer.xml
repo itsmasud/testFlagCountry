@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TabHost
+        android:id="@+id/tabhost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/actionbar_view"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <HorizontalScrollView
+                android:id="@+id/tabscroll_view"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </HorizontalScrollView>
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
+
+                <ScrollView
+                    android:id="@+id/scrollview1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.fieldnation.ui.dialog.PaymentCoView
+                        android:id="@+id/payment_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </ScrollView>
+
+                <ScrollView
+                    android:id="@+id/scrollview2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.fieldnation.ui.dialog.ScheduleCoView
+                        android:id="@+id/schedule_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </ScrollView>
+
+                <ScrollView
+                    android:id="@+id/scrollview3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.fieldnation.ui.dialog.ExpenseCoView
+                        android:id="@+id/expenses_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </ScrollView>
+
+                <ScrollView
+                    android:id="@+id/scrollview4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.fieldnation.ui.dialog.ReasonCoView
+                        android:id="@+id/reasons_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </ScrollView>
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+
+
+    <LinearLayout
+        android:id="@+id/actionbar_view"
+        style="?attr/dialogActionBarStyle"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/back_button"
+            style="?attr/dialogCancelButtonStyle"
+            android:text="BACK" />
+
+        <Button
+            android:id="@+id/ok_button"
+            style="?attr/dialogOkButtonStyle"
+            android:text="NEXT" />
+    </LinearLayout>
+
+    <View
+        style="@style/DividerFull"
+        android:layout_alignTop="@+id/actionbar_view" />
+
+    <com.fieldnation.ui.LoadingView
+        android:id="@+id/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

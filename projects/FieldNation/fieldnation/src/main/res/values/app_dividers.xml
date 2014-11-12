@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dividerColor">@color/black</color>
+    <dimen name="dividerHeight">1dp</dimen>
+    <dimen name="dividerPartialMargin">24dp</dimen>
+
+    <style name="DividerFull">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dividerHeight</item>
+        <item name="android:alpha">0.12</item>
+        <item name="android:background">@color/dividerColor</item>
+    </style>
+
+    <style name="DividerPart">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dividerHeight</item>
+        <item name="android:alpha">0.12</item>
+        <item name="android:background">@color/dividerColor</item>
+        <item name="android:layout_marginRight">@dimen/dividerPartialMargin</item>
+        <item name="android:layout_marginLeft">@dimen/dividerPartialMargin</item>
+    </style>
+
+</resources>

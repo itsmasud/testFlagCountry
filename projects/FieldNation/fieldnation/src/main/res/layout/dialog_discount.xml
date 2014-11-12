@@ -36,19 +36,19 @@
         android:inputType="numberDecimal" />
 
     <LinearLayout
+        style="?attr/dialogActionBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
-            style="@style/DialogCancelButton"
+            style="?attr/dialogCancelButtonStyle"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok_button"
-            style="@style/DialogOkButton"
+            style="?attr/dialogOkButtonStyle"
             android:text="@string/save" />
     </LinearLayout>
 

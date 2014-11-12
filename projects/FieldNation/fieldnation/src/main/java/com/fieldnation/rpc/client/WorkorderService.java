@@ -319,7 +319,10 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                     resultCode,
                     "api/rest/v1/workorder/" + workorderId + "/counter_offer",
                     null,
-                    "payBasis=blended&perHourRate=" + perHourRate + "&maxHours=" + maxHours + "&additionalHourRate=" + additionalHourRate + "&additionalHours=" + additionalHours + "&explanation=" + explanation,
+                    "payBasis=blended&perHourRate=" + perHourRate + "&maxHours=" + maxHours
+                            + "&additionalHourRate=" + additionalHourRate
+                            + "&additionalHours=" + additionalHours
+                            + "&explanation=" + explanation,
                     "application/x-www-form-urlencoded", false);
         }
     }

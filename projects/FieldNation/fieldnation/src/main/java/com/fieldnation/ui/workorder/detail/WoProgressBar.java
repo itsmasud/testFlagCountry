@@ -229,9 +229,9 @@ public class WoProgressBar extends RelativeLayout {
                 _nodes[2].setLabel(getResources().getString(R.string.my_work_category6)); //Approved
                 _nodes[3].setLabel(getResources().getString(R.string.my_work_category7)); //Paid
 				break;	
-			case CANCELLED:
-			case CANCELLED_LATEFEEPROCESSING:
-			case CANCELLED_LATEFEEPAID:
+			case CANCELED:
+			case CANCELED_LATEFEEPROCESSING:
+			case CANCELED_LATEFEEPAID:
 				_nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
 				_nodes[1].setActive(PROGRESSBAR_STEP_ACTIVE);
 				_nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);

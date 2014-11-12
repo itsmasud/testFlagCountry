@@ -1,225 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp">
-
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pay_rate_basis_colon" />
-
-    <Spinner
-        android:id="@+id/type_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp" />
-
-    <!-- fixed pay -->
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/fixed_layout"
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:orientation="vertical">
 
         <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/fixed_pay_amount_colon" />
-
-        <EditText
-            android:id="@+id/fixed_edittext"
-            style="@style/EditText"
+            style="?attr/dialogTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="numberDecimal" />
-    </LinearLayout>
-
-    <!-- hourly -->
-
-    <LinearLayout
-        android:id="@+id/hourly_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
+            android:text="Change Pay" />
 
         <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
+            style="?attr/dialogLabelStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/hourly_rate" />
+            android:text="@string/pay_rate_basis" />
 
-        <EditText
-            android:id="@+id/hourlyrate_edittext"
-            style="@style/EditText"
+        <Spinner
+            android:id="@+id/type_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="numberDecimal"
-            android:minEms="4" />
+            android:layout_marginBottom="@dimen/dialogContentPadding" />
 
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/max_hours" />
-
-        <EditText
-            android:id="@+id/maxhours_edittext"
-            style="@style/EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="numberDecimal" />
-    </LinearLayout>
-
-    <!-- per device -->
-
-    <LinearLayout
-        android:id="@+id/devices_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/per_device_rate" />
-
-        <EditText
-            android:id="@+id/devicerate_edittext"
-            style="@style/EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="numberDecimal" />
-
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/max_devices" />
-
-        <EditText
-            android:id="@+id/maxdevices_edittext"
-            style="@style/EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="numberDecimal" />
-    </LinearLayout>
-
-    <!-- blended -->
-
-    <LinearLayout
-        android:id="@+id/blended_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hourly_rate" />
+        <!-- fixed pay -->
 
         <LinearLayout
+            android:id="@+id/fixed_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/blendedhourlyrate_edittext"
-                style="@style/EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal" />
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
-                style="@style/WorkorderDetail_Field"
+                style="?attr/dialogLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:text="for the first" />
+                android:text="@string/fixed_pay_amount" />
 
             <EditText
-                android:id="@+id/blendedmaxhours_edittext"
-                style="@style/EditText"
-                android:layout_width="0dp"
+                android:id="@+id/fixed_edittext"
+                style="?attr/dialogEditTextStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal" />
-        </LinearLayout>
-
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hourly_rate" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/extrahours_edittext"
-                style="@style/EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal" />
-
-            <TextView
-                style="@style/WorkorderDetail_Field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:text="for up to" />
-
-            <EditText
-                android:id="@+id/extramaxhours_edittext"
-                style="@style/EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:imeOptions="actionDone"
                 android:inputType="numberDecimal" />
         </LinearLayout>
+
+        <!-- hourly -->
+
+        <LinearLayout
+            android:id="@+id/hourly_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="@string/hourly_rate" />
+
+            <EditText
+                android:id="@+id/hourlyrate_edittext"
+                style="?attr/dialogEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                android:minEms="4" />
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/max_hours" />
+
+            <EditText
+                android:id="@+id/maxhours_edittext"
+                style="?attr/dialogEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+
+        <!-- per device -->
+
+        <LinearLayout
+            android:id="@+id/devices_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/per_device_rate" />
+
+            <EditText
+                android:id="@+id/devicerate_edittext"
+                style="?attr/dialogEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal" />
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/max_devices" />
+
+            <EditText
+                android:id="@+id/maxdevices_edittext"
+                style="?attr/dialogEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+
+        <!-- blended -->
+
+        <LinearLayout
+            android:id="@+id/blended_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hourly_rate" />
+
+            <LinearLayout
+                android:layout_marginBottom="@dimen/dialogContentPadding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/blendedhourlyrate_edittext"
+                    style="?attr/dialogEditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal" />
+
+                <TextView
+                    style="?attr/dialogCaptionStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:text="for the first" />
+
+                <EditText
+                    android:id="@+id/blendedmaxhours_edittext"
+                    style="?attr/dialogEditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal" />
+            </LinearLayout>
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hourly_rate" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/extrahours_edittext"
+                    style="?attr/dialogEditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal" />
+
+                <TextView
+                    style="?attr/dialogCaptionStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:text="for up to" />
+
+                <EditText
+                    android:id="@+id/extramaxhours_edittext"
+                    style="?attr/dialogEditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
+        style="?attr/dialogActionBarStyle"
+        android:layout_marginTop="@dimen/dialogActionBarPadding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
-            style="@style/DialogCancelButton"
+            style="?attr/dialogCancelButtonStyle"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok_button"
-            style="@style/DialogOkButton"
+            style="?attr/dialogOkButtonStyle"
             android:text="@string/save" />
     </LinearLayout>
 

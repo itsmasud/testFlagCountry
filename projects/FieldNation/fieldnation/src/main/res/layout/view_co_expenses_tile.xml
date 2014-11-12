@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <RelativeLayout
+        style="?attr/tileStyle"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/container_view"
+            style="?attr/tileContainerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="?attr/tileTextTitleStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/expenses" />
+
+            <TextView
+                android:id="@+id/no_expenses_textview"
+                style="?attr/tileTextBodyStyle"
+                android:layout_marginTop="@dimen/tileContentPadding"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="No expenses have been added at this time" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/expenses_list_layout"
+            android:layout_below="@+id/container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/actionbar_view"
+            android:layout_below="@+id/expenses_list_layout"
+            style="?attr/tileActionBarStyle"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/reset_button"
+                style="?attr/tileButtonStyle"
+                android:text="RESET" />
+
+            <Button
+                android:id="@+id/add_button"
+                style="?attr/tileButtonStyle"
+                android:text="ADD EXPENSE" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

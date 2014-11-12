@@ -17,17 +17,18 @@ import android.view.ViewGroup;
 import com.cocosw.undobar.UndoBarController;
 import com.cocosw.undobar.UndoBarController.UndoBar;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.ui.PagingListAdapter;
 import com.fieldnation.ui.dialog.ConfirmDialog;
+import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
-import com.fieldnation.ui.dialog.PayDialog;
-import com.fieldnation.ui.workorder.detail.CounterOfferActivity;
 import com.fieldnation.utils.ISO8601;
 
 import java.lang.reflect.InvocationTargetException;
@@ -46,23 +47,30 @@ import java.util.List;
 public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
     private static final String TAG = "ui.workorder.WorkorderListAdapter";
 
+    // Intent Keys
+    private static final String KEY_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderListAdapter.WORKORDER_ID";
+
+    // web states
     private static final int WEB_REMOVING_WORKRODER = 100;
     private static final int WEB_CHANGING_WORKORDER = 101;
     private static final int WEB_CHECKING_IN = 102;
-    private static final String KEY_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderListAdapter.WORKORDER_ID";
 
+    // Data
     private WorkorderService _workorderService = null;
     private Method _rpcMethod;
     private WorkorderDataSelector _dataSelection;
     private Hashtable<Long, Workorder> _pendingNotInterestedWorkorders = new Hashtable<Long, Workorder>();
     private Hashtable<Long, Workorder> _requestWorkingWorkorders = new Hashtable<Long, Workorder>();
-    private PayDialog _payDialog;
     private ActionMode _actionMode = null;
     private Hashtable<Long, Workorder> _selectedWorkorders = new Hashtable<Long, Workorder>();
     private WorkorderUndoListener _wosumUndoListener;
+
+    // Ui
+    //private PayDialog _payDialog;
     private ExpiresDialog _expiresDialog;
     private ConfirmDialog _confirmDialog;
     private DeviceCountDialog _deviceCountDialog;
+    private CounterOfferDialog _counterOfferDialog;
 
 	/*-*****************************-*/
     /*-			Lifecycle			-*/
@@ -76,7 +84,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
                 int.class, boolean.class});
         _rpcMethod.setAccessible(true);
 
-        _payDialog = new PayDialog(activity);
+        //_payDialog = new PayDialog(activity);
         _expiresDialog = new ExpiresDialog(activity);
         _confirmDialog = new ConfirmDialog(activity);
     }
@@ -89,7 +97,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
                 int.class, boolean.class});
         _rpcMethod.setAccessible(true);
 
-        _payDialog = new PayDialog(activity);
+        //_payDialog = new PayDialog(activity);
         _expiresDialog = new ExpiresDialog(activity);
         _confirmDialog = new ConfirmDialog(activity);
     }
@@ -256,7 +264,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             Pay pay = workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, workorder, pay.getMaxDevice(), _deviceCountListener);
+                _deviceCountDialog.show(TAG, workorder, pay.getMaxDevice());
             } else {
                 Intent intent = _workorderService.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
                 intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
@@ -325,9 +333,9 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
             woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
 
-            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
-            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER_ID, workorder.getWorkorderId());
-            getContext().startActivity(intent);
+            _counterOfferDialog = CounterOfferDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+            _counterOfferDialog.setListener(_counterOfferDialog_listener);
+            _counterOfferDialog.show(TAG, workorder);
         }
 
         @Override
@@ -442,6 +450,18 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             new Exception().printStackTrace();
             _pendingNotInterestedWorkorders.clear();
             update(false);
+        }
+    };
+
+    private CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+            getActivity().startService(
+                    _workorderService.setCounterOffer(WEB_CHANGING_WORKORDER,
+                            workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,
+                            schedule, expenses));
+
+
         }
     };
 

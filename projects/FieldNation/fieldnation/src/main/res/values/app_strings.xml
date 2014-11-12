@@ -37,7 +37,7 @@
     <string name="shipment_description">Shipment Description</string>
     <string name="shipping_to_site">Shipping to site</string>
     <string name="shipping_from_size">Shipping from site</string>
-    <string name="add">Add</string>
+    <string name="add">ADD</string>
     <string name="travel_time">Travel Time</string>
     <string name="on_site_work">On Site Work</string>
     <string name="start_time">Start Time</string>
@@ -47,7 +47,7 @@
     <string name="amount">Amount</string>
     <string name="description">Description</string>
     <string name="by">by</string>
-    <string name="fixed_pay_amount_colon">Fixed Pay Amount:</string>
+    <string name="fixed_pay_amount">Fixed Pay Amount</string>
     <string name="hourly_rate">Hourly Rate</string>
     <string name="max_hours">Max Hours</string>
     <string name="per_device_rate">Per Device Rate</string>
@@ -63,7 +63,7 @@
     <string name="my_additional_files">My Additional Files</string>
     <string name="upload_file">Upload File</string>
     <string name="status_colon">Status: </string>
-    <string name="send">Send</string>
+    <string name="send">SEND</string>
     <string name="continue_the_conversation">Continue the conversation...</string>
     <string name="start_the_conversation">Start the conversation...</string>
     <string name="pending">...pending</string>
@@ -73,7 +73,7 @@
     <string name="work_performed_colon">Work Performed: </string>
     <string name="closing_notes">Closing Notes</string>
     <string name="enter_closing_notes_here">Enter closing notes here...</string>
-    <string name="save">Save</string>
+    <string name="save">SAVE</string>
     <string name="request_work">Request Work</string>
     <string name="accept_work">Accept Work</string>
     <string name="counter_offer">Counter Offer</string>
@@ -112,14 +112,14 @@
     <string name="expense">Expense</string>
     <string name="add_expense_to_counter_offer">Add Expense to Counter Offer</string>
     <string name="add_another_expense">Add Another Expense</string>
-    <string name="reason_for_counter_offer_colon">Reason for Counter Offer:</string>
+    <string name="reason_for_counter_offer">Counter offer reason</string>
     <string name="reason_for_request">Reason For Request</string>
     <string name="delete_counter_if_not_accepted_by">Delete counter of not accepted by</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>
-    <string name="cancel">Cancel</string>
-    <string name="send_counter">Send Counter</string>
-    <string name="pay_rate_basis_colon">Pay Rate Basis:</string>
+    <string name="cancel">CANCEL</string>
+    <string name="send_counter">SEND COUNTER</string>
+    <string name="pay_rate_basis">Pay Rate Basis</string>
     <string name="hourly">Hourly</string>
     <string name="blended">Blended</string>
     <string name="arrival_period_colon">Arrival Period:</string>
@@ -132,7 +132,7 @@
     <string name="and">and</string>
     <string name="offer_expires_colon">Offer Expires:</string>
     <string name="never">Never</string>
-    <string name="confirm">Confirm</string>
+    <string name="confirm">CONFIRM</string>
     <string name="tasks">Tasks</string>
     <string name="completed_devices_colon">Completed Devices:</string>
     <string name="device_count">Device Count</string>
@@ -143,6 +143,7 @@
     <string name="tip_colon_space">Tip: </string>
     <string name="counter_offer_schedule">Counter Offer Schedule</string>
     <string name="please_change_the_schedule_or_tap_cancel">Please change the schedule or tap Cancel</string>
+    <string name="expenses">Expenses</string>
 
     <!-- /general strings -->
 
@@ -242,7 +243,7 @@
         <item>Assigned</item>
         <item>In Progress</item>
         <item>Completed</item>
-        <item>Cancelled</item>
+        <item>Canceled</item>
         <item>Paid</item>
         <item>Approved</item>
     </string-array>
@@ -260,11 +261,11 @@
         <item>On Hold</item>
         <item>Checked In</item>
         <item>Checked Out</item>
-        <item>Pending</item>
         <item>In Review</item>
-        <item>Processing</item>
+        <item>In Review</item>
+        <item>Approved</item>
         <item>Paid</item>
-        <item>Cancelled</item>
+        <item>Canceled</item>
         <item>Fee Pending</item>
         <item>Fee Paid</item>
         <item>Unknown</item>

@@ -1,38 +1,71 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.fieldnation.R;
 import com.fieldnation.ui.AppPickerAdapter;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.AppPickerRowView;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class AppPickerDialog {
-    private static final String TAG = "com.fieldnation.ui.AppPickerDialog";
+public class AppPickerDialog extends DialogFragment {
+    private static final String TAG = "ui.AppPickerDialog";
 
+    // Ui
+    private ListView _items;
+
+    // Data
     private List<AppPickerPackage> _activityList = new LinkedList<AppPickerPackage>();
     private Set<String> _packages = new HashSet<String>();
-    private Activity _activity;
-    private AlertDialog.Builder _builder;
-    private AppPickerAdapter _adapter;
     private Listener _listener;
+    private FragmentManager _fm;
 
-    public AppPickerDialog(Activity activity, Listener listener) {
-        _activity = activity;
-        _listener = listener;
+    /*-*****************************-*/
+    /*-         Life Cycle          -*/
+    /*-*****************************-*/
+    public static AppPickerDialog getInstance(FragmentManager fm, String tag) {
+        AppPickerDialog d = null;
+        List<Fragment> frags = fm.getFragments();
+        if (frags != null) {
+            for (int i = 0; i < frags.size(); i++) {
+                Fragment frag = frags.get(i);
+                if (frag instanceof AppPickerDialog && frag.getTag().equals(tag)) {
+                    d = (AppPickerDialog) frag;
+                    break;
+                }
+            }
+        }
+        if (d == null)
+            d = new AppPickerDialog();
+        d._fm = fm;
+        return d;
     }
 
-    public void addIntent(Intent intent, String postfix) {
-        PackageManager pm = _activity.getPackageManager();
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.dialog_app_picker, container, false);
 
+        _items = (ListView) v.findViewById(R.id.apps_listview);
+
+        return v;
+    }
+
+    public void addIntent(PackageManager pm, Intent intent, String postfix) {
         List<ResolveInfo> infos = pm.queryIntentActivities(intent, 0);
 
         for (int i = 0; i < infos.size(); i++) {
@@ -53,23 +86,26 @@ public class AppPickerDialog {
         }
     }
 
-    public void finish() {
-        _adapter = new AppPickerAdapter(_activityList);
-        _builder = new AlertDialog.Builder(_activity);
-        _builder.setNegativeButton("Cancel", null);
-        _builder.setSingleChoiceItems(_adapter, -1, _dialog_onClick);
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
-    public void show() {
-        _builder.show();
+    public void show(String tag) {
+        show(_fm, tag);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        _items.setAdapter(new AppPickerAdapter(_activityList, _app_onClick));
+    }
 
-    private DialogInterface.OnClickListener _dialog_onClick = new DialogInterface.OnClickListener() {
+    private AppPickerRowView.OnClickListener _app_onClick = new AppPickerRowView.OnClickListener() {
         @Override
-        public void onClick(DialogInterface dialog, int which) {
-            _listener.onClick(_activityList.get(which));
-            dialog.dismiss();
+        public void onClick(AppPickerRowView row, AppPickerPackage pack) {
+            dismiss();
+            if (_listener != null)
+                _listener.onClick(pack);
         }
     };
 

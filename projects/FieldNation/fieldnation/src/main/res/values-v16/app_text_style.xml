@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Text_Display_4">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">112sp</item>
+        <item name="android:alpha">0.54</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Text_Display_3">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">56sp</item>
+        <item name="android:alpha">0.54</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Text_Display_2">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">45sp</item>
+        <item name="android:alpha">0.54</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Text_Display_1">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">34sp</item>
+        <item name="android:alpha">0.54</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Text_Headline">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Title">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:alpha">0.87</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Text_Subhead">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Body_2">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Body_1">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Caption">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
+    <style name="Text_Menu">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Button">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+</resources>

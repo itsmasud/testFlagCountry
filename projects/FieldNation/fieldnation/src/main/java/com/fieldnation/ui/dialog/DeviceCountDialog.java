@@ -36,6 +36,10 @@ public class DeviceCountDialog extends DialogFragment {
     private Workorder _workorder;
     private int _maxCount;
 
+
+    /*-*****************************-*/
+    /*-         Life Cycle          -*/
+    /*-*****************************-*/
     // grabs the dialog from the fragment stack if it already exists
     public static DeviceCountDialog getInstance(FragmentManager fm, String tag) {
         DeviceCountDialog d = null;
@@ -56,10 +60,6 @@ public class DeviceCountDialog extends DialogFragment {
 
         return d;
     }
-
-    /*-*****************************-*/
-    /*-         Life Cycle          -*/
-    /*-*****************************-*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,9 +93,8 @@ public class DeviceCountDialog extends DialogFragment {
     }
 
 
-    public void show(String tag, Workorder workorder, int maxDeviceCount, Listener listener) {
+    public void show(String tag, Workorder workorder, int maxDeviceCount) {
         _maxCount = maxDeviceCount;
-        _listener = listener;
         _workorder = workorder;
         populateUi();
         show(_fm, tag);

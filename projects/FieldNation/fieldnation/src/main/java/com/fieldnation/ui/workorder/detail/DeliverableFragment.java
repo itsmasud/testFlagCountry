@@ -79,13 +79,14 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _reviewList;
     private LinearLayout _filesLayout;
     private View _bar1View;
-    private AppPickerDialog _dialog;
     private RelativeLayout _loadingLayout;
     private TextView _noDocsTextView;
     private ActionBarTopView _topBar;
+
     private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
     private DeviceCountDialog _deviceCountDialog;
+    private AppPickerDialog _appPickerDialog;
 
     // Data
     private GlobalState _gs;
@@ -139,6 +140,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog.setListener(_deviceCountListener);
+
+        _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
+        _appPickerDialog.setListener(_appdialog_listener);
 
         checkMedia();
 
@@ -293,7 +297,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     _uploadCount++;
                     _uploadingSlot = slot;
                     _uploadingSlotView = uv;
-                    _dialog.show();
+                    _appPickerDialog.show(TAG);
                     break;
                 }
             }
@@ -304,20 +308,16 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (_dialog == null) {
-            _dialog = new AppPickerDialog(getActivity(), _dialog_listener);
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            _dialog.addIntent(intent, "Get Content");
 
-            if (getActivity().getPackageManager().hasSystemFeature(
-                    PackageManager.FEATURE_CAMERA)) {
-                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                _dialog.addIntent(intent, "Take Picture");
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
-            }
-            _dialog.finish();
+        if (getActivity().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
     }
 
@@ -462,7 +462,7 @@ public class DeliverableFragment extends WorkorderFragment {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
@@ -511,11 +511,11 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onEnterClosingNotes() {
-            _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+            _closingDialog.show(TAG, _workorder.getClosingNotes());
         }
     };
 
-    private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
+    private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
         @Override
         public void onClick(AppPickerPackage pack) {
@@ -553,7 +553,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _uploadCount++;
                 _uploadingSlot = slot;
                 _uploadingSlotView = view;
-                _dialog.show();
+                _appPickerDialog.show(TAG);
             } else {
                 Toast.makeText(
                         getActivity(),
