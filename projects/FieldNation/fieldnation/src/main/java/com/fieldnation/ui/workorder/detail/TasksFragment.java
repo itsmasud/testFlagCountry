@@ -364,7 +364,6 @@ public class TasksFragment extends WorkorderFragment {
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), _currentTask.getSlotId(),
                         filename, tempfile, getNotificationIntent()));
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
@@ -457,7 +456,7 @@ public class TasksFragment extends WorkorderFragment {
                         Location location = _gPSLocationService.getLocation();
                         double lat = location.getLatitude();
                         double log = location.getLongitude();
-                        getActivity().startService(_service.gpsCheckOut(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                     } catch (Exception e){
                         _gPSLocationService.showSettingsOffAlert(getView().getContext());
                     }
@@ -484,7 +483,7 @@ public class TasksFragment extends WorkorderFragment {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    getActivity().startService(_service.gpsCheckIn(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                 } catch (Exception e){
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
@@ -549,7 +548,7 @@ public class TasksFragment extends WorkorderFragment {
                             Location location = _gPSLocationService.getLocation();
                             double lat = location.getLatitude();
                             double log = location.getLongitude();
-                            getActivity().startService(_service.gpsCheckIn(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                            getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                         } catch (Exception e){
                             _gPSLocationService.showSettingsOffAlert(getView().getContext());
                         }
@@ -574,7 +573,7 @@ public class TasksFragment extends WorkorderFragment {
                                 Location location = _gPSLocationService.getLocation();
                                 double lat = location.getLatitude();
                                 double log = location.getLongitude();
-                                getActivity().startService(_service.gpsCheckOut(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                                getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                             } catch (Exception e){
                                 _gPSLocationService.showSettingsOffAlert(getView().getContext());
                             }
@@ -901,7 +900,7 @@ public class TasksFragment extends WorkorderFragment {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    getActivity().startService(_service.gpsCheckOut(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
+                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
                 } catch (Exception e){
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }

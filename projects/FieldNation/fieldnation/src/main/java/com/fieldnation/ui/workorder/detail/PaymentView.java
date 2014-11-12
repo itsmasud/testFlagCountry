@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -11,12 +10,9 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.Discount;
-import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.ui.dialog.DiscountDialog;
-import com.fieldnation.ui.dialog.ExpenseDialog;
 
 import java.util.Arrays;
 
@@ -39,9 +35,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private TextView _counterOfferTextView;
     private TextView _co1TextView;
     private TextView _co2TextView;
-    // TODO move these dialogs out of this view
-    //private ExpenseDialog _expenseDialog;
-    private DiscountDialog _discountDialog;
 
     // Data
     private Workorder _workorder;
@@ -83,8 +76,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         _discountsLabelTextView = (TextView) findViewById(R.id.discountslabel_textview);
         _discountsLinearLayout = (LinearLayout) findViewById(R.id.discounts_linearlayout);
 
-        //_expenseDialog = new ExpenseDialog(getContext());
-        //_expenseDialog = ExpenseDialog.getInstance(_f)
         _counterOfferLayout = (LinearLayout) findViewById(R.id.counteroffer_layout);
         _counterOfferLayout.setOnClickListener(_counterOffer_onClick);
         _detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
@@ -93,7 +84,6 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         _co1TextView = (TextView) findViewById(R.id.co1_textview);
         _co2TextView = (TextView) findViewById(R.id.co2_textview);
 
-        _discountDialog = new DiscountDialog(getContext());
         setVisibility(View.GONE);
     }
 
@@ -226,18 +216,16 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private View.OnClickListener _counterOffer_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO implement counteroffer dialog
-//            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
-//            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
-//            getContext().startActivity(intent);
+            if (_listener != null)
+                _listener.onShowCounterOfferDialog();
         }
     };
 
     private View.OnClickListener _terms_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO Method Stub: onClick()
-            Log.v(TAG, "Method Stub: onClick()");
+            if (_listener != null)
+                _listener.onShowTerms();
         }
     };
 
@@ -245,22 +233,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-//                _expenseDialog.show("Add Expense", _addExpense_listener);
+                _listener.onShowAddExpenseDialog();
             }
-        }
-    };
-
-    private ExpenseDialog.Listener _addExpense_listener = new ExpenseDialog.Listener() {
-        @Override
-        public void onOk(String description, double amount, ExpenseCategory category) {
-            if (_listener != null)
-                _listener.onAddExpense(_workorder, description, amount, category);
-        }
-
-        @Override
-        public void onCancel() {
-            // TODO Method Stub: onCancel()
-            Log.v(TAG, "Method Stub: onCancel()");
         }
     };
 
@@ -277,20 +251,9 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                _discountDialog.show("Add Discount", _addDiscount_listener);
+                if (_listener != null)
+                    _listener.onShowAddDiscountDialog();
             }
-        }
-    };
-
-    private DiscountDialog.Listener _addDiscount_listener = new DiscountDialog.Listener() {
-        @Override
-        public void onOk(String description, double amount) {
-            if (_listener != null)
-                _listener.onAddDiscount(_workorder, amount, description);
-        }
-
-        @Override
-        public void onCacnel() {
         }
     };
 
@@ -306,10 +269,14 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     public interface Listener {
         public void onDeleteDiscount(Workorder workorder, int discountId);
 
-        public void onAddDiscount(Workorder workorder, Double amount, String description);
-
         public void onDeleteExpense(Workorder workorder, AdditionalExpense expense);
 
-        public void onAddExpense(Workorder workorder, String description, double amount, ExpenseCategory category);
+        public void onShowAddDiscountDialog();
+
+        public void onShowAddExpenseDialog();
+
+        public void onShowCounterOfferDialog();
+
+        public void onShowTerms();
     }
 }

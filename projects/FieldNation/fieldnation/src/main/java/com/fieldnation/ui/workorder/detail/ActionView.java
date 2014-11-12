@@ -218,10 +218,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private View.OnClickListener _counteroffer_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO implement counteroffer dialog
-//            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
-//            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
-//            getContext().startActivity(intent);
+            if (_listener != null)
+                _listener.onShowCounterOfferDialog(_workorder);
         }
     };
 
@@ -233,6 +231,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         public void onConfirmAssignment(Workorder workorder);
 
         public void onRequest(Workorder workorder);
+
+        public void onShowCounterOfferDialog(Workorder workorder);
     }
 
 }

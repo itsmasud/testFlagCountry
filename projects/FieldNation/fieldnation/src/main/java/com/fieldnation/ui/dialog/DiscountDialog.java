@@ -83,13 +83,13 @@ public class DiscountDialog extends Dialog {
 		public void onClick(View v) {
 			dismiss();
 			if (_listener != null)
-				_listener.onCacnel();
+				_listener.onCancel();
 		}
 	};
 
 	public interface Listener {
 		public void onOk(String description, double amount);
 
-		public void onCacnel();
+		public void onCancel();
 	}
 }
