@@ -2,6 +2,9 @@ package com.fieldnation.ui;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
@@ -20,12 +23,12 @@ import com.google.android.gms.location.LocationServices;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class GPSLocationService implements
+public class GPSLocationService extends Activity implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "GPSLocationService";
+    private static final String TAG = "ui.GPSLocationService";
 
     private static final long INTERVAL = 1000 * 30;
     private static final long FASTEST_INTERVAL = 1000 * 5;
@@ -119,11 +122,17 @@ public class GPSLocationService implements
 
     public void turnOnGPS(){
         if(!isLocationServiceEnabled()) {
-            final LocationManager manager = (LocationManager) locationActivity.getApplicationContext().getSystemService(locationActivity.getApplicationContext().LOCATION_SERVICE)
-            ;
-            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                locationActivity.getApplicationContext().startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            }
+            Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
+            intent.putExtra("enabled", true);
+            locationActivity.getApplicationContext().sendBroadcast(intent);
+        }
+    }
+
+    public void turnOffGPS(){
+        if(isGpsEnabled()) {
+            Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
+            intent.putExtra("enabled", false);
+            locationActivity.getApplicationContext().sendBroadcast(intent);
         }
     }
 
@@ -135,6 +144,69 @@ public class GPSLocationService implements
             GooglePlayServicesUtil.getErrorDialog(status, locationActivity, 0).show();
             return false;
         }
+    }
+
+    /**
+     * Function to show settings alert dialog
+     * */
+    public void showSettingsAlert(final Context context){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("GPS is settings");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                context.startActivity(intent);
+            }
+        });
+
+        // on pressing cancel button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialogBox = alertDialog.create();
+        // Showing Alert Message
+        alertDialogBox.show();
+    }
+
+    /**
+     * Function to show settings alert dialog if failed
+     * */
+    public void showSettingsOffAlert(final Context context){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Location service settings");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Location service is not disabled. Do you want to go to settings menu, disabled it.?");
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                context.startActivity(intent);
+            }
+        });
+
+        // on pressing cancel button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
 }
