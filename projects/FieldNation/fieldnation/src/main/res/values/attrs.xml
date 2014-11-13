@@ -5,6 +5,11 @@
         <attr name="text" format="string"></attr>
     </declare-styleable>
 
+    <declare-styleable name="DividerStyles">
+        <attr name="dividerFullStyle" format="reference" />
+        <attr name="dividerPartialStyle" format="reference" />
+
+    </declare-styleable>
 
     <declare-styleable name="TileTheme">
         <attr name="tileStyle" format="reference" />
@@ -41,6 +46,9 @@
         <attr name="dialogOkButtonStyle" format="reference" />
         <attr name="dialogOkButtonGreenStyle" format="reference" />
         <attr name="dialogSpinnerButtonStyle" format="reference" />
+        <attr name="dialogBodyStyle" format="reference" />
+        <attr name="dialogDividerStyle" format="reference" />
     </declare-styleable>
+
 
 </resources>

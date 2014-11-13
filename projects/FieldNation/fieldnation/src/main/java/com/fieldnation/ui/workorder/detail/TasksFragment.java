@@ -156,7 +156,9 @@ public class TasksFragment extends WorkorderFragment {
 
         _taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
         _shipmentAddDialog = new ShipmentAddDialog(view.getContext());
-        _confirmDialog = new ConfirmDialog(view.getContext());
+
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _confirmDialog.setListener(_confirmDialog_listener);
 
 
         if (savedInstanceState == null) {
@@ -446,18 +448,18 @@ public class TasksFragment extends WorkorderFragment {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
                 _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
             } else {
-                if(_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()){
+                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
 
-                    if(!_gPSLocationService.isGpsEnabled()){
+                    if (!_gPSLocationService.isGpsEnabled()) {
                         _gPSLocationService.showSettingsAlert(getView().getContext());
                     }
 
-                    try{
+                    try {
                         Location location = _gPSLocationService.getLocation();
                         double lat = location.getLatitude();
                         double log = location.getLongitude();
                         getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         _gPSLocationService.showSettingsOffAlert(getView().getContext());
                     }
 
@@ -474,17 +476,17 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onCheckIn() {
             //@TODO
-            if(_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()){
-                if(!_gPSLocationService.isGpsEnabled()){
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
+                if (!_gPSLocationService.isGpsEnabled()) {
                     _gPSLocationService.showSettingsAlert(getView().getContext());
                 }
 
-                try{
+                try {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
                     getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-                } catch (Exception e){
+                } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
 
@@ -500,25 +502,8 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onConfirm() {
-            final Workorder workorder = _workorder;
-            _confirmDialog.show(getActivity().getSupportFragmentManager(), workorder.getSchedule(),
-                    new ConfirmDialog.Listener() {
-                        @Override
-                        public void onOk(String startDate, long durationMilliseconds) {
-                            try {
-                                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                                Intent intent = _service.confirmAssignment(WEB_CHANGED, _workorder.getWorkorderId(),
-                                        startDate, ISO8601.fromUTC(end));
-                                getActivity().startService(intent);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
+            _confirmDialog.setListener(_confirmDialog_listener);
+            _confirmDialog.show(TAG, _workorder, _workorder.getSchedule());
         }
 
         @Override
@@ -526,6 +511,7 @@ public class TasksFragment extends WorkorderFragment {
             showClosingNotesDialog();
         }
     };
+
 
     /*-*******************************-*/
     /*-         Time Logged           -*/
@@ -539,17 +525,17 @@ public class TasksFragment extends WorkorderFragment {
         public void onTaskClick(Task task) {
             switch (task.getTaskType()) {
                 case CHECKIN:
-                    if(_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()){
-                        if(!_gPSLocationService.isGpsEnabled()){
+                    if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
+                        if (!_gPSLocationService.isGpsEnabled()) {
                             _gPSLocationService.showSettingsAlert(getView().getContext());
                         }
 
-                        try{
+                        try {
                             Location location = _gPSLocationService.getLocation();
                             double lat = location.getLatitude();
                             double log = location.getLongitude();
                             getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             _gPSLocationService.showSettingsOffAlert(getView().getContext());
                         }
 
@@ -564,17 +550,17 @@ public class TasksFragment extends WorkorderFragment {
                         _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
                         _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
                     } else {
-                        if(_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()){
-                            if(!_gPSLocationService.isGpsEnabled()){
+                        if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
+                            if (!_gPSLocationService.isGpsEnabled()) {
                                 _gPSLocationService.showSettingsAlert(getView().getContext());
                             }
 
-                            try{
+                            try {
                                 Location location = _gPSLocationService.getLocation();
                                 double lat = location.getLatitude();
                                 double log = location.getLongitude();
                                 getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-                            } catch (Exception e){
+                            } catch (Exception e) {
                                 _gPSLocationService.showSettingsOffAlert(getView().getContext());
                             }
 
@@ -588,7 +574,7 @@ public class TasksFragment extends WorkorderFragment {
                     showClosingNotesDialog();
                     break;
                 case CONFIRM_ASSIGNMENT:
-                    _confirmDialog.show(getFragmentManager(), _workorder.getSchedule(), _confirmListener);
+                    _confirmDialog.show(TAG, _workorder, _workorder.getSchedule());
                     break;
                 case CUSTOM_FIELD:
                     if (task.getCompleted())
@@ -870,38 +856,46 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
-    private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+
+    private ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
         @Override
-        public void onOk(String startDate, long durationMilliseconds) {
+        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                getActivity().startService(
-                        _service.confirmAssignment(WEB_CHANGED, _workorder.getWorkorderId(), startDate,
-                                ISO8601.fromUTC(end)));
+                Intent intent = _service.confirmAssignment(WEB_CHANGED, _workorder.getWorkorderId(),
+                        startDate, ISO8601.fromUTC(end));
+                getActivity().startService(intent);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         @Override
-        public void onCancel() {
+        public void onCancel(Workorder workorder) {
+        }
+
+        @Override
+        public void termsOnClick(Workorder workorder) {
+            // TODO STUB .termsOnClick()
+            Log.v(TAG, "STUB .termsOnClick()");
+
         }
     };
 
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-            if(_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()){
-                if(!_gPSLocationService.isGpsEnabled()){
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
+                if (!_gPSLocationService.isGpsEnabled()) {
                     _gPSLocationService.showSettingsAlert(getView().getContext());
                 }
 
-                try{
+                try {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
                     getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
-                } catch (Exception e){
+                } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
 

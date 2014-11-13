@@ -86,7 +86,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         //_payDialog = new PayDialog(activity);
         _expiresDialog = new ExpiresDialog(activity);
-        _confirmDialog = new ConfirmDialog(activity);
     }
 
     public WorkorderListAdapter(FragmentActivity activity, WorkorderDataSelector selection, List<Workorder> workorders) throws NoSuchMethodException {
@@ -99,7 +98,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         //_payDialog = new PayDialog(activity);
         _expiresDialog = new ExpiresDialog(activity);
-        _confirmDialog = new ConfirmDialog(activity);
     }
 
     @Override
@@ -226,7 +224,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
     private WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
         @Override
-        public void actionRequest(Workorder workorder) {
+        public void actionRequest(WorkorderCardView view, Workorder workorder) {
             final Workorder _workorder = workorder;
 
             _expiresDialog.show(getActivity().getSupportFragmentManager(), new ExpiresDialog.Listener() {
@@ -256,7 +254,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         }
 
         @Override
-        public void actionCheckout(Workorder workorder) {
+        public void actionCheckout(WorkorderCardView view, Workorder workorder) {
             //set  loading mode
             WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
             woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
@@ -275,7 +273,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
 
         @Override
-        public void actionCheckin(Workorder workorder) {
+        public void actionCheckin(WorkorderCardView view, Workorder workorder) {
             //set  loading mode
             WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
             woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
@@ -287,36 +285,14 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         }
 
         @Override
-        public void actionAssignment(Workorder workorder) {
-            final Workorder _workorder = workorder;
-            _confirmDialog.show(getActivity().getSupportFragmentManager(), workorder.getSchedule(),
-                    new ConfirmDialog.Listener() {
-                        @Override
-                        public void onOk(String startDate, long durationMilliseconds) {
-                            //set  loading mode
-                            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
-                            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
-
-                            try {
-                                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                                Intent intent = _workorderService.confirmAssignment(WEB_CHANGING_WORKORDER,
-                                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
-                                intent.putExtra(KEY_WORKORDER_ID, _workorder.getWorkorderId());
-                                getContext().startService(intent);
-                                _requestWorkingWorkorders.put(_workorder.getWorkorderId(), _workorder);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
+        public void actionAssignment(WorkorderCardView view, Workorder workorder) {
+            _confirmDialog = ConfirmDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+            _confirmDialog.setListener(_confirmDialog_listener);
+            _confirmDialog.show(TAG, workorder, workorder.getSchedule());
         }
 
         @Override
-        public void actionAcknowledgeHold(Workorder workorder) {
+        public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
             //set  loading mode
             WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
             woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
@@ -328,7 +304,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         }
 
         @Override
-        public void viewCounter(Workorder workorder) {
+        public void viewCounter(WorkorderCardView view, Workorder workorder) {
             //set  loading mode
             WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
             woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
@@ -386,6 +362,37 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             Log.v(TAG, "Method Stub: onViewPayments()");
 
         }
+    };
+
+    private ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
+        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
+            //set  loading mode
+            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
+            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+
+            try {
+                long end = durationMilliseconds + ISO8601.toUtc(startDate);
+                Intent intent = _workorderService.confirmAssignment(WEB_CHANGING_WORKORDER,
+                        workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
+                intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
+                getContext().startService(intent);
+                _requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onCancel(Workorder workorder) {
+        }
+
+        @Override
+        public void termsOnClick(Workorder workorder) {
+            // TODO STUB .termsOnClick()
+            Log.v(TAG, "STUB .termsOnClick()");
+
+        }
+
     };
 
     private ActionMode.Callback _actionMode_Callback = new ActionMode.Callback() {

@@ -119,9 +119,11 @@ public class DetailFragment extends WorkorderFragment {
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog.setListener(_counterOffer_listener);
 
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _confirmDialog.setListener(_confirmListener);
+
         _discountDialog = new DiscountDialog(view.getContext());
         _expiresDialog = new ExpiresDialog(view.getContext());
-        _confirmDialog = new ConfirmDialog(view.getContext());
 
         _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -301,8 +303,8 @@ public class DetailFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWODialog.show(TAG, _workorder);
             } else {
-                _confirmDialog.show(getActivity().getSupportFragmentManager(),
-                        _workorder.getSchedule(), _confirmListener);
+                _confirmDialog.show(TAG, _workorder,
+                        _workorder.getSchedule());
             }
         }
 
@@ -357,7 +359,7 @@ public class DetailFragment extends WorkorderFragment {
 
     private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
         @Override
-        public void onOk(String startDate, long durationMilliseconds) {
+        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 getActivity().startService(_service.confirmAssignment(WEB_CHANGE,
@@ -368,8 +370,16 @@ public class DetailFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onCancel() {
+        public void onCancel(Workorder workorder) {
         }
+
+        @Override
+        public void termsOnClick(Workorder workorder) {
+            // TODO STUB .termsOnClick()
+            Log.v(TAG, "STUB .termsOnClick()");
+
+        }
+
     };
 
     private ActionView.Listener _actionView_listener = new ActionView.Listener() {
@@ -399,8 +409,7 @@ public class DetailFragment extends WorkorderFragment {
             if (workorder.isBundle()) {
                 _acceptBundleWODialog.show(TAG, workorder);
             } else {
-                _confirmDialog.show(getActivity().getSupportFragmentManager(),
-                        workorder.getSchedule(), _confirmListener);
+                _confirmDialog.show(TAG, _workorder, workorder.getSchedule());
             }
         }
 
@@ -415,7 +424,7 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onOk(Workorder workorder) {
-            _confirmDialog.show(getFragmentManager(), workorder.getSchedule(), _confirmListener);
+            _confirmDialog.show(TAG, _workorder, workorder.getSchedule());
         }
     };
     private AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {

@@ -144,6 +144,9 @@ public class DeliverableFragment extends WorkorderFragment {
         _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _appPickerDialog.setListener(_appdialog_listener);
 
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _confirmDialog.setListener(_confirmDialog_listener);
+
         checkMedia();
 
         populateUi();
@@ -484,35 +487,41 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onConfirm() {
-            final Workorder workorder = _workorder;
-            _confirmDialog.show(getActivity().getSupportFragmentManager(),
-                    workorder.getSchedule(), new ConfirmDialog.Listener() {
-                        @Override
-                        public void onOk(String startDate,
-                                         long durationMilliseconds) {
-                            try {
-                                long end = durationMilliseconds
-                                        + ISO8601.toUtc(startDate);
-                                Intent intent = _service.confirmAssignment(
-                                        WEB_CHANGE,
-                                        _workorder.getWorkorderId(), startDate,
-                                        ISO8601.fromUTC(end));
-                                getActivity().startService(intent);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
+            _confirmDialog.show(TAG, _workorder, _workorder.getSchedule());
         }
 
         @Override
         public void onEnterClosingNotes() {
             _closingDialog.show(TAG, _workorder.getClosingNotes());
         }
+    };
+
+    private ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
+            try {
+                long end = durationMilliseconds
+                        + ISO8601.toUtc(startDate);
+                Intent intent = _service.confirmAssignment(
+                        WEB_CHANGE,
+                        _workorder.getWorkorderId(), startDate,
+                        ISO8601.fromUTC(end));
+                getActivity().startService(intent);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onCancel(Workorder workorder) {
+        }
+
+        @Override
+        public void termsOnClick(Workorder workorder) {
+            // TODO STUB .termsOnClick()
+            Log.v(TAG, "STUB .termsOnClick()");
+        }
+
     };
 
     private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
@@ -597,9 +606,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 try {
                     _profile = Profile
                             .fromJson(new JsonObject(
-                                    new String(
-                                            resultData
-                                                    .getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+                                    new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
                 } catch (Exception e) {
                     // TODO mulligan?
                     e.printStackTrace();
