@@ -112,7 +112,7 @@ public class TasksFragment extends WorkorderFragment {
     private List<Task> _tasks = null;
     private Task _currentTask;
     private SecureRandom _rand = new SecureRandom();
-    GPSLocationService _gPSLocationService;
+    private GPSLocationService _gPSLocationService;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/

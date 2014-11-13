@@ -39,6 +39,7 @@ public class GPSLocationService {
     private GoogleApiClient _googleApiClient;
     private Location _location;
     private FusedLocationProviderApi fusedLocationProviderApi = LocationServices.FusedLocationApi;
+    private LocationManager _locationManager;
 
     public GPSLocationService(Activity locationActivity) {
         _locationRequest = LocationRequest.create();
@@ -46,6 +47,9 @@ public class GPSLocationService {
         _locationRequest.setInterval(INTERVAL);
         _locationRequest.setFastestInterval(FASTEST_INTERVAL);
         _locationActivity = locationActivity;
+
+        _locationManager = (LocationManager) _locationActivity.getSystemService(Context.LOCATION_SERVICE);
+
 
         _googleApiClient = new GoogleApiClient.Builder(locationActivity)
                 .addApi(LocationServices.API)
@@ -58,21 +62,17 @@ public class GPSLocationService {
         }
     }
 
-
     public Location getLocation() {
         return _location;
     }
 
     public boolean isLocationServiceEnabled() {
-        LocationManager lm = (LocationManager)
-                _locationActivity.getApplicationContext().getSystemService(_locationActivity.getApplicationContext().LOCATION_SERVICE);
-        String provider = lm.getBestProvider(new Criteria(), true);
+        String provider = _locationManager.getBestProvider(new Criteria(), true);
         return (!LocationManager.PASSIVE_PROVIDER.equals(provider));
     }
 
     public boolean isGpsEnabled() {
-        LocationManager service = (LocationManager) _locationActivity.getApplicationContext().getSystemService(_locationActivity.getApplicationContext().LOCATION_SERVICE);
-        return service.isProviderEnabled(LocationManager.GPS_PROVIDER) && service.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        return _locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && _locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
     public void turnOnGPS() {
@@ -87,12 +87,12 @@ public class GPSLocationService {
         if (isGpsEnabled()) {
             Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
             intent.putExtra("enabled", false);
-            _locationActivity.getApplicationContext().sendBroadcast(intent);
+            _locationActivity.sendBroadcast(intent);
         }
     }
 
     public boolean isGooglePlayServicesAvailable() {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(_locationActivity.getApplicationContext());
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(_locationActivity);
         if (ConnectionResult.SUCCESS == status) {
             return true;
         } else {
@@ -173,7 +173,7 @@ public class GPSLocationService {
                 _location = location;
                 //if the accuracy is not better, remove all location updates for this listener
                 if (location.getAccuracy() < MINIMUM_ACCURACY) {
-                    fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, this);
+                    fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
                 }
             }
         }
@@ -184,6 +184,7 @@ public class GPSLocationService {
         @Override
         public void onConnected(Bundle bundle) {
             Location currentLocation = fusedLocationProviderApi.getLastLocation(_googleApiClient);
+            // Todo this doesn't work: currentLocation.getTime() > REFRESH_TIME
             if (currentLocation != null && currentLocation.getTime() > REFRESH_TIME) {
                 _location = currentLocation;
             } else {
