@@ -24,6 +24,7 @@ public class AcceptBundleDialog extends DialogFragment {
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
+    private static final String STATE_TAG = "STATE_TAG";
 
     // UI
     private TextView _acceptWOText;
@@ -35,6 +36,7 @@ public class AcceptBundleDialog extends DialogFragment {
     private Listener _listener;
     private Workorder _workorder;
     private FragmentManager _fm;
+    private String _tag;
 
 
     /*-*****************************-*/
@@ -52,14 +54,20 @@ public class AcceptBundleDialog extends DialogFragment {
                 }
             }
         }
-        if (d == null)
+        if (d == null) {
             d = new AcceptBundleDialog();
+        }
         d._fm = fm;
+        d._tag = tag;
         return d;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TAG))
+                _tag = savedInstanceState.getString(STATE_TAG);
+        }
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -68,6 +76,17 @@ public class AcceptBundleDialog extends DialogFragment {
             if (savedInstanceState.containsKey(STATE_WORKORDER))
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_workorder != null)
+            outState.putParcelable(STATE_WORKORDER, _workorder);
+
+        if (_tag != null)
+            outState.putString(STATE_TAG, _tag);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -107,21 +126,15 @@ public class AcceptBundleDialog extends DialogFragment {
         _acceptWOText.setText("This workorder is part of a bundle of " + _workorder.getBundleCount().toString() + " workorders. By accepting this workorder you are accepting all of them.");
     }
 
-    public void show(String tag, Workorder workorder) {
+    public void show(Workorder workorder) {
         if (workorder == null)
             return;
 
         _workorder = workorder;
 
-        show(_fm, tag);
+        show(_fm, _tag);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (_workorder != null)
-            outState.putParcelable(STATE_WORKORDER, _workorder);
-        super.onSaveInstanceState(outState);
-    }
 
     public void setListener(Listener listener) {
         _listener = listener;

@@ -300,7 +300,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     _uploadCount++;
                     _uploadingSlot = slot;
                     _uploadingSlotView = uv;
-                    _appPickerDialog.show(TAG);
+                    _appPickerDialog.show();
                     break;
                 }
             }
@@ -562,7 +562,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _uploadCount++;
                 _uploadingSlot = slot;
                 _uploadingSlotView = view;
-                _appPickerDialog.show(TAG);
+                _appPickerDialog.show();
             } else {
                 Toast.makeText(
                         getActivity(),

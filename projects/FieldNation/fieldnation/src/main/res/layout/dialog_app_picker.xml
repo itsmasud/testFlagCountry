@@ -3,13 +3,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    style="?attr/dialogStyle">
+    android:layout_height="wrap_content">
 
     <ListView
+        style="?attr/dialogStyle"
         android:id="@+id/apps_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="wrap_content"></ListView>
 
 
 </RelativeLayout>

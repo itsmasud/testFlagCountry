@@ -685,12 +685,12 @@ public class TasksFragment extends WorkorderFragment {
                 }
                 case UPLOAD_FILE: {
                     _currentTask = task;
-                    _appDialog.show(TAG);
+                    _appDialog.show();
                     break;
                 }
                 case UPLOAD_PICTURE: {
                     _currentTask = task;
-                    _appDialog.show(TAG);
+                    _appDialog.show();
                     break;
                 }
                 case UNIQUE_TASK:

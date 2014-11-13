@@ -54,7 +54,8 @@ public class DetailFragment extends WorkorderFragment {
     private ExpiresDialog _expiresDialog;
     private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
-    private AcceptBundleDialog _acceptBundleWODialog;
+    private AcceptBundleDialog _acceptBundleWOConfirmDialog;
+    private AcceptBundleDialog _acceptBundleWOExpiresDialog;
     private DeviceCountDialog _deviceCountDialog;
     private ExpenseDialog _expenseDialog;
     private DiscountDialog _discountDialog;
@@ -110,8 +111,11 @@ public class DetailFragment extends WorkorderFragment {
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog.setListener(_deviceCountListener);
 
-        _acceptBundleWODialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
-        _acceptBundleWODialog.setListener(_acceptBundleDialogConfirmListener);
+        _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
+        _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
+
+        _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
+        _acceptBundleWOExpiresDialog.setListener(_acceptBundleDialogExpiresListener);
 
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
         _expenseDialog.setListener(_expenseDialog_listener);
@@ -194,42 +198,6 @@ public class DetailFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
-        @Override
-        public void onOk(String description, double amount, ExpenseCategory category) {
-            getActivity().startService(
-                    _service.addExpense(WEB_CHANGE, _workorder.getWorkorderId(),
-                            description, amount, category));
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    private CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
-                         Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
-            getActivity().startService(
-                    _service.setCounterOffer(WEB_CHANGE, workorder.getWorkorderId(), expires, reason,
-                            expirationInSeconds, pay, schedule, expenses));
-        }
-    };
-
-    private DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
-        @Override
-        public void onOk(String description, double amount) {
-            getActivity().startService(
-                    _service.addDiscount(WEB_CHANGE,
-                            _workorder.getWorkorderId(), amount, description));
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
     private View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -240,29 +208,10 @@ public class DetailFragment extends WorkorderFragment {
         }
     };
 
-    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
-        @Override
-        public void onOk(String message) {
-            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
     private TaskSumView.Listener _taskSum_listener = new TaskSumView.Listener() {
         @Override
         public void onShowTasksTab() {
             pageRequestListener.requestPage(TasksFragment.class, null);
-        }
-    };
-
-    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, int count) {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
         }
     };
 
@@ -301,10 +250,9 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onConfirm() {
             if (_workorder.isBundle()) {
-                _acceptBundleWODialog.show(TAG, _workorder);
+                _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _confirmDialog.show(TAG, _workorder,
-                        _workorder.getSchedule());
+                _confirmDialog.show(TAG, _workorder, _workorder.getSchedule());
             }
         }
 
@@ -357,6 +305,104 @@ public class DetailFragment extends WorkorderFragment {
 
     };
 
+    private ActionView.Listener _actionView_listener = new ActionView.Listener() {
+
+        @Override
+        public void onRequest(Workorder workorder) {
+            if (workorder.isBundle()) {
+                _acceptBundleWOExpiresDialog.show(workorder);
+            } else {
+                _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
+            }
+        }
+
+        @Override
+        public void onShowCounterOfferDialog(Workorder workorder) {
+            _counterOfferDialog.show(TAG, workorder);
+        }
+
+        @Override
+        public void onNotInterested(Workorder workorder) {
+            getActivity().startService(
+                    _service.decline(WEB_CHANGE, _workorder.getWorkorderId()));
+        }
+
+        @Override
+        public void onConfirmAssignment(Workorder workorder) {
+            if (workorder.isBundle()) {
+                _acceptBundleWOConfirmDialog.show(workorder);
+            } else {
+                _confirmDialog.show(TAG, _workorder, workorder.getSchedule());
+            }
+        }
+
+        @Override
+        public void onComplete(Workorder workorder) {
+            getActivity().startService(
+                    _service.complete(WEB_CHANGE, workorder.getWorkorderId()));
+        }
+    };
+
+    /*-*****************************************-*/
+    /*-				Dialog Events				-*/
+    /*-*****************************************-*/
+    private ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
+        @Override
+        public void onOk(String description, double amount, ExpenseCategory category) {
+            getActivity().startService(
+                    _service.addExpense(WEB_CHANGE, _workorder.getWorkorderId(),
+                            description, amount, category));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
+                         Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+            getActivity().startService(
+                    _service.setCounterOffer(WEB_CHANGE, workorder.getWorkorderId(), expires, reason,
+                            expirationInSeconds, pay, schedule, expenses));
+        }
+    };
+
+    private DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
+        @Override
+        public void onOk(String description, double amount) {
+            getActivity().startService(
+                    _service.addDiscount(WEB_CHANGE,
+                            _workorder.getWorkorderId(), amount, description));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+
+    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+        @Override
+        public void onOk(String message) {
+            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
+        }
+    };
+
     private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
@@ -380,44 +426,6 @@ public class DetailFragment extends WorkorderFragment {
 
         }
 
-    };
-
-    private ActionView.Listener _actionView_listener = new ActionView.Listener() {
-
-        @Override
-        public void onRequest(Workorder workorder) {
-            if (workorder.isBundle()) {
-                _acceptBundleWODialog.show(TAG, workorder);
-            } else {
-                _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
-            }
-        }
-
-        @Override
-        public void onShowCounterOfferDialog(Workorder workorder) {
-            _counterOfferDialog.show(TAG, workorder);
-        }
-
-        @Override
-        public void onNotInterested(Workorder workorder) {
-            getActivity().startService(
-                    _service.decline(WEB_CHANGE, _workorder.getWorkorderId()));
-        }
-
-        @Override
-        public void onConfirmAssignment(Workorder workorder) {
-            if (workorder.isBundle()) {
-                _acceptBundleWODialog.show(TAG, workorder);
-            } else {
-                _confirmDialog.show(TAG, _workorder, workorder.getSchedule());
-            }
-        }
-
-        @Override
-        public void onComplete(Workorder workorder) {
-            getActivity().startService(
-                    _service.complete(WEB_CHANGE, workorder.getWorkorderId()));
-        }
     };
 
     private AcceptBundleDialog.Listener _acceptBundleDialogConfirmListener = new AcceptBundleDialog.Listener() {

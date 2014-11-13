@@ -6,11 +6,11 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ListView;
 
 import com.fieldnation.R;
@@ -23,8 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class AppPickerDialog extends DialogFragment {
-    private static final String TAG = "ui.AppPickerDialog";
+public class AppPickerDialog extends DialogFragmentBase {
+    private static final String TAG = "ui.dialog.AppPickerDialog";
 
     // Ui
     private ListView _items;
@@ -33,27 +33,19 @@ public class AppPickerDialog extends DialogFragment {
     private List<AppPickerPackage> _activityList = new LinkedList<AppPickerPackage>();
     private Set<String> _packages = new HashSet<String>();
     private Listener _listener;
-    private FragmentManager _fm;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
     public static AppPickerDialog getInstance(FragmentManager fm, String tag) {
-        AppPickerDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof AppPickerDialog && frag.getTag().equals(tag)) {
-                    d = (AppPickerDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new AppPickerDialog();
-        d._fm = fm;
-        return d;
+        return DialogFragmentBase.getInstance(fm, tag, AppPickerDialog.class);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -61,6 +53,8 @@ public class AppPickerDialog extends DialogFragment {
         View v = inflater.inflate(R.layout.dialog_app_picker, container, false);
 
         _items = (ListView) v.findViewById(R.id.apps_listview);
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }
@@ -88,10 +82,6 @@ public class AppPickerDialog extends DialogFragment {
 
     public void setListener(Listener listener) {
         _listener = listener;
-    }
-
-    public void show(String tag) {
-        show(_fm, tag);
     }
 
     @Override
