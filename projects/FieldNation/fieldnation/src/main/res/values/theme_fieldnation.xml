@@ -30,6 +30,10 @@
         <item name="android:buttonStyle">?attr/buttonDefaultStyle</item>
         <item name="android:radioButtonStyle">@style/RadioButton</item>
 
+        <!-- dividers -->
+        <item name="dividerFullStyle">@style/DividerFull</item>
+        <item name="dividerPartialStyle">@style/DividerPart</item>
+
         <!-- buttons -->
         <item name="buttonDefaultStyle">@style/ButtonWhite</item>
         <item name="buttonWhiteStyle">@style/ButtonWhite</item>
@@ -64,6 +68,8 @@
         <item name="dialogOkButtonStyle">@style/DialogOkButton</item>
         <item name="dialogOkButtonGreenStyle">@style/DialogOkButtonGreen</item>
         <item name="dialogSpinnerButtonStyle">@style/DialogSpinnerButton</item>
+        <item name="dialogBodyStyle">@style/DialogBody</item>
+        <item name="dialogDividerStyle">@style/DialogDivider</item>
 
     </style>
 

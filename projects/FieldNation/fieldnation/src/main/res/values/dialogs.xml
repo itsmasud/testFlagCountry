@@ -60,6 +60,13 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="DialogBody" parent="@style/Text_Body_1">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/dialogContentPadding</item>
+    </style>
+
     <style name="DialogCaption" parent="@style/Text_Caption">
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_width">wrap_content</item>
@@ -96,6 +103,10 @@
         <item name="android:layout_gravity">right</item>
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="DialogDivider" parent="DividerFull">
+        <item name="android:layout_marginBottom">@dimen/dialogContentPadding</item>
     </style>
 
     <style name="DialogSpinnerButton" parent="@ButtonSpinner"></style>
