@@ -51,6 +51,7 @@
         <item name="tileTextBodyStyle">@style/TileTextBody</item>
         <item name="tileTextStatusStyle">@style/TileTextStatus</item>
         <item name="tileActionBarStyle">@style/TileActionBar</item>
+        <item name="tileEditText">@style/TileEditText</item>
         <item name="tileEditTextOneLineStyle">@style/TileEditTextOneLine</item>
         <item name="tileCheckBoxStyle">@style/TileCheckBox</item>
         <item name="tileSpinnerButtonStyle">@style/TileSpinnerButton</item>

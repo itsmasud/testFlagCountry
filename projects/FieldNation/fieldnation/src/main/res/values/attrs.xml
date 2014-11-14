@@ -18,6 +18,7 @@
         <attr name="tileTextBodyStyle" format="reference" />
         <attr name="tileTextStatusStyle" format="reference" />
         <attr name="tileActionBarStyle" format="reference" />
+        <attr name="tileEditText" format="reference" />
         <attr name="tileEditTextOneLineStyle" format="reference" />
         <attr name="tileCheckBoxStyle" format="reference" />
         <attr name="tileSpinnerButtonStyle" format="reference" />
