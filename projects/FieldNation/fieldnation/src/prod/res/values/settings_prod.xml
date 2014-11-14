@@ -3,7 +3,7 @@
 <resources>
     <string name="default_username"></string>
     <string name="default_password"></string>
-    <string name="fn_hostname">fieldnation.com</string>
+    <string name="fn_hostname">api.fieldnation.com</string>
     <string name="fn_grant_type">password</string>
     <string name="fn_client_id">demoapp</string>
     <string name="fn_client_secret">demopass</string>

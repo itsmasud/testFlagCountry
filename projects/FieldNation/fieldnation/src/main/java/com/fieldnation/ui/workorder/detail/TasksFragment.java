@@ -616,7 +616,7 @@ public class TasksFragment extends WorkorderFragment {
                                 getActivity().startService(
                                         _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
 
-                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
                             String phNum = "tel:" + task.getPhoneNumber();
                             callIntent.setData(Uri.parse(phNum));
                             startActivity(callIntent);

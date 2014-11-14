@@ -103,9 +103,9 @@
     <orderEntry type="library" exported="" name="gridlayout-v7-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-19.1.0" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-6.1.71" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-21.0.0" level="project" />
     <orderEntry type="module" module-name="libDateTimePicker" exported="" />
     <orderEntry type="module" module-name="libUtils" exported="" />
     <orderEntry type="module" module-name="libSmoothProgressBar" exported="" />
