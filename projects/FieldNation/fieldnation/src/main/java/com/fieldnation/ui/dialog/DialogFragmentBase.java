@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import java.util.List;
 
@@ -23,7 +24,23 @@ public class DialogFragmentBase extends DialogFragment {
     /*-*********************************-*/
     /*-             Life Cycle          -*/
     /*-*********************************-*/
-    public static <T extends DialogFragmentBase> T getInstance(FragmentManager fm, String tag, Class<? extends DialogFragmentBase> clazz) {
+
+    /**
+     * This should not be called by the application, but called by overriding dialogs.
+     * <p/>
+     * A typical call would look something like this:
+     * <p/>
+     * public static MyDialog getInstance(FragmentManager fm, String tag){
+     * return getInstance(fm, tag, MyDialog.class);
+     * }
+     *
+     * @param fm
+     * @param tag
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    protected static <T extends DialogFragmentBase> T getInstance(FragmentManager fm, String tag, Class<? extends DialogFragmentBase> clazz) {
         T d = null;
         List<Fragment> frags = fm.getFragments();
         if (frags != null) {
@@ -39,7 +56,7 @@ public class DialogFragmentBase extends DialogFragment {
         }
         if (d == null) {
             try {
-                d = (T) clazz.getConstructor(null).newInstance(null);
+                d = (T) clazz.getConstructor((Class<?>[]) null).newInstance((Object[]) null);
                 d._tag = tag;
                 d._fm = fm;
                 return d;
@@ -67,7 +84,31 @@ public class DialogFragmentBase extends DialogFragment {
         super.onSaveInstanceState(outState);
     }
 
-    public void show() {
-        show(_fm, _tag);
+    /**
+     * Do not use! use show();
+     *
+     * @param transaction
+     * @param tag
+     * @return
+     */
+    @Override
+    public int show(FragmentTransaction transaction, String tag) {
+        return super.show(transaction, tag);
     }
+
+    /**
+     * Do not use! use show();
+     *
+     * @param manager
+     * @param tag
+     */
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        super.show(manager, tag);
+    }
+
+    public void show() {
+        super.show(_fm, _tag);
+    }
+
 }

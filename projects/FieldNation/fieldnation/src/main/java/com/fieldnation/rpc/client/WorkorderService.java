@@ -102,7 +102,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 
     public Intent checkin(int resultCode, long workorderId, double gps_lat, double gps_lon) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
-                "checkin_time=" + ISO8601.now() +"&gps_lat="+ gps_lat +"&gps_lon="+ gps_lon, "application/x-www-form-urlencoded", false);
+                "checkin_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
     }
 
     public Intent checkout(int resultCode, long workorderId) {
@@ -112,12 +112,12 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 
     public Intent checkout(int resultCode, long workorderId, double gps_lat, double gps_lon) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-                "checkout_time=" + ISO8601.now() +"&gps_lat="+ gps_lat +"&gps_lon="+ gps_lon, "application/x-www-form-urlencoded", false);
+                "checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
     }
 
     public Intent checkout(int resultCode, long workorderId, int deviceCount, double gps_lat, double gps_lon) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-                "device_count=" + deviceCount +"&checkout_time=" + ISO8601.now() +"&gps_lat="+ gps_lat +"&gps_lon="+ gps_lon, "application/x-www-form-urlencoded", false);
+                "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
     }
 
     public Intent checkout(int resultCode, long workorderId, int deviceCount) {
@@ -195,6 +195,15 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "api/rest/v1/workorder/" + workorderId + "/log",
                 null,
                 "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&noOfDevices=" + numberOfDevices,
+                "application/x-www-form-urlencoded", false);
+    }
+
+    public Intent updateLogTime(int resultCode, long workorderId, long loggedHoursId, long startDate, long endDate) {
+        return httpPost(
+                resultCode,
+                "api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId,
+                null,
+                "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate),
                 "application/x-www-form-urlencoded", false);
     }
 

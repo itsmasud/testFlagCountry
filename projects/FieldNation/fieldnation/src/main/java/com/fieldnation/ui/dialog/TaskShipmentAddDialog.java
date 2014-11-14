@@ -1,168 +1,211 @@
 package com.fieldnation.ui.dialog;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.ShipmentSummary;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
+public class TaskShipmentAddDialog extends DialogFragmentBase {
+    private static final String TAG = "ui.dialog.TaskShipmentAddDialog";
 
-public class TaskShipmentAddDialog extends Dialog {
-	private static final String TAG = "ui.workorder.detail.TaskShipmentAddDialog";
+    // State
+    private static final String STATE_WORKORDER = "STATE_WORKORDER";
+    private static final String STATE_TASKID = "STATE_TASKID";
+    private static final String STATE_TITLE = "STATE_TITLE";
 
-	// UI	
-	private Button _addButton;
-	private Button _cancelButton;
-	private LinearLayout _shipmentsLayout;
-	private ShipmentAddDialog _addDialog;
+    // UI
+    private Button _addButton;
+    private Button _cancelButton;
+    private LinearLayout _shipmentsLayout;
+    private ShipmentAddDialog _addDialog;
 
-	// Data
-	private Listener _listener;
-	private Workorder _workorder;
-	private long _taskId;
-	
+    // Data
+    private Listener _listener;
+    private Workorder _workorder;
+    private String _title;
+    private long _taskId;
 
-	/*-*****************************-*/
-	/*-			Life Cycle			-*/
-	/*-*****************************-*/
-	public TaskShipmentAddDialog(Context context, int theme) {
-		super(context, theme);
-		init();
-	}
 
-	protected TaskShipmentAddDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
-		super(context, cancelable, cancelListener);
-		init();
-	}
+    /*-*****************************-*/
+    /*-			Life Cycle			-*/
+    /*-*****************************-*/
+    public static TaskShipmentAddDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, TaskShipmentAddDialog.class);
+    }
 
-	public TaskShipmentAddDialog(Context context) {
-		super(context);
-		init();
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TASKID))
+                _taskId = savedInstanceState.getLong(STATE_TASKID);
 
-	private void init() {
-		setContentView(R.layout.dialog_task_add_shipment);
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
 
-		_shipmentsLayout = (LinearLayout) findViewById(R.id.shipments_linearlayout);		
-		
-		_cancelButton = (Button) findViewById(R.id.cancel_button);
-		_cancelButton.setOnClickListener(_cancel_onClick);
-		_addButton = (Button) findViewById(R.id.add_button);
-		_addButton.setOnClickListener(_add_onClick);
+            if (savedInstanceState.containsKey(STATE_TITLE))
+                _title = savedInstanceState.getString(STATE_TITLE);
+        }
+        super.onCreate(savedInstanceState);
+    }
 
-		_addDialog = new ShipmentAddDialog(getContext());		
-		setTitle("Assign/Add New");
-		shipmentList();
-	}
-	
-	public void show(String title, Listener listener) {
-		_listener = listener;
-		setTitle(title);
-		show();
-	}
-	
-	public void setWorkorder(Workorder workorder) {
-		_workorder = workorder;
-		shipmentList();
-	}
-	
-	public void setTaskId(long taskId){
-		_taskId = taskId;
-	}
-	/*-*************************-*/
-	/*-			Events			-*/
-	/*-*************************-*/
-	private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
-		@Override
-		public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
-			if (_listener != null) {
-				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId);
-			}
-		}
-		
-		@Override
-		public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
-			if (_listener != null) {
-				_listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId, taskId);
-			}
-		}
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_workorder != null)
+            outState.putParcelable(STATE_WORKORDER, _workorder);
 
-		@Override
-		public void onCancel() {
-		}
-	};
-	
-	private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
-		@Override
-		public void onDelete(ShipmentTracking shipment) {
-			if (_listener != null) {
-				_listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
-			}
-		}
-		
-		@Override
-		public void onAssign(ShipmentTracking shipment) {
-			dismiss();
-			if (_listener != null) {
-				_listener.onAssign(_workorder, shipment.getWorkorderShipmentId(), _taskId);
-			}
-		}
-	};
-	
-	private View.OnClickListener _add_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			dismiss();
-			if (_listener != null) {
-				_addDialog.setTaskId(_taskId);
-				_addDialog.show(R.string.add_shipment, _addDialog_listener);
-			}
-		}
-	};
+        if (_taskId != 0)
+            outState.putLong(STATE_TASKID, _taskId);
 
-	private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			dismiss();
-			if (_listener != null)
-				_listener.onCancel();
-		}
-	};
+        if (_title != null)
+            outState.putString(STATE_TITLE, _title);
 
-	public interface Listener {		
-		public void onCancel();		
-		public void onDelete(Workorder workorder, int shipmentId);
-		public void onAssign(Workorder workorder, int shipmentId, long taskId);
-		
-		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-				String trackingId);
-		public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-				String trackingId, long taskId);
-	}
-	
-	private void shipmentList() {		
-		if (_workorder == null)
-			return;
-		
-		try{		
-			ShipmentTracking[] shipments = _workorder.getShipmentTracking();
-			_shipmentsLayout.removeAllViews();
-			
-			if (shipments == null)
-				return;
-			
-			for (int i = 0; i < shipments.length; i++) {
-				ShipmentSummary view = new ShipmentSummary(getContext());
-				_shipmentsLayout.addView(view);
-				view.setShipmentTracking(shipments[i]);
-				view.hideForTaskShipmentDialog();
-				view.setListener(_summaryListener);
-			}
-			
-		} catch (Exception ex) {}
-	}
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.dialog_task_add_shipment, container, false);
+
+        _shipmentsLayout = (LinearLayout) v.findViewById(R.id.shipments_linearlayout);
+
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _cancelButton.setOnClickListener(_cancel_onClick);
+        _addButton = (Button) v.findViewById(R.id.add_button);
+        _addButton.setOnClickListener(_add_onClick);
+
+        _addDialog = ShipmentAddDialog.getInstance(_fm, TAG);
+        _addDialog.setListener(_addDialog_listener);
+
+        getDialog().setTitle("Assign/Add New");
+        populateUi();
+
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (_title != null)
+            getDialog().setTitle(_title);
+
+        populateUi();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
+    public void show(String title, Workorder workorder, long taskId) {
+        _workorder = workorder;
+        _title = title;
+        _taskId = taskId;
+        show();
+    }
+
+    private void populateUi() {
+        if (_workorder == null)
+            return;
+
+        try {
+            ShipmentTracking[] shipments = _workorder.getShipmentTracking();
+            _shipmentsLayout.removeAllViews();
+
+            if (shipments == null)
+                return;
+
+            for (int i = 0; i < shipments.length; i++) {
+                ShipmentSummary view = new ShipmentSummary(getActivity());
+                _shipmentsLayout.addView(view);
+                view.setShipmentTracking(shipments[i]);
+                view.hideForTaskShipmentDialog();
+                view.setListener(_summaryListener);
+            }
+
+        } catch (Exception ex) {
+        }
+    }
+
+    /*-*************************-*/
+    /*-			Events			-*/
+    /*-*************************-*/
+    private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
+        @Override
+        public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
+            if (_listener != null) {
+                _listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId);
+            }
+        }
+
+        @Override
+        public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
+            if (_listener != null) {
+                _listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId, taskId);
+            }
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
+        @Override
+        public void onDelete(ShipmentTracking shipment) {
+            if (_listener != null) {
+                _listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
+            }
+        }
+
+        @Override
+        public void onAssign(ShipmentTracking shipment) {
+            dismiss();
+            if (_listener != null) {
+                _listener.onAssign(_workorder, shipment.getWorkorderShipmentId(), _taskId);
+            }
+        }
+    };
+
+    private View.OnClickListener _add_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            if (_listener != null) {
+                _addDialog.show(R.string.add_shipment, _taskId);
+            }
+        }
+    };
+
+    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            if (_listener != null)
+                _listener.onCancel();
+        }
+    };
+
+    public interface Listener {
+        public void onCancel();
+
+        public void onDelete(Workorder workorder, int shipmentId);
+
+        public void onAssign(Workorder workorder, int shipmentId, long taskId);
+
+        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+                                         String trackingId);
+
+        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+                                         String trackingId, long taskId);
+    }
+
 }

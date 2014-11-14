@@ -38,7 +38,7 @@ public class AppPickerDialog extends DialogFragmentBase {
     /*-         Life Cycle          -*/
     /*-*****************************-*/
     public static AppPickerDialog getInstance(FragmentManager fm, String tag) {
-        return DialogFragmentBase.getInstance(fm, tag, AppPickerDialog.class);
+        return getInstance(fm, tag, AppPickerDialog.class);
     }
 
     @Override

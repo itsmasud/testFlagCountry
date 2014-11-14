@@ -3,7 +3,6 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +23,9 @@ import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
-import java.util.List;
 
-public class ScheduleDialog extends DialogFragment {
-    private static final String TAG = "ui.workorder.detail.ScheduleDialog";
+public class ScheduleDialog extends DialogFragmentBase {
+    private static final String TAG = "ui.dialog.ScheduleDialog";
 
     // State
     private static final String STATE_SCHEDULE = "STATE_SCHEDULE";
@@ -56,7 +54,6 @@ public class ScheduleDialog extends DialogFragment {
     // Data
     private int _mode;
     private Schedule _sched;
-    private FragmentManager _fm;
     private Calendar _startCal;
     private Calendar _endCal;
     private boolean _startIsSet = false;
@@ -68,22 +65,7 @@ public class ScheduleDialog extends DialogFragment {
     /*-         Life Cycle          -*/
     /*-*****************************-*/
     public static ScheduleDialog getInstance(FragmentManager fm, String tag) {
-        ScheduleDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof ScheduleDialog && frag.getTag().equals(tag)) {
-                    d = (ScheduleDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new ScheduleDialog();
-        d._fm = fm;
-        return d;
-
+        return getInstance(fm, tag, ScheduleDialog.class);
     }
 
     @Override
@@ -95,7 +77,7 @@ public class ScheduleDialog extends DialogFragment {
         }
         super.onCreate(savedInstanceState);
 
-
+        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -104,8 +86,6 @@ public class ScheduleDialog extends DialogFragment {
             outState.putParcelable(STATE_SCHEDULE, _sched);
 
         super.onSaveInstanceState(outState);
-
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -162,9 +142,9 @@ public class ScheduleDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag, Schedule schedule) {
+    public void show(Schedule schedule) {
         _sched = schedule;
-        super.show(_fm, tag);
+        super.show();
     }
 
     private void populateUi() {

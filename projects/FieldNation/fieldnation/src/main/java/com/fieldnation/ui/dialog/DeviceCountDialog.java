@@ -2,8 +2,6 @@ package com.fieldnation.ui.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +12,10 @@ import android.widget.NumberPicker;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 
-import java.util.List;
-
 /**
  * Created by michael.carver on 10/28/2014.
  */
-public class DeviceCountDialog extends DialogFragment {
+public class DeviceCountDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.DeviceCountDialog";
 
     // State
@@ -32,7 +28,6 @@ public class DeviceCountDialog extends DialogFragment {
 
     // Data
     private Listener _listener;
-    private FragmentManager _fm;
     private Workorder _workorder;
     private int _maxCount;
 
@@ -42,23 +37,7 @@ public class DeviceCountDialog extends DialogFragment {
     /*-*****************************-*/
     // grabs the dialog from the fragment stack if it already exists
     public static DeviceCountDialog getInstance(FragmentManager fm, String tag) {
-        DeviceCountDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof DeviceCountDialog && frag.getTag().equals(tag)) {
-                    d = (DeviceCountDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new DeviceCountDialog();
-
-        d._fm = fm;
-
-        return d;
+        return getInstance(fm, tag, DeviceCountDialog.class);
     }
 
     @Override
@@ -87,17 +66,19 @@ public class DeviceCountDialog extends DialogFragment {
 
         getDialog().setTitle(R.string.device_count);
 
-        populateUi();
-
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateUi();
+    }
 
-    public void show(String tag, Workorder workorder, int maxDeviceCount) {
+    public void show(Workorder workorder, int maxDeviceCount) {
         _maxCount = maxDeviceCount;
         _workorder = workorder;
-        populateUi();
-        show(_fm, tag);
+        show();
     }
 
     public void setListener(Listener listener) {

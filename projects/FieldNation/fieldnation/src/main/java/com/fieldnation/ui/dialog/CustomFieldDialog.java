@@ -2,8 +2,6 @@ package com.fieldnation.ui.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,12 +18,10 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.utils.misc;
 
-import java.util.List;
-
 /**
  * Created by michael.carver on 10/29/2014.
  */
-public class CustomFieldDialog extends DialogFragment {
+public class CustomFieldDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.CustomFieldDialog";
 
     // State
@@ -41,31 +37,16 @@ public class CustomFieldDialog extends DialogFragment {
     private Button _cancelButton;
 
     // Data
-    private FragmentManager _fm;
     private CustomField _customField;
     private Listener _listener;
 
-    public static CustomFieldDialog getInstance(FragmentManager fm, String tag) {
-        CustomFieldDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof CustomFieldDialog && frag.getTag().equals(tag)) {
-                    d = (CustomFieldDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new CustomFieldDialog();
-        d._fm = fm;
-        return d;
-    }
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
+    public static CustomFieldDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, CustomFieldDialog.class);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,10 +102,10 @@ public class CustomFieldDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag, CustomField customField) {
+    public void show(CustomField customField) {
         _customField = customField;
 
-        show(_fm, tag);
+        show();
     }
 
     private void populateUi() {
