@@ -38,15 +38,17 @@ public class WorkLogDialog extends DialogFragmentBase {
     private DatePickerDialog _datePicker;
     private TimePickerDialog _timePicker;
 
+    // Data State
+    private String _title;
+    private LoggedWork _loggedWork;
+    private boolean _showDevicesCount;
+
     // Data
     private Listener _listener;
     private Calendar _startCalendar;
     private Calendar _endCalendar;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
-    private LoggedWork _loggedWork;
-    private boolean _showDevicesCount;
-    private String _title;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -168,10 +170,7 @@ public class WorkLogDialog extends DialogFragmentBase {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-
     }
-
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -235,7 +234,7 @@ public class WorkLogDialog extends DialogFragmentBase {
             if ((_startIsSet && _endIsSet) || (_loggedWork != null && (_startIsSet || _endIsSet)) || (_loggedWork != null && _showDevicesCount && deviceCount != _loggedWork.getNoOfDevices())) {
                 WorkLogDialog.this.dismiss();
                 if (_listener != null) {
-                    _listener.onOk(_startCalendar, _endCalendar, deviceCount);
+                    _listener.onOk(_loggedWork, _startCalendar, _endCalendar, deviceCount);
                 }
             }
         }
@@ -250,7 +249,7 @@ public class WorkLogDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(Calendar start, Calendar end, int deviceCount);
+        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount);
 
         public void onCancel();
     }

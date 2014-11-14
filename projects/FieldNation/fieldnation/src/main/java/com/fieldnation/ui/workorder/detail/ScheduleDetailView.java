@@ -143,8 +143,6 @@ public class ScheduleDetailView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void updateLogTime(long workorderId, long loggedHoursId, long startInMillis, long endInMillis, int deviceCount);
-
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
     }
 

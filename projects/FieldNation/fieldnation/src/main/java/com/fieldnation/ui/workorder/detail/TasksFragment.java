@@ -28,6 +28,7 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Task;
@@ -47,6 +48,7 @@ import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
+import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
@@ -57,6 +59,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -94,6 +97,8 @@ public class TasksFragment extends WorkorderFragment {
     private CustomFieldListView _customFields;
     private ShipmentView _shipments;
     private ClosingNotesView _closingNotes;
+
+    // Dialogs
     private ClosingNotesDialog _closingDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private ShipmentAddDialog _shipmentAddDialog;
@@ -101,6 +106,7 @@ public class TasksFragment extends WorkorderFragment {
     private ConfirmDialog _confirmDialog;
     private DeviceCountDialog _deviceCountDialog;
     private CustomFieldDialog _customFieldDialog;
+    private WorkLogDialog _worklogDialog;
 
     // Data
     private GlobalState _gs;
@@ -131,11 +137,16 @@ public class TasksFragment extends WorkorderFragment {
 
         _shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
         _shipments.setListener(_shipments_listener);
+
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
+        _taskList.setTaskListViewListener(_taskListView_listener);
+
         _timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
-        _timeLogged.setFragmentManager(getFragmentManager());
+        _timeLogged.setListener(_timeLoggedView_listener);
+
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_clockingNotesView_listener);
+
         _topBar = (ActionBarTopView) view.findViewById(R.id.topaction_view);
         _topBar.setListener(_actionBarTop_listener);
 
@@ -154,12 +165,17 @@ public class TasksFragment extends WorkorderFragment {
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _appDialog.setListener(_appdialog_listener);
 
-        _taskShipmentAddDialog = new TaskShipmentAddDialog(view.getContext());
-        _shipmentAddDialog = new ShipmentAddDialog(view.getContext());
+        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
+        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
+
+        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
+        _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
 
         _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
         _confirmDialog.setListener(_confirmDialog_listener);
 
+        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
+        _worklogDialog.setListener(_worklogDialog_listener);
 
         if (savedInstanceState == null) {
             _gs.requestAuthentication(_authClient);
@@ -192,7 +208,7 @@ public class TasksFragment extends WorkorderFragment {
         }
 
         _gPSLocationService = new GPSLocationService(getActivity());
-        if(_gPSLocationService != null && _gPSLocationService.isGpsEnabled()){
+        if (_gPSLocationService != null && _gPSLocationService.isGpsEnabled()) {
             _gPSLocationService.showSettingsAlert(getView().getContext());
         }
 
@@ -261,7 +277,6 @@ public class TasksFragment extends WorkorderFragment {
             _shipments.setWorkorder(_workorder);
 
         if (_taskList != null) {
-            _taskList.setTaskListViewListener(_taskListView_listener);
             _taskList.setWorkorder(_workorder);
         }
 
@@ -270,9 +285,6 @@ public class TasksFragment extends WorkorderFragment {
 
         if (_closingNotes != null)
             _closingNotes.setWorkorder(_workorder);
-
-        if (_taskShipmentAddDialog != null)
-            _taskShipmentAddDialog.setWorkorder(_workorder);
 
         if (_shipments != null && _timeLogged != null) {
             WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
@@ -427,12 +439,51 @@ public class TasksFragment extends WorkorderFragment {
     }
 
     private void showClosingNotesDialog() {
-        _closingDialog.show(TAG, _workorder.getClosingNotes());
+        _closingDialog.show(_workorder.getClosingNotes());
     }
 
     /*-*************************************-*/
     /*-				UI Events				-*/
     /*-*************************************-*/
+
+    private WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
+        @Override
+        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
+            if (loggedWork == null) {
+                if (deviceCount <= 0) {
+                    getActivity().startService(_service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
+                            end.getTimeInMillis()));
+                } else {
+                    getActivity().startService(_service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
+                            end.getTimeInMillis(), deviceCount));
+                }
+            } else {
+                if (deviceCount <= 0) {
+                    _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
+                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
+                } else {
+                    _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
+                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
+                }
+            }
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private TimeLoggedView.Listener _timeLoggedView_listener = new TimeLoggedView.Listener() {
+        @Override
+        public void addWorklog(boolean showdevice) {
+            _worklogDialog.show("Add Worklog", null, showdevice);
+        }
+
+        @Override
+        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
+            _worklogDialog.show("Add Worklog", loggedWork, showDeviceCount);
+        }
+    };
 
     /*-************************************-*/
     /*-         ActionBarTopView           -*/
@@ -448,8 +499,7 @@ public class TasksFragment extends WorkorderFragment {
         public void onCheckOut() {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
-                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
+                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
             } else {
                 if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
                     try {
@@ -493,8 +543,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onConfirm() {
-            _confirmDialog.setListener(_confirmDialog_listener);
-            _confirmDialog.show(TAG, _workorder, _workorder.getSchedule());
+            _confirmDialog.show(_workorder, _workorder.getSchedule());
         }
 
         @Override
@@ -534,8 +583,7 @@ public class TasksFragment extends WorkorderFragment {
                 case CHECKOUT:
                     Pay pay = _workorder.getPay();
                     if (pay != null && pay.isPerDeviceRate()) {
-                        _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                        _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
+                        _deviceCountDialog.show(_workorder, pay.getMaxDevice());
                     } else {
                         if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
                             try {
@@ -557,7 +605,7 @@ public class TasksFragment extends WorkorderFragment {
                     showClosingNotesDialog();
                     break;
                 case CONFIRM_ASSIGNMENT:
-                    _confirmDialog.show(TAG, _workorder, _workorder.getSchedule());
+                    _confirmDialog.show(_workorder, _workorder.getSchedule());
                     break;
                 case CUSTOM_FIELD:
                     if (task.getCompleted())
@@ -629,12 +677,9 @@ public class TasksFragment extends WorkorderFragment {
                 case SHIPMENT_TRACKING:
                     ShipmentTracking[] shipments = _workorder.getShipmentTracking();
                     if (shipments == null) {
-                        _shipmentAddDialog.setTaskId(task.getTaskId());
-                        _shipmentAddDialog.show(R.string.add_shipment, _addDialog_listener);
+                        _shipmentAddDialog.show(R.string.add_shipment, task.getTaskId());
                     } else {
-                        _taskShipmentAddDialog.setWorkorder(_workorder);
-                        _taskShipmentAddDialog.setTaskId(task.getTaskId());
-                        _taskShipmentAddDialog.show("Assign/Add New", _add_onClick);
+                        _taskShipmentAddDialog.show("Assign/Add New", _workorder, task.getTaskId());
                     }
 
                     break;
@@ -688,7 +733,7 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
-    private TaskShipmentAddDialog.Listener _add_onClick = new TaskShipmentAddDialog.Listener() {
+    private TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
             getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
@@ -729,7 +774,7 @@ public class TasksFragment extends WorkorderFragment {
     private CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override
         public void onClick(CustomFieldRowView view, CustomField field) {
-            _customFieldDialog.show(TAG, field);
+            _customFieldDialog.show(field);
         }
     };
 
@@ -744,7 +789,7 @@ public class TasksFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-         Shipments           -*/
     /*-*****************************-*/
-    private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
+    private ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
 
@@ -765,6 +810,11 @@ public class TasksFragment extends WorkorderFragment {
     private ShipmentView.Listener _shipments_listener = new ShipmentView.Listener() {
 
         @Override
+        public void addShipment() {
+            _shipmentAddDialog.show("Add Shipment", 0);
+        }
+
+        @Override
         public void onDelete(Workorder workorder, int shipmentId) {
             getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
         }
@@ -773,22 +823,22 @@ public class TasksFragment extends WorkorderFragment {
         public void onAssign(Workorder workorder, int shipmentId) {
         }
 
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-                                         String trackingId) {
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
-                            carrier, null, trackingId));
-            Log.v(TAG, "Method Stub: onAddShipmentDetails()");
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-                                         String trackingId, long taskId) {
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
-                            carrier, null, trackingId, taskId));
-        }
+//        @Override
+//        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+//                                         String trackingId) {
+//            getActivity().startService(
+//                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
+//                            carrier, null, trackingId));
+//            Log.v(TAG, "Method Stub: onAddShipmentDetails()");
+//        }
+//
+//        @Override
+//        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
+//                                         String trackingId, long taskId) {
+//            getActivity().startService(
+//                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
+//                            carrier, null, trackingId, taskId));
+//        }
     };
 
     /*-*********************************-*/
