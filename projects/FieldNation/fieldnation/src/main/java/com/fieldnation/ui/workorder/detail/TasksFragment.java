@@ -168,7 +168,7 @@ public class TasksFragment extends WorkorderFragment {
                 Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
                 _tasks = new LinkedList<Task>();
                 for (int i = 0; i < tasks.length; i++) {
-                    _tasks.add((Task)tasks[i]);
+                    _tasks.add((Task) tasks[i]);
                 }
                 _taskList.setTaskList(_tasks);
             }
@@ -573,7 +573,7 @@ public class TasksFragment extends WorkorderFragment {
                                 getActivity().startService(
                                         _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
 
-                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
                             String phNum = "tel:" + task.getPhoneNumber();
                             callIntent.setData(Uri.parse(phNum));
                             startActivity(callIntent);
