@@ -192,6 +192,9 @@ public class TasksFragment extends WorkorderFragment {
         }
 
         _gPSLocationService = new GPSLocationService(getActivity());
+        if(_gPSLocationService != null && _gPSLocationService.isGpsEnabled()){
+            _gPSLocationService.showSettingsAlert(getView().getContext());
+        }
 
         configureUi();
     }
@@ -449,7 +452,6 @@ public class TasksFragment extends WorkorderFragment {
                 _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
             } else {
                 if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-                    _gPSLocationService.showSettingsAlert(getView().getContext());
                     try {
                         Location location = _gPSLocationService.getLocation();
                         double lat = location.getLatitude();
@@ -469,7 +471,6 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onCheckIn() {
             if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-                _gPSLocationService.showSettingsAlert(getView().getContext());
                 try {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
@@ -516,7 +517,6 @@ public class TasksFragment extends WorkorderFragment {
             switch (task.getTaskType()) {
                 case CHECKIN:
                     if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-                         _gPSLocationService.showSettingsAlert(getView().getContext());
                         try {
                             Location location = _gPSLocationService.getLocation();
                             double lat = location.getLatitude();
@@ -538,7 +538,6 @@ public class TasksFragment extends WorkorderFragment {
                         _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
                     } else {
                         if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-                            _gPSLocationService.showSettingsAlert(getView().getContext());
                             try {
                                 Location location = _gPSLocationService.getLocation();
                                 double lat = location.getLatitude();
@@ -870,8 +869,6 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onOk(Workorder workorder, int count) {
             if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-                _gPSLocationService.showSettingsAlert(getView().getContext());
-
                 try {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
