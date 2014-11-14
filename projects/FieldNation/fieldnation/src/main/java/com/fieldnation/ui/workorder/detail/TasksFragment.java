@@ -821,7 +821,10 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onAssign(Workorder workorder, int shipmentId) {
+            // TODO STUB .onAssign()
+            Log.v(TAG, "STUB .onAssign()");
         }
+
 
 //        @Override
 //        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,

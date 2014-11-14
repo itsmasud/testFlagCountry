@@ -40,7 +40,7 @@ public class ExpiresDialog extends DialogFragmentBase {
     /*-             Life Cycle              -*/
     /*-*************************************-*/
     public static ExpiresDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, ExpenseDialog.class);
+        return getInstance(fm, tag, ExpiresDialog.class);
     }
 
     @Override
