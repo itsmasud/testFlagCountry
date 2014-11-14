@@ -448,12 +448,8 @@ public class TasksFragment extends WorkorderFragment {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
                 _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
             } else {
-                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
-
-                    if (!_gPSLocationService.isGpsEnabled()) {
-                        _gPSLocationService.showSettingsAlert(getView().getContext());
-                    }
-
+                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                    _gPSLocationService.showSettingsAlert(getView().getContext());
                     try {
                         Location location = _gPSLocationService.getLocation();
                         double lat = location.getLatitude();
@@ -462,25 +458,18 @@ public class TasksFragment extends WorkorderFragment {
                     } catch (Exception e) {
                         _gPSLocationService.showSettingsOffAlert(getView().getContext());
                     }
-
                 } else {
+                    _gPSLocationService.showCheckInOutAlert(getView().getContext());
                     getActivity().startService(
                             _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                 }
-
-                /*getActivity().startService(
-                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));*/
             }
         }
 
         @Override
         public void onCheckIn() {
-            //@TODO
-            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
-                if (!_gPSLocationService.isGpsEnabled()) {
-                    _gPSLocationService.showSettingsAlert(getView().getContext());
-                }
-
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                _gPSLocationService.showSettingsAlert(getView().getContext());
                 try {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
@@ -489,9 +478,10 @@ public class TasksFragment extends WorkorderFragment {
                 } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
-
             } else {
-                getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+                _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                getActivity().startService(
+                        _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
             }
         }
 
@@ -525,11 +515,8 @@ public class TasksFragment extends WorkorderFragment {
         public void onTaskClick(Task task) {
             switch (task.getTaskType()) {
                 case CHECKIN:
-                    if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
-                        if (!_gPSLocationService.isGpsEnabled()) {
-                            _gPSLocationService.showSettingsAlert(getView().getContext());
-                        }
-
+                    if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                         _gPSLocationService.showSettingsAlert(getView().getContext());
                         try {
                             Location location = _gPSLocationService.getLocation();
                             double lat = location.getLatitude();
@@ -538,8 +525,8 @@ public class TasksFragment extends WorkorderFragment {
                         } catch (Exception e) {
                             _gPSLocationService.showSettingsOffAlert(getView().getContext());
                         }
-
                     } else {
+                        _gPSLocationService.showCheckInOutAlert(getView().getContext());
                         getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
                     }
 
@@ -550,11 +537,8 @@ public class TasksFragment extends WorkorderFragment {
                         _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
                         _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
                     } else {
-                        if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
-                            if (!_gPSLocationService.isGpsEnabled()) {
-                                _gPSLocationService.showSettingsAlert(getView().getContext());
-                            }
-
+                        if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                            _gPSLocationService.showSettingsAlert(getView().getContext());
                             try {
                                 Location location = _gPSLocationService.getLocation();
                                 double lat = location.getLatitude();
@@ -563,8 +547,8 @@ public class TasksFragment extends WorkorderFragment {
                             } catch (Exception e) {
                                 _gPSLocationService.showSettingsOffAlert(getView().getContext());
                             }
-
                         } else {
+                            _gPSLocationService.showCheckInOutAlert(getView().getContext());
                             getActivity().startService(
                                     _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                         }
@@ -885,10 +869,8 @@ public class TasksFragment extends WorkorderFragment {
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled()) {
-                if (!_gPSLocationService.isGpsEnabled()) {
-                    _gPSLocationService.showSettingsAlert(getView().getContext());
-                }
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                _gPSLocationService.showSettingsAlert(getView().getContext());
 
                 try {
                     Location location = _gPSLocationService.getLocation();
@@ -900,6 +882,7 @@ public class TasksFragment extends WorkorderFragment {
                 }
 
             } else {
+                _gPSLocationService.showCheckInOutAlert(getView().getContext());
                 getActivity().startService(
                         _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
             }

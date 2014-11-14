@@ -96,9 +96,29 @@ public class GPSLocationService {
         if (ConnectionResult.SUCCESS == status) {
             return true;
         } else {
-            GooglePlayServicesUtil.getErrorDialog(status, _locationActivity, 0).show();
+            //GooglePlayServicesUtil.getErrorDialog(status, _locationActivity, 0).show();
             return false;
         }
+    }
+
+    /**
+     * Function to show checkin/checkout without GPS data alert
+     */
+    public void showCheckInOutAlert(final Context context) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+        alertDialog.setTitle("Without GPS data");
+        alertDialog.setMessage("You submit a checkin/checkout without GPS data. In the future we may require GPS.");
+
+        // on pressing Ok button
+        alertDialog.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialogBox = alertDialog.create();
+        alertDialogBox.show();
     }
 
     /**
@@ -107,11 +127,8 @@ public class GPSLocationService {
     public void showSettingsAlert(final Context context) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
-        // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
-
-        // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+        alertDialog.setTitle("GPS settings enable/disable");
+        alertDialog.setMessage("Go to menu settings for GPS enabled/disabled.");
 
         // On pressing Settings button
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
@@ -143,7 +160,7 @@ public class GPSLocationService {
         alertDialog.setTitle("Location service settings");
 
         // Setting Dialog Message
-        alertDialog.setMessage("Location service is not disabled. Do you want to go to settings menu, disabled it.?");
+        alertDialog.setMessage("Location service is not disabled. You may need to disabled it to submit a checkin/checkout data.");
 
         // On pressing Settings button
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
