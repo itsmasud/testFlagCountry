@@ -3,14 +3,12 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,9 +17,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.utils.misc;
 
-import java.util.List;
-
-public class ClosingNotesDialog extends DialogFragment {
+public class ClosingNotesDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.ClosingNotesDialog";
 
     // UI
@@ -32,30 +28,14 @@ public class ClosingNotesDialog extends DialogFragment {
     // Data
     private String _notes;
     private Listener _listener;
-    private FragmentManager _fm;
-
-    public static ClosingNotesDialog getInstance(FragmentManager fm, String tag) {
-        ClosingNotesDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof ClosingNotesDialog && frag.getTag().equals(tag)) {
-                    d = (ClosingNotesDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new ClosingNotesDialog();
-        d._fm = fm;
-        return d;
-    }
 
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
     /*-*****************************-*/
+    public static ClosingNotesDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, ClosingNotesDialog.class);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,12 +72,11 @@ public class ClosingNotesDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag, String notes) {
+    public void show(String notes) {
         if (!misc.isEmptyOrNull(notes)) {
             _notes = notes;
-            populateUi();
         }
-        show(_fm, tag);
+        super.show();
     }
 
     private void populateUi() {

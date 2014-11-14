@@ -126,8 +126,11 @@ public class DetailFragment extends WorkorderFragment {
         _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
         _confirmDialog.setListener(_confirmListener);
 
-        _discountDialog = new DiscountDialog(view.getContext());
-        _expiresDialog = new ExpiresDialog(view.getContext());
+        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
+        _discountDialog.setListener(_discountDialog_listener);
+
+        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
+        _expiresDialog.setListener(_expiresDialog_listener);
 
         _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -226,8 +229,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onCheckOut() {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
-                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
+                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
@@ -252,14 +254,14 @@ public class DetailFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _confirmDialog.show(TAG, _workorder, _workorder.getSchedule());
+                _confirmDialog.show(_workorder, _workorder.getSchedule());
             }
         }
 
         @Override
         public void onEnterClosingNotes() {
             if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                _closingDialog.show(TAG, _workorder.getClosingNotes());
+                _closingDialog.show(_workorder.getClosingNotes());
             }
         }
     };
@@ -276,17 +278,17 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onShowAddDiscountDialog() {
-            _discountDialog.show("Add Discount", _discountDialog_listener);
+            _discountDialog.show("Add Discount");
         }
 
         @Override
         public void onShowAddExpenseDialog() {
-            _expenseDialog.show(TAG);
+            _expenseDialog.show();
         }
 
         @Override
         public void onShowCounterOfferDialog() {
-            _counterOfferDialog.show(TAG, _workorder);
+            _counterOfferDialog.show(_workorder);
         }
 
         @Override
@@ -312,13 +314,13 @@ public class DetailFragment extends WorkorderFragment {
             if (workorder.isBundle()) {
                 _acceptBundleWOExpiresDialog.show(workorder);
             } else {
-                _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
+                _expiresDialog.show(workorder);
             }
         }
 
         @Override
         public void onShowCounterOfferDialog(Workorder workorder) {
-            _counterOfferDialog.show(TAG, workorder);
+            _counterOfferDialog.show(workorder);
         }
 
         @Override
@@ -332,7 +334,7 @@ public class DetailFragment extends WorkorderFragment {
             if (workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(workorder);
             } else {
-                _confirmDialog.show(TAG, _workorder, workorder.getSchedule());
+                _confirmDialog.show(_workorder, workorder.getSchedule());
             }
         }
 
@@ -432,19 +434,19 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onOk(Workorder workorder) {
-            _confirmDialog.show(TAG, _workorder, workorder.getSchedule());
+            _confirmDialog.show(_workorder, workorder.getSchedule());
         }
     };
     private AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _expiresDialog.show(getFragmentManager(), _expiresDialog_listener);
+            _expiresDialog.show(workorder);
         }
     };
 
     private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
-        public void onOk(String dateTime) {
+        public void onOk(Workorder workorder, String dateTime) {
             try {
                 long seconds;
                 seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;

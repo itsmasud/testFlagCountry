@@ -3,7 +3,6 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +18,7 @@ import android.widget.Spinner;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 
-import java.util.List;
-
-public class PayDialog extends DialogFragment {
+public class PayDialog extends DialogFragmentBase {
     private static String TAG = "ui.dialog.PayDialog";
 
     // State
@@ -58,7 +55,6 @@ public class PayDialog extends DialogFragment {
     private Button _cancelButton;
 
     // Data
-    private FragmentManager _fm;
     private Pay _pay;
     private Listener _listener;
     private int _mode = MODE_FIXED;
@@ -68,29 +64,11 @@ public class PayDialog extends DialogFragment {
     /*-*************************************-*/
 
     public static PayDialog getInstance(FragmentManager fm, String tag) {
-        PayDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof PayDialog && frag.getTag().equals(tag)) {
-                    d = (PayDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new PayDialog();
-        d._fm = fm;
-        return d;
+        return getInstance(fm, tag, PayDialog.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_PAY))
                 _pay = savedInstanceState.getParcelable(STATE_PAY);
@@ -98,6 +76,9 @@ public class PayDialog extends DialogFragment {
             if (savedInstanceState.containsKey(STATE_MODE))
                 _mode = savedInstanceState.getInt(STATE_MODE);
         }
+        super.onCreate(savedInstanceState);
+
+        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -165,9 +146,9 @@ public class PayDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag, Pay pay) {
+    public void show(Pay pay) {
         _pay = pay;
-        super.show(_fm, tag);
+        super.show();
     }
 
     private void clearUi() {

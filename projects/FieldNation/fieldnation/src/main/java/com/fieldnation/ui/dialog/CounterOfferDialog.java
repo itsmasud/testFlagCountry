@@ -5,8 +5,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Display;
@@ -35,13 +33,18 @@ import java.util.List;
 /**
  * Created by michael.carver on 11/5/2014.
  */
-public class CounterOfferDialog extends DialogFragment {
+public class CounterOfferDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.CounterOfferDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
     private static final String STATE_COUNTER_PAY = "STATE_COUNTER_PAY";
     private static final String STATE_EXPENSES = "STATE_EXPENSES";
+    private static final String STATE_COUNTER_SCHEDULE = "STATE_COUNTER_SCHEDULE";
+    private static final String STATE_COUNTER_REASON = "STATE_COUNTER_REASON";
+    private static final String STATE_EXPIRES = "STATE_EXPIRES";
+    private static final String STATE_EXPIRATION_DATE = "STATE_EXPIRATION_DATE";
+    private static final String STATE_TAC = "STATE_TAC";
 
     // Ui
     private TabHost _tabHost;
@@ -59,18 +62,18 @@ public class CounterOfferDialog extends DialogFragment {
     private DatePickerDialog _datePicker;
     private TimePickerDialog _timePicker;
 
-    // Data
-    private FragmentManager _fm;
+    // Data State
     private Workorder _workorder;
     private Pay _counterPay;
-    private Schedule _counterSchedule;
     private List<AdditionalExpense> _expenses = new LinkedList<AdditionalExpense>();
+    private Schedule _counterSchedule;
     private String _counterReason;
     private boolean _expires;
     private String _expirationDate;
+
+    // Data
     private boolean _tacAccpet;
     private Listener _listener;
-
     private Calendar _pickerCal;
 
 
@@ -78,21 +81,7 @@ public class CounterOfferDialog extends DialogFragment {
     /*-         Life Cycle          -*/
     /*-*****************************-*/
     public static CounterOfferDialog getInstance(FragmentManager fm, String tag) {
-        CounterOfferDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof CounterOfferDialog && frag.getTag().equals(tag)) {
-                    d = (CounterOfferDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new CounterOfferDialog();
-        d._fm = fm;
-        return d;
+        return getInstance(fm, tag, CounterOfferDialog.class);
     }
 
     @Override
@@ -111,12 +100,30 @@ public class CounterOfferDialog extends DialogFragment {
                     _expenses.add((AdditionalExpense) parc[i]);
                 }
             }
+
+            if (savedInstanceState.containsKey(STATE_COUNTER_SCHEDULE))
+                _counterSchedule = savedInstanceState.getParcelable(STATE_COUNTER_SCHEDULE);
+
+            if (savedInstanceState.containsKey(STATE_COUNTER_REASON))
+                _counterReason = savedInstanceState.getString(STATE_COUNTER_REASON);
+
+            if (savedInstanceState.containsKey(STATE_EXPIRES))
+                _expires = savedInstanceState.getBoolean(STATE_EXPIRES);
+
+            if (savedInstanceState.containsKey(STATE_EXPIRATION_DATE))
+                _expirationDate = savedInstanceState.getString(STATE_EXPIRATION_DATE);
+
+            if (savedInstanceState.containsKey(STATE_TAC))
+                _tacAccpet = savedInstanceState.getBoolean(STATE_TAC);
         }
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(STATE_EXPIRES, _expires);
+        outState.putBoolean(STATE_TAC, _tacAccpet);
+
         if (_workorder != null)
             outState.putParcelable(STATE_WORKORDER, _workorder);
 
@@ -132,6 +139,15 @@ public class CounterOfferDialog extends DialogFragment {
 
             outState.putParcelableArray(STATE_EXPENSES, exs);
         }
+
+        if (_counterSchedule != null)
+            outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
+
+        if (_counterReason != null)
+            outState.putString(STATE_COUNTER_REASON, _counterReason);
+
+        if (_expirationDate != null)
+            outState.putString(STATE_EXPIRATION_DATE, _expirationDate);
 
         super.onSaveInstanceState(outState);
     }
@@ -253,6 +269,7 @@ public class CounterOfferDialog extends DialogFragment {
             _scheduleView.setSchedule(_workorder.getSchedule(), false);
         }
 
+
         _expenseView.setExpenses(_expenses);
 
         _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate);
@@ -262,7 +279,8 @@ public class CounterOfferDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag, Workorder workorder) {
+    // this will only be called once.. will not be called on redraw
+    public void show(Workorder workorder) {
         _workorder = workorder;
 
         CounterOfferInfo info = _workorder.getCounterOfferInfo();
@@ -289,7 +307,7 @@ public class CounterOfferDialog extends DialogFragment {
             _expirationDate = ISO8601.fromUTC(Calendar.getInstance().getTimeInMillis() + info.getExpiresAfter() * 1000);
         }
 
-        super.show(_fm, tag);
+        super.show();
     }
 
     /*-*********************************-*/
@@ -319,7 +337,7 @@ public class CounterOfferDialog extends DialogFragment {
     private ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
-            _expenseDialog.show(TAG);
+            _expenseDialog.show();
         }
 
         @Override
@@ -363,7 +381,7 @@ public class CounterOfferDialog extends DialogFragment {
 
         @Override
         public void onChange(Schedule schedule) {
-            _scheduleDialog.show(TAG, schedule);
+            _scheduleDialog.show(schedule);
         }
     };
 
@@ -394,7 +412,7 @@ public class CounterOfferDialog extends DialogFragment {
 
         @Override
         public void onChangeClick(Pay pay) {
-            _payDialog.show(TAG, pay);
+            _payDialog.show(pay);
         }
     };
 

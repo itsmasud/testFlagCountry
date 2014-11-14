@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +16,11 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
-import java.util.List;
-
-public class AcceptBundleDialog extends DialogFragment {
+public class AcceptBundleDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.AcceptBundleDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
-    private static final String STATE_TAG = "STATE_TAG";
 
     // UI
     private TextView _acceptWOText;
@@ -35,56 +31,29 @@ public class AcceptBundleDialog extends DialogFragment {
     // Data
     private Listener _listener;
     private Workorder _workorder;
-    private FragmentManager _fm;
-    private String _tag;
-
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
     /*-*****************************-*/
     public static AcceptBundleDialog getInstance(FragmentManager fm, String tag) {
-        AcceptBundleDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof AcceptBundleDialog && frag.getTag().equals(tag)) {
-                    d = (AcceptBundleDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null) {
-            d = new AcceptBundleDialog();
-        }
-        d._fm = fm;
-        d._tag = tag;
-        return d;
+        return getInstance(fm, tag, AcceptBundleDialog.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TAG))
-                _tag = savedInstanceState.getString(STATE_TAG);
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
         }
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_WORKORDER))
-                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
-        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (_workorder != null)
             outState.putParcelable(STATE_WORKORDER, _workorder);
-
-        if (_tag != null)
-            outState.putString(STATE_TAG, _tag);
 
         super.onSaveInstanceState(outState);
     }
@@ -116,6 +85,11 @@ public class AcceptBundleDialog extends DialogFragment {
         populateUi();
     }
 
+    public void show(Workorder workorder) {
+        _workorder = workorder;
+        super.show();
+    }
+
     private void populateUi() {
         if (_workorder == null)
             return;
@@ -124,15 +98,6 @@ public class AcceptBundleDialog extends DialogFragment {
             return;
 
         _acceptWOText.setText("This workorder is part of a bundle of " + _workorder.getBundleCount().toString() + " workorders. By accepting this workorder you are accepting all of them.");
-    }
-
-    public void show(Workorder workorder) {
-        if (workorder == null)
-            return;
-
-        _workorder = workorder;
-
-        show(_fm, _tag);
     }
 
 

@@ -83,9 +83,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         _rpcMethod = WorkorderService.class.getDeclaredMethod(selection.getCall(), new Class<?>[]{int.class,
                 int.class, boolean.class});
         _rpcMethod.setAccessible(true);
-
-        //_payDialog = new PayDialog(activity);
-        _expiresDialog = new ExpiresDialog(activity);
     }
 
     public WorkorderListAdapter(FragmentActivity activity, WorkorderDataSelector selection, List<Workorder> workorders) throws NoSuchMethodException {
@@ -95,9 +92,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         _rpcMethod = WorkorderService.class.getDeclaredMethod(selection.getCall(), new Class<?>[]{int.class,
                 int.class, boolean.class});
         _rpcMethod.setAccessible(true);
-
-        //_payDialog = new PayDialog(activity);
-        _expiresDialog = new ExpiresDialog(activity);
     }
 
     @Override
@@ -227,30 +221,9 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
             final Workorder _workorder = workorder;
 
-            _expiresDialog.show(getActivity().getSupportFragmentManager(), new ExpiresDialog.Listener() {
-
-                @Override
-                public void onOk(String dateTime) {
-                    long time = -1;
-                    if (dateTime != null) {
-                        try {
-                            time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                        } catch (ParseException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-
-                    //set  loading mode
-                    WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
-                    woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
-
-                    Intent intent = _workorderService.request(WEB_CHANGING_WORKORDER, _workorder.getWorkorderId(), time);
-                    intent.putExtra(KEY_WORKORDER_ID, _workorder.getWorkorderId());
-                    getContext().startService(intent);
-                    _requestWorkingWorkorders.put(_workorder.getWorkorderId(), _workorder);
-                }
-            });
+            _expiresDialog = ExpiresDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+            _expiresDialog.setListener(_expiresDialog_listener);
+            _expiresDialog.show(workorder);
         }
 
         @Override
@@ -262,7 +235,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             Pay pay = workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, workorder, pay.getMaxDevice());
+                _deviceCountDialog.setListener(_deviceCountListener);
+                _deviceCountDialog.show(workorder, pay.getMaxDevice());
             } else {
                 Intent intent = _workorderService.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
                 intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
@@ -274,9 +248,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void actionCheckin(WorkorderCardView view, Workorder workorder) {
-            //set  loading mode
-            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
-            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
+            //TODO set loading mode
 
             Intent intent = _workorderService.checkin(WEB_CHECKING_IN, workorder.getWorkorderId());
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
@@ -288,15 +260,12 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
             _confirmDialog = ConfirmDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
             _confirmDialog.setListener(_confirmDialog_listener);
-            _confirmDialog.show(TAG, workorder, workorder.getSchedule());
+            _confirmDialog.show(workorder, workorder.getSchedule());
         }
 
         @Override
         public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
-            //set  loading mode
-            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
-            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
-
+            //TODO set loading mode
             Intent intent = _workorderService.acknowledgeHold(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getContext().startService(intent);
@@ -305,13 +274,10 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void viewCounter(WorkorderCardView view, Workorder workorder) {
-            //set  loading mode
-            WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
-            woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
-
+            //TODO set loading mode
             _counterOfferDialog = CounterOfferDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
             _counterOfferDialog.setListener(_counterOfferDialog_listener);
-            _counterOfferDialog.show(TAG, workorder);
+            _counterOfferDialog.show(workorder);
         }
 
         @Override
@@ -357,10 +323,29 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             //set  loading mode
             WorkorderCardView woCardViewObj = new WorkorderCardView(getContext());
             woCardViewObj.setDisplayMode(woCardViewObj.MODE_DOING_WORK);
-
             // TODO Method Stub: onViewPayments()
             Log.v(TAG, "Method Stub: onViewPayments()");
+        }
+    };
 
+    private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
+
+        @Override
+        public void onOk(Workorder workorder, String dateTime) {
+            long time = -1;
+            if (dateTime != null) {
+                try {
+                    time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
+                } catch (ParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            //TODO set  loading mode
+            Intent intent = _workorderService.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), time);
+            intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
+            getContext().startService(intent);
+            _requestWorkingWorkorders.put(workorder.getWorkorderId(), workorder);
         }
     };
 

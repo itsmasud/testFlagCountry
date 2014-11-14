@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -23,9 +22,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 
-import java.util.List;
-
-public class ExpenseDialog extends DialogFragment {
+public class ExpenseDialog extends DialogFragmentBase {
     private static String TAG = "ui.dialog.ExpenseDialog";
 
     // Ui
@@ -36,7 +33,6 @@ public class ExpenseDialog extends DialogFragment {
     private Spinner _categorySpinner;
 
     // Data
-    private FragmentManager _fm;
     private Listener _listener;
     private ExpenseCategory[] _categories;
     private ArrayAdapter<ExpenseCategory> _adapter;
@@ -47,21 +43,7 @@ public class ExpenseDialog extends DialogFragment {
     /*-             Life Cycle              -*/
     /*-*************************************-*/
     public static ExpenseDialog getInstance(FragmentManager fm, String tag) {
-        ExpenseDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof ExpenseDialog && frag.getTag().equals(tag)) {
-                    d = (ExpenseDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new ExpenseDialog();
-        d._fm = fm;
-        return d;
+        return getInstance(fm, tag, ExpenseDialog.class);
     }
 
     @Override
@@ -122,9 +104,9 @@ public class ExpenseDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag) {
+    public void show() {
         _reset = true;
-        show(_fm, tag);
+        super.show();
     }
 
     public String getDescription() {

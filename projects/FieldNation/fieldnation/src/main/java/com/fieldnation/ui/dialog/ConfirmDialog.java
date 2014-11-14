@@ -3,7 +3,6 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +24,10 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class ConfirmDialog extends DialogFragment {
+public class ConfirmDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.ConfirmDialog";
 
     // State
@@ -53,7 +51,6 @@ public class ConfirmDialog extends DialogFragment {
     // Data
     private Listener _listener;
     private Calendar _startCalendar;
-    private FragmentManager _fm;
     private long _durationMilliseconds;
     private Schedule _schedule;
     private Workorder _workorder;
@@ -62,21 +59,7 @@ public class ConfirmDialog extends DialogFragment {
     /*-             Life Cycle          -*/
     /*-*********************************-*/
     public static ConfirmDialog getInstance(FragmentManager fm, String tag) {
-        ConfirmDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof ConfirmDialog && frag.getTag().equals(tag)) {
-                    d = (ConfirmDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new ConfirmDialog();
-        d._fm = fm;
-        return d;
+        return getInstance(fm, tag, ConfirmDialog.class);
     }
 
     @Override
@@ -143,7 +126,9 @@ public class ConfirmDialog extends DialogFragment {
 
         _startCalendar = Calendar.getInstance();
 
-        _durationDialog = new DurationDialog(getActivity());
+        _durationDialog = DurationDialog.getInstance(_fm, TAG);
+        _durationDialog.setListener(_duration_listener);
+
         _startCalendar = Calendar.getInstance();
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -156,6 +141,45 @@ public class ConfirmDialog extends DialogFragment {
         super.onResume();
         populateUi();
     }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
+//    public void setDuration(long timeMilliseconds) {
+//        _durationMilliseconds = timeMilliseconds;
+//        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+//    }
+
+//    public void setTime(Calendar time) {
+//        try {
+//            _startCalendar.set(time.get(Calendar.YEAR), time.get(Calendar.MONTH),
+//                    time.get(Calendar.DAY_OF_MONTH), time.get(Calendar.HOUR_OF_DAY),
+//                    time.get(Calendar.MINUTE));
+//
+//            long start = ISO8601.toUtc(_schedule.getStartTime());
+//            long end = ISO8601.toUtc(_schedule.getEndTime());
+//
+//            long input = _startCalendar.getTimeInMillis();
+//
+//            if (input < start || input > end) {
+//                Toast.makeText(getActivity(), "Arrival time is out of range. Please try again", Toast.LENGTH_LONG).show();
+//                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
+//            }
+//
+//            _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//    }
+
+
+    public void show(Workorder workorder, Schedule schedule) {
+        _schedule = schedule;
+        _workorder = workorder;
+        super.show();
+    }
+
 
     private void populateUi() {
         if (_schedule == null)
@@ -217,42 +241,6 @@ public class ConfirmDialog extends DialogFragment {
         }
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
-
-    public void setDuration(long timeMilliseconds) {
-        _durationMilliseconds = timeMilliseconds;
-        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
-    }
-
-    public void setTime(Calendar time) {
-        try {
-            _startCalendar.set(time.get(Calendar.YEAR), time.get(Calendar.MONTH),
-                    time.get(Calendar.DAY_OF_MONTH), time.get(Calendar.HOUR_OF_DAY),
-                    time.get(Calendar.MINUTE));
-
-            long start = ISO8601.toUtc(_schedule.getStartTime());
-            long end = ISO8601.toUtc(_schedule.getEndTime());
-
-            long input = _startCalendar.getTimeInMillis();
-
-            if (input < start || input > end) {
-                Toast.makeText(getActivity(), "Arrival time is out of range. Please try again", Toast.LENGTH_LONG).show();
-                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
-            }
-
-            _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void show(String tag, Workorder workorder, Schedule schedule) {
-        _schedule = schedule;
-        _workorder = workorder;
-        show(_fm, tag);
-    }
 
     /*-*****************************-*/
     /*-				Events			-*/
@@ -347,7 +335,7 @@ public class ConfirmDialog extends DialogFragment {
 
         @Override
         public void onClick(View v) {
-            _durationDialog.show(_duration_listener);
+            _durationDialog.show();
         }
     };
     private DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {

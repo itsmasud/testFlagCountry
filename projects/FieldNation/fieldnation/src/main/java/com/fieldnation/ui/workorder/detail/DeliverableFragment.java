@@ -464,8 +464,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onCheckOut() {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
-                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice());
+                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
@@ -487,12 +486,12 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onConfirm() {
-            _confirmDialog.show(TAG, _workorder, _workorder.getSchedule());
+            _confirmDialog.show(_workorder, _workorder.getSchedule());
         }
 
         @Override
         public void onEnterClosingNotes() {
-            _closingDialog.show(TAG, _workorder.getClosingNotes());
+            _closingDialog.show(_workorder.getClosingNotes());
         }
     };
 
