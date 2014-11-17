@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 
 import com.fieldnation.R;
@@ -50,6 +51,8 @@ public class ExpiresDialog extends DialogFragmentBase {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -80,7 +83,9 @@ public class ExpiresDialog extends DialogFragmentBase {
 
         _calendar = Calendar.getInstance();
 
-        getDialog().setTitle("Request Workorder");
+        //getDialog().setTitle("Request Workorder");
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }

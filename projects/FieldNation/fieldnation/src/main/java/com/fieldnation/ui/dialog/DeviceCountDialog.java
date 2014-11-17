@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.NumberPicker;
 
@@ -46,6 +47,8 @@ public class DeviceCountDialog extends DialogFragmentBase {
             _maxCount = savedInstanceState.getInt(MAX_COUNT, 0);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -64,7 +67,9 @@ public class DeviceCountDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        getDialog().setTitle(R.string.device_count);
+//        getDialog().setTitle(R.string.device_count);
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }

@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,6 +28,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String STATE_TITLE = "STATE_TITLE";
 
     // UI
+    private TextView _titleTextView;
     private EditText _trackingIdEditText;
     private Spinner _carrierSpinner;
     private ArrayAdapter<CharSequence> _carrierAdapter;
@@ -59,6 +61,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 _title = savedInstanceState.getString(STATE_TITLE);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -75,6 +79,10 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_add_shipment, container, false);
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
         _trackingIdEditText = (EditText) v.findViewById(R.id.trackingid_edittext);
         _trackingIdEditText.setOnEditorActionListener(_onEditor);
@@ -108,7 +116,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         super.onResume();
 
         if (_title != null)
-            getDialog().setTitle(_title);
+            _titleTextView.setText(_title);
     }
 
     public void setListener(Listener listener) {

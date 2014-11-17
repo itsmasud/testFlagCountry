@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
         style="?attr/dialogContainerStyle"
@@ -13,54 +12,66 @@
 
         <TextView
             style="?attr/dialogTitleStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bundle Request" />
-
-        <TextView
-            android:id="@+id/accept_description"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="This workorder is part of a bundle of 10 workorders. By accepting this workorder you are accepting all of them." />
-
-    </LinearLayout>
-
-    <LinearLayout
-        style="?attr/dialogActionBarStyle"
-        android:orientation="horizontal">
+            android:text="Accept Bundle"
+            android:layout_marginBottom="@dimen/dialogContentPadding" />
 
         <LinearLayout
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_gravity=""
+            style="?attr/dialogContainerStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/bundle_button"
-                style="?attr/buttonDefaultStyle"
-                android:text="VIEW BUNDLE" />
+            <TextView
+                style="?attr/dialogTitleStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bundle Request" />
+
+            <TextView
+                android:id="@+id/accept_description"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This workorder is part of a bundle of 10 workorders. By accepting this workorder you are accepting all of them." />
+
         </LinearLayout>
 
         <LinearLayout
-            android:layout_gravity="center_vertical|right"
-            android:gravity="right"
-            android:layout_width="0dp"
-            android:layout_weight="1.50"
-            android:layout_height="wrap_content"
+            style="?attr/dialogActionBarStyle"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/cancel_button"
-                style="?attr/dialogCancelButtonStyle"
-                android:text="@string/cancel" />
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_gravity=""
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/ok_button"
-                style="?attr/dialogOkButtonStyle"
-                android:text="ACCEPT" />
+                <Button
+                    android:id="@+id/bundle_button"
+                    style="?attr/buttonDefaultStyle"
+                    android:text="VIEW BUNDLE" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_gravity="center_vertical|right"
+                android:gravity="right"
+                android:layout_width="0dp"
+                android:layout_weight="1.50"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/cancel_button"
+                    style="?attr/dialogCancelButtonStyle"
+                    android:text="CANCEL" />
+
+                <Button
+                    android:id="@+id/ok_button"
+                    style="?attr/dialogOkButtonStyle"
+                    android:text="ACCEPT" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

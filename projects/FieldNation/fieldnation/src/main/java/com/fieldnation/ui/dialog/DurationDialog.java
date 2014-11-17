@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,6 +49,8 @@ public class DurationDialog extends DialogFragmentBase {
                 _number = savedInstanceState.getString(STATE_NUMBER);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -62,7 +65,8 @@ public class DurationDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_duration, container, false);
 
-        getDialog().setTitle("Set Duration");
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+//        getDialog().setTitle("Set Duration");
 
         _dayTextView = (TextView) v.findViewById(R.id.day_textview);
         _hourTextView = (TextView) v.findViewById(R.id.hour_textview);

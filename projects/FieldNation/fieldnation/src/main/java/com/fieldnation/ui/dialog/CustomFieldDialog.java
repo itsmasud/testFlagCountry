@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private static final String STATE_CUSTOM_FIELD = "CustomFieldDialog:STATE_CUSTOM_FIELD";
 
     // UI
+    private TextView _titleTextView;
     private EditText _textEditText;
     private Button _dateTimeButton;
     private Spinner _spinner;
@@ -57,6 +59,8 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -70,6 +74,9 @@ public class CustomFieldDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.dialog_custom_field, container);
+
+
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
         _textEditText = (EditText) v.findViewById(R.id.text_edittext);
         Log.v(TAG, "onCreateView() _textEditText = " + _textEditText.toString());
@@ -88,6 +95,8 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }
@@ -113,9 +122,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 _tipLayout == null || _tipTextView == null || _customField == null)
             return;
 
-        if (getDialog() != null) {
-            getDialog().setTitle(_customField.getLabel());
-        }
+        _titleTextView.setText(_customField.getLabel());
 
         CustomField.FieldType type = _customField.getFieldType();
 
@@ -131,6 +138,9 @@ public class CustomFieldDialog extends DialogFragmentBase {
             } else {
                 _tipTextView.setText(_customField.getTip());
             }
+        } else if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
+            _tipLayout.setVisibility(View.VISIBLE);
+            _tipTextView.setText(_customField.getCustomFieldFormat());
         }
 
         switch (type) {
@@ -152,10 +162,10 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 _spinner.setVisibility(View.VISIBLE);
                 if (_customField.getPredefinedValues() != null) {
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                            android.R.layout.simple_spinner_dropdown_item,
+                            android.R.layout.simple_spinner_item,
                             _customField.getPredefinedValues());
 
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     _spinner.setAdapter(adapter);
                     if (!misc.isEmptyOrNull(_customField.getValue())) {
                         String val = _customField.getValue();
