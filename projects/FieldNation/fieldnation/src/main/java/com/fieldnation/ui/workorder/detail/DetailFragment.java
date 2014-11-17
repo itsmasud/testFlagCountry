@@ -196,6 +196,7 @@ public class DetailFragment extends WorkorderFragment {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
         }
+        setLoading(false);
     }
 
     /*-*********************************-*/
@@ -208,6 +209,7 @@ public class DetailFragment extends WorkorderFragment {
             intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
             intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
             getActivity().startActivity(intent);
+            setLoading(true);
         }
     };
 
@@ -223,6 +225,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onComplete() {
             getActivity().startService(
                     _service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -233,6 +236,7 @@ public class DetailFragment extends WorkorderFragment {
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+                setLoading(true);
             }
         }
 
@@ -240,6 +244,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onCheckIn() {
             getActivity().startService(
                     _service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -247,6 +252,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.acknowledgeHold(WEB_CHANGE,
                             _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -274,6 +280,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(_service.deleteExpense(WEB_CHANGE,
                     _workorder.getWorkorderId(),
                     expense.getExpenseId()));
+            setLoading(true);
         }
 
         @Override
@@ -303,8 +310,8 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.deleteDiscount(WEB_CHANGE,
                             _workorder.getWorkorderId(), discountId));
+            setLoading(true);
         }
-
     };
 
     private ActionView.Listener _actionView_listener = new ActionView.Listener() {
@@ -327,6 +334,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onNotInterested(Workorder workorder) {
             getActivity().startService(
                     _service.decline(WEB_CHANGE, _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -342,6 +350,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onComplete(Workorder workorder) {
             getActivity().startService(
                     _service.complete(WEB_CHANGE, workorder.getWorkorderId()));
+            setLoading(true);
         }
     };
 
@@ -354,6 +363,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.addExpense(WEB_CHANGE, _workorder.getWorkorderId(),
                             description, amount, category));
+            setLoading(true);
         }
 
         @Override
@@ -368,6 +378,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGE, workorder.getWorkorderId(), expires, reason,
                             expirationInSeconds, pay, schedule, expenses));
+            setLoading(true);
         }
     };
 
@@ -377,6 +388,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.addDiscount(WEB_CHANGE,
                             _workorder.getWorkorderId(), amount, description));
+            setLoading(true);
         }
 
         @Override
@@ -389,6 +401,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onOk(String message) {
             getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
+            setLoading(true);
         }
 
         @Override
@@ -402,6 +415,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onOk(Workorder workorder, int count) {
             getActivity().startService(
                     _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
+            setLoading(true);
         }
     };
 
@@ -412,6 +426,7 @@ public class DetailFragment extends WorkorderFragment {
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 getActivity().startService(_service.confirmAssignment(WEB_CHANGE,
                         _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end)));
+                setLoading(true);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -453,6 +468,7 @@ public class DetailFragment extends WorkorderFragment {
                 getActivity().startService(
                         _service.request(WEB_CHANGE,
                                 _workorder.getWorkorderId(), seconds));
+                setLoading(true);
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -487,6 +503,8 @@ public class DetailFragment extends WorkorderFragment {
         public void onSuccess(int resultCode, Bundle resultData) {
             if (resultCode == WEB_CHANGE) {
                 _workorder.dispatchOnChange();
+            } else {
+                setLoading(false);
             }
         }
 
@@ -496,6 +514,7 @@ public class DetailFragment extends WorkorderFragment {
                 _gs.invalidateAuthToken(_service.getAuthToken());
             }
             _gs.requestAuthenticationDelayed(_authClient);
+            setLoading(false);
             // TODO, toast failure, put ui in wait mode
         }
     };

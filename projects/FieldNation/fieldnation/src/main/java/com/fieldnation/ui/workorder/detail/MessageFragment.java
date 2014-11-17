@@ -95,13 +95,13 @@ public class MessageFragment extends WorkorderFragment {
 		getMessages();
 	}
 
-	private void setLoading(boolean isLoading) {
-		if (isLoading) {
-			_loadingLayout.setVisibility(View.VISIBLE);
-		} else {
-			_loadingLayout.setVisibility(View.GONE);
-		}
-	}
+//	private void setLoading(boolean isLoading) {
+//		if (isLoading) {
+//			_loadingLayout.setVisibility(View.VISIBLE);
+//		} else {
+//			_loadingLayout.setVisibility(View.GONE);
+//		}
+//	}
 
 	private void getMessages() {
 		if (_workorderService == null)

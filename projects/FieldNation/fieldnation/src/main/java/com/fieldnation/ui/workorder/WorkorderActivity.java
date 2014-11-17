@@ -21,7 +21,6 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
-import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -45,19 +44,18 @@ public class WorkorderActivity extends BaseActivity {
     private static final int RPC_GET_DETAIL = 1;
 
     // SavedInstance fields
-    private static final String AUTHTOKEN = "AUTHTOKEN";
-    private static final String USERNAME = "USERNAME";
-    private static final String WORKORDERID = "WORKORDERID";
-    private static final String CURRENT_TAB = "CURRENT_TAB";
-    private static final String CURRENTFRAG = "CURRENT_FRAG";
-    private static final String WORKORDER = "WORKORDER";
+    private static final String STATE_AUTHTOKEN = "STATE_AUTHTOKEN";
+    private static final String STATE_USERNAME = "STATE_USERNAME";
+    private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
+    private static final String STATE_CURRENT_TAB = "STATE_CURRENT_TAB";
+    private static final String STATE_CURRENTFRAG = "STATE_CURRENT_FRAG";
+    private static final String STATE_WORKORDER = "STATE_WORKORDER";
 
     // UI
     private ViewPager _viewPager;
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
     private RelativeLayout _loadingLayout;
-    private DeviceCountDialog _deviceCountDialog;
 
     // Data
     private GlobalState _gs;
@@ -77,11 +75,6 @@ public class WorkorderActivity extends BaseActivity {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-    public WorkorderActivity() {
-        super();
-        Log.v(TAG, "WorkorderActivity()");
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +107,6 @@ public class WorkorderActivity extends BaseActivity {
                             _workorderId = Long.parseLong(intent.getData().getQueryParameter("workorder_id"));
                         }
                     }
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -124,23 +116,23 @@ public class WorkorderActivity extends BaseActivity {
         if (savedInstanceState == null) {
             _gs.requestAuthentication(_authClient);
         } else {
-            if (savedInstanceState.containsKey(AUTHTOKEN)) {
-                _authToken = savedInstanceState.getString(AUTHTOKEN);
+            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
+                _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
             }
-            if (savedInstanceState.containsKey(USERNAME)) {
-                _username = savedInstanceState.getString(USERNAME);
+            if (savedInstanceState.containsKey(STATE_USERNAME)) {
+                _username = savedInstanceState.getString(STATE_USERNAME);
             }
-            if (savedInstanceState.containsKey(WORKORDERID)) {
-                _workorderId = savedInstanceState.getLong(WORKORDERID);
+            if (savedInstanceState.containsKey(STATE_WORKORDERID)) {
+                _workorderId = savedInstanceState.getLong(STATE_WORKORDERID);
             }
-            if (savedInstanceState.containsKey(CURRENT_TAB)) {
-                _currentTab = savedInstanceState.getInt(CURRENT_TAB);
+            if (savedInstanceState.containsKey(STATE_CURRENT_TAB)) {
+                _currentTab = savedInstanceState.getInt(STATE_CURRENT_TAB);
             }
-            if (savedInstanceState.containsKey(CURRENTFRAG)) {
-                _currentFragment = savedInstanceState.getInt(CURRENTFRAG);
+            if (savedInstanceState.containsKey(STATE_CURRENTFRAG)) {
+                _currentFragment = savedInstanceState.getInt(STATE_CURRENTFRAG);
             }
-            if (savedInstanceState.containsKey(WORKORDER)) {
-                _workorder = savedInstanceState.getParcelable(WORKORDER);
+            if (savedInstanceState.containsKey(STATE_WORKORDER)) {
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
             if (_authToken != null && _username != null) {
                 _woRpc = new WorkorderService(this, _username, _authToken, _rpcReceiver);
@@ -166,6 +158,29 @@ public class WorkorderActivity extends BaseActivity {
         populateUi();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (_authToken != null)
+            outState.putString(STATE_AUTHTOKEN, _authToken);
+
+        if (_username != null)
+            outState.putString(STATE_USERNAME, _username);
+
+        if (_workorderId != 0)
+            outState.putLong(STATE_WORKORDERID, _workorderId);
+
+        if (_currentTab != 0)
+            outState.putInt(STATE_CURRENT_TAB, _currentTab);
+
+        if (_currentFragment != 0)
+            outState.putInt(STATE_CURRENTFRAG, _currentFragment);
+
+        if (_workorder != null)
+            outState.putParcelable(STATE_WORKORDER, _workorder);
+
+        super.onSaveInstanceState(outState);
+    }
+
     private void buildFragments(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
         _viewPager.setOffscreenPageLimit(4);
@@ -181,26 +196,31 @@ public class WorkorderActivity extends BaseActivity {
                         if (frag instanceof DetailFragment) {
                             _fragments[0] = (WorkorderFragment) frag;
                             _fragments[0].setPageRequestListener(_pageRequestListener);
+                            _fragments[0].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
                         if (frag instanceof TasksFragment) {
                             _fragments[1] = (WorkorderFragment) frag;
                             _fragments[1].setPageRequestListener(_pageRequestListener);
+                            _fragments[1].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
                         if (frag instanceof MessageFragment) {
                             _fragments[2] = (WorkorderFragment) frag;
                             _fragments[2].setPageRequestListener(_pageRequestListener);
+                            _fragments[2].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
                         if (frag instanceof DeliverableFragment) {
                             _fragments[3] = (WorkorderFragment) frag;
                             _fragments[3].setPageRequestListener(_pageRequestListener);
+                            _fragments[3].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
                         if (frag instanceof NotificationFragment) {
                             _fragments[4] = (WorkorderFragment) frag;
                             _fragments[4].setPageRequestListener(_pageRequestListener);
+                            _fragments[4].setLoadingListener(_workorderFrag_loadingListener);
                         }
                     }
                 }
@@ -219,6 +239,7 @@ public class WorkorderActivity extends BaseActivity {
 
             for (int i = 0; i < _fragments.length; i++) {
                 _fragments[i].setPageRequestListener(_pageRequestListener);
+                _fragments[i].setLoadingListener(_workorderFrag_loadingListener);
             }
         }
 
@@ -273,9 +294,15 @@ public class WorkorderActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onRefresh() {
+        startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+        setLoading(true);
+    }
+
     /*-*************************-*/
     /*-			Events			-*/
-	/*-*************************-*/
+    /*-*************************-*/
     private PageRequestListener _pageRequestListener = new PageRequestListener() {
 
         @Override
@@ -338,6 +365,30 @@ public class WorkorderActivity extends BaseActivity {
         }
     };
 
+    private Workorder.Listener _workorder_listener = new Workorder.Listener() {
+        @Override
+        public void onChange(Workorder workorder) {
+            startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+            // setLoading(true);
+        }
+    };
+
+    private WorkorderFragment.LoadingListener _workorderFrag_loadingListener = new WorkorderFragment.LoadingListener() {
+        @Override
+        public void setLoading(boolean isLoading) {
+            WorkorderActivity.this.setLoading(isLoading);
+        }
+    };
+
+
+    public interface PageRequestListener {
+        public void requestPage(Class<? extends WorkorderFragment> clazz, Bundle request);
+    }
+
+    /*-*****************************-*/
+    /*-			Web Events			-*/
+    /*-*****************************-*/
+
     private AuthenticationClient _authClient = new AuthenticationClient() {
         @Override
         public void onAuthenticationFailed(Exception ex) {
@@ -385,21 +436,4 @@ public class WorkorderActivity extends BaseActivity {
         }
     };
 
-    private Workorder.Listener _workorder_listener = new Workorder.Listener() {
-        @Override
-        public void onChange(Workorder workorder) {
-            startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
-            // setLoading(true);
-        }
-    };
-
-    @Override
-    public void onRefresh() {
-        startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
-        setLoading(true);
-    }
-
-    public interface PageRequestListener {
-        public void requestPage(Class<? extends WorkorderFragment> clazz, Bundle request);
-    }
 }
