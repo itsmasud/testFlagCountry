@@ -1,60 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="5dp">
-
-    <TextView
-        android:id="@+id/title_textview"
-        style="?attr/dialogTitleStyle"
-        android:text="Add Discount" />
-
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Discount Description:" />
-
-    <EditText
-        android:id="@+id/description_edittext"
-        style="@style/EditText"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:hint="@string/description"
-        android:imeOptions="actionDone"
-        android:inputType="text" />
-
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Amount:" />
-
-    <EditText
-        android:id="@+id/amount_edittext"
-        style="@style/EditText"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:hint="@string/amount"
-        android:imeOptions="actionDone"
-        android:inputType="numberDecimal" />
+    android:layout_height="match_parent">
 
     <LinearLayout
-        style="?attr/dialogActionBarStyle"
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/cancel_button"
-            style="?attr/dialogCancelButtonStyle"
-            android:text="@string/cancel" />
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/dialogTitleStyle"
+            android:text="Add Discount" />
 
-        <Button
-            android:id="@+id/ok_button"
-            style="?attr/dialogOkButtonStyle"
-            android:text="@string/save" />
+        <TextView
+            style="@style/WorkorderDetail_FieldSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Discount Description:" />
+
+        <EditText
+            android:id="@+id/description_edittext"
+            style="@style/EditText"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:hint="@string/description"
+            android:imeOptions="actionDone"
+            android:inputType="text" />
+
+        <TextView
+            style="@style/WorkorderDetail_FieldSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount:" />
+
+        <EditText
+            android:id="@+id/amount_edittext"
+            style="@style/EditText"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:hint="@string/amount"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal" />
+
+        <LinearLayout
+            style="?attr/dialogActionBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="?attr/dialogCancelButtonStyle"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="?attr/dialogOkButtonStyle"
+                android:text="@string/save" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

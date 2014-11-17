@@ -1,45 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp">
-
-    <TextView
-        android:id="@+id/title_textview"
-        style="?attr/dialogTitleStyle"
-        android:text="Request Workorder" />
-
-    <TextView
-        style="@style/WorkorderDetail_Field_Bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="When does this request expire?" />
-
-    <Button
-        android:id="@+id/expiration_button"
-        style="?android:attr/spinnerStyle"
-        android:gravity="center_horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginLeft="10dp"
-        android:text="@string/never" />
+    android:layout_height="match_parent">
 
     <LinearLayout
-        style="?attr/dialogActionBarStyle"
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/dialogTitleStyle"
+            android:text="Request Workorder" />
+
+        <TextView
+            style="@style/WorkorderDetail_Field_Bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="When does this request expire?" />
 
         <Button
-            android:id="@+id/cancel_button"
-            style="?attr/dialogCancelButtonStyle"
-            android:text="@string/cancel" />
+            android:id="@+id/expiration_button"
+            style="?android:attr/spinnerStyle"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="10dp"
+            android:text="@string/never" />
 
-        <Button
-            android:id="@+id/ok_button"
-            style="?attr/dialogOkButtonStyle"
-            android:text="@string/ok" />
+        <LinearLayout
+            style="?attr/dialogActionBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="?attr/dialogCancelButtonStyle"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="?attr/dialogOkButtonStyle"
+                android:text="@string/ok" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

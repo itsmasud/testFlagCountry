@@ -1,37 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="5dp">
-
-    <TextView
-        android:id="@+id/title_textview"
-        style="?attr/dialogTitleStyle"
-        android:text="Assign/Add New" />
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/shipments_linearlayout"
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical">
 
-    <LinearLayout
-        style="?attr/dialogActionBarStyle"
-        android:id="@+id/action_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/dialogTitleStyle"
+            android:text="Assign/Add New" />
 
-        <Button
-            android:id="@+id/cancel_button"
-            style="?attr/dialogCancelButtonStyle"
-            android:text="@string/cancel" />
+        <LinearLayout
+            android:id="@+id/shipments_linearlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
 
-        <Button
-            android:id="@+id/add_button"
-            style="?attr/dialogOkButtonStyle"
-            android:text="@string/add" />
+        <LinearLayout
+            style="?attr/dialogActionBarStyle"
+            android:id="@+id/action_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="?attr/dialogCancelButtonStyle"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/add_button"
+                style="?attr/dialogOkButtonStyle"
+                android:text="@string/add" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
