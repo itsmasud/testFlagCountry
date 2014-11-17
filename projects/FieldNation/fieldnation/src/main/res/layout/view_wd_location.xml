@@ -24,12 +24,11 @@
         android:layout_height="wrap_content"
         android:text="3.5 mi" />
 
-    <!-- TODO -->
-    <!--fragment
-        android:id="@+id/location_map"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/-->
+    <TextView
+        android:layout_gravity="left"
+        android:id="@+id/open_map_button"
+        style="?attr/buttonTextLinkStyle"
+        android:text="Show Map" />
 
     <TextView
         android:id="@+id/contactinfo_textview"
