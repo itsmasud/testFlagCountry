@@ -304,7 +304,13 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
             _counterReason = info.getExplanation();
             _expires = info.getExpires();
-            _expirationDate = ISO8601.fromUTC(Calendar.getInstance().getTimeInMillis() + info.getExpiresAfter() * 1000);
+            if (_expires) {
+                try {
+                    _expirationDate = ISO8601.fromUTC(Calendar.getInstance().getTimeInMillis() + info.getExpiresAfter() * 1000);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
 
         super.show();
