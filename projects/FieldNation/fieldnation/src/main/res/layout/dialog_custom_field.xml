@@ -1,78 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp">
-
-    <RelativeLayout
-        android:id="@+id/tip_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_marginRight="5dp"
-            android:id="@+id/tiplabel_textview"
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tip_colon_space" />
-
-        <TextView
-            android:layout_toRightOf="@+id/tiplabel_textview"
-            android:id="@+id/tip_textview"
-            style="@style/WorkorderDetail_Field_Gray"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/text_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/datetime_button"
-            android:gravity="center_vertical"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/datetime_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/ic_calendar"
-            android:visibility="gone" />
-    </RelativeLayout>
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
+    android:layout_height="match_parent">
 
     <LinearLayout
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/cancel_button"
-            style="@style/DialogCancelButton"
-            android:text="@string/cancel" />
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/dialogTitleStyle"
+            android:text="Custom Field" />
 
-        <Button
-            android:id="@+id/ok_button"
-            style="@style/DialogOkButton"
-            android:text="@string/save" />
+        <RelativeLayout
+            android:id="@+id/tip_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_marginRight="5dp"
+                android:id="@+id/tiplabel_textview"
+                style="@style/WorkorderDetail_FieldSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tip_colon_space" />
+
+            <TextView
+                android:layout_toRightOf="@+id/tiplabel_textview"
+                android:id="@+id/tip_textview"
+                style="@style/WorkorderDetail_Field_Gray"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/text_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/datetime_button"
+                android:gravity="center_vertical"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/datetime_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_calendar"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+
+        <LinearLayout
+            style="?attr/dialogActionBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="?attr/dialogCancelButtonStyle"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="?attr/dialogOkButtonStyle"
+                android:text="@string/save" />
+        </LinearLayout>
+
+
     </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>

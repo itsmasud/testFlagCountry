@@ -1,12 +1,16 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -14,8 +18,11 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
-public class ExpiresDialog extends Dialog {
+public class ExpiresDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.ExpiresDialog";
+
+    // State
+    private static final String STATE_WORKORDER = "STATE_WORKORDER";
 
     // Ui
     private Button _expirationButton;
@@ -25,20 +32,46 @@ public class ExpiresDialog extends Dialog {
     private TimePickerDialog _timePicker;
 
     // Data
-    private FragmentManager _fm;
     private Calendar _calendar;
     private boolean _isDateSet;
     private Listener _listener;
+    private Workorder _workorder;
 
-    public ExpiresDialog(Context context) {
-        super(context);
-        setContentView(R.layout.dialog_expiration);
+    /*-*************************************-*/
+    /*-             Life Cycle              -*/
+    /*-*************************************-*/
+    public static ExpiresDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, ExpiresDialog.class);
+    }
 
-        _expirationButton = (Button) findViewById(R.id.expiration_button);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+        }
+        super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_workorder != null)
+            outState.putParcelable(STATE_WORKORDER, _workorder);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.dialog_expiration, container, false);
+
+        _expirationButton = (Button) v.findViewById(R.id.expiration_button);
         _expirationButton.setOnClickListener(_expiration_onClick);
-        _cancelButton = (Button) findViewById(R.id.cancel_button);
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
-        _okButton = (Button) findViewById(R.id.ok_button);
+        _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
 
         final Calendar c = Calendar.getInstance();
@@ -50,20 +83,33 @@ public class ExpiresDialog extends Dialog {
 
         _calendar = Calendar.getInstance();
 
-        setTitle("Request Workorder");
+        //getDialog().setTitle("Request Workorder");
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        return v;
     }
 
-    public void show(FragmentManager fm, Listener listener) {
-        _fm = fm;
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void setListener(Listener listener) {
         _listener = listener;
+    }
+
+
+    public void show(Workorder workorder) {
         _isDateSet = false;
-        _expirationButton.setText("Never");
-        show();
+        _workorder = workorder;
+
+        super.show();
     }
 
 	/*-*************************-*/
     /*-			Events			-*/
-	/*-*************************-*/
+    /*-*************************-*/
 
     private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -105,9 +151,9 @@ public class ExpiresDialog extends Dialog {
         public void onClick(View v) {
             if (_listener != null) {
                 if (_isDateSet) {
-                    _listener.onOk(null);
+                    _listener.onOk(_workorder, null);
                 } else {
-                    _listener.onOk(ISO8601.fromCalendar(_calendar));
+                    _listener.onOk(_workorder, ISO8601.fromCalendar(_calendar));
                 }
             }
             dismiss();
@@ -115,7 +161,7 @@ public class ExpiresDialog extends Dialog {
     };
 
     public interface Listener {
-        public void onOk(String dateTime);
+        public void onOk(Workorder workorder, String dateTime);
     }
 
 }

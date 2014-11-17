@@ -1,8 +1,8 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
 
     lintOptions {
         abortOnError false
@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 19
-        versionCode 9
-        versionName "0.009"
+        versionCode 10
+        versionName "0.010"
         applicationId "com.fieldnation.android"
     }
     buildTypes {
@@ -49,5 +49,5 @@ dependencies {
     compile 'com.android.support:support-v4:+'
     compile 'com.google.android.gms:play-services:+'
     compile 'com.android.support:gridlayout-v7:+'
-    compile 'com.android.support:appcompat-v7:19.1.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
 }

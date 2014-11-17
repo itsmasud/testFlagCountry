@@ -1,73 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp">
-
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Time:" />
-
-    <Button
-        android:id="@+id/start_spinner"
-        style="?android:attr/spinnerStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/start_time" />
-
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="End Time:" />
-
-    <Button
-        android:id="@+id/end_spinner"
-        style="?android:attr/spinnerStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/end_time" />
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/devices_layout"
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
+            style="?attr/dialogTitleStyle"
+            android:text="Worklog" />
+
+        <TextView
             style="@style/WorkorderDetail_FieldSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Device Count:" />
+            android:text="Start Time:" />
 
-        <EditText
-            android:id="@+id/devices_edittext"
-            style="@style/EditText"
+        <Button
+            android:id="@+id/start_spinner"
+            style="?android:attr/spinnerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/number_of_devices"
-            android:imeOptions="actionNext"
-            android:inputType="number" />
-    </LinearLayout>
+            android:hint="@string/start_time" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        <TextView
+            style="@style/WorkorderDetail_FieldSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="End Time:" />
 
         <Button
-            android:id="@+id/cancel_button"
-            style="@style/DialogCancelButton"
-            android:text="@string/cancel" />
+            android:id="@+id/end_spinner"
+            style="?android:attr/spinnerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/end_time" />
 
-        <Button
-            android:id="@+id/ok_button"
-            style="@style/DialogOkButton"
-            android:text="@string/save" />
+        <LinearLayout
+            android:id="@+id/devices_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/WorkorderDetail_FieldSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device Count:" />
+
+            <EditText
+                android:id="@+id/devices_edittext"
+                style="@style/EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/number_of_devices"
+                android:imeOptions="actionNext"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="?attr/dialogActionBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="?attr/dialogCancelButtonStyle"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="?attr/dialogOkButtonStyle"
+                android:text="@string/save" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

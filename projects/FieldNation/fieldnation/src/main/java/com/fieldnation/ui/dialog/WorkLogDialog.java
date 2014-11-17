@@ -1,9 +1,12 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,8 +21,13 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import java.text.ParseException;
 import java.util.Calendar;
 
-public class WorkLogDialog extends Dialog {
-    private static final String TAG = "ui.WorkLogDialog";
+public class WorkLogDialog extends DialogFragmentBase {
+    private static final String TAG = "ui.dialog.WorkLogDialog";
+
+    // State
+    private static final String STATE_TITLE = "STATE_TITLE";
+    private static final String STATE_LOGGEDWORK = "STATE_LOGGED_WORK";
+    private static final String STATE_DEVICES_COUNT = "STATE_DEVICES_COUNT";
 
     // UI
     private Button _startButton;
@@ -31,36 +39,70 @@ public class WorkLogDialog extends Dialog {
     private DatePickerDialog _datePicker;
     private TimePickerDialog _timePicker;
 
+    // Data State
+    private String _title;
+    private LoggedWork _loggedWork;
+    private boolean _showDevicesCount;
+
     // Data
-    private FragmentManager _fm;
+    private Listener _listener;
     private Calendar _startCalendar;
     private Calendar _endCalendar;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
-    private Listener _listener;
-    private LoggedWork _loggedWork;
-    private boolean _showDevicesCount;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-    public WorkLogDialog(Context context) {
-        super(context);
-        setContentView(R.layout.dialog_add_worklog);
+    public static WorkLogDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, WorkLogDialog.class);
+    }
 
-        _startButton = (Button) findViewById(R.id.start_spinner);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TITLE))
+                _title = savedInstanceState.getString(STATE_TITLE);
+            if (savedInstanceState.containsKey(STATE_DEVICES_COUNT))
+                _showDevicesCount = savedInstanceState.getBoolean(STATE_DEVICES_COUNT);
+            if (savedInstanceState.containsKey(STATE_LOGGEDWORK))
+                _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
+        }
+        super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(STATE_DEVICES_COUNT, _showDevicesCount);
+        if (_title != null)
+            outState.putString(STATE_TITLE, _title);
+        if (_loggedWork != null)
+            outState.putParcelable(STATE_LOGGEDWORK, _loggedWork);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.dialog_add_worklog, container, false);
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        _startButton = (Button) v.findViewById(R.id.start_spinner);
         _startButton.setOnClickListener(_start_onClick);
 
-        _endButton = (Button) findViewById(R.id.end_spinner);
+        _endButton = (Button) v.findViewById(R.id.end_spinner);
         _endButton.setOnClickListener(_end_onClick);
 
-        _devicesLayout = (LinearLayout) findViewById(R.id.devices_layout);
-        _devicesEditText = (EditText) findViewById(R.id.devices_edittext);
+        _devicesLayout = (LinearLayout) v.findViewById(R.id.devices_layout);
+        _devicesEditText = (EditText) v.findViewById(R.id.devices_edittext);
 
-        _okButton = (Button) findViewById(R.id.ok_button);
+        _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
 
-        _cancelButton = (Button) findViewById(R.id.cancel_button);
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
 
@@ -73,54 +115,67 @@ public class WorkLogDialog extends Dialog {
 
         _startCalendar = Calendar.getInstance();
         _endCalendar = Calendar.getInstance();
+
+        return v;
     }
 
-    public void show(FragmentManager fm, int titleResId, LoggedWork loggedWork, boolean showDeviceCount,
-                     Listener listener) {
-        show(fm, getContext().getText(titleResId),loggedWork, showDeviceCount, listener);
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateUi();
     }
 
-    public void show(FragmentManager fm, CharSequence title, LoggedWork loggedWork, boolean showDeviceCount,
-                     Listener listener) {
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
+    public void show(int titleResId, LoggedWork loggedWork, boolean showDeviceCount) {
+        show(getActivity().getText(titleResId), loggedWork, showDeviceCount);
+    }
+
+    public void show(CharSequence title, LoggedWork loggedWork, boolean showDeviceCount) {
         _startIsSet = false;
         _endIsSet = false;
-        _listener = listener;
         _loggedWork = loggedWork;
-
-        _fm = fm;
         _showDevicesCount = showDeviceCount;
-        setTitle(title);
+        _title = (String) title;
 
-        if (showDeviceCount) {
+        super.show();
+    }
+
+    private void populateUi() {
+        if (_devicesLayout == null)
+            return;
+
+        if (_showDevicesCount) {
             _devicesLayout.setVisibility(View.VISIBLE);
         } else {
             _devicesLayout.setVisibility(View.GONE);
         }
 
-        if (_loggedWork != null) {
-            try {
-                String startDate = _loggedWork.getStartDate();
-                _startButton.setText(misc.formatDateTime(ISO8601.toCalendar(startDate), false));
-            } catch (ParseException ex) {
-                ex.printStackTrace();
-            }
+        if (_loggedWork == null)
+            return;
 
-            try {
-                String endDate = _loggedWork.getEndDate();
-                _endButton.setText(misc.formatDateTime(ISO8601.toCalendar(endDate), false));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            try {
-                _devicesEditText.setText(_loggedWork.getNoOfDevices().toString());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        try {
+            String startDate = _loggedWork.getStartDate();
+            _startButton.setText(misc.formatDateTime(ISO8601.toCalendar(startDate), false));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
         }
-        show();
-    }
 
+        try {
+            String endDate = _loggedWork.getEndDate();
+            _endButton.setText(misc.formatDateTime(ISO8601.toCalendar(endDate), false));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            _devicesEditText.setText(_loggedWork.getNoOfDevices().toString());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -184,7 +239,7 @@ public class WorkLogDialog extends Dialog {
             if ((_startIsSet && _endIsSet) || (_loggedWork != null && (_startIsSet || _endIsSet)) || (_loggedWork != null && _showDevicesCount && deviceCount != _loggedWork.getNoOfDevices())) {
                 WorkLogDialog.this.dismiss();
                 if (_listener != null) {
-                    _listener.onOk(_startCalendar, _endCalendar, deviceCount);
+                    _listener.onOk(_loggedWork, _startCalendar, _endCalendar, deviceCount);
                 }
             }
         }
@@ -199,7 +254,7 @@ public class WorkLogDialog extends Dialog {
     };
 
     public interface Listener {
-        public void onOk(Calendar start, Calendar end, int deviceCount);
+        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount);
 
         public void onCancel();
     }

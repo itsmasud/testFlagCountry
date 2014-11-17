@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/tileStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/container_view"
+        style="?attr/tileContainerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="?attr/tileTextTitleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/tileContentPadding"
+            android:text="@string/reason_for_counter_offer" />
+
+        <EditText
+            android:id="@+id/request_reason_edittext"
+            style="?attr/tileEditText"
+            android:layout_height="wrap_content"
+            android:hint="@string/reason_for_request"
+            android:inputType="textMultiLine"
+            android:scrollHorizontally="false" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/expires_checkbox"
+                style="?attr/tileCheckBoxStyle"
+                android:layout_width="wrap_content"
+                android:text="Valid until" />
+
+            <Button
+                android:id="@+id/expires_button"
+                style="?attr/buttonTextLinkStyle"
+                android:layout_width="wrap_content"
+                android:text="10/20/2014 11:11am" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/tac_checkbox"
+                style="?attr/tileCheckBoxStyle"
+                android:layout_width="wrap_content"
+                android:text="I accept" />
+
+            <Button
+                android:id="@+id/tac_button"
+                style="?attr/buttonTextLinkStyle"
+                android:text="@string/terms_and_conditions" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

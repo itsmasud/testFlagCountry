@@ -6,7 +6,7 @@ public class DelayedCall<Tag> extends AsyncTaskEx<Long, Void, Object> {
 	private Listener<Tag> _listener;
 	private Tag _tag;
 	private boolean _finished = false;
-	private boolean _cancelled = false;
+	private boolean _canceled = false;
 
 	public void execute(long timeInMilliseconds, Listener<Tag> listener, Tag tag) {
 		_listener = listener;
@@ -22,7 +22,7 @@ public class DelayedCall<Tag> extends AsyncTaskEx<Long, Void, Object> {
 	}
 
 	public void cancel() {
-		_cancelled = true;
+		_canceled = true;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class DelayedCall<Tag> extends AsyncTaskEx<Long, Void, Object> {
 
 	@Override
 	protected void onPostExecute(Object result) {
-		if (_finished || _cancelled)
+		if (_finished || _canceled)
 			return;
 
 		if (_listener != null) {

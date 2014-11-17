@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <bool name="use_https">true</bool>
     <string name="default_username">hexixtech</string>
     <string name="default_password">hexixtech</string>
     <string name="fn_hostname">dev.fieldnation.com</string>

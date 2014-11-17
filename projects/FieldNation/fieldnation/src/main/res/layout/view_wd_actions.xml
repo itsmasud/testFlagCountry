@@ -17,7 +17,7 @@
 
             <Button
                 android:id="@+id/not_interested_button"
-                style="@style/ButtonWhite"
+                style="?attr/buttonWhiteStyle"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
@@ -27,7 +27,7 @@
 
             <Button
                 android:id="@+id/counteroffer_button"
-                style="@style/ButtonWhite"
+                style="?attr/buttonWhiteStyle"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
@@ -38,7 +38,7 @@
 
             <Button
                 android:id="@+id/request_button"
-                style="@style/ButtonWhite"
+                style="?attr/buttonWhiteStyle"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
@@ -50,7 +50,7 @@
 
         <Button
             android:id="@+id/complete_button"
-            style="@style/ButtonOrange"
+            style="?attr/buttonOrangeStyle"
             android:layout_width="match_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"

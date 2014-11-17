@@ -60,6 +60,19 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
         _listener = listener;
     }
 
+    @Override
+    public void setWorkorder(Workorder workorder) {
+        _workorder = workorder;
+        refresh();
+    }
+
+    private void refresh() {
+        if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
+            _notesTextView.setText(_workorder.getClosingNotes());
+        }
+    }
+
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -72,21 +85,6 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
         }
     };
 
-	/*-*************************************-*/
-    /*-				Mutators				-*/
-	/*-*************************************-*/
-
-    @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
-        refresh();
-    }
-
-    private void refresh() {
-        if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
-            _notesTextView.setText(_workorder.getClosingNotes());
-        }
-    }
 
     public interface Listener {
         public void onChangeClosingNotes(String closingNotes);

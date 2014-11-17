@@ -3,11 +3,11 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,10 +23,9 @@ import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
-import java.util.List;
 
-public class ScheduleDialog extends DialogFragment {
-    private static final String TAG = "ui.workorder.detail.ScheduleDialog";
+public class ScheduleDialog extends DialogFragmentBase {
+    private static final String TAG = "ui.dialog.ScheduleDialog";
 
     // State
     private static final String STATE_SCHEDULE = "STATE_SCHEDULE";
@@ -55,7 +54,6 @@ public class ScheduleDialog extends DialogFragment {
     // Data
     private int _mode;
     private Schedule _sched;
-    private FragmentManager _fm;
     private Calendar _startCal;
     private Calendar _endCal;
     private boolean _startIsSet = false;
@@ -63,28 +61,12 @@ public class ScheduleDialog extends DialogFragment {
     private Listener _listener;
 
 
-    public static ScheduleDialog getInstance(FragmentManager fm, String tag) {
-        ScheduleDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof ScheduleDialog && frag.getTag().equals(tag)) {
-                    d = (ScheduleDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new ScheduleDialog();
-        d._fm = fm;
-        return d;
-
-    }
-
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
+    public static ScheduleDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, ScheduleDialog.class);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,8 +75,9 @@ public class ScheduleDialog extends DialogFragment {
                 _sched = savedInstanceState.getParcelable(STATE_SCHEDULE);
             }
         }
-
         super.onCreate(savedInstanceState);
+
+        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -143,7 +126,8 @@ public class ScheduleDialog extends DialogFragment {
         _startCal = Calendar.getInstance();
         _endCal = Calendar.getInstance();
 
-        getDialog().setTitle(R.string.counter_offer_schedule);
+        //getDialog().setTitle(R.string.counter_offer_schedule);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }
@@ -158,9 +142,9 @@ public class ScheduleDialog extends DialogFragment {
         _listener = listener;
     }
 
-    public void show(String tag, Schedule schedule) {
+    public void show(Schedule schedule) {
         _sched = schedule;
-        super.show(_fm, tag);
+        super.show();
     }
 
     private void populateUi() {
@@ -223,7 +207,6 @@ public class ScheduleDialog extends DialogFragment {
     };
 
     private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
-
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
             String tag = view.getTag();
@@ -232,7 +215,11 @@ public class ScheduleDialog extends DialogFragment {
                         _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
                 _startIsSet = true;
 
-                _startDateButton.setText(misc.formatDateTimeLong(_startCal));
+                if (_mode == MODE_EXACT) {
+                    _dateTimeButton.setText(misc.formatDateTimeLong(_startCal));
+                } else {
+                    _startDateButton.setText(misc.formatDateTimeLong(_startCal));
+                }
 
             } else if (tag.equals("end")) {
                 _endCal.set(_endCal.get(Calendar.YEAR), _endCal.get(Calendar.MONTH),

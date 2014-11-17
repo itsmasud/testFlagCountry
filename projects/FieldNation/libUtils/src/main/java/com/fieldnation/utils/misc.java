@@ -920,7 +920,7 @@ public class misc {
 			result += days + " days ";
 		}
 		if (hours > 0) {
-			result += hours + " hrs ";
+			result += hours + " hours ";
 		}
 		if (min > 0) {
 			result += min + " min ";

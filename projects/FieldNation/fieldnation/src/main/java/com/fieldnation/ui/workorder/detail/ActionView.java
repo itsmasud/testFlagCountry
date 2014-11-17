@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -98,7 +97,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
         WorkorderStatus stat = workorder.getStatus().getWorkorderStatus();
 
-        if (stat == WorkorderStatus.CANCELLED || stat == WorkorderStatus.COMPLETED) {
+        if (stat == WorkorderStatus.CANCELED || stat == WorkorderStatus.COMPLETED) {
             setVisibility(View.GONE);
         } else {
             setVisibility(View.VISIBLE);
@@ -115,8 +114,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
             case AVAILABLE:
                 buildStatusAvailable();
                 break;
-            case CANCELLED:
-                buildStatusCancelled();
+            case CANCELED:
+                buildStatusCanceled();
                 break;
             case COMPLETED:
             case APPROVED:
@@ -161,7 +160,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private void buildStatusInProgress() {
     }
 
-    private void buildStatusCancelled() {
+    private void buildStatusCanceled() {
     }
 
     private void buildStatusCompleted() {
@@ -219,9 +218,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private View.OnClickListener _counteroffer_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), CounterOfferActivity.class);
-            intent.putExtra(CounterOfferActivity.INTENT_WORKORDER, _workorder);
-            getContext().startActivity(intent);
+            if (_listener != null)
+                _listener.onShowCounterOfferDialog(_workorder);
         }
     };
 
@@ -233,6 +231,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         public void onConfirmAssignment(Workorder workorder);
 
         public void onRequest(Workorder workorder);
+
+        public void onShowCounterOfferDialog(Workorder workorder);
     }
 
 }

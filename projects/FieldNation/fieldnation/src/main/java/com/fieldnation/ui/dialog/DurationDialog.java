@@ -1,135 +1,181 @@
 package com.fieldnation.ui.dialog;
 
-import com.fieldnation.R;
-import com.fieldnation.utils.misc;
-
-import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class DurationDialog extends Dialog {
-	private static final String TAG = "ui.dialog.DurationDialog";
-	// Ui
-	private TextView _dayTextView;
-	private TextView _hourTextView;
-	private TextView _minTextView;
+import com.fieldnation.R;
+import com.fieldnation.utils.misc;
 
-	private Button[] _numberPad;
+public class DurationDialog extends DialogFragmentBase {
+    private static final String TAG = "ui.dialog.DurationDialog";
 
-	private Button _okButton;
-	private Button _cancelButton;
-	private ImageView _deleteButton;
+    // State
+    private static final String STATE_NUMBER = "STATE_NUMBER";
 
-	// Data
-	private Listener _listener;
-	private String _number = "";
+    // Ui
+    private TextView _dayTextView;
+    private TextView _hourTextView;
+    private TextView _minTextView;
 
-	public DurationDialog(Context context) {
-		super(context);
-		setContentView(R.layout.dialog_duration);
-		setTitle("Set Duration");
+    private Button[] _numberPad;
 
-		_dayTextView = (TextView) findViewById(R.id.day_textview);
-		_hourTextView = (TextView) findViewById(R.id.hour_textview);
-		_minTextView = (TextView) findViewById(R.id.min_textview);
+    private Button _okButton;
+    private Button _cancelButton;
+    private ImageView _deleteButton;
 
-		_numberPad = new Button[10];
-		_numberPad[0] = (Button) findViewById(R.id.button0);
-		_numberPad[0].setOnClickListener(_number_onClick);
-		_numberPad[1] = (Button) findViewById(R.id.button1);
-		_numberPad[1].setOnClickListener(_number_onClick);
-		_numberPad[2] = (Button) findViewById(R.id.button2);
-		_numberPad[2].setOnClickListener(_number_onClick);
-		_numberPad[3] = (Button) findViewById(R.id.button3);
-		_numberPad[3].setOnClickListener(_number_onClick);
-		_numberPad[4] = (Button) findViewById(R.id.button4);
-		_numberPad[4].setOnClickListener(_number_onClick);
-		_numberPad[5] = (Button) findViewById(R.id.button5);
-		_numberPad[5].setOnClickListener(_number_onClick);
-		_numberPad[6] = (Button) findViewById(R.id.button6);
-		_numberPad[6].setOnClickListener(_number_onClick);
-		_numberPad[7] = (Button) findViewById(R.id.button7);
-		_numberPad[7].setOnClickListener(_number_onClick);
-		_numberPad[8] = (Button) findViewById(R.id.button8);
-		_numberPad[8].setOnClickListener(_number_onClick);
-		_numberPad[9] = (Button) findViewById(R.id.button9);
-		_numberPad[9].setOnClickListener(_number_onClick);
+    // Data
+    private Listener _listener;
+    private String _number = "";
 
-		_okButton = (Button) findViewById(R.id.ok_button);
-		_okButton.setOnClickListener(_ok_onClick);
-		_cancelButton = (Button) findViewById(R.id.cancel_button);
-		_cancelButton.setOnClickListener(_cancel_onClick);
-		_deleteButton = (ImageView) findViewById(R.id.delete_imageview);
-		_deleteButton.setOnClickListener(_delete_onClick);
-	}
+    /*-*************************************-*/
+    /*-             Life Cycle              -*/
+    /*-*************************************-*/
+    public static DurationDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, DurationDialog.class);
+    }
 
-	public void show(Listener listener) {
-		_listener = listener;
-		show();
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_NUMBER))
+                _number = savedInstanceState.getString(STATE_NUMBER);
+        }
+        super.onCreate(savedInstanceState);
 
-	private void render() {
-		String padded = _number;
+        setStyle(STYLE_NO_TITLE, 0);
+    }
 
-		if (padded.length() < 6)
-			padded = misc.repeat("0", 6 - _number.length()) + padded;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_number != null)
+            outState.putString(STATE_NUMBER, _number);
 
-		_dayTextView.setText(padded.substring(0, 2));
-		_hourTextView.setText(padded.substring(2, 4));
-		_minTextView.setText(padded.substring(4, 6));
-	}
+        super.onSaveInstanceState(outState);
+    }
 
-	private View.OnClickListener _number_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			String tag = (String) v.getTag();
-			if (_number.length() < 6) {
-				_number += tag;
-				render();
-			}
-		}
-	};
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.dialog_duration, container, false);
 
-	private View.OnClickListener _ok_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (_listener != null) {
-				long seconds = Long.parseLong(_dayTextView.getText() + "") * 86400;
-				seconds += Long.parseLong(_hourTextView.getText() + "") * 3600;
-				seconds += Long.parseLong(_minTextView.getText() + "") * 60;
-				_listener.onOk(seconds * 1000);
-			}
-			dismiss();
-		}
-	};
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+//        getDialog().setTitle("Set Duration");
 
-	private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (_listener != null)
-				_listener.onCancel();
-			dismiss();
-		}
-	};
+        _dayTextView = (TextView) v.findViewById(R.id.day_textview);
+        _hourTextView = (TextView) v.findViewById(R.id.hour_textview);
+        _minTextView = (TextView) v.findViewById(R.id.min_textview);
 
-	private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+        _numberPad = new Button[10];
+        _numberPad[0] = (Button) v.findViewById(R.id.button0);
+        _numberPad[0].setOnClickListener(_number_onClick);
+        _numberPad[1] = (Button) v.findViewById(R.id.button1);
+        _numberPad[1].setOnClickListener(_number_onClick);
+        _numberPad[2] = (Button) v.findViewById(R.id.button2);
+        _numberPad[2].setOnClickListener(_number_onClick);
+        _numberPad[3] = (Button) v.findViewById(R.id.button3);
+        _numberPad[3].setOnClickListener(_number_onClick);
+        _numberPad[4] = (Button) v.findViewById(R.id.button4);
+        _numberPad[4].setOnClickListener(_number_onClick);
+        _numberPad[5] = (Button) v.findViewById(R.id.button5);
+        _numberPad[5].setOnClickListener(_number_onClick);
+        _numberPad[6] = (Button) v.findViewById(R.id.button6);
+        _numberPad[6].setOnClickListener(_number_onClick);
+        _numberPad[7] = (Button) v.findViewById(R.id.button7);
+        _numberPad[7].setOnClickListener(_number_onClick);
+        _numberPad[8] = (Button) v.findViewById(R.id.button8);
+        _numberPad[8].setOnClickListener(_number_onClick);
+        _numberPad[9] = (Button) v.findViewById(R.id.button9);
+        _numberPad[9].setOnClickListener(_number_onClick);
 
-		@Override
-		public void onClick(View v) {
-			if (_number.length() > 0) {
-				_number = _number.substring(0, _number.length() - 1);
-				render();
-			}
-		}
-	};
+        _okButton = (Button) v.findViewById(R.id.ok_button);
+        _okButton.setOnClickListener(_ok_onClick);
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _cancelButton.setOnClickListener(_cancel_onClick);
+        _deleteButton = (ImageView) v.findViewById(R.id.delete_imageview);
+        _deleteButton.setOnClickListener(_delete_onClick);
 
-	public interface Listener {
-		public void onOk(long timeMilliseconds);
+        return v;
+    }
 
-		public void onCancel();
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        populateUi();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
+    private void populateUi() {
+        if (_dayTextView == null)
+            return;
+
+        String padded = _number;
+
+        if (padded.length() < 6)
+            padded = misc.repeat("0", 6 - _number.length()) + padded;
+
+        _dayTextView.setText(padded.substring(0, 2));
+        _hourTextView.setText(padded.substring(2, 4));
+        _minTextView.setText(padded.substring(4, 6));
+    }
+
+    private View.OnClickListener _number_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String tag = (String) v.getTag();
+            if (_number.length() < 6) {
+                _number += tag;
+                populateUi();
+            }
+        }
+    };
+
+    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                long seconds = Long.parseLong(_dayTextView.getText() + "") * 86400;
+                seconds += Long.parseLong(_hourTextView.getText() + "") * 3600;
+                seconds += Long.parseLong(_minTextView.getText() + "") * 60;
+                _listener.onOk(seconds * 1000);
+            }
+            dismiss();
+        }
+    };
+
+    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onCancel();
+            dismiss();
+        }
+    };
+
+    private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (_number.length() > 0) {
+                _number = _number.substring(0, _number.length() - 1);
+                populateUi();
+            }
+        }
+    };
+
+    public interface Listener {
+        public void onOk(long timeMilliseconds);
+
+        public void onCancel();
+    }
 }

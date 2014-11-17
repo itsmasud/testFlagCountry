@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="DurationNumberPad" parent="@style/ButtonWhite">
+    <dimen name="dialogGutter">24dp</dimen>
+    <dimen name="dialogActionBarPadding">16dp</dimen>
+    <dimen name="dialogActionBarGutter">16dp</dimen>
+    <dimen name="dialogContentPadding">16dp</dimen>
+    <dimen name="dialogActionBarBottomMargin">8dp</dimen>
+    <dimen name="dialogButtonTouchTarget">@dimen/Button_Touch_Target</dimen>
+    <dimen name="dialogButtonHeight">36dp</dimen>
+
+    <color name="dialogBg">#FFf3f3eb</color>
+
+    <style name="DurationNumberPad" parent="@ButtonWhite">
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20sp</item>
         <item name="android:layout_width">64dp</item>
@@ -24,5 +34,81 @@
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:textSize">10sp</item>
     </style>
+
+    <style name="Dialog">
+        <item name="android:background">@color/dialogBg</item>
+    </style>
+
+    <style name="DialogContainer">
+        <item name="android:paddingLeft">@dimen/dialogGutter</item>
+        <item name="android:paddingRight">@dimen/dialogGutter</item>
+        <item name="android:paddingTop">@dimen/dialogGutter</item>
+        <item name="android:paddingBottom">@dimen/dialogActionBarPadding</item>
+    </style>
+
+    <style name="DialogTitle" parent="@style/Text_Headline">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DialogLabel" parent="@style/Text_Subhead">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DialogBody" parent="@style/Text_Body_1">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/dialogContentPadding</item>
+    </style>
+
+    <style name="DialogCaption" parent="@style/Text_Caption">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DialogEditText" parent="@style/EditText">
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:layout_height">36dp</item>
+    </style>
+
+    <style name="DialogActionBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dialogButtonTouchTarget</item>
+        <item name="android:layout_marginBottom">@dimen/dialogActionBarBottomMargin</item>
+        <item name="android:paddingLeft">@dimen/dialogActionBarGutter</item>
+        <item name="android:paddingRight">@dimen/dialogActionBarGutter</item>
+        <item name="android:gravity">right</item>
+    </style>
+
+    <style name="DialogCancelButton" parent="ButtonWhite">
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:layout_marginRight">4dp</item>
+    </style>
+
+    <style name="DialogOkButton" parent="ButtonWhite">
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:layout_marginLeft">4dp</item>
+    </style>
+
+    <style name="DialogOkButtonGreen" parent="ButtonGreen">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="DialogDivider" parent="DividerFull">
+        <item name="android:layout_marginBottom">@dimen/dialogContentPadding</item>
+    </style>
+
+    <style name="DialogSpinnerButton" parent="@ButtonSpinner"></style>
 
 </resources>

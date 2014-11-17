@@ -1,11 +1,13 @@
 package com.fieldnation.ui.dialog;
 
-import com.fieldnation.R;
-
-import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,158 +18,210 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class ShipmentAddDialog extends Dialog {
-	private static final String TAG = "ui.workorder.detail.ShipmentAddDialog";
+import com.fieldnation.R;
 
-	// UI
-	private EditText _trackingIdEditText;
-	private Spinner _carrierSpinner;
-	private ArrayAdapter<CharSequence> _carrierAdapter;
-	private EditText _carrierEditText;
-	private EditText _descriptionEditText;
-	private RadioButton _shipToSiteRadio;
-	private Button _okButton;
-	private Button _cancelButton;
-	private LinearLayout _carrierNameLayout;
+public class ShipmentAddDialog extends DialogFragmentBase {
+    private static final String TAG = "ui.dialog.ShipmentAddDialog";
 
-	// Data
-	private Listener _listener;
-	private long _taskId = 0;
+    // State
+    private static final String STATE_TASKID = "STATE_TASKID";
+    private static final String STATE_TITLE = "STATE_TITLE";
 
-	/*-*************************************-*/
-	/*-				Life Cycle				-*/
-	/*-*************************************-*/
-	public ShipmentAddDialog(Context context) {
-		super(context);
-		setContentView(R.layout.dialog_add_shipment);
+    // UI
+    private TextView _titleTextView;
+    private EditText _trackingIdEditText;
+    private Spinner _carrierSpinner;
+    private ArrayAdapter<CharSequence> _carrierAdapter;
+    private EditText _carrierEditText;
+    private EditText _descriptionEditText;
+    private RadioButton _shipToSiteRadio;
+    private Button _okButton;
+    private Button _cancelButton;
+    private LinearLayout _carrierNameLayout;
 
-		_trackingIdEditText = (EditText) findViewById(R.id.trackingid_edittext);
-		_trackingIdEditText.setOnEditorActionListener(_onEditor);
+    // Data
+    private Listener _listener;
+    private long _taskId = 0;
+    private String _title;
 
-		_carrierSpinner = (Spinner) findViewById(R.id.carrier_spinner);
-		_carrierSpinner.setOnItemSelectedListener(_carrier_selected);
+    /*-*************************************-*/
+    /*-				Life Cycle				-*/
+    /*-*************************************-*/
+    public static ShipmentAddDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, ShipmentAddDialog.class);
+    }
 
-		_carrierAdapter = ArrayAdapter.createFromResource(getContext(), R.array.carrier_list,
-				android.R.layout.simple_spinner_item);
-		_carrierAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		_carrierSpinner.setAdapter(_carrierAdapter);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TASKID))
+                _taskId = savedInstanceState.getLong(STATE_TASKID);
 
-		_carrierNameLayout = (LinearLayout) findViewById(R.id.carriername_layout);
-		_carrierEditText = (EditText) findViewById(R.id.carrier_edittext);
-		_carrierEditText.setOnEditorActionListener(_onEditor);
-		_descriptionEditText = (EditText) findViewById(R.id.description_edittext);
-		_descriptionEditText.setOnEditorActionListener(_onEditor);
-		_shipToSiteRadio = (RadioButton) findViewById(R.id.shiptosite_radio);
+            if (savedInstanceState.containsKey(STATE_TITLE))
+                _title = savedInstanceState.getString(STATE_TITLE);
+        }
+        super.onCreate(savedInstanceState);
 
-		_okButton = (Button) findViewById(R.id.ok_button);
-		_okButton.setOnClickListener(_okButton_onClick);
+        setStyle(STYLE_NO_TITLE, 0);
+    }
 
-		_cancelButton = (Button) findViewById(R.id.cancel_button);
-		_cancelButton.setOnClickListener(_cancel_onClick);
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_title != null)
+            outState.putString(STATE_TITLE, _title);
 
-	}
+        if (_taskId != 0)
+            outState.putLong(STATE_TASKID, _taskId);
 
-	public void show(int titleResId, Listener listener) {
-		show(getContext().getText(titleResId), listener);
-	}
+        super.onSaveInstanceState(outState);
+    }
 
-	public void show(CharSequence title, Listener listener) {
-		_listener = listener;
-		setTitle(title);
-		show();
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.dialog_add_shipment, container, false);
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
-	private TextView.OnEditorActionListener _onEditor = new TextView.OnEditorActionListener() {
-		@Override
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			boolean handled = false;
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-			if (actionId == EditorInfo.IME_ACTION_NEXT) {
-				if (v == _trackingIdEditText) {
-					if (_carrierNameLayout.getVisibility() == View.VISIBLE) {
-						_carrierEditText.requestFocus();
-						handled = true;
-					} else {
-						_descriptionEditText.requestFocus();
-						handled = true;
-					}
-				} else if (v == _carrierEditText) {
-					_descriptionEditText.requestFocus();
-					handled = true;
-				}
-			} else if (actionId == EditorInfo.IME_ACTION_DONE) {
-				_okButton_onClick.onClick(null);
-				handled = true;
-			}
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
-			return handled;
-		}
-	};
+        _trackingIdEditText = (EditText) v.findViewById(R.id.trackingid_edittext);
+        _trackingIdEditText.setOnEditorActionListener(_onEditor);
 
-	private AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
-				_carrierNameLayout.setVisibility(View.VISIBLE);
-			} else {
-				_carrierNameLayout.setVisibility(View.GONE);
-			}
-		}
+        _carrierSpinner = (Spinner) v.findViewById(R.id.carrier_spinner);
+        _carrierSpinner.setOnItemSelectedListener(_carrier_selected);
 
-		@Override
-		public void onNothingSelected(AdapterView<?> parent) {
-		}
-	};
+        _carrierAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.carrier_list,
+                android.R.layout.simple_spinner_item);
+        _carrierAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        _carrierSpinner.setAdapter(_carrierAdapter);
 
-	private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			// TODO validate input
-			if (_listener != null) {				
-				if(_taskId != 0){
-					if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
-						_listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
-								_descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked(), _taskId);
-					} else {
-						_listener.onOk(_trackingIdEditText.getText().toString(),
-								_carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
-								_shipToSiteRadio.isChecked(), _taskId);
-					}
-					
-				} else {				
-					if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
-						_listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
-								_descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked());
-					} else {
-						_listener.onOk(_trackingIdEditText.getText().toString(),
-								_carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
-							_shipToSiteRadio.isChecked());
-				}
-				}
-			}
-			ShipmentAddDialog.this.dismiss();
-		}
-	};
+        _carrierNameLayout = (LinearLayout) v.findViewById(R.id.carriername_layout);
+        _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
+        _carrierEditText.setOnEditorActionListener(_onEditor);
+        _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
+        _descriptionEditText.setOnEditorActionListener(_onEditor);
+        _shipToSiteRadio = (RadioButton) v.findViewById(R.id.shiptosite_radio);
 
-	private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			dismiss();
-		}
-	};
+        _okButton = (Button) v.findViewById(R.id.ok_button);
+        _okButton.setOnClickListener(_okButton_onClick);
 
-	public interface Listener {
-		public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId);
-		public void onOk(String trackingId, String carrier, String description, boolean shipToSite);
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _cancelButton.setOnClickListener(_cancel_onClick);
 
-		public void onCancel();
-	}
-	
-	public void setTaskId(long taskId){
-		_taskId = taskId;
-	}
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (_title != null)
+            _titleTextView.setText(_title);
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
+    public void show(int titleResId, long taskId) {
+        show(getActivity().getText(titleResId), taskId);
+    }
+
+    public void show(CharSequence title, long taskId) {
+        _title = (String) title;
+        _taskId = taskId;
+        show();
+    }
+
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
+    private TextView.OnEditorActionListener _onEditor = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            boolean handled = false;
+
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                if (v == _trackingIdEditText) {
+                    if (_carrierNameLayout.getVisibility() == View.VISIBLE) {
+                        _carrierEditText.requestFocus();
+                        handled = true;
+                    } else {
+                        _descriptionEditText.requestFocus();
+                        handled = true;
+                    }
+                } else if (v == _carrierEditText) {
+                    _descriptionEditText.requestFocus();
+                    handled = true;
+                }
+            } else if (actionId == EditorInfo.IME_ACTION_DONE) {
+                _okButton_onClick.onClick(null);
+                handled = true;
+            }
+
+            return handled;
+        }
+    };
+
+    private AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+                _carrierNameLayout.setVisibility(View.VISIBLE);
+            } else {
+                _carrierNameLayout.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+    private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO validate input
+            if (_listener != null) {
+                if (_taskId != 0) {
+                    if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+                        _listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
+                                _descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked(), _taskId);
+                    } else {
+                        _listener.onOk(_trackingIdEditText.getText().toString(),
+                                _carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
+                                _shipToSiteRadio.isChecked(), _taskId);
+                    }
+
+                } else {
+                    if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+                        _listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
+                                _descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked());
+                    } else {
+                        _listener.onOk(_trackingIdEditText.getText().toString(),
+                                _carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
+                                _shipToSiteRadio.isChecked());
+                    }
+                }
+            }
+            ShipmentAddDialog.this.dismiss();
+        }
+    };
+
+    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+        }
+    };
+
+    public interface Listener {
+        public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId);
+
+        public void onOk(String trackingId, String carrier, String description, boolean shipToSite);
+
+        public void onCancel();
+    }
+
 
 }

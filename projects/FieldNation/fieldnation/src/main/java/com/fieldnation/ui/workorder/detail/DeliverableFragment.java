@@ -79,13 +79,14 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _reviewList;
     private LinearLayout _filesLayout;
     private View _bar1View;
-    private AppPickerDialog _dialog;
     private RelativeLayout _loadingLayout;
     private TextView _noDocsTextView;
     private ActionBarTopView _topBar;
+
     private ConfirmDialog _confirmDialog;
     private ClosingNotesDialog _closingDialog;
     private DeviceCountDialog _deviceCountDialog;
+    private AppPickerDialog _appPickerDialog;
 
     // Data
     private GlobalState _gs;
@@ -139,6 +140,12 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog.setListener(_deviceCountListener);
+
+        _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
+        _appPickerDialog.setListener(_appdialog_listener);
+
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _confirmDialog.setListener(_confirmDialog_listener);
 
         checkMedia();
 
@@ -293,7 +300,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     _uploadCount++;
                     _uploadingSlot = slot;
                     _uploadingSlotView = uv;
-                    _dialog.show();
+                    _appPickerDialog.show();
                     break;
                 }
             }
@@ -304,20 +311,16 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (_dialog == null) {
-            _dialog = new AppPickerDialog(getActivity(), _dialog_listener);
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            _dialog.addIntent(intent, "Get Content");
 
-            if (getActivity().getPackageManager().hasSystemFeature(
-                    PackageManager.FEATURE_CAMERA)) {
-                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                _dialog.addIntent(intent, "Take Picture");
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
-            }
-            _dialog.finish();
+        if (getActivity().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
     }
 
@@ -461,8 +464,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onCheckOut() {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
-                _deviceCountDialog = DeviceCountDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
-                _deviceCountDialog.show(TAG, _workorder, pay.getMaxDevice(), _deviceCountListener);
+                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
@@ -484,38 +486,44 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onConfirm() {
-            final Workorder workorder = _workorder;
-            _confirmDialog.show(getActivity().getSupportFragmentManager(),
-                    workorder.getSchedule(), new ConfirmDialog.Listener() {
-                        @Override
-                        public void onOk(String startDate,
-                                         long durationMilliseconds) {
-                            try {
-                                long end = durationMilliseconds
-                                        + ISO8601.toUtc(startDate);
-                                Intent intent = _service.confirmAssignment(
-                                        WEB_CHANGE,
-                                        _workorder.getWorkorderId(), startDate,
-                                        ISO8601.fromUTC(end));
-                                getActivity().startService(intent);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
+            _confirmDialog.show(_workorder, _workorder.getSchedule());
         }
 
         @Override
         public void onEnterClosingNotes() {
-            _closingDialog.show(TAG, _workorder.getClosingNotes(), _closingNotes_onOk);
+            _closingDialog.show(_workorder.getClosingNotes());
         }
     };
 
-    private AppPickerDialog.Listener _dialog_listener = new AppPickerDialog.Listener() {
+    private ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
+            try {
+                long end = durationMilliseconds
+                        + ISO8601.toUtc(startDate);
+                Intent intent = _service.confirmAssignment(
+                        WEB_CHANGE,
+                        _workorder.getWorkorderId(), startDate,
+                        ISO8601.fromUTC(end));
+                getActivity().startService(intent);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onCancel(Workorder workorder) {
+        }
+
+        @Override
+        public void termsOnClick(Workorder workorder) {
+            // TODO STUB .termsOnClick()
+            Log.v(TAG, "STUB .termsOnClick()");
+        }
+
+    };
+
+    private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
         @Override
         public void onClick(AppPickerPackage pack) {
@@ -553,7 +561,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _uploadCount++;
                 _uploadingSlot = slot;
                 _uploadingSlotView = view;
-                _dialog.show();
+                _appPickerDialog.show();
             } else {
                 Toast.makeText(
                         getActivity(),
@@ -597,9 +605,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 try {
                     _profile = Profile
                             .fromJson(new JsonObject(
-                                    new String(
-                                            resultData
-                                                    .getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+                                    new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
                 } catch (Exception e) {
                     // TODO mulligan?
                     e.printStackTrace();

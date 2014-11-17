@@ -1,66 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="5dp">
-
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Expense Description:" />
-
-    <EditText
-        android:id="@+id/description_edittext"
-        style="@style/EditText"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:hint="@string/description"
-        android:imeOptions="actionNext"
-        android:inputType="text" />
-
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Price:" />
-
-    <EditText
-        android:id="@+id/amount_edittext"
-        style="@style/EditText"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:hint="@string/amount"
-        android:imeOptions="actionNext"
-        android:inputType="numberDecimal" />
-
-    <TextView
-        style="@style/WorkorderDetail_FieldSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Category:" />
-
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    android:layout_width="match_parent">
 
     <LinearLayout
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/cancel_button"
-            style="@style/DialogCancelButton"
-            android:text="@string/cancel" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/ok_button"
-            style="@style/DialogOkButton"
-            android:text="@string/save" />
+            <TextView
+                style="?attr/dialogTitleStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Expense" />
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expense Description" />
+
+            <EditText
+                android:id="@+id/description_edittext"
+                style="?attr/dialogEditTextStyle"
+                android:layout_width="fill_parent"
+                android:layout_marginBottom="@dimen/dialogContentPadding"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Price" />
+
+            <EditText
+                android:id="@+id/amount_edittext"
+                style="?attr/dialogEditTextStyle"
+                android:layout_width="fill_parent"
+                android:layout_marginBottom="@dimen/dialogContentPadding"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal" />
+
+            <TextView
+                style="?attr/dialogLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category" />
+
+            <Spinner
+                android:id="@+id/category_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/actionbar_view"
+            style="?attr/dialogActionBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="?attr/dialogCancelButtonStyle"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="?attr/dialogOkButtonStyle"
+                android:text="@string/save" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

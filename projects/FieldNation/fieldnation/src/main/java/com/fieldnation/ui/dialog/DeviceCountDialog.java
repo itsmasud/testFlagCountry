@@ -2,24 +2,21 @@ package com.fieldnation.ui.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.NumberPicker;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 
-import java.util.List;
-
 /**
  * Created by michael.carver on 10/28/2014.
  */
-public class DeviceCountDialog extends DialogFragment {
+public class DeviceCountDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.DeviceCountDialog";
 
     // State
@@ -32,34 +29,17 @@ public class DeviceCountDialog extends DialogFragment {
 
     // Data
     private Listener _listener;
-    private FragmentManager _fm;
     private Workorder _workorder;
     private int _maxCount;
 
-    // grabs the dialog from the fragment stack if it already exists
-    public static DeviceCountDialog getInstance(FragmentManager fm, String tag) {
-        DeviceCountDialog d = null;
-        List<Fragment> frags = fm.getFragments();
-        if (frags != null) {
-            for (int i = 0; i < frags.size(); i++) {
-                Fragment frag = frags.get(i);
-                if (frag instanceof DeviceCountDialog && frag.getTag().equals(tag)) {
-                    d = (DeviceCountDialog) frag;
-                    break;
-                }
-            }
-        }
-        if (d == null)
-            d = new DeviceCountDialog();
-
-        d._fm = fm;
-
-        return d;
-    }
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
+    // grabs the dialog from the fragment stack if it already exists
+    public static DeviceCountDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, DeviceCountDialog.class);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +47,8 @@ public class DeviceCountDialog extends DialogFragment {
             _maxCount = savedInstanceState.getInt(MAX_COUNT, 0);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -85,20 +67,23 @@ public class DeviceCountDialog extends DialogFragment {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        getDialog().setTitle(R.string.device_count);
+//        getDialog().setTitle(R.string.device_count);
 
-        populateUi();
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }
 
-
-    public void show(String tag, Workorder workorder, int maxDeviceCount, Listener listener) {
-        _maxCount = maxDeviceCount;
-        _listener = listener;
-        _workorder = workorder;
+    @Override
+    public void onResume() {
+        super.onResume();
         populateUi();
-        show(_fm, tag);
+    }
+
+    public void show(Workorder workorder, int maxDeviceCount) {
+        _maxCount = maxDeviceCount;
+        _workorder = workorder;
+        show();
     }
 
     public void setListener(Listener listener) {
