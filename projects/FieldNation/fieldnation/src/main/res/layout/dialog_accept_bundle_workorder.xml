@@ -5,6 +5,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <TextView
+        style="?attr/dialogTitleStyle"
+        android:text="Accept Bundle"
+        android:layout_marginBottom="@dimen/dialogContentPadding" />
+
     <LinearLayout
         style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
@@ -54,7 +59,7 @@
             <Button
                 android:id="@+id/cancel_button"
                 style="?attr/dialogCancelButtonStyle"
-                android:text="@string/cancel" />
+                android:text="CANCEL" />
 
             <Button
                 android:id="@+id/ok_button"

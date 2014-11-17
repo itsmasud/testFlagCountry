@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,6 +58,8 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -89,6 +92,8 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
         return v;
     }
 
@@ -113,9 +118,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 _tipLayout == null || _tipTextView == null || _customField == null)
             return;
 
-        if (getDialog() != null) {
-            getDialog().setTitle(_customField.getLabel());
-        }
+        _tipTextView.setText(_customField.getLabel());
 
         CustomField.FieldType type = _customField.getFieldType();
 

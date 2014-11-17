@@ -6,6 +6,10 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <TextView
+        style="?attr/dialogTitleStyle"
+        android:text="Installed Devices" />
+
 
     <TextView
         style="@style/WorkorderDetail_FieldSubTitle"

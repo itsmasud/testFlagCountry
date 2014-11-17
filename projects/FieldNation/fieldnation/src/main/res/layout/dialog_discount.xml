@@ -6,6 +6,11 @@
     android:padding="5dp">
 
     <TextView
+        android:id="@+id/title_textview"
+        style="?attr/dialogTitleStyle"
+        android:text="Add Discount" />
+
+    <TextView
         style="@style/WorkorderDetail_FieldSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

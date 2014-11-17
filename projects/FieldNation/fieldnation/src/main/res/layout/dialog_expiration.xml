@@ -6,6 +6,11 @@
     android:padding="10dp">
 
     <TextView
+        android:id="@+id/title_textview"
+        style="?attr/dialogTitleStyle"
+        android:text="Request Workorder" />
+
+    <TextView
         style="@style/WorkorderDetail_Field_Bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
