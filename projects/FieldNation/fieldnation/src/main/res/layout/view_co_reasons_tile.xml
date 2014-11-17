@@ -17,6 +17,7 @@
             style="?attr/tileTextTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/tileContentPadding"
             android:text="@string/reason_for_counter_offer" />
 
         <EditText
@@ -55,7 +56,7 @@
                 android:id="@+id/tac_checkbox"
                 style="?attr/tileCheckBoxStyle"
                 android:layout_width="wrap_content"
-                android:text="I accept the" />
+                android:text="I accept" />
 
             <Button
                 android:id="@+id/tac_button"
