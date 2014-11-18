@@ -155,6 +155,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
             if (_service != null) {
                 _gs.invalidateAuthToken(_service.getAuthToken());
             }
