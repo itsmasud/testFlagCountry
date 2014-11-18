@@ -357,7 +357,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
-            _expenseDialog.show();
+            _expenseDialog.show(false);
         }
 
         @Override

@@ -291,7 +291,7 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onShowAddExpenseDialog() {
-            _expenseDialog.show();
+            _expenseDialog.show(true);
         }
 
         @Override
