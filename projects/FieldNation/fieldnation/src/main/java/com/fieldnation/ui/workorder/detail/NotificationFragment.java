@@ -1,8 +1,13 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -15,262 +20,271 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.State;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class NotificationFragment extends WorkorderFragment {
-	private static final String TAG = "ui.workorder.detail.NotificationFragment";
-	private int WEB_LIST_NOTIFICATIONS = 1;
+    private static final String TAG = "ui.workorder.detail.NotificationFragment";
+    private int WEB_LIST_NOTIFICATIONS = 1;
 
-	// UI
-	private PullToRefreshListView _listview;
-	private SmoothProgressBar _loadingProgress;
-	private TextView _emptyTextView;
+    // UI
+    private PullToRefreshListView _listview;
+    private SmoothProgressBar _loadingProgress;
+    private TextView _emptyTextView;
 
-	// Data
-	private GlobalState _gs;
-	private Workorder _workorder;
-	private Random _rand = new Random();
-	private WorkorderService _service;
-	private List<Notification> _notes;
-	private NotificationListAdapter _adapter;
+    // Data
+    private GlobalState _gs;
+    private Workorder _workorder;
+    private Random _rand = new Random();
+    private WorkorderService _service;
+    private List<Notification> _notes;
+    private NotificationListAdapter _adapter;
 
 	/*-*************************************-*/
-	/*-				LifeCycle				-*/
-	/*-*************************************-*/
+    /*-				LifeCycle				-*/
+    /*-*************************************-*/
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_workorder_notifications, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_workorder_notifications, container, false);
+    }
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		Log.v(TAG, "onCreateView");
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.v(TAG, "onCreateView");
 
-		_gs = (GlobalState) getActivity().getApplicationContext();
-		_gs.requestAuthentication(_authclient);
-		_listview = (PullToRefreshListView) view.findViewById(R.id.listview);
-		_listview.setOnRefreshListener(_listview_onRefresh);
-		_listview.setStateListener(_listview_stateListener);
-		_loadingProgress = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
-		_loadingProgress.setSmoothProgressDrawableCallbacks(_progressCallback);
-		_loadingProgress.setMax(100);
-		_emptyTextView = (TextView) view.findViewById(R.id.empty_textview);
-	}
+        _gs = (GlobalState) getActivity().getApplicationContext();
+        _gs.requestAuthentication(_authclient);
+        _listview = (PullToRefreshListView) view.findViewById(R.id.listview);
+        _listview.setOnRefreshListener(_listview_onRefresh);
+        _listview.setStateListener(_listview_stateListener);
+        _loadingProgress = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
+        _loadingProgress.setSmoothProgressDrawableCallbacks(_progressCallback);
+        _loadingProgress.setMax(100);
+        _emptyTextView = (TextView) view.findViewById(R.id.empty_textview);
+    }
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		WEB_LIST_NOTIFICATIONS = 0;
-		if (_adapter != null) {
-			_adapter.notifyDataSetInvalidated();
-			_adapter = null;
-		}
-	};
+    @Override
+    public void onPause() {
+        super.onPause();
+        WEB_LIST_NOTIFICATIONS = 0;
+        if (_adapter != null) {
+            _adapter.notifyDataSetInvalidated();
+            _adapter = null;
+        }
+    }
 
-	@Override
-	public void update() {
-		getNotifications();
-	}
 
-	@Override
-	public void setWorkorder(Workorder workorder) {
-		Log.v(TAG,
-				"setWorkorder: wokorder==null:" + (workorder == null) + " _service==null:" + (_service == null) + " _gs==null:" + (_gs == null));
-		_workorder = workorder;
+    @Override
+    public void update() {
+        getNotifications();
+    }
 
-		populateUi();
-		getNotifications();
-	}
+    @Override
+    public void setWorkorder(Workorder workorder) {
+        Log.v(TAG,
+                "setWorkorder: wokorder==null:" + (workorder == null) + " _service==null:" + (_service == null) + " _gs==null:" + (_gs == null));
+        _workorder = workorder;
 
-	public void populateUi() {
-		Log.v(TAG, "populateUi, _notes:" + (_notes == null) + " _workorder:" + (_workorder == null));
-		if (_notes == null)
-			return;
-		if (_workorder == null)
-			return;
+        populateUi();
+        getNotifications();
+    }
 
-		Log.v(TAG, "populateUi");
+    public void populateUi() {
+        Log.v(TAG, "populateUi, _notes:" + (_notes == null) + " _workorder:" + (_workorder == null));
+        if (_notes == null)
+            return;
+        if (_workorder == null)
+            return;
 
-		if (getAdapter() != null)
-			getAdapter().setNotifications(_notes);
+        Log.v(TAG, "populateUi");
 
-		if (_notes.size() == 0) {
-			_emptyTextView.setVisibility(View.VISIBLE);
-		}
+        if (getAdapter() != null)
+            getAdapter().setNotifications(_notes);
 
-		_loadingProgress.setVisibility(View.GONE);
-		_listview.onRefreshComplete();
-	}
+        if (_notes.size() == 0) {
+            _emptyTextView.setVisibility(View.VISIBLE);
+        }
 
-	private void getNotifications() {
-		Log.v(TAG, "getNotifications, _service:" + (_service == null) + " _workorder:" + (_workorder == null));
-		if (_service == null)
-			return;
+        _loadingProgress.setVisibility(View.GONE);
+        _listview.onRefreshComplete();
+        setLoading(false);
+    }
 
-		if (_workorder == null)
-			return;
-		Log.v(TAG, "getNotifications");
+    private void getNotifications() {
+        Log.v(TAG, "getNotifications, _service:" + (_service == null) + " _workorder:" + (_workorder == null));
+        if (_service == null)
+            return;
 
-		_listview.setRefreshing();
-		_loadingProgress.setVisibility(View.VISIBLE);
-		_notes = null;
-		WEB_LIST_NOTIFICATIONS = _rand.nextInt();
-		_emptyTextView.setVisibility(View.GONE);
-		try {
-			_gs.startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			Log.v(TAG, "BP");
-		}
-	}
+        if (_workorder == null)
+            return;
+        Log.v(TAG, "getNotifications");
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
-	private SmoothProgressDrawable.Callbacks _progressCallback = new SmoothProgressDrawable.Callbacks() {
+        _listview.setRefreshing();
+        _loadingProgress.setVisibility(View.VISIBLE);
+        _notes = null;
+        WEB_LIST_NOTIFICATIONS = _rand.nextInt();
+        _emptyTextView.setVisibility(View.GONE);
+        try {
+            _gs.startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
+            setLoading(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.v(TAG, "BP");
+        }
+    }
 
-		@Override
-		public void onStop() {
-			_loadingProgress.setVisibility(View.GONE);
-		}
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
+    private SmoothProgressDrawable.Callbacks _progressCallback = new SmoothProgressDrawable.Callbacks() {
 
-		@Override
-		public void onStart() {
-			_loadingProgress.setVisibility(View.VISIBLE);
-		}
+        @Override
+        public void onStop() {
+            _loadingProgress.setVisibility(View.GONE);
+        }
 
-	};
+        @Override
+        public void onStart() {
+            _loadingProgress.setVisibility(View.VISIBLE);
+        }
 
-	private PullToRefreshListView.OnRefreshListener _listview_onRefresh = new PullToRefreshListView.OnRefreshListener() {
-		@Override
-		public void onRefresh() {
-			getNotifications();
-		}
-	};
+    };
 
-	private PullToRefreshListView.StateListener _listview_stateListener = new PullToRefreshListView.StateListener() {
-		@Override
-		public void onPull(int pullPercent) {
-			if (_listview.getState() == PullToRefreshListView.State.PULL_TO_REFRESH) {
-				float sep = 4f - 4 * Math.abs(pullPercent) / 100f;
-				if (sep < 0)
-					sep = 0f;
+    private PullToRefreshListView.OnRefreshListener _listview_onRefresh = new PullToRefreshListView.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            getNotifications();
+        }
+    };
 
-				_loadingProgress.setSmoothProgressDrawableSpeed(sep);
-			}
-		}
+    private PullToRefreshListView.StateListener _listview_stateListener = new PullToRefreshListView.StateListener() {
+        @Override
+        public void onPull(int pullPercent) {
+            if (_listview.getState() == PullToRefreshListView.State.PULL_TO_REFRESH) {
+                float sep = 4f - 4 * Math.abs(pullPercent) / 100f;
+                if (sep < 0)
+                    sep = 0f;
 
-		@Override
-		public void onStopPull() {
-			_loadingProgress.setSmoothProgressDrawableSpeed(2f);
-			_loadingProgress.setSmoothProgressDrawableReversed(true);
-			_loadingProgress.setSmoothProgressDrawableSectionsCount(1);
-			_loadingProgress.progressiveStop();
-			_loadingProgress.setVisibility(View.GONE);
-		}
+                _loadingProgress.setSmoothProgressDrawableSpeed(sep);
+            }
+        }
 
-		@Override
-		public void onStateChange(State state) {
-			if (state == State.RELEASE_TO_REFRESH) {
-				// if (getAdapter() != null)
-				// getAdapter().update(false);
-				_loadingProgress.progressiveStart();
-			}
-		}
+        @Override
+        public void onStopPull() {
+            _loadingProgress.setSmoothProgressDrawableSpeed(2f);
+            _loadingProgress.setSmoothProgressDrawableReversed(true);
+            _loadingProgress.setSmoothProgressDrawableSectionsCount(1);
+            _loadingProgress.progressiveStop();
+            _loadingProgress.setVisibility(View.GONE);
+        }
 
-		@Override
-		public void onStartPull() {
-			_loadingProgress.setSmoothProgressDrawableSectionsCount(1);
-			_loadingProgress.setSmoothProgressDrawableReversed(true);
-			_loadingProgress.progressiveStart();
-		}
+        @Override
+        public void onStateChange(State state) {
+            if (state == State.RELEASE_TO_REFRESH) {
+                // if (getAdapter() != null)
+                // getAdapter().update(false);
+                _loadingProgress.progressiveStart();
+            }
+        }
 
-	};
+        @Override
+        public void onStartPull() {
+            _loadingProgress.setSmoothProgressDrawableSectionsCount(1);
+            _loadingProgress.setSmoothProgressDrawableReversed(true);
+            _loadingProgress.progressiveStart();
+        }
 
-	private AuthenticationClient _authclient = new AuthenticationClient() {
-		@Override
-		public void onAuthenticationFailed(Exception ex) {
-			Log.v(TAG, "onAuthenticationFailed");
-			_gs.requestAuthenticationDelayed(_authclient);
-		}
+    };
 
-		@Override
-		public void onAuthentication(String username, String authToken) {
-			Log.v(TAG, "onAuthentication");
-			_service = new WorkorderService(_gs, username, authToken, _resultReceiver);
-			getNotifications();
-		}
+    private AuthenticationClient _authclient = new AuthenticationClient() {
+        @Override
+        public void onAuthenticationFailed(Exception ex) {
+            Log.v(TAG, "onAuthenticationFailed");
+            _gs.requestAuthenticationDelayed(_authclient);
+        }
 
-		@Override
-		public GlobalState getGlobalState() {
-			return _gs;
-		}
-	};
+        @Override
+        public void onAuthentication(String username, String authToken) {
+            Log.v(TAG, "onAuthentication");
+            _service = new WorkorderService(_gs, username, authToken, _resultReceiver);
+            getNotifications();
+        }
 
-	private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
-		@Override
-		public void onError(int resultCode, Bundle resultData, String errorType) {
-			// TODO Method Stub: onError()
-			Log.v(TAG, "Method Stub: onError()" + errorType + resultData.toString());
-		}
+        @Override
+        public GlobalState getGlobalState() {
+            return _gs;
+        }
+    };
 
-		@Override
-		public void onSuccess(int resultCode, Bundle resultData) {
-			Log.v(TAG, "onSuccess");
+    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            Log.v(TAG, "onSuccess");
 
-			if (resultCode == WEB_LIST_NOTIFICATIONS) {
-				Log.v(TAG, "onSuccess2");
-				try {
-					JsonArray ja = new JsonArray(new String(
-							resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-					_notes = new LinkedList<Notification>();
+            if (resultCode == WEB_LIST_NOTIFICATIONS) {
+                Log.v(TAG, "onSuccess2");
+                try {
+                    JsonArray ja = new JsonArray(new String(
+                            resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
+                    _notes = new LinkedList<Notification>();
 
-					for (int i = 0; i < ja.size(); i++) {
-						JsonObject obj = ja.getJsonObject(i);
-						_notes.add(Notification.fromJson(obj));
-					}
+                    for (int i = 0; i < ja.size(); i++) {
+                        JsonObject obj = ja.getJsonObject(i);
+                        _notes.add(Notification.fromJson(obj));
+                    }
 
-					populateUi();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	};
+                    populateUi();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                setLoading(false);
+            }
+        }
 
-	private NotificationListAdapter getAdapter() {
-		if (this.getActivity() == null)
-			return null;
-		try {
-			if (_adapter == null) {
-				_adapter = new NotificationListAdapter();
-				_listview.setAdapter(_adapter);
-			}
+        @Override
+        public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
+            if (_service != null) {
+                _gs.invalidateAuthToken(_service.getAuthToken());
+            }
+            _gs.requestAuthenticationDelayed(_authclient);
+            setLoading(false);
+            Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
+        }
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
+    };
 
-		return _adapter;
-	}
+    private NotificationListAdapter getAdapter() {
+        if (this.getActivity() == null)
+            return null;
+        try {
+            if (_adapter == null) {
+                _adapter = new NotificationListAdapter();
+                _listview.setAdapter(_adapter);
+            }
 
-	@Override
-	public void doAction(Bundle bundle) {
-		// TODO Method Stub: doAction()
-		Log.v(TAG, "Method Stub: doAction()");
-		
-	}
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+
+        return _adapter;
+    }
+
+    @Override
+    public void doAction(Bundle bundle) {
+        // TODO Method Stub: doAction()
+        Log.v(TAG, "Method Stub: doAction()");
+
+    }
 }

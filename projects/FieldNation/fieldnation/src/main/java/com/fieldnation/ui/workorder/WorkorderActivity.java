@@ -429,6 +429,7 @@ public class WorkorderActivity extends BaseActivity {
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
             if (_woRpc != null) {
                 _gs.invalidateAuthToken(_woRpc.getAuthToken());
             }

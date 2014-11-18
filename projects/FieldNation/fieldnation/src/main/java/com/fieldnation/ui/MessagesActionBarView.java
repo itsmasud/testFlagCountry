@@ -107,7 +107,8 @@ public class MessagesActionBarView extends RelativeLayout {
 
 		@Override
 		public void onError(int resultCode, Bundle resultData, String errorType) {
-			if (_profileService != null) {
+            super.onError(resultCode, resultData, errorType);
+            if (_profileService != null) {
 				_gs.invalidateAuthToken(_profileService.getAuthToken());
 			}
 			_gs.requestAuthenticationDelayed(_authclient);

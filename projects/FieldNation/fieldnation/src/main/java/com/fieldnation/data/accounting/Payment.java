@@ -5,71 +5,72 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Payment {
-	@Json(name="amount")
-	private Double _amount;
-	@Json(name = "datePaid")
-	private String _datePaid;
-	@Json(name = "fees")
-	private Fee[] _fees;
-	@Json(name = "payMethod")
-	private String _payMethod;
-	@Json(name="paymentId")
-	private Integer _paymentId;
-	@Json(name="status")
-	private String _status;
-	@Json(name = "workorders")
-	private Workorder[] _workorders;
+    @Json(name = "amount")
+    private Double _amount;
+    @Json(name = "datePaid")
+    private String _datePaid;
+    @Json(name = "fees")
+    private Fee[] _fees;
+    @Json(name = "payMethod")
+    private String _payMethod;
+    @Json(name = "paymentId")
+    private Long _paymentId;
+    @Json(name = "status")
+    private String _status;
+    @Json(name = "workorders")
+    private Workorder[] _workorders;
 
-	public Payment() {
-	}
-	public Double getAmount(){
-		return _amount;
-	}
+    public Payment() {
+    }
 
-	public String getDatePaid() {
-		return _datePaid;
-	}
+    public Double getAmount() {
+        return _amount;
+    }
 
-	public Fee[] getFees() {
-		return _fees;
-	}
+    public String getDatePaid() {
+        return _datePaid;
+    }
 
-	public String getPayMethod() {
-		return _payMethod;
-	}
+    public Fee[] getFees() {
+        return _fees;
+    }
 
-	public Integer getPaymentId(){
-		return _paymentId;
-	}
+    public String getPayMethod() {
+        return _payMethod;
+    }
 
-	public String getStatus(){
-		return _status;
-	}
+    public Long getPaymentId() {
+        return _paymentId;
+    }
 
-	public Workorder[] getWorkorders() {
-		return _workorders;
-	}
+    public String getStatus() {
+        return _status;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public Workorder[] getWorkorders() {
+        return _workorders;
+    }
 
-	public static JsonObject toJson(Payment payment) {
-		try {
-			return Serializer.serializeObject(payment);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static Payment fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Payment.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(Payment payment) {
+        try {
+            return Serializer.serializeObject(payment);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Payment fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Payment.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }
