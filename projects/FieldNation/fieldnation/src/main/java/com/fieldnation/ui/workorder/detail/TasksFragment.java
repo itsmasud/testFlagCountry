@@ -47,6 +47,7 @@ import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
+import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -106,6 +107,7 @@ public class TasksFragment extends WorkorderFragment {
     private DeviceCountDialog _deviceCountDialog;
     private CustomFieldDialog _customFieldDialog;
     private WorkLogDialog _worklogDialog;
+    private TermsDialog _termsDialog;
 
     // Data
     private GlobalState _gs;
@@ -176,6 +178,8 @@ public class TasksFragment extends WorkorderFragment {
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog.setListener(_worklogDialog_listener);
 
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+        
         if (savedInstanceState == null) {
             _gs.requestAuthentication(_authClient);
         } else {
@@ -938,6 +942,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void termsOnClick(Workorder workorder) {
+            _termsDialog.show();
             // TODO STUB .termsOnClick()
             Log.v(TAG, "STUB .termsOnClick()");
 

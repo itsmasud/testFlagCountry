@@ -29,6 +29,7 @@ import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
+import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.utils.ISO8601;
 
 import java.lang.reflect.InvocationTargetException;
@@ -71,6 +72,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
     private ConfirmDialog _confirmDialog;
     private DeviceCountDialog _deviceCountDialog;
     private CounterOfferDialog _counterOfferDialog;
+    private TermsDialog _termsDialog;
 
 	/*-*****************************-*/
     /*-			Lifecycle			-*/
@@ -373,9 +375,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
 
         @Override
         public void termsOnClick(Workorder workorder) {
-            // TODO STUB .termsOnClick()
-            Log.v(TAG, "STUB .termsOnClick()");
-
+            _termsDialog = TermsDialog.getInstance(getActivity().getSupportFragmentManager(), TAG);
+            _termsDialog.show();
         }
 
     };

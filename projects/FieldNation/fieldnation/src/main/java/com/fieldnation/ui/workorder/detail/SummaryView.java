@@ -121,7 +121,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
             _bundleWarningTextView.setVisibility(View.GONE);
         }
 
-        // TODO hook up policies
         if (!misc.isEmptyOrNull(_workorder.getCustomerPoliciesProcedures())) {
             _policiesTextView.setVisibility(View.VISIBLE);
             //_policiesTextView.setText(_workorder.getCustomerPoliciesProcedures());
@@ -129,7 +128,6 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
             _policiesTextView.setVisibility(View.GONE);
         }
 
-        // TODO hook up confidential info
         if (!misc.isEmptyOrNull(_workorder.getConfidentialInformation())) {
             _confidentialTextView.setVisibility(View.VISIBLE);
             //_confidentialTextView.setText(_workorder.getConfidentialInformation());

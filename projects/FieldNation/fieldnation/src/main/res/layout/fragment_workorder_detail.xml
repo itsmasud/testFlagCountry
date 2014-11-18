@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <ScrollView
         style="@style/WorkorderDetail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             style="@style/WorkorderDetail_Data"
@@ -23,12 +23,12 @@
 
             <!-- Summary -->
 
+            <!-- tasks -->
+
             <com.fieldnation.ui.workorder.detail.SummaryView
                 android:id="@+id/summary_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
-            <!-- tasks -->
 
             <com.fieldnation.ui.workorder.detail.TaskSumView
                 android:id="@+id/tasksum_view"

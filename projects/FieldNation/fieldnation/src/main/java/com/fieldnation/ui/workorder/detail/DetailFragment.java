@@ -28,6 +28,7 @@ import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
+import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
@@ -61,6 +62,7 @@ public class DetailFragment extends WorkorderFragment {
     private ExpenseDialog _expenseDialog;
     private DiscountDialog _discountDialog;
     private CounterOfferDialog _counterOfferDialog;
+    private TermsDialog _termsDialog;
 
     // Data
     private Workorder _workorder;
@@ -132,6 +134,8 @@ public class DetailFragment extends WorkorderFragment {
 
         _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _expiresDialog.setListener(_expiresDialog_listener);
+
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -301,9 +305,7 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onShowTerms() {
-            // TODO STUB .onShowTerms()
-            Log.v(TAG, "STUB .onShowTerms()");
-
+            _termsDialog.show();
         }
 
         @Override
