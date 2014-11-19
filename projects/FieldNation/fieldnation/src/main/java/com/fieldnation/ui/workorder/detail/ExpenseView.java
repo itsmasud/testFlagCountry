@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -92,8 +91,7 @@ public class ExpenseView extends LinearLayout {
         _descriptionTextView.setText(_expense.getDescription());
         // TODO need to map the ID to a real string
         _categoryTextView.setVisibility(View.GONE);
-        Log.v(TAG, _expense.getCategoryId() + "");
-        if (_categories != null) {
+        if (_categories != null && _expense.getCategoryId() != null) {
             for (int i = 0; i < _categories.length; i++) {
                 if (_categories[i].getId() == _expense.getCategoryId()) {
                     _categoryTextView.setText(_categories[i].getName());

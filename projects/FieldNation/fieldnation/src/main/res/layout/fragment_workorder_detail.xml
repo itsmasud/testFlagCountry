@@ -1,71 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/WorkorderDetail"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        style="@style/WorkorderDetail_Data"
+    <ScrollView
+        style="@style/WorkorderDetail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <!-- top action bar -->
-
-        <com.fieldnation.ui.workorder.detail.ActionBarTopView
-            android:id="@+id/actiontop_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- Summary -->
-
-        <com.fieldnation.ui.workorder.detail.SummaryView
-            android:id="@+id/summary_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- tasks -->
-
-        <com.fieldnation.ui.workorder.detail.TaskSumView
-            android:id="@+id/tasksum_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- location -->
-
-        <com.fieldnation.ui.workorder.detail.LocationView
-            android:id="@+id/location_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
-            android:id="@+id/schedule_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.fieldnation.ui.workorder.detail.PaymentView
-            android:id="@+id/payment_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.fieldnation.ui.workorder.detail.ExpectedPaymentView
-            android:id="@+id/expected_pay_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:gravity="center"
-            android:id="@+id/bundlewarning2_textview"
-            style="@style/TextViewLink"
+        <LinearLayout
+            style="@style/WorkorderDetail_Data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="This is part of a bundle of ## workorders." />
+            android:orientation="vertical">
 
-        <com.fieldnation.ui.workorder.detail.ActionView
-            android:id="@+id/action_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            <!-- top action bar -->
 
-</ScrollView>
+            <com.fieldnation.ui.workorder.detail.ActionBarTopView
+                android:id="@+id/actiontop_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Summary -->
+
+            <com.fieldnation.ui.workorder.detail.SummaryView
+                android:id="@+id/summary_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- tasks -->
+
+            <com.fieldnation.ui.workorder.detail.TaskSumView
+                android:id="@+id/tasksum_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- location -->
+
+            <com.fieldnation.ui.workorder.detail.LocationView
+                android:id="@+id/location_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
+                android:id="@+id/schedule_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.fieldnation.ui.workorder.detail.PaymentView
+                android:id="@+id/payment_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.fieldnation.ui.workorder.detail.ExpectedPaymentView
+                android:id="@+id/expected_pay_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/bundlewarning2_textview"
+                style="@style/TextViewLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="This is part of a bundle of ## workorders." />
+
+            <com.fieldnation.ui.workorder.detail.ActionView
+                android:id="@+id/action_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <com.fieldnation.ui.LoadingView
+        android:id="@+id/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</RelativeLayout>

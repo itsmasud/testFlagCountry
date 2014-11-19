@@ -15,13 +15,6 @@
             style="?attr/dialogTitleStyle"
             android:text="Installed Devices" />
 
-
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/completed_devices_colon" />
-
         <NumberPicker
             android:id="@+id/devices_picker"
             android:layout_width="wrap_content"

@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -25,12 +26,16 @@ import com.fieldnation.data.workorder.ExpenseCategory;
 public class ExpenseDialog extends DialogFragmentBase {
     private static String TAG = "ui.dialog.ExpenseDialog";
 
+    // State
+    private static final String STATE_SHOW_CATEGORIES = "STATE_SHOW_CATEGORIES";
+
     // Ui
     private Button _okButton;
     private Button _cancelButton;
     private EditText _amountEditText;
     private EditText _descriptionEditText;
     private Spinner _categorySpinner;
+    private LinearLayout _categoryLayout;
 
     // Data
     private Listener _listener;
@@ -38,6 +43,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     private ArrayAdapter<ExpenseCategory> _adapter;
     private InputMethodManager _imm;
     private boolean _reset = false;
+    private boolean _showCategories = true;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -48,9 +54,19 @@ public class ExpenseDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_SHOW_CATEGORIES))
+                _showCategories = savedInstanceState.getBoolean(STATE_SHOW_CATEGORIES);
+        }
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(STATE_SHOW_CATEGORIES, _showCategories);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -59,6 +75,9 @@ public class ExpenseDialog extends DialogFragmentBase {
 
         _amountEditText = (EditText) v.findViewById(R.id.amount_edittext);
         _amountEditText.setOnEditorActionListener(_oneditor_listener);
+
+        _categoryLayout = (LinearLayout) v.findViewById(R.id.category_layout);
+
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
 
         _categorySpinner = (Spinner) v.findViewById(R.id.category_spinner);
@@ -97,6 +116,12 @@ public class ExpenseDialog extends DialogFragmentBase {
 
         if (_categorySpinner != null)
             _categorySpinner.setSelection(0);
+
+        if (_showCategories) {
+            _categoryLayout.setVisibility(View.VISIBLE);
+        } else {
+            _categoryLayout.setVisibility(View.GONE);
+        }
     }
 
 
@@ -104,7 +129,8 @@ public class ExpenseDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show() {
+    public void show(boolean showCategories) {
+        _showCategories = showCategories;
         _reset = true;
         super.show();
     }
@@ -118,7 +144,10 @@ public class ExpenseDialog extends DialogFragmentBase {
     }
 
     public ExpenseCategory getCategory() {
-        return _adapter.getItem(_categorySpinner.getSelectedItemPosition());
+        if (_showCategories)
+            return _adapter.getItem(_categorySpinner.getSelectedItemPosition());
+        else
+            return null;
     }
 
     /*-*********************************-*/
@@ -157,8 +186,12 @@ public class ExpenseDialog extends DialogFragmentBase {
     private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _listener.onOk(getDescription(), getAmount(), getCategory());
-            ExpenseDialog.this.dismiss();
+            if (_listener != null)
+                _listener.onOk(getDescription(), getAmount(), getCategory());
+
+            ExpenseDialog.this.
+
+                    dismiss();
         }
     };
 
