@@ -3,8 +3,8 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -33,6 +33,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
     private TextView _bundleWarningTextView;
 
     // Data
+    private Listener _listener;
     private Workorder _workorder;
 
 	/*-*************************************-*/
@@ -64,7 +65,11 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
         _confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
+        _confidentialTextView.setOnClickListener(_confidential_onClick);
+
         _policiesTextView = (TextView) findViewById(R.id.policies_textview);
+        _policiesTextView.setOnClickListener(_policies_onClick);
+
         _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
         _bundleWarningTextView = (TextView) findViewById(R.id.bundlewarning_textview);
@@ -73,15 +78,14 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         setVisibility(View.GONE);
     }
 
-	/*-*************************************-*/
-    /*-				Mutators				-*/
-    /*-*************************************-*/
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
 
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         _workorder.addListener(_workorder_listener);
-
         refresh();
     }
 
@@ -109,6 +113,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         }
 
         _descriptionTextView.setText(Html.fromHtml(_workorder.getFullWorkDescription()).toString());
+        Linkify.addLinks(_descriptionTextView, Linkify.ALL);
 
         _worktypeTextView.setText(_workorder.getTypeOfWork());
         setLoading(false);
@@ -159,16 +164,23 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
     private View.OnClickListener _confidential_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO Method Stub: onClick()
-            Log.v(TAG, "Method Stub: onClick()");
+            if (_listener != null)
+                _listener.showConfidentialInfo(_workorder.getConfidentialInformation());
         }
     };
 
     private View.OnClickListener _policies_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO Method Stub: onClick()
-            Log.v(TAG, "Method Stub: onClick()");
+            if (_listener != null)
+                _listener.showCustomerPolicies(_workorder.getCustomerPoliciesProcedures());
         }
     };
+
+
+    public interface Listener {
+        public void showConfidentialInfo(String body);
+
+        public void showCustomerPolicies(String body);
+    }
 }

@@ -88,6 +88,7 @@ public class DetailFragment extends WorkorderFragment {
         _gs.requestAuthentication(_authClient);
 
         _sumView = (SummaryView) view.findViewById(R.id.summary_view);
+        _sumView.setListener(_summaryView_listener);
 
         _taskView = (TaskSumView) view.findViewById(R.id.tasksum_view);
         _taskView.setListener(_taskSum_listener);
@@ -207,6 +208,18 @@ public class DetailFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private SummaryView.Listener _summaryView_listener = new SummaryView.Listener() {
+        @Override
+        public void showConfidentialInfo(String body) {
+            _termsDialog.show("Confidential Information", body);
+        }
+
+        @Override
+        public void showCustomerPolicies(String body) {
+            _termsDialog.show("Policies And Procedures", body);
+        }
+    };
+
     private View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

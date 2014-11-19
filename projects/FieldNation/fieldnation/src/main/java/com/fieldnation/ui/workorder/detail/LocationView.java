@@ -1,11 +1,8 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -16,13 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ui.workorder.detail.LocationView";
@@ -41,7 +32,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     public LocationView(Context context) {
         this(context, null);
@@ -63,8 +54,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     }
 
 	/*-*************************************-*/
-	/*-				Mutators				-*/
-	/*-*************************************-*/
+    /*-				Mutators				-*/
+    /*-*************************************-*/
 
     @Override
     public void setWorkorder(Workorder workorder) {
@@ -100,11 +91,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (!misc.isEmptyOrNull(location.getContactName())) {
             contactInfo += location.getContactName() + "\n";
         }
-        // Todo this should be clickable
         if (!misc.isEmptyOrNull(location.getContactEmail())) {
             contactInfo += location.getContactEmail() + "\n";
         }
-        // Todo this should be clickable
         if (!misc.isEmptyOrNull(location.getContactPhone())) {
             contactInfo += location.getContactPhone() + "\n";
         }
@@ -113,6 +102,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         if (!misc.isEmptyOrNull(contactInfo)) {
             _contactInfoTextView.setText(contactInfo);
+            Linkify.addLinks(_contactInfoTextView, Linkify.ALL);
             _contactInfoTextView.setVisibility(View.VISIBLE);
         } else {
             _contactInfoTextView.setVisibility(View.GONE);
@@ -120,6 +110,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         if (!misc.isEmptyOrNull(location.getNotes())) {
             _descriptionTextView.setText(location.getNotes());
+            Linkify.addLinks(_descriptionTextView, Linkify.ALL);
             _descriptionTextView.setVisibility(VISIBLE);
         } else {
             _descriptionTextView.setVisibility(GONE);
@@ -194,7 +185,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     /**
      * function to load map If map is not created it will create it for you
-     * */
+     */
     private void initilizeMap() {
         if (_googleMap == null) {
             //@TODO
@@ -215,9 +206,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
      */
     private double[] createRandLocation(double latitude, double longitude) {
 
-        return new double[] { latitude + ((Math.random() - 0.5) / 500),
+        return new double[]{latitude + ((Math.random() - 0.5) / 500),
                 longitude + ((Math.random() - 0.5) / 500),
-                150 + ((Math.random() - 0.5) * 10) };
+                150 + ((Math.random() - 0.5) * 10)};
     }
 
 }
