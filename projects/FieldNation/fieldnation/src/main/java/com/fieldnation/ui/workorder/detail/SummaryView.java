@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.Html;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -112,8 +111,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
             _companyTextView.setText(_workorder.getCompanyName());
         }
 
-        _descriptionTextView.setText(Html.fromHtml(_workorder.getFullWorkDescription()).toString());
-        Linkify.addLinks(_descriptionTextView, Linkify.ALL);
+        _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription().toString(), Linkify.ALL));
 
         _worktypeTextView.setText(_workorder.getTypeOfWork());
         setLoading(false);

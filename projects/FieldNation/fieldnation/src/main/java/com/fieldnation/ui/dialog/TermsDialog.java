@@ -3,7 +3,6 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.text.Html;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.utils.misc;
 
 import static android.view.View.OnClickListener;
 
@@ -67,8 +67,7 @@ public class TermsDialog extends DialogFragmentBase {
         super.onResume();
 
         _titleTextView.setText(_title);
-        _bodyTextView.setText(Html.fromHtml(_body));
-        Linkify.addLinks(_bodyTextView, Linkify.ALL);
+        _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
     }
 
     public void show() {
