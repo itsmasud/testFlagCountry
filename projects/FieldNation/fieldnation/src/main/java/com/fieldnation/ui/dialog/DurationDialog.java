@@ -115,6 +115,26 @@ public class DurationDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
+    public void show(long timeInMilliseconds) {
+        long seconds = timeInMilliseconds / 1000;
+        long days = seconds / 86400;
+        seconds = seconds % 86400;
+        long hours = seconds / 3600;
+        seconds = seconds % 3600;
+        long min = seconds / 60;
+
+        _number = min + "";
+        if (_number.length() < 2)
+            _number = misc.repeat("0", 2 - _number.length()) + _number;
+
+        _number = hours + _number;
+        if (_number.length() < 4)
+            _number = misc.repeat("0", 4 - _number.length()) + _number;
+
+        _number = days + _number;
+        super.show();
+    }
+
     private void populateUi() {
         if (_dayTextView == null)
             return;
