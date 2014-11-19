@@ -24,7 +24,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private TextView _distanceTextView;
     private TextView _contactInfoTextView;
     private TextView _descriptionTextView;
-    private TextView _openMapLink;
 
     // Data
     private Workorder _workorder;
@@ -49,9 +48,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _contactInfoTextView = (TextView) findViewById(R.id.contactinfo_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
-        _openMapLink = (TextView) findViewById(R.id.open_map_button);
-        _openMapLink.setOnClickListener(_openMapOnClick);
-
         setVisibility(View.GONE);
 
     }
@@ -66,14 +62,10 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Location location = _workorder.getLocation();
                 if(location != null){
                     try{
-                        //@TODO
-                        /*double latitude_source = -93.4973;
-                        double longitude_source = 45.0935;
-                        double latitude_dest = -93.2413;
-                        double longitude_dest = 45.0023;
-                        String uri = "http://maps.google.com/maps?saddr="+latitude_source+","+longitude_source+"(Y)&daddr="+latitude_dest+","+longitude_dest+"(W)";
-                        */
-                        showMap(location.getDistanceMapUrl());
+                        String _fullAddress = misc.escapeForURL(location.getFullAddress());
+                        String _uriString = "geo:0,0?q="+_fullAddress;
+                        Uri _uri = Uri.parse(_uriString);
+                        showMap(_uri);
                     } catch (Exception e){}
                 }
             }
@@ -104,6 +96,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (!misc.isEmptyOrNull(fullAddr)) {
             _addressTextView.setText(fullAddr);
             _addressTextView.setVisibility(View.VISIBLE);
+            _addressTextView.setOnClickListener(_openMapOnClick);
         } else {
             _addressTextView.setVisibility(View.GONE);
         }
@@ -112,6 +105,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _distanceTextView.setText(_workorder.getDistance() + " mi");
         } else if (location.getDistance() != null) {
             _distanceTextView.setText(location.getDistance() + " mi");
+            _distanceTextView.setOnClickListener(_openMapOnClick);
         }
 
         String contactInfo = "";
@@ -143,17 +137,16 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _descriptionTextView.setVisibility(GONE);
         }
 
-        if(_workorder.getIsRemoteWork()){
-           // _openMapButton.setVisibility(GONE);
-        }
-
         setVisibility(View.VISIBLE);
 
     }
 
-    public void showMap(String geoLocation) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoLocation));
-        getContext().startActivity(intent);
+    public void showMap(Uri geoLocation) {
+        Intent _intent = new Intent(Intent.ACTION_VIEW);
+        _intent.setData(geoLocation);
+        if (_intent.resolveActivity(getContext().getPackageManager()) != null) {
+            getContext().startActivity(_intent);
+        }
     }
 
 }

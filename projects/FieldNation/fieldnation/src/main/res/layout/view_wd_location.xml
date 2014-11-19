@@ -25,12 +25,6 @@
         android:text="3.5 mi" />
 
     <TextView
-        android:layout_gravity="left"
-        android:id="@+id/open_map_button"
-        style="?attr/buttonTextLinkStyle"
-        android:text="Show Map" />
-
-    <TextView
         android:id="@+id/contactinfo_textview"
         style="@style/WorkorderDetail_Field"
         android:layout_width="match_parent"
