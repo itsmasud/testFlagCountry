@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -38,6 +40,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.SignatureActivity;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
@@ -46,6 +49,7 @@ import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
+import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -105,6 +109,7 @@ public class TasksFragment extends WorkorderFragment {
     private DeviceCountDialog _deviceCountDialog;
     private CustomFieldDialog _customFieldDialog;
     private WorkLogDialog _worklogDialog;
+    private TermsDialog _termsDialog;
 
     // Data
     private GlobalState _gs;
@@ -116,7 +121,7 @@ public class TasksFragment extends WorkorderFragment {
     private List<Task> _tasks = null;
     private Task _currentTask;
     private SecureRandom _rand = new SecureRandom();
-    //private GPSLocationService _gPSLocationService;
+    private GPSLocationService _gPSLocationService;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -175,6 +180,8 @@ public class TasksFragment extends WorkorderFragment {
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog.setListener(_worklogDialog_listener);
 
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+        
         if (savedInstanceState == null) {
             _gs.requestAuthentication(_authClient);
         } else {
@@ -205,10 +212,11 @@ public class TasksFragment extends WorkorderFragment {
             }
         }
 
-//        _gPSLocationService = new GPSLocationService(getActivity());
-//        if (_gPSLocationService != null && _gPSLocationService.isGpsEnabled()) {
-//            _gPSLocationService.showSettingsAlert(getView().getContext());
-//        }
+        _gPSLocationService = new GPSLocationService(getActivity());
+        // GPS settings dialog should only be displayed if the GPS is failing
+        if (_gPSLocationService.isGooglePlayServicesAvailable() && !_gPSLocationService.isGpsEnabled()) {
+            _gPSLocationService.showSettingsAlert(view.getContext());
+        }
 
         configureUi();
     }
@@ -303,6 +311,7 @@ public class TasksFragment extends WorkorderFragment {
         if (_customFields != null) {
             _customFields.setData(_workorder.getCustomFields());
         }
+        setLoading(false);
     }
 
     private void requestData() {
@@ -313,6 +322,7 @@ public class TasksFragment extends WorkorderFragment {
             return;
 
         _gs.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), false));
+        setLoading(true);
     }
 
     private PendingIntent getNotificationIntent() {
@@ -340,6 +350,7 @@ public class TasksFragment extends WorkorderFragment {
 
             getActivity().startService(
                     _service.completeSignatureTask(resultCode, workorderid, taskid, arrival, depart, name, json_vector));
+            setLoading(true);
         } else if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
             if (data == null)
                 return;
@@ -378,6 +389,7 @@ public class TasksFragment extends WorkorderFragment {
                 _gs.startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), _currentTask.getSlotId(),
                         filename, tempfile, getNotificationIntent()));
+                setLoading(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -425,7 +437,7 @@ public class TasksFragment extends WorkorderFragment {
                             WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                             _currentTask.getSlotId(), c.getString(nameIndex),
                             tempfile, getNotificationIntent()));
-
+                    setLoading(true);
                     c.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -457,13 +469,16 @@ public class TasksFragment extends WorkorderFragment {
                 }
             } else {
                 if (deviceCount <= 0) {
-                    _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
+                    getActivity().startService(
+                            _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
+                                    loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis()));
                 } else {
-                    _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
+                    getActivity().startService(
+                            _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
+                                    loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount));
                 }
             }
+            setLoading(true);
         }
 
         @Override
@@ -491,6 +506,7 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onComplete() {
             getActivity().startService(_service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -499,44 +515,49 @@ public class TasksFragment extends WorkorderFragment {
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog.show(_workorder, pay.getMaxDevice());
             } else {
-//                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-//                    try {
-//                        Location location = _gPSLocationService.getLocation();
-//                        double lat = location.getLatitude();
-//                        double log = location.getLongitude();
-//                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-//                    } catch (Exception e) {
-//                        _gPSLocationService.showSettingsOffAlert(getView().getContext());
-//                    }
-//                } else {
-//                    _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                getActivity().startService(
-                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
-//                }
+                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                    try {
+                        Location location = _gPSLocationService.getLocation();
+                        double lat = location.getLatitude();
+                        double log = location.getLongitude();
+                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                        setLoading(true);
+                    } catch (Exception e) {
+                        _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                    }
+                } else {
+                    _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                    getActivity().startService(
+                            _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+                    setLoading(true);
+                }
             }
         }
 
         @Override
         public void onCheckIn() {
-//            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-//                try {
-//                    Location location = _gPSLocationService.getLocation();
-//                    double lat = location.getLatitude();
-//                    double log = location.getLongitude();
-//                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-//                } catch (Exception e) {
-//                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
-//                }
-//            } else {
-//                _gPSLocationService.showCheckInOutAlert(getView().getContext());
-            getActivity().startService(
-                    _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
-//            }
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                try {
+                    Location location = _gPSLocationService.getLocation();
+                    double lat = location.getLatitude();
+                    double log = location.getLongitude();
+                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                    setLoading(true);
+                } catch (Exception e) {
+                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                }
+            } else {
+                _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                getActivity().startService(
+                        _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+                setLoading(true);
+            }
         }
 
         @Override
         public void onAcknowledge() {
             getActivity().startService(_service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -563,19 +584,21 @@ public class TasksFragment extends WorkorderFragment {
         public void onTaskClick(Task task) {
             switch (task.getTaskType()) {
                 case CHECKIN:
-//                    if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-//                        try {
-//                            Location location = _gPSLocationService.getLocation();
-//                            double lat = location.getLatitude();
-//                            double log = location.getLongitude();
-//                            getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-//                        } catch (Exception e) {
-//                            _gPSLocationService.showSettingsOffAlert(getView().getContext());
-//                        }
-//                    } else {
-//                        _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
-//                    }
+                    if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                        try {
+                            Location location = _gPSLocationService.getLocation();
+                            double lat = location.getLatitude();
+                            double log = location.getLongitude();
+                            getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                            setLoading(true);
+                        } catch (Exception e) {
+                            _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                        }
+                    } else {
+                        _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                        getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+                        setLoading(true);
+                    }
 
                     break;
                 case CHECKOUT:
@@ -583,20 +606,22 @@ public class TasksFragment extends WorkorderFragment {
                     if (pay != null && pay.isPerDeviceRate()) {
                         _deviceCountDialog.show(_workorder, pay.getMaxDevice());
                     } else {
-//                        if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-//                            try {
-//                                Location location = _gPSLocationService.getLocation();
-//                                double lat = location.getLatitude();
-//                                double log = location.getLongitude();
-//                                getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-//                            } catch (Exception e) {
-//                                _gPSLocationService.showSettingsOffAlert(getView().getContext());
-//                            }
-//                        } else {
-//                            _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                        getActivity().startService(
-                                _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
-//                        }
+                        if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                            try {
+                                Location location = _gPSLocationService.getLocation();
+                                double lat = location.getLatitude();
+                                double log = location.getLongitude();
+                                getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                                setLoading(true);
+                            } catch (Exception e) {
+                                _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                            }
+                        } else {
+                            _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                            getActivity().startService(
+                                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+                            setLoading(true);
+                        }
                     }
                     break;
                 case CLOSE_OUT_NOTES:
@@ -620,10 +645,12 @@ public class TasksFragment extends WorkorderFragment {
                             Log.v(TAG, "docid: " + doc.getDocumentId());
                             if (doc.getDocumentId().equals(_identifier)) {
                                 // task completed here
-                                if (!task.getCompleted())
+                                if (!task.getCompleted()) {
                                     getActivity().startService(
                                             _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(),
                                                     task.getTaskId()));
+                                    setLoading(true);
+                                }
 
                                 try {
                                     Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -650,17 +677,21 @@ public class TasksFragment extends WorkorderFragment {
                     intent.setData(Uri.parse("mailto:" + email));
                     startActivityForResult(intent, RESULT_CODE_SEND_EMAIL);
 
-                    if (!task.getCompleted())
+                    if (!task.getCompleted()) {
                         getActivity().startService(
                                 _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+                        setLoading(true);
+                    }
                     break;
                 }
                 case PHONE:
                     try {
                         if (task.getPhoneNumber() != null) {
-                            if (!task.getCompleted())
+                            if (!task.getCompleted()) {
                                 getActivity().startService(
                                         _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+                                setLoading(true);
+                            }
 
                             Intent callIntent = new Intent(Intent.ACTION_DIAL);
                             String phNum = "tel:" + task.getPhoneNumber();
@@ -724,6 +755,7 @@ public class TasksFragment extends WorkorderFragment {
                         return;
                     getActivity().startService(
                             _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+                    setLoading(true);
                     break;
                 default:
                     break;
@@ -735,6 +767,7 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
             getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+            setLoading(true);
         }
 
         @Override
@@ -743,6 +776,7 @@ public class TasksFragment extends WorkorderFragment {
             Log.v(TAG, "Method Stub: onAssign()" + shipmentId + "=" + taskId);
             getActivity().startService(
                     _service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));
+            setLoading(true);
         }
 
         @Override
@@ -755,6 +789,7 @@ public class TasksFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
                             carrier, null, trackingId));
+            setLoading(true);
         }
 
         @Override
@@ -763,6 +798,7 @@ public class TasksFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
                             carrier, null, trackingId, taskId));
+            setLoading(true);
         }
     };
 
@@ -781,6 +817,7 @@ public class TasksFragment extends WorkorderFragment {
         public void onOk(CustomField field, String value) {
             getActivity().startService(
                     _service.setCustomField(WEB_CHANGED, _workorder.getWorkorderId(), field.getCustomLabelId(), value));
+            setLoading(true);
         }
     };
 
@@ -798,6 +835,7 @@ public class TasksFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
                             carrier, null, trackingId, taskId));
+            setLoading(true);
         }
 
         @Override
@@ -815,6 +853,7 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
             getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+            setLoading(true);
         }
 
         @Override
@@ -851,6 +890,7 @@ public class TasksFragment extends WorkorderFragment {
             Log.v(TAG, "On Ok");
             getActivity().startService(
                     _service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+            setLoading(true);
 
         }
 
@@ -899,6 +939,7 @@ public class TasksFragment extends WorkorderFragment {
                 Intent intent = _service.confirmAssignment(WEB_CHANGED, _workorder.getWorkorderId(),
                         startDate, ISO8601.fromUTC(end));
                 getActivity().startService(intent);
+                setLoading(true);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -910,6 +951,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void termsOnClick(Workorder workorder) {
+            _termsDialog.show();
             // TODO STUB .termsOnClick()
             Log.v(TAG, "STUB .termsOnClick()");
 
@@ -919,21 +961,23 @@ public class TasksFragment extends WorkorderFragment {
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-//            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-//                try {
-//                    Location location = _gPSLocationService.getLocation();
-//                    double lat = location.getLatitude();
-//                    double log = location.getLongitude();
-//                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
-//                } catch (Exception e) {
-//                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
-//                }
-//
-//            } else {
-//                _gPSLocationService.showCheckInOutAlert(getView().getContext());
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
-//            }
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                try {
+                    Location location = _gPSLocationService.getLocation();
+                    double lat = location.getLatitude();
+                    double log = location.getLongitude();
+                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
+                    setLoading(true);
+                } catch (Exception e) {
+                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                }
+
+            } else {
+                _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
+                setLoading(true);
+            }
         }
     };
 
@@ -971,10 +1015,9 @@ public class TasksFragment extends WorkorderFragment {
 
             if (resultCode == WEB_CHANGED || resultCode == WEB_SEND_DELIVERABLE) {
                 _workorder.dispatchOnChange();
-            }
 
 			/*-			Tasks			-*/
-            if (resultCode == WEB_GET_TASKS) {
+            } else if (resultCode == WEB_GET_TASKS) {
                 // TODO populate
                 String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
                 try {
@@ -992,17 +1035,23 @@ public class TasksFragment extends WorkorderFragment {
                 }
 
                 _taskList.setTaskList(_tasks);
+                setLoading(false);
+            } else {
+                setLoading(false);
             }
         }
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
             if (_service != null) {
                 _gs.invalidateAuthToken(_service.getAuthToken());
             }
             _gs.requestAuthenticationDelayed(_authClient);
             _username = null;
             _authToken = null;
+            setLoading(false);
+            Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };
 

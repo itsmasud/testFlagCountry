@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
@@ -12,24 +12,17 @@
 
     <TextView
         android:id="@+id/address_textview"
-        style="@style/WorkorderDetail_Field"
+        style="@style/TextViewLink"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Location Name\n1234 Somewhere Street\nSomeplace, MN 55408" />
 
     <TextView
         android:id="@+id/distance_textview"
-        style="@style/WorkorderDetail_Field"
+        style="@style/TextViewLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="3.5 mi" />
-
-    <!-- TODO -->
-    <!--fragment
-        android:id="@+id/location_map"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/-->
 
     <TextView
         android:id="@+id/contactinfo_textview"

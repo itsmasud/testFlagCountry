@@ -24,6 +24,7 @@
         <!--<item name="colorPrimaryDark">#FF00FF00</item>-->
         <!--   theme UI controls like checkboxes and text fields -->
         <!--<item name="colorAccent">#FF3fcca9</item>-->
+        <item name="android:textColorLink">@color/text_link_color</item>
 
         <!-- android widgets -->
         <item name="android:editTextStyle">@style/EditText</item>

@@ -43,6 +43,7 @@ import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
+import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
@@ -87,6 +88,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private ClosingNotesDialog _closingDialog;
     private DeviceCountDialog _deviceCountDialog;
     private AppPickerDialog _appPickerDialog;
+    private TermsDialog _termsDialog;
 
     // Data
     private GlobalState _gs;
@@ -147,10 +149,13 @@ public class DeliverableFragment extends WorkorderFragment {
         _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
         _confirmDialog.setListener(_confirmDialog_listener);
 
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+
         checkMedia();
 
         populateUi();
         executeDelayedAction();
+        setLoading(true);
     }
 
     private boolean checkMedia() {
@@ -161,23 +166,6 @@ public class DeliverableFragment extends WorkorderFragment {
             return false;
         }
     }
-
-    // private void startLoading() {
-    // if (_loadingCounter == 0) {
-    // _loadingLayout.setVisibility(View.VISIBLE);
-    // }
-    // _loadingCounter++;
-    // Log.v(TAG, "startLoading(" + _loadingCounter + ")");
-    // }
-    //
-    // private void stopLoading() {
-    // _loadingCounter--;
-    // if (_loadingCounter <= 0) {
-    // _loadingCounter = 0;
-    // _loadingLayout.setVisibility(View.GONE);
-    // }
-    // Log.v(TAG, "stopLoading(" + _loadingCounter + ")");
-    // }
 
     @Override
     public void update() {
@@ -209,7 +197,6 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_profileService == null)
             return;
 
-        // startLoading();
         _profile = null;
         _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE,
                 true));
@@ -264,6 +251,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _filesLayout.addView(v);
             }
         }
+        setLoading(false);
     }
 
     private void executeDelayedAction() {
@@ -450,6 +438,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onOk(Workorder workorder, int count) {
             getActivity().startService(
                     _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
+            setLoading(true);
         }
     };
 
@@ -458,6 +447,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onComplete() {
             getActivity().startService(
                     _service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -468,6 +458,7 @@ public class DeliverableFragment extends WorkorderFragment {
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
+                setLoading(true);
             }
         }
 
@@ -475,6 +466,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onCheckIn() {
             getActivity().startService(
                     _service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -482,6 +474,7 @@ public class DeliverableFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.acknowledgeHold(WEB_CHANGE,
                             _workorder.getWorkorderId()));
+            setLoading(true);
         }
 
         @Override
@@ -506,6 +499,7 @@ public class DeliverableFragment extends WorkorderFragment {
                         _workorder.getWorkorderId(), startDate,
                         ISO8601.fromUTC(end));
                 getActivity().startService(intent);
+                setLoading(true);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -517,8 +511,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void termsOnClick(Workorder workorder) {
-            // TODO STUB .termsOnClick()
-            Log.v(TAG, "STUB .termsOnClick()");
+            _termsDialog.show();
         }
 
     };
@@ -628,6 +621,8 @@ public class DeliverableFragment extends WorkorderFragment {
                 // TODO, update individual UI elements when complete.
                 if (_deleteCount == 0 && _uploadCount == 0)
                     _workorder.dispatchOnChange();
+
+                setLoading(false);
             } else if (resultCode == WEB_CHANGE) {
                 _workorder.dispatchOnChange();
             }
@@ -635,7 +630,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
-            // stopLoading();
+            super.onError(resultCode, resultData, errorType);
             if (_service != null) {
                 _gs.invalidateAuthToken(_service.getAuthToken());
             } else if (_profileService != null) {
@@ -644,6 +639,8 @@ public class DeliverableFragment extends WorkorderFragment {
             _gs.requestAuthenticationDelayed(_authClient);
             _service = null;
             _profileService = null;
+            Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
+            setLoading(false);
         }
     };
 

@@ -365,7 +365,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 payload += "&fixedTotalAmount=" + pay.getFixedAmount();
             } else if (pay.isHourlyRate()) {
                 payload += "&payBasis=per_hour";
-                payload += "&perHourRate=" + pay.getPerHour();
+                payload += "&hourlyRate=" + pay.getPerHour();
                 payload += "&maxHours=" + pay.getMaxHour();
             }
         }
@@ -385,8 +385,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
             for (int i = 0; i < expenses.length; i++) {
                 AdditionalExpense expense = expenses[i];
                 json.append("{\"description\":\"").append(expense.getDescription()).append("\",");
-                json.append("\"price\":\"").append(expense.getPrice()).append("\",");
-                json.append("\"categoryId:\":\"").append(expense.getCategoryId()).append("\"}");
+                json.append("\"price\":\"").append(expense.getPrice()).append("\"}");
             }
             json.append("]");
 

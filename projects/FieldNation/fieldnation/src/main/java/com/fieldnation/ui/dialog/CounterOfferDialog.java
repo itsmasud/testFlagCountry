@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +61,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private ExpenseDialog _expenseDialog;
     private DatePickerDialog _datePicker;
     private TimePickerDialog _timePicker;
+    private TermsDialog _termsDialog;
 
     // Data State
     private Workorder _workorder;
@@ -220,6 +220,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
         _expenseDialog.setListener(_expenseDialog_listener);
 
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         final Calendar c = Calendar.getInstance();
         _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
@@ -336,16 +337,12 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
         @Override
         public void onTacClick() {
-            // TODO STUB .onTacClick()
-            Log.v(TAG, "STUB .onTacClick()");
-
+            _termsDialog.show();
         }
 
         @Override
         public void onTacChange(boolean isChecked) {
             _tacAccpet = isChecked;
-            // TODO STUB .onTacChange()
-            Log.v(TAG, "STUB .onTacChange()");
         }
 
         @Override
@@ -357,7 +354,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
-            _expenseDialog.show();
+            _expenseDialog.show(false);
         }
 
         @Override
