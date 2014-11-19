@@ -236,7 +236,7 @@ public class MessageFragment extends WorkorderFragment {
                 _gs.invalidateAuthToken(_workorderService.getAuthToken());
             }
             _gs.requestAuthenticationDelayed(_authClient);
-            Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Could not complete request.", Toast.LENGTH_LONG).show();
             setLoading(false);
         }
     };

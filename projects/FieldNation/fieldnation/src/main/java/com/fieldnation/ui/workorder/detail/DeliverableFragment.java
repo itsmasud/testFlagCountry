@@ -43,6 +43,7 @@ import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
+import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
@@ -87,6 +88,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private ClosingNotesDialog _closingDialog;
     private DeviceCountDialog _deviceCountDialog;
     private AppPickerDialog _appPickerDialog;
+    private TermsDialog _termsDialog;
 
     // Data
     private GlobalState _gs;
@@ -146,6 +148,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
         _confirmDialog.setListener(_confirmDialog_listener);
+
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         checkMedia();
 
@@ -507,8 +511,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void termsOnClick(Workorder workorder) {
-            // TODO STUB .termsOnClick()
-            Log.v(TAG, "STUB .termsOnClick()");
+            _termsDialog.show();
         }
 
     };

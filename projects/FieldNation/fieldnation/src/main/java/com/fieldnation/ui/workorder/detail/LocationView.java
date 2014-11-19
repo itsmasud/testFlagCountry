@@ -3,11 +3,10 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,7 +29,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     public LocationView(Context context) {
         this(context, null);
@@ -44,37 +43,17 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             return;
 
         _addressTextView = (TextView) findViewById(R.id.address_textview);
+        _addressTextView.setOnClickListener(_openMapOnClick);
+
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
+        _distanceTextView.setOnClickListener(_openMapOnClick);
+
         _contactInfoTextView = (TextView) findViewById(R.id.contactinfo_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
         setVisibility(View.GONE);
 
     }
-
-    /*-*************************-*/
-	/*-			Events			-*/
-	/*-*************************-*/
-    private View.OnClickListener _openMapOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if(_workorder != null){
-                Location location = _workorder.getLocation();
-                if(location != null){
-                    try{
-                        String _fullAddress = misc.escapeForURL(location.getFullAddress());
-                        String _uriString = "geo:0,0?q="+_fullAddress;
-                        Uri _uri = Uri.parse(_uriString);
-                        showMap(_uri);
-                    } catch (Exception e){}
-                }
-            }
-        }
-    };
-
-	/*-*************************************-*/
-	/*-				Mutators				-*/
-	/*-*************************************-*/
 
     @Override
     public void setWorkorder(Workorder workorder) {
@@ -96,7 +75,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (!misc.isEmptyOrNull(fullAddr)) {
             _addressTextView.setText(fullAddr);
             _addressTextView.setVisibility(View.VISIBLE);
-            _addressTextView.setOnClickListener(_openMapOnClick);
+
         } else {
             _addressTextView.setVisibility(View.GONE);
         }
@@ -105,18 +84,15 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _distanceTextView.setText(_workorder.getDistance() + " mi");
         } else if (location.getDistance() != null) {
             _distanceTextView.setText(location.getDistance() + " mi");
-            _distanceTextView.setOnClickListener(_openMapOnClick);
         }
 
         String contactInfo = "";
         if (!misc.isEmptyOrNull(location.getContactName())) {
             contactInfo += location.getContactName() + "\n";
         }
-        // Todo this should be clickable
         if (!misc.isEmptyOrNull(location.getContactEmail())) {
             contactInfo += location.getContactEmail() + "\n";
         }
-        // Todo this should be clickable
         if (!misc.isEmptyOrNull(location.getContactPhone())) {
             contactInfo += location.getContactPhone() + "\n";
         }
@@ -125,6 +101,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         if (!misc.isEmptyOrNull(contactInfo)) {
             _contactInfoTextView.setText(contactInfo);
+            Linkify.addLinks(_contactInfoTextView, Linkify.ALL);
             _contactInfoTextView.setVisibility(View.VISIBLE);
         } else {
             _contactInfoTextView.setVisibility(View.GONE);
@@ -132,6 +109,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         if (!misc.isEmptyOrNull(location.getNotes())) {
             _descriptionTextView.setText(location.getNotes());
+            Linkify.addLinks(_descriptionTextView, Linkify.ALL);
             _descriptionTextView.setVisibility(VISIBLE);
         } else {
             _descriptionTextView.setVisibility(GONE);
@@ -148,5 +126,27 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             getContext().startActivity(_intent);
         }
     }
+
+    /*-*************************-*/
+    /*-			Events			-*/
+    /*-*************************-*/
+    private View.OnClickListener _openMapOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workorder != null) {
+                Location location = _workorder.getLocation();
+                if (location != null) {
+                    try {
+                        String _fullAddress = misc.escapeForURL(location.getFullAddress());
+                        String _uriString = "geo:0,0?q=" + _fullAddress;
+                        Uri _uri = Uri.parse(_uriString);
+                        showMap(_uri);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+    };
+
 
 }
