@@ -9,7 +9,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.utils.ISO8601;
@@ -26,7 +25,6 @@ public class ReasonCoView extends RelativeLayout {
     // Ui
     private EditText _requestReasonEditText;
     private CheckBox _expiresCheckBox;
-    private TextView _expiresSpaceTextView;
     private Button _expiresButton;
     private CheckBox _tacCheckBox;
     private Button _tacButton;
@@ -63,8 +61,6 @@ public class ReasonCoView extends RelativeLayout {
 
         _expiresCheckBox = (CheckBox) findViewById(R.id.expires_checkbox);
         _expiresCheckBox.setOnCheckedChangeListener(_expires_onChange);
-
-        _expiresSpaceTextView = (TextView) findViewById(R.id.expiresspace_textview);
 
         _expiresButton = (Button) findViewById(R.id.expires_button);
         _expiresButton.setOnClickListener(_expiresButton_onClick);
@@ -111,10 +107,8 @@ public class ReasonCoView extends RelativeLayout {
         // expiration stuff
         _expiresCheckBox.setChecked(_expires);
         if (_expires) {
-            _expiresSpaceTextView.setVisibility(View.VISIBLE);
             _expiresButton.setVisibility(View.VISIBLE);
         } else {
-            _expiresSpaceTextView.setVisibility(View.GONE);
             _expiresButton.setVisibility(View.GONE);
         }
         if (_expirationDate != null) {

@@ -129,8 +129,6 @@ public class ConfirmDialog extends DialogFragmentBase {
         _durationDialog = DurationDialog.getInstance(_fm, TAG);
         _durationDialog.setListener(_duration_listener);
 
-        _startCalendar = Calendar.getInstance();
-
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -177,6 +175,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     public void show(Workorder workorder, Schedule schedule) {
         _schedule = schedule;
         _workorder = workorder;
+
         super.show();
     }
 
@@ -214,7 +213,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                 time = misc.formatTime(cal, false);
 
-                String msg = "You will need to arrive between " + dayDate + " at " + time + " and ";
+                String msg = "You will need to arrive between\n\t" + dayDate + " at " + time + " and\n\t";
 
                 Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
 

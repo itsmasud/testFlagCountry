@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ public class DiscountDialog extends DialogFragmentBase {
     private static final String STATE_TITLE = "STATE_TITLE";
 
     // UI
+    private TextView _titleTextView;
     private Button _okButton;
     private Button _cancelButton;
     private EditText _amountEditText;
@@ -45,6 +47,7 @@ public class DiscountDialog extends DialogFragmentBase {
                 _title = savedInstanceState.getString(STATE_TITLE);
         }
         super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -58,6 +61,7 @@ public class DiscountDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_discount, container, false);
 
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
@@ -66,7 +70,9 @@ public class DiscountDialog extends DialogFragmentBase {
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
         _descriptionEditText.setOnEditorActionListener(_oneditor_listener);
 
-        getDialog().setTitle("Add Discount");
+        //getDialog().setTitle("Add Discount");
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
 
         return v;
     }
@@ -75,8 +81,8 @@ public class DiscountDialog extends DialogFragmentBase {
     public void onResume() {
         super.onResume();
 
-        if (_title != null) ;
-        getDialog().setTitle(_title);
+        if (_title != null)
+            _titleTextView.setText(_title);
     }
 
     public void setListener(Listener listener) {

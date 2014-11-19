@@ -6,8 +6,10 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
@@ -23,6 +25,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     private static final String STATE_TITLE = "STATE_TITLE";
 
     // UI
+    private TextView _titleTextView;
     private Button _addButton;
     private Button _cancelButton;
     private LinearLayout _shipmentsLayout;
@@ -55,6 +58,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
                 _title = savedInstanceState.getString(STATE_TITLE);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -75,6 +80,9 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_task_add_shipment, container, false);
 
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _shipmentsLayout = (LinearLayout) v.findViewById(R.id.shipments_linearlayout);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
@@ -85,7 +93,6 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         _addDialog = ShipmentAddDialog.getInstance(_fm, TAG);
         _addDialog.setListener(_addDialog_listener);
 
-        getDialog().setTitle("Assign/Add New");
         populateUi();
 
         return v;
@@ -96,7 +103,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         super.onResume();
 
         if (_title != null)
-            getDialog().setTitle(_title);
+            _titleTextView.setText(_title);
 
         populateUi();
     }

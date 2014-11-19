@@ -75,6 +75,10 @@ public class DialogFragmentBase extends DialogFragment {
                 _tag = savedInstanceState.getString(STATE_TAG);
         }
         super.onCreate(savedInstanceState);
+
+        if (_fm == null) {
+            _fm = getFragmentManager();
+        }
     }
 
     @Override

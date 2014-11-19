@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -68,6 +69,8 @@ public class WorkLogDialog extends DialogFragmentBase {
                 _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
         }
         super.onCreate(savedInstanceState);
+
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
@@ -84,6 +87,8 @@ public class WorkLogDialog extends DialogFragmentBase {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_add_worklog, container, false);
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         _startButton = (Button) v.findViewById(R.id.start_spinner);
         _startButton.setOnClickListener(_start_onClick);

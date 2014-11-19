@@ -45,6 +45,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private static final String STATE_EXPIRES = "STATE_EXPIRES";
     private static final String STATE_EXPIRATION_DATE = "STATE_EXPIRATION_DATE";
     private static final String STATE_TAC = "STATE_TAC";
+    private static final String STATE_TAB_POS = "STATE_TAB_POS";
 
     // Ui
     private TabHost _tabHost;
@@ -75,6 +76,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private boolean _tacAccpet;
     private Listener _listener;
     private Calendar _pickerCal;
+    private int _savedTabPos = -1;
 
 
     /*-*****************************-*/
@@ -115,6 +117,9 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_TAC))
                 _tacAccpet = savedInstanceState.getBoolean(STATE_TAC);
+
+            if (savedInstanceState.containsKey(STATE_TAB_POS))
+                _savedTabPos = savedInstanceState.getInt(STATE_TAB_POS);
         }
         super.onCreate(savedInstanceState);
     }
@@ -148,6 +153,9 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
         if (_expirationDate != null)
             outState.putString(STATE_EXPIRATION_DATE, _expirationDate);
+
+        if (_tabHost != null)
+            outState.putInt(STATE_TAB_POS, _tabHost.getCurrentTab());
 
         super.onSaveInstanceState(outState);
     }
@@ -245,6 +253,12 @@ public class CounterOfferDialog extends DialogFragmentBase {
             window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
         }
 
+        if (_savedTabPos != -1) {
+            _tabHost.setCurrentTab(_savedTabPos);
+            _savedTabPos = -1;
+        }
+
+
         populateUi();
     }
 
@@ -304,7 +318,13 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
             _counterReason = info.getExplanation();
             _expires = info.getExpires();
-            _expirationDate = ISO8601.fromUTC(Calendar.getInstance().getTimeInMillis() + info.getExpiresAfter() * 1000);
+            if (_expires) {
+                try {
+                    _expirationDate = ISO8601.fromUTC(Calendar.getInstance().getTimeInMillis() + info.getExpiresAfter() * 1000);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
 
         super.show();
@@ -337,7 +357,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
-            _expenseDialog.show();
+            _expenseDialog.show(false);
         }
 
         @Override
