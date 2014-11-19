@@ -2,16 +2,15 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -315,109 +314,72 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
-        if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
+
+        if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
             if (data == null)
                 return;
 
-            Uri uri = data.getData();
             try {
-                // get temp path
-                String packageName = _gs.getPackageName();
+                // generate temp file
                 File externalPath = Environment.getExternalStorageDirectory();
-                File temppath = new File(externalPath.getAbsolutePath()
-                        + "/Android/data/" + packageName + "/temp");
+                String packageName = _gs.getPackageName();
+                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
                 temppath.mkdirs();
-
-                // create temp folder
                 File tempfile = File.createTempFile("DATA", null, temppath);
 
-                // copy the data
-                InputStream in = _gs.getContentResolver().openInputStream(uri);
-                OutputStream out = new FileOutputStream(tempfile);
-                misc.copyStream(in, out, 1024, -1, 500);
-                out.close();
-                in.close();
 
-                String filename = "";
-                if (uri.getScheme().equals("file")) {
-                    filename = uri.getLastPathSegment();
-                } else {
-                    Cursor c = _gs.getContentResolver().query(uri, null, null,
-                            null, null);
-                    int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    c.moveToFirst();
-                    filename = c.getString(nameIndex);
-                    c.close();
+                String filename = null;
+                boolean gotData = false;
+
+                if ("inline-data".equals(data.getAction())) {
+                    if (data.getExtras().getParcelable("data") instanceof Bitmap) {
+                        Bitmap bitmap = data.getExtras().getParcelable("data");
+                        FileOutputStream fout = new FileOutputStream(tempfile);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
+                        fout.close();
+                        filename = "Image-" + ISO8601.now() + ".png";
+                        gotData = true;
+                    }
+                } else if (data.getData() != null) {
+                    Uri uri = data.getData();
+
+                    InputStream in = _gs.getContentResolver().openInputStream(uri);
+                    OutputStream out = new FileOutputStream(tempfile);
+                    misc.copyStream(in, out, 1024, -1, 500);
+                    out.close();
+                    in.close();
+                    gotData = true;
+
+                    if (uri.getScheme().equals("file")) {
+                        filename = uri.getLastPathSegment();
+                    } else {
+                        Cursor c = _gs.getContentResolver().query(uri, null, null,
+                                null, null);
+                        int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                        c.moveToFirst();
+                        filename = c.getString(nameIndex);
+                        c.close();
+                    }
+
                 }
 
-                // send to the service
-                // startLoading();
-                _uploadingSlotView.addUploading(filename);
+                if (!gotData) {
+                    Toast.makeText(getActivity(), "Could not get image data.", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 _gs.startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                         _uploadingSlot.getSlotId(), filename,
                         tempfile, getNotificationIntent()));
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
 
-        } else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
-            ContentResolver cr = getActivity().getContentResolver();
-            String[] p1 = new String[]{BaseColumns._ID,
-                    MediaStore.Images.ImageColumns.DATE_TAKEN};
-            Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    p1, null, null, p1[1] + " DESC");
-            if (c1.moveToFirst()) {
-                String uristringpic = "content://media/external/images/media/"
-                        + c1.getInt(0);
-                Uri uri = Uri.parse(uristringpic);
-                try {
-                    // find temp path
-                    String packageName = _gs.getPackageName();
-                    File externalPath = Environment
-                            .getExternalStorageDirectory();
-                    File temppath = new File(externalPath.getAbsolutePath()
-                            + "/Android/data/" + packageName + "/temp");
-                    temppath.mkdirs();
-
-                    // open temp file
-                    File tempfile = File.createTempFile("DATA", null, temppath);
-
-                    // write the image
-                    InputStream in = _gs.getContentResolver().openInputStream(
-                            uri);
-                    OutputStream out = new FileOutputStream(tempfile);
-                    misc.copyStream(in, out, 1024, -1, 500);
-                    out.close();
-                    in.close();
-
-                    Cursor c = _gs.getContentResolver().query(uri, null, null,
-                            null, null);
-                    int nameIndex = c
-                            .getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    c.moveToFirst();
-
-                    // send data to service
-                    // startLoading();
-                    _uploadingSlotView.addUploading(c.getString(nameIndex));
-                    _gs.startService(_service.uploadDeliverable(
-                            WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                            _uploadingSlot.getSlotId(), c.getString(nameIndex),
-                            tempfile, getNotificationIntent()));
-
-                    c.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            c1.close();
-            Log.v(TAG, "BP");
         }
     }
 
-    ;
 
     /*-*********************************-*/
     /*-				Events				-*/
