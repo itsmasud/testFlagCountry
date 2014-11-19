@@ -1,28 +1,20 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ui.workorder.detail.LocationView";
@@ -35,9 +27,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     // Data
     private Workorder _workorder;
-
-    // Google Map
-    private GoogleMap _googleMap;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -58,9 +47,30 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
         _contactInfoTextView = (TextView) findViewById(R.id.contactinfo_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
+
         setVisibility(View.GONE);
 
     }
+
+    /*-*************************-*/
+	/*-			Events			-*/
+	/*-*************************-*/
+    private View.OnClickListener _openMapOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(_workorder != null){
+                Location location = _workorder.getLocation();
+                if(location != null){
+                    try{
+                        String _fullAddress = misc.escapeForURL(location.getFullAddress());
+                        String _uriString = "geo:0,0?q="+_fullAddress;
+                        Uri _uri = Uri.parse(_uriString);
+                        showMap(_uri);
+                    } catch (Exception e){}
+                }
+            }
+        }
+    };
 
 	/*-*************************************-*/
 	/*-				Mutators				-*/
@@ -86,6 +96,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (!misc.isEmptyOrNull(fullAddr)) {
             _addressTextView.setText(fullAddr);
             _addressTextView.setVisibility(View.VISIBLE);
+            _addressTextView.setOnClickListener(_openMapOnClick);
         } else {
             _addressTextView.setVisibility(View.GONE);
         }
@@ -94,6 +105,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _distanceTextView.setText(_workorder.getDistance() + " mi");
         } else if (location.getDistance() != null) {
             _distanceTextView.setText(location.getDistance() + " mi");
+            _distanceTextView.setOnClickListener(_openMapOnClick);
         }
 
         String contactInfo = "";
@@ -124,100 +136,17 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         } else {
             _descriptionTextView.setVisibility(GONE);
         }
+
         setVisibility(View.VISIBLE);
 
-        //@TODO FOR MAP VIEW
-        /*
-        try {
-            // Loading map
-            initilizeMap();
-
-            // Changing map type
-            _googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-            // Showing / hiding your current location
-            _googleMap.setMyLocationEnabled(true);
-
-            // Enable / Disable zooming controls
-            _googleMap.getUiSettings().setZoomControlsEnabled(false);
-
-            // Enable / Disable my location button
-            _googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-
-            // Enable / Disable Compass icon
-            _googleMap.getUiSettings().setCompassEnabled(true);
-
-            // Enable / Disable Rotate gesture
-            _googleMap.getUiSettings().setRotateGesturesEnabled(true);
-
-            // Enable / Disable zooming functionality
-            _googleMap.getUiSettings().setZoomGesturesEnabled(true);
-
-
-            //@TODO Provider Location Data
-            //@TODO Workorder Location Data
-            //Provider Location info
-            double latitude = 17.385044;
-            double longitude = 78.486671;
-
-            // random latitude and logitude
-            double[] randomLocation = createRandLocation(latitude,
-                    longitude);
-
-            // Adding a marker
-            MarkerOptions marker = new MarkerOptions().position(
-                    new LatLng(randomLocation[0], randomLocation[1]))
-                    .title("Provider");
-
-            // changing marker color
-            marker.icon(BitmapDescriptorFactory
-                    .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-
-            _googleMap.addMarker(marker);
-
-
-            // Move the camera to last position with a zoom level
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(randomLocation[0],
-                            randomLocation[1])).zoom(15).build();
-
-            _googleMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(cameraPosition));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        */
     }
 
-
-    /**
-     * function to load map If map is not created it will create it for you
-     * */
-    private void initilizeMap() {
-        if (_googleMap == null) {
-            //@TODO
-            /*_googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                    R.id.location_map)).getMap();*/
-
-            // check if map is created successfully or not
-            if (_googleMap == null) {
-                Toast.makeText(getContext(),
-                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
-                        .show();
-            }
+    public void showMap(Uri geoLocation) {
+        Intent _intent = new Intent(Intent.ACTION_VIEW);
+        _intent.setData(geoLocation);
+        if (_intent.resolveActivity(getContext().getPackageManager()) != null) {
+            getContext().startActivity(_intent);
         }
-    }
-
-    /*
-     * creating random postion around a location for testing purpose only
-     */
-    private double[] createRandLocation(double latitude, double longitude) {
-
-        return new double[] { latitude + ((Math.random() - 0.5) / 500),
-                longitude + ((Math.random() - 0.5) / 500),
-                150 + ((Math.random() - 0.5) * 10) };
     }
 
 }
