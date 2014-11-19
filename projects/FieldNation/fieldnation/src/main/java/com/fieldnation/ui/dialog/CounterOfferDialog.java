@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.AdditionalExpense;
@@ -508,6 +509,11 @@ public class CounterOfferDialog extends DialogFragmentBase {
             } else if (_tabHost.getCurrentTabTag().startsWith("mid")) {
                 _tabHost.setCurrentTab(_tabHost.getCurrentTab() + 1);
             } else if (_tabHost.getCurrentTabTag().equals("end")) {
+                if (!_tacAccpet) {
+                    Toast.makeText(getActivity(), "Please accept the terms and conditions to continue", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 // Todo need to do some data validation
                 if (_listener != null) {
                     AdditionalExpense[] exp = new AdditionalExpense[_expenses.size()];
