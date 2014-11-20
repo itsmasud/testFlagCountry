@@ -5,14 +5,10 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.FileReceiver;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -46,12 +43,8 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -316,67 +309,7 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
         if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
-            if (data == null)
-                return;
-
-            try {
-                // generate temp file
-                File externalPath = Environment.getExternalStorageDirectory();
-                String packageName = _gs.getPackageName();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
-                temppath.mkdirs();
-                File tempfile = File.createTempFile("DATA", null, temppath);
-
-
-                String filename = null;
-                boolean gotData = false;
-
-                if ("inline-data".equals(data.getAction())) {
-                    if (data.getExtras().getParcelable("data") instanceof Bitmap) {
-                        Bitmap bitmap = data.getExtras().getParcelable("data");
-                        FileOutputStream fout = new FileOutputStream(tempfile);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
-                        fout.close();
-                        filename = "Image-" + ISO8601.now() + ".png";
-                        gotData = true;
-                    }
-                } else if (data.getData() != null) {
-                    Uri uri = data.getData();
-
-                    InputStream in = _gs.getContentResolver().openInputStream(uri);
-                    OutputStream out = new FileOutputStream(tempfile);
-                    misc.copyStream(in, out, 1024, -1, 500);
-                    out.close();
-                    in.close();
-                    gotData = true;
-
-                    if (uri.getScheme().equals("file")) {
-                        filename = uri.getLastPathSegment();
-                    } else {
-                        Cursor c = _gs.getContentResolver().query(uri, null, null,
-                                null, null);
-                        int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                        c.moveToFirst();
-                        filename = c.getString(nameIndex);
-                        c.close();
-                    }
-
-                }
-
-                if (!gotData) {
-                    Toast.makeText(getActivity(), "Could not get image data.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                _gs.startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _uploadingSlot.getSlotId(), filename,
-                        tempfile, getNotificationIntent()));
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
+            FileReceiver.fileFromActivityResult(getActivity(), data, _fileReceiver_listener);
         }
     }
 
@@ -384,6 +317,21 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private FileReceiver.Listener _fileReceiver_listener = new FileReceiver.Listener() {
+        @Override
+        public void fileReady(String filename, File file) {
+            _gs.startService(_service.uploadDeliverable(
+                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                    _uploadingSlot.getSlotId(), filename,
+                    file, getNotificationIntent()));
+        }
+
+        @Override
+        public void fail(String reason) {
+            Toast.makeText(getActivity(), reason, Toast.LENGTH_LONG).show();
+        }
+    };
+
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
