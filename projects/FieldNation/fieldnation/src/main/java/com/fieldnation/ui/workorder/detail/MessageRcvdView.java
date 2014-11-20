@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
@@ -86,7 +84,7 @@ public class MessageRcvdView extends RelativeLayout {
             return;
 
         WEB_GET_PHOTO = _rand.nextInt();
-        _gs.startService(_service.getPhoto(WEB_GET_PHOTO, _message.getFromUser().getPhotoThumbUrl()));
+        _gs.startService(_service.getPhoto(WEB_GET_PHOTO, _message.getFromUser().getPhotoThumbUrl(), true));
     }
 
     private void populateUi() {
@@ -120,30 +118,12 @@ public class MessageRcvdView extends RelativeLayout {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == WEB_GET_PHOTO) {
-                byte[] data = resultData.getByteArray(PhotoServiceConstants.KEY_RESPONSE_DATA);
-                if (data != null) {
-                    new MakeCircleAsync().executeEx(data);
-                }
+                Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
+                Drawable draw = new BitmapDrawable(getContext().getResources(), photo);
+                _profileImageView.setBackgroundDrawable(draw);
             }
             super.onReceiveResult(resultCode, resultData);
         }
     };
 
-    private class MakeCircleAsync extends AsyncTaskEx<byte[], Void, Bitmap>{
-        @Override
-        protected Bitmap doInBackground(byte[]... params) {
-            Bitmap bitmap = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
-            return misc.extractCircle(bitmap);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-
-            if (bitmap != null) {
-                Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
-                _profileImageView.setBackgroundDrawable(draw);
-            }
-        }
-    }
 }

@@ -1,14 +1,5 @@
 package com.fieldnation.ui;
 
-import java.util.Calendar;
-
-import com.fieldnation.R;
-import com.fieldnation.data.profile.Message;
-import com.fieldnation.rpc.client.PhotoService;
-import com.fieldnation.rpc.common.PhotoServiceConstants;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,130 +15,133 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.R;
+import com.fieldnation.data.profile.Message;
+import com.fieldnation.rpc.client.PhotoService;
+import com.fieldnation.rpc.common.PhotoServiceConstants;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
+
+import java.util.Calendar;
+
 public class MessageCardView extends RelativeLayout {
-	private static final String TAG = "ui.MessageView";
-	private View _statusView;
-	private TextView _titleTextView;
-	private TextView _substatusTextView;
-	private TextView _messageBodyTextView;
-	private TextView _timeTextView;
-	private ImageView _profileImageView;
-	private int _viewId;
+    private static final String TAG = "ui.MessageView";
+    private View _statusView;
+    private TextView _titleTextView;
+    private TextView _substatusTextView;
+    private TextView _messageBodyTextView;
+    private TextView _timeTextView;
+    private ImageView _profileImageView;
+    private int _viewId;
 
-	private PhotoService _photoService;
-	private Message _message;
-	private String[] _substatus;
+    private PhotoService _photoService;
+    private Message _message;
+    private String[] _substatus;
 
-	/*-*****************************-*/
-	/*-			LifeCycle			-*/
-	/*-*****************************-*/
-	public MessageCardView(Context context) {
-		this(context, null, -1);
-	}
+    /*-*****************************-*/
+    /*-			LifeCycle			-*/
+    /*-*****************************-*/
+    public MessageCardView(Context context) {
+        this(context, null, -1);
+    }
 
-	public MessageCardView(Context context, AttributeSet attrs) {
-		this(context, attrs, -1);
-	}
+    public MessageCardView(Context context, AttributeSet attrs) {
+        this(context, attrs, -1);
+    }
 
-	public MessageCardView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		final LayoutInflater inflater = LayoutInflater.from(getContext());
-		inflater.inflate(R.layout.view_message_card, this);
+    public MessageCardView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        final LayoutInflater inflater = LayoutInflater.from(getContext());
+        inflater.inflate(R.layout.view_message_card, this);
 
-		if (isInEditMode())
-			return;
+        if (isInEditMode())
+            return;
 
-		_substatus = getResources().getStringArray(R.array.workorder_substatus);
+        _substatus = getResources().getStringArray(R.array.workorder_substatus);
 
-		_photoService = new PhotoService(context, _resultReceiver);
+        _photoService = new PhotoService(context, _resultReceiver);
 
-		_titleTextView = (TextView) findViewById(R.id.title_textview);
-		_messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
-		_substatusTextView = (TextView) findViewById(R.id.substatus_textview);
-		_timeTextView = (TextView) findViewById(R.id.time_textview);
-		_profileImageView = (ImageView) findViewById(R.id.profile_imageview);
-		_statusView = findViewById(R.id.status_view);
-	}
+        _titleTextView = (TextView) findViewById(R.id.title_textview);
+        _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
+        _substatusTextView = (TextView) findViewById(R.id.substatus_textview);
+        _timeTextView = (TextView) findViewById(R.id.time_textview);
+        _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
+        _statusView = findViewById(R.id.status_view);
+    }
 
-	public void setMessage(Message message) {
-		_message = message;
-		_substatusTextView.setText(_substatus[_message.getStatus().getWorkorderSubstatus().ordinal()]);
+    public void setMessage(Message message) {
+        _message = message;
+        _substatusTextView.setText(_substatus[_message.getStatus().getWorkorderSubstatus().ordinal()]);
 
-		_viewId = message.getMessageId() % Integer.MAX_VALUE;
-		try {
-			_titleTextView.setText(message.getWorkorderTitle() + "");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			// compress the data a bit
-			_messageBodyTextView.setText(message.getMessage());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        _viewId = message.getMessageId() % Integer.MAX_VALUE;
+        try {
+            _titleTextView.setText(message.getWorkorderTitle() + "");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            // compress the data a bit
+            _messageBodyTextView.setText(message.getMessage());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		try {
-			Calendar cal = ISO8601.toCalendar(message.getDate());
+        try {
+            Calendar cal = ISO8601.toCalendar(message.getDate());
 
-			String date = misc.formatDateLong(cal);
+            String date = misc.formatDateLong(cal);
 
-			_timeTextView.setText(date);
+            _timeTextView.setText(date);
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		try {
-			// _profileImageView.setBackgroundDrawable(null);
-			_profileImageView.setImageDrawable(null);
-			String url = message.getPhotoUrl();
-			getContext().startService(_photoService.getPhoto(_viewId, url));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+        try {
+            // _profileImageView.setBackgroundDrawable(null);
+            _profileImageView.setImageDrawable(null);
+            String url = message.getPhotoUrl();
+            getContext().startService(_photoService.getPhoto(_viewId, url, true));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
-		switch (_message.getStatus().getStatusIntent()) {
-		case NORMAL:
-			_statusView.setBackgroundResource(R.drawable.card_status_white);
-			break;
-		case SUCCESS:
-			_statusView.setBackgroundResource(R.drawable.card_status_green);
-			break;
-		case UNKNOWN:
-			_statusView.setBackgroundResource(R.drawable.card_status_white);
-			break;
-		case WAITING:
-			_statusView.setBackgroundResource(R.drawable.card_status_gray);
-			break;
-		case WARNING:
-			_statusView.setBackgroundResource(R.drawable.card_status_orange);
-			break;
-		}
-	}
+        switch (_message.getStatus().getStatusIntent()) {
+            case NORMAL:
+                _statusView.setBackgroundResource(R.drawable.card_status_white);
+                break;
+            case SUCCESS:
+                _statusView.setBackgroundResource(R.drawable.card_status_green);
+                break;
+            case UNKNOWN:
+                _statusView.setBackgroundResource(R.drawable.card_status_white);
+                break;
+            case WAITING:
+                _statusView.setBackgroundResource(R.drawable.card_status_gray);
+                break;
+            case WARNING:
+                _statusView.setBackgroundResource(R.drawable.card_status_orange);
+                break;
+        }
+    }
 
-	public Message getMessage() {
-		return _message;
-	}
+    public Message getMessage() {
+        return _message;
+    }
 
-	private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
-		@Override
-		protected void onReceiveResult(int resultCode, Bundle resultData) {
-			if (resultCode == _viewId) {
-				byte[] data = resultData.getByteArray(PhotoServiceConstants.KEY_RESPONSE_DATA);
-
-				Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-				if (bitmap != null) {
-					bitmap = misc.extractCircle(bitmap);
-					Drawable draw = new BitmapDrawable(getContext().getResources(), bitmap);
-					// _profileImageView.setBackgroundDrawable(draw);
-					_profileImageView.setImageDrawable(draw);
-				}
-			}
-			super.onReceiveResult(resultCode, resultData);
-		}
-	};
+    private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if (resultCode == _viewId) {
+                Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
+                Drawable draw = new BitmapDrawable(getContext().getResources(), photo);
+                _profileImageView.setImageDrawable(draw);
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+    };
 
 }
