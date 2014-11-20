@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.FileReceiver;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -44,7 +43,6 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 
-import java.io.File;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -309,7 +307,11 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
         if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
-            FileReceiver.fileFromActivityResult(getActivity(), data, _fileReceiver_listener);
+            _gs.startService(_service.uploadDeliverable(
+                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                    _uploadingSlot.getSlotId(), data, getNotificationIntent()));
+
+            _uploadingSlotView.addUploading("Selected File");
         }
     }
 
@@ -317,20 +319,6 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private FileReceiver.Listener _fileReceiver_listener = new FileReceiver.Listener() {
-        @Override
-        public void fileReady(String filename, File file) {
-            _gs.startService(_service.uploadDeliverable(
-                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                    _uploadingSlot.getSlotId(), filename,
-                    file, getNotificationIntent()));
-        }
-
-        @Override
-        public void fail(String reason) {
-            Toast.makeText(getActivity(), reason, Toast.LENGTH_LONG).show();
-        }
-    };
 
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override

@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.fieldnation.FileReceiver;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -52,7 +51,6 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-import java.io.File;
 import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -345,7 +343,11 @@ public class TasksFragment extends WorkorderFragment {
                     _service.completeSignatureTask(resultCode, workorderid, taskid, arrival, depart, name, json_vector));
             setLoading(true);
         } else if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
-            FileReceiver.fileFromActivityResult(getActivity(), data, _fileReceiver_listener);
+            _gs.startService(_service.uploadDeliverable(
+                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                    _currentTask.getSlotId(), data, getNotificationIntent()));
+            // todo notify task view that the file is uploading
+
         }
     }
 
@@ -356,22 +358,6 @@ public class TasksFragment extends WorkorderFragment {
     /*-*************************************-*/
     /*-				UI Events				-*/
     /*-*************************************-*/
-
-    private FileReceiver.Listener _fileReceiver_listener = new FileReceiver.Listener() {
-        @Override
-        public void fileReady(String filename, File file) {
-            _gs.startService(_service.uploadDeliverable(
-                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                    _currentTask.getSlotId(), filename,
-                    file, getNotificationIntent()));
-        }
-
-        @Override
-        public void fail(String reason) {
-            Toast.makeText(getActivity(), reason, Toast.LENGTH_LONG).show();
-        }
-    };
-
 
     private WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
         @Override
