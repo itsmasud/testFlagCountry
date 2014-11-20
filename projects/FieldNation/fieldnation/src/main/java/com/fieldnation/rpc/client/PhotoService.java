@@ -9,24 +9,25 @@ import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.rpc.server.DataService;
 
 public class PhotoService implements PhotoServiceConstants {
-	private Context _context;
-	private ResultReceiver _resultReceiver;
+    private Context _context;
+    private ResultReceiver _resultReceiver;
 
-	public PhotoService(Context context, ResultReceiver resultReceiver) {
-		_context = context.getApplicationContext();
-		_resultReceiver = resultReceiver;
-	}
+    public PhotoService(Context context, ResultReceiver resultReceiver) {
+        _context = context.getApplicationContext();
+        _resultReceiver = resultReceiver;
+    }
 
-	public Intent getPhoto(int resultCode, String url) {
-		Intent intent = new Intent(_context, DataService.class);
+    public Intent getPhoto(int resultCode, String url, boolean getCircle) {
+        Intent intent = new Intent(_context, DataService.class);
 
-		intent.setAction(DataServiceConstants.ACTION_RPC);
-		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+        intent.setAction(DataServiceConstants.ACTION_RPC);
+        intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
 
-		intent.putExtra(KEY_RESULT_RECEIVER, _resultReceiver);
-		intent.putExtra(KEY_PARAM_URL, url);
-		intent.putExtra(KEY_RESULT_CODE, resultCode);
+        intent.putExtra(KEY_RESULT_RECEIVER, _resultReceiver);
+        intent.putExtra(KEY_PARAM_URL, url);
+        intent.putExtra(KEY_RESULT_CODE, resultCode);
+        intent.putExtra(KEY_GET_CIRCLE, getCircle);
 
-		return intent;
-	}
+        return intent;
+    }
 }
