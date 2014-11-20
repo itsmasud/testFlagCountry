@@ -13,8 +13,6 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-import java.io.File;
-
 public class WorkorderService extends WebService implements WebServiceConstants {
 
     public WorkorderService(Context context, String username, String authToken, ResultReceiver callback) {
@@ -408,15 +406,25 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 false);
     }
 
-    public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String filename,
-                                    File file, PendingIntent notificationIntent) {
+//    public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String filename,
+//                                    File file, PendingIntent notificationIntent) {
+//        if (deliverableSlotId <= 0) {
+//            return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables", null, "file",
+//                    filename, file, null, notificationIntent);
+//        }
+//        return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
+//                null, "file", filename, file, null, notificationIntent);
+//    }
+
+    public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, Intent data, PendingIntent notificationIntent) {
         if (deliverableSlotId <= 0) {
-            return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables", null, "file",
-                    filename, file, null, notificationIntent);
+            return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables", null,
+                    "file", data, null, notificationIntent);
         }
         return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
-                null, "file", filename, file, null, notificationIntent);
+                null, "file", data, null, notificationIntent);
     }
+
 
     public Intent getDeliverableDetails(int resultCode, long workorderId, long deliverableId, boolean allowCache) {
         return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId,

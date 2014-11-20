@@ -1,15 +1,5 @@
 package com.fieldnation.rpc.server;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.fieldnation.R;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.WebServiceConstants;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,110 +9,146 @@ import android.os.ResultReceiver;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-public class HttpPostFileRunnable extends HttpRunnable implements WebServiceConstants {
-	private static final String TAG = "rpc.server.HttpPostFileRunnable";
+import com.fieldnation.FileReceiver;
+import com.fieldnation.R;
+import com.fieldnation.json.JsonObject;
+import com.fieldnation.rpc.common.WebServiceConstants;
 
-	private static final int NOTIFICATION_ID = 1;
+import java.io.File;
+import java.io.FileInputStream;
+import java.security.SecureRandom;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
-	public HttpPostFileRunnable(Context context, Intent intent, OAuth at) {
-		super(context, intent, at);
-	}
+public class HttpPostFileRunnable extends HttpRunnable implements WebServiceConstants, FileReceiver.Listener {
+    private static final String TAG = "rpc.server.HttpPostFileRunnable";
 
-	@Override
-	public void run() {
-		Bundle bundle = _intent.getExtras();
-		String path = bundle.getString(KEY_PARAM_PATH);
-		String options = bundle.getString(KEY_PARAM_OPTIONS);
-		String filename = bundle.getString(KEY_PARAM_FILE_NAME);
-		String fieldName = bundle.getString(KEY_PARAM_FILE_FIELD_NAME);
-		String fieldMapString = bundle.getString(KEY_PARAM_FIELD_MAP);
-		PendingIntent responseIntent = bundle.getParcelable(KEY_PARAM_NOTIFICATION_INTENT);
-		Map<String, String> fields = null;
+    private int NOTIFICATION_ID = 1;
 
-		NotificationCompat.Builder noteBuilder = new NotificationCompat.Builder(_context).setSmallIcon(
-				R.drawable.ic_action_upload).setContentTitle("Upload " + filename).setContentText("Uploading...").setContentIntent(
-				responseIntent);
+    private Bundle _bundle;
+    private ResultReceiver _rr;
+    private NotificationManager _noteManager;
+    private NotificationCompat.Builder _noteBuilder;
+    private SecureRandom _rand = new SecureRandom();
+    private PendingIntent _responseIntent;
 
-		NotificationManager noteManager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
+    public HttpPostFileRunnable(Context context, Intent intent, OAuth at) {
+        super(context, intent, at);
+    }
 
-		ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
+    @Override
+    public void run() {
+        NOTIFICATION_ID = _rand.nextInt();
 
-		if (fieldMapString != null) {
-			try {
-				JsonObject obj = new JsonObject(fieldMapString);
-				fields = new HashMap<String, String>();
+        _bundle = _intent.getExtras();
+        _rr = _bundle.getParcelable(KEY_PARAM_CALLBACK);
+        _responseIntent = _bundle.getParcelable(KEY_PARAM_NOTIFICATION_INTENT);
 
-				Enumeration<String> keys = obj.keys();
-				while (keys.hasMoreElements()) {
-					String key = keys.nextElement();
-					fields.put(key, obj.getString(key));
-				}
+        _noteBuilder = new NotificationCompat.Builder(_context)
+                .setSmallIcon(R.drawable.ic_action_upload)
+                .setContentTitle("Starting File Upload...")
+                .setContentText("Getting file")
+                .setContentIntent(_responseIntent);
 
-			} catch (Exception ex) {
-			}
-		}
+        _noteManager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
+        _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
 
-		Ws ws = new Ws(_auth);
-		Result result = null;
-		try {
-			if (bundle.containsKey(KEY_PARAM_FILE_URI)) {
-				String uri = bundle.getString(KEY_PARAM_FILE_URI);
-				File file = new File(uri);
-				result = ws.httpPostFile(path, options, fieldName, filename, new FileInputStream(file),
-						(int) file.length(), fields);
-			} else if (bundle.containsKey(KEY_PARAM_FILE_DATA)) {
-				byte[] filedata = bundle.getByteArray(KEY_PARAM_FILE_DATA);
-				String contentType = bundle.getString(KEY_PARAM_CONTENT_TYPE);
-				result = ws.httpPostFile(path, options, fieldName, filename, filedata, fields, contentType);
-			}
-			if (result.getResponseCode() / 100 != 2) {
-				Log.v(TAG, "Error response: " + result.getResponseCode());
-				bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-				bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
-				bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-				noteBuilder.setContentText("Failed!");
-				noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
-			} else {
-				try {
-					// happy path
-					bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
-					bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-					bundle.putBoolean(KEY_RESPONSE_CACHED, false);
-					bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-					DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
-							bundle.getInt(KEY_RESPONSE_CODE));
-					Log.v(TAG, "web request success");
-					noteBuilder.setContentText("Success!");
-					noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
-				} catch (Exception ex) {
-					noteBuilder.setContentText("Failed!");
-					noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
-					try {
-						// unhappy, but http error
-						bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
-						bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-					} catch (Exception ex1) {
-						// sad path
-						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
-						bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
-					}
-				}
-			}
+        Intent data = _bundle.getParcelable(KEY_PARAM_FILE_DATA_INTENT);
+        FileReceiver.fileFromActivityResult(_context, data, this);
+    }
 
-		} catch (Exception ex) {
-			noteBuilder.setContentText("Failed!");
-			noteManager.notify(NOTIFICATION_ID, noteBuilder.build());
-			Log.v(TAG, "web request fail");
-			bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
-			bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());
-			if (result != null) {
-				bundle.putLong(KEY_RESPONSE_CODE, result.getResponseCode());
-			}
-		}
+    @Override
+    public void fileReady(String filename, File file) {
+        String path = _bundle.getString(KEY_PARAM_PATH);
+        String options = _bundle.getString(KEY_PARAM_OPTIONS);
+        String fieldName = _bundle.getString(KEY_PARAM_FILE_FIELD_NAME);
+        String fieldMapString = _bundle.getString(KEY_PARAM_FIELD_MAP);
+        Map<String, String> fields = null;
 
-		rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
-	}
+        if (fieldMapString != null) {
+            try {
+                JsonObject obj = new JsonObject(fieldMapString);
+                fields = new HashMap<String, String>();
+
+                Enumeration<String> keys = obj.keys();
+                while (keys.hasMoreElements()) {
+                    String key = keys.nextElement();
+                    fields.put(key, obj.getString(key));
+                }
+
+            } catch (Exception ex) {
+            }
+        }
+
+        _noteBuilder.setContentTitle("Uploading " + filename)
+                .setContentText("Uploading...");
+        _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
+
+        Ws ws = new Ws(_auth);
+        Result result = null;
+        try {
+
+            result = ws.httpPostFile(path, options, fieldName, filename, new FileInputStream(file),
+                    (int) file.length(), fields);
+
+            if (result.getResponseCode() / 100 != 2) {
+                Log.v(TAG, "Error response: " + result.getResponseCode());
+                _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+                _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+                _bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                _noteBuilder.setContentText("Failed!");
+                _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
+            } else {
+                try {
+                    // happy path
+                    _bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
+                    _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+                    _bundle.putBoolean(KEY_RESPONSE_CACHED, false);
+                    _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
+                    DataCache.store(_context, _auth, _bundle, _bundle.getByteArray(KEY_RESPONSE_DATA),
+                            _bundle.getInt(KEY_RESPONSE_CODE));
+                    Log.v(TAG, "web request success");
+                    _noteBuilder.setContentText("Success!");
+                    _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
+                } catch (Exception ex) {
+                    _noteBuilder.setContentText("Failed!");
+                    _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
+                    try {
+                        // unhappy, but http error
+                        _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+                        _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+                        _bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                    } catch (Exception ex1) {
+                        // sad path
+                        _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+                        _bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            _noteBuilder.setContentText("Failed!");
+            _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
+            Log.v(TAG, "web request fail");
+            _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+            _bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());
+            if (result != null) {
+                _bundle.putLong(KEY_RESPONSE_CODE, result.getResponseCode());
+            }
+        }
+        _rr.send(_bundle.getInt(KEY_RESULT_CODE), _bundle);
+    }
+
+    @Override
+    public void fail(String reason) {
+        _noteBuilder.setContentText("Failed!");
+        _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
+        Log.v(TAG, "get file failed");
+        _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+        _bundle.putString(KEY_RESPONSE_ERROR, reason);
+        _rr.send(_bundle.getInt(KEY_RESULT_CODE), _bundle);
+    }
+
 }
