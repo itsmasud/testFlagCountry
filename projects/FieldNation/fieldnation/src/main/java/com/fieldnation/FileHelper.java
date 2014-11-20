@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -7,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.OpenableColumns;
+import android.widget.Toast;
 
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -19,9 +21,9 @@ import java.io.OutputStream;
 /**
  * Created by michael.carver on 11/20/2014.
  */
-public class FileReceiver {
+public class FileHelper {
 
-    public static void fileFromActivityResult(Context context, Intent data, Listener listener) {
+    public static void getFileFromActivityResult(Context context, Intent data, Listener listener) {
         if (data == null) {
             listener.fail("No data available");
             return;
@@ -86,6 +88,32 @@ public class FileReceiver {
             ex.printStackTrace();
             listener.fail("Exception: " + ex.getMessage());
         }
+    }
+
+    public static void viewOrDownloadFile(Context context, String url, String filename, String mimetype) {
+        Intent intent = null;
+
+        if (mimetype != null) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse(url), mimetype);
+        } else {
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        }
+
+        if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+            context.startActivity(intent);
+        } else {
+            // http://stackoverflow.com/questions/525204/android-download-intent
+            DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
+            r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+            r.allowScanningByMediaScanner();
+            r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+            DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            dm.enqueue(r);
+            Toast.makeText(context, "Downloading " + filename, Toast.LENGTH_LONG).show();
+        }
+
     }
 
 

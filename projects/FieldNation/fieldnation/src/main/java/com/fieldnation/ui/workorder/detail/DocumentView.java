@@ -1,8 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.utils.ISO8601;
@@ -64,8 +63,8 @@ public class DocumentView extends RelativeLayout {
     }
 
     /*-*************************-*/
-	/*-			Methods			-*/
-	/*-*************************-*/
+    /*-			Methods			-*/
+    /*-*************************-*/
     public void setDocument(Document document) {
         _document = document;
         populateUi();
@@ -91,23 +90,13 @@ public class DocumentView extends RelativeLayout {
     }
 
     /*-*************************-*/
-	/*-			Events			-*/
-	/*-*************************-*/
+    /*-			Events			-*/
+    /*-*************************-*/
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(_document.getFilePath()), _document.getFileType());
-                getContext().startActivity(intent);
-            } catch (Exception ex) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_document.getFilePath()));
-                    getContext().startActivity(intent);
-                } catch (Exception ex1) {
-                    ex1.printStackTrace();
-                }
-            }
+            FileHelper.viewOrDownloadFile(getContext(), _document.getFilePath(),
+                    _document.getFileName(), _document.getFileType());
         }
     };
 }

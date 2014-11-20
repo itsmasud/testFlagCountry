@@ -9,7 +9,7 @@ import android.os.ResultReceiver;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.fieldnation.FileReceiver;
+import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebServiceConstants;
@@ -21,7 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpPostFileRunnable extends HttpRunnable implements WebServiceConstants, FileReceiver.Listener {
+public class HttpPostFileRunnable extends HttpRunnable implements WebServiceConstants, FileHelper.Listener {
     private static final String TAG = "rpc.server.HttpPostFileRunnable";
 
     private int NOTIFICATION_ID = 1;
@@ -56,7 +56,7 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
         _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
 
         Intent data = _bundle.getParcelable(KEY_PARAM_FILE_DATA_INTENT);
-        FileReceiver.fileFromActivityResult(_context, data, this);
+        FileHelper.getFileFromActivityResult(_context, data, this);
     }
 
     @Override
