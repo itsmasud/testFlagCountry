@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.fieldnation.FileHelper;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -555,18 +556,8 @@ public class TasksFragment extends WorkorderFragment {
                                     setLoading(true);
                                 }
 
-                                try {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setDataAndType(Uri.parse(doc.getFilePath()), doc.getFileType());
-                                    startActivity(intent);
-                                } catch (Exception ex) {
-                                    try {
-                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(doc.getFilePath()));
-                                        startActivity(intent);
-                                    } catch (Exception ex1) {
-                                        ex1.printStackTrace();
-                                    }
-                                }
+                                FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
+                                        doc.getFileName(), doc.getFileType());
 
                                 break;
                             }
