@@ -528,6 +528,11 @@ public class Workorder implements Parcelable {
         return false;
     }
 
+    public boolean canModify() {
+        WorkorderStatus status = getStatus().getWorkorderStatus();
+        return status == WorkorderStatus.ASSIGNED || status == WorkorderStatus.INPROGRESS;
+    }
+
     public void dispatchOnChange() {
         Iterator<Listener> iter = _listeners.iterator();
         while (iter.hasNext()) {

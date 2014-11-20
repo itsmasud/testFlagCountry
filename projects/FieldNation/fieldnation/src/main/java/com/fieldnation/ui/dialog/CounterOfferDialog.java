@@ -286,7 +286,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
 
 
-        _expenseView.setExpenses(_expenses);
+        _expenseView.setData(_workorder, _expenses);
 
         _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate);
     }

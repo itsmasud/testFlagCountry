@@ -13,8 +13,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
-import java.util.Arrays;
-
 public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ui.workorder.detail.ClosingNotesView";
 
@@ -69,6 +67,18 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private void refresh() {
         if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
             _notesTextView.setText(_workorder.getClosingNotes());
+        } else if (!_workorder.canModify()) {
+            setVisibility(View.GONE);
+            return;
+        }
+        setVisibility(View.VISIBLE);
+
+        if (_workorder.canModify()) {
+            _editLayout.setVisibility(View.VISIBLE);
+            _notesTextView.setClickable(true);
+        } else {
+            _editLayout.setVisibility(View.GONE);
+            _notesTextView.setClickable(false);
         }
     }
 
@@ -79,7 +89,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private View.OnClickListener _notes_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!Arrays.asList(woStatus).contains(_workorder.getStatusId()) && _listener != null) {
+            if (_listener != null & _workorder.canModify()) {
                 _listener.onChangeClosingNotes(_workorder.getClosingNotes());
             }
         }

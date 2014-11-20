@@ -97,15 +97,17 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
         WorkorderStatus stat = workorder.getStatus().getWorkorderStatus();
 
-        if (stat == WorkorderStatus.CANCELED || stat == WorkorderStatus.COMPLETED) {
-            setVisibility(View.GONE);
-        } else {
+        if (_workorder.canModify() || stat == WorkorderStatus.AVAILABLE) {
             setVisibility(View.VISIBLE);
+        } else {
+            setVisibility(View.GONE);
+            return;
         }
 
         _requestButton.setVisibility(View.GONE);
         _notInterestedButton.setVisibility(View.GONE);
         _counterOfferButton.setVisibility(View.GONE);
+
 
         switch (stat) {
             case ASSIGNED:

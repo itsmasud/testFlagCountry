@@ -137,6 +137,11 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         } else {
             _confidentialTextView.setVisibility(View.GONE);
         }
+
+        if (!_workorder.canModify()) {
+            _policiesTextView.setVisibility(View.GONE);
+            _confidentialTextView.setVisibility(View.GONE);
+        }
     }
 
     /*-*********************************-*/

@@ -301,7 +301,7 @@ public class TasksFragment extends WorkorderFragment {
             _topBar.setWorkorder(_workorder);
 
         if (_customFields != null) {
-            _customFields.setData(_workorder.getCustomFields());
+            _customFields.setData(_workorder, _workorder.getCustomFields());
         }
         setLoading(false);
     }

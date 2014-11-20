@@ -12,6 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
 public class ExpenseView extends LinearLayout {
@@ -24,6 +25,7 @@ public class ExpenseView extends LinearLayout {
     private ImageButton _deleteImageButton;
 
     // Data
+    private Workorder _workorder;
     private Listener _listener;
     private AdditionalExpense _expense = null;
     private ExpenseCategory[] _categories;
@@ -79,8 +81,9 @@ public class ExpenseView extends LinearLayout {
     /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
-    public void setAdditionalExpense(AdditionalExpense expense) {
+    public void setData(Workorder workorder, AdditionalExpense expense) {
         _expense = expense;
+        _workorder = workorder;
         refresh();
     }
 
@@ -102,6 +105,12 @@ public class ExpenseView extends LinearLayout {
         }
         // TODO, need to get quantity and price per item numbers
         _costTextView.setText(misc.toCurrency(_expense.getPrice()));
+
+        if (_workorder.canModify()) {
+            _deleteImageButton.setVisibility(View.VISIBLE);
+        } else {
+            _deleteImageButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void setListener(Listener listener) {

@@ -1,8 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.fieldnation.R;
-import com.fieldnation.data.workorder.ShipmentTracking;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,110 +9,127 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.R;
+import com.fieldnation.data.workorder.ShipmentTracking;
+import com.fieldnation.data.workorder.Workorder;
+
 public class ShipmentSummary extends RelativeLayout {
-	private static final String TAG = "ui.workorder.detail.ShipmentSummary";
+    private static final String TAG = "ui.workorder.detail.ShipmentSummary";
 
-	// UI
-	private TextView _trackingIdTextView;
-	private TextView _carrierTextView;
-	private TextView _descTextView;
-	private TextView _directionTextView;
-	private ImageButton _deleteImageButton;
-	private Button _assignButton; 
+    // UI
+    private TextView _trackingIdTextView;
+    private TextView _carrierTextView;
+    private TextView _descTextView;
+    private TextView _directionTextView;
+    private ImageButton _deleteImageButton;
+    private Button _assignButton;
 
-	// Data
-	private ShipmentTracking _shipment;
-	private Listener _listener;
+    // Data
+    private Workorder _workorder;
+    private ShipmentTracking _shipment;
+    private Listener _listener;
 
-	/*-*************************************-*/
-	/*-				Life Cycle				-*/
-	/*-*************************************-*/
-	public ShipmentSummary(Context context) {
-		super(context);
-		init();
-	}
+    /*-*************************************-*/
+    /*-				Life Cycle				-*/
+    /*-*************************************-*/
+    public ShipmentSummary(Context context) {
+        super(context);
+        init();
+    }
 
-	public ShipmentSummary(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init();
-	}
+    public ShipmentSummary(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
 
-	public ShipmentSummary(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init();
-	}
+    public ShipmentSummary(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
+    }
 
-	private void init() {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_shipment_summary, this);
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.view_shipment_summary, this);
 
-		if (isInEditMode())
-			return;
+        if (isInEditMode())
+            return;
 
-		_trackingIdTextView = (TextView) findViewById(R.id.trackingid_textview);
-		_carrierTextView = (TextView) findViewById(R.id.carrier_textview);
-		_descTextView = (TextView) findViewById(R.id.description_textview);
-		_directionTextView = (TextView) findViewById(R.id.direction_textview);
-		_deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
-		_deleteImageButton.setOnClickListener(_delete_onClick);
-		_assignButton = (Button) findViewById(R.id.assign_button);
-		_assignButton.setOnClickListener(_assign_onClick);
-	}
+        _trackingIdTextView = (TextView) findViewById(R.id.trackingid_textview);
+        _carrierTextView = (TextView) findViewById(R.id.carrier_textview);
+        _descTextView = (TextView) findViewById(R.id.description_textview);
+        _directionTextView = (TextView) findViewById(R.id.direction_textview);
 
-	public void setShipmentTracking(ShipmentTracking shipment) {
-		_shipment = shipment;
+        _deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
+        _deleteImageButton.setOnClickListener(_delete_onClick);
 
-		if (_shipment.getTrackingId() != null) {
-			_trackingIdTextView.setText(_shipment.getTrackingId());
-		}
+        _assignButton = (Button) findViewById(R.id.assign_button);
+        _assignButton.setOnClickListener(_assign_onClick);
+    }
 
-		String carrier = _shipment.getCarrier();
-		if (carrier == null) {
-			carrier = _shipment.getCarrierOther();
-		}
+    public void setData(Workorder workorder, ShipmentTracking shipment) {
+        _shipment = shipment;
+        _workorder = workorder;
 
-		_carrierTextView.setText(carrier);
+        if (_shipment.getTrackingId() != null) {
+            _trackingIdTextView.setText(_shipment.getTrackingId());
+        }
 
-		_descTextView.setText(_shipment.getName());
-		boolean toSite = _shipment.getDirection().equals("to_site");
-		_directionTextView.setText(toSite ? "To Site" : "From Site");
+        String carrier = _shipment.getCarrier();
+        if (carrier == null) {
+            carrier = _shipment.getCarrierOther();
+        }
 
-	}
+        _carrierTextView.setText(carrier);
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
-	private View.OnClickListener _delete_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (_listener != null) {
-				_listener.onDelete(_shipment);
-			}
-		}
-	};
-	
-	private View.OnClickListener _assign_onClick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (_listener != null) {
-				_listener.onAssign(_shipment);
-			}
-		}
-	};
+        _descTextView.setText(_shipment.getName());
+        boolean toSite = _shipment.getDirection().equals("to_site");
+        _directionTextView.setText(toSite ? "To Site" : "From Site");
 
-	public void setListener(Listener listener) {
-		_listener = listener;
-	}
-	
-	public void hideForTaskShipmentDialog() {
-		_deleteImageButton.setVisibility(GONE);
-		_trackingIdTextView.setVisibility(GONE);
-		_carrierTextView.setVisibility(GONE);
-		//_directionTextView.setVisibility(GONE);
-		_assignButton.setVisibility(VISIBLE);
-	}
+        if (_workorder.canModify()) {
+            _deleteImageButton.setVisibility(View.VISIBLE);
+            _assignButton.setVisibility(View.VISIBLE);
+        } else {
+            _deleteImageButton.setVisibility(View.GONE);
+            _assignButton.setVisibility(View.GONE);
+        }
 
-	public interface Listener {
-		public void onDelete(ShipmentTracking shipment);
-		public void onAssign(ShipmentTracking shipment);
-	}
+    }
+
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
+    private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onDelete(_shipment);
+            }
+        }
+    };
+
+    private View.OnClickListener _assign_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onAssign(_shipment);
+            }
+        }
+    };
+
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
+    public void hideForTaskShipmentDialog() {
+        _deleteImageButton.setVisibility(GONE);
+        _trackingIdTextView.setVisibility(GONE);
+        _carrierTextView.setVisibility(GONE);
+        //_directionTextView.setVisibility(GONE);
+        _assignButton.setVisibility(VISIBLE);
+    }
+
+    public interface Listener {
+        public void onDelete(ShipmentTracking shipment);
+
+        public void onAssign(ShipmentTracking shipment);
+    }
 }

@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.utils.misc;
 
@@ -64,30 +63,28 @@ public class ActionBarTopView extends RelativeLayout {
         _confirmButton.setOnClickListener(_confirm_onClick);
         _closingNotesButton = (Button) findViewById(R.id.closingnotes_button);
         _closingNotesButton.setOnClickListener(_closing_onClick);
+
         setVisibility(View.GONE);
     }
 
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
-        WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
-        WorkorderSubstatus substatus = _workorder.getStatus()
-                .getWorkorderSubstatus();
-
-        if (status == WorkorderStatus.AVAILABLE
-                || status == WorkorderStatus.COMPLETED
-                || status == WorkorderStatus.CANCELED) {
+        if (_workorder.canModify()) {
+            setVisibility(View.VISIBLE);
+        } else {
             setVisibility(View.GONE);
             return;
-        } else {
-            setVisibility(View.VISIBLE);
         }
+
         _checkinButton.setVisibility(View.GONE);
         _checkoutButton.setVisibility(View.GONE);
         _acknowledgeButton.setVisibility(View.GONE);
         _completeButton.setVisibility(View.GONE);
         _confirmButton.setVisibility(View.GONE);
         _closingNotesButton.setVisibility(View.GONE);
+
+        WorkorderSubstatus substatus = _workorder.getStatus().getWorkorderSubstatus();
 
         switch (substatus) {
             case APPROVED_PROCESSINGPAYMENT:
@@ -135,9 +132,13 @@ public class ActionBarTopView extends RelativeLayout {
                 break;
         }
 
-        if (_workorder.canComplete()) {
+        if (_workorder.canComplete())
+
+        {
             _completeButton.setVisibility(View.VISIBLE);
-        } else {
+        } else
+
+        {
             if (_workorder.areTasksComplete() && substatus != WorkorderSubstatus.CHECKEDIN && misc.isEmptyOrNull(_workorder.getClosingNotes())) {
                 _closingNotesButton.setVisibility(View.VISIBLE);
             }

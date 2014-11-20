@@ -10,8 +10,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
 
-import java.util.Arrays;
-
 public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ui.workorder.detail.ShipmentView";
 
@@ -25,7 +23,6 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     // Data
     private Workorder _workorder;
     private Listener _listener;
-    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -62,13 +59,25 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
         _shipmentsLayout.removeAllViews();
 
-        if (shipments == null)
+        if (_workorder.canModify()) {
+            _addLayout.setVisibility(View.VISIBLE);
+        } else {
+            _addLayout.setVisibility(View.GONE);
+        }
+
+        if ((shipments == null || shipments.length == 0) && !_workorder.canModify()) {
+            setVisibility(View.GONE);
+            return;
+        }
+        setVisibility(View.VISIBLE);
+
+        if (shipments == null || shipments.length == 0)
             return;
 
         for (int i = 0; i < shipments.length; i++) {
             ShipmentSummary view = new ShipmentSummary(getContext());
             _shipmentsLayout.addView(view);
-            view.setShipmentTracking(shipments[i]);
+            view.setData(_workorder, shipments[i]);
             view.setListener(_summaryListener);
         }
     }
@@ -79,24 +88,22 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     private View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                if (_listener != null)
-                    _listener.addShipment();
-            }
+            if (_listener != null)
+                _listener.addShipment();
         }
     };
 
     private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
         @Override
         public void onDelete(ShipmentTracking shipment) {
-            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+            if (_listener != null && _workorder.canModify()) {
                 _listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
             }
         }
 
         @Override
         public void onAssign(ShipmentTracking shipment) {
-            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+            if (_listener != null && _workorder.canModify()) {
                 _listener.onAssign(_workorder, shipment.getWorkorderShipmentId());
             }
         }

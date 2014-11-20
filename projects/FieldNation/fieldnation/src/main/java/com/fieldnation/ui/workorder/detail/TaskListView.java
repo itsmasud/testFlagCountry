@@ -13,7 +13,6 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class TaskListView extends RelativeLayout {
@@ -32,7 +31,6 @@ public class TaskListView extends RelativeLayout {
     private List<Task> _tasks;
     private Listener _listener;
     private Workorder _workorder;
-    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
     public TaskListView(Context context) {
         super(context);
@@ -80,12 +78,12 @@ public class TaskListView extends RelativeLayout {
             return;
 
         if (_tasks.size() == 0) {
-            setVisibility(View.GONE);
-            //_noDataTextView.setVisibility(View.VISIBLE);
+            //setVisibility(View.GONE);
+            _noDataTextView.setVisibility(View.VISIBLE);
             return;
         } else {
-            setVisibility(View.VISIBLE);
-            //_noDataTextView.setVisibility(View.GONE);
+            //setVisibility(View.VISIBLE);
+            _noDataTextView.setVisibility(View.GONE);
         }
 
         boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage()) || "any".equals(_tasks.get(0).getStage());
@@ -102,10 +100,9 @@ public class TaskListView extends RelativeLayout {
                 Task task = _tasks.get(i);
 
                 TaskRowView row = new TaskRowView(getContext());
-                row.setTask(task);
+                row.setData(_workorder, task);
 
-                //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                if (_workorder.canModify()) {
                     row.setOnTaskClickListener(_task_onClick);
                 }
 
@@ -119,10 +116,10 @@ public class TaskListView extends RelativeLayout {
                 Task task = _tasks.get(i);
 
                 TaskRowView row = new TaskRowView(getContext());
-                row.setTask(task);
+                row.setData(_workorder, task);
 
                 //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+                if (_workorder.canModify()) {
                     row.setOnTaskClickListener(_task_onClick);
                 }
 
@@ -143,7 +140,7 @@ public class TaskListView extends RelativeLayout {
 
     /*-*************************-*/
     /*-			Events			-*/
-	/*-*************************-*/
+    /*-*************************-*/
     private TaskRowView.Listener _task_onClick = new TaskRowView.Listener() {
         @Override
         public void onTaskClick(Task task) {
