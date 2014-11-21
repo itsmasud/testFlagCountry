@@ -70,7 +70,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             return;
         }
 
-        // Todo should be clickable, load google maps
         String fullAddr = location.getFullAddress();
         if (!misc.isEmptyOrNull(fullAddr)) {
             _addressTextView.setText(fullAddr);

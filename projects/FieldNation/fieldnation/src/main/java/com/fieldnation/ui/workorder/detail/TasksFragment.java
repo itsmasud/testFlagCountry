@@ -271,19 +271,6 @@ public class TasksFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
-        if (_shipments != null)
-            _shipments.setWorkorder(_workorder);
-
-        if (_taskList != null) {
-            _taskList.setWorkorder(_workorder);
-        }
-
-        if (_timeLogged != null)
-            _timeLogged.setWorkorder(_workorder);
-
-        if (_closingNotes != null)
-            _closingNotes.setWorkorder(_workorder);
-
         if (_shipments != null && _timeLogged != null) {
             WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
             if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
@@ -297,11 +284,25 @@ public class TasksFragment extends WorkorderFragment {
             }
         }
 
+        if (_shipments != null)
+            _shipments.setWorkorder(_workorder);
+
+        if (_taskList != null) {
+            _taskList.setWorkorder(_workorder);
+        }
+
+        if (_timeLogged != null)
+            _timeLogged.setWorkorder(_workorder);
+
+        if (_closingNotes != null)
+            _closingNotes.setWorkorder(_workorder);
+
+
         if (_topBar != null)
             _topBar.setWorkorder(_workorder);
 
         if (_customFields != null) {
-            _customFields.setData(_workorder.getCustomFields());
+            _customFields.setData(_workorder, _workorder.getCustomFields());
         }
         setLoading(false);
     }

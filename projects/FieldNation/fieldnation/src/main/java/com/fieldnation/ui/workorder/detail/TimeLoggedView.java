@@ -12,8 +12,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
 
-import java.util.Arrays;
-
 public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer {
     private static final String TAG = "ui.workorder.detail.TimeLoggedView";
 
@@ -26,7 +24,6 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
     // Data
     private Listener _listener;
     private Workorder _workorder;
-    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
     public TimeLoggedView(Context context) {
         super(context);
@@ -65,6 +62,16 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
         LoggedWork[] logs = _workorder.getLoggedWork();
 
+        if (_workorder.canModifyTimeLog()) {
+            _addLogLinearLayout.setVisibility(View.VISIBLE);
+        } else {
+            if (logs == null || logs.length == 0) {
+                setVisibility(GONE);
+                return;
+            }
+            _addLogLinearLayout.setVisibility(View.GONE);
+        }
+
         if (logs == null || logs.length == 0) {
             _noTimeTextView.setVisibility(View.VISIBLE);
             return;
@@ -79,6 +86,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
             v.setData(_workorder, log);
             _logList.addView(v);
         }
+
     }
 
     /*-*************************-*/
@@ -87,8 +95,10 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
     private ScheduleDetailView.Listener _scheduleDetailView_listener = new ScheduleDetailView.Listener() {
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
-            if (_listener != null)
-                _listener.editWorklog(workorder, loggedWork, showDeviceCount);
+            if (_workorder.canModifyTimeLog()) {
+                if (_listener != null)
+                    _listener.editWorklog(workorder, loggedWork, showDeviceCount);
+            }
         }
     };
 
@@ -101,7 +111,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
             } catch (Exception ex) {
             }
 
-            if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+            if (_workorder.canModifyTimeLog()) {
                 if (_listener != null)
                     _listener.addWorklog(showdevices);
             }

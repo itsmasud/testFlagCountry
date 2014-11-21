@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -26,6 +27,7 @@ public class DocumentView extends RelativeLayout {
     private ImageButton _deleteButton;
 
     // Data
+    private Workorder _workorder;
     private Document _document;
 
     /*-*****************************-*/
@@ -65,8 +67,9 @@ public class DocumentView extends RelativeLayout {
     /*-*************************-*/
     /*-			Methods			-*/
     /*-*************************-*/
-    public void setDocument(Document document) {
+    public void setData(Workorder workorder, Document document) {
         _document = document;
+        _workorder = workorder;
         populateUi();
     }
 
@@ -81,12 +84,18 @@ public class DocumentView extends RelativeLayout {
             e.printStackTrace();
             _dateTextView.setVisibility(View.GONE);
         }
-        _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+        try {
+            _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            _usernameTextView.setVisibility(View.GONE);
+        }
 
-    }
-
-    public void hideDeleteButton() {
-        _deleteButton.setVisibility(GONE);
+        if (_workorder.canChangeDeliverables()) {
+            _deleteButton.setVisibility(View.VISIBLE);
+        } else {
+            _deleteButton.setVisibility(View.GONE);
+        }
     }
 
     /*-*************************-*/

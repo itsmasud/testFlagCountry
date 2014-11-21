@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadedDocument;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -31,6 +32,7 @@ public class UploadedDocumentView extends RelativeLayout {
     private LinearLayout _usernameLayout;
 
     // Data
+    private Workorder _workorder;
     private UploadedDocument _doc;
     private long _profileId;
     private Listener _listener;
@@ -104,9 +106,10 @@ public class UploadedDocumentView extends RelativeLayout {
         _filenameTextView.setText(filename);
     }
 
-    public void setDeliverable(long profileId, UploadedDocument deliverable) {
+    public void setData(Workorder workorder, long profileId, UploadedDocument deliverable) {
         _doc = deliverable;
         _profileId = profileId;
+        _workorder = workorder;
         populateUi();
     }
 
@@ -126,20 +129,19 @@ public class UploadedDocumentView extends RelativeLayout {
         }
         _usernameTextView.setText(_doc.getUploaderUserName());
 
-        if (_profileId == _doc.getUploaderUserId() && !_isLoading) {
+        if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
             _deleteButton.setVisibility(View.VISIBLE);
         } else {
             _deleteButton.setVisibility(View.GONE);
         }
+
+        setClickable(_workorder.canViewDeliverables());
     }
 
-    public void hideDeleteButton() {
-        _deleteButton.setVisibility(View.GONE);
-    }
 
     /*-*************************-*/
-	/*-			Events			-*/
-	/*-*************************-*/
+    /*-			Events			-*/
+    /*-*************************-*/
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

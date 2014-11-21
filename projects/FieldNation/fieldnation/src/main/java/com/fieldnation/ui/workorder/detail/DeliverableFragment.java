@@ -44,7 +44,6 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 
 public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DeliverableFragment";
@@ -87,7 +86,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private ProfileService _profileService;
     private Profile _profile = null;
     private Bundle _delayedAction = null;
-    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
     // private List<Deliverable> _deliverables = null;
     // private List<Task> _tasks = null;
@@ -174,13 +172,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private PendingIntent getNotificationIntent() {
         Intent intent = new Intent(_gs, WorkorderActivity.class);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
-                WorkorderActivity.TAB_DELIVERABLES);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
-                _workorder.getWorkorderId());
-
-        return PendingIntent.getActivity(_gs, _rand.nextInt(), intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+        return PendingIntent.getActivity(_gs, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void getData() {
@@ -188,8 +182,7 @@ public class DeliverableFragment extends WorkorderFragment {
             return;
 
         _profile = null;
-        _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE,
-                true));
+        _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
 
     private void populateUi() {
@@ -212,12 +205,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 Document doc = docs[i];
                 DocumentView v = new DocumentView(getActivity());
                 _reviewList.addView(v);
-                v.setDocument(doc);
-
-                //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder != null && Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                    v.hideDeleteButton();
-                }
+                v.setData(_workorder, doc);
             }
             _noDocsTextView.setVisibility(View.GONE);
         } else {
@@ -230,13 +218,9 @@ public class DeliverableFragment extends WorkorderFragment {
             for (int i = 0; i < slots.length; i++) {
                 UploadSlot slot = slots[i];
                 UploadSlotView v = new UploadSlotView(getActivity());
-                v.setUploadSlot(_profile.getUserId(), slot,
-                        _uploaded_document_listener, _workorder);
-
-                //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                    v.setListener(_uploadSlot_listener);
-                }
+                v.setData(_workorder, _profile.getUserId(), slot,
+                        _uploaded_document_listener);
+                v.setListener(_uploadSlot_listener);
 
                 _filesLayout.addView(v);
             }

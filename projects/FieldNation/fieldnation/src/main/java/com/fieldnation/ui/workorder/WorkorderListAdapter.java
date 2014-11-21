@@ -82,8 +82,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         super(activity, Workorder.class);
         _dataSelection = selection;
 
-        _rpcMethod = WorkorderService.class.getDeclaredMethod(selection.getCall(), new Class<?>[]{int.class,
-                int.class, boolean.class});
+        _rpcMethod = WorkorderService.class.getDeclaredMethod(selection.getCall(), new Class<?>[]{int.class, int.class, boolean.class});
         _rpcMethod.setAccessible(true);
     }
 
@@ -453,8 +452,6 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
                     _workorderService.setCounterOffer(WEB_CHANGING_WORKORDER,
                             workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,
                             schedule, expenses));
-
-
         }
     };
 

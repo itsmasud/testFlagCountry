@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
 /**
@@ -24,6 +25,7 @@ public class CustomFieldRowView extends RelativeLayout {
 
     // Data
     private Listener _listener;
+    private Workorder _workorder;
     private CustomField _customField;
 
     /*-*********************************-*/
@@ -57,9 +59,10 @@ public class CustomFieldRowView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(CustomField customField, Listener listener) {
+    public void setData(Workorder workorder, CustomField customField, Listener listener) {
         _customField = customField;
         _listener = listener;
+        _workorder = workorder;
         populateUi();
     }
 
@@ -80,6 +83,8 @@ public class CustomFieldRowView extends RelativeLayout {
         } else {
             _optionalTextView.setVisibility(View.VISIBLE);
         }
+
+        _checkbox.setEnabled(_workorder.canChangeCustomFields());
     }
 
     private View.OnClickListener _check_listener = new View.OnClickListener() {
