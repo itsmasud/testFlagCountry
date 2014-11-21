@@ -67,8 +67,9 @@ public class TaskListView extends RelativeLayout {
         _listener = l;
     }
 
-    public void setTaskList(List<Task> tasks) {
+    public void setData(Workorder workorder, List<Task> tasks) {
         _tasks = tasks;
+        _workorder = workorder;
 
         populateUi();
     }
@@ -132,10 +133,6 @@ public class TaskListView extends RelativeLayout {
                 }
             }
         }
-    }
-
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
     }
 
     /*-*************************-*/

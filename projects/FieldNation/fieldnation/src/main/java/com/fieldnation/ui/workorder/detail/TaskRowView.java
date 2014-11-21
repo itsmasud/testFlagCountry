@@ -47,23 +47,35 @@ public class TaskRowView extends RelativeLayout {
 
         _checkbox = (CheckBox) findViewById(R.id.checkbox);
         _checkbox.setOnClickListener(_checkbox_onClick);
+
+        populateUi();
     }
 
     public void setData(Workorder workorder, Task task) {
         _task = task;
         _workorder = workorder;
 
+        populateUi();
+    }
+
+    private void populateUi() {
+        if (_checkbox == null)
+            return;
+        if (_workorder == null)
+            return;
+
         _checkbox.setEnabled(_workorder.canModifyTasks());
 
-        TaskType type = task.getTaskType();
+        TaskType type = _task.getTaskType();
 
-        if (misc.isEmptyOrNull(task.getDescription())) {
+        if (misc.isEmptyOrNull(_task.getDescription())) {
             _checkbox.setText(type.getDisplay(getContext()));
         } else {
-            _checkbox.setText(type.getDisplay(getContext()) + "\n" + task.getDescription());
+            _checkbox.setText(type.getDisplay(getContext()) + "\n" + _task.getDescription());
         }
 
-        _checkbox.setChecked(task.getCompleted());
+        _checkbox.setChecked(_task.getCompleted());
+
     }
 
     public void setOnTaskClickListener(Listener listener) {
