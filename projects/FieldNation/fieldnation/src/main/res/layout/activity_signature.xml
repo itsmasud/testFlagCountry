@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/SignatureActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <com.fieldnation.ui.SignatureView
         android:id="@+id/sig_view"
@@ -12,14 +12,14 @@
     <RelativeLayout
         style="@style/SignatureContents"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/arrival_layout"
             style="@style/ArrivalStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -30,9 +30,8 @@
             <TextView
                 android:id="@+id/arrival_textview"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tap_to_set_a_time"
-                android:textColor="@color/SignatureCardGrey" />
+                style="@style/TextViewLink"
+                android:text="@string/tap_to_set_a_time" />
         </LinearLayout>
 
         <LinearLayout
@@ -42,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -54,39 +53,64 @@
             <TextView
                 android:id="@+id/departure_textview"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/TextViewLink"
                 android:layout_gravity="right"
-                android:text="@string/tap_to_set_a_time"
-                android:textColor="@color/SignatureCardGrey" />
+                android:text="@string/tap_to_set_a_time" />
         </LinearLayout>
 
         <LinearLayout
-            style="@style/SignatureLine"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/name_textview"
-            android:orientation="horizontal" >
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_grey_x" />
+            <LinearLayout
+                style="@style/SignatureLine"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:layout_gravity="bottom"
-                android:background="@color/SignatureCardGrey" />
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/ic_signature_x" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="bottom"
+                    android:background="@color/SignatureCardGrey" />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/name_textview"
+                style="@style/TextViewLink"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/tap_to_set_name" />
+
+            <View style="?attr/dialogDividerStyle" />
+
+            <LinearLayout
+                android:id="@+id/actionbar_view"
+                style="?attr/dialogActionBarStyle"
+                android:layout_alignParentBottom="true">
+
+                <Button
+                    android:id="@+id/clear_button"
+                    style="@style/Button.Material.Flat"
+                    android:text="CLEAR" />
+
+                <Button
+                    android:id="@+id/done_button"
+                    style="@style/Button.Material.Flat"
+                    android:text="DONE" />
+            </LinearLayout>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/name_textview"
-            style="@style/SignatureName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="@string/tap_to_set_name" />
     </RelativeLayout>
 
 </RelativeLayout>

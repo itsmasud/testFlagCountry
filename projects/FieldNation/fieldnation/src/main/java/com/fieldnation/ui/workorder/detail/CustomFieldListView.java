@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
+import com.fieldnation.data.workorder.Workorder;
 
 /**
  * Created by michael.carver on 10/30/2014.
@@ -21,6 +22,7 @@ public class CustomFieldListView extends RelativeLayout {
     private LinearLayout _fieldsList;
 
     // Data
+    private Workorder _workorder;
     private CustomField[] _fields;
     private CustomFieldRowView.Listener _listener;
 
@@ -63,18 +65,19 @@ public class CustomFieldListView extends RelativeLayout {
             CustomField field = _fields[i];
 
             CustomFieldRowView v = new CustomFieldRowView(getContext());
-            v.setData(field, _listener);
+            v.setData(_workorder, field, _listener);
             _fieldsList.addView(v);
         }
     }
 
     public void setListener(CustomFieldRowView.Listener listener) {
         _listener = listener;
+        populateUi();
     }
 
-    public void setData(CustomField[] fieldList) {
+    public void setData(Workorder workorder, CustomField[] fieldList) {
         _fields = fieldList;
-
+        _workorder = workorder;
         populateUi();
     }
 }

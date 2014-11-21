@@ -104,7 +104,7 @@
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="departure_date_and_time_colon">Departure Date and Time:</string>
     <string name="tap_to_set_a_time">Tap to set a time</string>
-    <string name="tap_to_set_name">Tap to set name</string>
+    <string name="tap_to_set_name">Tap to set signer\'s name</string>
     <string name="request_payment_change">Request Payment Change</string>
     <string name="request_schedule_change">Request Schedule Change</string>
     <string name="edit_payment_counter">Edit Payment Counter</string>

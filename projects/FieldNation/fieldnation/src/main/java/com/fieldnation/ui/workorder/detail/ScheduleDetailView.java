@@ -15,7 +15,6 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Calendar;
 
 public class ScheduleDetailView extends RelativeLayout {
@@ -34,7 +33,6 @@ public class ScheduleDetailView extends RelativeLayout {
     private Listener _listener;
     private Workorder _workorder;
     private LoggedWork _loggedWork;
-    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -65,6 +63,7 @@ public class ScheduleDetailView extends RelativeLayout {
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _startTextView = (TextView) findViewById(R.id.start_textview);
         _endTextView = (TextView) findViewById(R.id.end_textview);
+
         _editImageView = (ImageView) findViewById(R.id.edit_imageview);
         _editImageView.setOnClickListener(_edit_onClick);
 
@@ -119,6 +118,12 @@ public class ScheduleDetailView extends RelativeLayout {
         if (_loggedWork.getHours() != null) {
             _hoursTextView.setText(String.format("%.2f", _loggedWork.getHours()));
         }
+
+        if (_workorder.canModifyTimeLog()) {
+            _editImageView.setVisibility(View.VISIBLE);
+        } else {
+            _editImageView.setVisibility(View.GONE);
+        }
     }
 
     /*-******************************-*/
@@ -135,10 +140,8 @@ public class ScheduleDetailView extends RelativeLayout {
 
             }
 
-            if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                if (_listener != null)
-                    _listener.editWorklog(_workorder, _loggedWork, showdevices);
-            }
+            if (_listener != null)
+                _listener.editWorklog(_workorder, _loggedWork, showdevices);
         }
     };
 

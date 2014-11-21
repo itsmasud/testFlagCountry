@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.ExpenseView;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class ExpenseCoView extends RelativeLayout {
     private Button _resetButton;
 
     // Data
+    private Workorder _workorder;
     private List<AdditionalExpense> _expenses;
     private Listener _listener;
 
@@ -64,8 +66,9 @@ public class ExpenseCoView extends RelativeLayout {
         _listener = listener;
     }
 
-    public void setExpenses(List<AdditionalExpense> expenses) {
+    public void setData(Workorder workorder, List<AdditionalExpense> expenses) {
         _expenses = expenses;
+        _workorder = workorder;
 
         populateUi();
     }
@@ -89,7 +92,7 @@ public class ExpenseCoView extends RelativeLayout {
         for (int i = 0; i < _expenses.size(); i++) {
             ExpenseView v = new ExpenseView(getContext());
             v.setListener(_expense_listener);
-            v.setAdditionalExpense(_expenses.get(i));
+            v.setData(_workorder, _expenses.get(i));
             _expensesList.addView(v);
         }
     }

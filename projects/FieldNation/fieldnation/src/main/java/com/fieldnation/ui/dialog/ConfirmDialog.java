@@ -34,6 +34,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     private static final String STATE_DURATION = "STATE_DURATION";
     private static final String STATE_SCHEDULE = "STATE_SCHEDULE";
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
+    private static final String STATE_TAC_ACCEPT = "STATE_TAC_ACCEPT";
 
     // Ui
     private Button _startDateButton;
@@ -48,12 +49,14 @@ public class ConfirmDialog extends DialogFragmentBase {
     private DatePickerDialog _datePicker;
     private TimePickerDialog _timePicker;
     private DurationDialog _durationDialog;
+
     // Data
     private Listener _listener;
     private Calendar _startCalendar;
     private long _durationMilliseconds;
     private Schedule _schedule;
     private Workorder _workorder;
+    private boolean _tacAccept = false;
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -73,6 +76,9 @@ public class ConfirmDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_WORKORDER))
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+
+            if (savedInstanceState.containsKey(STATE_TAC_ACCEPT))
+                _tacAccept = savedInstanceState.getBoolean(STATE_TAC_ACCEPT);
         }
 
         super.onCreate(savedInstanceState);
@@ -82,6 +88,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putLong(STATE_DURATION, _durationMilliseconds);
+        outState.putBoolean(STATE_TAC_ACCEPT, _tacAccept);
 
         if (_schedule != null)
             outState.putParcelable(STATE_SCHEDULE, _schedule);
@@ -104,7 +111,6 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
-        _okButton.setEnabled(false);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
@@ -144,10 +150,10 @@ public class ConfirmDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-//    public void setDuration(long timeMilliseconds) {
-//        _durationMilliseconds = timeMilliseconds;
-//        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
-//    }
+    public void setDuration(long timeMilliseconds) {
+        _durationMilliseconds = timeMilliseconds;
+        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+    }
 
 //    public void setTime(Calendar time) {
 //        try {
@@ -187,6 +193,8 @@ public class ConfirmDialog extends DialogFragmentBase {
         if (_schedule1TextView == null)
             return;
 
+        _tacCheckBox.setChecked(_tacAccept);
+
         if (_schedule.isExact()) {
             _schedule2TextView.setVisibility(View.GONE);
             try {
@@ -200,6 +208,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 _startCalendar = cal;
                 _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
                 _startDateButton.setEnabled(false);
+                setDuration(60000);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -233,6 +242,8 @@ public class ConfirmDialog extends DialogFragmentBase {
                 _startCalendar = cal;
                 _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
                 _startDateButton.setEnabled(true);
+
+                setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -279,7 +290,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     private CompoundButton.OnCheckedChangeListener _tacCheck_change = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            _okButton.setEnabled(isChecked);
+            _tacAccept = isChecked;
         }
     };
 
@@ -324,6 +335,10 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         @Override
         public void onClick(View v) {
+            if (!_tacAccept) {
+                Toast.makeText(getActivity(), "Please accept the terms and conditions to continue", Toast.LENGTH_LONG).show();
+                return;
+            }
             if (_listener != null) {
                 _listener.onOk(_workorder, ISO8601.fromCalendar(_startCalendar), _durationMilliseconds);
             }
@@ -334,7 +349,7 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         @Override
         public void onClick(View v) {
-            _durationDialog.show();
+            _durationDialog.show(_durationMilliseconds);
         }
     };
     private DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {

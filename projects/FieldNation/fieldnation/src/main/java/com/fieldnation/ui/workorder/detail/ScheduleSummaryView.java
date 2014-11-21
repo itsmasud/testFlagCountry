@@ -99,7 +99,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                     time = misc.formatTime(cal, false);
 
-                    String msg = "You will need to arrive between " + dayDate + " at " + time + " and ";
+                    String msg = "You will need to arrive between \n\t" + dayDate + " at " + time + " and\n\t";
 
                     Calendar cal2 = ISO8601.toCalendar(schedule.getEndTime());
 

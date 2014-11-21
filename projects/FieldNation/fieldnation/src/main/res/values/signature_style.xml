@@ -4,11 +4,11 @@
     <color name="SignatureCardGrey">#FFc0bfbf</color>
 
     <style name="SignatureActivity">
-        <item name="android:background">@drawable/signature_dropshadow</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="SignatureContents">
-        <item name="android:padding">30dp</item>
+        <item name="android:padding">0dp</item>
     </style>
 
     <style name="ArrivalStyle">

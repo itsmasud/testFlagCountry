@@ -3,20 +3,15 @@ package com.fieldnation.ui.workorder.detail;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.fieldnation.FileHelper;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
@@ -56,10 +52,6 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -181,7 +173,7 @@ public class TasksFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
 
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-        
+
         if (savedInstanceState == null) {
             _gs.requestAuthentication(_authClient);
         } else {
@@ -200,7 +192,7 @@ public class TasksFragment extends WorkorderFragment {
                 for (int i = 0; i < tasks.length; i++) {
                     _tasks.add((Task) tasks[i]);
                 }
-                _taskList.setTaskList(_tasks);
+                _taskList.setData(_workorder, _tasks);
             }
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
                 _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
@@ -279,19 +271,6 @@ public class TasksFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
-        if (_shipments != null)
-            _shipments.setWorkorder(_workorder);
-
-        if (_taskList != null) {
-            _taskList.setWorkorder(_workorder);
-        }
-
-        if (_timeLogged != null)
-            _timeLogged.setWorkorder(_workorder);
-
-        if (_closingNotes != null)
-            _closingNotes.setWorkorder(_workorder);
-
         if (_shipments != null && _timeLogged != null) {
             WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
             if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
@@ -305,11 +284,21 @@ public class TasksFragment extends WorkorderFragment {
             }
         }
 
+        if (_shipments != null)
+            _shipments.setWorkorder(_workorder);
+
+        if (_timeLogged != null)
+            _timeLogged.setWorkorder(_workorder);
+
+        if (_closingNotes != null)
+            _closingNotes.setWorkorder(_workorder);
+
+
         if (_topBar != null)
             _topBar.setWorkorder(_workorder);
 
         if (_customFields != null) {
-            _customFields.setData(_workorder.getCustomFields());
+            _customFields.setData(_workorder, _workorder.getCustomFields());
         }
         setLoading(false);
     }
@@ -351,100 +340,12 @@ public class TasksFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.completeSignatureTask(resultCode, workorderid, taskid, arrival, depart, name, json_vector));
             setLoading(true);
-        } else if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
-            if (data == null)
-                return;
+        } else if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
+            _gs.startService(_service.uploadDeliverable(
+                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                    _currentTask.getSlotId(), data, getNotificationIntent()));
+            // todo notify task view that the file is uploading
 
-            Uri uri = data.getData();
-            try {
-                // get temp path
-                String packageName = _gs.getPackageName();
-                File externalPath = Environment.getExternalStorageDirectory();
-                File temppath = new File(externalPath.getAbsolutePath()
-                        + "/Android/data/" + packageName + "/temp");
-                temppath.mkdirs();
-
-                // create temp folder
-                File tempfile = File.createTempFile("DATA", null, temppath);
-
-                // copy the data
-                InputStream in = _gs.getContentResolver().openInputStream(uri);
-                OutputStream out = new FileOutputStream(tempfile);
-                misc.copyStream(in, out, 1024, -1, 500);
-                out.close();
-                in.close();
-
-                String filename = "";
-                if (uri.getScheme().equals("file")) {
-                    filename = uri.getLastPathSegment();
-                } else {
-                    Cursor c = _gs.getContentResolver().query(uri, null, null,
-                            null, null);
-                    int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    c.moveToFirst();
-                    filename = c.getString(nameIndex);
-                    c.close();
-                }
-
-                _gs.startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        filename, tempfile, getNotificationIntent()));
-                setLoading(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        } else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
-            ContentResolver cr = getActivity().getContentResolver();
-            String[] p1 = new String[]{BaseColumns._ID,
-                    MediaStore.Images.ImageColumns.DATE_TAKEN};
-            Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    p1, null, null, p1[1] + " DESC");
-            if (c1.moveToFirst()) {
-                String uristringpic = "content://media/external/images/media/"
-                        + c1.getInt(0);
-                Uri uri = Uri.parse(uristringpic);
-                try {
-                    // find temp path
-                    String packageName = _gs.getPackageName();
-                    File externalPath = Environment
-                            .getExternalStorageDirectory();
-                    File temppath = new File(externalPath.getAbsolutePath()
-                            + "/Android/data/" + packageName + "/temp");
-                    temppath.mkdirs();
-
-                    // open temp file
-                    File tempfile = File.createTempFile("DATA", null, temppath);
-
-                    // write the image
-                    InputStream in = _gs.getContentResolver().openInputStream(
-                            uri);
-                    OutputStream out = new FileOutputStream(tempfile);
-                    misc.copyStream(in, out, 1024, -1, 500);
-                    out.close();
-                    in.close();
-
-                    Cursor c = _gs.getContentResolver().query(uri, null, null,
-                            null, null);
-                    int nameIndex = c
-                            .getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    c.moveToFirst();
-
-                    // send data to service
-                    // startLoading();
-                    //_uploadingSlotView.addUploading(c.getString(nameIndex));
-                    _gs.startService(_service.uploadDeliverable(
-                            WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                            _currentTask.getSlotId(), c.getString(nameIndex),
-                            tempfile, getNotificationIntent()));
-                    setLoading(true);
-                    c.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            c1.close();
-            Log.v(TAG, "BP");
         }
     }
 
@@ -652,18 +553,8 @@ public class TasksFragment extends WorkorderFragment {
                                     setLoading(true);
                                 }
 
-                                try {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setDataAndType(Uri.parse(doc.getFilePath()), doc.getFileType());
-                                    startActivity(intent);
-                                } catch (Exception ex) {
-                                    try {
-                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(doc.getFilePath()));
-                                        startActivity(intent);
-                                    } catch (Exception ex1) {
-                                        ex1.printStackTrace();
-                                    }
-                                }
+                                FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
+                                        doc.getFileName(), doc.getFileType());
 
                                 break;
                             }
@@ -1034,7 +925,7 @@ public class TasksFragment extends WorkorderFragment {
                     ex.printStackTrace();
                 }
 
-                _taskList.setTaskList(_tasks);
+                _taskList.setData(_workorder, _tasks);
                 setLoading(false);
             } else {
                 setLoading(false);

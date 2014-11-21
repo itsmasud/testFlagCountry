@@ -1,8 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +9,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -27,6 +27,7 @@ public class DocumentView extends RelativeLayout {
     private ImageButton _deleteButton;
 
     // Data
+    private Workorder _workorder;
     private Document _document;
 
     /*-*****************************-*/
@@ -64,10 +65,11 @@ public class DocumentView extends RelativeLayout {
     }
 
     /*-*************************-*/
-	/*-			Methods			-*/
-	/*-*************************-*/
-    public void setDocument(Document document) {
+    /*-			Methods			-*/
+    /*-*************************-*/
+    public void setData(Workorder workorder, Document document) {
         _document = document;
+        _workorder = workorder;
         populateUi();
     }
 
@@ -82,32 +84,28 @@ public class DocumentView extends RelativeLayout {
             e.printStackTrace();
             _dateTextView.setVisibility(View.GONE);
         }
-        _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+        try {
+            _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            _usernameTextView.setVisibility(View.GONE);
+        }
 
-    }
-
-    public void hideDeleteButton() {
-        _deleteButton.setVisibility(GONE);
+        if (_workorder.canChangeDeliverables()) {
+            _deleteButton.setVisibility(View.VISIBLE);
+        } else {
+            _deleteButton.setVisibility(View.GONE);
+        }
     }
 
     /*-*************************-*/
-	/*-			Events			-*/
-	/*-*************************-*/
+    /*-			Events			-*/
+    /*-*************************-*/
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(_document.getFilePath()), _document.getFileType());
-                getContext().startActivity(intent);
-            } catch (Exception ex) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_document.getFilePath()));
-                    getContext().startActivity(intent);
-                } catch (Exception ex1) {
-                    ex1.printStackTrace();
-                }
-            }
+            FileHelper.viewOrDownloadFile(getContext(), _document.getFilePath(),
+                    _document.getFileName(), _document.getFileType());
         }
     };
 }

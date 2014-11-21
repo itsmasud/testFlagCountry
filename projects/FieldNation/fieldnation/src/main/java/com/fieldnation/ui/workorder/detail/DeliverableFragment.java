@@ -2,18 +2,13 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,14 +42,8 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.SecureRandom;
-import java.util.Arrays;
 
 public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DeliverableFragment";
@@ -97,7 +86,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private ProfileService _profileService;
     private Profile _profile = null;
     private Bundle _delayedAction = null;
-    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
     // private List<Deliverable> _deliverables = null;
     // private List<Task> _tasks = null;
@@ -184,13 +172,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private PendingIntent getNotificationIntent() {
         Intent intent = new Intent(_gs, WorkorderActivity.class);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
-                WorkorderActivity.TAB_DELIVERABLES);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
-                _workorder.getWorkorderId());
-
-        return PendingIntent.getActivity(_gs, _rand.nextInt(), intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+        return PendingIntent.getActivity(_gs, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void getData() {
@@ -198,8 +182,7 @@ public class DeliverableFragment extends WorkorderFragment {
             return;
 
         _profile = null;
-        _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE,
-                true));
+        _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
 
     private void populateUi() {
@@ -222,12 +205,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 Document doc = docs[i];
                 DocumentView v = new DocumentView(getActivity());
                 _reviewList.addView(v);
-                v.setDocument(doc);
-
-                //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder != null && Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                    v.hideDeleteButton();
-                }
+                v.setData(_workorder, doc);
             }
             _noDocsTextView.setVisibility(View.GONE);
         } else {
@@ -240,13 +218,9 @@ public class DeliverableFragment extends WorkorderFragment {
             for (int i = 0; i < slots.length; i++) {
                 UploadSlot slot = slots[i];
                 UploadSlotView v = new UploadSlotView(getActivity());
-                v.setUploadSlot(_profile.getUserId(), slot,
-                        _uploaded_document_listener, _workorder);
-
-                //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-                    v.setListener(_uploadSlot_listener);
-                }
+                v.setData(_workorder, _profile.getUserId(), slot,
+                        _uploaded_document_listener);
+                v.setListener(_uploadSlot_listener);
 
                 _filesLayout.addView(v);
             }
@@ -315,113 +289,21 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
-        if (requestCode == RESULT_CODE_GET_ATTACHMENT) {
-            if (data == null)
-                return;
 
-            Uri uri = data.getData();
-            try {
-                // get temp path
-                String packageName = _gs.getPackageName();
-                File externalPath = Environment.getExternalStorageDirectory();
-                File temppath = new File(externalPath.getAbsolutePath()
-                        + "/Android/data/" + packageName + "/temp");
-                temppath.mkdirs();
+        if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
+            _gs.startService(_service.uploadDeliverable(
+                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                    _uploadingSlot.getSlotId(), data, getNotificationIntent()));
 
-                // create temp folder
-                File tempfile = File.createTempFile("DATA", null, temppath);
-
-                // copy the data
-                InputStream in = _gs.getContentResolver().openInputStream(uri);
-                OutputStream out = new FileOutputStream(tempfile);
-                misc.copyStream(in, out, 1024, -1, 500);
-                out.close();
-                in.close();
-
-                String filename = "";
-                if (uri.getScheme().equals("file")) {
-                    filename = uri.getLastPathSegment();
-                } else {
-                    Cursor c = _gs.getContentResolver().query(uri, null, null,
-                            null, null);
-                    int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    c.moveToFirst();
-                    filename = c.getString(nameIndex);
-                    c.close();
-                }
-
-                // send to the service
-                // startLoading();
-                _uploadingSlotView.addUploading(filename);
-
-                _gs.startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _uploadingSlot.getSlotId(), filename,
-                        tempfile, getNotificationIntent()));
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        } else if (requestCode == RESULT_CODE_GET_CAMERA_PIC) {
-            ContentResolver cr = getActivity().getContentResolver();
-            String[] p1 = new String[]{BaseColumns._ID,
-                    MediaStore.Images.ImageColumns.DATE_TAKEN};
-            Cursor c1 = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    p1, null, null, p1[1] + " DESC");
-            if (c1.moveToFirst()) {
-                String uristringpic = "content://media/external/images/media/"
-                        + c1.getInt(0);
-                Uri uri = Uri.parse(uristringpic);
-                try {
-                    // find temp path
-                    String packageName = _gs.getPackageName();
-                    File externalPath = Environment
-                            .getExternalStorageDirectory();
-                    File temppath = new File(externalPath.getAbsolutePath()
-                            + "/Android/data/" + packageName + "/temp");
-                    temppath.mkdirs();
-
-                    // open temp file
-                    File tempfile = File.createTempFile("DATA", null, temppath);
-
-                    // write the image
-                    InputStream in = _gs.getContentResolver().openInputStream(
-                            uri);
-                    OutputStream out = new FileOutputStream(tempfile);
-                    misc.copyStream(in, out, 1024, -1, 500);
-                    out.close();
-                    in.close();
-
-                    Cursor c = _gs.getContentResolver().query(uri, null, null,
-                            null, null);
-                    int nameIndex = c
-                            .getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    c.moveToFirst();
-
-                    // send data to service
-                    // startLoading();
-                    _uploadingSlotView.addUploading(c.getString(nameIndex));
-                    _gs.startService(_service.uploadDeliverable(
-                            WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                            _uploadingSlot.getSlotId(), c.getString(nameIndex),
-                            tempfile, getNotificationIntent()));
-
-                    c.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            c1.close();
-            Log.v(TAG, "BP");
+            _uploadingSlotView.addUploading("Selected File");
         }
     }
 
-    ;
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {

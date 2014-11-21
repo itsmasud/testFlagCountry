@@ -67,6 +67,7 @@ public class WorkorderActivity extends BaseActivity {
     private int _currentFragment = 0;
     private boolean _created = false;
     private Workorder _workorder = null;
+    private boolean _hidingTasks;
 
     // Services
     private PagerAdapter _pagerAdapter;
@@ -275,6 +276,14 @@ public class WorkorderActivity extends BaseActivity {
         for (int i = 0; i < _fragments.length; i++) {
             _fragments[i].setWorkorder(_workorder);
         }
+
+//        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
+//            //_tabview.hideTab(TAB_TASKS);
+//            _hidingTasks = true;
+//        } else {
+//            //_tabview.showTab(TAB_TASKS);
+//            _hidingTasks = false;
+//        }
 
         // if (_workorder.getStatus().getWorkorderStatus() ==
         // WorkorderStatus.INPROGRESS) {
