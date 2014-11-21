@@ -192,7 +192,7 @@ public class TasksFragment extends WorkorderFragment {
                 for (int i = 0; i < tasks.length; i++) {
                     _tasks.add((Task) tasks[i]);
                 }
-                _taskList.setTaskList(_tasks);
+                _taskList.setData(_workorder, _tasks);
             }
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
                 _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
@@ -286,10 +286,6 @@ public class TasksFragment extends WorkorderFragment {
 
         if (_shipments != null)
             _shipments.setWorkorder(_workorder);
-
-        if (_taskList != null) {
-            _taskList.setWorkorder(_workorder);
-        }
 
         if (_timeLogged != null)
             _timeLogged.setWorkorder(_workorder);
@@ -929,7 +925,7 @@ public class TasksFragment extends WorkorderFragment {
                     ex.printStackTrace();
                 }
 
-                _taskList.setTaskList(_tasks);
+                _taskList.setData(_workorder, _tasks);
                 setLoading(false);
             } else {
                 setLoading(false);
