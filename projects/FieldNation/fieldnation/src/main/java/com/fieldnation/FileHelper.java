@@ -113,7 +113,6 @@ public class FileHelper {
             dm.enqueue(r);
             Toast.makeText(context, "Downloading " + filename, Toast.LENGTH_LONG).show();
         }
-
     }
 
 
