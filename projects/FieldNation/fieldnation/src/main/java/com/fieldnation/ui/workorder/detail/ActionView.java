@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 
 public class ActionView extends RelativeLayout implements WorkorderRenderer {
@@ -95,77 +94,31 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
         _workorder = workorder;
 
-        WorkorderStatus stat = workorder.getStatus().getWorkorderStatus();
-
-        if (_workorder.canModify() || stat == WorkorderStatus.AVAILABLE) {
-            setVisibility(View.VISIBLE);
-        } else {
-            setVisibility(View.GONE);
-            return;
-        }
-
         _requestButton.setVisibility(View.GONE);
         _notInterestedButton.setVisibility(View.GONE);
         _counterOfferButton.setVisibility(View.GONE);
 
-
-        switch (stat) {
-            case ASSIGNED:
-                buildStatusAssigned();
-                break;
-            case AVAILABLE:
-                buildStatusAvailable();
-                break;
-            case CANCELED:
-                buildStatusCanceled();
-                break;
-            case COMPLETED:
-            case APPROVED:
-            case PAID:
-                buildStatusCompleted();
-                break;
-            case INPROGRESS:
-                buildStatusInProgress();
-                break;
-            default:
-                break;
-
+        // request button
+        if (_workorder.canAcceptWork()) {
+            _requestButton.setText(R.string.accept_work);
+        } else if (_workorder.canRequest()) {
+            _requestButton.setText(R.string.request_work);
+        } else {
+            _requestButton.setVisibility(View.GONE);
         }
 
+        // counter offer button
+        if (_workorder.canCounterOffer()) {
+            _counterOfferButton.setVisibility(View.VISIBLE);
+        }
+
+        // complete button
         if (_workorder.canComplete()) {
             _completeButton.setVisibility(View.VISIBLE);
         } else {
             _completeButton.setVisibility(View.GONE);
         }
         setVisibility(View.VISIBLE);
-    }
-
-    private void buildStatusAssigned() {
-    }
-
-    private void buildStatusAvailable() {
-        WorkorderSubstatus substatus = _workorder.getStatus().getWorkorderSubstatus();
-
-        _requestButton.setVisibility(View.VISIBLE);
-        _notInterestedButton.setVisibility(View.VISIBLE);
-        _counterOfferButton.setVisibility(View.VISIBLE);
-
-        if (substatus == WorkorderSubstatus.ROUTED) {
-            _requestButton.setText(R.string.accept_work);
-        } else if (substatus == WorkorderSubstatus.REQUESTED || substatus == WorkorderSubstatus.COUNTEROFFERED) {
-            _requestButton.setVisibility(View.GONE);
-        } else {
-            _requestButton.setText(R.string.request_work);
-        }
-    }
-
-    private void buildStatusInProgress() {
-    }
-
-    private void buildStatusCanceled() {
-    }
-
-    private void buildStatusCompleted() {
     }
 
 	/*-*************************-*/

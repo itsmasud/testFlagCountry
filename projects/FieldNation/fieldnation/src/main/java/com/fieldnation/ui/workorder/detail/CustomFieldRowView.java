@@ -84,7 +84,7 @@ public class CustomFieldRowView extends RelativeLayout {
             _optionalTextView.setVisibility(View.VISIBLE);
         }
 
-        _checkbox.setEnabled(_workorder.canModify());
+        _checkbox.setEnabled(_workorder.canChangeCustomFields());
     }
 
     private View.OnClickListener _check_listener = new View.OnClickListener() {

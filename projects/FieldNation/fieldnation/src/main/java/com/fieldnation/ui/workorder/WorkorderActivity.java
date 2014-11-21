@@ -277,13 +277,13 @@ public class WorkorderActivity extends BaseActivity {
             _fragments[i].setWorkorder(_workorder);
         }
 
-        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
-            //_tabview.hideTab(TAB_TASKS);
-            _hidingTasks = true;
-        } else {
-            //_tabview.showTab(TAB_TASKS);
-            _hidingTasks = false;
-        }
+//        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
+//            //_tabview.hideTab(TAB_TASKS);
+//            _hidingTasks = true;
+//        } else {
+//            //_tabview.showTab(TAB_TASKS);
+//            _hidingTasks = false;
+//        }
 
         // if (_workorder.getStatus().getWorkorderStatus() ==
         // WorkorderStatus.INPROGRESS) {

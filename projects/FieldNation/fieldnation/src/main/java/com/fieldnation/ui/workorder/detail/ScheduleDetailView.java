@@ -119,7 +119,7 @@ public class ScheduleDetailView extends RelativeLayout {
             _hoursTextView.setText(String.format("%.2f", _loggedWork.getHours()));
         }
 
-        if (_workorder.canModify()) {
+        if (_workorder.canModifyTimeLog()) {
             _editImageView.setVisibility(View.VISIBLE);
         } else {
             _editImageView.setVisibility(View.GONE);

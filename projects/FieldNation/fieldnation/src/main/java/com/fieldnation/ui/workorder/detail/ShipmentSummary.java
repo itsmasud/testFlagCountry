@@ -84,7 +84,7 @@ public class ShipmentSummary extends RelativeLayout {
         boolean toSite = _shipment.getDirection().equals("to_site");
         _directionTextView.setText(toSite ? "To Site" : "From Site");
 
-        if (_workorder.canModify()) {
+        if (_workorder.canChangeShipments()) {
             _deleteImageButton.setVisibility(View.VISIBLE);
             _assignButton.setVisibility(View.VISIBLE);
         } else {

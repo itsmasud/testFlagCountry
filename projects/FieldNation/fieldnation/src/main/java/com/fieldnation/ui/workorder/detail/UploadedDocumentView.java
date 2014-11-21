@@ -129,13 +129,13 @@ public class UploadedDocumentView extends RelativeLayout {
         }
         _usernameTextView.setText(_doc.getUploaderUserName());
 
-        if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canModify()) {
+        if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
             _deleteButton.setVisibility(View.VISIBLE);
         } else {
             _deleteButton.setVisibility(View.GONE);
         }
 
-        setClickable(_workorder.canModify());
+        setClickable(_workorder.canViewDeliverables());
     }
 
 

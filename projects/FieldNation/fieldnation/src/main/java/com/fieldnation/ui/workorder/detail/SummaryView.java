@@ -138,7 +138,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
             _confidentialTextView.setVisibility(View.GONE);
         }
 
-        if (!_workorder.canModify()) {
+        if (!_workorder.canViewConfidentialInfo()) {
             _policiesTextView.setVisibility(View.GONE);
             _confidentialTextView.setVisibility(View.GONE);
         }

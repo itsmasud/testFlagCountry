@@ -84,9 +84,14 @@ public class DocumentView extends RelativeLayout {
             e.printStackTrace();
             _dateTextView.setVisibility(View.GONE);
         }
-        _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+        try {
+            _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            _usernameTextView.setVisibility(View.GONE);
+        }
 
-        if (_workorder.canModify()) {
+        if (_workorder.canChangeDeliverables()) {
             _deleteButton.setVisibility(View.VISIBLE);
         } else {
             _deleteButton.setVisibility(View.GONE);

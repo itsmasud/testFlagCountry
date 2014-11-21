@@ -80,13 +80,13 @@ public class UploadSlotView extends RelativeLayout {
             _docsList.addView(v);
         }
 
-        if (slot.getMaxFiles() > 0 && docs.length >= slot.getMaxFiles() || !_workorder.canModify()) {
+        if (slot.getMaxFiles() > 0 && docs.length >= slot.getMaxFiles() || !_workorder.canChangeDeliverables()) {
             _uploadTextView.setVisibility(GONE);
         } else {
             _uploadTextView.setVisibility(VISIBLE);
         }
 
-        if (docs.length == 0 && !_workorder.canModify()) {
+        if (docs.length == 0 && !_workorder.canChangeDeliverables()) {
             setVisibility(View.GONE);
         } else {
             setVisibility(View.VISIBLE);

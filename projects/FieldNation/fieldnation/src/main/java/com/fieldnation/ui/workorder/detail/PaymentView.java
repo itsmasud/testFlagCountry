@@ -208,13 +208,14 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
         WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
 
-        if (!_workorder.canModify()) {
-            if (status != WorkorderStatus.AVAILABLE)
-                _counterOfferLayout.setVisibility(View.GONE);
-            _addExpenseLayout.setVisibility(View.GONE);
-            _addDiscountLayout.setVisibility(View.GONE);
-        }
+        if (!_workorder.canCounterOffer())
+            _counterOfferLayout.setVisibility(View.GONE);
 
+        if (!_workorder.canChangeExpenses())
+            _addExpenseLayout.setVisibility(View.GONE);
+
+        if (!_workorder.canChangeDiscounts())
+            _addDiscountLayout.setVisibility(View.GONE);
     }
 
     /*-*********************************-*/
@@ -247,7 +248,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
         @Override
         public void onDelete(ExpenseView view, AdditionalExpense expense) {
-            if (_workorder.canModify()) {
+            if (_workorder.canChangeExpenses()) {
                 if (_listener != null)
                     _listener.onDeleteExpense(_workorder, expense);
             }
@@ -265,7 +266,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private DiscountView.Listener _discount_listener = new DiscountView.Listener() {
         @Override
         public void onDelete(Discount discount) {
-            if (_workorder.canModify()) {
+            if (_workorder.canChangeDiscounts()) {
                 _listener.onDeleteDiscount(_workorder, discount.getDiscountId());
             }
         }

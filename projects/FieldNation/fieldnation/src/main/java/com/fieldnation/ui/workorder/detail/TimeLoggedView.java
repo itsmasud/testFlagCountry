@@ -62,9 +62,13 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
         LoggedWork[] logs = _workorder.getLoggedWork();
 
-        if (_workorder.canModify()) {
+        if (_workorder.canModifyTimeLog()) {
             _addLogLinearLayout.setVisibility(View.VISIBLE);
         } else {
+            if (logs == null || logs.length == 0) {
+                setVisibility(GONE);
+                return;
+            }
             _addLogLinearLayout.setVisibility(View.GONE);
         }
 
@@ -73,13 +77,6 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
             return;
         }
         _noTimeTextView.setVisibility(View.GONE);
-
-        if ((logs == null || logs.length == 0) && !_workorder.canModify()) {
-            setVisibility(View.GONE);
-            return;
-        } else {
-            setVisibility(View.VISIBLE);
-        }
 
         _logList.removeAllViews();
         for (int i = 0; i < logs.length; i++) {
@@ -98,7 +95,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
     private ScheduleDetailView.Listener _scheduleDetailView_listener = new ScheduleDetailView.Listener() {
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
-            if (_workorder.canModify()) {
+            if (_workorder.canModifyTimeLog()) {
                 if (_listener != null)
                     _listener.editWorklog(workorder, loggedWork, showDeviceCount);
             }
@@ -114,7 +111,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
             } catch (Exception ex) {
             }
 
-            if (_workorder.canModify()) {
+            if (_workorder.canModifyTimeLog()) {
                 if (_listener != null)
                     _listener.addWorklog(showdevices);
             }

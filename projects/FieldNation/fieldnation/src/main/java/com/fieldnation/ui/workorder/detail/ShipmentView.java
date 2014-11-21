@@ -59,13 +59,13 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
         _shipmentsLayout.removeAllViews();
 
-        if (_workorder.canModify()) {
+        if (_workorder.canChangeShipments()) {
             _addLayout.setVisibility(View.VISIBLE);
         } else {
             _addLayout.setVisibility(View.GONE);
         }
 
-        if ((shipments == null || shipments.length == 0) && !_workorder.canModify()) {
+        if ((shipments == null || shipments.length == 0) && !_workorder.canChangeShipments()) {
             setVisibility(View.GONE);
             return;
         }
@@ -96,14 +96,14 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
         @Override
         public void onDelete(ShipmentTracking shipment) {
-            if (_listener != null && _workorder.canModify()) {
+            if (_listener != null && _workorder.canChangeShipments()) {
                 _listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
             }
         }
 
         @Override
         public void onAssign(ShipmentTracking shipment) {
-            if (_listener != null && _workorder.canModify()) {
+            if (_listener != null && _workorder.canChangeShipments()) {
                 _listener.onAssign(_workorder, shipment.getWorkorderShipmentId());
             }
         }

@@ -102,7 +102,7 @@ public class TaskListView extends RelativeLayout {
                 TaskRowView row = new TaskRowView(getContext());
                 row.setData(_workorder, task);
 
-                if (_workorder.canModify()) {
+                if (_workorder.canModifyTasks()) {
                     row.setOnTaskClickListener(_task_onClick);
                 }
 
@@ -119,7 +119,7 @@ public class TaskListView extends RelativeLayout {
                 row.setData(_workorder, task);
 
                 //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder.canModify()) {
+                if (_workorder.canModifyTasks()) {
                     row.setOnTaskClickListener(_task_onClick);
                 }
 

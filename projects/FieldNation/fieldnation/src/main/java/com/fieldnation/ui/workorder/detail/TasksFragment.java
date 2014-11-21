@@ -271,6 +271,19 @@ public class TasksFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
+        if (_shipments != null && _timeLogged != null) {
+            WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
+            if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
+                _timeLogged.setVisibility(View.GONE);
+                _shipments.setVisibility(View.GONE);
+                _closingNotes.setVisibility(View.GONE);
+            } else {
+                _shipments.setVisibility(View.VISIBLE);
+                _timeLogged.setVisibility(View.VISIBLE);
+                _closingNotes.setVisibility(View.VISIBLE);
+            }
+        }
+
         if (_shipments != null)
             _shipments.setWorkorder(_workorder);
 
@@ -284,18 +297,6 @@ public class TasksFragment extends WorkorderFragment {
         if (_closingNotes != null)
             _closingNotes.setWorkorder(_workorder);
 
-        if (_shipments != null && _timeLogged != null) {
-            WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
-            if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
-                _timeLogged.setVisibility(View.GONE);
-                _shipments.setVisibility(View.GONE);
-                _closingNotes.setVisibility(View.GONE);
-            } else {
-                _shipments.setVisibility(View.VISIBLE);
-                _timeLogged.setVisibility(View.VISIBLE);
-                _closingNotes.setVisibility(View.VISIBLE);
-            }
-        }
 
         if (_topBar != null)
             _topBar.setWorkorder(_workorder);

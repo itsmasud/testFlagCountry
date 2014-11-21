@@ -67,13 +67,13 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private void refresh() {
         if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
             _notesTextView.setText(_workorder.getClosingNotes());
-        } else if (!_workorder.canModify()) {
+        } else if (!_workorder.canChangeClosingNotes()) {
             setVisibility(View.GONE);
             return;
         }
         setVisibility(View.VISIBLE);
 
-        if (_workorder.canModify()) {
+        if (_workorder.canChangeClosingNotes()) {
             _editLayout.setVisibility(View.VISIBLE);
             _notesTextView.setClickable(true);
         } else {
@@ -89,7 +89,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private View.OnClickListener _notes_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null & _workorder.canModify()) {
+            if (_listener != null && _workorder.canChangeClosingNotes()) {
                 _listener.onChangeClosingNotes(_workorder.getClosingNotes());
             }
         }

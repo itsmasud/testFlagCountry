@@ -106,7 +106,7 @@ public class ExpenseView extends LinearLayout {
         // TODO, need to get quantity and price per item numbers
         _costTextView.setText(misc.toCurrency(_expense.getPrice()));
 
-        if (_workorder.canModify()) {
+        if (_workorder.canChangeExpenses()) {
             _deleteImageButton.setVisibility(View.VISIBLE);
         } else {
             _deleteImageButton.setVisibility(View.INVISIBLE);

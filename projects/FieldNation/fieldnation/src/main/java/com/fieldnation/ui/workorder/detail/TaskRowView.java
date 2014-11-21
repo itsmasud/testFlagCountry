@@ -53,7 +53,7 @@ public class TaskRowView extends RelativeLayout {
         _task = task;
         _workorder = workorder;
 
-        _checkbox.setEnabled(_workorder.canModify());
+        _checkbox.setEnabled(_workorder.canModifyTasks());
 
         TaskType type = task.getTaskType();
 

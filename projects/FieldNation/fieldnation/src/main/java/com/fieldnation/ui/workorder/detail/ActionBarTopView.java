@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.utils.misc;
 
 public class ActionBarTopView extends RelativeLayout {
@@ -70,13 +69,6 @@ public class ActionBarTopView extends RelativeLayout {
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
-        if (_workorder.canModify()) {
-            setVisibility(View.VISIBLE);
-        } else {
-            setVisibility(View.GONE);
-            return;
-        }
-
         _checkinButton.setVisibility(View.GONE);
         _checkoutButton.setVisibility(View.GONE);
         _acknowledgeButton.setVisibility(View.GONE);
@@ -84,64 +76,27 @@ public class ActionBarTopView extends RelativeLayout {
         _confirmButton.setVisibility(View.GONE);
         _closingNotesButton.setVisibility(View.GONE);
 
-        WorkorderSubstatus substatus = _workorder.getStatus().getWorkorderSubstatus();
-
-        switch (substatus) {
-            case APPROVED_PROCESSINGPAYMENT:
-                break;
-            case AVAILABLE:
-                break;
-            case CANCELED:
-                break;
-            case CANCELED_LATEFEEPAID:
-                break;
-            case CANCELED_LATEFEEPROCESSING:
-                break;
-            case CHECKEDIN:
-                _checkoutButton.setVisibility(View.VISIBLE);
-                break;
-            case CHECKEDOUT:
-                _checkinButton.setVisibility(View.VISIBLE);
-                break;
-            case CONFIRMED:
-                _checkinButton.setVisibility(View.VISIBLE);
-                break;
-            case COUNTEROFFERED:
-                break;
-            case INREVIEW:
-                break;
-            case NA:
-                break;
-            case ONHOLD_ACKNOWLEDGED:
-                break;
-            case ONHOLD_UNACKNOWLEDGED:
-                _acknowledgeButton.setVisibility(View.VISIBLE);
-                break;
-            case PAID:
-                break;
-            case PENDINGREVIEWED:
-                break;
-            case REQUESTED:
-                break;
-            case ROUTED:
-                break;
-            case UNCONFIRMED:
-                _confirmButton.setVisibility(View.VISIBLE);
-                break;
-            default:
-                break;
+        if (_workorder.canCheckout()) {
+            _checkoutButton.setVisibility(View.VISIBLE);
+            setVisibility(VISIBLE);
+        }
+        if (_workorder.canCheckin()) {
+            _checkinButton.setVisibility(View.VISIBLE);
+            setVisibility(VISIBLE);
+        }
+        if (_workorder.canAckHold()) {
+            _acknowledgeButton.setVisibility(View.VISIBLE);
+            setVisibility(VISIBLE);
+        }
+        if (_workorder.canConfirm()) {
+            _confirmButton.setVisibility(View.VISIBLE);
+            setVisibility(VISIBLE);
         }
 
-        if (_workorder.canComplete())
-
-        {
+        if (_workorder.canComplete()) {
             _completeButton.setVisibility(View.VISIBLE);
-        } else
-
-        {
-            if (_workorder.areTasksComplete() && substatus != WorkorderSubstatus.CHECKEDIN && misc.isEmptyOrNull(_workorder.getClosingNotes())) {
-                _closingNotesButton.setVisibility(View.VISIBLE);
-            }
+        } else if (_workorder.areTasksComplete() && misc.isEmptyOrNull(_workorder.getClosingNotes()) && _workorder.canChangeClosingNotes()) {
+            _closingNotesButton.setVisibility(View.VISIBLE);
         }
     }
 
