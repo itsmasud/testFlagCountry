@@ -44,7 +44,7 @@ public class BundleAdapter extends BaseAdapter {
 			v = new WorkorderCardView(parent.getContext());
 		}
 
-		v.setWorkorder(WorkorderDataSelector.ASSIGNED, _workorders[position]);
+		v.setWorkorder(_workorders[position]);
 		v.setIsBundle(false);
 		v.showMessageAlertIcon(false);
 		v.showAlertIcon(false);

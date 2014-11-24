@@ -40,7 +40,7 @@ public class WorkorderCardView extends RelativeLayout {
     // not interested
     /*-private RelativeLayout _notInterestedLayout;-*/
     /*-private ImageView _backImageView;-*/
-	/*-private LinearLayout _notInterestedButtonLayout;-*/
+    /*-private LinearLayout _notInterestedButtonLayout;-*/
 
     // background
     private ViewGroup _backgroundLayout;
@@ -88,7 +88,6 @@ public class WorkorderCardView extends RelativeLayout {
     // private Animation _slideBackAnimation;
 
     // Data
-    private WorkorderDataSelector _dataView = null;
     private Workorder _workorder;
     private Listener _listener = null;
     private int _displayMode = MODE_NORMAL;
@@ -119,7 +118,7 @@ public class WorkorderCardView extends RelativeLayout {
 
         // connect UI components
         // not interested
-		/*-_notInterestedLayout = (RelativeLayout) findViewById(R.id.notinterested_layout);-*/
+        /*-_notInterestedLayout = (RelativeLayout) findViewById(R.id.notinterested_layout);-*/
 		/* _backImageView = (ImageView) findViewById(R.id.back_imageview); */
 		/* _backImageView.setOnClickListener(_back_onClick); */
 		/* _backImageView.setClickable(false); */
@@ -205,9 +204,8 @@ public class WorkorderCardView extends RelativeLayout {
     /*-*****************************************-*/
 	/*-				Setters Getters				-*/
 	/*-*****************************************-*/
-    public void setWorkorder(WorkorderDataSelector workorderDataSelector, Workorder workorder) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        _dataView = workorderDataSelector;
         refresh();
     }
 
