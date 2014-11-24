@@ -8,6 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -17,15 +21,11 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import eu.erikw.PullToRefreshListView;
-import eu.erikw.PullToRefreshListView.State;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 
 public class WorkorderListFragment extends Fragment {
     private static final String TAG = "ui.workorder.WorkorderListFragment";
@@ -38,14 +38,20 @@ public class WorkorderListFragment extends Fragment {
     private static final String KEY_PAGE_NUM = "PAGE_NUM";
 
     // UI
-    private PullToRefreshListView _listView;
-    private SmoothProgressBar _loadingBar;
+    private OverScrollListView _listView;
+    private ImageView _loadingView;
+    //private SmoothProgressBar _loadingBar;
+
+    // Animations
+    private Animation _rotateAnim;
 
     // Data
 //    private WorkorderListAdapter _adapter;
+    private int _loadingStartMargin;
     private GlobalState _gs;
     private WorkorderService _service;
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
+    private boolean _isLoading = false;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -69,15 +75,21 @@ public class WorkorderListFragment extends Fragment {
 
         _gs = (GlobalState) getActivity().getApplicationContext();
 
+        _loadingView = (ImageView) view.findViewById(R.id.loading_view);
+        _loadingStartMargin = ((RelativeLayout.LayoutParams) _loadingView.getLayoutParams()).topMargin;
 
-        _listView = (PullToRefreshListView) view.findViewById(R.id.workorders_listview);
+        _rotateAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_spingear_cw);
+
+        _listView = (OverScrollListView) view.findViewById(R.id.workorders_listview);
         _listView.setDivider(null);
-        _listView.setOnRefreshListener(_listView_onRefreshListener);
-        _listView.setStateListener(_listview_onPullListener);
+//        _listView.setOnRefreshListener(_listView_onRefreshListener);
+//        _listView.setStateListener(_listview_onPullListener);
+        _listView.setOnOverScrollListener(_listView_OverScroll);
+        _listView.setAdapter(_adapter);
 
-        _loadingBar = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
-        _loadingBar.setSmoothProgressDrawableCallbacks(_progressCallback);
-        _loadingBar.setMax(100);
+//        _loadingBar = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
+//        _loadingBar.setSmoothProgressDrawableCallbacks(_progressCallback);
+//        _loadingBar.setMax(100);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("_displayView")) {
@@ -85,23 +97,6 @@ public class WorkorderListFragment extends Fragment {
                 _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString("_displayView"));
             }
 
-//            if (savedInstanceState.containsKey("WORKORDERS")) {
-//                Parcelable[] works = savedInstanceState.getParcelableArray("WORKORDERS");
-//
-//                if (works != null && works.length > 0) {
-//                    List<Workorder> work = new LinkedList<Workorder>();
-//                    for (int i = 0; i < works.length; i++) {
-//                        work.add((Workorder) works[i]);
-//                    }
-//                    try {
-//                        _adapter = new WorkorderListAdapter(this.getActivity(), _displayView, work);
-//                        _adapter.setLoadingListener(_workorderAdapter_listener);
-//                        _loadingBar.setVisibility(View.GONE);
-//                    } catch (NoSuchMethodException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
         }
         Log.v(TAG, "Display Type: " + _displayView.getCall());
         _gs.requestAuthentication(_authClient);
@@ -111,29 +106,8 @@ public class WorkorderListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("_displayView", _displayView.name());
-
-//        if (_adapter != null) {
-//            List<Workorder> work = _adapter.getObjects();
-//            if (work != null && work.size() > 0) {
-//                Workorder[] works = new Workorder[work.size()];
-//                for (int i = 0; i < work.size(); i++) {
-//                    works[i] = work.get(i);
-//                }
-//                outState.putParcelableArray("WORKORDERS", works);
-//            }
-//        }
-
         super.onSaveInstanceState(outState);
     }
-
-//    @Override
-//    public void onStart() {
-//        Log.v(TAG, "onStart");
-//        if (_listView != null && getAdapter() != null && _listView.getAdapter() == null) {
-//            _listView.setAdapter(getAdapter());
-//        }
-//        super.onStart();
-//    }
 
     public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
         _displayView = displayView;
@@ -145,45 +119,64 @@ public class WorkorderListFragment extends Fragment {
     }
 
     public void update() {
-//        if (getAdapter() != null)
-//            getAdapter().update(false);
-        _listView.setRefreshing();
+        //_listView.setRefreshing();
+        _adapter.refreshPages();
     }
 
-    public void hiding() {
-//        if (getAdapter() != null)
-//            getAdapter().onStop();
-    }
+    private void requestList(int page, boolean allowCache) {
+        if (_service == null)
+            return;
 
-//    private WorkorderListAdapter getAdapter() {
-//        if (this.getActivity() == null)
-//            return null;
-//        try {
-//            if (_adapter == null) {
-//                _adapter = new WorkorderListAdapter(this.getActivity(), _displayView);
-//                _adapter.setLoadingListener(_workorderAdapter_listener);
-//            }
-//
-//            if (!_adapter.isViable()) {
-//                _adapter = new WorkorderListAdapter(this.getActivity(), _displayView);
-//                _adapter.setLoadingListener(_workorderAdapter_listener);
-//            }
-//
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//            return null;
-//        }
-//
-//        return _adapter;
-//    }
+        Intent intent = _service.getList(WEB_GET_LIST, page, _displayView, allowCache);
+        intent.putExtra(KEY_PAGE_NUM, page);
+        getActivity().startService(intent);
+    }
 
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private OverScrollListView.OnOverScrollListener _listView_OverScroll = new OverScrollListView.OnOverScrollListener() {
+        @Override
+        public void onOverScrolled(OverScrollListView view, int pixelsX, int pixelsY) {
+
+            // clamp
+            if (pixelsY < -350) {
+                pixelsY = -350;
+            }
+            if (pixelsY > 0) {
+                pixelsY = 0;
+            }
+
+            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _loadingView.getLayoutParams();
+            lp.topMargin = _loadingStartMargin + (-pixelsY);
+            _loadingView.setLayoutParams(lp);
+            if (pixelsY < -300 && !_isLoading) {
+                _isLoading = true;
+                _loadingView.startAnimation(_rotateAnim);
+            } else if (pixelsY > -300 && _isLoading) {
+                _isLoading = false;
+                _loadingView.clearAnimation();
+            }
+        }
+
+        @Override
+        public void onOverScrollComplete(OverScrollListView view, int pixelsX, int pixelsY) {
+            if (_isLoading) {
+                _adapter.refreshPages();
+            } else {
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _loadingView.getLayoutParams();
+                lp.topMargin = _loadingStartMargin;
+                _loadingView.setLayoutParams(lp);
+                _loadingView.clearAnimation();
+            }
+        }
+    };
+
     private PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
+            Log.v(TAG, "getView()");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -199,95 +192,11 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public void requestPage(int page) {
-            requestList(page, true);
+        public void requestPage(int page, boolean allowCache) {
+            Log.v(TAG, "requestPage(), " + _displayView.getCall() + " " + page);
+            requestList(page, allowCache);
         }
     };
-
-    private SmoothProgressDrawable.Callbacks _progressCallback = new SmoothProgressDrawable.Callbacks() {
-
-        @Override
-        public void onStop() {
-            _loadingBar.setVisibility(View.GONE);
-        }
-
-        @Override
-        public void onStart() {
-            _loadingBar.setVisibility(View.VISIBLE);
-        }
-
-    };
-
-//    private WorkorderListAdapter.Listener<Workorder> _workorderAdapter_listener = new WorkorderListAdapter.Listener<Workorder>() {
-//
-//        @Override
-//        public void onLoading() {
-//            _listView.setRefreshing();
-//            _loadingBar.progressiveStart();
-//        }
-//
-//        @Override
-//        public void onLoadComplete() {
-//            _listView.onRefreshComplete();
-//            _loadingBar.progressiveStop();
-//        }
-//    };
-
-    private PullToRefreshListView.OnRefreshListener _listView_onRefreshListener = new PullToRefreshListView.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            // _adapter.update(false);
-            // _loadingBar.setIndeterminate(true);
-            // _loadingBar.progressiveStart();
-        }
-    };
-
-    private PullToRefreshListView.StateListener _listview_onPullListener = new PullToRefreshListView.StateListener() {
-        @Override
-        public void onPull(int pullPercent) {
-            if (_listView.getState() == PullToRefreshListView.State.PULL_TO_REFRESH) {
-                float sep = 4f - 4 * Math.abs(pullPercent) / 100f;
-                if (sep < 0)
-                    sep = 0f;
-                _loadingBar.setSmoothProgressDrawableSpeed(sep);
-            }
-        }
-
-        @Override
-        public void onStopPull() {
-            _loadingBar.setSmoothProgressDrawableSpeed(2f);
-            _loadingBar.setSmoothProgressDrawableReversed(true);
-            _loadingBar.setSmoothProgressDrawableSectionsCount(1);
-            _loadingBar.progressiveStop();
-            _loadingBar.setVisibility(View.GONE);
-        }
-
-        @Override
-        public void onStateChange(State state) {
-            if (state == State.RELEASE_TO_REFRESH) {
-//                if (getAdapter() != null)
-//                    getAdapter().update(false);
-                _loadingBar.progressiveStart();
-            }
-        }
-
-        @Override
-        public void onStartPull() {
-            _loadingBar.setSmoothProgressDrawableSectionsCount(1);
-            _loadingBar.setSmoothProgressDrawableReversed(true);
-            _loadingBar.progressiveStart();
-        }
-
-    };
-
-    private void requestList(int page, boolean allowCache) {
-        if (_service == null)
-            return;
-
-        Intent intent = _service.getList(WEB_GET_LIST, page, _displayView, allowCache);
-        intent.putExtra(KEY_PAGE_NUM, page);
-        getActivity().startService(intent);
-    }
 
 
     /*-*****************************-*/
@@ -304,6 +213,7 @@ public class WorkorderListFragment extends Fragment {
         @Override
         public void onAuthentication(String username, String authToken) {
             _service = new WorkorderService(getActivity(), username, authToken, _resultReciever);
+            requestList(0, true);
         }
 
         @Override
@@ -321,6 +231,7 @@ public class WorkorderListFragment extends Fragment {
                 int page = resultData.getInt(KEY_PAGE_NUM);
 
                 String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+                boolean cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
 
                 JsonArray objects = null;
                 try {
@@ -340,11 +251,17 @@ public class WorkorderListFragment extends Fragment {
                     }
                 }
 
-                _adapter.addPage(page, list);
-                _listView.setAdapter(_adapter);
-
-                if (list.size() < 25) {
+                if (list.size() == 0) {
                     _adapter.setNoMorePages();
+                }
+
+                _adapter.setPage(page, list, cached);
+                if (_isLoading) {
+                    _isLoading = false;
+                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _loadingView.getLayoutParams();
+                    lp.topMargin = _loadingStartMargin;
+                    _loadingView.setLayoutParams(lp);
+                    _loadingView.clearAnimation();
                 }
             }
         }
