@@ -111,6 +111,7 @@ public class WorkorderListFragment extends Fragment {
 
     public void update() {
         //_listView.setRefreshing();
+        _loadingView.startRefreshing();
         _adapter.refreshPages();
     }
 

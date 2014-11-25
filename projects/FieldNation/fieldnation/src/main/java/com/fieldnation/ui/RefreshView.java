@@ -16,7 +16,7 @@ import com.fieldnation.R;
 /**
  * Created by michael.carver on 11/25/2014.
  */
-public class RefreshView extends RelativeLayout implements OverScrollListView.OnOverScrollListener {
+public class RefreshView extends RelativeLayout implements OnOverScrollListener {
     private static final String TAG = "ui.RefreshView";
 
     private static final int STATE_IDLE = 0;
@@ -65,36 +65,36 @@ public class RefreshView extends RelativeLayout implements OverScrollListView.On
         _listener = listener;
     }
 
-    public void startSpinning() {
+    private void startSpinning() {
         Log.v(TAG, "startSpinning");
         _contents.startAnimation(_rotateAnim);
     }
 
-    public void stopSpinning() {
+    private void stopSpinning() {
         Log.v(TAG, "stopSpinning");
         _contents.clearAnimation();
     }
 
-    public void setLoadingOffset(int px) {
+    private void setLoadingOffset(int px) {
         Log.v(TAG, "offsetLoading");
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contents.getLayoutParams();
         lp.topMargin = px;
         _contents.setLayoutParams(lp);
     }
 
-    public int getLoadingOffset() {
+    private int getLoadingOffset() {
         Log.v(TAG, "getLoadingOffset");
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contents.getLayoutParams();
         return lp.topMargin;
     }
 
-    public int getMaxTravelDistance() {
+    private int getMaxTravelDistance() {
         if (_maxTravelDistance == -1)
             _maxTravelDistance = _contents.getHeight() * 4;
         return _maxTravelDistance;
     }
 
-    public void startAnimation(int start, int end, Animator.AnimatorListener listener) {
+    private void startAnimation(int start, int end, Animator.AnimatorListener listener) {
         ValueAnimator a = ValueAnimator.ofInt(start, end);
         if (listener != null)
             a.addListener(listener);
@@ -163,7 +163,7 @@ public class RefreshView extends RelativeLayout implements OverScrollListView.On
         }
     };
 
-    public int cleanYPixels(int y) {
+    private int cleanYPixels(int y) {
         Log.v(TAG, "cleanYPixels");
         // negative values is overscroll pull down
         y = -y;
@@ -178,7 +178,7 @@ public class RefreshView extends RelativeLayout implements OverScrollListView.On
     }
 
     @Override
-    public void onOverScrolled(OverScrollListView view, int pixelsX, int pixelsY) {
+    public void onOverScrolled(View view, int pixelsX, int pixelsY) {
         Log.v(TAG, "onOverScrolled");
         if (_state == STATE_IDLE) {
             _state = STATE_PULLING;
@@ -202,7 +202,7 @@ public class RefreshView extends RelativeLayout implements OverScrollListView.On
 
     // this is a mouse up
     @Override
-    public void onOverScrollComplete(OverScrollListView view, int pixelsX, int pixelsY) {
+    public void onOverScrollComplete(View view, int pixelsX, int pixelsY) {
         Log.v(TAG, "onOverScrollComplete");
         if (_state == STATE_RELEASE_TO_REFRESH) {
             _state = STATE_MOVE_TO_REFRESH;
@@ -229,6 +229,20 @@ public class RefreshView extends RelativeLayout implements OverScrollListView.On
 
             startAnimation(pixelsY, 0, _hiding_listener);
         }
+    }
+
+    public void startRefreshing() {
+        if (_state == STATE_IDLE) {
+            _state = STATE_MOVE_TO_REFRESH;
+            setLoadingOffset(0);
+
+            startAnimation(
+                    0,
+                    (_contents.getHeight() * 3) / 2,
+                    _moveToRefresh_listener);
+            startSpinning();
+        }
+
     }
 
     public void refreshComplete() {
