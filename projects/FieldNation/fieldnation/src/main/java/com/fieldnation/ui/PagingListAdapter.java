@@ -71,7 +71,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
 
     /*-*********************************-*/
     /*-			Getters/Setters			-*/
-	/*-*********************************-*/
+    /*-*********************************-*/
     public String getUsername() {
         return _username;
     }
@@ -141,7 +141,7 @@ public abstract class PagingListAdapter<T> extends BaseAdapter {
     }
 
     /*-*****************************-*/
-	/*-			Dispatchers			-*/
+    /*-			Dispatchers			-*/
 	/*-*****************************-*/
     public void setLoadingListener(Listener<T> listener) {
         _listener = listener;

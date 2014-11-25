@@ -10,6 +10,7 @@ import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -20,6 +21,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     }
 
     // workorders
+
+    public Intent getList(int resultCode, int page, WorkorderDataSelector selector, boolean allowCache) {
+        return httpGet(resultCode, "/api/rest/v1/workorder/" + selector.getCall(), "?page=" + page, allowCache);
+    }
+
     public Intent getRequested(int resultCode, int page, boolean allowCache) {
         return httpGet(resultCode, "/api/rest/v1/workorder/requested", "?page=" + page, allowCache);
     }

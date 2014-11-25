@@ -34,7 +34,6 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 
 import java.text.ParseException;
-import java.util.Arrays;
 
 public class DetailFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DetailFragment";
@@ -68,17 +67,14 @@ public class DetailFragment extends WorkorderFragment {
     private Workorder _workorder;
     private GlobalState _gs;
     private WorkorderService _service;
-    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_workorder_detail, container,
-                false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_workorder_detail, container, false);
     }
 
     @Override
@@ -284,7 +280,7 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onEnterClosingNotes() {
-            if (!Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
+            if (_workorder.canChangeClosingNotes()) {
                 _closingDialog.show(_workorder.getClosingNotes());
             }
         }

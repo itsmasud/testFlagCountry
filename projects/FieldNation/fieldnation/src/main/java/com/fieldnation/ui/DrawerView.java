@@ -239,8 +239,8 @@ public class DrawerView extends RelativeLayout {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                getContext().startService(_dataService.getAll(1, 0, true));
-                _nextPage = 1;
+                //getContext().startService(_dataService.getAll(1, 0, true));
+                //_nextPage = 1;
             }
             Log.v(TAG, "WebServiceResultReceiver.onSuccess");
         }

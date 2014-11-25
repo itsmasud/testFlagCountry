@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author michael.carver
  */
-public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
+public class WorkorderListAdapterX extends PagingListAdapter<Workorder> {
     private static final String TAG = "ui.workorder.WorkorderListAdapter";
 
     // Intent Keys
@@ -62,8 +62,8 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
     private WorkorderDataSelector _dataSelection;
     private Hashtable<Long, Workorder> _pendingNotInterestedWorkorders = new Hashtable<Long, Workorder>();
     private Hashtable<Long, Workorder> _requestWorkingWorkorders = new Hashtable<Long, Workorder>();
-    private ActionMode _actionMode = null;
     private Hashtable<Long, Workorder> _selectedWorkorders = new Hashtable<Long, Workorder>();
+    private ActionMode _actionMode = null;
     private WorkorderUndoListener _wosumUndoListener;
 
     // Ui
@@ -78,7 +78,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
     /*-			Lifecycle			-*/
     /*-*****************************-*/
 
-    public WorkorderListAdapter(FragmentActivity activity, WorkorderDataSelector selection) throws NoSuchMethodException {
+    public WorkorderListAdapterX(FragmentActivity activity, WorkorderDataSelector selection) throws NoSuchMethodException {
         super(activity, Workorder.class);
         _dataSelection = selection;
 
@@ -86,7 +86,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
         _rpcMethod.setAccessible(true);
     }
 
-    public WorkorderListAdapter(FragmentActivity activity, WorkorderDataSelector selection, List<Workorder> workorders) throws NoSuchMethodException {
+    public WorkorderListAdapterX(FragmentActivity activity, WorkorderDataSelector selection, List<Workorder> workorders) throws NoSuchMethodException {
         super(activity, Workorder.class, workorders);
         _dataSelection = selection;
 
@@ -118,7 +118,7 @@ public class WorkorderListAdapter extends PagingListAdapter<Workorder> {
             wosum.setDisplayMode(WorkorderCardView.MODE_NORMAL);
         }
 
-        wosum.setWorkorder(_dataSelection, object);
+        wosum.setWorkorder( object);
         wosum.setWorkorderSummaryListener(_wocv_listener);
 
         return wosum;
