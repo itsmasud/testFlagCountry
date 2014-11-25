@@ -22,6 +22,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private Hashtable<Integer, List<T>> _pages = new Hashtable<Integer, List<T>>();
     private Set<Integer> _loadingPages = new HashSet<Integer>();
     private int _size;
+    private Listener _listener;
 
     public void setPage(int page, List<T> items, boolean isCached) {
         Log.v(TAG, "setPage()");
@@ -37,7 +38,15 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         if (isCached)
             preRequestPage(page, false);
 
+        if (_loadingPages.size() == 0 && _listener != null) {
+            _listener.onLoadingComplete();
+        }
+
         notifyDataSetChanged();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     public void refreshPages() {
@@ -153,5 +162,9 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     public abstract View getView(int page, int position, T object, View convertView, ViewGroup parent);
 
     public abstract void requestPage(int page, boolean allowCache);
+
+    public interface Listener {
+        public void onLoadingComplete();
+    }
 
 }

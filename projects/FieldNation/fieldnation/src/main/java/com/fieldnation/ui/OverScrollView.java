@@ -4,12 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.ListView;
+import android.widget.ScrollView;
 
 /**
- * Created by michael.carver on 11/24/2014.
+ * Created by michael.carver on 11/25/2014.
  */
-public class OverScrollListView extends ListView {
+public class OverScrollView extends ScrollView {
     private static final String TAG = "ui.OverScrollListView";
 
     private OnOverScrollListener _onOverscrollListener;
@@ -23,22 +23,20 @@ public class OverScrollListView extends ListView {
     private boolean isScrollRight = false;
     private boolean _startingPull = true;
 
-    public OverScrollListView(Context context) {
+
+    public OverScrollView(Context context) {
         super(context);
-        init();
     }
 
-    public OverScrollListView(Context context, AttributeSet attrs) {
+    public OverScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
-    public OverScrollListView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public OverScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
     }
 
-    private void init() {
+    public void init() {
         setOverScrollMode(OVER_SCROLL_ALWAYS);
     }
 
@@ -68,8 +66,8 @@ public class OverScrollListView extends ListView {
         Log.v(TAG, "onTouchEvent " + ev.getAction());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (getCount() == 0)
-                    _startingPull = true;
+//                if (getCount() == 0)
+//                    _startingPull = true;
                 break;
             case MotionEvent.ACTION_UP:
                 if (_onOverscrollListener != null) {

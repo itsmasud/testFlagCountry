@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <com.fieldnation.ui.OverScrollListView
+        android:animateLayoutChanges="true"
         android:id="@+id/workorders_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,20 +21,11 @@
     <!--android:layout_alignParentTop="true"-->
     <!--android:layout_marginTop="-1dp" />-->
 
-    <com.fieldnation.ui.LoadingView
-        android:id="@+id/loading_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:visibility="gone" />
-
-    <ImageView
+    <com.fieldnation.ui.RefreshView
         android:id="@+id/loading_view"
-        android:layout_marginTop="-50dp"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/loading_gear_64"
-        android:layout_width="48dp"
-        android:layout_height="48dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_marginTop="-50dp" />
 
 </RelativeLayout>

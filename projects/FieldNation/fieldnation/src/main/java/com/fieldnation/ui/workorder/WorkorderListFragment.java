@@ -8,10 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -23,6 +19,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
+import com.fieldnation.ui.RefreshView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,19 +36,13 @@ public class WorkorderListFragment extends Fragment {
 
     // UI
     private OverScrollListView _listView;
-    private ImageView _loadingView;
+    private RefreshView _loadingView;
     //private SmoothProgressBar _loadingBar;
 
-    // Animations
-    private Animation _rotateAnim;
-
     // Data
-//    private WorkorderListAdapter _adapter;
-    private int _loadingStartMargin;
     private GlobalState _gs;
     private WorkorderService _service;
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
-    private boolean _isLoading = false;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -75,16 +66,16 @@ public class WorkorderListFragment extends Fragment {
 
         _gs = (GlobalState) getActivity().getApplicationContext();
 
-        _loadingView = (ImageView) view.findViewById(R.id.loading_view);
-        _loadingStartMargin = ((RelativeLayout.LayoutParams) _loadingView.getLayoutParams()).topMargin;
+        _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
+        _loadingView.setListener(_refreshViewListener);
 
-        _rotateAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_spingear_cw);
+        _adapter.setListener(_adapterListener);
 
         _listView = (OverScrollListView) view.findViewById(R.id.workorders_listview);
         _listView.setDivider(null);
 //        _listView.setOnRefreshListener(_listView_onRefreshListener);
 //        _listView.setStateListener(_listview_onPullListener);
-        _listView.setOnOverScrollListener(_listView_OverScroll);
+        _listView.setOnOverScrollListener(_loadingView);
         _listView.setAdapter(_adapter);
 
 //        _loadingBar = (SmoothProgressBar) view.findViewById(R.id.loading_progress);
@@ -136,40 +127,10 @@ public class WorkorderListFragment extends Fragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private OverScrollListView.OnOverScrollListener _listView_OverScroll = new OverScrollListView.OnOverScrollListener() {
+    private RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
         @Override
-        public void onOverScrolled(OverScrollListView view, int pixelsX, int pixelsY) {
-
-            // clamp
-            if (pixelsY < -350) {
-                pixelsY = -350;
-            }
-            if (pixelsY > 0) {
-                pixelsY = 0;
-            }
-
-            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _loadingView.getLayoutParams();
-            lp.topMargin = _loadingStartMargin + (-pixelsY);
-            _loadingView.setLayoutParams(lp);
-            if (pixelsY < -300 && !_isLoading) {
-                _isLoading = true;
-                _loadingView.startAnimation(_rotateAnim);
-            } else if (pixelsY > -300 && _isLoading) {
-                _isLoading = false;
-                _loadingView.clearAnimation();
-            }
-        }
-
-        @Override
-        public void onOverScrollComplete(OverScrollListView view, int pixelsX, int pixelsY) {
-            if (_isLoading) {
-                _adapter.refreshPages();
-            } else {
-                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _loadingView.getLayoutParams();
-                lp.topMargin = _loadingStartMargin;
-                _loadingView.setLayoutParams(lp);
-                _loadingView.clearAnimation();
-            }
+        public void onStartRefresh() {
+            _adapter.refreshPages();
         }
     };
 
@@ -195,6 +156,13 @@ public class WorkorderListFragment extends Fragment {
         public void requestPage(int page, boolean allowCache) {
             Log.v(TAG, "requestPage(), " + _displayView.getCall() + " " + page);
             requestList(page, allowCache);
+        }
+    };
+
+    private PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
+        @Override
+        public void onLoadingComplete() {
+            _loadingView.refreshComplete();
         }
     };
 
@@ -256,13 +224,6 @@ public class WorkorderListFragment extends Fragment {
                 }
 
                 _adapter.setPage(page, list, cached);
-                if (_isLoading) {
-                    _isLoading = false;
-                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _loadingView.getLayoutParams();
-                    lp.topMargin = _loadingStartMargin;
-                    _loadingView.setLayoutParams(lp);
-                    _loadingView.clearAnimation();
-                }
             }
         }
 
@@ -274,6 +235,7 @@ public class WorkorderListFragment extends Fragment {
 
             }
             _gs.requestAuthenticationDelayed(_authClient);
+            _loadingView.refreshFailed();
         }
     };
 
