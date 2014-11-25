@@ -62,8 +62,8 @@ public class WorkorderListAdapterX extends PagingListAdapter<Workorder> {
     private WorkorderDataSelector _dataSelection;
     private Hashtable<Long, Workorder> _pendingNotInterestedWorkorders = new Hashtable<Long, Workorder>();
     private Hashtable<Long, Workorder> _requestWorkingWorkorders = new Hashtable<Long, Workorder>();
-    private ActionMode _actionMode = null;
     private Hashtable<Long, Workorder> _selectedWorkorders = new Hashtable<Long, Workorder>();
+    private ActionMode _actionMode = null;
     private WorkorderUndoListener _wosumUndoListener;
 
     // Ui

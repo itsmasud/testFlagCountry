@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -17,7 +16,7 @@ import com.fieldnation.R;
  * Created by michael.carver on 11/25/2014.
  */
 public class RefreshView extends RelativeLayout implements OnOverScrollListener {
-    private static final String TAG = "ui.RefreshView";
+//    private static final String TAG = "ui.RefreshView";
 
     private static final int STATE_IDLE = 0;
     private static final int STATE_PULLING = 1;
@@ -48,7 +47,6 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     public void init() {
-        Log.v(TAG, "init");
         LayoutInflater.from(getContext()).inflate(R.layout.view_refresh, this);
 
         if (isInEditMode())
@@ -66,24 +64,20 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     private void startSpinning() {
-        Log.v(TAG, "startSpinning");
         _contents.startAnimation(_rotateAnim);
     }
 
     private void stopSpinning() {
-        Log.v(TAG, "stopSpinning");
         _contents.clearAnimation();
     }
 
     private void setLoadingOffset(int px) {
-        Log.v(TAG, "offsetLoading");
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contents.getLayoutParams();
         lp.topMargin = px;
         _contents.setLayoutParams(lp);
     }
 
     private int getLoadingOffset() {
-        Log.v(TAG, "getLoadingOffset");
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contents.getLayoutParams();
         return lp.topMargin;
     }
@@ -119,15 +113,11 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     private Animator.AnimatorListener _moveToRefresh_listener = new Animator.AnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {
-            // TODO STUB .onAnimationStart()
-            Log.v(TAG, "STUB .onAnimationStart()");
             _state = STATE_MOVE_TO_REFRESH;
         }
 
         @Override
         public void onAnimationEnd(Animator animation) {
-            // TODO STUB .onAnimationEnd()
-            Log.v(TAG, "STUB .onAnimationEnd()");
             _state = STATE_REFRESHING;
         }
 
@@ -143,13 +133,11 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     private Animator.AnimatorListener _hiding_listener = new Animator.AnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {
-            Log.v(TAG, "STUB .onAnimationStart()");
             _state = STATE_HIDING;
         }
 
         @Override
         public void onAnimationEnd(Animator animation) {
-            Log.v(TAG, "STUB .onAnimationEnd()");
             _state = STATE_IDLE;
             stopSpinning();
         }
@@ -164,7 +152,6 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     };
 
     private int cleanYPixels(int y) {
-        Log.v(TAG, "cleanYPixels");
         // negative values is overscroll pull down
         y = -y;
         // clamp
@@ -179,7 +166,6 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
 
     @Override
     public void onOverScrolled(View view, int pixelsX, int pixelsY) {
-        Log.v(TAG, "onOverScrolled");
         if (_state == STATE_IDLE) {
             _state = STATE_PULLING;
         }
@@ -203,7 +189,6 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     // this is a mouse up
     @Override
     public void onOverScrollComplete(View view, int pixelsX, int pixelsY) {
-        Log.v(TAG, "onOverScrollComplete");
         if (_state == STATE_RELEASE_TO_REFRESH) {
             _state = STATE_MOVE_TO_REFRESH;
 
@@ -246,7 +231,6 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     public void refreshComplete() {
-        Log.v(TAG, "refreshComplete");
         if (_state == STATE_REFRESHING || _state == STATE_MOVE_TO_REFRESH) {
             _state = STATE_HIDING;
 

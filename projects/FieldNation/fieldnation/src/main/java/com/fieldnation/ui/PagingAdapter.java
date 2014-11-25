@@ -55,6 +55,10 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         }
     }
 
+    public Hashtable<Integer, List<T>> getPages() {
+        return _pages;
+    }
+
     private void countItems() {
         int count = 0;
         Enumeration<Integer> e = _pages.keys();
