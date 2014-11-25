@@ -71,7 +71,7 @@ public class WorkorderActivity extends BaseActivity {
 
     // Services
     private PagerAdapter _pagerAdapter;
-    private WorkorderService _woRpc;
+    private WorkorderService _service;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -136,7 +136,7 @@ public class WorkorderActivity extends BaseActivity {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
             if (_authToken != null && _username != null) {
-                _woRpc = new WorkorderService(this, _username, _authToken, _rpcReceiver);
+                _service = new WorkorderService(this, _username, _authToken, _rpcReceiver);
             } else {
                 _gs.requestAuthentication(_authClient);
             }
@@ -156,7 +156,7 @@ public class WorkorderActivity extends BaseActivity {
 
         _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
         setLoading(true);
-        populateUi();
+        populateUi(true);
     }
 
     @Override
@@ -254,7 +254,7 @@ public class WorkorderActivity extends BaseActivity {
         _viewPager.setCurrentItem(_currentTab, false);
     }
 
-    private void populateUi() {
+    private void populateUi(boolean isCached) {
         if (_workorder == null)
             return;
 
@@ -291,6 +291,10 @@ public class WorkorderActivity extends BaseActivity {
         // }
 
         setLoading(false);
+
+        if (isCached) {
+            getData(false);
+        }
     }
 
     private void setLoading(boolean loading) {
@@ -305,8 +309,15 @@ public class WorkorderActivity extends BaseActivity {
 
     @Override
     public void onRefresh() {
-        startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+        getData(true);
         setLoading(true);
+    }
+
+    public void getData(boolean allowCache) {
+        if (_service == null)
+            return;
+
+        startService(_service.getDetails(RPC_GET_DETAIL, _workorderId, allowCache));
     }
 
     /*-*************************-*/
@@ -377,8 +388,7 @@ public class WorkorderActivity extends BaseActivity {
     private Workorder.Listener _workorder_listener = new Workorder.Listener() {
         @Override
         public void onChange(Workorder workorder) {
-            startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
-            // setLoading(true);
+            getData(false);
         }
     };
 
@@ -406,8 +416,8 @@ public class WorkorderActivity extends BaseActivity {
 
         @Override
         public void onAuthentication(String username, String authToken) {
-            _woRpc = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
-            startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+            _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
+            getData(true);
         }
 
         @Override
@@ -428,7 +438,7 @@ public class WorkorderActivity extends BaseActivity {
                 _workorder = Workorder.fromJson(new JsonObject(data));
 
                 _workorder.addListener(_workorder_listener);
-                populateUi();
+                populateUi(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
                 Log.v(TAG, "Have workorder");
                 setLoading(false);
             } catch (Exception ex) {
@@ -439,8 +449,8 @@ public class WorkorderActivity extends BaseActivity {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_woRpc != null) {
-                _gs.invalidateAuthToken(_woRpc.getAuthToken());
+            if (_service != null) {
+                _gs.invalidateAuthToken(_service.getAuthToken());
             }
             _gs.requestAuthenticationDelayed(_authClient);
         }
