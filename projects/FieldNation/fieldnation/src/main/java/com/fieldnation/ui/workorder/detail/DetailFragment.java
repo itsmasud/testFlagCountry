@@ -20,6 +20,8 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.OverScrollView;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
@@ -50,6 +52,8 @@ public class DetailFragment extends WorkorderFragment {
     private ActionBarTopView _topBar;
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
+    private RefreshView _refreshView;
+    private OverScrollView _scrollView;
 
     // Dialogs
     private ExpiresDialog _expiresDialog;
@@ -105,6 +109,15 @@ public class DetailFragment extends WorkorderFragment {
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
+        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
+        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
+
+        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
+        _refreshView.setListener(_refreshView_listener);
+
+        _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
+        _scrollView.setOnOverScrollListener(_refreshView);
+
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog.setListener(_closingNotes_onOk);
 
@@ -134,16 +147,12 @@ public class DetailFragment extends WorkorderFragment {
 
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
-        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
-        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
-
         if (_workorder != null) {
-            setWorkorder(_workorder);
+            setWorkorder(_workorder, true);
         }
-
     }
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
 
@@ -152,43 +161,46 @@ public class DetailFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
 
         if (_sumView != null) {
-            _sumView.setWorkorder(_workorder);
+            _sumView.setWorkorder(_workorder, isCached);
         }
 
         if (_taskView != null) {
-            _taskView.setWorkorder(_workorder);
+            _taskView.setWorkorder(_workorder, isCached);
         }
 
         if (_locView != null) {
-            _locView.setWorkorder(_workorder);
+            _locView.setWorkorder(_workorder, isCached);
         }
 
         if (_scheduleView != null) {
-            _scheduleView.setWorkorder(_workorder);
+            _scheduleView.setWorkorder(_workorder, isCached);
         }
 
         if (_payView != null) {
-            _payView.setWorkorder(_workorder);
+            _payView.setWorkorder(_workorder, isCached);
         }
 
         if (_actionView != null) {
-            _actionView.setWorkorder(_workorder);
+            _actionView.setWorkorder(_workorder, isCached);
         }
 
         if (_topBar != null) {
-            _topBar.setWorkorder(_workorder);
+            _topBar.setWorkorder(_workorder, isCached);
         }
 
         if (_exView != null) {
-            _exView.setWorkorder(_workorder);
+            _exView.setWorkorder(_workorder, isCached);
         }
 
         if (workorder == null)
             return;
+
+        if (!isCached)
+            setLoading(false);
 
         if (_bundleWarningTextView != null) {
             if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
@@ -198,12 +210,38 @@ public class DetailFragment extends WorkorderFragment {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
         }
-        setLoading(false);
+    }
+
+    private void getData() {
+        if (_workorder != null) {
+            Log.v(TAG, "getData.startRefreshing");
+            setLoading(true);
+            _workorder.dispatchOnChange();
+
+        }
+    }
+
+    @Override
+    public void setLoading(boolean isLoading) {
+        if (_refreshView != null) {
+            if (isLoading) {
+                _refreshView.startRefreshing();
+            } else {
+                _refreshView.refreshComplete();
+            }
+        }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+        @Override
+        public void onStartRefresh() {
+            getData();
+        }
+    };
+
     private SummaryView.Listener _summaryView_listener = new SummaryView.Listener() {
         @Override
         public void showConfidentialInfo(String body) {
@@ -223,7 +261,6 @@ public class DetailFragment extends WorkorderFragment {
             intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
             intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
             getActivity().startActivity(intent);
-            setLoading(true);
         }
     };
 
@@ -239,7 +276,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onComplete() {
             getActivity().startService(
                     _service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
-            setLoading(true);
+
         }
 
         @Override
@@ -250,7 +287,7 @@ public class DetailFragment extends WorkorderFragment {
             } else {
                 getActivity().startService(
                         _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
-                setLoading(true);
+
             }
         }
 
@@ -258,7 +295,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onCheckIn() {
             getActivity().startService(
                     _service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
-            setLoading(true);
+
         }
 
         @Override
@@ -266,7 +303,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.acknowledgeHold(WEB_CHANGE,
                             _workorder.getWorkorderId()));
-            setLoading(true);
+
         }
 
         @Override
@@ -294,7 +331,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(_service.deleteExpense(WEB_CHANGE,
                     _workorder.getWorkorderId(),
                     expense.getExpenseId()));
-            setLoading(true);
+
         }
 
         @Override
@@ -322,7 +359,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.deleteDiscount(WEB_CHANGE,
                             _workorder.getWorkorderId(), discountId));
-            setLoading(true);
+
         }
     };
 
@@ -346,7 +383,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onNotInterested(Workorder workorder) {
             getActivity().startService(
                     _service.decline(WEB_CHANGE, _workorder.getWorkorderId()));
-            setLoading(true);
+
         }
 
         @Override
@@ -362,7 +399,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onComplete(Workorder workorder) {
             getActivity().startService(
                     _service.complete(WEB_CHANGE, workorder.getWorkorderId()));
-            setLoading(true);
+
         }
     };
 
@@ -375,7 +412,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.addExpense(WEB_CHANGE, _workorder.getWorkorderId(),
                             description, amount, category));
-            setLoading(true);
+
         }
 
         @Override
@@ -390,7 +427,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGE, workorder.getWorkorderId(), expires, reason,
                             expirationInSeconds, pay, schedule, expenses));
-            setLoading(true);
+
         }
     };
 
@@ -400,7 +437,7 @@ public class DetailFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.addDiscount(WEB_CHANGE,
                             _workorder.getWorkorderId(), amount, description));
-            setLoading(true);
+
         }
 
         @Override
@@ -413,7 +450,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onOk(String message) {
             getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
-            setLoading(true);
+
         }
 
         @Override
@@ -427,7 +464,7 @@ public class DetailFragment extends WorkorderFragment {
         public void onOk(Workorder workorder, int count) {
             getActivity().startService(
                     _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
-            setLoading(true);
+
         }
     };
 
@@ -438,7 +475,7 @@ public class DetailFragment extends WorkorderFragment {
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 getActivity().startService(_service.confirmAssignment(WEB_CHANGE,
                         _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end)));
-                setLoading(true);
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -480,7 +517,7 @@ public class DetailFragment extends WorkorderFragment {
                 getActivity().startService(
                         _service.request(WEB_CHANGE,
                                 _workorder.getWorkorderId(), seconds));
-                setLoading(true);
+
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -514,9 +551,9 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             if (resultCode == WEB_CHANGE) {
-                _workorder.dispatchOnChange();
+                getData();
             } else {
-                setLoading(false);
+
             }
         }
 
@@ -527,7 +564,6 @@ public class DetailFragment extends WorkorderFragment {
                 _gs.invalidateAuthToken(_service.getAuthToken());
             }
             _gs.requestAuthenticationDelayed(_authClient);
-            setLoading(false);
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };

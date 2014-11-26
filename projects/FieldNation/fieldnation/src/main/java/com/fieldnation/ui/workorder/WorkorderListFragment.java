@@ -153,8 +153,15 @@ public class WorkorderListFragment extends Fragment {
         return _displayView;
     }
 
-    public void update() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        _adapter.refreshPages();
         _loadingView.startRefreshing();
+    }
+
+    public void update() {
+        //_loadingView.startRefreshing();
         _adapter.refreshPages();
     }
 
@@ -162,18 +169,20 @@ public class WorkorderListFragment extends Fragment {
         if (_service == null)
             return;
 
+        _loadingView.startRefreshing();
         Intent intent = _service.getList(WEB_GET_LIST, page, _displayView, allowCache);
         intent.putExtra(KEY_PAGE_NUM, page);
-        getActivity().startService(intent);
+        if (getActivity() != null)
+            getActivity().startService(intent);
     }
 
-    private void addPage(int page, List<Workorder> list, boolean cached) {
+    private void addPage(int page, List<Workorder> list, boolean isCached) {
         if (list.size() == 0) {
             _adapter.setNoMorePages();
         }
-        _adapter.setPage(page, list, cached);
+        _adapter.setPage(page, list, isCached);
 
-        if (!cached) {
+        if (!isCached) {
             _pendingNotInterested.clear();
             _requestWorking.clear();
             _selected.clear();
@@ -496,8 +505,10 @@ public class WorkorderListFragment extends Fragment {
         public void onAuthentication(String username, String authToken) {
             _username = username;
             _authToken = authToken;
-            _service = new WorkorderService(getActivity(), username, authToken, _resultReciever);
-            requestList(0, true);
+            if (getActivity() != null) {
+                _service = new WorkorderService(getActivity(), username, authToken, _resultReciever);
+                requestList(0, true);
+            }
         }
 
         @Override

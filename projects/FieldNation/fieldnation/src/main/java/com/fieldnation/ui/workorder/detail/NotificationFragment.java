@@ -89,13 +89,21 @@ public class NotificationFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
-        Log.v(TAG,
-                "setWorkorder: wokorder==null:" + (workorder == null) + " _service==null:" + (_service == null) + " _gs==null:" + (_gs == null));
+    public void setWorkorder(Workorder workorder, boolean isCached) {
+        Log.v(TAG, "setWorkorder: wokorder==null:" + (workorder == null)
+                + " _service==null:" + (_service == null)
+                + " _gs==null:" + (_gs == null));
+
         _workorder = workorder;
 
         populateUi();
         getNotifications();
+    }
+
+    @Override
+    public void setLoading(boolean isLoading) {
+        // TODO STUB com.fieldnation.ui.workorder.detail.NotificationFragment.setLoading()
+        Log.v(TAG, "STUB com.fieldnation.ui.workorder.detail.NotificationFragment.setLoading()");
     }
 
     public void populateUi() {

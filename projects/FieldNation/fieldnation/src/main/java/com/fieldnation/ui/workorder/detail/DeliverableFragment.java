@@ -97,6 +97,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private UploadSlotView _uploadingSlotView;
     private int _uploadCount = 0;
     private int _deleteCount = 0;
+    private boolean _isCached = true;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -163,9 +164,9 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
-
+        _isCached = isCached;
         getData();
         executeDelayedAction();
     }
@@ -185,12 +186,18 @@ public class DeliverableFragment extends WorkorderFragment {
         _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
 
+    @Override
+    public void setLoading(boolean isLoading) {
+        // TODO STUB com.fieldnation.ui.workorder.detail.DeliverableFragment.setLoading()
+        Log.v(TAG, "STUB com.fieldnation.ui.workorder.detail.DeliverableFragment.setLoading()");
+    }
+
     private void populateUi() {
         if (_workorder == null)
             return;
 
         if (_topBar != null)
-            _topBar.setWorkorder(_workorder);
+            _topBar.setWorkorder(_workorder, _isCached);
 
         if (_profile == null)
             return;

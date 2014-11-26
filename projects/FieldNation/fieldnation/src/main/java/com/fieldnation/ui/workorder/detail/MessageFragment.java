@@ -89,7 +89,7 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
         getMessages();
     }
@@ -116,6 +116,12 @@ public class MessageFragment extends WorkorderFragment {
         WEB_GET_MESSAGES = _rand.nextInt();
         _gs.startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
         setLoading(true);
+    }
+
+    @Override
+    public void setLoading(boolean isLoading) {
+        // TODO STUB com.fieldnation.ui.workorder.detail.MessageFragment.setLoading()
+        Log.v(TAG, "STUB com.fieldnation.ui.workorder.detail.MessageFragment.setLoading()");
     }
 
     private void rebuildList() {

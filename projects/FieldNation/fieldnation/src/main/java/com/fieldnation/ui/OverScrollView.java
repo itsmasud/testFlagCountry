@@ -47,7 +47,7 @@ public class OverScrollView extends ScrollView {
     // Used to detect end/start of list
     @Override
     protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX, int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
-        if (isTouchEvent) {
+        if (isTouchEvent && getScrollY() == 0 || getMaxScrollAmount() == 0) {
             scrollAmountX += deltaX;
             scrollAmountY += deltaY;
 
@@ -81,7 +81,7 @@ public class OverScrollView extends ScrollView {
 
             case MotionEvent.ACTION_MOVE:
                 // if we are in overscroll mode
-                if (_startingPull) {
+                if (_startingPull && getScrollY() == 0 || getMaxScrollAmount() == 0) {
                     int size = ev.getHistorySize();
                     for (int i = 0; i < size; i++) {
                         scrollAmountX += (int) (-ev.getHistoricalX(i));

@@ -89,7 +89,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         Log.v(TAG, "Method Stub: setWorkorder()");
 
         _workorder = workorder;

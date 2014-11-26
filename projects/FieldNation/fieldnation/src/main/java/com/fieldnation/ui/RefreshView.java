@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -16,7 +17,7 @@ import com.fieldnation.R;
  * Created by michael.carver on 11/25/2014.
  */
 public class RefreshView extends RelativeLayout implements OnOverScrollListener {
-//    private static final String TAG = "ui.RefreshView";
+    private static final String TAG = "ui.RefreshView";
 
     private static final int STATE_IDLE = 0;
     private static final int STATE_PULLING = 1;
@@ -28,7 +29,6 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     private View _contents;
     private Animation _rotateAnim;
     private int _state;
-    private int _maxTravelDistance = -1;
     private Listener _listener;
 
     public RefreshView(Context context) {
@@ -64,6 +64,8 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     private void startSpinning() {
+        _contents.clearAnimation();
+        _rotateAnim.reset();
         _contents.startAnimation(_rotateAnim);
     }
 
@@ -75,6 +77,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contents.getLayoutParams();
         lp.topMargin = px;
         _contents.setLayoutParams(lp);
+        requestLayout();
     }
 
     private int getLoadingOffset() {
@@ -83,9 +86,8 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     private int getMaxTravelDistance() {
-        if (_maxTravelDistance == -1)
-            _maxTravelDistance = _contents.getHeight() * 4;
-        return _maxTravelDistance;
+        Log.v(TAG, "getMaxTravelDistance() = " + _contents.getHeight() * 4);
+        return _contents.getHeight() * 4;
     }
 
     private void startAnimation(int start, int end, Animator.AnimatorListener listener) {
@@ -101,7 +103,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         });
 
         if (start == end) {
-            a.setDuration(0);
+            a.setDuration(100);
         } else {
             // 1 px/ms
             a.setDuration(Math.abs(start - end));
@@ -217,10 +219,15 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     public void startRefreshing() {
+        Log.v(TAG, "startRefreshing " + _state + ":" + _contents.getHeight());
+
+        if (_contents.getHeight() == 0)
+            return;
+
         if (_state == STATE_IDLE) {
             _state = STATE_MOVE_TO_REFRESH;
-            setLoadingOffset(0);
 
+            setLoadingOffset(0);
             startAnimation(
                     0,
                     (_contents.getHeight() * 3) / 2,
@@ -231,6 +238,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     public void refreshComplete() {
+        Log.v(TAG, "refreshComplete " + _state);
         if (_state == STATE_REFRESHING || _state == STATE_MOVE_TO_REFRESH) {
             _state = STATE_HIDING;
 

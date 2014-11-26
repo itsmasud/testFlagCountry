@@ -13,7 +13,7 @@ public abstract class WorkorderFragment extends Fragment {
 
     public abstract void update();
 
-    public abstract void setWorkorder(Workorder workorder);
+    public abstract void setWorkorder(Workorder workorder, boolean isCached);
 
     public void setPageRequestListener(PageRequestListener listener) {
         pageRequestListener = listener;
@@ -23,7 +23,9 @@ public abstract class WorkorderFragment extends Fragment {
         _loadingListener = listener;
     }
 
-    public void setLoading(boolean isLoading) {
+    public abstract void setLoading(boolean isLoading);
+
+    public void dispatchLoading(boolean isLoading) {
         if (_loadingListener != null)
             _loadingListener.setLoading(isLoading);
     }
