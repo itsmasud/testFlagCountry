@@ -20,10 +20,12 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
     private TextView _totalTimeTextView;
     private LinearLayout _addLogLinearLayout;
     private TextView _noTimeTextView;
+    private View _spacer;
 
     // Data
     private Listener _listener;
     private Workorder _workorder;
+    private boolean _inSIgnOffMode = false;
 
     public TimeLoggedView(Context context) {
         super(context);
@@ -50,11 +52,27 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
         _noTimeTextView = (TextView) findViewById(R.id.notime_textview);
         _addLogLinearLayout = (LinearLayout) findViewById(R.id.addlog_linearlayout);
         _addLogLinearLayout.setOnClickListener(_addLog_onClick);
+        _spacer = (View) findViewById(R.id.buttonspacer_view);
+    }
+
+    private void enableSpacer(boolean enabled) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) _spacer.getLayoutParams();
+        if (enabled) {
+            params.weight = 1;
+            _spacer.setLayoutParams(params);
+            _spacer.setVisibility(View.INVISIBLE);
+
+        } else {
+            params.weight = 0;
+            _spacer.setLayoutParams(params);
+            _spacer.setVisibility(View.GONE);
+        }
     }
 
     public void setListener(Listener listener) {
         _listener = listener;
     }
+
 
     @Override
     public void setWorkorder(Workorder workorder, boolean isCached) {
@@ -62,13 +80,14 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
         LoggedWork[] logs = _workorder.getLoggedWork();
 
-        if (_workorder.canModifyTimeLog()) {
+        if (_workorder.canModifyTimeLog() && !_inSIgnOffMode) {
             _addLogLinearLayout.setVisibility(View.VISIBLE);
         } else {
             if (logs == null || logs.length == 0) {
                 setVisibility(GONE);
                 return;
             }
+            enableSpacer(false);
             _addLogLinearLayout.setVisibility(View.GONE);
         }
 

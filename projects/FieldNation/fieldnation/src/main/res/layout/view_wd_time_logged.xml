@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -43,7 +43,16 @@
             android:layout_weight="1"
             android:text="End" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="Devices" />
+
         <View
+            android:id="@+id/buttonspacer_view"
+            android:visibility="invisible"
             android:layout_width="1px"
             android:layout_height="1px"
             android:layout_weight="1" />
@@ -60,8 +69,7 @@
         android:id="@+id/log_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:orientation="vertical"></LinearLayout>
 
     <TextView
         android:id="@+id/totaltime_textview"
@@ -75,7 +83,7 @@
         android:id="@+id/addlog_linearlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
