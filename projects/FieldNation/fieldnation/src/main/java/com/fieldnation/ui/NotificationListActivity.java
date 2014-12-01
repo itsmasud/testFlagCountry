@@ -1,125 +1,202 @@
 package com.fieldnation.ui;
 
-import com.fieldnation.R;
-import com.fieldnation.data.profile.Notification;
-
-import eu.erikw.PullToRefreshListView;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.fieldnation.GlobalState;
+import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.data.profile.Message;
+import com.fieldnation.data.profile.Notification;
+import com.fieldnation.json.JsonArray;
+import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.common.WebServiceResultReceiver;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class NotificationListActivity extends BaseActivity {
-	private static final String TAG = "ui.NotificationListActivity";
+    private static final String TAG = "ui.NotificationListActivity";
 
-	// UI
-	private PullToRefreshListView _listView;
-	private SmoothProgressBar _loadingProgress;
+    // WEB
+    private final static int WEB_LIST_NOTIFICATIONS = 1;
 
-	// Data
-	private NotificationListAdapter _adapter;
+    // WEB params
+    private final static String PARAM_PAGE_NUM = "NotificationListActivity.PARAM_PAGE_NUM";
+
+    // UI
+    private OverScrollListView _listView;
+    private RefreshView _refreshView;
+
+    // Data
+    private GlobalState _gs;
+    private ProfileService _service;
 
 	/*-*************************************-*/
-	/*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-				Life Cycle				-*/
+    /*-*************************************-*/
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_itemlist);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_itemlist);
 
-		_listView = (PullToRefreshListView) findViewById(R.id.items_listview);
-		_listView.setOnRefreshListener(_listView_onRefreshListener);
+        _gs = (GlobalState) getApplicationContext();
 
-		_loadingProgress = (SmoothProgressBar) findViewById(R.id.loading_progress);
-		_loadingProgress.setSmoothProgressDrawableCallbacks(_loadingCallback);
-	}
+        _adapter.setListener(_adapter_lsitener);
 
-	@Override
-	protected void onResume() {
-		_listView.setAdapter(getListAdapter());
+        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
+        _refreshView.setListener(_refreshView_listener);
 
-		super.onResume();
-	}
+        _listView = (OverScrollListView) findViewById(R.id.items_listview);
+        _listView.setOnOverScrollListener(_refreshView);
+        _listView.setAdapter(_adapter);
 
-	@Override
-	protected void onPause() {
-		super.onPause();
+        _gs.requestAuthentication(_authClient);
+    }
 
-		if (_adapter != null) {
-			_adapter.onStop();
-			_adapter = null;
-		}
-	}
+    @Override
+    public void onRefresh() {
+        if (_refreshView != null) {
+            _refreshView.startRefreshing();
+        }
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
-	private SmoothProgressDrawable.Callbacks _loadingCallback = new SmoothProgressDrawable.Callbacks() {
-		@Override
-		public void onStop() {
-			_loadingProgress.setVisibility(View.GONE);
-		}
+        _adapter.refreshPages();
+    }
 
-		@Override
-		public void onStart() {
-			_loadingProgress.setVisibility(View.VISIBLE);
-		}
-	};
+    private void getData(int page, boolean allowCache) {
+        if (_service == null)
+            return;
 
-	private NotificationListAdapter.Listener<Notification> _adapter_listener = new NotificationListAdapter.Listener<Notification>() {
+        if (_listView == null)
+            return;
 
-		@Override
-		public void onLoading() {
-			_listView.setRefreshing();
-			_loadingProgress.progressiveStart();
-		}
+        _refreshView.startRefreshing();
+        Intent intent = _service.getAllNotifications(WEB_LIST_NOTIFICATIONS, page, allowCache);
+        intent.putExtra(PARAM_PAGE_NUM, page);
+        startService(intent);
+    }
 
-		@Override
-		public void onLoadComplete() {
-			_listView.onRefreshComplete();
-			_loadingProgress.progressiveStop();
-		}
-	};
+    private void addPage(int page, List<Notification> list, boolean isCached) {
+        if (list.size() == 0) {
+            _adapter.setNoMorePages();
+        }
+        _adapter.setPage(page, list, isCached);
+    }
 
-	private PullToRefreshListView.OnRefreshListener _listView_onRefreshListener = new PullToRefreshListView.OnRefreshListener() {
+    private PagingAdapter<Notification> _adapter = new PagingAdapter<Notification>() {
+        @Override
+        public View getView(int page, int position, Notification object, View convertView, ViewGroup parent) {
+            NotificationView v = null;
 
-		@Override
-		public void onRefresh() {
-			getListAdapter().update(false);
-			_loadingProgress.progressiveStart();
-		}
-	};
+            if (convertView == null) {
+                v = new NotificationView(parent.getContext());
+            } else if (convertView instanceof NotificationView) {
+                v = (NotificationView) convertView;
+            } else {
+                v = new NotificationView(parent.getContext());
+            }
 
-	@Override
-	public void onRefresh() {
-		getListAdapter().update(false);
-		_loadingProgress.progressiveStart();
-	}
+            v.setNotification(object);
 
-	/*-*********************************-*/
-	/*-				Util				-*/
-	/*-*********************************-*/
+            return v;
+        }
 
-	private NotificationListAdapter getListAdapter() {
-		try {
-			if (_adapter == null) {
-				_adapter = new NotificationListAdapter(this);
-				_adapter.setLoadingListener(_adapter_listener);
-			}
+        @Override
+        public void requestPage(int page, boolean allowCache) {
+            getData(page, allowCache);
+        }
+    };
 
-			if (!_adapter.isViable()) {
-				_adapter = new NotificationListAdapter(this);
-				_adapter.setLoadingListener(_adapter_listener);
-			}
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
+    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+        @Override
+        public void onStartRefresh() {
+            _adapter.refreshPages();
+        }
+    };
 
-		return _adapter;
+    private PagingAdapter.Listener _adapter_lsitener = new PagingAdapter.Listener() {
+        @Override
+        public void onLoadingComplete() {
+            _refreshView.refreshComplete();
+        }
+    };
 
-	}
+
+    /*-*****************************-*/
+    /*-				Web				-*/
+    /*-*****************************-*/
+    private AuthenticationClient _authClient = new AuthenticationClient() {
+        @Override
+        public void onAuthenticationFailed(Exception ex) {
+            _gs.requestAuthenticationDelayed(_authClient);
+        }
+
+        @Override
+        public void onAuthentication(String username, String authToken) {
+            _service = new ProfileService(NotificationListActivity.this, username, authToken, _resultReceiver);
+            getData(0, true);
+        }
+
+        @Override
+        public GlobalState getGlobalState() {
+            return _gs;
+        }
+    };
+
+    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+            new Handler()) {
+
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            if (resultCode == WEB_LIST_NOTIFICATIONS) {
+                int page = resultData.getInt(PARAM_PAGE_NUM);
+
+                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+                boolean isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
+
+                JsonArray objects = null;
+                try {
+                    objects = new JsonArray(data);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    return;
+                }
+
+                List<Notification> list = new LinkedList<Notification>();
+                for (int i = 0; i < objects.size(); i++) {
+                    try {
+                        list.add(Notification.fromJson(objects.getJsonObject(i)));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                addPage(page, list, isCached);
+                _refreshView.refreshComplete();
+            }
+        }
+
+        @Override
+        public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
+            if (_service != null) {
+                _gs.invalidateAuthToken(_service.getAuthToken());
+            }
+            _gs.requestAuthenticationDelayed(_authClient);
+            Toast.makeText(NotificationListActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
+            _refreshView.refreshComplete();
+        }
+    };
+
 
 }

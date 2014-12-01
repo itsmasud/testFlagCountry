@@ -5,7 +5,9 @@
     <dimen name="MessageCard_StatusWidth">25dp</dimen>
 
     <style name="MessageCard">
-        <item name="android:padding">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
     </style>
 
     <style name="MessageCard_Padding">
