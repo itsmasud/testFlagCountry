@@ -31,6 +31,8 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     private int _state;
     private Listener _listener;
 
+    private boolean _completeWhenAble = false;
+
     public RefreshView(Context context) {
         super(context);
         init();
@@ -121,6 +123,9 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         @Override
         public void onAnimationEnd(Animator animation) {
             _state = STATE_REFRESHING;
+            if (_completeWhenAble) {
+                refreshComplete();
+            }
         }
 
         @Override
@@ -239,14 +244,17 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
 
     public void refreshComplete() {
         Log.v(TAG, "refreshComplete " + _state);
-        if (_state == STATE_REFRESHING || _state == STATE_MOVE_TO_REFRESH) {
+        if (_state == STATE_REFRESHING) {
             _state = STATE_HIDING;
+            _completeWhenAble = false;
 
             int off = getLoadingOffset();
 
             setLoadingOffset(0);
 
             startAnimation(off, 0, _hiding_listener);
+        } else {
+            _completeWhenAble = true;
         }
     }
 

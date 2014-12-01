@@ -33,6 +33,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     private RefreshView _refreshView;
 
     // Data
+    private String _authToken;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -140,6 +141,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
 
         @Override
         public void onAuthentication(String username, String authToken) {
+            _authToken = authToken;
             ItemListActivity.this.onAuthentication(username, authToken, _resultReceiver);
             getData(0, true);
         }
@@ -174,6 +176,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             invalidateService();
+            _gs.invalidateAuthToken(_authToken);
             _gs.requestAuthenticationDelayed(_authClient);
             Toast.makeText(ItemListActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshComplete();

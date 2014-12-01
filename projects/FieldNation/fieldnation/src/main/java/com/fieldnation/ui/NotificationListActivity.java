@@ -28,7 +28,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
         if (_service == null)
             return null;
 
-        return _service.getAllMessages(resultCode, page, allowCache);
+        return _service.getAllNotifications(resultCode, page, allowCache);
     }
 
     @Override

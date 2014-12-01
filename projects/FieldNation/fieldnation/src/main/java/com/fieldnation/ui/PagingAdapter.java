@@ -79,7 +79,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
-        Log.v(TAG, "registerDataSetObserver()");
+//        Log.v(TAG, "registerDataSetObserver()");
         super.registerDataSetObserver(observer);
         if (!_noMorePages && !_loadingPages.contains(_pages.size())) {
             requestPage(_pages.size(), true);
@@ -88,13 +88,13 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     @Override
     public int getCount() {
-        Log.v(TAG, "getCount()");
+//        Log.v(TAG, "getCount()");
         return _size;
     }
 
     @Override
     public Object getItem(int position) {
-        Log.v(TAG, "getItem()");
+//        Log.v(TAG, "getItem()");
 
         // find the page that has this item
         int count = 0;
@@ -119,13 +119,13 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        Log.v(TAG, "getItemId()");
+//        Log.v(TAG, "getItemId()");
         return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.v(TAG, "getView()");
+//        Log.v(TAG, "getView()");
 
         // find the page
         int count = 0;
@@ -155,12 +155,12 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     private void preRequestPage(int page, boolean allowCache) {
         if (!_loadingPages.contains(page)) {
-            Log.v(TAG, "preRequestPage(), requesting");
+//            Log.v(TAG, "preRequestPage(), requesting");
             _loadingPages.add(page);
             requestPage(page, allowCache);
             return;
         }
-        Log.v(TAG, "preRequestPage(), skipping");
+//        Log.v(TAG, "preRequestPage(), skipping");
     }
 
     public abstract View getView(int page, int position, T object, View convertView, ViewGroup parent);

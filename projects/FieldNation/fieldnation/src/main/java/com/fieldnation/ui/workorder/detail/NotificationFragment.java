@@ -230,6 +230,7 @@ public class NotificationFragment extends WorkorderFragment {
             }
             _gs.requestAuthenticationDelayed(_authclient);
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
+            _refreshView.refreshComplete();
         }
 
     };
