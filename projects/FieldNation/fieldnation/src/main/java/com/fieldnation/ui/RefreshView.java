@@ -86,7 +86,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     private int getMaxTravelDistance() {
-        Log.v(TAG, "getMaxTravelDistance() = " + _contents.getHeight() * 4);
+//        Log.v(TAG, "getMaxTravelDistance() = " + _contents.getHeight() * 4);
         return _contents.getHeight() * 4;
     }
 

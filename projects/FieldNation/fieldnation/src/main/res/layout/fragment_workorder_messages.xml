@@ -12,6 +12,7 @@
         android:layout_above="@+id/input_view"
         android:layout_alignParentTop="true"
         android:divider="@null"
+        android:animateLayoutChanges="true"
         android:scrollbarStyle="outsideOverlay" />
 
     <com.fieldnation.ui.workorder.detail.MessageInputView
@@ -19,5 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_marginTop="-50dp" />
 
 </RelativeLayout>

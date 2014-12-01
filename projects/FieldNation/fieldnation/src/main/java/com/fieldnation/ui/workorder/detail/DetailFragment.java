@@ -152,10 +152,6 @@ public class DetailFragment extends WorkorderFragment {
         }
     }
 
-    /*-*************************************-*/
-    /*-				Mutators				-*/
-    /*-*************************************-*/
-
     @Override
     public void update() {
     }
