@@ -698,19 +698,16 @@ public class TasksFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-                                         String trackingId) {
+        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
             getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
-                            carrier, null, trackingId));
+                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite, carrier, carrierName, trackingId));
         }
 
         @Override
-        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-                                         String trackingId, long taskId) {
+        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
             getActivity().startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
-                            carrier, null, trackingId, taskId));
+                            carrier, carrierName, trackingId, taskId));
         }
     };
 
@@ -737,15 +734,17 @@ public class TasksFragment extends WorkorderFragment {
     /*-*****************************-*/
     private ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
-        public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
-
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
+            getActivity().startService(
+                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
+                            carrier, carrierName, trackingId));
         }
 
         @Override
-        public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
             getActivity().startService(
                     _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
-                            carrier, null, trackingId, taskId));
+                            carrier, carrierName, trackingId, taskId));
         }
 
         @Override

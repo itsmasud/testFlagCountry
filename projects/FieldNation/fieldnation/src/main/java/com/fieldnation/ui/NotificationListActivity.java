@@ -1,125 +1,81 @@
 package com.fieldnation.ui;
 
-import com.fieldnation.R;
-import com.fieldnation.data.profile.Notification;
-
-import eu.erikw.PullToRefreshListView;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
-import android.os.Bundle;
+import android.content.Intent;
+import android.os.ResultReceiver;
 import android.view.View;
+import android.view.ViewGroup;
 
-public class NotificationListActivity extends BaseActivity {
-	private static final String TAG = "ui.NotificationListActivity";
+import com.fieldnation.data.profile.Notification;
+import com.fieldnation.json.JsonArray;
+import com.fieldnation.rpc.client.ProfileService;
 
-	// UI
-	private PullToRefreshListView _listView;
-	private SmoothProgressBar _loadingProgress;
+import java.util.LinkedList;
+import java.util.List;
 
-	// Data
-	private NotificationListAdapter _adapter;
+public class NotificationListActivity extends ItemListActivity<Notification> {
+    private static final String TAG = "ui.NotificationListActivity";
+
+    // Data
+    private ProfileService _service;
 
 	/*-*************************************-*/
-	/*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-				Life Cycle				-*/
+    /*-*************************************-*/
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_itemlist);
 
-		_listView = (PullToRefreshListView) findViewById(R.id.items_listview);
-		_listView.setOnRefreshListener(_listView_onRefreshListener);
+    @Override
+    public Intent requestData(int resultCode, int page, boolean allowCache) {
+        if (_service == null)
+            return null;
 
-		_loadingProgress = (SmoothProgressBar) findViewById(R.id.loading_progress);
-		_loadingProgress.setSmoothProgressDrawableCallbacks(_loadingCallback);
-	}
+        return _service.getAllMessages(resultCode, page, allowCache);
+    }
 
-	@Override
-	protected void onResume() {
-		_listView.setAdapter(getListAdapter());
+    @Override
+    public View getView(Notification object, View convertView, ViewGroup parent) {
+        NotificationView v = null;
+        if (convertView == null) {
+            v = new NotificationView(parent.getContext());
+        } else if (convertView instanceof NotificationView) {
+            v = (NotificationView) convertView;
+        } else {
+            v = new NotificationView(parent.getContext());
+        }
 
-		super.onResume();
-	}
+        v.setNotification(object);
 
-	@Override
-	protected void onPause() {
-		super.onPause();
+        return v;
+    }
 
-		if (_adapter != null) {
-			_adapter.onStop();
-			_adapter = null;
-		}
-	}
+    @Override
+    public void onAuthentication(String username, String authToken, ResultReceiver resultReceiver) {
+        _service = new ProfileService(this, username, authToken, resultReceiver);
+    }
 
-	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
-	private SmoothProgressDrawable.Callbacks _loadingCallback = new SmoothProgressDrawable.Callbacks() {
-		@Override
-		public void onStop() {
-			_loadingProgress.setVisibility(View.GONE);
-		}
+    @Override
+    public List<Notification> onParseData(int page, boolean isCached, byte[] data) {
+        JsonArray objects = null;
+        try {
+            objects = new JsonArray(new String(data));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
 
-		@Override
-		public void onStart() {
-			_loadingProgress.setVisibility(View.VISIBLE);
-		}
-	};
+        List<Notification> list = new LinkedList<Notification>();
+        for (int i = 0; i < objects.size(); i++) {
+            try {
+                list.add(Notification.fromJson(objects.getJsonObject(i)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-	private NotificationListAdapter.Listener<Notification> _adapter_listener = new NotificationListAdapter.Listener<Notification>() {
+        return list;
+    }
 
-		@Override
-		public void onLoading() {
-			_listView.setRefreshing();
-			_loadingProgress.progressiveStart();
-		}
-
-		@Override
-		public void onLoadComplete() {
-			_listView.onRefreshComplete();
-			_loadingProgress.progressiveStop();
-		}
-	};
-
-	private PullToRefreshListView.OnRefreshListener _listView_onRefreshListener = new PullToRefreshListView.OnRefreshListener() {
-
-		@Override
-		public void onRefresh() {
-			getListAdapter().update(false);
-			_loadingProgress.progressiveStart();
-		}
-	};
-
-	@Override
-	public void onRefresh() {
-		getListAdapter().update(false);
-		_loadingProgress.progressiveStart();
-	}
-
-	/*-*********************************-*/
-	/*-				Util				-*/
-	/*-*********************************-*/
-
-	private NotificationListAdapter getListAdapter() {
-		try {
-			if (_adapter == null) {
-				_adapter = new NotificationListAdapter(this);
-				_adapter.setLoadingListener(_adapter_listener);
-			}
-
-			if (!_adapter.isViable()) {
-				_adapter = new NotificationListAdapter(this);
-				_adapter.setLoadingListener(_adapter_listener);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-
-		return _adapter;
-
-	}
-
+    @Override
+    public void invalidateService() {
+        _service = null;
+    }
 }

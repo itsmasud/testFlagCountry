@@ -147,16 +147,16 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     /*-*************************-*/
     private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
-        public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
             if (_listener != null) {
-                _listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId);
+                _listener.onAddShipmentDetails(_workorder, trackingId, carrier, carrierName, description, shipToSite);
             }
         }
 
         @Override
-        public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
             if (_listener != null) {
-                _listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId, taskId);
+                _listener.onAddShipmentDetails(_workorder, trackingId, carrier, carrierName, description, shipToSite, taskId);
             }
         }
 
@@ -208,11 +208,10 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
 
         public void onAssign(Workorder workorder, int shipmentId, long taskId);
 
-        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-                                         String trackingId);
+        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
 
-        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-                                         String trackingId, long taskId);
+        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
+
     }
 
 }

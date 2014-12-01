@@ -28,6 +28,7 @@ public class ShipmentSummary extends RelativeLayout {
     private Workorder _workorder;
     private ShipmentTracking _shipment;
     private Listener _listener;
+    private boolean _taskMode = false;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -69,6 +70,16 @@ public class ShipmentSummary extends RelativeLayout {
         _shipment = shipment;
         _workorder = workorder;
 
+        populateUi();
+    }
+
+    private void populateUi() {
+        if (_shipment == null)
+            return;
+
+        if (_assignButton == null)
+            return;
+
         if (_shipment.getTrackingId() != null) {
             _trackingIdTextView.setText(_shipment.getTrackingId());
         }
@@ -85,13 +96,24 @@ public class ShipmentSummary extends RelativeLayout {
         _directionTextView.setText(toSite ? "To Site" : "From Site");
 
         if (_workorder.canChangeShipments()) {
-            _deleteImageButton.setVisibility(View.VISIBLE);
-            _assignButton.setVisibility(View.VISIBLE);
+            if (_taskMode)
+                _assignButton.setVisibility(View.VISIBLE);
+            else
+                _deleteImageButton.setVisibility(View.VISIBLE);
+
         } else {
-            _deleteImageButton.setVisibility(View.GONE);
-            _assignButton.setVisibility(View.GONE);
+            if (_taskMode)
+                _assignButton.setVisibility(View.GONE);
+            else
+                _deleteImageButton.setVisibility(View.GONE);
         }
 
+        if (_taskMode) {
+            _deleteImageButton.setVisibility(GONE);
+            _trackingIdTextView.setVisibility(GONE);
+            _carrierTextView.setVisibility(GONE);
+
+        }
     }
 
     /*-*********************************-*/
@@ -120,11 +142,8 @@ public class ShipmentSummary extends RelativeLayout {
     }
 
     public void hideForTaskShipmentDialog() {
-        _deleteImageButton.setVisibility(GONE);
-        _trackingIdTextView.setVisibility(GONE);
-        _carrierTextView.setVisibility(GONE);
-        //_directionTextView.setVisibility(GONE);
-        _assignButton.setVisibility(VISIBLE);
+        _taskMode = true;
+        populateUi();
     }
 
     public interface Listener {

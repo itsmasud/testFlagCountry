@@ -40,10 +40,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':libSmoothProgressBar')
     compile project(':libJson')
     compile project(':libUtils')
-    compile project(':libPullToRefresh')
     compile project(':libUndobar')
     compile project(':libDateTimePicker')
     compile 'com.android.support:support-v4:+'

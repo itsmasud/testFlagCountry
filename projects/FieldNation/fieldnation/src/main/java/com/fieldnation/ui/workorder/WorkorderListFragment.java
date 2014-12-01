@@ -541,7 +541,6 @@ public class WorkorderListFragment extends Fragment {
                     try {
                         list.add(Workorder.fromJson(objects.getJsonObject(i)));
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
