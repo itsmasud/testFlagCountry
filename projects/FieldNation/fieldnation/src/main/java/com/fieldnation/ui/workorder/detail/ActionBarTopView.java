@@ -66,7 +66,7 @@ public class ActionBarTopView extends RelativeLayout {
         setVisibility(View.GONE);
     }
 
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
 
         _checkinButton.setVisibility(View.GONE);

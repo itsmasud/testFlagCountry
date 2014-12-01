@@ -21,6 +21,7 @@ import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
 import java.util.LinkedList;
@@ -37,6 +38,7 @@ public class MessageFragment extends WorkorderFragment {
     // UI
     private ListView _listview;
     private MessageInputView _inputView;
+    private RefreshView _refreshView;
 
     // Data
     private GlobalState _gs;
@@ -64,11 +66,11 @@ public class MessageFragment extends WorkorderFragment {
         _gs = (GlobalState) getActivity().getApplicationContext();
         _gs.requestAuthentication(_authClient);
 
+        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
+
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
-
-        setLoading(true);
     }
 
     @Override
@@ -89,7 +91,7 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
         getMessages();
     }
@@ -107,7 +109,7 @@ public class MessageFragment extends WorkorderFragment {
         if (_gs == null)
             return;
 
-        setLoading(true);
+        _refreshView.startRefreshing();
 
         _messages.clear();
         if (_adapter != null)
@@ -115,7 +117,17 @@ public class MessageFragment extends WorkorderFragment {
 
         WEB_GET_MESSAGES = _rand.nextInt();
         _gs.startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
-        setLoading(true);
+    }
+
+    @Override
+    public void setLoading(boolean isLoading) {
+        if (_refreshView != null) {
+            if (isLoading) {
+                _refreshView.startRefreshing();
+            } else {
+                _refreshView.refreshComplete();
+            }
+        }
     }
 
     private void rebuildList() {
@@ -123,7 +135,7 @@ public class MessageFragment extends WorkorderFragment {
             getAdapter().setMessages(_messages);
             _listview.setSelection(getAdapter().getCount() - 1);
         }
-        setLoading(false);
+        _refreshView.refreshComplete();
     }
 
     private MessagesAdapter getAdapter() {
@@ -145,19 +157,30 @@ public class MessageFragment extends WorkorderFragment {
         }
     }
 
+    @Override
+    public void doAction(Bundle bundle) {
+        // TODO Method Stub: doAction()
+        Log.v(TAG, "Method Stub: doAction()");
+
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
     private View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLoading(true);
+            _refreshView.startRefreshing();
             WEB_NEW_MESSAGE = _rand.nextInt();
             _gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
                     _inputView.getInputText()));
             _inputView.clearText();
         }
     };
+
+    /*-*****************************-*/
+    /*-				Web				-*/
+    /*-*****************************-*/
 
     private AuthenticationClient _authClient = new AuthenticationClient() {
         @Override
@@ -198,7 +221,6 @@ public class MessageFragment extends WorkorderFragment {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                setLoading(false);
             } else if (resultCode == WEB_GET_MESSAGES) {
                 try {
                     JsonArray messages = new JsonArray(new String(
@@ -219,11 +241,9 @@ public class MessageFragment extends WorkorderFragment {
                 } else {
                     _inputView.setHint(R.string.continue_the_conversation);
                 }
-                setLoading(false);
             } else if (resultCode == WEB_NEW_MESSAGE) {
                 _inputView.clearText();
                 getMessages();
-                setLoading(false);
             }
         }
 
@@ -237,14 +257,6 @@ public class MessageFragment extends WorkorderFragment {
             }
             _gs.requestAuthenticationDelayed(_authClient);
             Toast.makeText(getActivity(), "Could not complete request.", Toast.LENGTH_LONG).show();
-            setLoading(false);
         }
     };
-
-    @Override
-    public void doAction(Bundle bundle) {
-        // TODO Method Stub: doAction()
-        Log.v(TAG, "Method Stub: doAction()");
-
-    }
 }

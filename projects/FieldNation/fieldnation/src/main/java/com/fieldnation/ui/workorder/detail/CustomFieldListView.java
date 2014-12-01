@@ -75,7 +75,7 @@ public class CustomFieldListView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(Workorder workorder, CustomField[] fieldList) {
+    public void setData(Workorder workorder, CustomField[] fieldList, boolean isCached) {
         _fields = fieldList;
         _workorder = workorder;
         populateUi();

@@ -9,8 +9,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -55,7 +53,7 @@ public class WorkorderActivity extends BaseActivity {
     private ViewPager _viewPager;
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
-    private RelativeLayout _loadingLayout;
+//    private RelativeLayout _loadingLayout;
 
     // Data
     private GlobalState _gs;
@@ -154,7 +152,7 @@ public class WorkorderActivity extends BaseActivity {
             _created = true;
         }
 
-        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+//        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
         setLoading(true);
         populateUi(true);
     }
@@ -274,7 +272,7 @@ public class WorkorderActivity extends BaseActivity {
         }
 
         for (int i = 0; i < _fragments.length; i++) {
-            _fragments[i].setWorkorder(_workorder);
+            _fragments[i].setWorkorder(_workorder, isCached);
         }
 
 //        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
@@ -290,33 +288,29 @@ public class WorkorderActivity extends BaseActivity {
         // _viewPager.setCurrentItem(TAB_TASKS, false);
         // }
 
-        setLoading(false);
 
         if (isCached) {
             getData(false);
+        } else {
+            setLoading(false);
         }
     }
 
     private void setLoading(boolean loading) {
-        if (loading) {
-            _loadingLayout.setVisibility(View.VISIBLE);
-            _viewPager.setVisibility(View.GONE);
-        } else {
-            _loadingLayout.setVisibility(View.GONE);
-            _viewPager.setVisibility(View.VISIBLE);
+        for (int i = 0; i < _fragments.length; i++) {
+            _fragments[i].setLoading(loading);
         }
     }
 
     @Override
     public void onRefresh() {
-        getData(true);
-        setLoading(true);
+        getData(false);
     }
 
     public void getData(boolean allowCache) {
         if (_service == null)
             return;
-
+        setLoading(true);
         startService(_service.getDetails(RPC_GET_DETAIL, _workorderId, allowCache));
     }
 
@@ -324,7 +318,6 @@ public class WorkorderActivity extends BaseActivity {
     /*-			Events			-*/
     /*-*************************-*/
     private PageRequestListener _pageRequestListener = new PageRequestListener() {
-
         @Override
         public void requestPage(Class<? extends WorkorderFragment> clazz, Bundle request) {
             for (int i = 0; i < _fragments.length; i++) {
@@ -440,7 +433,6 @@ public class WorkorderActivity extends BaseActivity {
                 _workorder.addListener(_workorder_listener);
                 populateUi(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
                 Log.v(TAG, "Have workorder");
-                setLoading(false);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

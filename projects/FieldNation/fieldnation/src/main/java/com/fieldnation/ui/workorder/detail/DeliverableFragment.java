@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +22,6 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
-import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
@@ -34,14 +32,11 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.OverScrollView;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
-import com.fieldnation.ui.dialog.ClosingNotesDialog;
-import com.fieldnation.ui.dialog.ConfirmDialog;
-import com.fieldnation.ui.dialog.DeviceCountDialog;
-import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.ISO8601;
 
 import java.security.SecureRandom;
 
@@ -49,9 +44,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.DeliverableFragment";
 
     // pageRequest parameters
-    public static final String PR_ACTION = "PR_ACTION";
-    public static final String PR_UPLOAD_PICTURE = "PR_UPLOAD_PICTURE";
-    public static final String PR_UPLOAD_FILE = "PR_UPLOAD_FILE";
     public static final String PR_TASK_ID = "PR_TASK_ID";
 
     // activity result codes
@@ -66,18 +58,13 @@ public class DeliverableFragment extends WorkorderFragment {
     private static final int WEB_CHANGE = 5;
 
     // UI
+    private OverScrollView _scrollView;
     private LinearLayout _reviewList;
     private LinearLayout _filesLayout;
-    private View _bar1View;
-    private RelativeLayout _loadingLayout;
     private TextView _noDocsTextView;
-    private ActionBarTopView _topBar;
+    private RefreshView _refreshView;
 
-    private ConfirmDialog _confirmDialog;
-    private ClosingNotesDialog _closingDialog;
-    private DeviceCountDialog _deviceCountDialog;
     private AppPickerDialog _appPickerDialog;
-    private TermsDialog _termsDialog;
 
     // Data
     private GlobalState _gs;
@@ -87,9 +74,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private Profile _profile = null;
     private Bundle _delayedAction = null;
 
-    // private List<Deliverable> _deliverables = null;
-    // private List<Task> _tasks = null;
-    // private int _loadingCounter = 0;
     private SecureRandom _rand = new SecureRandom();
 
     // temporary storage
@@ -97,13 +81,13 @@ public class DeliverableFragment extends WorkorderFragment {
     private UploadSlotView _uploadingSlotView;
     private int _uploadCount = 0;
     private int _deleteCount = 0;
+    private boolean _isCached = true;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_workorder_deliverables,
                 container, false);
     }
@@ -113,42 +97,32 @@ public class DeliverableFragment extends WorkorderFragment {
         super.onViewCreated(view, savedInstanceState);
 
         _gs = (GlobalState) getActivity().getApplicationContext();
-        _gs.requestAuthentication(_authClient);
+
+        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
+        _refreshView.setListener(_refreshView_listener);
+
+        _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
+        _scrollView.setOnOverScrollListener(_refreshView);
 
         _reviewList = (LinearLayout) view.findViewById(R.id.review_list);
+
         _filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
-        _bar1View = view.findViewById(R.id.bar1_view);
-        _loadingLayout = (RelativeLayout) view
-                .findViewById(R.id.loading_layout);
+
         _noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
-
-        _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
-        _topBar.setListener(_actionbartop_listener);
-
-        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
-        _closingDialog.setListener(_closingNotes_onOk);
-
-        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog.setListener(_deviceCountListener);
 
         _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _appPickerDialog.setListener(_appdialog_listener);
-
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog.setListener(_confirmDialog_listener);
-
-        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         checkMedia();
 
         populateUi();
         executeDelayedAction();
-        setLoading(true);
+
+        _gs.requestAuthentication(_authClient);
     }
 
     private boolean checkMedia() {
-        if (Environment.MEDIA_MOUNTED.equals(Environment
-                .getExternalStorageState())) {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             return true;
         } else {
             return false;
@@ -163,9 +137,9 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
-
+        _isCached = isCached;
         getData();
         executeDelayedAction();
     }
@@ -181,16 +155,25 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_profileService == null)
             return;
 
+        _refreshView.startRefreshing();
         _profile = null;
         _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+    }
+
+    @Override
+    public void setLoading(boolean isLoading) {
+        if (_refreshView != null) {
+            if (isLoading) {
+                _refreshView.startRefreshing();
+            } else {
+                _refreshView.refreshComplete();
+            }
+        }
     }
 
     private void populateUi() {
         if (_workorder == null)
             return;
-
-        if (_topBar != null)
-            _topBar.setWorkorder(_workorder);
 
         if (_profile == null)
             return;
@@ -225,7 +208,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _filesLayout.addView(v);
             }
         }
-        setLoading(false);
+        _refreshView.refreshComplete();
     }
 
     private void executeDelayedAction() {
@@ -291,6 +274,7 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
         if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
+            _refreshView.startRefreshing();
             _gs.startService(_service.uploadDeliverable(
                     WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                     _uploadingSlot.getSlotId(), data, getNotificationIntent()));
@@ -299,105 +283,56 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     }
 
+    @Override
+    public void doAction(Bundle bundle) {
+        _delayedAction = bundle;
+        executeDelayedAction();
+    }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
-        public void onOk(String message) {
-            getActivity().startService(_service.closingNotes(WEB_CHANGE, _workorder.getWorkorderId(), message));
-        }
-
-        @Override
-        public void onCancel() {
+        public void onStartRefresh() {
+            getData();
         }
     };
 
-    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+    private UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
-        public void onOk(Workorder workorder, int count) {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGE, _workorder.getWorkorderId(), count));
-            setLoading(true);
+        public void onDelete(UploadedDocumentView v, UploadedDocument document) {
+            _deleteCount++;
+            // startLoading();
+            _gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
+                    _workorder.getWorkorderId(),
+                    document.getWorkorderUploadId()));
         }
     };
 
-    private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
-        @Override
-        public void onComplete() {
-            getActivity().startService(
-                    _service.complete(WEB_CHANGE, _workorder.getWorkorderId()));
-            setLoading(true);
-        }
 
+    // step 1, user taps on the add button
+    private UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
         @Override
-        public void onCheckOut() {
-            Pay pay = _workorder.getPay();
-            if (pay != null && pay.isPerDeviceRate()) {
-                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
+        public void onUploadClick(UploadSlotView view, UploadSlot slot) {
+            if (checkMedia()) {
+                // start of the upload process
+                _uploadCount++;
+                _uploadingSlot = slot;
+                _uploadingSlotView = view;
+                _appPickerDialog.show();
             } else {
-                getActivity().startService(
-                        _service.checkout(WEB_CHANGE, _workorder.getWorkorderId()));
-                setLoading(true);
+                Toast.makeText(
+                        getActivity(),
+                        "Need External Storage, pleaswe insert storage device before continuing",
+                        Toast.LENGTH_LONG).show();
             }
-        }
-
-        @Override
-        public void onCheckIn() {
-            getActivity().startService(
-                    _service.checkin(WEB_CHANGE, _workorder.getWorkorderId()));
-            setLoading(true);
-        }
-
-        @Override
-        public void onAcknowledge() {
-            getActivity().startService(
-                    _service.acknowledgeHold(WEB_CHANGE,
-                            _workorder.getWorkorderId()));
-            setLoading(true);
-        }
-
-        @Override
-        public void onConfirm() {
-            _confirmDialog.show(_workorder, _workorder.getSchedule());
-        }
-
-        @Override
-        public void onEnterClosingNotes() {
-            _closingDialog.show(_workorder.getClosingNotes());
         }
     };
 
-    private ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
-            try {
-                long end = durationMilliseconds
-                        + ISO8601.toUtc(startDate);
-                Intent intent = _service.confirmAssignment(
-                        WEB_CHANGE,
-                        _workorder.getWorkorderId(), startDate,
-                        ISO8601.fromUTC(end));
-                getActivity().startService(intent);
-                setLoading(true);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
 
-        @Override
-        public void onCancel(Workorder workorder) {
-        }
-
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            _termsDialog.show();
-        }
-
-    };
-
+    // step 2, user selects an app to load the file with
     private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
         @Override
@@ -415,38 +350,14 @@ public class DeliverableFragment extends WorkorderFragment {
             } else {
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
             }
+            // next: see onActivityResult()
         }
     };
 
-    private UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
-        @Override
-        public void onDelete(UploadedDocumentView v, UploadedDocument document) {
-            _deleteCount++;
-            // startLoading();
-            _gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
-                    _workorder.getWorkorderId(),
-                    document.getWorkorderUploadId()));
-        }
-    };
 
-    private UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
-        @Override
-        public void onUploadClick(UploadSlotView view, UploadSlot slot) {
-            if (checkMedia()) {
-                _uploadCount++;
-                _uploadingSlot = slot;
-                _uploadingSlotView = view;
-                _appPickerDialog.show();
-            } else {
-                Toast.makeText(
-                        getActivity(),
-                        "Need External Storage, pleaswe insert storage device before continuing",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-    };
-
-    // Web
+    /*-*****************************-*/
+    /*-				Web				-*/
+    /*-*****************************-*/
     private AuthenticationClient _authClient = new AuthenticationClient() {
         @Override
         public void onAuthentication(String username, String authToken) {
@@ -472,15 +383,12 @@ public class DeliverableFragment extends WorkorderFragment {
             new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
-            // stopLoading();
-            // TODO Method Stub: onSuccess()
             Log.v(TAG, "Method Stub: onSuccess()");
             if (resultCode == WEB_GET_PROFILE) {
                 _profile = null;
                 try {
-                    _profile = Profile
-                            .fromJson(new JsonObject(
-                                    new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+                    _profile = Profile.fromJson(
+                            new JsonObject(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
                 } catch (Exception e) {
                     // TODO mulligan?
                     e.printStackTrace();
@@ -504,7 +412,6 @@ public class DeliverableFragment extends WorkorderFragment {
                 if (_deleteCount == 0 && _uploadCount == 0)
                     _workorder.dispatchOnChange();
 
-                setLoading(false);
             } else if (resultCode == WEB_CHANGE) {
                 _workorder.dispatchOnChange();
             }
@@ -522,13 +429,8 @@ public class DeliverableFragment extends WorkorderFragment {
             _service = null;
             _profileService = null;
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
-            setLoading(false);
+            _refreshView.refreshComplete();
         }
     };
 
-    @Override
-    public void doAction(Bundle bundle) {
-        _delayedAction = bundle;
-        executeDelayedAction();
-    }
 }

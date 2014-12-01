@@ -22,13 +22,13 @@ public class GlobalState extends Application {
 
     private AuthenticationServer _authServer = null;
 
-    public static final int USER_ID = 375;
+//    public static final int USER_ID = 375;
 
     public String authority;
     public String accountType;
 
-    private long _waitTime = 5000;
-    private long _lastDelayed = 0;
+//    private long _waitTime = 5000;
+//    private long _lastDelayed = 0;
 
     public GlobalState() {
         super();
@@ -53,14 +53,7 @@ public class GlobalState extends Application {
     }
 
     private long getNextDelay() {
-        long dif = System.currentTimeMillis() - _lastDelayed;
-        if (dif < 10000) {
-            _waitTime += 5000;
-        } else {
-            _waitTime = 5000;
-        }
-        _lastDelayed = System.currentTimeMillis();
-        return _waitTime;
+        return 3000;
     }
 
     /**
