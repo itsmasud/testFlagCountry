@@ -225,11 +225,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                                      String carrier, String carrierName, String trackingNumber) {
         return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/shipments", null,
                 "description=" + misc.escapeForURL(description)
-                        // n
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        // n
                         + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName))
-                        // n
                         + "&tracking_number=" + trackingNumber, "application/x-www-form-urlencoded", false);
     }
 
@@ -239,7 +236,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 resultCode,
                 "api/rest/v1/workorder/" + workorderId + "/shipments",
                 null,
-                "description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber + "&task_id=" + taskId,
+                "description=" + misc.escapeForURL(description)
+                        + "&direction=" + (isToSite ? "to_site" : "from_site")
+                        + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName))
+                        + "&tracking_number=" + trackingNumber
+                        + "&task_id=" + taskId,
                 "application/x-www-form-urlencoded", false);
     }
 

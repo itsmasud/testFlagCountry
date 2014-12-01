@@ -109,10 +109,8 @@
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.0" level="project" />
     <orderEntry type="module" module-name="libDateTimePicker" exported="" />
     <orderEntry type="module" module-name="libUtils" exported="" />
-    <orderEntry type="module" module-name="libSmoothProgressBar" exported="" />
     <orderEntry type="module" module-name="libJson" exported="" />
     <orderEntry type="module" module-name="libUndobar" exported="" />
-    <orderEntry type="module" module-name="libPullToRefresh" exported="" />
   </component>
 </module>
 
