@@ -4,6 +4,7 @@
     <string name="accounttype">com.fieldnation</string>
     <string name="authority">com.fieldnation.service</string>
     <!-- /connection info -->
+    <string name="default_username">hexixtech</string>
 
     <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
     <string name="pull_to_refresh_release_label">Release to refresh...</string>
@@ -144,6 +145,7 @@
     <string name="counter_offer_schedule">Counter Offer Schedule</string>
     <string name="please_change_the_schedule_or_tap_cancel">Please change the schedule or tap Cancel</string>
     <string name="expenses">Expenses</string>
+    <string name="devices">Devices</string>
 
     <!-- /general strings -->
 

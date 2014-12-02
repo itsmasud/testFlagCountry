@@ -1,85 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:scrollbarStyle="outsideOverlay"
     android:padding="10dp">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/company_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="fitStart"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/WorkorderDetail_ProjectTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="Upgrade ATM - US Bank" />
 
-            <ImageView
-                android:id="@+id/company_imageview"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_gravity="left"
-                android:src="@drawable/common_signin_btn_icon_dark" />
+        <TextView
+            android:id="@+id/description_textview"
+            style="@style/WorkorderDetail_Field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ljksdkjf lksd jflskdfj lksdjf lasiefj sldkfsel slekjf lskl;skejf liksgfrjlsgfljkhdrfglkijhdsrfg,j.h dzfg, jh  lksg ldsfhfg lksrjgfflis jfglks hlkshjgfr kl lwrgf lisrjgf,lkrsngloidsghewl lk" />
 
-            <TextView
-                android:id="@+id/title_textview"
-                style="@style/WorkorderDetail_ProjectTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Upgrade ATM - US Bank" />
+        <View
+            android:id="@+id/time_divider"
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
 
-            <TextView
-                android:id="@+id/description_textview"
-                style="@style/WorkorderDetail_Field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ljksdkjf lksd jflskdfj lksdjf lasiefj sldkfsel slekjf lskl;skejf liksgfrjlsgfljkhdrfglkijhdsrfg,j.h dzfg, jh  lksg ldsfhfg lksrjgfflis jfglks hlkshjgfr kl lwrgf lisrjgf,lkrsngloidsghewl lk" />
+        <TextView
+            android:id="@+id/time_textview"
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time Logged" />
 
-            <View
-                style="@style/WorkorderDetail_Separator"
-                android:layout_width="match_parent" />
+        <LinearLayout
+            android:id="@+id/time_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
-            <TextView
-                style="@style/WorkorderDetail_FieldTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Time Logged" />
+        <View
+            android:id="@+id/tasks_divider"
+            style="@style/WorkorderDetail_Separator"
+            android:layout_width="match_parent" />
 
-            <LinearLayout
-                android:id="@+id/time_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/tasks_textview"
+            style="@style/WorkorderDetail_FieldTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tasks" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="10.71\t11/6/2013\t9:08 pm\t7:50 am\t2" />
+        <LinearLayout
+            android:id="@+id/tasks_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
-            </LinearLayout>
 
-            <View
-                style="@style/WorkorderDetail_Separator"
-                android:layout_width="match_parent" />
-
-            <TextView
-                style="@style/WorkorderDetail_FieldTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/tasks" />
-
-            <LinearLayout
-                android:id="@+id/tasks_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-        </LinearLayout>
-    </ScrollView>
-
-    <Button
-        android:id="@+id/signoff_button"
-        style="@style/ButtonOrange"
-        android:layout_width="match_parent"
-        android:text="Sign Off" />
-
-</LinearLayout>
+        <Button
+            android:id="@+id/signoff_button"
+            style="@style/ButtonOrangeMaterial"
+            android:layout_width="150dp"
+            android:layout_gravity="right"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:text="SIGN OFF" />
+    </LinearLayout>
+</ScrollView>

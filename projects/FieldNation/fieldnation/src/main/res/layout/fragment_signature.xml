@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/top_view"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/Text_Body_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="By signing this work order you acknowledge that the work has been satisfactorily completed"
+            android:layout_marginBottom="@dimen/tileContentPadding" />
+
+        <EditText
+            style="?attr/tileEditText"
+            android:layout_marginBottom="@dimen/tileContentPadding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter your name" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_below="@+id/top_view"
+        android:layout_above="@+id/bottom_view"
+        android:layout_width="match_parent"
+        android:background="@drawable/edittext_bg"
+        android:layout_height="wrap_content">
+
+        <com.fieldnation.ui.SignatureView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <LinearLayout
+            style="@style/SignatureLine"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_signature_x" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="@color/SignatureCardGrey" />
+        </LinearLayout>
+
+        <Button
+            android:layout_marginTop="8dp"
+            android:layout_width="100dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            style="@style/Button.Material.Flat"
+            android:text="CLEAR" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/tileContentPadding"
+        android:background="@null"
+        style="?attr/tileActionBarStyle"
+        android:id="@+id/bottom_view"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_centerVertical="true"
+            style="@style/ButtonWhiteMaterial"
+            android:layout_width="150dp"
+            android:text="BACK TO REVIEW" />
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            style="@style/ButtonOrangeMaterial"
+            android:text="SUBMIT" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

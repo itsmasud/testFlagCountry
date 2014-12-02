@@ -435,6 +435,10 @@ public class WorkorderActivity extends BaseActivity {
                 Log.v(TAG, "Have workorder");
             } catch (Exception ex) {
                 ex.printStackTrace();
+
+                if (resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED)) {
+                    getData(false);
+                }
             }
         }
 

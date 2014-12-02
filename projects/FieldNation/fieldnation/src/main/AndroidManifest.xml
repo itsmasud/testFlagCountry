@@ -132,6 +132,10 @@
             android:name="com.fieldnation.ui.SettingsActivity"
             android:exported="false"
             android:label="@string/settings" />
+        <activity
+            android:name=".ui.SignOffActivity"
+            android:exported="false"
+            android:label="Sign Off" />
 
         <service
             android:name="com.fieldnation.auth.server.AuthService"

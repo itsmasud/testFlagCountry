@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/tileStyle"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        style="@style/TileContainer.Material"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/date_textview"
+                style="?attr/tileTextStatusStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/devices_textview"
+                android:text="11/6/2013" />
+
+            <TextView
+                android:id="@+id/devices_textview"
+                android:layout_alignParentRight="true"
+                style="?attr/tileTextBodyStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 Devices" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/time_textview"
+            style="?attr/tileTextBodyStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="9:08 pm - 7:50 am (10.71 hrs)" />
+
+
+    </LinearLayout>
+
+    <View style="?attr/dividerFullStyle" />
+
+</LinearLayout>
