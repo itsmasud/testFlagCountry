@@ -1,23 +1,34 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.fieldnation.json.JsonArray;
+
+import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
 /*
  * This is a very stupid signature collection class. 
  * TODO Improve speed by drawing the lines on a back buffer as we capture them. This way we only need to do all the calculations on the shapes once.
+ * TODO implement short straw to filter out points we don't need
  */
 public class SignatureView extends View {
     private static final String TAG = "ui.SignatureView";
+
+    // State
+    private static final String STATE_SUPER = "STATE_SUPER";
+    private static final String STATE_SHAPES = "STATE_SHAPES";
 
     // Data
     private Paint _myPaint;
@@ -27,10 +38,6 @@ public class SignatureView extends View {
     private float _min = 0;
     private float _max = 10;
 
-    private float _minX = Float.MAX_VALUE;
-    private float _minY = Float.MAX_VALUE;
-    private float _maxX = Float.MIN_VALUE;
-    private float _maxY = Float.MIN_VALUE;
 
     public SignatureView(Context context) {
         super(context);
@@ -48,7 +55,6 @@ public class SignatureView extends View {
     }
 
     public void init() {
-
         _shape = new LinkedList<Point>();
         _shapes = new LinkedList<List<Point>>();
         _shapes.add(_shape);
@@ -57,7 +63,72 @@ public class SignatureView extends View {
         _myPaint.setStrokeWidth(3);
     }
 
-    public byte[] getSignature() {
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
+
+        JsonArray jshapes = new JsonArray();
+        for (int i = 0; i < _shapes.size(); i++) {
+            List<Point> shape = _shapes.get(i);
+            JsonArray jshape = new JsonArray();
+            for (int j = 0; j < shape.size(); j++) {
+                jshape.add(shape.get(j).toJson());
+            }
+            jshapes.add(jshape);
+        }
+
+        bundle.putString(STATE_SHAPES, jshapes.toString());
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            super.onRestoreInstanceState(((Bundle) state).getParcelable(STATE_SUPER));
+
+            String raw = ((Bundle) state).getString(STATE_SHAPES);
+
+            Point.resetBounds();
+            _shapes = new LinkedList<List<Point>>();
+            try {
+                JsonArray jshapes = new JsonArray(raw);
+
+                for (int i = 0; i < jshapes.size(); i++) {
+                    JsonArray jshape = jshapes.getJsonArray(i);
+                    List<Point> shape = new LinkedList<Point>();
+                    for (int j = 0; j < jshape.size(); j++) {
+                        shape.add(Point.fromJson(jshape.getJsonObject(j)));
+                    }
+                    _shapes.add(shape);
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            _shape = new LinkedList<Point>();
+            _shapes.add(_shape);
+
+        } else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
+    public byte[] getSignaturePng() {
+        setDrawingCacheEnabled(true);
+        Bitmap bmp = Bitmap.createBitmap(getDrawingCache());
+        setDrawingCacheEnabled(false);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+        return out.toByteArray();
+    }
+
+    public byte[] getSignatureJson() {
         // setDrawingCacheEnabled(true);
         // // we make a copy, this ensures we don't screw up the canvas
         // Bitmap bmp = Bitmap.createBitmap(getDrawingCache());
@@ -71,9 +142,9 @@ public class SignatureView extends View {
 
         StringBuilder sb = new StringBuilder();
 
-        float scale = Math.max((_maxX) / 605, (_maxY) / 115);
-        float xo = ((605 * scale) - (_maxX + _minX)) / 2;
-        float yo = ((115 * scale) - (_maxY + _minY)) / 2;
+        float scale = Math.max((Point.MAX_X) / 605, (Point.MAX_Y) / 115);
+        float xo = ((605 * scale) - (Point.MAX_X + Point.MIN_X)) / 2;
+        float yo = ((115 * scale) - (Point.MAX_Y + Point.MIN_Y)) / 2;
 
         sb.append("[");
         for (int i = 0; i < _shapes.size(); i++) {
@@ -168,10 +239,7 @@ public class SignatureView extends View {
         _shapes = new LinkedList<List<Point>>();
         _shape = new LinkedList<Point>();
         _shapes.add(_shape);
-        _minX = Float.MAX_VALUE;
-        _minY = Float.MAX_VALUE;
-        _maxX = Float.MIN_VALUE;
-        _maxY = Float.MIN_VALUE;
+        Point.resetBounds();
 
         invalidate();
     }
@@ -200,31 +268,4 @@ public class SignatureView extends View {
         return super.dispatchTouchEvent(event);
     }
 
-    private class Point {
-        public float x;
-        public float y;
-        public long t;
-        public Float stroke = null;
-
-        public Point(MotionEvent event) {
-            x = event.getX();
-            y = event.getY();
-            t = event.getEventTime();
-        }
-
-        public Point(float x, float y, long t) {
-            this.x = x;
-            this.y = y;
-            this.t = t;
-
-            if (x < _minX)
-                _minX = x;
-            if (y < _minY)
-                _minY = y;
-            if (x > _maxX)
-                _maxX = x;
-            if (y > _maxY)
-                _maxY = y;
-        }
-    }
 }

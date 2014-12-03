@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -29,6 +30,7 @@ public class SignOffFragment extends FragmentBase {
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
 
     // Ui
+    private LinearLayout _container;
     private ImageView _companyImageView;
     private TextView _titleTextView;
     private TextView _descriptionTextView;
@@ -45,6 +47,7 @@ public class SignOffFragment extends FragmentBase {
     // Data
     private Workorder _workorder;
     private Listener _listener;
+    private Bitmap _image;
 
     /*-*************----------**************-*/
     /*-             Life Cycle              -*/
@@ -78,6 +81,7 @@ public class SignOffFragment extends FragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_signoff, container, false);
 
+        _container = (LinearLayout) v.findViewById(R.id.container);
         _companyImageView = (ImageView) v.findViewById(R.id.company_imageview);
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _descriptionTextView = (TextView) v.findViewById(R.id.description_textview);
@@ -170,8 +174,8 @@ public class SignOffFragment extends FragmentBase {
             _tasksTextView.setVisibility(View.GONE);
             _tasksLinearLayout.setVisibility(View.GONE);
         }
-    }
 
+    }
 
     /*-*********************************-*/
     /*-             Events              -*/
@@ -180,12 +184,12 @@ public class SignOffFragment extends FragmentBase {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
-                _listener.signOffOnClick();
+                _listener.signOffOnClick(misc.getViewBitmap(_container));
             }
         }
     };
 
     public interface Listener {
-        public void signOffOnClick();
+        public void signOffOnClick(Bitmap bitmap);
     }
 }

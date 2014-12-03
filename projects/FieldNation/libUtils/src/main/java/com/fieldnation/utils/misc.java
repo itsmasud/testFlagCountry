@@ -2,12 +2,14 @@ package com.fieldnation.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.view.View;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -33,6 +35,31 @@ public class misc {
 
     // private static NumberFormat _normalNumber =
     // NumberFormat.getIntegerInstance();
+
+    public static Bitmap getViewBitmap(View view) {
+        int width = view.getWidth();
+        int height = view.getHeight();
+
+        //Create a bitmap backed Canvas to draw the view into
+        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+
+        //Now that the view is laid out and we have a canvas, ask the view to draw itself into the canvas
+        view.draw(c);
+
+//        int h = b.getHeight();
+//        int w = b.getWidth();
+//        if (h > 2048) {
+//            w = (w * 2048) / h;
+//            h = 2048;
+//            return Bitmap.createScaledBitmap(b, w, h, false);
+//        } else if (w > 2048) {
+//            w = 2048;
+//            h = (h * 2048) / w;
+//            return Bitmap.createScaledBitmap(b, w, h, false);
+//        }
+        return b;
+    }
 
     public static String toCurrency(double money) {
         return _currencyFormat.format(money);
@@ -737,7 +764,7 @@ public class misc {
             while (!error && !timedOut && !complete) {
 
 				/*
-				 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
+                 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
 				 * break; }
 				 */
 

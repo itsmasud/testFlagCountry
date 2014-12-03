@@ -81,10 +81,8 @@
         <item name="actionBarTabStyle">@style/FieldNation.ActionBar.TabViewStyle</item>
         <item name="actionMenuTextColor">@color/white</item>
 
-
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
-
     </style>
 
     <style name="FieldNation.ActionBar.Solid" parent="@style/Widget.AppCompat.ActionBar.Solid">
