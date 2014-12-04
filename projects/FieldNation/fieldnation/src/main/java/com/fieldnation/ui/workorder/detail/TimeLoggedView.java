@@ -17,15 +17,13 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
     // Ui
     private LinearLayout _logList;
-    private TextView _totalTimeTextView;
     private LinearLayout _addLogLinearLayout;
     private TextView _noTimeTextView;
-    private View _spacer;
+    private TextView _devicesTextView;
 
     // Data
     private Listener _listener;
     private Workorder _workorder;
-    private boolean _inSIgnOffMode = false;
 
     public TimeLoggedView(Context context) {
         super(context);
@@ -48,24 +46,22 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
         if (isInEditMode())
             return;
         _logList = (LinearLayout) findViewById(R.id.log_list);
-        _totalTimeTextView = (TextView) findViewById(R.id.totaltime_textview);
         _noTimeTextView = (TextView) findViewById(R.id.notime_textview);
         _addLogLinearLayout = (LinearLayout) findViewById(R.id.addlog_linearlayout);
         _addLogLinearLayout.setOnClickListener(_addLog_onClick);
-        _spacer = (View) findViewById(R.id.buttonspacer_view);
+        _devicesTextView = (TextView) findViewById(R.id.devices_textview);
     }
 
-    private void enableSpacer(boolean enabled) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) _spacer.getLayoutParams();
+    private void enableDevices(boolean enabled) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) _devicesTextView.getLayoutParams();
         if (enabled) {
             params.weight = 1;
-            _spacer.setLayoutParams(params);
-            _spacer.setVisibility(View.INVISIBLE);
-
+            _devicesTextView.setLayoutParams(params);
+            _devicesTextView.setVisibility(View.VISIBLE);
         } else {
             params.weight = 0;
-            _spacer.setLayoutParams(params);
-            _spacer.setVisibility(View.GONE);
+            _devicesTextView.setLayoutParams(params);
+            _devicesTextView.setVisibility(View.GONE);
         }
     }
 
@@ -80,14 +76,13 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
         LoggedWork[] logs = _workorder.getLoggedWork();
 
-        if (_workorder.canModifyTimeLog() && !_inSIgnOffMode) {
+        if (_workorder.canModifyTimeLog()) {
             _addLogLinearLayout.setVisibility(View.VISIBLE);
         } else {
             if (logs == null || logs.length == 0) {
                 setVisibility(GONE);
                 return;
             }
-            enableSpacer(false);
             _addLogLinearLayout.setVisibility(View.GONE);
         }
 
@@ -96,6 +91,8 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
             return;
         }
         _noTimeTextView.setVisibility(View.GONE);
+
+        enableDevices(_workorder.getPay().isPerDeviceRate());
 
         _logList.removeAllViews();
         for (int i = 0; i < logs.length; i++) {
@@ -118,6 +115,12 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
                 if (_listener != null)
                     _listener.editWorklog(workorder, loggedWork, showDeviceCount);
             }
+        }
+
+        @Override
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
+            if (_listener != null)
+                _listener.deleteWorklog(workorder, loggedWork);
         }
     };
 
@@ -158,6 +161,8 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
         public void addWorklog(boolean showdevice);
 
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
 
     }
 

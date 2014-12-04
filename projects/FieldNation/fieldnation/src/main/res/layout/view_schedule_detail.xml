@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:layout_height="48dp"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/hours_textview"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:gravity="left"
         android:layout_weight="1"
         android:text="2.50" />
 
     <TextView
         android:id="@+id/date_textview"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:gravity="center"
         android:layout_weight="1"
         android:text="04/14/14" />
 
     <TextView
         android:id="@+id/start_textview"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:gravity="center"
         android:layout_weight="1"
         android:text="8:00 AM" />
 
     <TextView
         android:id="@+id/end_textview"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:gravity="center"
         android:layout_weight="1"
         android:text="10:30 PM" />
 
-    <ImageView
-        android:id="@+id/edit_imageview"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
-        android:background="@drawable/ic_edit_8" />
-
+    <TextView
+        android:id="@+id/devices_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_weight="1"
+        android:text="0" />
 </LinearLayout>

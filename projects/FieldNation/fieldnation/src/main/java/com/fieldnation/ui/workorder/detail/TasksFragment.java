@@ -1,8 +1,10 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -435,6 +437,25 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
             _worklogDialog.show("Add Worklog", loggedWork, showDeviceCount);
+        }
+
+        @Override
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
+            final Workorder _workorder = workorder;
+            final LoggedWork _loggedWork = loggedWork;
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Are you sure you want to delete this work log?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    getActivity().startService(
+                            _service.deleteLogTime(WEB_CHANGED,
+                                    _workorder.getWorkorderId(), _loggedWork.getLoggedHoursId()));
+                    _refreshView.startRefreshing();
+                }
+            });
+            builder.setNegativeButton("No", null);
+            builder.show();
         }
     };
 

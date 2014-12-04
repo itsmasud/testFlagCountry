@@ -16,46 +16,40 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="left"
             android:layout_weight="1"
             android:text="Hours" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_weight="1"
             android:text="Date" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_weight="1"
             android:text="Start" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_weight="1"
             android:text="End" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/devices_textview"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="right"
             android:layout_weight="1"
             android:text="Devices" />
-
-        <View
-            android:id="@+id/buttonspacer_view"
-            android:visibility="invisible"
-            android:layout_width="1px"
-            android:layout_height="1px"
-            android:layout_weight="1" />
     </LinearLayout>
 
     <TextView
@@ -69,7 +63,8 @@
         android:id="@+id/log_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"></LinearLayout>
+        android:animateLayoutChanges="true"
+        android:orientation="vertical" />
 
     <TextView
         android:id="@+id/totaltime_textview"

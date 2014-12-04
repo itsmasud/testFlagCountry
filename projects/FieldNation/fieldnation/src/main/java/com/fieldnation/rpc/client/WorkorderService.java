@@ -220,6 +220,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "application/x-www-form-urlencoded", false);
     }
 
+    public Intent deleteLogTime(int resultCode, long workorderId, long loggedHoursId) {
+        return httpDelete(resultCode, "api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId,
+                "", false);
+    }
+
     // shipments
     public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
                                      String carrier, String carrierName, String trackingNumber) {
