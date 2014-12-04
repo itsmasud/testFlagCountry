@@ -41,6 +41,11 @@ public class SignOffFragment extends FragmentBase {
     private View _tasksDivider;
     private TextView _tasksTextView;
     private LinearLayout _tasksLinearLayout;
+
+    private View _closingNotesDivider;
+    private TextView _closingNotesLabelTextView;
+    private TextView _closingNotesTextView;
+
     private Button _signOffButton;
 
 
@@ -85,12 +90,19 @@ public class SignOffFragment extends FragmentBase {
         _companyImageView = (ImageView) v.findViewById(R.id.company_imageview);
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _descriptionTextView = (TextView) v.findViewById(R.id.description_textview);
+
         _timeDivider = v.findViewById(R.id.time_divider);
         _timeTextView = (TextView) v.findViewById(R.id.time_textview);
         _timeLinearLayout = (LinearLayout) v.findViewById(R.id.time_list);
+
         _tasksDivider = v.findViewById(R.id.tasks_divider);
         _tasksTextView = (TextView) v.findViewById(R.id.tasks_textview);
         _tasksLinearLayout = (LinearLayout) v.findViewById(R.id.tasks_list);
+
+        _closingNotesDivider = v.findViewById(R.id.closingnotes_divider);
+        _closingNotesLabelTextView = (TextView) v.findViewById(R.id.closingnoteslabel_textview);
+        _closingNotesTextView = (TextView) v.findViewById(R.id.closingnotes_textview);
+
         _signOffButton = (Button) v.findViewById(R.id.signoff_button);
         _signOffButton.setOnClickListener(_signOff_onClick);
 
@@ -103,7 +115,7 @@ public class SignOffFragment extends FragmentBase {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            _workorder = bundle.getParcelable(SignOffActivity.PARAM_WORKORDER);
+            _workorder = bundle.getParcelable(SignOffActivity.INTENT_PARAM_WORKORDER);
         }
 
         populateUi();
@@ -175,6 +187,18 @@ public class SignOffFragment extends FragmentBase {
             _tasksLinearLayout.setVisibility(View.GONE);
         }
 
+        if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
+            _closingNotesTextView.setVisibility(View.VISIBLE);
+            _closingNotesDivider.setVisibility(View.VISIBLE);
+
+            _closingNotesTextView.setText(_workorder.getClosingNotes());
+
+        } else {
+            _closingNotesTextView.setVisibility(View.GONE);
+            _closingNotesDivider.setVisibility(View.GONE);
+            _closingNotesLabelTextView.setVisibility(View.GONE);
+        }
+
     }
 
     /*-*********************************-*/
@@ -184,12 +208,12 @@ public class SignOffFragment extends FragmentBase {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
-                _listener.signOffOnClick(misc.getViewBitmap(_container));
+                _listener.signOffOnClick();
             }
         }
     };
 
     public interface Listener {
-        public void signOffOnClick(Bitmap bitmap);
+        public void signOffOnClick();
     }
 }

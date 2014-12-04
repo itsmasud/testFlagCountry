@@ -11,10 +11,10 @@ import android.util.Log;
  *
  * @author michael.carver
  */
-public abstract class WebServiceResultReceiver extends ResultReceiver implements WebServiceConstants {
+public abstract class WebResultReceiver extends ResultReceiver implements WebServiceConstants {
     private static final String TAG = "rpc.common.WebServiceResultReceiver";
 
-    public WebServiceResultReceiver(Handler handler) {
+    public WebResultReceiver(Handler handler) {
         super(handler);
     }
 

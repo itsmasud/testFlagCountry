@@ -8,7 +8,6 @@ import android.os.ResultReceiver;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.DataServiceConstants;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.rpc.server.DataService;
 
 import java.text.ParseException;
@@ -39,7 +38,7 @@ public class WebService implements WebServiceConstants {
      * @param context
      * @param username
      * @param authToken
-     * @param callback  Recommend using {@link WebServiceResultReceiver}, however any
+     * @param callback  Recommend using {@link com.fieldnation.rpc.common.WebResultReceiver}, however any
      *                  {@link ResultReceiver} will do.
      */
     public WebService(Context context, String username, String authToken, ResultReceiver callback) {

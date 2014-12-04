@@ -86,6 +86,8 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
             _addLogLinearLayout.setVisibility(View.GONE);
         }
 
+        setVisibility(View.VISIBLE);
+
         if (logs == null || logs.length == 0) {
             _noTimeTextView.setVisibility(View.VISIBLE);
             return;

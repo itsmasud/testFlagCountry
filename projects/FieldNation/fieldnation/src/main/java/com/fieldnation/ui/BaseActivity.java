@@ -49,7 +49,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         public void requestAuthentication(AuthenticationClient client) {
             Log.v(TAG, "requestAuthentication()");
             if (_removing) {
-                client.waitForTime(10000);
+                client.waitForTime(5000);
                 return;
             }
 

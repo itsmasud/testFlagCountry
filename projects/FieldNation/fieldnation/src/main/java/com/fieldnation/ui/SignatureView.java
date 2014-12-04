@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -128,7 +127,7 @@ public class SignatureView extends View {
         return out.toByteArray();
     }
 
-    public byte[] getSignatureJson() {
+    public String getSignatureJson() {
         // setDrawingCacheEnabled(true);
         // // we make a copy, this ensures we don't screw up the canvas
         // Bitmap bmp = Bitmap.createBitmap(getDrawingCache());
@@ -177,9 +176,9 @@ public class SignatureView extends View {
             }
         }
         sb.append("]");
-        Log.v(TAG, sb.toString());
+        //Log.v(TAG, sb.toString());
 
-        return sb.toString().getBytes();
+        return sb.toString();
     }
 
     @Override

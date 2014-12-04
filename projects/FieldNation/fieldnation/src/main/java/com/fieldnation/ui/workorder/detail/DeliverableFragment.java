@@ -29,8 +29,8 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -379,7 +379,7 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
-    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {

@@ -136,7 +136,7 @@ public class SignatureActivity extends FragmentActivity {
     private View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            byte[] signature = _sigView.getSignatureJson();
+            byte[] signature = _sigView.getSignatureJson().getBytes();
 
             Log.v(TAG, "Sig size: " + signature.length);
 

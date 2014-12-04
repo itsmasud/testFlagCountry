@@ -1,18 +1,14 @@
 package com.fieldnation.ui;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 
 /**
@@ -27,10 +23,12 @@ public class ThankYouFragment extends FragmentBase {
     // Data
     private Handler _handler;
     private Listener _listener;
-    private Bitmap _summary;
-    private Bitmap _signature;
-    private Bitmap _combined;
-    private boolean _combinedComplete = false;
+
+    private String _name;
+    private String _signatureJson;
+    private String _workorder;
+
+    private boolean _uploadComplete = false;
     private boolean _timerComplete = false;
 
     /*-*********************************-*/
@@ -56,62 +54,31 @@ public class ThankYouFragment extends FragmentBase {
     public void onResume() {
         super.onResume();
 
+        _timerComplete = false;
+        _uploadComplete = false;
+
         _doneButton.setVisibility(View.GONE);
         _handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                _timerComplete = true;
                 showDoneButton();
             }
         }, 10000);
+    }
+
+    public void setUploadComplete() {
+        _uploadComplete = true;
+        showDoneButton();
     }
 
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
-    public void setImages(Bitmap summary, Bitmap signature) {
-        _summary = summary;
-        _signature = signature;
-        _imageManipulator.executeEx(null);
-        Log.v(TAG, "BP");
-    }
-
-    private AsyncTaskEx<Object, Object, Object> _imageManipulator = new AsyncTaskEx<Object, Object, Object>() {
-        @Override
-        protected Object doInBackground(Object... params) {
-
-            int width = _summary.getWidth();
-            int height = _summary.getHeight();
-
-            if (_signature.getWidth() > width)
-                width = _signature.getWidth();
-
-            height += _signature.getHeight();
-
-            _combined = Bitmap.createBitmap(width, height, _signature.getConfig());
-            Canvas canvas = new Canvas(_combined);
-            canvas.drawBitmap(_summary, 0, 0, null);
-            canvas.drawBitmap(_signature, 0, _summary.getHeight(), null);
-
-            _signature.recycle();
-            _summary.recycle();
-
-            // upload deliverable
-
-            _combinedComplete = true;
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            showDoneButton();
-        }
-    };
-
     private void showDoneButton() {
-        if (!_combinedComplete)
-            return;
+//        if (!_uploadComplete)
+//            return;
 
         if (!_timerComplete)
             return;

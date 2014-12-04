@@ -14,13 +14,12 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-import java.text.ParseException;
 import java.util.Calendar;
 
 public class PaymentDetailActivity extends BaseActivity {
@@ -146,7 +145,7 @@ public class PaymentDetailActivity extends BaseActivity {
         }
     };
 
-    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             if (resultCode == WEB_GET_PAY) {

@@ -16,8 +16,8 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.BaseActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -112,7 +112,7 @@ public class WorkorderBundleDetailActivity extends BaseActivity {
         }
     };
 
-    private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
 
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {

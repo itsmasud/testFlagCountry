@@ -19,7 +19,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
@@ -94,7 +94,7 @@ public class DetailFragment extends WorkorderFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SignOffActivity.class);
-                intent.putExtra(SignOffActivity.PARAM_WORKORDER, _workorder);
+                intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
                 getActivity().startActivity(intent);
             }
         });
@@ -551,7 +551,7 @@ public class DetailFragment extends WorkorderFragment {
         }
     };
 
-    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
 
         @Override

@@ -1,13 +1,15 @@
 package com.fieldnation.ui;
 
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.rpc.client.WorkorderService;
 
 /**
  * Created by michael.carver on 12/2/2014.
@@ -17,8 +19,9 @@ public class SignOffActivity extends FragmentActivity {
 
     // State
     private static final String STATE_DISPLAY_MODE = "STATE_DISPLAY_MODE";
-    private static final String STATE_SUMMARY_BITMAP = "STATE_SUMMARY_BITMAP";
-    private static final String STATE_SIGNATURE_BITMAP = "STATE_SIGNATURE_BITMAP";
+    private static final String STATE_NAME = "STATE_NAME";
+    private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
+    private static final String STATE_WORKORDER = "STATE_WORKORDER";
 
     // Display Modes
     private static final int DISPLAY_SUMMARY = 1;
@@ -26,7 +29,7 @@ public class SignOffActivity extends FragmentActivity {
     private static final int DISPLAY_THANK_YOU = 3;
 
     // Intent Params
-    public static final String PARAM_WORKORDER = "SignOffActivity.PARAM_WORKORDER";
+    public static final String INTENT_PARAM_WORKORDER = "SignOffActivity.INTENT_PARAM_WORKORDER";
 
     // Ui
     private SignOffFragment _signOffFrag;
@@ -34,15 +37,21 @@ public class SignOffActivity extends FragmentActivity {
     private ThankYouFragment _thankYouFrag;
 
     // Data
+    private GlobalState _gs;
+    private WorkorderService _service;
+
     private int _displayMode = DISPLAY_SUMMARY;
-    private Bitmap _summaryBitmap;
-    private Bitmap _signatureBitmap;
+    private String _name;
+    private String _signatureJson;
+    private Workorder _workorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signoff);
+
+        _gs = (GlobalState) getApplicationContext();
 
         _signOffFrag = SignOffFragment.getInstance(getSupportFragmentManager(), TAG);
         _signOffFrag.setListener(_signOff_listener);
@@ -53,21 +62,29 @@ public class SignOffActivity extends FragmentActivity {
         _thankYouFrag = ThankYouFragment.getInstance(getSupportFragmentManager(), TAG);
         _thankYouFrag.setListener(_thankyou_listener);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.containsKey(INTENT_PARAM_WORKORDER)) {
+            _workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
+        }
+
         if (savedInstanceState == null) {
             _signOffFrag.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
 
-            _sigFrag.setArguments(getIntent().getExtras());
-            _thankYouFrag.setArguments(getIntent().getExtras());
+            _sigFrag.setArguments(extras);
+            _thankYouFrag.setArguments(extras);
         } else {
             if (savedInstanceState.containsKey(STATE_DISPLAY_MODE))
                 _displayMode = savedInstanceState.getInt(STATE_DISPLAY_MODE);
 
-            if (savedInstanceState.containsKey(STATE_SUMMARY_BITMAP))
-                _summaryBitmap = savedInstanceState.getParcelable(STATE_SUMMARY_BITMAP);
+            if (savedInstanceState.containsKey(STATE_NAME))
+                _name = savedInstanceState.getString(STATE_NAME);
 
-            if (savedInstanceState.containsKey(STATE_SIGNATURE_BITMAP))
-                _signatureBitmap = savedInstanceState.getParcelable(STATE_SIGNATURE_BITMAP);
+            if (savedInstanceState.containsKey(STATE_SIGNATURE))
+                _signatureJson = savedInstanceState.getString(STATE_SIGNATURE);
+
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
         }
     }
 
@@ -75,13 +92,14 @@ public class SignOffActivity extends FragmentActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
 
-        if (_summaryBitmap != null) {
-            outState.putParcelable(STATE_SUMMARY_BITMAP, _summaryBitmap);
-        }
+        if (_name != null)
+            outState.putString(STATE_NAME, _name);
 
-        if (_signatureBitmap != null) {
-            outState.putParcelable(STATE_SIGNATURE_BITMAP, _signatureBitmap);
-        }
+        if (_signatureJson != null)
+            outState.putString(STATE_SIGNATURE, _signatureJson);
+
+        if (_workorder != null)
+            outState.putParcelable(STATE_WORKORDER, _workorder);
 
         super.onSaveInstanceState(outState);
     }
@@ -91,8 +109,7 @@ public class SignOffActivity extends FragmentActivity {
     /*-*********************************-*/
     private SignOffFragment.Listener _signOff_listener = new SignOffFragment.Listener() {
         @Override
-        public void signOffOnClick(Bitmap bitmap) {
-            _summaryBitmap = bitmap;
+        public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
@@ -109,15 +126,17 @@ public class SignOffActivity extends FragmentActivity {
         }
 
         @Override
-        public void onSubmit(String name, Bitmap signature) {
+        public void onSubmit(String name, String signatureJson) {
             _displayMode = DISPLAY_THANK_YOU;
-            _signatureBitmap = signature;
+            _name = name;
+            _signatureJson = signatureJson;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-            _thankYouFrag.setImages(_summaryBitmap, signature);
             trans.replace(R.id.container_view, _thankYouFrag);
             trans.addToBackStack(null);
             trans.commit();
+
+            // TODO start upload
         }
     };
 

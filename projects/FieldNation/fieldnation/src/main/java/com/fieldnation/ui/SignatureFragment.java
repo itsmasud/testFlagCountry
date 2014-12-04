@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -11,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.fieldnation.R;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by michael.carver on 12/2/2014.
@@ -24,7 +22,6 @@ public class SignatureFragment extends FragmentBase {
     private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
 
     // Ui
-    private View _container;
     private EditText _nameEditText;
     private SignatureView _signatureView;
     private Button _clearButton;
@@ -73,8 +70,6 @@ public class SignatureFragment extends FragmentBase {
         _submitButton = (Button) v.findViewById(R.id.submit_button);
         _submitButton.setOnClickListener(_submit_onClick);
 
-        _container = v.findViewById(R.id.container);
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_NAME))
                 _nameEditText.onRestoreInstanceState(savedInstanceState.getParcelable(STATE_NAME));
@@ -113,13 +108,13 @@ public class SignatureFragment extends FragmentBase {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.onSubmit(_nameEditText.getText().toString(), misc.getViewBitmap(_container));
+                _listener.onSubmit(_nameEditText.getText().toString(), _signatureView.getSignatureJson());
         }
     };
 
     public interface Listener {
         public void onBack();
 
-        public void onSubmit(String name, Bitmap signature);
+        public void onSubmit(String name, String signatureJson);
     }
 }

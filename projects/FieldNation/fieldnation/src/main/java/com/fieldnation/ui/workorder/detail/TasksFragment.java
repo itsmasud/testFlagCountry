@@ -35,8 +35,8 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollView;
@@ -934,7 +934,7 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
-    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
 

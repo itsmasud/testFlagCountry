@@ -20,8 +20,8 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -517,7 +517,7 @@ public class WorkorderListFragment extends Fragment {
         }
     };
 
-    private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
 
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {

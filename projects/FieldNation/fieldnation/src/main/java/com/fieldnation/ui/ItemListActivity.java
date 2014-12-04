@@ -11,8 +11,8 @@ import android.widget.Toast;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import java.util.List;
 
@@ -154,7 +154,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
 
     public abstract void onAuthentication(String username, String authToken, ResultReceiver resultReceiver);
 
-    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
 
         @Override
