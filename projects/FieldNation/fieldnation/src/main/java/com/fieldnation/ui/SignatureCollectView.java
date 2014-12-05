@@ -22,7 +22,7 @@ import java.util.List;
  * TODO Improve speed by drawing the lines on a back buffer as we capture them. This way we only need to do all the calculations on the shapes once.
  * TODO implement short straw to filter out points we don't need
  */
-public class SignatureView extends View {
+public class SignatureCollectView extends View {
     private static final String TAG = "ui.SignatureView";
 
     // State
@@ -38,17 +38,17 @@ public class SignatureView extends View {
     private float _max = 10;
 
 
-    public SignatureView(Context context) {
+    public SignatureCollectView(Context context) {
         super(context);
         init();
     }
 
-    public SignatureView(Context context, AttributeSet attrs) {
+    public SignatureCollectView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public SignatureView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SignatureCollectView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }

@@ -17,7 +17,7 @@ import java.util.Set;
 public class Workorder implements Parcelable {
 
     @Json(name = "additionalExpenses")
-    private AdditionalExpense[] _additionalExpenses;
+    private Expense[] _additionalExpenses;
     @Json(name = "alertCount ")
     private Integer _alertCount;
     @Json(name = "alerts")
@@ -28,8 +28,12 @@ public class Workorder implements Parcelable {
     private Integer _bundleCount;
     @Json(name = "bundleId")
     private Long _bundleId;
+    @Json(name = "buyerRatingInfo")
+    private BuyerRating _buyerRatingInfo;
     @Json(name = "canEditFieldsForProviderToEnter")
     private Boolean _canEditFieldsForProviderToEnter;
+    @Json(name = "canPerformPreassignmentAction")
+    private Boolean _canPerformPreassignmentAction;
     @Json(name = "canRequestPayForThisWo")
     private Boolean _canRequestPayForThisWo;
     @Json(name = "canViewServicePayRateInfo")
@@ -44,6 +48,8 @@ public class Workorder implements Parcelable {
     private Integer _companyId;
     @Json(name = "companyName")
     private String _companyName;
+    @Json(name = "completionSteps")
+    private CompletionStep[] _completionSteps;
     @Json(name = "confidentialInformation")
     private String _confidentialInformation;
     @Json(name = "counterOfferInfo")
@@ -72,10 +78,14 @@ public class Workorder implements Parcelable {
     private EstimatedSchedule _estimatedSchedule;
     @Json(name = "expectedPayment")
     private ExpectedPayment _expectedPayment;
+    @Json(name = "financeId")
+    private Integer _financeId;
     @Json(name = "fullWorkDescription")
     private String _fullWorkDescription;
     @Json(name = "hasFund")
     private Boolean _hasFund;
+    @Json(name = "hasMarketplaceAccess")
+    private Boolean _hasMarketplaceAccess;
     @Json(name = "identifier")
     private String _identifier;
     @Json(name = "increaseRequestInfo")
@@ -88,8 +98,12 @@ public class Workorder implements Parcelable {
     private Boolean _isCounter;
     @Json(name = "isDeliverablesUploaded")
     private Boolean _isDeliverablesUploaded;
+    @Json(name = "isExemptFromFee")
+    private Boolean _isExemptFromFee;
+    @Json(name = "isGpsRequired")
+    private Boolean _isGpsRequired;
     @Json(name = "isRemoteWork")
-    private Boolean _isRemoteWork;
+    private Integer _isRemoteWork;
     @Json(name = "isRequest")
     private Boolean _isRequest;
     @Json(name = "isRequestedByProvider")
@@ -98,6 +112,8 @@ public class Workorder implements Parcelable {
     private Boolean _isWoOnHold;
     @Json(name = "isWorkPerformed")
     private Boolean _isWorkPerformed;
+//	@Json(name="label")
+//	private Label[] _label;
     @Json(name = "location")
     private Location _location;
     @Json(name = "loggedWork")
@@ -106,8 +122,20 @@ public class Workorder implements Parcelable {
     private Integer _messageCount;
     @Json(name = "messages")
     private Integer _messages;
+    @Json(name = "needsReadyToGo")
+    private Boolean _needsReadyToGo;
+    @Json(name = "onlyApprovedAdditionalExpenses")
+    private Expense[] _onlyApprovedAdditionalExpenses;
+    @Json(name = "onlyDeniedAdditionalExpenses")
+    private Expense[] _onlyDeniedAdditionalExpenses;
+    @Json(name = "onlyNewAdditionalExpenses")
+    private Expense[] _onlyNewAdditionalExpenses;
+    @Json(name = "paidDate")
+    private String _paidDate;
     @Json(name = "pay")
     private Pay _pay;
+    @Json(name = "paymentId")
+    private Long _paymentId;
 //    @Json(name = "provider")
 //    private Provider _provider;
     @Json(name = "schedule")
@@ -128,6 +156,8 @@ public class Workorder implements Parcelable {
     private Integer _statusId;
     @Json(name = "tasks")
     private Task[] _tasks;
+    @Json(name = "techCanPrint")
+    private Boolean _techCanPrint;
     @Json(name = "time_since_published")
     private Integer _timeSincePublished;
     @Json(name = "timezone")
@@ -150,7 +180,7 @@ public class Workorder implements Parcelable {
     public Workorder() {
     }
 
-    public AdditionalExpense[] getAdditionalExpenses() {
+    public Expense[] getAdditionalExpenses() {
         return _additionalExpenses;
     }
 
@@ -174,8 +204,16 @@ public class Workorder implements Parcelable {
         return _bundleId;
     }
 
+    public BuyerRating getBuyerRatingInfo() {
+        return _buyerRatingInfo;
+    }
+
     public Boolean getCanEditFieldsForProviderToEnter() {
         return _canEditFieldsForProviderToEnter;
+    }
+
+    public Boolean getCanPerformPreassignmentAction() {
+        return _canPerformPreassignmentAction;
     }
 
     public Boolean getCanRequestPayForThisWo() {
@@ -204,6 +242,10 @@ public class Workorder implements Parcelable {
 
     public String getCompanyName() {
         return _companyName;
+    }
+
+    public CompletionStep[] getCompletionSteps() {
+        return _completionSteps;
     }
 
     public String getConfidentialInformation() {
@@ -262,12 +304,20 @@ public class Workorder implements Parcelable {
         return _expectedPayment;
     }
 
+    public Integer getFinanceId() {
+        return _financeId;
+    }
+
     public String getFullWorkDescription() {
         return _fullWorkDescription;
     }
 
     public Boolean getHasFund() {
         return _hasFund;
+    }
+
+    public Boolean getHasMarketplaceAccess() {
+        return _hasMarketplaceAccess;
     }
 
     public String getIdentifier() {
@@ -294,7 +344,15 @@ public class Workorder implements Parcelable {
         return _isDeliverablesUploaded;
     }
 
-    public Boolean getIsRemoteWork() {
+    public Boolean getIsExemptFromFee() {
+        return _isExemptFromFee;
+    }
+
+    public Boolean getIsGpsRequired() {
+        return _isGpsRequired;
+    }
+
+    public Integer getIsRemoteWork() {
         return _isRemoteWork;
     }
 
@@ -314,6 +372,10 @@ public class Workorder implements Parcelable {
         return _isWorkPerformed;
     }
 
+//	public Label[] getLabel(){
+//		return _label;
+//	}
+
     public Location getLocation() {
         return _location;
     }
@@ -330,8 +392,32 @@ public class Workorder implements Parcelable {
         return _messages;
     }
 
+    public Boolean getNeedsReadyToGo() {
+        return _needsReadyToGo;
+    }
+
+    public Expense[] getOnlyApprovedAdditionalExpenses() {
+        return _onlyApprovedAdditionalExpenses;
+    }
+
+    public Expense[] getOnlyDeniedAdditionalExpenses() {
+        return _onlyDeniedAdditionalExpenses;
+    }
+
+    public Expense[] getOnlyNewAdditionalExpenses() {
+        return _onlyNewAdditionalExpenses;
+    }
+
+    public String getPaidDate() {
+        return _paidDate;
+    }
+
     public Pay getPay() {
         return _pay;
+    }
+
+    public Long getPaymentId() {
+        return _paymentId;
     }
 
 //    public Provider getProvider() {
@@ -362,12 +448,20 @@ public class Workorder implements Parcelable {
         return _standardInstructions;
     }
 
+//	public Status getStatus(){
+//		return _status;
+//	}
+
     public Integer getStatusId() {
         return _statusId;
     }
 
     public Task[] getTasks() {
         return _tasks;
+    }
+
+    public Boolean getTechCanPrint() {
+        return _techCanPrint;
     }
 
     public Integer getTimeSincePublished() {

@@ -28,7 +28,6 @@
                     android:id="@+id/id_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ID 971"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <LinearLayout
@@ -46,7 +45,6 @@
                         android:id="@+id/payment_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$1,748.00"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
                 </LinearLayout>
 
@@ -54,14 +52,12 @@
                     android:id="@+id/paymenttype_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Check"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/date_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Estimated 05/21/14"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
 
@@ -77,7 +73,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
-                    android:text="3 Work Orders"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -85,7 +80,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
-                    android:text="2 Fees"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
         </LinearLayout>

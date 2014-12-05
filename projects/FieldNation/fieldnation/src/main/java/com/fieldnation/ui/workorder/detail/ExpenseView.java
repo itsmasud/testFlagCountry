@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Workorder;
@@ -27,7 +27,7 @@ public class ExpenseView extends LinearLayout {
     // Data
     private Workorder _workorder;
     private Listener _listener;
-    private AdditionalExpense _expense = null;
+    private Expense _expense = null;
     private ExpenseCategory[] _categories;
 
     /*-*************************************-*/
@@ -81,7 +81,7 @@ public class ExpenseView extends LinearLayout {
     /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
-    public void setData(Workorder workorder, AdditionalExpense expense) {
+    public void setData(Workorder workorder, Expense expense) {
         _expense = expense;
         _workorder = workorder;
         refresh();
@@ -118,6 +118,6 @@ public class ExpenseView extends LinearLayout {
     }
 
     public interface Listener {
-        public void onDelete(ExpenseView view, AdditionalExpense expense);
+        public void onDelete(ExpenseView view, Expense expense);
     }
 }

@@ -16,32 +16,31 @@ public class Schedule implements Parcelable {
 
     @Json(name = "endTime")
     private String _endTime;
+	@Json(name="endTimeHours")
+	private String _endTimeHours;
     @Json(name = "startTime")
     private String _startTime;
-    @Json(name = "scheduleStartDate")
-    private String _scheduleStartDate;
-    @Json(name = "scheduleStartTime")
-    private String _scheduleStartTime;
-    @Json(name = "scheduleEndDate")
-    private String _scheduleEndDate;
-    @Json(name = "scheduleEndTime")
-    private String _scheduleEndTime;
+	@Json(name="startTimeHours")
+	private String _startTimeHours;
 
     public Schedule() {
     }
 
     public String getEndTime() {
-        if (_endTime == null)
-            return _scheduleEndTime;
-
         return _endTime;
     }
 
+	public String getEndTimeHours(){
+		return _endTimeHours;
+	}
+
     public String getStartTime() {
-        if (_startTime == null)
-            return _scheduleStartTime;
         return _startTime;
     }
+
+	public String getStartTimeHours(){
+		return _startTimeHours;
+	}
 
     public JsonObject toJson() {
         return toJson(this);

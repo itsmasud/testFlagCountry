@@ -42,6 +42,7 @@ import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignatureActivity;
+import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
@@ -97,6 +98,7 @@ public class TasksFragment extends WorkorderFragment {
     private ClosingNotesView _closingNotes;
     private RefreshView _refreshView;
     private OverScrollView _scrollView;
+    private SignatureListView _signatureView;
 
     // Dialogs
     private ClosingNotesDialog _closingDialog;
@@ -160,6 +162,9 @@ public class TasksFragment extends WorkorderFragment {
 
         _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
+
+        _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
+        _signatureView.setListener(_signaturelist_listener);
 
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog.setListener(_closingNotes_onOk);
@@ -324,6 +329,10 @@ public class TasksFragment extends WorkorderFragment {
 
         if (_customFields != null) {
             _customFields.setData(_workorder, _workorder.getCustomFields(), _isCached);
+        }
+
+        if (_signatureView != null) {
+            _signatureView.setWorkorder(_workorder, _isCached);
         }
     }
 
@@ -831,6 +840,14 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onChangeClosingNotes(String closingNotes) {
             showClosingNotesDialog();
+        }
+    };
+
+    private SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
+        @Override
+        public void addSignature() {
+            // TODO STUB .addSignature()
+            Log.v(TAG, "STUB .addSignature()");
         }
     };
 

@@ -4,31 +4,27 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class UploadSlot {
+public class SlotData{
 	@Json(name="maxFileSize")
 	private Object _maxFileSize;
-	@Json(name = "maxFiles")
+	@Json(name="maxFiles")
 	private Integer _maxFiles;
 	@Json(name="minFileSize")
 	private Object _minFileSize;
-	@Json(name = "minFiles")
+	@Json(name="minFiles")
 	private Integer _minFiles;
-	@Json(name = "slotId")
+	@Json(name="slotId")
 	private Integer _slotId;
-	@Json(name = "slotName")
+	@Json(name="slotName")
 	private String _slotName;
-	@Json(name="task")
-	private Task _task;
-	@Json(name = "uploadedDocuments")
-	private UploadedDocument[] _uploadedDocuments;
 
-	public UploadSlot() {
+	public SlotData(){
 	}
 	public Object getMaxFileSize(){
 		return _maxFileSize;
 	}
 
-	public Integer getMaxFiles() {
+	public Integer getMaxFiles(){
 		return _maxFiles;
 	}
 
@@ -36,42 +32,34 @@ public class UploadSlot {
 		return _minFileSize;
 	}
 
-	public Integer getMinFiles() {
+	public Integer getMinFiles(){
 		return _minFiles;
 	}
 
-	public Integer getSlotId() {
+	public Integer getSlotId(){
 		return _slotId;
 	}
 
-	public String getSlotName() {
+	public String getSlotName(){
 		return _slotName;
 	}
 
-	public Task getTask() {
-		return _task;
-	}
-
-	public UploadedDocument[] getUploadedDocuments() {
-		return _uploadedDocuments;
-	}
-
-	public JsonObject toJson() {
+	public JsonObject toJson(){
 		return toJson(this);
 	}
 
-	public static JsonObject toJson(UploadSlot uploadSlot) {
+	public static JsonObject toJson(SlotData slotData) {
 		try {
-			return Serializer.serializeObject(uploadSlot);
+			return Serializer.serializeObject(slotData);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
 	}
 
-	public static UploadSlot fromJson(JsonObject json) {
+	public static SlotData fromJson(JsonObject json) {
 		try {
-			return Serializer.unserializeObject(UploadSlot.class, json);
+			return Serializer.unserializeObject(SlotData.class, json);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

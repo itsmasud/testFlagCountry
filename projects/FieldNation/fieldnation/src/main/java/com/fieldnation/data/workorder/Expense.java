@@ -9,7 +9,7 @@ import com.fieldnation.json.annotations.Json;
 
 import java.text.ParseException;
 
-public class AdditionalExpense implements Parcelable {
+public class Expense implements Parcelable {
 
     @Json(name = "approved")
     private Boolean _approved;
@@ -26,7 +26,7 @@ public class AdditionalExpense implements Parcelable {
     @Json(name = "statusDescription")
     private String _statusDescription;
 
-    public AdditionalExpense() {
+    public Expense() {
     }
 
     public Boolean getApproved() {
@@ -61,7 +61,7 @@ public class AdditionalExpense implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(AdditionalExpense additionalExpense) {
+    public static JsonObject toJson(Expense additionalExpense) {
         try {
             return Serializer.serializeObject(additionalExpense);
         } catch (Exception ex) {
@@ -70,9 +70,9 @@ public class AdditionalExpense implements Parcelable {
         }
     }
 
-    public static AdditionalExpense fromJson(JsonObject json) {
+    public static Expense fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(AdditionalExpense.class, json);
+            return Serializer.unserializeObject(Expense.class, json);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -82,7 +82,7 @@ public class AdditionalExpense implements Parcelable {
     /*-*************************************************-*/
     /*-				Human Generated Code				-*/
 	/*-*************************************************-*/
-    public AdditionalExpense(String description, double amount, ExpenseCategory category) {
+    public Expense(String description, double amount, ExpenseCategory category) {
         if (category != null) {
             _categoryId = category.getId();
         } else {
@@ -97,12 +97,12 @@ public class AdditionalExpense implements Parcelable {
 	/*-			Parcelable Implementation			-*/
 	/*-*********************************************-*/
 
-    public static final Parcelable.Creator<AdditionalExpense> CREATOR = new Parcelable.Creator<AdditionalExpense>() {
+    public static final Parcelable.Creator<Expense> CREATOR = new Parcelable.Creator<Expense>() {
 
         @Override
-        public AdditionalExpense createFromParcel(Parcel source) {
+        public Expense createFromParcel(Parcel source) {
             try {
-                return AdditionalExpense.fromJson(new JsonObject(source.readString()));
+                return Expense.fromJson(new JsonObject(source.readString()));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -110,8 +110,8 @@ public class AdditionalExpense implements Parcelable {
         }
 
         @Override
-        public AdditionalExpense[] newArray(int size) {
-            return new AdditionalExpense[size];
+        public Expense[] newArray(int size) {
+            return new Expense[size];
         }
     };
 

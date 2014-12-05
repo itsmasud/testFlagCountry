@@ -36,12 +36,12 @@ public class J2J {
 					e.printStackTrace();
 				}
 
-				//getProfile();
+				getProfile();
 				getWorkorders();
-//				getExpenseCategories();
-//				getMessages();
-//				getPayments();
-//				getNotifications();
+				getExpenseCategories();
+				getMessages();
+				getPayments();
+				getNotifications();
 			}
 			exportClasses();
 
@@ -338,12 +338,12 @@ public class J2J {
 			Log.println("Building Class Structure");
 			addData(objects, "com.fieldnation.data.workorder", "Workorder");
 
-			//getWorkorderMessages(details);
+			getWorkorderMessages(details);
 			getWorkorderTasks(details);
-			//getCounterOffers(details);
-			//getWorkorderBundle(details);
+			getCounterOffers(details);
+			getWorkorderBundle(details);
 			getDeliverables(details);
-			//getDiscounts(details);
+			getDiscounts(details);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

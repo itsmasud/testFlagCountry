@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
-import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -346,7 +346,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
         }
     }
 
-    public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+    public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
         String payload = "";
         // reason/expire
         if (expires)
@@ -393,7 +393,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
             StringBuilder json = new StringBuilder();
             json.append("[");
             for (int i = 0; i < expenses.length; i++) {
-                AdditionalExpense expense = expenses[i];
+                Expense expense = expenses[i];
                 json.append("{\"description\":\"").append(expense.getDescription()).append("\",");
                 json.append("\"price\":\"").append(expense.getPrice()).append("\"}");
             }

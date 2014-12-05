@@ -139,7 +139,8 @@
 
         <service
             android:name="com.fieldnation.auth.server.AuthService"
-            android:exported="true">
+            android:exported="true"
+            android:process=":bg">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -150,7 +151,8 @@
         </service>
         <service
             android:name="com.fieldnation.rpc.server.DataService"
-            android:exported="false" />
+            android:exported="false"
+            android:process=":bg" />
         <service
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"

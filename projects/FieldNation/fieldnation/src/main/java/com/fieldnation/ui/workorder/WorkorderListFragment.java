@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
-import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
@@ -30,6 +30,8 @@ import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
+import com.fieldnation.ui.payment.PaymentDetailActivity;
+import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.utils.ISO8601;
 
 import java.text.ParseException;
@@ -284,10 +286,15 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void onViewPayments(WorkorderCardView view, Workorder workorder) {
-            //set  loading mode
-            view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
             // TODO Method Stub: onViewPayments()
-            Log.v(TAG, "Method Stub: onViewPayments()");
+            if (workorder.getPaymentId() != null) {
+                Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
+                intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, workorder.getPaymentId());
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), PaymentListActivity.class);
+                startActivity(intent);
+            }
         }
     };
 
@@ -358,7 +365,7 @@ public class WorkorderListFragment extends Fragment {
 
     private CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {
         @Override
-        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGING_WORKORDER,
                             workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,

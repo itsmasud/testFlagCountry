@@ -5,12 +5,18 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CheckInOutInfo{
+	@Json(name="checkInDate")
+	private String _checkInDate;
 	@Json(name="checkInDistance")
-	private Integer _checkInDistance;
+	private Double _checkInDistance;
 	@Json(name="checkInId")
 	private Integer _checkInId;
 	@Json(name="checkInTime")
 	private String _checkInTime;
+	@Json(name="checkOutDate")
+	private String _checkOutDate;
+	@Json(name="checkOutDistance")
+	private Double _checkOutDistance;
 	@Json(name="checkOutId")
 	private Integer _checkOutId;
 	@Json(name="checkOutTime")
@@ -20,7 +26,11 @@ public class CheckInOutInfo{
 
 	public CheckInOutInfo(){
 	}
-	public Integer getCheckInDistance(){
+	public String getCheckInDate(){
+		return _checkInDate;
+	}
+
+	public Double getCheckInDistance(){
 		return _checkInDistance;
 	}
 
@@ -30,6 +40,14 @@ public class CheckInOutInfo{
 
 	public String getCheckInTime(){
 		return _checkInTime;
+	}
+
+	public String getCheckOutDate(){
+		return _checkOutDate;
+	}
+
+	public Double getCheckOutDistance(){
+		return _checkOutDistance;
 	}
 
 	public Integer getCheckOutId(){

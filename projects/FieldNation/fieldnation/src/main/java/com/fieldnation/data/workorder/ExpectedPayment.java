@@ -8,7 +8,7 @@ public class ExpectedPayment {
 	@Json(name = "bonuses")
 	private Bonuses[] _bonuses;
 	@Json(name="discounts")
-	private Integer _discounts;
+	private Double _discounts;
 	@Json(name = "expectedAmount")
 	private Double _expectedAmount;
 	@Json(name = "expectedFee")
@@ -24,7 +24,7 @@ public class ExpectedPayment {
 	@Json(name = "paymentStatus")
 	private String _paymentStatus;
 	@Json(name="penalties")
-	private String _penalties;
+	private Penalty[] _penalties;
 
 	public ExpectedPayment() {
 	}
@@ -33,7 +33,7 @@ public class ExpectedPayment {
 		return _bonuses;
 	}
 
-	public Integer getDiscounts(){
+	public Double getDiscounts(){
 		return _discounts;
 	}
 
@@ -65,7 +65,7 @@ public class ExpectedPayment {
 		return _paymentStatus;
 	}
 
-	public Object getPenalties(){
+	public Penalty[] getPenalties(){
 		return _penalties;
 	}
 

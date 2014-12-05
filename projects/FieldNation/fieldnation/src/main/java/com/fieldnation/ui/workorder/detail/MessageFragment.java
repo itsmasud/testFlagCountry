@@ -250,6 +250,10 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
+
+            if (getActivity() == null)
+                return;
+            
             if (_profileService != null) {
                 _gs.invalidateAuthToken(_profileService.getAuthToken());
             } else if (_workorderService != null) {

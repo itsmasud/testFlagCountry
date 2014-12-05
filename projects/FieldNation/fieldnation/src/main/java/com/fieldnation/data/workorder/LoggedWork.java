@@ -10,6 +10,8 @@ import com.fieldnation.json.annotations.Json;
 import java.text.ParseException;
 
 public class LoggedWork implements Parcelable {
+	@Json(name="checkinHoursId")
+	private Integer _checkinHoursId;
     @Json(name = "checkinLat")
     private Double _checkinLat;
     @Json(name = "checkinLng")
@@ -18,6 +20,8 @@ public class LoggedWork implements Parcelable {
     private Double _checkoutLat;
     @Json(name = "checkoutLng")
     private Double _checkoutLng;
+	@Json(name="date2")
+	private String _date2;
     @Json(name = "endDate")
     private String _endDate;
     @Json(name = "endTime")
@@ -37,6 +41,9 @@ public class LoggedWork implements Parcelable {
 
     public LoggedWork() {
     }
+	public Integer getCheckinHoursId(){
+		return _checkinHoursId;
+	}
 
     public Double getCheckinLat() {
         return _checkinLat;
@@ -53,6 +60,10 @@ public class LoggedWork implements Parcelable {
     public Double getCheckoutLng() {
         return _checkoutLng;
     }
+
+	public String getDate2(){
+		return _date2;
+	}
 
     public String getEndDate() {
         return _endDate;

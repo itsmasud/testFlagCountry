@@ -23,7 +23,7 @@ public class SignatureFragment extends FragmentBase {
 
     // Ui
     private EditText _nameEditText;
-    private SignatureView _signatureView;
+    private SignatureCollectView _signatureView;
     private Button _clearButton;
     private Button _backButton;
     private Button _submitButton;
@@ -59,7 +59,7 @@ public class SignatureFragment extends FragmentBase {
         View v = inflater.inflate(R.layout.fragment_signature, container, false);
 
         _nameEditText = (EditText) v.findViewById(R.id.name_edittext);
-        _signatureView = (SignatureView) v.findViewById(R.id.signature_view);
+        _signatureView = (SignatureCollectView) v.findViewById(R.id.signature_view);
 
         _clearButton = (Button) v.findViewById(R.id.clear_button);
         _clearButton.setOnClickListener(_clear_onClick);

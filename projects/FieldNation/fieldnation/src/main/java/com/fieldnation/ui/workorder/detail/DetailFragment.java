@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
-import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -333,7 +333,7 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onDeleteExpense(Workorder workorder,
-                                    AdditionalExpense expense) {
+                                    Expense expense) {
             getActivity().startService(_service.deleteExpense(WEB_CHANGE,
                     _workorder.getWorkorderId(),
                     expense.getExpenseId()));
@@ -429,7 +429,7 @@ public class DetailFragment extends WorkorderFragment {
     private CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
-                         Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+                         Pay pay, Schedule schedule, Expense[] expenses) {
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGE, workorder.getWorkorderId(), expires, reason,
                             expirationInSeconds, pay, schedule, expenses));

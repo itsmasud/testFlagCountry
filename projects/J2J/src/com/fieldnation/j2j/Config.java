@@ -27,8 +27,13 @@ public class Config {
 		ClassNameMap.put("Fees", "Fee");
 		ClassNameMap.put("UploadSlots", "UploadSlot");
 		ClassNameMap.put("UploadedDocuments", "UploadedDocument");
-		
-
+		ClassNameMap.put("OnlyApprovedAdditionalExpenses", "Expense");
+		ClassNameMap.put("OnlyDeniedAdditionalExpenses", "Expense");
+		ClassNameMap.put("OnlyNewAdditionalExpenses", "Expense");
+		ClassNameMap.put("CompletionSteps", "CompletionStep");
+		ClassNameMap.put("BuyerRatingInfo", "BuyerRating");
+		//ClassNameMap.put("CounterOfferInfo", "CounterOffer");
+		ClassNameMap.put("Penalties", "Penalty");
 	}
 
 }

@@ -20,6 +20,8 @@ public class Notification {
 	private Integer _viewed;
 	@Json(name="workorder")
 	private Workorder _workorder;
+	@Json(name="workorderId")
+	private Long _workorderId;
 
 	public Notification() {
 	}
@@ -49,6 +51,10 @@ public class Notification {
 
 	public Workorder getWorkorder(){
 		return _workorder;
+	}
+
+	public Long getWorkorderId(){
+		return _workorderId;
 	}
 
 	public JsonObject toJson() {
