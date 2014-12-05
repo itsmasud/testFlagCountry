@@ -26,6 +26,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     private static final String STATE_NAME = "STATE_NAME";
     private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
+    private static final String STATE_TASK_ID = "STATE_TASK_ID";
 
     // Display Modes
     private static final int DISPLAY_SUMMARY = 1;
@@ -34,6 +35,11 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     // Intent Params
     public static final String INTENT_PARAM_WORKORDER = "SignOffActivity.INTENT_PARAM_WORKORDER";
+    public static final String INTENT_PARAM_TASK_ID = "SignOffActivity.INTENT_PARAM_TASK_ID";
+
+    // Web
+    private static final int WEB_COMPLETE_TASK = 1;
+    private static final int WEB_UPLOAD_SIGNATURE = 2;
 
     // Ui
     private SignOffFragment _signOffFrag;
@@ -48,6 +54,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     private String _name;
     private String _signatureJson;
     private Workorder _workorder;
+    private int _taskId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +75,12 @@ public class SignOffActivity extends AuthFragmentActivity {
         _thankYouFrag.setListener(_thankyou_listener);
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.containsKey(INTENT_PARAM_WORKORDER)) {
-            _workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
+        if (extras != null) {
+            if (extras.containsKey(INTENT_PARAM_WORKORDER))
+                _workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
+
+            if (extras.containsKey(INTENT_PARAM_TASK_ID))
+                _taskId = extras.getInt(INTENT_PARAM_TASK_ID);
         }
 
         if (savedInstanceState == null) {
@@ -90,6 +101,9 @@ public class SignOffActivity extends AuthFragmentActivity {
 
             if (savedInstanceState.containsKey(STATE_WORKORDER))
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+
+            if (savedInstanceState.containsKey(STATE_TASK_ID))
+                _taskId = savedInstanceState.getInt(STATE_TASK_ID);
         }
     }
 
@@ -102,6 +116,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
+        outState.putInt(STATE_TASK_ID, _taskId);
 
         if (_name != null)
             outState.putString(STATE_NAME, _name);
@@ -113,6 +128,15 @@ public class SignOffActivity extends AuthFragmentActivity {
             outState.putParcelable(STATE_WORKORDER, _workorder);
 
         super.onSaveInstanceState(outState);
+    }
+
+    private void sendSignature() {
+        if (_taskId != -1) {
+            // this is a task
+            // TODO fill in the web service request
+            //_service.completeSignatureTask(WEB_COMPLETE_TASK,_taskId,)
+
+        }
     }
 
     /*-*********************************-*/
@@ -147,7 +171,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             trans.addToBackStack(null);
             trans.commit();
 
-            // TODO start upload
+            sendSignature();
         }
     };
 
