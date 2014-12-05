@@ -95,4 +95,8 @@
             android:text="Add Time Log" />
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        style="@style/WorkorderDetail_Separator" />
+
 </LinearLayout>
