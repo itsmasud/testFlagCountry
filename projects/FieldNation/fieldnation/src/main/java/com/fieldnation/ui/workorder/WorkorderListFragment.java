@@ -533,6 +533,8 @@ public class WorkorderListFragment extends Fragment {
                     objects = new JsonArray(data);
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    if (cached)
+                        requestList(page, false);
                     return;
                 }
 
