@@ -16,13 +16,13 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.util.Calendar;
 
-public class PaymentDetailActivity extends BaseActivity {
+public class PaymentDetailActivity extends AuthActionBarActivity {
     private static final String TAG = "ui.payment.PaymentDetailActivity";
 
     public static final String INTENT_KEY_PAYMENT_ID = "com.fieldnation.ui.payment.PaymentDetailActivity:PAYMENT_ID";

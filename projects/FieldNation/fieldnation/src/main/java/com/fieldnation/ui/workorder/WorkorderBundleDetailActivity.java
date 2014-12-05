@@ -18,13 +18,13 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.text.NumberFormat;
 
-public class WorkorderBundleDetailActivity extends BaseActivity {
+public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     private static final String TAG = "ui.workorder.WorkorderBundleDetailActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:workorder_id";

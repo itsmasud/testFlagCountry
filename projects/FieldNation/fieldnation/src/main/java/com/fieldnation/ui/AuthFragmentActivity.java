@@ -9,9 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,12 +24,9 @@ import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 
 /**
- * This is the base of all the activities in this project. It provides
- * authentication and sets up the action bars.
- *
- * @author michael.carver
+ * Created by michael.carver on 12/5/2014.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class AuthFragmentActivity extends FragmentActivity {
     private static final String TAG = "ui.BaseActivity";
 
     // UI
@@ -59,17 +55,6 @@ public abstract class BaseActivity extends ActionBarActivity {
         _gs.setAuthenticationServer(authServer);
 
         ClockReceiver.registerClock(this);
-
-        getAccount();
-
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeButtonEnabled(true);
-        actionbar.setDisplayUseLogoEnabled(true);
-        //actionbar.setDisplayShowHomeEnabled(true);
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setDisplayShowHomeEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
     }
 
     @Override
@@ -78,16 +63,14 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
         // _notificationsView.setCount(10);
-
         _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
 
         return true;
-
     }
 
 	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
 
     /**
      * Implements the AuthenticationServer interface.
@@ -104,14 +87,14 @@ public abstract class BaseActivity extends ActionBarActivity {
 
             if (_account == null) {
                 Log.v(TAG, "requestAuthentication() no account");
-                client.waitForObject(BaseActivity.this, "_acccount");
+                client.waitForObject(AuthFragmentActivity.this, "_acccount");
                 if (!_authenticating) {
                     getAccount();
                 }
             } else {
                 Log.v(TAG, "requestAuthentication() asking for account token");
                 AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(_account, _gs.accountType, null,
-                        BaseActivity.this, null, _handler);
+                        AuthFragmentActivity.this, null, _handler);
                 client.waitForFuture(future);
             }
         }
@@ -144,7 +127,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
 /*
-			Intent gohome = new Intent(this, MyWorkActivity.class);
+            Intent gohome = new Intent(this, MyWorkActivity.class);
 			startActivity(gohome);
 */
                 onBackPressed();
@@ -189,8 +172,8 @@ public abstract class BaseActivity extends ActionBarActivity {
                 _removing = false;
                 // restart the app to clear the backstack, and anything stored
                 // in the UI.
-                Intent activity = new Intent(BaseActivity.this, MyWorkActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(BaseActivity.this, 1, activity,
+                Intent activity = new Intent(AuthFragmentActivity.this, MyWorkActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(AuthFragmentActivity.this, 1, activity,
                         PendingIntent.FLAG_CANCEL_CURRENT);
                 AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
@@ -231,7 +214,5 @@ public abstract class BaseActivity extends ActionBarActivity {
             Log.v(TAG, "got future");
             new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
         }
-
     }
-
 }

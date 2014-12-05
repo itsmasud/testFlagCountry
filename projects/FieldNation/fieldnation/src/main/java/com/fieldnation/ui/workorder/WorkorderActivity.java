@@ -18,7 +18,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -27,7 +27,7 @@ import com.fieldnation.ui.workorder.detail.TasksFragment;
 
 import java.util.List;
 
-public class WorkorderActivity extends BaseActivity {
+public class WorkorderActivity extends AuthActionBarActivity {
     private static final String TAG = "ui.workorder.WorkorderActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
