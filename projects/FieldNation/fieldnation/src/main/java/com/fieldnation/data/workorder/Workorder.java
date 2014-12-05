@@ -108,8 +108,8 @@ public class Workorder implements Parcelable {
     private Integer _messages;
     @Json(name = "pay")
     private Pay _pay;
-    @Json(name = "provider")
-    private Provider _provider;
+//    @Json(name = "provider")
+//    private Provider _provider;
     @Json(name = "schedule")
     private Schedule _schedule;
     @Json(name = "shipmentTracking")
@@ -334,9 +334,9 @@ public class Workorder implements Parcelable {
         return _pay;
     }
 
-    public Provider getProvider() {
-        return _provider;
-    }
+//    public Provider getProvider() {
+//        return _provider;
+//    }
 
     public Schedule getSchedule() {
         return _schedule;
