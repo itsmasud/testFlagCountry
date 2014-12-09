@@ -11,10 +11,12 @@
         android:text="Signature" />
 
     <TextView
-        style="@style/WorkorderDetail_Field_Bold"
+        android:id="@+id/nodata_textview"
+        android:gravity="center"
+        style="@style/WorkorderDetail_Field_Gray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Note: A list of collected signatures will appear here soon. This list will be added in the next update." />
+        android:text="No Signatures to display." />
 
     <LinearLayout
         android:id="@+id/listview"

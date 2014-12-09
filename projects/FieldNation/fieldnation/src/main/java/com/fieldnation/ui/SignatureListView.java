@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
@@ -24,6 +25,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     // Ui
     private LinearLayout _listView;
     private Button _addButton;
+    private TextView _noDataTextView;
 
     // Data
     private Workorder _workorder;
@@ -55,6 +57,9 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
             return;
 
         _listView = (LinearLayout) findViewById(R.id.listview);
+
+        _noDataTextView = (TextView) findViewById(R.id.nodata_textview);
+
         _addButton = (Button) findViewById(R.id.add_button);
         _addButton.setOnClickListener(_add_onClick);
 
@@ -87,12 +92,14 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         if (_workorder == null)
             return;
 
-        if (_signatures == null)
-            return;
-
         setVisibility(View.VISIBLE);
 
-        // TODO get the data, and do stuff.
+        if (_signatures == null || _signatures.size() == 0) {
+            _noDataTextView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        _noDataTextView.setVisibility(View.GONE);
 
         _listView.removeAllViews();
         for (int i = 0; i < _signatures.size(); i++) {
