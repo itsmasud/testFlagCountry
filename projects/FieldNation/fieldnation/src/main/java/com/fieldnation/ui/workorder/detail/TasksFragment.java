@@ -29,6 +29,7 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.ShipmentTracking;
+import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
@@ -41,7 +42,9 @@ import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
+import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
+import com.fieldnation.ui.SignatureTileView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
@@ -67,18 +70,14 @@ public class TasksFragment extends WorkorderFragment {
     // Activity result codes
     private static final int RESULT_CODE_BASE = 200;
     private static final int RESULT_CODE_SEND_EMAIL = RESULT_CODE_BASE + 1;
-    private static final int RESULT_CODE_SIGNATURE = RESULT_CODE_BASE + 2;
     private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 3;
     private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 4;
-
-    // tags to put in signature to link the signature back to me
-    private static final String SIGNATURE_WORKORDERID = "ui.workorder.detail.TasksFragment:SIGNATURE_WORKORDERID";
-    private static final String SIGNATURE_TASKID = "ui.workorder.detail.TasksFragment:SIGNATURE_TASKID";
 
     // Web request result codes
     private static final int WEB_CHANGED = 1;
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
+    private static final int WEB_GET_SIGNATURES = 4;
 
     // saved state keys
     private static final String STATE_WORKORDER = "ui.workorder.detail.TasksFragment:STATE_WORKORDER";
@@ -86,6 +85,7 @@ public class TasksFragment extends WorkorderFragment {
     private static final String STATE_USERNAME = "ui.workorder.detail.TasksFragment:STATE_USERNAME";
     private static final String STATE_TASKS = "ui.workorder.detail.TasksFragment:STATE_TASKS";
     private static final String STATE_CURRENT_TASK = "ui.workorder.detail.TasksFragment:STATE_CURRENT_TASK";
+    private static final String STATE_SIGNATURES = "ui.workorder.detail.TasksFragment:STATE_SIGNATURES";
 
     // UI
     private ActionBarTopView _topBar;
@@ -121,6 +121,7 @@ public class TasksFragment extends WorkorderFragment {
     private SecureRandom _rand = new SecureRandom();
     private GPSLocationService _gPSLocationService;
     private boolean _isCached = true;
+    private List<Signature> _signatures = null;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -213,6 +214,14 @@ public class TasksFragment extends WorkorderFragment {
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
                 _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
             }
+            if (savedInstanceState.containsKey(STATE_SIGNATURES)) {
+                Parcelable[] sigs = savedInstanceState.getParcelableArray(STATE_SIGNATURES);
+                _signatures = new LinkedList<Signature>();
+                for (int i = 0; i < sigs.length; i++) {
+                    _signatures.add((Signature) sigs[i]);
+                }
+                _signatureView.setSignatures(_signatures);
+            }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
             } else {
@@ -262,6 +271,13 @@ public class TasksFragment extends WorkorderFragment {
                 tasks[i] = _tasks.get(i);
             }
             outState.putParcelableArray(STATE_TASKS, tasks);
+        }
+        if (_signatures != null && _signatures.size() > 0) {
+            Signature[] sigs = new Signature[_signatures.size()];
+            for (int i = 0; i < _signatures.size(); i++) {
+                sigs[i] = _signatures.get(i);
+            }
+            outState.putParcelableArray(STATE_SIGNATURES, sigs);
         }
 
         if (_currentTask != null) {
@@ -335,6 +351,11 @@ public class TasksFragment extends WorkorderFragment {
     }
 
     private void requestData(boolean allowCache) {
+        requestTaskData(allowCache);
+        requestSignatureData(allowCache);
+    }
+
+    private void requestTaskData(boolean allowCache) {
         if (_service == null)
             return;
 
@@ -345,12 +366,37 @@ public class TasksFragment extends WorkorderFragment {
         _gs.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
     }
 
+    private void requestSignatureData(boolean allowCache) {
+        if (_service == null)
+            return;
+
+        if (_workorder == null)
+            return;
+
+        if (_workorder.isSignatureCollected()) {
+            setLoading(true);
+            _gs.startService(_service.listSignatures(WEB_GET_SIGNATURES, _workorder.getWorkorderId(), allowCache));
+        }
+    }
+
     private void setTaskData(List<Task> tasks, boolean isCached) {
         _tasks = tasks;
         _taskList.setData(_workorder, tasks, isCached);
 
         if (isCached) {
-            requestData(false);
+            requestTaskData(false);
+            setLoading(true);
+        } else {
+            setLoading(false);
+        }
+    }
+
+    private void setSignatureData(List<Signature> sigs, boolean isCached) {
+        _signatures = sigs;
+        _signatureView.setSignatures(sigs);
+
+        if (isCached) {
+            requestSignatureData(false);
             setLoading(true);
         } else {
             setLoading(false);
@@ -818,6 +864,11 @@ public class TasksFragment extends WorkorderFragment {
             intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
             getActivity().startActivity(intent);
         }
+
+        @Override
+        public void signatureOnClick(SignatureTileView view, Signature signature) {
+            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature, _workorder));
+        }
     };
 
     /*-*****************************-*/
@@ -945,7 +996,22 @@ public class TasksFragment extends WorkorderFragment {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-
+            } else if (resultCode == WEB_GET_SIGNATURES) {
+                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+                try {
+                    JsonArray array = new JsonArray(data);
+                    List<Signature> sigs = new LinkedList<Signature>();
+                    for (int i = 0; i < array.size(); i++) {
+                        try {
+                            sigs.add(Signature.fromJson(array.getJsonObject(i)));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                    setSignatureData(sigs, resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             } else {
             }
         }

@@ -33,6 +33,8 @@ public class SignOffActivity extends AuthFragmentActivity {
     private static final int DISPLAY_SUMMARY = 1;
     private static final int DISPLAY_SIGNATURE = 2;
     private static final int DISPLAY_THANK_YOU = 3;
+    private static final int DISPLAY_SORRY = 4;
+
 
     // Intent Params
     public static final String INTENT_PARAM_WORKORDER = "SignOffActivity.INTENT_PARAM_WORKORDER";
@@ -48,6 +50,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     private SignOffFragment _signOffFrag;
     private SignatureFragment _sigFrag;
     private ThankYouFragment _thankYouFrag;
+    private SorryFragment _sorryFrag;
 
     // Data
     private GlobalState _gs;
@@ -77,6 +80,9 @@ public class SignOffActivity extends AuthFragmentActivity {
 
         _thankYouFrag = ThankYouFragment.getInstance(getSupportFragmentManager(), TAG);
         _thankYouFrag.setListener(_thankyou_listener);
+
+        _sorryFrag = SorryFragment.getInstance(getSupportFragmentManager(), TAG);
+        _sorryFrag.setListener(_sorry_listener);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -167,6 +173,16 @@ public class SignOffActivity extends AuthFragmentActivity {
             trans.addToBackStack(null);
             trans.commit();
         }
+
+        @Override
+        public void rejectOnClick() {
+            _displayMode = DISPLAY_SORRY;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+            FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+            trans.replace(R.id.container_view, _sorryFrag);
+            trans.addToBackStack(null);
+            trans.commit();
+        }
     };
 
     private SignatureFragment.Listener _signature_listener = new SignatureFragment.Listener() {
@@ -194,6 +210,14 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void onDoneClick() {
             setResult(RESULT_OK);
+            finish();
+        }
+    };
+
+    private SorryFragment.Listener _sorry_listener = new SorryFragment.Listener() {
+        @Override
+        public void onDoneClick() {
+            setResult(RESULT_CANCELED);
             finish();
         }
     };

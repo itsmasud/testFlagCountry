@@ -34,6 +34,7 @@ public class SignOffFragment extends FragmentBase {
     private ImageView _companyImageView;
     private TextView _titleTextView;
     private TextView _descriptionTextView;
+
     private View _timeDivider;
     private TextView _timeTextView;
     private LinearLayout _timeLinearLayout;
@@ -47,6 +48,7 @@ public class SignOffFragment extends FragmentBase {
     private TextView _closingNotesTextView;
 
     private Button _signOffButton;
+    private Button _rejectButton;
 
 
     // Data
@@ -105,6 +107,8 @@ public class SignOffFragment extends FragmentBase {
 
         _signOffButton = (Button) v.findViewById(R.id.signoff_button);
         _signOffButton.setOnClickListener(_signOff_onClick);
+        _rejectButton = (Button) v.findViewById(R.id.reject_button);
+        _rejectButton.setOnClickListener(_reject_onClick);
 
         return v;
     }
@@ -213,7 +217,17 @@ public class SignOffFragment extends FragmentBase {
         }
     };
 
+    private View.OnClickListener _reject_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.rejectOnClick();
+        }
+    };
+
     public interface Listener {
         public void signOffOnClick();
+
+        public void rejectOnClick();
     }
 }

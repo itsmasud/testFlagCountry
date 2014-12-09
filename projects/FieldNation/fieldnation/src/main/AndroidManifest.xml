@@ -136,6 +136,10 @@
             android:name=".ui.SignOffActivity"
             android:exported="false"
             android:label="Sign Off" />
+        <activity
+            android:name=".ui.SignatureDisplayActivity"
+            android:exported="false"
+            android:label="Signature Info" />
 
         <service
             android:name="com.fieldnation.auth.server.AuthService"

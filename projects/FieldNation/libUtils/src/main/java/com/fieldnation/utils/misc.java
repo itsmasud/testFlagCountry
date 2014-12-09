@@ -88,6 +88,20 @@ public class misc {
         return buffer;
     }
 
+    public static Spannable htmlify(String html) {
+        Spanned text = Html.fromHtml(html);
+        URLSpan[] currentSpans = text.getSpans(0, text.length(), URLSpan.class);
+
+        SpannableString buffer = new SpannableString(text);
+
+        for (URLSpan span : currentSpans) {
+            int end = text.getSpanEnd(span);
+            int start = text.getSpanStart(span);
+            buffer.setSpan(span, start, end, 0);
+        }
+        return buffer;
+    }
+
     /**
      * removes a circle from the source bitmap that is exactly centered
      *
