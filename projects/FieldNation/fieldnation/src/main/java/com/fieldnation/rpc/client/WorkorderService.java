@@ -503,7 +503,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     }
 
     public Intent listSignatures(int resultCode, long workorderId, boolean allowCache) {
-        return httpGet(resultCode, "api/rest/v1/workroder/" + workorderId + "/signature", null, allowCache);
+        return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/signature", null, allowCache);
     }
 
 }

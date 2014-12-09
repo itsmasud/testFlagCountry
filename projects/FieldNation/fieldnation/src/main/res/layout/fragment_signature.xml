@@ -35,7 +35,7 @@
         android:layout_below="@+id/top_view"
         android:background="@drawable/edittext_bg">
 
-        <com.fieldnation.ui.SignatureCollectView
+        <com.fieldnation.ui.SignatureView
             android:id="@+id/signature_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

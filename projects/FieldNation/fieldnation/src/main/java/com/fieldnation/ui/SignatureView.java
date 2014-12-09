@@ -23,7 +23,7 @@ import java.util.List;
  * TODO Improve speed by drawing the lines on a back buffer as we capture them. This way we only need to do all the calculations on the shapes once.
  * TODO implement short straw to filter out points we don't need
  */
-public class SignatureCollectView extends View {
+public class SignatureView extends View {
     private static final String TAG = "ui.SignatureView";
 
     // State
@@ -38,19 +38,24 @@ public class SignatureCollectView extends View {
 
     private float _min = 0;
     private float _max = 10;
+    private float _scale = 1.0F;
+    private float _xOff = 0;
+    private float _yOff = 0;
+    private String _json;
+    private boolean _isMeasured;
 
 
-    public SignatureCollectView(Context context) {
+    public SignatureView(Context context) {
         super(context);
         init();
     }
 
-    public SignatureCollectView(Context context, AttributeSet attrs) {
+    public SignatureView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public SignatureCollectView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SignatureView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -111,7 +116,6 @@ public class SignatureCollectView extends View {
 
             _shape = new LinkedList<Point>();
             _shapes.add(_shape);
-
         } else {
             super.onRestoreInstanceState(state);
         }
@@ -185,28 +189,70 @@ public class SignatureCollectView extends View {
 
     public void setSignatureJson(String signatureJson, boolean isReadOnly) {
         _isReadOnly = isReadOnly;
+        _json = signatureJson;
 
-        _shape = new LinkedList<Point>();
-        _shapes = new LinkedList<List<Point>>();
-        _shapes.add(_shape);
+        populateUi();
+    }
 
+    private void populateUi() {
+        if (_json == null)
+            return;
+
+        if (!_isMeasured)
+            return;
+
+        clear();
         try {
-            JsonArray signature = new JsonArray(signatureJson);
+            JsonArray signature = new JsonArray(_json);
 
-            JsonObject lseg = null;
+            Point lp = null;
             for (int i = 0; i < signature.size(); i++) {
                 JsonObject seg = signature.getJsonObject(i);
 
-//                if (lp == null || lp.getInt("lx") ){
-//
-//                }
+                Point l = new Point(seg.getFloat("lx"), seg.getFloat("ly"), 0);
+                Point m = new Point(seg.getFloat("mx"), seg.getFloat("my"), 0);
 
+                if (lp == null) {
+                    _shape.add(l);
+                    _shape.add(m);
+                    lp = m;
+                } else if ((int) lp.x == (int) l.x && (int) lp.y == (int) l.y) {
+                    _shape.add(m);
+                    lp = m;
+                } else {
+                    _shape = new LinkedList<Point>();
+                    _shapes.add(_shape);
+                    _shape.add(l);
+                    _shape.add(m);
+                    lp = m;
+                }
             }
+
+            _xOff = Point.MIN_X;
+            _yOff = Point.MIN_Y;
+
+            _scale = getMeasuredWidth() / (Point.MAX_X - Point.MIN_X);
+            if (getMeasuredHeight() / (Point.MAX_Y - Point.MIN_Y) < _scale)
+                _scale = getMeasuredHeight() / (Point.MAX_Y - Point.MIN_Y);
+
+            float height = _scale * (Point.MAX_Y - Point.MIN_Y);
+            float width = _scale * (Point.MAX_X - Point.MIN_X);
+
+            _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
+            //_xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
 
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+        _isMeasured = true;
+        populateUi();
     }
 
     @Override
@@ -253,7 +299,12 @@ public class SignatureCollectView extends View {
                     }
 
                     _myPaint.setStrokeWidth(p.stroke);
-                    canvas.drawLine(lp.x, lp.y, p.x, p.y, _myPaint);
+                    canvas.drawLine(
+                            (lp.x - _xOff) * _scale,
+                            (lp.y - _yOff) * _scale,
+                            (p.x - _xOff) * _scale,
+                            (p.y - _yOff) * _scale,
+                            _myPaint);
                     lp = p;
                 }
             }
@@ -266,6 +317,9 @@ public class SignatureCollectView extends View {
         _shapes = new LinkedList<List<Point>>();
         _shape = new LinkedList<Point>();
         _shapes.add(_shape);
+        _scale = 1;
+        _xOff = 0;
+        _yOff = 0;
         Point.resetBounds();
 
         invalidate();
@@ -273,23 +327,25 @@ public class SignatureCollectView extends View {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        int action = event.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                // must return true here otherwise we wont receive move/up events.
-                return true;
-            case MotionEvent.ACTION_MOVE:
-                int count = event.getHistorySize();
-                for (int i = 0; i < count; i++) {
-                    _shape.add(new Point(event.getHistoricalX(i), event.getHistoricalY(i), event.getHistoricalEventTime(i)));
-                }
-                invalidate();
-                return true;
-            case MotionEvent.ACTION_UP:
-                _shape = new LinkedList<Point>();
-                _shapes.add(_shape);
-                invalidate();
-                return true;
+        if (!_isReadOnly) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // must return true here otherwise we wont receive move/up events.
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    int count = event.getHistorySize();
+                    for (int i = 0; i < count; i++) {
+                        _shape.add(new Point(event.getHistoricalX(i), event.getHistoricalY(i), event.getHistoricalEventTime(i)));
+                    }
+                    invalidate();
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    _shape = new LinkedList<Point>();
+                    _shapes.add(_shape);
+                    invalidate();
+                    return true;
+            }
         }
 
         return super.dispatchTouchEvent(event);

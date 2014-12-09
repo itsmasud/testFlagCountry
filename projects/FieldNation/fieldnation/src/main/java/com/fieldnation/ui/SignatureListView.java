@@ -9,8 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.WorkorderRenderer;
+
+import java.util.List;
 
 /**
  * Created by michael.carver on 12/5/2014.
@@ -19,12 +22,13 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     private static final String TAG = "ui.SummaryListView";
 
     // Ui
-    private LinearLayout _summaryListView;
+    private LinearLayout _listView;
     private Button _addButton;
 
     // Data
     private Workorder _workorder;
     private Listener _listener;
+    private List<Signature> _signatures;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -50,7 +54,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         if (isInEditMode())
             return;
 
-        _summaryListView = (LinearLayout) findViewById(R.id.summary_listview);
+        _listView = (LinearLayout) findViewById(R.id.listview);
         _addButton = (Button) findViewById(R.id.add_button);
         _addButton.setOnClickListener(_add_onClick);
 
@@ -68,6 +72,12 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         _listener = listener;
     }
 
+    public void setSignatures(List<Signature> signatures) {
+        _signatures = signatures;
+
+        populateUI();
+    }
+
     private void populateUI() {
         setVisibility(View.GONE);
 
@@ -77,9 +87,21 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         if (_workorder == null)
             return;
 
+        if (_signatures == null)
+            return;
+
         setVisibility(View.VISIBLE);
 
         // TODO get the data, and do stuff.
+
+        _listView.removeAllViews();
+        for (int i = 0; i < _signatures.size(); i++) {
+            Signature sig = _signatures.get(i);
+            SignatureTileView v = new SignatureTileView(getContext());
+            v.setSignature(sig);
+            v.setOnClickListener(_signature_onClick);
+            _listView.addView(v);
+        }
 
     }
 
@@ -95,8 +117,20 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         }
     };
 
+    private OnClickListener _signature_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            SignatureTileView view = (SignatureTileView) v;
+            if (_listener != null)
+                _listener.signatureOnClick(view, view.getSignature());
+
+        }
+    };
+
     public interface Listener {
         public void addSignature();
+
+        public void signatureOnClick(SignatureTileView view, Signature signature);
 
     }
 

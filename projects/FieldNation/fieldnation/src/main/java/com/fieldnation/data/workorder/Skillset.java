@@ -5,41 +5,42 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Skillset {
-	@Json(name="dynamicTermId")
-	private Integer _dynamicTermId;
-	@Json(name = "name")
-	private String _name;
+    @Json(name = "dynamicTermId")
+    private Integer _dynamicTermId;
+    @Json(name = "name")
+    private String _name;
 
-	public Skillset() {
-	}
-	public Integer getDynamicTermId(){
-		return _dynamicTermId;
-	}
+    public Skillset() {
+    }
 
-	public String getName() {
-		return _name;
-	}
+    public Integer getDynamicTermId() {
+        return _dynamicTermId;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public static JsonObject toJson(Skillset skillset) {
-		try {
-			return Serializer.serializeObject(skillset);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static Skillset fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Skillset.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(Skillset skillset) {
+        try {
+            return Serializer.serializeObject(skillset);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Skillset fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Skillset.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }

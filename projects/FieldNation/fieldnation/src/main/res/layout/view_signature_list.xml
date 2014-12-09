@@ -17,9 +17,10 @@
         android:text="Note: A list of collected signatures will appear here soon. This list will be added in the next update." />
 
     <LinearLayout
-        android:id="@+id/summary_listview"
+        android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:orientation="vertical" />
 
     <Button
