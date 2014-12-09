@@ -34,6 +34,7 @@ public class SignOffFragment extends FragmentBase {
     private ImageView _companyImageView;
     private TextView _titleTextView;
     private TextView _descriptionTextView;
+
     private View _timeDivider;
     private TextView _timeTextView;
     private LinearLayout _timeLinearLayout;

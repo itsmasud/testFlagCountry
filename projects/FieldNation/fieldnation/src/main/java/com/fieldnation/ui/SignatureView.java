@@ -239,7 +239,7 @@ public class SignatureView extends View {
             float width = _scale * (Point.MAX_X - Point.MIN_X);
 
             _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
-            //_xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
+            _xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
 
 
         } catch (Exception ex) {

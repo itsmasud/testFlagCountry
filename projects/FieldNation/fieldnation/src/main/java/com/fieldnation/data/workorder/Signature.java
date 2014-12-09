@@ -91,7 +91,7 @@ public class Signature implements Parcelable {
         return "svg".equals(_signatureFormat);
     }
 
-    public static final Creator<Signature> CREATEOR = new Creator<Signature>() {
+    public static final Parcelable.Creator<Signature> CREATOR = new Creator<Signature>() {
         @Override
         public Signature createFromParcel(Parcel source) {
             try {

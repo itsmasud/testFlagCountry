@@ -42,6 +42,7 @@ import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
+import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.SignatureTileView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
@@ -866,8 +867,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void signatureOnClick(SignatureTileView view, Signature signature) {
-            // TODO STUB .signatureOnClick()
-            Log.v(TAG, "STUB .signatureOnClick()");
+            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature, _workorder));
         }
     };
 

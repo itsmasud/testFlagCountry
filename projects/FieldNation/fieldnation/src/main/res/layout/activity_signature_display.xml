@@ -95,11 +95,13 @@
                 android:layout_width="match_parent" />
 
             <com.fieldnation.ui.SignatureView
+                android:id="@+id/signature_view"
                 android:background="@color/fn_gray"
                 android:layout_width="match_parent"
                 android:layout_height="96dp" />
 
             <TextView
+                android:id="@+id/name_textview"
                 style="?attr/tileTextStatusStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,7 +110,7 @@
 
 
             <Button
-                android:id="@+id/signoff_button"
+                android:id="@+id/done_button"
                 style="?attr/buttonDefaultStyle"
                 android:layout_width="150dp"
                 android:layout_gravity="right"
