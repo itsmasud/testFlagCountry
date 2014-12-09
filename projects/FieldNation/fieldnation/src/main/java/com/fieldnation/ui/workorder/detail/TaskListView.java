@@ -78,6 +78,8 @@ public class TaskListView extends RelativeLayout {
         if (_tasks == null)
             return;
 
+        setVisibility(View.VISIBLE);
+
         if (_tasks.size() == 0) {
             //setVisibility(View.GONE);
             _noDataTextView.setVisibility(View.VISIBLE);

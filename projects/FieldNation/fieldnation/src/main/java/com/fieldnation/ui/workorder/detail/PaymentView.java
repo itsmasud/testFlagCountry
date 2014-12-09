@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
@@ -162,14 +162,14 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         } else {
             _detailLayout.setVisibility(View.VISIBLE);
 
-            AdditionalExpense[] expenses = _workorder.getAdditionalExpenses();
+            Expense[] expenses = _workorder.getAdditionalExpenses();
 
             if (expenses != null && expenses.length > 0) {
                 _expensesLabelTextView.setVisibility(VISIBLE);
                 _expensesLinearLayout.setVisibility(VISIBLE);
                 _expensesLinearLayout.removeAllViews();
                 for (int i = 0; i < expenses.length; i++) {
-                    AdditionalExpense expense = expenses[i];
+                    Expense expense = expenses[i];
                     ExpenseView v = new ExpenseView(getContext());
                     v.setListener(_expenseView_listener);
                     _expensesLinearLayout.addView(v);
@@ -247,7 +247,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private ExpenseView.Listener _expenseView_listener = new ExpenseView.Listener() {
 
         @Override
-        public void onDelete(ExpenseView view, AdditionalExpense expense) {
+        public void onDelete(ExpenseView view, Expense expense) {
             if (_workorder.canChangeExpenses()) {
                 if (_listener != null)
                     _listener.onDeleteExpense(_workorder, expense);
@@ -275,7 +275,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     public interface Listener {
         public void onDeleteDiscount(Workorder workorder, int discountId);
 
-        public void onDeleteExpense(Workorder workorder, AdditionalExpense expense);
+        public void onDeleteExpense(Workorder workorder, Expense expense);
 
         public void onShowAddDiscountDialog();
 

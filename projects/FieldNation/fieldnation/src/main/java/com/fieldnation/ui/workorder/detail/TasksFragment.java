@@ -1,8 +1,9 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -33,13 +34,14 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.SignatureActivity;
+import com.fieldnation.ui.SignOffActivity;
+import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
@@ -52,7 +54,6 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 import java.security.SecureRandom;
 import java.util.Calendar;
@@ -95,6 +96,7 @@ public class TasksFragment extends WorkorderFragment {
     private ClosingNotesView _closingNotes;
     private RefreshView _refreshView;
     private OverScrollView _scrollView;
+    private SignatureListView _signatureView;
 
     // Dialogs
     private ClosingNotesDialog _closingDialog;
@@ -158,6 +160,9 @@ public class TasksFragment extends WorkorderFragment {
 
         _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
+
+        _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
+        _signatureView.setListener(_signaturelist_listener);
 
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog.setListener(_closingNotes_onOk);
@@ -323,6 +328,10 @@ public class TasksFragment extends WorkorderFragment {
         if (_customFields != null) {
             _customFields.setData(_workorder, _workorder.getCustomFields(), _isCached);
         }
+
+        if (_signatureView != null) {
+            _signatureView.setWorkorder(_workorder, _isCached);
+        }
     }
 
     private void requestData(boolean allowCache) {
@@ -363,17 +372,7 @@ public class TasksFragment extends WorkorderFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-        if (requestCode == RESULT_CODE_SIGNATURE && resultCode == Activity.RESULT_OK) {
-            byte[] json_vector = data.getExtras().getByteArray(SignatureActivity.INTENT_KEY_BITMAP);
-            String name = data.getExtras().getString(SignatureActivity.INTENT_KEY_NAME);
-            String arrival = data.getExtras().getString(SignatureActivity.INTENT_KEY_ARRIVAL);
-            String depart = data.getExtras().getString(SignatureActivity.INTENT_KEY_DEPARTURE);
-            int taskid = data.getExtras().getInt(SIGNATURE_TASKID);
-            long workorderid = data.getExtras().getLong(SIGNATURE_WORKORDERID);
-
-            getActivity().startService(
-                    _service.completeSignatureTask(resultCode, workorderid, taskid, arrival, depart, name, json_vector));
-        } else if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
+        if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
             _gs.startService(_service.uploadDeliverable(
                     WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                     _currentTask.getSlotId(), data, getNotificationIntent()));
@@ -435,6 +434,25 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
             _worklogDialog.show("Add Worklog", loggedWork, showDeviceCount);
+        }
+
+        @Override
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
+            final Workorder _workorder = workorder;
+            final LoggedWork _loggedWork = loggedWork;
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Are you sure you want to delete this work log?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    getActivity().startService(
+                            _service.deleteLogTime(WEB_CHANGED,
+                                    _workorder.getWorkorderId(), _loggedWork.getLoggedHoursId()));
+                    _refreshView.startRefreshing();
+                }
+            });
+            builder.setNegativeButton("No", null);
+            builder.show();
         }
     };
 
@@ -631,30 +649,10 @@ public class TasksFragment extends WorkorderFragment {
                     break;
                 case SIGNATURE: {
                     _currentTask = task;
-                    Intent intent = new Intent(getActivity(), SignatureActivity.class);
-                    try {
-                        if (!misc.isEmptyOrNull(_workorder.getCheckInOutInfo().getCheckInTime()))
-                            intent.putExtra(SignatureActivity.INTENT_KEY_ARRIVAL,
-                                    _workorder.getCheckInOutInfo().getCheckInTime());
-                    } catch (Exception ex) {
-                    }
-                    try {
-                        if (!misc.isEmptyOrNull(_workorder.getCheckInOutInfo().getCheckOutTime()))
-                            intent.putExtra(SignatureActivity.INTENT_KEY_DEPARTURE,
-                                    _workorder.getCheckInOutInfo().getCheckOutTime());
-                    } catch (Exception ex) {
-                    }
-                    try {
-                        if (!misc.isEmptyOrNull(task.getDescription())) {
-                            intent.putExtra(SignatureActivity.INTENT_KEY_NAME, task.getDescription());
-                        }
-                    } catch (Exception ex) {
-                    }
-
-                    intent.putExtra(SIGNATURE_TASKID, task.getTaskId());
-                    intent.putExtra(SIGNATURE_WORKORDERID, _workorder.getWorkorderId());
-
-                    startActivityForResult(intent, RESULT_CODE_SIGNATURE);
+                    Intent intent = new Intent(getActivity(), SignOffActivity.class);
+                    intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
+                    intent.putExtra(SignOffActivity.INTENT_PARAM_TASK_ID, task.getTaskId());
+                    getActivity().startActivity(intent);
                     break;
                 }
                 case UPLOAD_FILE: {
@@ -813,6 +811,15 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
+    private SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
+        @Override
+        public void addSignature() {
+            Intent intent = new Intent(getActivity(), SignOffActivity.class);
+            intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
+            getActivity().startActivity(intent);
+        }
+    };
+
     /*-*****************************-*/
     /*-         MISC Events         -*/
     /*-*****************************-*/
@@ -913,7 +920,7 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
-    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
 

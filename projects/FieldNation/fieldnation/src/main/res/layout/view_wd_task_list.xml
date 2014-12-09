@@ -4,9 +4,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <View
-        style="@style/WorkorderDetail_Separator"
-        android:layout_width="match_parent" />
 
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
@@ -40,7 +37,8 @@
             android:id="@+id/previsit_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
+            android:animateLayoutChanges="true"
+            android:orientation="vertical" />
     </LinearLayout>
 
     <LinearLayout
@@ -82,5 +80,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"></LinearLayout>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        style="@style/WorkorderDetail_Separator" />
 
 </LinearLayout>

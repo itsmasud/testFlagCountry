@@ -2,6 +2,13 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="FieldNation.Material.Theme" parent="FieldNation.Base.Theme">
+        <!-- Main theme colors v21+ -->
+        <!--   your app branding color for the app bar -->
+        <!--<item name="colorPrimary">#FFFF0000</item>-->
+        <!--   darker variant for the status bar and contextual app bars -->
+        <!--<item name="colorPrimaryDark">#FF00FF00</item>-->
+        <!--   theme UI controls like checkboxes and text fields -->
+        <!--<item name="colorAccent">#FF3fcca9</item>-->
 
         <item name="android:buttonStyle">@style/Button.Material.Flat</item>
 
@@ -17,13 +24,6 @@
     </style>
 
     <style name="FieldNation.Base.Theme" parent="FieldNation.ActionBar.Theme">
-        <!-- Main theme colors v21+ -->
-        <!--   your app branding color for the app bar -->
-        <!--<item name="colorPrimary">#FFFF0000</item>-->
-        <!--   darker variant for the status bar and contextual app bars -->
-        <!--<item name="colorPrimaryDark">#FF00FF00</item>-->
-        <!--   theme UI controls like checkboxes and text fields -->
-        <!--<item name="colorAccent">#FF3fcca9</item>-->
         <item name="android:textColorLink">@color/text_link_color</item>
 
         <!-- android widgets -->
@@ -81,10 +81,8 @@
         <item name="actionBarTabStyle">@style/FieldNation.ActionBar.TabViewStyle</item>
         <item name="actionMenuTextColor">@color/white</item>
 
-
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
-
     </style>
 
     <style name="FieldNation.ActionBar.Solid" parent="@style/Widget.AppCompat.ActionBar.Solid">

@@ -13,13 +13,13 @@ import android.widget.Toast;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthenticationClient;
-import com.fieldnation.data.workorder.AdditionalExpense;
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
@@ -195,6 +195,7 @@ public class DetailFragment extends WorkorderFragment {
         if (workorder == null)
             return;
 
+
         if (!isCached)
             setLoading(false);
 
@@ -226,6 +227,13 @@ public class DetailFragment extends WorkorderFragment {
                 _refreshView.refreshComplete();
             }
         }
+    }
+
+    @Override
+    public void doAction(Bundle bundle) {
+        // TODO Method Stub: doAction()
+        Log.v(TAG, "Method Stub: doAction()");
+
     }
 
     /*-*********************************-*/
@@ -323,7 +331,7 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void onDeleteExpense(Workorder workorder,
-                                    AdditionalExpense expense) {
+                                    Expense expense) {
             getActivity().startService(_service.deleteExpense(WEB_CHANGE,
                     _workorder.getWorkorderId(),
                     expense.getExpenseId()));
@@ -419,7 +427,7 @@ public class DetailFragment extends WorkorderFragment {
     private CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
-                         Pay pay, Schedule schedule, AdditionalExpense[] expenses) {
+                         Pay pay, Schedule schedule, Expense[] expenses) {
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGE, workorder.getWorkorderId(), expires, reason,
                             expirationInSeconds, pay, schedule, expenses));
@@ -483,9 +491,7 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void termsOnClick(Workorder workorder) {
-            // TODO STUB .termsOnClick()
-            Log.v(TAG, "STUB .termsOnClick()");
-
+            _termsDialog.show();
         }
 
     };
@@ -541,7 +547,7 @@ public class DetailFragment extends WorkorderFragment {
         }
     };
 
-    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
 
         @Override
@@ -563,11 +569,4 @@ public class DetailFragment extends WorkorderFragment {
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };
-
-    @Override
-    public void doAction(Bundle bundle) {
-        // TODO Method Stub: doAction()
-        Log.v(TAG, "Method Stub: doAction()");
-
-    }
 }

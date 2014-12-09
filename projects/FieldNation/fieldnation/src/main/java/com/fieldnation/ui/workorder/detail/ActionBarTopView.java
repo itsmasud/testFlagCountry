@@ -75,6 +75,7 @@ public class ActionBarTopView extends RelativeLayout {
         _completeButton.setVisibility(View.GONE);
         _confirmButton.setVisibility(View.GONE);
         _closingNotesButton.setVisibility(View.GONE);
+        _completeButton.setEnabled(true);
 
         if (_workorder.canCheckout()) {
             _checkoutButton.setVisibility(View.VISIBLE);
@@ -161,6 +162,7 @@ public class ActionBarTopView extends RelativeLayout {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
+            _completeButton.setEnabled(false);
             if (_listener != null)
                 _listener.onComplete();
         }

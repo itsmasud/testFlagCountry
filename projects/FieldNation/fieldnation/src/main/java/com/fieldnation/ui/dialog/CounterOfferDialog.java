@@ -16,8 +16,8 @@ import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.AdditionalExpense;
 import com.fieldnation.data.workorder.CounterOfferInfo;
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -67,7 +67,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     // Data State
     private Workorder _workorder;
     private Pay _counterPay;
-    private List<AdditionalExpense> _expenses = new LinkedList<AdditionalExpense>();
+    private List<Expense> _expenses = new LinkedList<Expense>();
     private Schedule _counterSchedule;
     private String _counterReason;
     private boolean _expires;
@@ -100,7 +100,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
                 Parcelable[] parc = savedInstanceState.getParcelableArray(STATE_EXPENSES);
                 _expenses.clear();
                 for (int i = 0; i < parc.length; i++) {
-                    _expenses.add((AdditionalExpense) parc[i]);
+                    _expenses.add((Expense) parc[i]);
                 }
             }
 
@@ -137,7 +137,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
             outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
 
         if (_expenses != null && _expenses.size() > 0) {
-            AdditionalExpense[] exs = new AdditionalExpense[_expenses.size()];
+            Expense[] exs = new Expense[_expenses.size()];
 
             for (int i = 0; i < _expenses.size(); i++) {
                 exs[i] = _expenses.get(i);
@@ -310,7 +310,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
             }
 
             if (info.getExpense() != null && info.getExpense().length > 0) {
-                AdditionalExpense[] exp = info.getExpense();
+                Expense[] exp = info.getExpense();
 
                 _expenses.clear();
                 for (int i = 0; i < exp.length; i++) {
@@ -359,7 +359,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
 
         @Override
-        public void removeExpense(AdditionalExpense expense) {
+        public void removeExpense(Expense expense) {
             _expenses.remove(expense);
             populateUi();
         }
@@ -369,7 +369,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
             CounterOfferInfo info = _workorder.getCounterOfferInfo();
             _expenses.clear();
             if (info != null && info.getExpense() != null && info.getExpense().length > 0) {
-                AdditionalExpense[] exp = info.getExpense();
+                Expense[] exp = info.getExpense();
                 for (int i = 0; i < exp.length; i++) {
                     _expenses.add(exp[i]);
                 }
@@ -381,7 +381,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
-            _expenses.add(new AdditionalExpense(description, amount, category));
+            _expenses.add(new Expense(description, amount, category));
             populateUi();
         }
 
@@ -516,7 +516,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
                 // Todo need to do some data validation
                 if (_listener != null) {
-                    AdditionalExpense[] exp = new AdditionalExpense[_expenses.size()];
+                    Expense[] exp = new Expense[_expenses.size()];
                     for (int i = 0; i < _expenses.size(); i++) {
                         exp[i] = _expenses.get(i);
                     }
@@ -545,7 +545,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, AdditionalExpense[] expenses);
+        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
     }
 
 }

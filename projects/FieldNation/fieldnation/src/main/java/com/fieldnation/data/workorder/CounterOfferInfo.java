@@ -6,11 +6,13 @@ import com.fieldnation.json.annotations.Json;
 
 public class CounterOfferInfo {
 	@Json(name = "expense")
-	private AdditionalExpense[] _expense;
+	private Expense[] _expense;
 	@Json(name = "expires")
 	private Boolean _expires;
 	@Json(name = "expiresAfter")
 	private Integer _expiresAfter;
+	@Json(name="expiresAfterInSecond")
+	private Integer _expiresAfterInSecond;
 	@Json(name = "explanation")
 	private String _explanation;
 	@Json(name = "pay")
@@ -21,7 +23,7 @@ public class CounterOfferInfo {
 	public CounterOfferInfo() {
 	}
 
-	public AdditionalExpense[] getExpense() {
+	public Expense[] getExpense() {
 		return _expense;
 	}
 
@@ -31,6 +33,10 @@ public class CounterOfferInfo {
 
 	public Integer getExpiresAfter() {
 		return _expiresAfter;
+	}
+
+	public Integer getExpiresAfterInSecond(){
+		return _expiresAfterInSecond;
 	}
 
 	public String getExplanation() {

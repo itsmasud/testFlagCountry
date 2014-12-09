@@ -16,7 +16,7 @@ public class Deliverable {
 	@Json(name = "fileType")
 	private String _fileType;
 	@Json(name="reviewComment")
-	private String _reviewComment;
+	private Integer _reviewComment;
 	@Json(name = "reviewTime")
 	private Integer _reviewTime;
 	@Json(name = "reviewUserId")
@@ -34,7 +34,7 @@ public class Deliverable {
 	@Json(name="thumbnailFilesize")
 	private Integer _thumbnailFilesize;
 	@Json(name="uploadUniqueId")
-	private Object _uploadUniqueId;
+	private String _uploadUniqueId;
 	@Json(name="uploadedBy")
 	private User _uploadedBy;
 	@Json(name="uploadedTime")
@@ -72,7 +72,7 @@ public class Deliverable {
 		return _fileType;
 	}
 
-	public String getReviewComment(){
+	public Integer getReviewComment(){
 		return _reviewComment;
 	}
 
@@ -108,7 +108,7 @@ public class Deliverable {
 		return _thumbnailFilesize;
 	}
 
-	public Object getUploadUniqueId(){
+	public String getUploadUniqueId(){
 		return _uploadUniqueId;
 	}
 

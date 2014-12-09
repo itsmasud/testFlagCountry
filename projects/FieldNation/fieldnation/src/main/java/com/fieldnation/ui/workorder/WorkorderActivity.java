@@ -16,9 +16,9 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -27,7 +27,7 @@ import com.fieldnation.ui.workorder.detail.TasksFragment;
 
 import java.util.List;
 
-public class WorkorderActivity extends BaseActivity {
+public class WorkorderActivity extends AuthActionBarActivity {
     private static final String TAG = "ui.workorder.WorkorderActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
@@ -419,7 +419,7 @@ public class WorkorderActivity extends BaseActivity {
         }
     };
 
-    private WebServiceResultReceiver _rpcReceiver = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _rpcReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             Log.v(TAG, "onSuccess()");
@@ -435,6 +435,10 @@ public class WorkorderActivity extends BaseActivity {
                 Log.v(TAG, "Have workorder");
             } catch (Exception ex) {
                 ex.printStackTrace();
+
+                if (resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED)) {
+                    getData(false);
+                }
             }
         }
 

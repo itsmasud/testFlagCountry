@@ -35,7 +35,7 @@ public class SignatureActivity extends FragmentActivity {
     public static final String INTENT_KEY_NAME = "com.fieldnation.ui.SignatureActivity:NAME";
 
     // UI
-    private SignatureView _sigView;
+    private SignatureCollectView _sigView;
     private TextView _arrivalTextView;
     private TextView _departureTextView;
     private TextView _nameTextView;
@@ -58,7 +58,7 @@ public class SignatureActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signature);
 
-        _sigView = (SignatureView) findViewById(R.id.sig_view);
+        _sigView = (SignatureCollectView) findViewById(R.id.sig_view);
         _arrivalTextView = (TextView) findViewById(R.id.arrival_textview);
         _arrivalLayout = (LinearLayout) findViewById(R.id.arrival_layout);
         _arrivalLayout.setOnClickListener(_arrival_onClick);
@@ -136,7 +136,7 @@ public class SignatureActivity extends FragmentActivity {
     private View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            byte[] signature = _sigView.getSignature();
+            byte[] signature = _sigView.getSignatureJson().getBytes();
 
             Log.v(TAG, "Sig size: " + signature.length);
 

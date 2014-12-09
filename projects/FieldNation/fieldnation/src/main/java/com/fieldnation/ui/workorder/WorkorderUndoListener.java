@@ -9,7 +9,7 @@ import com.cocosw.undobar.UndoBarController.AdvancedUndoListener;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.CancelCategory;
 import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
+import com.fieldnation.rpc.common.WebResultReceiver;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -84,7 +84,7 @@ public class WorkorderUndoListener implements AdvancedUndoListener {
         }
     }
 
-    private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
 
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {

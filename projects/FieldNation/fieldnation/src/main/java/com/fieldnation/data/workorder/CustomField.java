@@ -9,8 +9,6 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 import java.text.ParseException;
-import java.util.LinkedList;
-import java.util.List;
 
 public class CustomField implements Parcelable {
     @Json(name = "customFieldFormat")
@@ -34,7 +32,7 @@ public class CustomField implements Parcelable {
     @Json(name = "predefinedValues")
     private String[] _predefinedValues;
     @Json(name = "required")
-    private Boolean _required;
+    private int _required;
     @Json(name = "tip")
     private String _tip;
     @Json(name = "value")
@@ -84,7 +82,7 @@ public class CustomField implements Parcelable {
     }
 
     public Boolean getRequired() {
-        return _required;
+        return _required == 1;
     }
 
     public String getTip() {

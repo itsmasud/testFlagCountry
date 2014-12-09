@@ -36,6 +36,8 @@ public class Pay implements Parcelable {
 	private Double _maximumAmount;
 	@Json(name = "payRateBasis")
 	private String _payRateBasis;
+	@Json(name="penaltyFees")
+	private Double _penaltyFees;
 	@Json(name = "perDevice")
 	private Double _perDevice;
 	@Json(name = "perHour")
@@ -92,7 +94,11 @@ public class Pay implements Parcelable {
 		return _payRateBasis;
 	}
 
-	public Double getPerDevice() {
+	public Double getPenaltyFees(){
+		return _penaltyFees;
+	}
+
+	public Double getPerDevice(){
 		return _perDevice;
 	}
 
