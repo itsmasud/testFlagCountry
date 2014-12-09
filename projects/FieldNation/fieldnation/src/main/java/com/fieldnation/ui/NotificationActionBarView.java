@@ -16,8 +16,8 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 public class NotificationActionBarView extends RelativeLayout {
     private static final String TAG = "ui.NotificationActionBarView";
@@ -86,7 +86,7 @@ public class NotificationActionBarView extends RelativeLayout {
         }
     };
 
-    private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             //Log.v(TAG, "WebServiceResultReceiver.onSuccess");

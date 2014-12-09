@@ -11,6 +11,8 @@ public class IncreaseRequestInfo{
 	private Object _denyReason;
 	@Json(name="flagId")
 	private Integer _flagId;
+	@Json(name="pay")
+	private Pay _pay;
 	@Json(name="payRateDiff")
 	private Integer _payRateDiff;
 	@Json(name="payTermDescription")
@@ -44,6 +46,10 @@ public class IncreaseRequestInfo{
 
 	public Integer getFlagId(){
 		return _flagId;
+	}
+
+	public Pay getPay(){
+		return _pay;
 	}
 
 	public Integer getPayRateDiff(){

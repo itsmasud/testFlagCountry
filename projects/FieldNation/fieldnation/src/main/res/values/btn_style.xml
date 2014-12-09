@@ -19,9 +19,27 @@
         <item name="android:paddingRight">10dp</item>
     </style>
 
+    <style name="ButtonWhiteMaterial" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/btn_white_fg</item>
+        <item name="android:background">@drawable/btn_white_material</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
     <style name="ButtonOrange" parent="@android:style/Widget.Button">
         <item name="android:textColor">@color/btn_orange_fg</item>
         <item name="android:background">@drawable/btn_orange</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="ButtonOrangeMaterial" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/btn_orange_fg</item>
+        <item name="android:background">@drawable/btn_orange_material</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:paddingLeft">10dp</item>
@@ -64,8 +82,7 @@
         <item name="android:layout_height">@dimen/dialogButtonHeight</item>
     </style>
 
-    <style name="Button.Material.Flat" parent="ButtonTextLink">
-    </style>
+    <style name="Button.Material.Flat" parent="ButtonTextLink"></style>
 
 
 </resources>

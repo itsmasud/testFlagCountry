@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        style="@style/WorkorderDetail_FieldTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Signature" />
+
+    <TextView
+        style="@style/WorkorderDetail_Field_Bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Note: A list of collected signatures will appear here soon. This list will be added in the next update." />
+
+    <LinearLayout
+        android:id="@+id/summary_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <Button
+        android:id="@+id/add_button"
+        android:layout_gravity="right"
+        style="@style/ButtonWhite"
+        android:text="Add Signature" />
+
+    <View
+        android:layout_width="match_parent"
+        style="@style/WorkorderDetail_Separator" />
+
+</LinearLayout>

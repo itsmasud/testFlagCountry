@@ -9,8 +9,8 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 
 import java.util.Hashtable;
 
@@ -72,7 +72,7 @@ public class ExpenseCategories {
         }
     };
 
-    private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
 
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {

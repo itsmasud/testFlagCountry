@@ -47,12 +47,14 @@ public class Task implements Parcelable {
     private Boolean _showAlertMenu;
     @Json(name = "showTimeMenu")
     private Boolean _showTimeMenu;
+	@Json(name="slotData")
+	private SlotData _slotData;
     @Json(name = "slotId")
     private Long _slotId;
     @Json(name = "stage")
     private String _stage;
     @Json(name = "taskId")
-    private int _taskId;
+    private long _taskId;
     @Json(name = "taskIdentifier")
     private Integer _taskIdentifier;
     @Json(name = "taskIsCompleted")
@@ -63,8 +65,6 @@ public class Task implements Parcelable {
     private String _type;
     @Json(name = "typeId")
     private Integer _typeId;
-    @Json(name = "workorderUploadSlotId")
-    private Long _workorderUploadSlotId;
     @Json(name = "workorderTaskId")
     private Integer _workorderTaskId;
 
@@ -143,10 +143,11 @@ public class Task implements Parcelable {
         return _showTimeMenu;
     }
 
-    public Long getSlotId() {
-        if (_workorderUploadSlotId != null)
-            return _workorderUploadSlotId;
+	public SlotData getSlotData(){
+		return _slotData;
+	}
 
+    public Long getSlotId() {
         return _slotId;
     }
 
@@ -154,7 +155,7 @@ public class Task implements Parcelable {
         return _stage;
     }
 
-    public int getTaskId() {
+    public long getTaskId() {
         return _taskId;
     }
 

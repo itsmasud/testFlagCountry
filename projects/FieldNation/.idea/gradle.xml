@@ -11,8 +11,6 @@
             <option value="$PROJECT_DIR$/fieldnation" />
             <option value="$PROJECT_DIR$/libDateTimePicker" />
             <option value="$PROJECT_DIR$/libJson" />
-            <option value="$PROJECT_DIR$/libPullToRefresh" />
-            <option value="$PROJECT_DIR$/libSmoothProgressBar" />
             <option value="$PROJECT_DIR$/libUndobar" />
             <option value="$PROJECT_DIR$/libUtils" />
           </set>

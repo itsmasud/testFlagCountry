@@ -3,14 +3,14 @@
     style="@style/Payment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/paymentheader_layout"
         style="@style/Payment_Header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/title_textview"
@@ -39,7 +39,7 @@
     <RelativeLayout
         style="@style/Payment_Body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/amount_layout"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/description_textview"
@@ -66,45 +66,48 @@
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/amount_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:gravity="right" >
+            android:gravity="right"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/moneysymbol_textview"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:text="@string/money"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/amount_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/moneysymbol_textview"
-                android:text="748.00"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="24sp" />
+                <TextView
+                    android:id="@+id/moneysymbol_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="top"
+                    android:text="@string/money"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/amount_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10,007.00"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="24sp" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/paymenttype_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignRight="@+id/amount_textview"
-                android:layout_below="@+id/amount_textview"
                 android:gravity="right"
                 android:lines="1"
                 android:maxLines="1"
                 android:text="Direct Deposit"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
-        </RelativeLayout>
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>

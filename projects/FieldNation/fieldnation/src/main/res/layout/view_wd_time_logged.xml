@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
@@ -13,40 +13,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="left"
             android:layout_weight="1"
             android:text="Hours" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_weight="1"
             android:text="Date" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_weight="1"
             android:text="Start" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_weight="1"
             android:text="End" />
 
-        <View
-            android:layout_width="1px"
-            android:layout_height="1px"
-            android:layout_weight="1" />
+        <TextView
+            android:id="@+id/devices_textview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_weight="1"
+            android:text="Devices" />
     </LinearLayout>
 
     <TextView
@@ -60,8 +63,8 @@
         android:id="@+id/log_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:animateLayoutChanges="true"
+        android:orientation="vertical" />
 
     <TextView
         android:id="@+id/totaltime_textview"
@@ -75,7 +78,7 @@
         android:id="@+id/addlog_linearlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -91,5 +94,9 @@
             android:layout_gravity="center"
             android:text="Add Time Log" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        style="@style/WorkorderDetail_Separator" />
 
 </LinearLayout>

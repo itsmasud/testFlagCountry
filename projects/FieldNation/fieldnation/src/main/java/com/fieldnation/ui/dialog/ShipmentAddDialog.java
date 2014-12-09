@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -154,9 +156,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     _descriptionEditText.requestFocus();
                     handled = true;
                 }
-            } else if (actionId == EditorInfo.IME_ACTION_DONE) {
-                _okButton_onClick.onClick(null);
-                handled = true;
             }
 
             return handled;
@@ -185,21 +184,37 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             if (_listener != null) {
                 if (_taskId != 0) {
                     if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
-                        _listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
-                                _descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked(), _taskId);
+                        _listener.onOk(
+                                _trackingIdEditText.getText().toString(),
+                                "Other",
+                                _carrierEditText.getText().toString(),
+                                _descriptionEditText.getText().toString(),
+                                _shipToSiteRadio.isChecked(),
+                                _taskId);
                     } else {
-                        _listener.onOk(_trackingIdEditText.getText().toString(),
-                                _carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
-                                _shipToSiteRadio.isChecked(), _taskId);
+                        _listener.onOk(
+                                _trackingIdEditText.getText().toString(),
+                                _carrierSpinner.getSelectedItem().toString(),
+                                null,
+                                _descriptionEditText.getText().toString(),
+                                _shipToSiteRadio.isChecked(),
+                                _taskId);
                     }
 
                 } else {
                     if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
-                        _listener.onOk(_trackingIdEditText.getText().toString(), _carrierEditText.getText().toString(),
-                                _descriptionEditText.getText().toString(), _shipToSiteRadio.isChecked());
+                        _listener.onOk(
+                                _trackingIdEditText.getText().toString(),
+                                "Other",
+                                _carrierEditText.getText().toString(),
+                                _descriptionEditText.getText().toString(),
+                                _shipToSiteRadio.isChecked());
                     } else {
-                        _listener.onOk(_trackingIdEditText.getText().toString(),
-                                _carrierSpinner.getSelectedItem().toString(), _descriptionEditText.getText().toString(),
+                        _listener.onOk(
+                                _trackingIdEditText.getText().toString(),
+                                _carrierSpinner.getSelectedItem().toString(),
+                                null,
+                                _descriptionEditText.getText().toString(),
                                 _shipToSiteRadio.isChecked());
                     }
                 }
@@ -216,9 +231,9 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId);
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
 
-        public void onOk(String trackingId, String carrier, String description, boolean shipToSite);
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
 
         public void onCancel();
     }

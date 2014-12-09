@@ -18,8 +18,8 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -175,7 +175,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private WebServiceResultReceiver _resultReciever = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             try {
@@ -239,8 +239,8 @@ public class DrawerView extends RelativeLayout {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                getContext().startService(_dataService.getAll(1, 0, true));
-                _nextPage = 1;
+                //getContext().startService(_dataService.getAll(1, 0, true));
+                //_nextPage = 1;
             }
             Log.v(TAG, "WebServiceResultReceiver.onSuccess");
         }

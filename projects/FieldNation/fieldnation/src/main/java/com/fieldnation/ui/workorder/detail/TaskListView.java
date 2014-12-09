@@ -67,7 +67,7 @@ public class TaskListView extends RelativeLayout {
         _listener = l;
     }
 
-    public void setData(Workorder workorder, List<Task> tasks) {
+    public void setData(Workorder workorder, List<Task> tasks, boolean isCached) {
         _tasks = tasks;
         _workorder = workorder;
 
@@ -77,6 +77,8 @@ public class TaskListView extends RelativeLayout {
     private void populateUi() {
         if (_tasks == null)
             return;
+
+        setVisibility(View.VISIBLE);
 
         if (_tasks.size() == 0) {
             //setVisibility(View.GONE);

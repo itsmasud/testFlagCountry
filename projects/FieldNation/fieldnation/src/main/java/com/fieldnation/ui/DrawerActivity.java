@@ -15,7 +15,7 @@ import android.view.MenuItem;
  * @author michael.carver
  * 
  */
-public abstract class DrawerActivity extends BaseActivity {
+public abstract class DrawerActivity extends AuthActionBarActivity {
 	private final static String TAG = "ui.DrawerActivity";
 
 	// UI

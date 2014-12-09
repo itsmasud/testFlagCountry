@@ -140,6 +140,15 @@ public class MyWorkActivity extends DrawerActivity {
         };
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        for (int i = 0; i < _fragments.length; i++) {
+            _fragments[i].update();
+        }
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/

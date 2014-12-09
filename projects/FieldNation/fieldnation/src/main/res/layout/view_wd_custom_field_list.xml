@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <View
-        style="@style/WorkorderDetail_Separator"
-        android:layout_width="match_parent" />
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
@@ -19,8 +15,13 @@
         android:id="@+id/fields_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:orientation="vertical">
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        style="@style/WorkorderDetail_Separator" />
 
 </LinearLayout>

@@ -9,8 +9,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
@@ -18,9 +16,9 @@ import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.common.WebServiceResultReceiver;
-import com.fieldnation.ui.BaseActivity;
+import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -29,7 +27,7 @@ import com.fieldnation.ui.workorder.detail.TasksFragment;
 
 import java.util.List;
 
-public class WorkorderActivity extends BaseActivity {
+public class WorkorderActivity extends AuthActionBarActivity {
     private static final String TAG = "ui.workorder.WorkorderActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
@@ -55,7 +53,7 @@ public class WorkorderActivity extends BaseActivity {
     private ViewPager _viewPager;
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
-    private RelativeLayout _loadingLayout;
+//    private RelativeLayout _loadingLayout;
 
     // Data
     private GlobalState _gs;
@@ -71,7 +69,7 @@ public class WorkorderActivity extends BaseActivity {
 
     // Services
     private PagerAdapter _pagerAdapter;
-    private WorkorderService _woRpc;
+    private WorkorderService _service;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -136,7 +134,7 @@ public class WorkorderActivity extends BaseActivity {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
             if (_authToken != null && _username != null) {
-                _woRpc = new WorkorderService(this, _username, _authToken, _rpcReceiver);
+                _service = new WorkorderService(this, _username, _authToken, _rpcReceiver);
             } else {
                 _gs.requestAuthentication(_authClient);
             }
@@ -154,9 +152,9 @@ public class WorkorderActivity extends BaseActivity {
             _created = true;
         }
 
-        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+//        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
         setLoading(true);
-        populateUi();
+        populateUi(true);
     }
 
     @Override
@@ -254,7 +252,7 @@ public class WorkorderActivity extends BaseActivity {
         _viewPager.setCurrentItem(_currentTab, false);
     }
 
-    private void populateUi() {
+    private void populateUi(boolean isCached) {
         if (_workorder == null)
             return;
 
@@ -274,7 +272,7 @@ public class WorkorderActivity extends BaseActivity {
         }
 
         for (int i = 0; i < _fragments.length; i++) {
-            _fragments[i].setWorkorder(_workorder);
+            _fragments[i].setWorkorder(_workorder, isCached);
         }
 
 //        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
@@ -290,30 +288,36 @@ public class WorkorderActivity extends BaseActivity {
         // _viewPager.setCurrentItem(TAB_TASKS, false);
         // }
 
-        setLoading(false);
+
+        if (isCached) {
+            getData(false);
+        } else {
+            setLoading(false);
+        }
     }
 
     private void setLoading(boolean loading) {
-        if (loading) {
-            _loadingLayout.setVisibility(View.VISIBLE);
-            _viewPager.setVisibility(View.GONE);
-        } else {
-            _loadingLayout.setVisibility(View.GONE);
-            _viewPager.setVisibility(View.VISIBLE);
+        for (int i = 0; i < _fragments.length; i++) {
+            _fragments[i].setLoading(loading);
         }
     }
 
     @Override
     public void onRefresh() {
-        startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+        getData(false);
+    }
+
+    public void getData(boolean allowCache) {
+        if (_service == null)
+            return;
         setLoading(true);
+        startService(_service.getDetails(RPC_GET_DETAIL, _workorderId, allowCache));
     }
 
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
     private PageRequestListener _pageRequestListener = new PageRequestListener() {
-
         @Override
         public void requestPage(Class<? extends WorkorderFragment> clazz, Bundle request) {
             for (int i = 0; i < _fragments.length; i++) {
@@ -377,8 +381,7 @@ public class WorkorderActivity extends BaseActivity {
     private Workorder.Listener _workorder_listener = new Workorder.Listener() {
         @Override
         public void onChange(Workorder workorder) {
-            startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
-            // setLoading(true);
+            getData(false);
         }
     };
 
@@ -406,8 +409,8 @@ public class WorkorderActivity extends BaseActivity {
 
         @Override
         public void onAuthentication(String username, String authToken) {
-            _woRpc = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
-            startService(_woRpc.getDetails(RPC_GET_DETAIL, _workorderId, false));
+            _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
+            getData(true);
         }
 
         @Override
@@ -416,7 +419,7 @@ public class WorkorderActivity extends BaseActivity {
         }
     };
 
-    private WebServiceResultReceiver _rpcReceiver = new WebServiceResultReceiver(new Handler()) {
+    private WebResultReceiver _rpcReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             Log.v(TAG, "onSuccess()");
@@ -428,19 +431,22 @@ public class WorkorderActivity extends BaseActivity {
                 _workorder = Workorder.fromJson(new JsonObject(data));
 
                 _workorder.addListener(_workorder_listener);
-                populateUi();
+                populateUi(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
                 Log.v(TAG, "Have workorder");
-                setLoading(false);
             } catch (Exception ex) {
                 ex.printStackTrace();
+
+                if (resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED)) {
+                    getData(false);
+                }
             }
         }
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_woRpc != null) {
-                _gs.invalidateAuthToken(_woRpc.getAuthToken());
+            if (_service != null) {
+                _gs.invalidateAuthToken(_service.getAuthToken());
             }
             _gs.requestAuthenticationDelayed(_authClient);
         }

@@ -49,7 +49,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
         refresh();
     }
@@ -76,9 +76,9 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
         for (int i = 0; i < shipments.length; i++) {
             ShipmentSummary view = new ShipmentSummary(getContext());
-            _shipmentsLayout.addView(view);
             view.setData(_workorder, shipments[i]);
             view.setListener(_summaryListener);
+            _shipmentsLayout.addView(view);
         }
     }
 

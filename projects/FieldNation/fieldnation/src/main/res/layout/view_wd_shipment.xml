@@ -4,10 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <View
-        style="@style/WorkorderDetail_Separator"
-        android:layout_width="match_parent" />
-
     <TextView
         style="@style/WorkorderDetail_FieldTitle"
         android:layout_width="wrap_content"
@@ -18,7 +14,7 @@
         android:id="@+id/shipments_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical" />
 
     <LinearLayout
         android:id="@+id/add_layout"
@@ -39,5 +35,9 @@
             android:layout_gravity="center_vertical"
             android:text="@string/add_shipment" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        style="@style/WorkorderDetail_Separator" />
 
 </LinearLayout>

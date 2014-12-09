@@ -53,7 +53,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
         refresh();
     }
@@ -81,6 +81,12 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
             if (_listener != null)
                 _listener.editWorklog(workorder, loggedWork, showDeviceCount);
+        }
+
+        @Override
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
+            if (_listener != null)
+                _listener.deleteWorklog(workorder, loggedWork);
         }
     };
 
@@ -116,6 +122,8 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
         public void onAddWorklog(Workorder workorder, boolean showDeviceCount);
 
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
     }
 
 //    private AuthenticationClient _authClient = new AuthenticationClient() {

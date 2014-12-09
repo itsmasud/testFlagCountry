@@ -61,7 +61,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
 	/*-*************************************-*/
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
         refresh();
     }

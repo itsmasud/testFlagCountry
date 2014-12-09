@@ -14,7 +14,7 @@
 
     <style name="TileContainer.Material">
         <item name="android:padding">@dimen/tileContentPadding_Material</item>
-        <item name="android:background">@color/tileBackGroundColor</item>
+        <item name="android:background">@color/tileBackGroundColor_Material</item>
     </style>
 
     <style name="TileTextTitle.Material" parent="@style/Text_Headline">

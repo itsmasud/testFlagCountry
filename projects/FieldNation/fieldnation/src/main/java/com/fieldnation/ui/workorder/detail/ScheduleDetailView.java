@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,7 +27,7 @@ public class ScheduleDetailView extends RelativeLayout {
     private TextView _dateTextView;
     private TextView _startTextView;
     private TextView _endTextView;
-    private ImageView _editImageView;
+    private TextView _devicesTextView;
 
     // Data
     private Listener _listener;
@@ -63,9 +63,10 @@ public class ScheduleDetailView extends RelativeLayout {
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _startTextView = (TextView) findViewById(R.id.start_textview);
         _endTextView = (TextView) findViewById(R.id.end_textview);
+        _devicesTextView = (TextView) findViewById(R.id.devices_textview);
 
-        _editImageView = (ImageView) findViewById(R.id.edit_imageview);
-        _editImageView.setOnClickListener(_edit_onClick);
+        setOnClickListener(_edit_onClick);
+        setOnLongClickListener(_delete_onClick);
 
         populateUi();
     }
@@ -80,16 +81,23 @@ public class ScheduleDetailView extends RelativeLayout {
         populateUi();
     }
 
+    private void enableDevices(boolean enabled) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) _devicesTextView.getLayoutParams();
+        if (enabled) {
+            params.weight = 1;
+            _devicesTextView.setLayoutParams(params);
+            _devicesTextView.setVisibility(View.VISIBLE);
+        } else {
+            params.weight = 0;
+            _devicesTextView.setLayoutParams(params);
+            _devicesTextView.setVisibility(View.GONE);
+        }
+    }
+
     private void populateUi() {
         if (_loggedWork == null)
             return;
-        if (_dateTextView == null)
-            return;
-        if (_startTextView == null)
-            return;
-        if (_endTextView == null)
-            return;
-        if (_hoursTextView == null)
+        if (_devicesTextView == null)
             return;
 
         String startDate = _loggedWork.getStartDate();
@@ -120,9 +128,16 @@ public class ScheduleDetailView extends RelativeLayout {
         }
 
         if (_workorder.canModifyTimeLog()) {
-            _editImageView.setVisibility(View.VISIBLE);
+            setClickable(true);
         } else {
-            _editImageView.setVisibility(View.GONE);
+            setClickable(false);
+        }
+
+        if (_workorder.getPay().isPerDeviceRate()) {
+            enableDevices(true);
+            _devicesTextView.setText(_loggedWork.getNoOfDevices() + "");
+        } else {
+            enableDevices(false);
         }
     }
 
@@ -137,7 +152,6 @@ public class ScheduleDetailView extends RelativeLayout {
             try {
                 showdevices = _workorder.getPay().isPerDeviceRate();
             } catch (Exception ex) {
-
             }
 
             if (_listener != null)
@@ -145,58 +159,20 @@ public class ScheduleDetailView extends RelativeLayout {
         }
     };
 
+    private OnLongClickListener _delete_onClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (_listener != null) {
+                _listener.deleteWorklog(_workorder, _loggedWork);
+                return true;
+            }
+            return false;
+        }
+    };
+
     public interface Listener {
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
     }
-
-//    private WorkLogDialog.Listener _worklogdialog_onOk = new WorkLogDialog.Listener() {
-//        @Override
-//        public void onOk(Calendar start, Calendar end, int deviceCount) {
-//            if (_listener != null)
-//                _listener.updateLogTime(_workorder.getWorkorderId(), _loggedWork.getLoggedHoursId(), start.getTimeInMillis(),
-//                        end.getTimeInMillis(), deviceCount);
-//        }
-//
-//        @Override
-//        public void onCancel() {
-//        }
-//    };
-
-
-//    // Todo move web stuff to parent
-//    private AuthenticationClient _authClient = new AuthenticationClient() {
-//
-//        @Override
-//        public void onAuthenticationFailed(Exception ex) {
-//            _gs.requestAuthenticationDelayed(_authClient);
-//        }
-//
-//        @Override
-//        public void onAuthentication(String username, String authToken) {
-//            _service = new WorkorderService(getContext(), username, authToken, _resultReceiver);
-//        }
-//
-//        @Override
-//        public GlobalState getGlobalState() {
-//            return _gs;
-//        }
-//    };
-//
-//    private WebServiceResultReceiver _resultReceiver = new WebServiceResultReceiver(new Handler()) {
-//
-//        @Override
-//        public void onSuccess(int resultCode, Bundle resultData) {
-//            if (resultCode == WEB_SUBMIT_WORKLOG) {
-//                Toast.makeText(getContext(), "Success!", Toast.LENGTH_LONG).show();
-//                _workorder.dispatchOnChange();
-//            }
-//        }
-//
-//        @Override
-//        public void onError(int resultCode, Bundle resultData, String errorType) {
-//            Log.v(TAG, "onError()");
-//            Log.v(TAG, resultData.getString(WebServiceConstants.KEY_RESPONSE_ERROR));
-//        }
-//    };
-
 }

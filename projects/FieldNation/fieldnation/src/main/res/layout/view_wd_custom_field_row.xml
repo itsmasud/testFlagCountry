@@ -3,14 +3,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/task_border"
+    android:layout_marginBottom="5dp"
     android:orientation="horizontal">
 
     <CheckBox
         android:id="@+id/checkbox"
-        style="@style/CheckBox"
+        android:drawableLeft="@drawable/ic_checkbox_check"
+        android:button="@null"
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title\nValue" />
+        android:layout_toLeftOf="@+id/optional_textview"
+        android:text="LKfjslkfjsdkl fsdlkjf sdlkfj sdlkfj sdlkfdsfj sd fsdfns lkjdfhksj fhskjhf skjd fh" />
 
     <TextView
         android:id="@+id/optional_textview"
@@ -22,6 +27,6 @@
         android:layout_marginRight="10dp"
         android:text="(optional)"
         android:textScaleX="0.75"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </RelativeLayout>
