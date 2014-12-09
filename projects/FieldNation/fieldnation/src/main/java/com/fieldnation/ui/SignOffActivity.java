@@ -27,6 +27,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
     private static final String STATE_TASK_ID = "STATE_TASK_ID";
+    private static final String STATE_COMPLETE_WORKORDER = "COMPLETE_WORKORDER";
 
     // Display Modes
     private static final int DISPLAY_SUMMARY = 1;
@@ -36,10 +37,12 @@ public class SignOffActivity extends AuthFragmentActivity {
     // Intent Params
     public static final String INTENT_PARAM_WORKORDER = "SignOffActivity.INTENT_PARAM_WORKORDER";
     public static final String INTENT_PARAM_TASK_ID = "SignOffActivity.INTENT_PARAM_TASK_ID";
+    public static final String INTENT_COMPLETE_WORKORDER = "SignOffActivity.INTENT_COMPLETE_WORKORDER";
 
     // Web
     private static final int WEB_COMPLETE_TASK = 1;
     private static final int WEB_UPLOAD_SIGNATURE = 2;
+    private static final int WEB_COMPLETE_WORKORDER = 3;
 
     // Ui
     private SignOffFragment _signOffFrag;
@@ -54,7 +57,8 @@ public class SignOffActivity extends AuthFragmentActivity {
     private String _name;
     private String _signatureJson;
     private Workorder _workorder;
-    private int _taskId = -1;
+    private long _taskId = -1;
+    private boolean _completeWorkorder = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +84,10 @@ public class SignOffActivity extends AuthFragmentActivity {
                 _workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
 
             if (extras.containsKey(INTENT_PARAM_TASK_ID))
-                _taskId = extras.getInt(INTENT_PARAM_TASK_ID);
+                _taskId = extras.getLong(INTENT_PARAM_TASK_ID);
+
+            if (extras.containsKey(INTENT_COMPLETE_WORKORDER))
+                _completeWorkorder = extras.getBoolean(INTENT_COMPLETE_WORKORDER);
         }
 
         if (savedInstanceState == null) {
@@ -103,7 +110,10 @@ public class SignOffActivity extends AuthFragmentActivity {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
 
             if (savedInstanceState.containsKey(STATE_TASK_ID))
-                _taskId = savedInstanceState.getInt(STATE_TASK_ID);
+                _taskId = savedInstanceState.getLong(STATE_TASK_ID);
+
+            if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
+                _completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
         }
     }
 
@@ -116,7 +126,8 @@ public class SignOffActivity extends AuthFragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
-        outState.putInt(STATE_TASK_ID, _taskId);
+        outState.putLong(STATE_TASK_ID, _taskId);
+        outState.putBoolean(STATE_COMPLETE_WORKORDER, _completeWorkorder);
 
         if (_name != null)
             outState.putString(STATE_NAME, _name);
@@ -131,11 +142,15 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     private void sendSignature() {
-        if (_taskId != -1) {
-            // this is a task
-            // TODO fill in the web service request
-            //_service.completeSignatureTask(WEB_COMPLETE_TASK,_taskId,)
-
+        // not a task
+        if (_taskId == -1) {
+            startService(
+                    _service.addSignatureJson(WEB_UPLOAD_SIGNATURE, _workorder.getWorkorderId(), _name, _signatureJson));
+        } else {
+            // is a task
+            startService(
+                    _service.completeSignatureTaskJson(WEB_COMPLETE_TASK, _workorder.getWorkorderId(),
+                            _taskId, _name, _signatureJson));
         }
     }
 
@@ -178,6 +193,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     private ThankYouFragment.Listener _thankyou_listener = new ThankYouFragment.Listener() {
         @Override
         public void onDoneClick() {
+            setResult(RESULT_OK);
             finish();
         }
     };
@@ -223,7 +239,23 @@ public class SignOffActivity extends AuthFragmentActivity {
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
-            // TODO need to handle the response
+
+            if (resultCode == WEB_COMPLETE_WORKORDER) {
+                // we completed the workorder... done
+                _thankYouFrag.setUploadComplete();
+
+            } else if (resultCode == WEB_COMPLETE_TASK || resultCode == WEB_UPLOAD_SIGNATURE) {
+                // we finished uploading the signature
+                if (_completeWorkorder) {
+                    // if we need to complete, then start that process
+                    startService(
+                            _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
+
+                } else {
+                    // otherwise we're done
+                    _thankYouFrag.setUploadComplete();
+                }
+            }
         }
 
         @Override
@@ -234,6 +266,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             }
             _gs.requestAuthenticationDelayed(_authClient);
             Toast.makeText(SignOffActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
+            _thankYouFrag.setUploadComplete();
         }
     };
 

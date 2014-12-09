@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
@@ -33,6 +34,7 @@ public class SignatureCollectView extends View {
     private Paint _myPaint;
     private List<Point> _shape;
     private List<List<Point>> _shapes;
+    private boolean _isReadOnly = false;
 
     private float _min = 0;
     private float _max = 10;
@@ -179,6 +181,32 @@ public class SignatureCollectView extends View {
         //Log.v(TAG, sb.toString());
 
         return sb.toString();
+    }
+
+    public void setSignatureJson(String signatureJson, boolean isReadOnly) {
+        _isReadOnly = isReadOnly;
+
+        _shape = new LinkedList<Point>();
+        _shapes = new LinkedList<List<Point>>();
+        _shapes.add(_shape);
+
+        try {
+            JsonArray signature = new JsonArray(signatureJson);
+
+            JsonObject lseg = null;
+            for (int i = 0; i < signature.size(); i++) {
+                JsonObject seg = signature.getJsonObject(i);
+
+//                if (lp == null || lp.getInt("lx") ){
+//
+//                }
+
+            }
+
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override

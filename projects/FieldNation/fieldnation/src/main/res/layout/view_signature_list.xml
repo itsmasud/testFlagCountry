@@ -10,6 +10,12 @@
         android:layout_height="wrap_content"
         android:text="Signature" />
 
+    <TextView
+        style="@style/WorkorderDetail_Field_Bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Note: A list of collected signatures will appear here soon. This list will be added in the next update." />
+
     <LinearLayout
         android:id="@+id/summary_listview"
         android:layout_width="match_parent"

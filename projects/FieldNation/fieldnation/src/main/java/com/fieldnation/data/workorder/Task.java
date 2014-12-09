@@ -54,7 +54,7 @@ public class Task implements Parcelable {
     @Json(name = "stage")
     private String _stage;
     @Json(name = "taskId")
-    private int _taskId;
+    private long _taskId;
     @Json(name = "taskIdentifier")
     private Integer _taskIdentifier;
     @Json(name = "taskIsCompleted")
@@ -155,7 +155,7 @@ public class Task implements Parcelable {
         return _stage;
     }
 
-    public int getTaskId() {
+    public long getTaskId() {
         return _taskId;
     }
 

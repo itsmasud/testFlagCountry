@@ -44,6 +44,8 @@ public class Workorder implements Parcelable {
     private CheckInOutInfo _checkInOutInfo;
     @Json(name = "closingNotes")
     private String _closingNotes;
+    @Json(name = "collectedSignature")
+    private Boolean _collectedSignature;
     @Json(name = "companyId")
     private Integer _companyId;
     @Json(name = "companyName")
@@ -112,7 +114,7 @@ public class Workorder implements Parcelable {
     private Boolean _isWoOnHold;
     @Json(name = "isWorkPerformed")
     private Boolean _isWorkPerformed;
-//	@Json(name="label")
+    //	@Json(name="label")
 //	private Label[] _label;
     @Json(name = "location")
     private Location _location;
@@ -136,7 +138,7 @@ public class Workorder implements Parcelable {
     private Pay _pay;
     @Json(name = "paymentId")
     private Long _paymentId;
-//    @Json(name = "provider")
+    //    @Json(name = "provider")
 //    private Provider _provider;
     @Json(name = "schedule")
     private Schedule _schedule;
@@ -234,6 +236,10 @@ public class Workorder implements Parcelable {
 
     public String getClosingNotes() {
         return _closingNotes;
+    }
+
+    public Boolean isSignatureCollected() {
+        return _collectedSignature;
     }
 
     public Integer getCompanyId() {

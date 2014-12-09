@@ -22,7 +22,6 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
@@ -90,14 +89,6 @@ public class DetailFragment extends WorkorderFragment {
 
         _sumView = (SummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
-        _sumView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SignOffActivity.class);
-                intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
-                getActivity().startActivity(intent);
-            }
-        });
 
         _taskView = (TaskSumView) view.findViewById(R.id.tasksum_view);
         _taskView.setListener(_taskSum_listener);
@@ -236,6 +227,13 @@ public class DetailFragment extends WorkorderFragment {
                 _refreshView.refreshComplete();
             }
         }
+    }
+
+    @Override
+    public void doAction(Bundle bundle) {
+        // TODO Method Stub: doAction()
+        Log.v(TAG, "Method Stub: doAction()");
+
     }
 
     /*-*********************************-*/
@@ -493,9 +491,7 @@ public class DetailFragment extends WorkorderFragment {
 
         @Override
         public void termsOnClick(Workorder workorder) {
-            // TODO STUB .termsOnClick()
-            Log.v(TAG, "STUB .termsOnClick()");
-
+            _termsDialog.show();
         }
 
     };
@@ -573,11 +569,4 @@ public class DetailFragment extends WorkorderFragment {
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };
-
-    @Override
-    public void doAction(Bundle bundle) {
-        // TODO Method Stub: doAction()
-        Log.v(TAG, "Method Stub: doAction()");
-
-    }
 }

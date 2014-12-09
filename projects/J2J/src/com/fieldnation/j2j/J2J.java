@@ -10,6 +10,7 @@ import java.util.Enumeration;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.misc;
 
 public class J2J {
 	private static String hostname = "dev.fieldnation.com";
@@ -36,12 +37,12 @@ public class J2J {
 					e.printStackTrace();
 				}
 
-				getProfile();
+				//getProfile();
 				getWorkorders();
-				getExpenseCategories();
-				getMessages();
-				getPayments();
-				getNotifications();
+//				getExpenseCategories();
+//				getMessages();
+//				getPayments();
+//				getNotifications();
 			}
 			exportClasses();
 
@@ -275,7 +276,7 @@ public class J2J {
 						Log.println("no pay!");
 					}
 
-					if (!strres.contains("file_url")) {
+					if (strres.contains("file_url")) {
 						Log.println("file_url");
 					}
 
@@ -323,7 +324,7 @@ public class J2J {
 				if (!res.contains("pay")) {
 					Log.println("no pay!");
 				}
-				if (!res.contains("file_url")) {
+				if (res.contains("file_url")) {
 					Log.println("file_url");
 				}
 
@@ -331,7 +332,12 @@ public class J2J {
 					Log.println("bundle");
 				}
 
+				try{
 				details.add(result.getResultsAsJsonObject());
+				} catch(Exception ex){
+					ex.printStackTrace();
+					Log.println(misc.getStackTrace(ex));
+				}
 			}
 			objects.merge(details);
 

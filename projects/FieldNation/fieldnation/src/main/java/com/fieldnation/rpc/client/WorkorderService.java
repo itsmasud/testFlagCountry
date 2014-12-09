@@ -402,8 +402,6 @@ public class WorkorderService extends WebService implements WebServiceConstants 
             payload += "&expenses=" + json.toString();
         }
 
-        System.out.println(payload);
-
         return httpPost(
                 resultCode,
                 "api/rest/v1/workorder/" + workorderId + "/counter_offer",
@@ -471,15 +469,14 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     }
 
     // tasks
-    public Intent completeSignatureTask(int resultCode, long workorderId, long taskId, String arrivalTime,
-                                        String departureTime, String printName, byte[] signatureJson) {
+    public Intent completeSignatureTaskJson(int resultCode, long workorderId, long taskId, String printName, String signatureJson) {
         return httpPost(
                 resultCode,
                 "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId,
                 null,
-                "arrival_time=" + arrivalTime + "&departure_time=" + departureTime + "&print_name=" + misc.escapeForURL(printName) + "&signature_json=" +
-                        // misc.escapeForURL
-                        (new String(signatureJson)), "application/x-www-form-urlencoded", false);
+                "print_name=" + misc.escapeForURL(printName)
+                        + "&signature_json=" + signatureJson,
+                "application/x-www-form-urlencoded", false);
 
     }
 
@@ -488,10 +485,25 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "application/x-www-form-urlencoded", false);
     }
 
-    // @TODO
-    // need to implement REST CALL
     public Intent completeShipmentTask(int resultCode, long workorderId, long shipmentId, long taskId) {
         return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId, null,
                 "shipment_id=" + shipmentId, "application/x-www-form-urlencoded", false);
     }
+
+    // signature collection
+    public Intent addSignatureJson(int resultCode, long workorderId, String printName, String jsonSignature) {
+        return httpPost(
+                resultCode,
+                "api/rest/v1/workorder/" + workorderId + "/signature",
+                null,
+                "signatureFormat=json"
+                        + "&printName=" + misc.escapeForURL(printName)
+                        + "&signature=" + jsonSignature,
+                "application/x-www-form-urlencoded", false);
+    }
+
+    public Intent listSignatures(int resultCode, long workorderId, boolean allowCache) {
+        return httpGet(resultCode, "api/rest/v1/workroder/" + workorderId + "/signature", null, allowCache);
+    }
+
 }
