@@ -205,15 +205,32 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/signoff_button"
-                style="@style/ButtonOrangeMaterial"
-                android:layout_width="150dp"
-                android:layout_gravity="right"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:text="SIGN OFF" />
+                <Button
+                    android:id="@+id/reject_button"
+                    style="@style/ButtonWhiteMaterial"
+                    android:layout_width="150dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="16dp"
+                    android:text="REJECT" />
+
+                <Button
+                    android:id="@+id/signoff_button"
+                    style="@style/ButtonOrangeMaterial"
+                    android:layout_width="150dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="SIGN OFF" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

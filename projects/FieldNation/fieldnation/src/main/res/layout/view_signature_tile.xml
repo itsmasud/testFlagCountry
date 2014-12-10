@@ -13,7 +13,7 @@
             android:id="@+id/thumb_signatureview"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:background="@drawable/ic_file_grey" />
+            android:background="@drawable/ic_signature_grey" />
 
         <LinearLayout
             android:layout_toRightOf="@+id/thumb_signatureview"
