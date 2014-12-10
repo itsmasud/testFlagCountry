@@ -25,11 +25,14 @@ android {
     }
 
     productFlavors {
-        dev {
+        red {
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
-        lipo {
-            buildConfigField "boolean", "USE_HTTPS", "false"
+        blue {
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
+        green {
+            buildConfigField "boolean", "USE_HTTPS", "true"
         }
         prod {
             buildConfigField "boolean", "USE_HTTPS", "true"
