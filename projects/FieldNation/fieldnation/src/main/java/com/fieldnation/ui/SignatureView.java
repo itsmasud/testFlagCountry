@@ -13,6 +13,8 @@ import android.view.View;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.shortstraw.Point;
+import com.fieldnation.shortstraw.Shape;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
@@ -32,8 +34,8 @@ public class SignatureView extends View {
 
     // Data
     private Paint _myPaint;
-    private List<Point> _shape;
-    private List<List<Point>> _shapes;
+    private Shape _shape;
+    private List<Shape> _shapes;
     private boolean _isReadOnly = false;
 
     private float _min = 0;
@@ -61,8 +63,8 @@ public class SignatureView extends View {
     }
 
     public void init() {
-        _shape = new LinkedList<Point>();
-        _shapes = new LinkedList<List<Point>>();
+        _shape = new Shape();
+        _shapes = new LinkedList<Shape>();
         _shapes.add(_shape);
         _myPaint = new Paint();
         _myPaint.setColor(Color.BLACK);
@@ -76,7 +78,7 @@ public class SignatureView extends View {
 
         JsonArray jshapes = new JsonArray();
         for (int i = 0; i < _shapes.size(); i++) {
-            List<Point> shape = _shapes.get(i);
+            Shape shape = _shapes.get(i);
             JsonArray jshape = new JsonArray();
             for (int j = 0; j < shape.size(); j++) {
                 jshape.add(shape.get(j).toJson());
@@ -96,14 +98,13 @@ public class SignatureView extends View {
 
             String raw = ((Bundle) state).getString(STATE_SHAPES);
 
-            Point.resetBounds();
-            _shapes = new LinkedList<List<Point>>();
+            _shapes = new LinkedList<Shape>();
             try {
                 JsonArray jshapes = new JsonArray(raw);
 
                 for (int i = 0; i < jshapes.size(); i++) {
                     JsonArray jshape = jshapes.getJsonArray(i);
-                    List<Point> shape = new LinkedList<Point>();
+                    Shape shape = new Shape();
                     for (int j = 0; j < jshape.size(); j++) {
                         shape.add(Point.fromJson(jshape.getJsonObject(j)));
                     }
@@ -114,7 +115,7 @@ public class SignatureView extends View {
                 ex.printStackTrace();
             }
 
-            _shape = new LinkedList<Point>();
+            _shape = new Shape();
             _shapes.add(_shape);
         } else {
             super.onRestoreInstanceState(state);
@@ -147,13 +148,27 @@ public class SignatureView extends View {
 
         StringBuilder sb = new StringBuilder();
 
-        float scale = Math.max((Point.MAX_X) / 605, (Point.MAX_Y) / 115);
-        float xo = ((605 * scale) - (Point.MAX_X + Point.MIN_X)) / 2;
-        float yo = ((115 * scale) - (Point.MAX_Y + Point.MIN_Y)) / 2;
+        float maxX = Float.MIN_VALUE;
+        float maxY = Float.MIN_VALUE;
+        float minX = Float.MAX_VALUE;
+        float minY = Float.MAX_VALUE;
+        for (int i = 0; i < _shapes.size(); i++) {
+            Shape s = _shapes.get(i);
+            //s.simplify();
+            maxX = Math.max(maxX, s.getMaxX());
+            maxY = Math.max(maxY, s.getMaxY());
+            minX = Math.min(minX, s.getMinX());
+            minY = Math.min(minY, s.getMinY());
+        }
+
+
+        float scale = Math.max(maxX / 605, (maxY) / 115);
+        float xo = ((605 * scale) - (maxX + minX)) / 2;
+        float yo = ((115 * scale) - (maxY + minY)) / 2;
 
         sb.append("[");
         for (int i = 0; i < _shapes.size(); i++) {
-            List<Point> shape = _shapes.get(i);
+            Shape shape = _shapes.get(i);
 
             if (shape.size() > 0) {
                 Point lp = shape.get(0);
@@ -220,7 +235,7 @@ public class SignatureView extends View {
                     _shape.add(m);
                     lp = m;
                 } else {
-                    _shape = new LinkedList<Point>();
+                    _shape = new Shape();
                     _shapes.add(_shape);
                     _shape.add(l);
                     _shape.add(m);
@@ -228,15 +243,27 @@ public class SignatureView extends View {
                 }
             }
 
-            _xOff = Point.MIN_X;
-            _yOff = Point.MIN_Y;
+            float maxX = Float.MIN_VALUE;
+            float maxY = Float.MIN_VALUE;
+            float minX = Float.MAX_VALUE;
+            float minY = Float.MAX_VALUE;
+            for (int i = 0; i < _shapes.size(); i++) {
+                Shape s = _shapes.get(i);
+                maxX = Math.max(maxX, s.getMaxX());
+                maxY = Math.max(maxY, s.getMaxY());
+                minX = Math.min(minX, s.getMinX());
+                minY = Math.min(minY, s.getMinY());
+            }
 
-            _scale = getMeasuredWidth() / (Point.MAX_X - Point.MIN_X);
-            if (getMeasuredHeight() / (Point.MAX_Y - Point.MIN_Y) < _scale)
-                _scale = getMeasuredHeight() / (Point.MAX_Y - Point.MIN_Y);
+            _xOff = minX;
+            _yOff = minY;
 
-            float height = _scale * (Point.MAX_Y - Point.MIN_Y);
-            float width = _scale * (Point.MAX_X - Point.MIN_X);
+            _scale = getMeasuredWidth() / (maxX - minX);
+            if (getMeasuredHeight() / (maxY - minY) < _scale)
+                _scale = getMeasuredHeight() / (maxY - minY);
+
+            float height = _scale * (maxY - minY);
+            float width = _scale * (maxX - minX);
 
             _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
             _xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
@@ -259,7 +286,7 @@ public class SignatureView extends View {
     protected void onDraw(Canvas canvas) {
         // walk through the shapes list... draw those
         for (int i = 0; i < _shapes.size(); i++) {
-            List<Point> shape = _shapes.get(i);
+            Shape shape = _shapes.get(i);
             if (shape.size() > 0) {
                 Point lp = shape.get(0);
                 Point p = null;
@@ -314,13 +341,12 @@ public class SignatureView extends View {
     }
 
     public void clear() {
-        _shapes = new LinkedList<List<Point>>();
-        _shape = new LinkedList<Point>();
+        _shapes = new LinkedList<Shape>();
+        _shape = new Shape();
         _shapes.add(_shape);
         _scale = 1;
         _xOff = 0;
         _yOff = 0;
-        Point.resetBounds();
 
         invalidate();
     }
@@ -341,7 +367,7 @@ public class SignatureView extends View {
                     invalidate();
                     return true;
                 case MotionEvent.ACTION_UP:
-                    _shape = new LinkedList<Point>();
+                    _shape = new Shape();
                     _shapes.add(_shape);
                     invalidate();
                     return true;
