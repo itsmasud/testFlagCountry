@@ -105,11 +105,11 @@ public class ShipmentSummary extends RelativeLayout {
             if (_taskMode)
                 _assignButton.setVisibility(View.GONE);
             else
-                _deleteImageButton.setVisibility(View.GONE);
+                _deleteImageButton.setVisibility(View.INVISIBLE);
         }
 
         if (_taskMode) {
-            _deleteImageButton.setVisibility(GONE);
+            _deleteImageButton.setVisibility(INVISIBLE);
             _trackingIdTextView.setVisibility(GONE);
             _carrierTextView.setVisibility(GONE);
 
