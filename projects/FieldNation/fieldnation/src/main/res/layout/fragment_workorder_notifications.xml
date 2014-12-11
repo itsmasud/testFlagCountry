@@ -22,7 +22,7 @@
         style="@style/TextViewEmptyLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/this_work_order_as_no_notification_at_this_time" />
+        android:text="@string/this_work_order_has_no_notification_at_this_time" />
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"

@@ -95,6 +95,11 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         _videoView.stopPlayback();
     }
 
+    @Override
+    public void onBackPressed() {
+        return;
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/

@@ -85,7 +85,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
 	/*-*********************************-*/
     /*-				Events				-*/
-	/*-*********************************-*/
+    /*-*********************************-*/
 
     /**
      * Implements the AuthenticationServer interface.
@@ -142,7 +142,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
 /*
-			Intent gohome = new Intent(this, MyWorkActivity.class);
+            Intent gohome = new Intent(this, MyWorkActivity.class);
 			startActivity(gohome);
 */
                 onBackPressed();
@@ -206,6 +206,9 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         if (_removing)
             return;
 
+        if (isFinishing())
+            return;
+
         Log.v(TAG, "getAccount() not authenticating");
 
         _authenticating = true;
@@ -216,7 +219,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         Log.v(TAG, "Found accounts: " + accounts.length);
         AccountManagerFuture<Bundle> future = null;
         if (accounts.length == 0) {
-            future = _accountManager.addAccount(_gs.accountType, null, null, null, this, null, new Handler());
+            future = _accountManager.addAccount(_gs.accountType, null, null, null, this, null, null);
 
         } else if (accounts.length == 1) {
             _account = accounts[0];
