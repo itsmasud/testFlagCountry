@@ -5,14 +5,14 @@
         jar="C:\Users\Michael\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libUndobar\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="2d65d8be73b24c34f646a51cd5fec2ed01a06d4e">
+        sha1="4893bba9e7a91299506a7ad1a0c9ad270c718bb4">
         <dex dex="C:\Users\Michael\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-98333493b5cd013849b08c96a48ed931d016d26f.jar" />
     </item>
     <item
         jar="C:\Users\Michael\Code\android_dev\projects\FieldNation\libUtils\build\libs\libUtils.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="b6ff357775b5d21b574e16542ef33e7ef385f423">
+        sha1="fc5ea47f28cfe2446ed1206f68d5784849ada409">
         <dex dex="C:\Users\Michael\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libUtils-1cb1610def4199c62d99d623c8af61ea520fcd6d.jar" />
     </item>
     <item
@@ -26,7 +26,7 @@
         jar="C:\Users\Michael\Code\android_dev\projects\FieldNation\libJson\build\libs\libJson.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="333d05e9b6ebf27374dbdae5b533b9742cd8d25a">
+        sha1="ee79999a41564b4ba18d5d9a1b9aef922f891ec7">
         <dex dex="C:\Users\Michael\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libJson-654f35d280609efa5c493901a3be2777c20c1eb5.jar" />
     </item>
     <item
@@ -75,7 +75,7 @@
         jar="C:\Users\Michael\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="bd9c52ede3743c12730135bd4bb8aa0c3b3b6ddf">
+        sha1="bdf758ac1d825b3c5a8be50c0e21f4be83ac1996">
         <dex dex="C:\Users\Michael\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-64dc67f29b1c819a484ce8c87e2a82b1ead8d85e.jar" />
     </item>
 
