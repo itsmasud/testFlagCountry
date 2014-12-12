@@ -633,7 +633,9 @@ public class Workorder implements Parcelable {
         WorkorderSubstatus substatus = getWorkorderSubstatus();
 
         if (status == WorkorderStatus.ASSIGNED || status == WorkorderStatus.INPROGRESS) {
-            if (substatus == WorkorderSubstatus.CHECKEDIN || substatus == WorkorderSubstatus.CONFIRMED) {
+            if (substatus == WorkorderSubstatus.CHECKEDIN
+                    || substatus == WorkorderSubstatus.CONFIRMED
+                    || substatus == WorkorderSubstatus.CHECKEDOUT) {
                 return true;
             }
         }
@@ -645,7 +647,9 @@ public class Workorder implements Parcelable {
         WorkorderSubstatus substatus = getWorkorderSubstatus();
 
         if (status == WorkorderStatus.ASSIGNED || status == WorkorderStatus.INPROGRESS) {
-            if (substatus == WorkorderSubstatus.CHECKEDIN || substatus == WorkorderSubstatus.CONFIRMED) {
+            if (substatus == WorkorderSubstatus.CHECKEDIN
+                    || substatus == WorkorderSubstatus.CONFIRMED
+                    || substatus == WorkorderSubstatus.CHECKEDOUT) {
                 return true;
             }
         }
@@ -661,13 +665,16 @@ public class Workorder implements Parcelable {
         if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE) {
             WorkorderSubstatus substatus = getWorkorderSubstatus();
 
-            return !canAcceptWork() && substatus != WorkorderSubstatus.REQUESTED && substatus != WorkorderSubstatus.COUNTEROFFERED;
+            return !canAcceptWork()
+                    && substatus != WorkorderSubstatus.REQUESTED
+                    && substatus != WorkorderSubstatus.COUNTEROFFERED;
         }
         return false;
     }
 
     public boolean canAcceptWork() {
-        return getWorkorderStatus() == WorkorderStatus.AVAILABLE && getWorkorderSubstatus() == WorkorderSubstatus.ROUTED;
+        return getWorkorderStatus() == WorkorderStatus.AVAILABLE
+                && getWorkorderSubstatus() == WorkorderSubstatus.ROUTED;
     }
 
     public boolean canChangeDeliverables() {
@@ -675,37 +682,40 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canViewConfidentialInfo() {
-        return getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS;
+        return getWorkorderStatus() == WorkorderStatus.ASSIGNED
+                || getWorkorderStatus() == WorkorderStatus.INPROGRESS;
     }
 
     public boolean canChangeCustomFields() {
-        return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
-                && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+        return (getWorkorderStatus() == WorkorderStatus.ASSIGNED
+                || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
+                && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN
+                    || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
+                    || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canChangeClosingNotes() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                    || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canViewDeliverables() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                    || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canModifyTasks() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
-                && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                    && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
+                        || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canModifyTimeLog() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                    || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canCheckout() {

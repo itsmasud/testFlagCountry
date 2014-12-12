@@ -55,8 +55,14 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
         _noteManager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
         _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
 
-        Intent data = _bundle.getParcelable(KEY_PARAM_FILE_DATA_INTENT);
-        FileHelper.getFileFromActivityResult(_context, data, this);
+        if (_bundle.containsKey(KEY_PARAM_FILE_DATA_INTENT)) {
+            Intent data = _bundle.getParcelable(KEY_PARAM_FILE_DATA_INTENT);
+            FileHelper.getFileFromActivityResult(_context, data, this);
+        } else {
+            String filename = _bundle.getString(KEY_PARAM_FILE_NAME);
+            File f = new File(filename);
+            fileReady(f.getName(), f);
+        }
     }
 
     @Override

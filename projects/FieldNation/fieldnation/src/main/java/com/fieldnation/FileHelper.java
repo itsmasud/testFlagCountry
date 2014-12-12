@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.fieldnation.utils.ISO8601;
@@ -22,21 +24,32 @@ import java.io.OutputStream;
  * Created by michael.carver on 11/20/2014.
  */
 public class FileHelper {
+    private static final String TAG = "FileHelper";
 
     public static void getFileFromActivityResult(Context context, Intent data, Listener listener) {
+
         if (data == null) {
             listener.fail("No data available");
             return;
         }
 
         try {
-            // generate temp file
-            File externalPath = Environment.getExternalStorageDirectory();
-            String packageName = context.getPackageName();
-            File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
-            temppath.mkdirs();
-            File tempfile = File.createTempFile("DATA", null, temppath);
+            File tempfile = null;
 
+            Log.v(TAG, data.getParcelableExtra(MediaStore.EXTRA_OUTPUT).toString());
+
+            if (data.getExtras().containsKey(MediaStore.EXTRA_OUTPUT)) {
+                tempfile = new File(data.getParcelableExtra(MediaStore.EXTRA_OUTPUT).toString());
+                listener.fileReady(tempfile.getName(), tempfile);
+                return;
+            } else {
+                // generate temp file
+                File externalPath = Environment.getExternalStorageDirectory();
+                String packageName = context.getPackageName();
+                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+                temppath.mkdirs();
+                tempfile = File.createTempFile("DATA", null, temppath);
+            }
 
             String filename = null;
             boolean gotData = false;

@@ -6,11 +6,11 @@ import com.fieldnation.json.annotations.Json;
 
 public class SlotData{
 	@Json(name="maxFileSize")
-	private Object _maxFileSize;
+	private Long _maxFileSize;
 	@Json(name="maxFiles")
 	private Integer _maxFiles;
 	@Json(name="minFileSize")
-	private Object _minFileSize;
+	private Long _minFileSize;
 	@Json(name="minFiles")
 	private Integer _minFiles;
 	@Json(name="slotId")
@@ -20,7 +20,7 @@ public class SlotData{
 
 	public SlotData(){
 	}
-	public Object getMaxFileSize(){
+	public Long getMaxFileSize(){
 		return _maxFileSize;
 	}
 
@@ -28,7 +28,7 @@ public class SlotData{
 		return _maxFiles;
 	}
 
-	public Object getMinFileSize(){
+	public Long getMinFileSize(){
 		return _minFileSize;
 	}
 

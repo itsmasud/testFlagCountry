@@ -206,46 +206,45 @@ public class WebService implements WebServiceConstants {
         return intent;
     }
 
-//    public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, String fileName,
-//                               byte[] filedata, Map<String, String> fields, String contentType, PendingIntent notificationIntent) {
-//        Intent intent = new Intent(_context, DataService.class);
-//        intent.setAction(DataServiceConstants.ACTION_RPC);
-//        intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
-//        intent.putExtra(KEY_PARAM_AUTH_TOKEN, _authToken);
-//        intent.putExtra(KEY_PARAM_USERNAME, _username);
-//        intent.putExtra(KEY_METHOD, METHOD_HTTP_POST_FILE);
-//        intent.putExtra(KEY_PARAM_PATH, path);
-//        intent.putExtra(KEY_PARAM_OPTIONS, options);
-//        intent.putExtra(KEY_RESULT_CODE, resultCode);
-//        intent.putExtra(KEY_PARAM_FILE_DATA, filedata);
-//        intent.putExtra(KEY_PARAM_FILE_FIELD_NAME, fileFieldName);
-//        intent.putExtra(KEY_PARAM_FILE_NAME, fileName);
-//        intent.putExtra(KEY_PARAM_NOTIFICATION_INTENT, notificationIntent);
-//        intent.putExtra(KEY_PARAM_CONTENT_TYPE, contentType);
-//
-//        if (fields != null && fields.size() > 0) {
-//            JsonObject obj = new JsonObject();
-//
-//            Iterator<String> iter = fields.keySet().iterator();
-//            while (iter.hasNext()) {
-//                String key = iter.next();
-//                try {
-//                    obj.put(key, fields.get(key));
-//                } catch (ParseException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            intent.putExtra(KEY_PARAM_FIELD_MAP, obj.toString());
-//        }
-//
-//        if (_callback != null) {
-//            intent.putExtra(KEY_PARAM_CALLBACK, _callback);
-//        }
-//
-//        return intent;
-//    }
+    public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, String localFilename,
+                               Map<String, String> fields, String contentType, PendingIntent notificationIntent) {
+        Intent intent = new Intent(_context, DataService.class);
+        intent.setAction(DataServiceConstants.ACTION_RPC);
+        intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+        intent.putExtra(KEY_PARAM_AUTH_TOKEN, _authToken);
+        intent.putExtra(KEY_PARAM_USERNAME, _username);
+        intent.putExtra(KEY_METHOD, METHOD_HTTP_POST_FILE);
+        intent.putExtra(KEY_PARAM_PATH, path);
+        intent.putExtra(KEY_PARAM_OPTIONS, options);
+        intent.putExtra(KEY_RESULT_CODE, resultCode);
+        intent.putExtra(KEY_PARAM_FILE_FIELD_NAME, fileFieldName);
+        intent.putExtra(KEY_PARAM_FILE_NAME, localFilename);
+        intent.putExtra(KEY_PARAM_NOTIFICATION_INTENT, notificationIntent);
+        intent.putExtra(KEY_PARAM_CONTENT_TYPE, contentType);
+
+        if (fields != null && fields.size() > 0) {
+            JsonObject obj = new JsonObject();
+
+            Iterator<String> iter = fields.keySet().iterator();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                try {
+                    obj.put(key, fields.get(key));
+                } catch (ParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            intent.putExtra(KEY_PARAM_FIELD_MAP, obj.toString());
+        }
+
+        if (_callback != null) {
+            intent.putExtra(KEY_PARAM_CALLBACK, _callback);
+        }
+
+        return intent;
+    }
 
     public Intent httpGet(int resultCode, String path, boolean allowCache) {
         return httpGet(resultCode, path, null, allowCache);

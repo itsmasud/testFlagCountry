@@ -59,6 +59,7 @@
         <activity
             android:name="com.fieldnation.auth.server.AuthActivity"
             android:exported="true"
+            android:noHistory="true"
             android:label="@string/activity_login_title" />
         <activity
             android:name="com.fieldnation.ui.workorder.WorkorderActivity"
@@ -144,7 +145,7 @@
         <service
             android:name="com.fieldnation.auth.server.AuthService"
             android:exported="true"
-            android:process=":bg">
+            android:process="">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -156,7 +157,11 @@
         <service
             android:name="com.fieldnation.rpc.server.DataService"
             android:exported="false"
-            android:process=":bg" />
+            android:process="" />
+        <service
+            android:name=".topics.TopicService"
+            android:exported="false"
+            android:process=":topics" />
         <service
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"

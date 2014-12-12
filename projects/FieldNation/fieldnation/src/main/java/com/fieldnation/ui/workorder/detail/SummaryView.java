@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -99,6 +100,9 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void refresh() {
+        setLoading(false);
+        setVisibility(View.VISIBLE);
+
         _progress.setSubstatus(_workorder.getStatus().getWorkorderSubstatus());
         _projectNameTextView.setText(_workorder.getTitle());
 
@@ -111,11 +115,10 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
             _companyTextView.setText(_workorder.getCompanyName());
         }
 
-        _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription().toString(), Linkify.ALL));
+        _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
+        _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
         _worktypeTextView.setText(_workorder.getTypeOfWork());
-        setLoading(false);
-        setVisibility(View.VISIBLE);
 
         if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
             _bundleWarningTextView.setVisibility(View.VISIBLE);
