@@ -159,6 +159,10 @@
             android:exported="false"
             android:process="" />
         <service
+            android:name=".topics.TopicService"
+            android:exported="false"
+            android:process=":topics" />
+        <service
             android:name="com.fieldnation.rpc.server.SyncService"
             android:exported="true"
             android:process=":sync">

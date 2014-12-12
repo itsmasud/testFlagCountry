@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -18,6 +19,8 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicReceiver;
+import com.fieldnation.topics.TopicService;
 
 public class NotificationActionBarView extends RelativeLayout {
     private static final String TAG = "ui.NotificationActionBarView";
@@ -32,7 +35,7 @@ public class NotificationActionBarView extends RelativeLayout {
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     public NotificationActionBarView(Context context) {
         this(context, null, -1);
@@ -56,6 +59,8 @@ public class NotificationActionBarView extends RelativeLayout {
         setOnClickListener(_this_onClick);
 
         _gs.requestAuthentication(_authclient);
+
+        TopicService.registerListener(getContext(), 1, "NOTIFICATION_TEST", _topicReceiver);
     }
 
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
@@ -83,6 +88,29 @@ public class NotificationActionBarView extends RelativeLayout {
         @Override
         public GlobalState getGlobalState() {
             return _gs;
+        }
+    };
+
+    private TopicReceiver _topicReceiver = new TopicReceiver() {
+        @Override
+        public void onRegister(int resultCode, String topicId, int uid) {
+            // TODO STUB TopicReceiver.onRegister()
+            Log.v(TAG, "STUB .onRegister()");
+
+        }
+
+        @Override
+        public void onUnregister(int resultCode, String topicId, int uid) {
+            // TODO STUB TopicReceiver.onUnregister()
+            Log.v(TAG, "STUB .onUnregister()");
+
+        }
+
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            // TODO STUB TopicReceiver.onTopic()
+            Log.v(TAG, "STUB .onTopic()");
+
         }
     };
 
