@@ -83,7 +83,7 @@ public class misc {
         for (URLSpan span : currentSpans) {
             int end = text.getSpanEnd(span);
             int start = text.getSpanStart(span);
-            buffer.setSpan(span, start, end, 0);
+            buffer.setSpan(span, start, end, text.getSpanFlags(span));
         }
         return buffer;
     }
@@ -97,7 +97,7 @@ public class misc {
         for (URLSpan span : currentSpans) {
             int end = text.getSpanEnd(span);
             int start = text.getSpanStart(span);
-            buffer.setSpan(span, start, end, 0);
+            buffer.setSpan(span, start, end, text.getSpanFlags(span));
         }
         return buffer;
     }
