@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -37,7 +38,9 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.ISO8601;
 
+import java.io.File;
 import java.security.SecureRandom;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -82,6 +85,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private int _uploadCount = 0;
     private int _deleteCount = 0;
     private boolean _isCached = true;
+    private File _tempFile;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -273,11 +277,19 @@ public class DeliverableFragment extends WorkorderFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
+
         if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
             _refreshView.startRefreshing();
-            _gs.startService(_service.uploadDeliverable(
-                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                    _uploadingSlot.getSlotId(), data, getNotificationIntent()));
+
+            if (data == null) {
+                _gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                        _workorder.getWorkorderId(), _uploadingSlot.getSlotId(),
+                        _tempFile.getAbsolutePath(), getNotificationIntent()));
+            } else {
+                _gs.startService(_service.uploadDeliverable(
+                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                        _uploadingSlot.getSlotId(), data, getNotificationIntent()));
+            }
 
             _uploadingSlotView.addUploading("Selected File");
         }
@@ -348,6 +360,12 @@ public class DeliverableFragment extends WorkorderFragment {
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
+                String packageName = getActivity().getPackageName();
+                File externalPath = Environment.getExternalStorageDirectory();
+                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
+                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + ISO8601.now() + ".png");
+                _tempFile = temppath;
+                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
             }
             // next: see onActivityResult()
@@ -361,10 +379,8 @@ public class DeliverableFragment extends WorkorderFragment {
     private AuthenticationClient _authClient = new AuthenticationClient() {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _service = new WorkorderService(_gs, username, authToken,
-                    _resultReceiver);
-            _profileService = new ProfileService(_gs, username, authToken,
-                    _resultReceiver);
+            _service = new WorkorderService(_gs, username, authToken, _resultReceiver);
+            _profileService = new ProfileService(_gs, username, authToken, _resultReceiver);
             getData();
         }
 
