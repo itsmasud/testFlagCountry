@@ -18,6 +18,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.DetailFragment;
@@ -155,6 +156,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
 //        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
         setLoading(true);
         populateUi(true);
+
+        TopicService.dispatchTopic(this, "NOTIFICATION_TEST", null);
     }
 
     @Override
