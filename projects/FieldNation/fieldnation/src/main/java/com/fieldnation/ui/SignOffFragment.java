@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,8 +136,8 @@ public class SignOffFragment extends FragmentBase {
             return;
 
         _titleTextView.setText(_workorder.getTitle());
-        _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
-        _descriptionTextView.setLinksClickable(false);
+        _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
+        //_descriptionTextView.setLinksClickable(false);
 
         LoggedWork[] logs = _workorder.getLoggedWork();
         if (logs != null && logs.length > 0) {
