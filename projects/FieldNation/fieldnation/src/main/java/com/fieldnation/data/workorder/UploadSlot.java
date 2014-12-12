@@ -5,77 +5,78 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class UploadSlot {
-	@Json(name="maxFileSize")
-	private Object _maxFileSize;
-	@Json(name = "maxFiles")
-	private Integer _maxFiles;
-	@Json(name="minFileSize")
-	private Object _minFileSize;
-	@Json(name = "minFiles")
-	private Integer _minFiles;
-	@Json(name = "slotId")
-	private Integer _slotId;
-	@Json(name = "slotName")
-	private String _slotName;
-	@Json(name="task")
-	private Task _task;
-	@Json(name = "uploadedDocuments")
-	private UploadedDocument[] _uploadedDocuments;
+    @Json(name = "maxFileSize")
+    private Object _maxFileSize;
+    @Json(name = "maxFiles")
+    private Integer _maxFiles;
+    @Json(name = "minFileSize")
+    private Object _minFileSize;
+    @Json(name = "minFiles")
+    private Integer _minFiles;
+    @Json(name = "slotId")
+    private Integer _slotId;
+    @Json(name = "slotName")
+    private String _slotName;
+    @Json(name = "task")
+    private Task _task;
+    @Json(name = "uploadedDocuments")
+    private UploadedDocument[] _uploadedDocuments;
 
-	public UploadSlot() {
-	}
-	public Object getMaxFileSize(){
-		return _maxFileSize;
-	}
+    public UploadSlot() {
+    }
 
-	public Integer getMaxFiles() {
-		return _maxFiles;
-	}
+    public Object getMaxFileSize() {
+        return _maxFileSize;
+    }
 
-	public Object getMinFileSize(){
-		return _minFileSize;
-	}
+    public Integer getMaxFiles() {
+        return _maxFiles;
+    }
 
-	public Integer getMinFiles() {
-		return _minFiles;
-	}
+    public Object getMinFileSize() {
+        return _minFileSize;
+    }
 
-	public Integer getSlotId() {
-		return _slotId;
-	}
+    public Integer getMinFiles() {
+        return _minFiles;
+    }
 
-	public String getSlotName() {
-		return _slotName;
-	}
+    public Integer getSlotId() {
+        return _slotId;
+    }
 
-	public Task getTask() {
-		return _task;
-	}
+    public String getSlotName() {
+        return _slotName;
+    }
 
-	public UploadedDocument[] getUploadedDocuments() {
-		return _uploadedDocuments;
-	}
+    public Task getTask() {
+        return _task;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public UploadedDocument[] getUploadedDocuments() {
+        return _uploadedDocuments;
+    }
 
-	public static JsonObject toJson(UploadSlot uploadSlot) {
-		try {
-			return Serializer.serializeObject(uploadSlot);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static UploadSlot fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(UploadSlot.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(UploadSlot uploadSlot) {
+        try {
+            return Serializer.serializeObject(uploadSlot);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static UploadSlot fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(UploadSlot.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }

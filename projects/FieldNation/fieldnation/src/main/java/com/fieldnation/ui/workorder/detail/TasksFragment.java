@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
@@ -58,6 +59,7 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 
+import java.io.File;
 import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -122,6 +124,7 @@ public class TasksFragment extends WorkorderFragment {
     private GPSLocationService _gPSLocationService;
     private boolean _isCached = true;
     private List<Signature> _signatures = null;
+    private File _tempFile;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -419,9 +422,16 @@ public class TasksFragment extends WorkorderFragment {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
         if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
-            _gs.startService(_service.uploadDeliverable(
-                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                    _currentTask.getSlotId(), data, getNotificationIntent()));
+
+            if (data == null) {
+                _gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
+                        _tempFile.getAbsolutePath(), getNotificationIntent()));
+            } else {
+                _gs.startService(_service.uploadDeliverable(
+                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                        _currentTask.getSlotId(), data, getNotificationIntent()));
+            }
             // todo notify task view that the file is uploading
 
         }
@@ -890,6 +900,12 @@ public class TasksFragment extends WorkorderFragment {
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
+                String packageName = getActivity().getPackageName();
+                File externalPath = Environment.getExternalStorageDirectory();
+                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
+                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + ISO8601.now() + ".png");
+                _tempFile = temppath;
+                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
             }
         }

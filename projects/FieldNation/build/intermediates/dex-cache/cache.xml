@@ -2,25 +2,11 @@
 <items version="2" >
 
     <item
-        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\classes.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="d1bf02de1c56d942e7a9d093b8610ba1ef4128e3">
-        <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-ffb4397cc9d65e24d4f1544fab5b53bf6a9236ae.jar" />
-    </item>
-    <item
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="4d82ef2fb69179e3b079b87869ac74b6371cfbc3">
+        sha1="87fdf9e6def5a9634e43721b4848ad3cd64f7b2d">
         <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-eb2c1ee3a0e248d5de892345863644d01b6a812a.jar" />
-    </item>
-    <item
-        jar="D:\dev\fn\projects\FieldNation\libUtils\build\libs\libUtils.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="ec58091aaada98c56bfba5127c2a6a3e5c8cb71a">
-        <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libUtils-72024576d9a0b8ec25f7bdb07b4259d4a706dde5.jar" />
     </item>
     <item
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.2\classes.jar"
@@ -44,20 +30,6 @@
         <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-878b69e016da7154227bd3b9200e4ca97a7d2ba5.jar" />
     </item>
     <item
-        jar="D:\dev\fn\projects\FieldNation\libJson\build\libs\libJson.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="dda8f2e19e106078795d44048edac64969123b0e">
-        <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libJson-b43012cbbf7e3961edef567c9d79e1aa9c375890.jar" />
-    </item>
-    <item
-        jar="C:\Users\michael.carver\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
-        <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\library-2.4.0-02af723547a0f8bec5a243d122572a6b2074c6d8.jar" />
-    </item>
-    <item
         jar="D:\dev\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.2\support-annotations-21.0.2.jar"
         jumboMode="false"
         revision="21.1.1"
@@ -75,8 +47,36 @@
         jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libUndobar\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="517e26e7e7811525a5f90636b7d6d0d50773a585">
+        sha1="7b6496ed52e9fd1c4bd0f37dd1cd6889f4a9976f">
         <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-48306ee339be4e0e6de715c528aa76c3c4af0103.jar" />
+    </item>
+    <item
+        jar="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="d1bf02de1c56d942e7a9d093b8610ba1ef4128e3">
+        <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-ffb4397cc9d65e24d4f1544fab5b53bf6a9236ae.jar" />
+    </item>
+    <item
+        jar="D:\dev\fn\projects\FieldNation\libUtils\build\libs\libUtils.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="30e4be4abdce8bf42ea4d8c32c4358b835ee7239">
+        <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libUtils-72024576d9a0b8ec25f7bdb07b4259d4a706dde5.jar" />
+    </item>
+    <item
+        jar="D:\dev\fn\projects\FieldNation\libJson\build\libs\libJson.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="7e0b0512b6ce5126049cee022b70831d86f7a8d3">
+        <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libJson-b43012cbbf7e3961edef567c9d79e1aa9c375890.jar" />
+    </item>
+    <item
+        jar="C:\Users\michael.carver\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="D:\dev\fn\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\library-2.4.0-02af723547a0f8bec5a243d122572a6b2074c6d8.jar" />
     </item>
 
 </items>
