@@ -2,7 +2,10 @@ package com.fieldnation.topics;
 
 import android.os.ResultReceiver;
 
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * Created by michael.carver on 12/12/2014.
@@ -10,29 +13,67 @@ import java.util.Hashtable;
 public class TopicClient {
     public int resultCode;
     public ResultReceiver receiver;
-    public int id;
-    public String topicId;
+    public String tag;
+    public Set<String> topics = new HashSet<String>();
     public boolean isValid = true;
 
     private static Integer _counter = 0;
-    private static Hashtable<Integer, TopicClient> _instances = new Hashtable<>();
 
-    public TopicClient() {
-        synchronized (_counter) {
-            _counter++;
-            id = _counter;
-            _instances.put(id, this);
+    private static Hashtable<String, TopicClient> _instances = new Hashtable<>();
+    private static Hashtable<String, Set<TopicClient>> _topics = new Hashtable<>();
+
+    public TopicClient(String tag) {
+        this.tag = tag;
+    }
+
+    public static Set<TopicClient> getSet(String topic) {
+        if (!_topics.containsKey(topic)) {
+            _topics.put(topic, new HashSet<TopicClient>());
         }
+
+        return _topics.get(topic);
     }
 
-    public static TopicClient remove(int uid) {
-        _instances.get(uid).isValid = false;
-        return _instances.remove(uid);
+
+    public static TopicClient get(String tag) {
+        if (!_instances.containsKey(tag)) {
+            _instances.put(tag, new TopicClient(tag));
+        }
+
+        return _instances.get(tag);
     }
 
-    public static void clearAll() {
-        _instances.clear();
-        _instances = null;
-        _counter = 0;
+    public static void delete(String tag) {
+        TopicClient c = _instances.get(tag);
+
+        Enumeration<String> e = _topics.keys();
+        while (e.hasMoreElements()) {
+            String key = e.nextElement();
+            Set<TopicClient> clients = getSet(key);
+
+            if (clients.contains(c))
+                clients.remove(c);
+        }
+
+        _instances.remove(tag);
+    }
+
+    public static void unregister(String tag, String topic) {
+        TopicClient c = get(tag);
+        c.topics.remove(topic);
+
+        Set<TopicClient> clients = getSet(topic);
+        clients.remove(c);
+    }
+
+
+    public void addTopic(String topic) {
+        topics.add(topic);
+        getSet(topic).add(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return tag.hashCode();
     }
 }

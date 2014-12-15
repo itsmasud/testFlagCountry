@@ -60,7 +60,7 @@ public class NotificationActionBarView extends RelativeLayout {
 
         _gs.requestAuthentication(_authclient);
 
-        TopicService.registerListener(getContext(), 1, "NOTIFICATION_TEST", _topicReceiver);
+        TopicService.registerListener(getContext(), 1, TAG, "NOTIFICATION_TEST", _topicReceiver);
     }
 
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
@@ -93,14 +93,14 @@ public class NotificationActionBarView extends RelativeLayout {
 
     private TopicReceiver _topicReceiver = new TopicReceiver() {
         @Override
-        public void onRegister(int resultCode, String topicId, int uid) {
+        public void onRegister(int resultCode, String topicId) {
             // TODO STUB TopicReceiver.onRegister()
             Log.v(TAG, "STUB .onRegister()");
 
         }
 
         @Override
-        public void onUnregister(int resultCode, String topicId, int uid) {
+        public void onUnregister(int resultCode, String topicId) {
             // TODO STUB TopicReceiver.onUnregister()
             Log.v(TAG, "STUB .onUnregister()");
 
