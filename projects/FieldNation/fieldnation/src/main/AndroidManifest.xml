@@ -143,7 +143,11 @@
             android:label="Signature Info" />
 
         <service
-            android:name="com.fieldnation.auth.server.AuthService"
+            android:name=".auth.client.AuthTopicService"
+            android:exported="false"
+            android:process="" />
+        <service
+            android:name=".auth.server.AuthService"
             android:exported="true"
             android:process="">
             <intent-filter>

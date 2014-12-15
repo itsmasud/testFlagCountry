@@ -12,7 +12,8 @@ import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -22,6 +23,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -41,7 +43,9 @@ import java.util.List;
 import java.util.Set;
 
 public class WorkorderListFragment extends Fragment {
-    private static final String TAG = "ui.workorder.WorkorderListFragment";
+    private static final String TAG_ROOT = "ui.workorder.WorkorderListFragment";
+    private String TAG = ":";
+    private static Integer TAG_COUNT = 0;
 
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
@@ -68,7 +72,6 @@ public class WorkorderListFragment extends Fragment {
     private TermsDialog _termsDialog;
 
     // Data
-    private GlobalState _gs;
     private String _username;
     private String _authToken;
     private WorkorderService _service;
@@ -85,6 +88,13 @@ public class WorkorderListFragment extends Fragment {
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
+    public WorkorderListFragment() {
+        super();
+        synchronized (TAG_COUNT) {
+            TAG = TAG_ROOT + ":" + TAG_COUNT;
+            TAG_COUNT++;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,8 +118,6 @@ public class WorkorderListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        _gs = (GlobalState) getActivity().getApplicationContext();
 
         _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
         _loadingView.setListener(_refreshViewListener);
@@ -136,9 +144,16 @@ public class WorkorderListFragment extends Fragment {
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
-        _gs.requestAuthentication(_authClient);
+
+        AuthTopicService.startService(getActivity());
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
     }
 
+    @Override
+    public void onPause() {
+        TopicService.delete(getActivity(), 0, TAG);
+        super.onPause();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -500,14 +515,7 @@ public class WorkorderListFragment extends Fragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
-
+    private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver() {
         @Override
         public void onAuthentication(String username, String authToken) {
             _username = username;
@@ -519,8 +527,18 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationFailed() {
+            AuthTopicService.requestAuthentication(getActivity());
+        }
+
+        @Override
+        public void onAuthenticationInvalidated() {
+            AuthTopicService.requestAuthentication(getActivity());
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getActivity());
         }
     };
 
@@ -583,11 +601,7 @@ public class WorkorderListFragment extends Fragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null || _service.getAuthToken() != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(getActivity());
             _loadingView.refreshFailed();
             Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
         }

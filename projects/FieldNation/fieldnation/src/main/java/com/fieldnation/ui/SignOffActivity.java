@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
@@ -53,7 +53,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     private SorryFragment _sorryFrag;
 
     // Data
-    private GlobalState _gs;
     private WorkorderService _service;
 
     private int _displayMode = DISPLAY_SUMMARY;
@@ -68,9 +67,6 @@ public class SignOffActivity extends AuthFragmentActivity {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signoff);
-
-        _gs = (GlobalState) getApplicationContext();
-        _gs.requestAuthentication(_authClient);
 
         _signOffFrag = SignOffFragment.getInstance(getSupportFragmentManager(), TAG);
         _signOffFrag.setListener(_signOff_listener);
@@ -120,6 +116,15 @@ public class SignOffActivity extends AuthFragmentActivity {
 
             if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
                 _completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
+        }
+    }
+
+    @Override
+    public void onAuthentication(String username, String authToken) {
+        try {
+            _service = new WorkorderService(SignOffActivity.this, username, authToken, _resultReceiver);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -239,27 +244,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     /*-******************************-*/
     /*-             Web              -*/
     /*-******************************-*/
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-        @Override
-        public void onAuthentication(String username, String authToken) {
-            try {
-                _service = new WorkorderService(SignOffActivity.this, username, authToken, _resultReceiver);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
-
-        @Override
-        public GlobalState getGlobalState() {
-            return _gs;
-        }
-    };
-
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
@@ -285,10 +269,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(SignOffActivity.this);
             Toast.makeText(SignOffActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
             _thankYouFrag.setUploadComplete();
         }

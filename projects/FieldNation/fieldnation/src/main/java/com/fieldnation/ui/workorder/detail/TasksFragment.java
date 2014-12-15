@@ -24,7 +24,6 @@ import android.widget.Toast;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.LoggedWork;

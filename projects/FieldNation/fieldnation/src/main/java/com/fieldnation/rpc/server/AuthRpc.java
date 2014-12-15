@@ -175,7 +175,7 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
             if (accessToken != null) {
                 resultBundle.putString(AccountManager.KEY_AUTHTOKEN, accessToken);
                 resultBundle.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-                resultBundle.putString(AccountManager.KEY_ACCOUNT_TYPE, _gs.accountType);
+                resultBundle.putString(AccountManager.KEY_ACCOUNT_TYPE, context.getString(R.string.accounttype));
             } else {
                 resultBundle.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE, errorMessage);
             }

@@ -14,12 +14,14 @@ import android.widget.TextView;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -50,7 +52,6 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _paidLayout;
 
     // Data
-    private GlobalState _gs;
     private PaymentService _dataService;
     private boolean _hasPaid = false;
     private boolean _hasEstimated = false;
@@ -62,7 +63,7 @@ public class DrawerView extends RelativeLayout {
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
     public DrawerView(Context context) {
         super(context);
         init();
@@ -84,8 +85,8 @@ public class DrawerView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _gs = (GlobalState) getContext().getApplicationContext();
-        _gs.requestAuthentication(_authClient);
+        AuthTopicService.startService(getContext());
+        AuthTopicService.subscribeAuthState(getContext(), 0, TAG, _authReceiver);
 
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
         _myworkView.setOnClickListener(_myworkView_onClick);
@@ -111,9 +112,15 @@ public class DrawerView extends RelativeLayout {
         _estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        TopicService.delete(getContext(), 0, TAG);
+        super.finalize();
+    }
+
     /*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
     private View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -149,18 +156,11 @@ public class DrawerView extends RelativeLayout {
     private View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _gs.requestRemoveAccount(_authClient);
+            AuthTopicService.requestAuthRemove(getContext());
         }
     };
 
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
-
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
         @Override
         public void onAuthentication(String username, String authToken) {
             _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
@@ -170,8 +170,18 @@ public class DrawerView extends RelativeLayout {
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationFailed() {
+            AuthTopicService.requestAuthentication(getContext());
+        }
+
+        @Override
+        public void onAuthenticationInvalidated() {
+            AuthTopicService.requestAuthentication(getContext());
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getContext());
         }
     };
 

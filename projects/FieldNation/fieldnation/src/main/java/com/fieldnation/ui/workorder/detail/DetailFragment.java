@@ -12,7 +12,8 @@ import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -20,6 +21,7 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
@@ -69,7 +71,6 @@ public class DetailFragment extends WorkorderFragment {
 
     // Data
     private Workorder _workorder;
-    private GlobalState _gs;
     private WorkorderService _service;
 
 	/*-*************************************-*/
@@ -84,8 +85,6 @@ public class DetailFragment extends WorkorderFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        _gs = (GlobalState) getActivity().getApplicationContext();
-        _gs.requestAuthentication(_authClient);
 
         _sumView = (SummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
@@ -150,6 +149,15 @@ public class DetailFragment extends WorkorderFragment {
         if (_workorder != null) {
             setWorkorder(_workorder, true);
         }
+
+        AuthTopicService.startService(getActivity());
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+    }
+
+    @Override
+    public void onPause() {
+        TopicService.delete(getActivity(), 0, TAG);
+        super.onPause();
     }
 
     @Override
@@ -529,21 +537,25 @@ public class DetailFragment extends WorkorderFragment {
 
 
     // Web
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
-
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _service = new WorkorderService(getActivity(), username, authToken,
-                    _resultReceiver);
+            _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationFailed() {
+            AuthTopicService.requestAuthentication(getActivity());
+        }
+
+        @Override
+        public void onAuthenticationInvalidated() {
+            AuthTopicService.requestAuthentication(getActivity());
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getActivity());
         }
     };
 
@@ -562,10 +574,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };

@@ -133,14 +133,14 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                 String error = resultData.getString("error");
 
                 if (authToken != null) {
-                    Account account = new Account(_username, _gs.accountType);
+                    Account account = new Account(_username, getString(R.string.accounttype));
                     AccountManager am = AccountManager.get(AuthActivity.this);
                     am.addAccountExplicitly(account, _password, null);
-                    am.setAuthToken(account, _gs.accountType, authToken);
+                    am.setAuthToken(account, getString(R.string.accounttype), authToken);
 
                     Intent intent = new Intent();
                     intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-                    intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, _gs.accountType);
+                    intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.accounttype));
                     // intent.putExtra(AccountManager.KEY_AUTHTOKEN,
                     // Constants.FIELD_NATION_ACCOUNT_TYPE);
                     intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString("authtoken"));

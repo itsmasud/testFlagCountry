@@ -11,7 +11,8 @@ import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
@@ -19,6 +20,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -37,7 +39,6 @@ public class NotificationFragment extends WorkorderFragment {
     private RefreshView _refreshView;
 
     // Data
-    private GlobalState _gs;
     private Workorder _workorder;
     private Random _rand = new Random();
     private WorkorderService _service;
@@ -58,8 +59,6 @@ public class NotificationFragment extends WorkorderFragment {
         super.onViewCreated(view, savedInstanceState);
         Log.v(TAG, "onCreateView");
 
-        _gs = (GlobalState) getActivity().getApplicationContext();
-
         _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
@@ -68,7 +67,14 @@ public class NotificationFragment extends WorkorderFragment {
 
         _emptyTextView = (TextView) view.findViewById(R.id.empty_textview);
 
-        _gs.requestAuthentication(_authclient);
+        AuthTopicService.startService(getActivity());
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+    }
+
+    @Override
+    public void onPause() {
+        TopicService.delete(getActivity(), 0, TAG);
+        super.onPause();
     }
 
     @Override
@@ -80,7 +86,7 @@ public class NotificationFragment extends WorkorderFragment {
     public void setWorkorder(Workorder workorder, boolean isCached) {
         Log.v(TAG, "setWorkorder: wokorder==null:" + (workorder == null)
                 + " _service==null:" + (_service == null)
-                + " _gs==null:" + (_gs == null));
+                + " _gs==null:" + (getActivity() == null));
 
         _workorder = workorder;
 
@@ -132,7 +138,7 @@ public class NotificationFragment extends WorkorderFragment {
         WEB_LIST_NOTIFICATIONS = _rand.nextInt();
         _emptyTextView.setVisibility(View.GONE);
         try {
-            _gs.startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
+            getActivity().startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.v(TAG, "BP");
@@ -176,26 +182,30 @@ public class NotificationFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-
-    private AuthenticationClient _authclient = new AuthenticationClient() {
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            Log.v(TAG, "onAuthenticationFailed");
-            _gs.requestAuthenticationDelayed(_authclient);
-        }
-
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
         @Override
         public void onAuthentication(String username, String authToken) {
             Log.v(TAG, "onAuthentication");
-            _service = new WorkorderService(_gs, username, authToken, _resultReceiver);
+            _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
             getNotifications();
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationFailed() {
+            AuthTopicService.requestAuthentication(getActivity());
+        }
+
+        @Override
+        public void onAuthenticationInvalidated() {
+            AuthTopicService.requestAuthentication(getActivity());
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getActivity());
         }
     };
+
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
@@ -225,10 +235,7 @@ public class NotificationFragment extends WorkorderFragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authclient);
+            AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshComplete();
         }
