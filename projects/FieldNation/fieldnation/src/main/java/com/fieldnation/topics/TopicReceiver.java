@@ -1,6 +1,7 @@
 package com.fieldnation.topics;
 
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.ResultReceiver;
 
@@ -21,6 +22,8 @@ public abstract class TopicReceiver extends ResultReceiver implements TopicConst
             onUnregister(resultCode, resultData.getString(PARAM_TOPIC_ID));
         } else if (ACTION_DISPATCH_EVENT.equals(action)) {
             onTopic(resultCode, resultData.getString(PARAM_TOPIC_ID), resultData.getBundle(PARAM_TOPIC_PARCEL));
+        } else if (ACTION_DELETE_CLIENT.equals(action)) {
+            onDelete(resultCode, resultData.getString(PARAM_TOPIC_ID));
         }
     }
 
@@ -29,4 +32,6 @@ public abstract class TopicReceiver extends ResultReceiver implements TopicConst
     public abstract void onUnregister(int resultCode, String topicId);
 
     public abstract void onTopic(int resultCode, String topicId, Bundle parcel);
+
+    public abstract void onDelete(int resultCode, String topicId);
 }

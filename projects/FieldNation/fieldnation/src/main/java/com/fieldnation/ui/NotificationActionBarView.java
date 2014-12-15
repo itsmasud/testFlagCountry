@@ -112,6 +112,11 @@ public class NotificationActionBarView extends RelativeLayout {
             Log.v(TAG, "STUB .onTopic()");
 
         }
+
+        @Override
+        public void onDelete(int resultCode, String topicId) {
+
+        }
     };
 
     private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {

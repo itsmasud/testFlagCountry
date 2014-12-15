@@ -77,7 +77,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.main, menu);
 
         _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
-        // _notificationsView.setCount(10);
         _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
 
         return true;
@@ -194,7 +193,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
                 mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
                 System.exit(0);
             }
-
         }
     };
 
@@ -232,7 +230,5 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             Log.v(TAG, "got future");
             new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
         }
-
     }
-
 }
