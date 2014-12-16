@@ -92,6 +92,9 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         if (_workorder == null)
             return;
 
+        if (!_workorder.getIsAssignedToWorkorder())
+            return;
+
         setVisibility(View.VISIBLE);
 
         if (_signatures == null || _signatures.size() == 0) {
