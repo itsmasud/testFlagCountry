@@ -30,6 +30,9 @@ public class TopicService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
+        if (intent == null)
+            return START_STICKY;
+
         String action = intent.getAction();
 
         if (TopicConstants.ACTION_REGISTER_LISTENER.equals(action)) {

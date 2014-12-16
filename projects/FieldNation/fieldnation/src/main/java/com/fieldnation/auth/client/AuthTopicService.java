@@ -145,6 +145,7 @@ public class AuthTopicService extends Service {
                     _username = null;
                     _authToken = null;
                     dispatchAuthInvalid(AuthTopicService.this);
+                    requestAuthentication(AuthTopicService.this);
                 }
             } else if (BUNDLE_PARAM_TYPE_REQUEST.equals(type)) {
                 if (_account != null && !_removing) {

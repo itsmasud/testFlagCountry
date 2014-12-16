@@ -10,6 +10,9 @@ import com.fieldnation.topics.TopicReceiver;
  */
 public abstract class AuthTopicReceiver extends TopicReceiver {
 
+    private String lastusername = null;
+    private String lastauthtoken = null;
+
     public AuthTopicReceiver(Handler handler) {
         super(handler);
     }
@@ -22,8 +25,14 @@ public abstract class AuthTopicReceiver extends TopicReceiver {
     public void onTopic(int resultCode, String topicId, Bundle parcel) {
         String type = parcel.getString(AuthTopicService.BUNDLE_PARAM_TYPE);
         if (AuthTopicService.BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {
-            onAuthentication(parcel.getString(AuthTopicService.BUNDLE_PARAM_USERNAME),
-                    parcel.getString(AuthTopicService.BUNDLE_PARAM_AUTH_TOKEN));
+            String username = parcel.getString(AuthTopicService.BUNDLE_PARAM_USERNAME);
+            String authtoken = parcel.getString(AuthTopicService.BUNDLE_PARAM_AUTH_TOKEN);
+
+            if (!username.equals(lastusername) || !authtoken.equals(lastauthtoken)) {
+                lastusername = username;
+                lastauthtoken = authtoken;
+                onAuthentication(lastusername, lastauthtoken);
+            }
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
             onAuthenticationInvalidated();
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_FAILED.equals(type)) {

@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -52,6 +53,7 @@ import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
+import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -75,12 +77,16 @@ public class TasksFragment extends WorkorderFragment {
     private static final int RESULT_CODE_SEND_EMAIL = RESULT_CODE_BASE + 1;
     private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 3;
     private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 4;
+    private static final int RESULT_CODE_GET_SIGNATURE = RESULT_CODE_BASE + 5;
 
     // Web request result codes
     private static final int WEB_CHANGED = 1;
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
     private static final int WEB_GET_SIGNATURES = 4;
+
+    // Signature Flag
+    private static final String SIGNATURE_COMPLETE_WHEN_DONE = TAG + ":SIGNATURE_COMPLETE_WHEN_DONE";
 
     // saved state keys
     private static final String STATE_WORKORDER = "ui.workorder.detail.TasksFragment:STATE_WORKORDER";
@@ -111,6 +117,7 @@ public class TasksFragment extends WorkorderFragment {
     private CustomFieldDialog _customFieldDialog;
     private WorkLogDialog _worklogDialog;
     private TermsDialog _termsDialog;
+    private MarkCompleteDialog _markCompleteDialog;
 
     // Data
     private WorkorderService _service;
@@ -191,6 +198,9 @@ public class TasksFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
 
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+
+        _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
+        _markCompleteDialog.setListener(_markCompleteDialog_listener);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
@@ -441,6 +451,9 @@ public class TasksFragment extends WorkorderFragment {
             }
             // todo notify task view that the file is uploading
 
+        } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+            getActivity().startService(
+                    _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
         }
     }
 
@@ -456,6 +469,22 @@ public class TasksFragment extends WorkorderFragment {
         public void onStartRefresh() {
             if (_workorder != null)
                 _workorder.dispatchOnChange();
+        }
+    };
+
+    private MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
+        @Override
+        public void onSignatureClick() {
+            Intent intent = new Intent(getActivity(), SignOffActivity.class);
+            intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
+            intent.putExtra(SIGNATURE_COMPLETE_WHEN_DONE, true);
+            startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+        }
+
+        @Override
+        public void onContinueClick() {
+            getActivity().startService(
+                    _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
         }
     };
 
@@ -526,7 +555,7 @@ public class TasksFragment extends WorkorderFragment {
     private ActionBarTopView.Listener _actionBarTop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onComplete() {
-            getActivity().startService(_service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
+            _markCompleteDialog.show(_workorder);
         }
 
         @Override

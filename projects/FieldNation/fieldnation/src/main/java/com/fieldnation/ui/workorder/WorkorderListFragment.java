@@ -599,7 +599,7 @@ public class WorkorderListFragment extends Fragment {
             _service = null;
             AuthTopicService.requestAuthInvalid(getActivity());
             _loadingView.refreshFailed();
-            Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
         }
     };
 
