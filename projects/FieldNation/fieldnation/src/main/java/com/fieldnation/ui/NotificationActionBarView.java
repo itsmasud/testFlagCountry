@@ -5,15 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
@@ -29,7 +28,6 @@ public class NotificationActionBarView extends RelativeLayout {
     private TextView _countTextView;
 
     // data
-    private GlobalState _gs;
     private ProfileService _profileService;
     private Profile _profile = null;
 
@@ -38,29 +36,41 @@ public class NotificationActionBarView extends RelativeLayout {
     /*-*************************************-*/
 
     public NotificationActionBarView(Context context) {
-        this(context, null, -1);
+        super(context);
+        init();
     }
 
     public NotificationActionBarView(Context context, AttributeSet attrs) {
-        this(context, attrs, -1);
+        super(context, attrs);
+        init();
     }
 
     public NotificationActionBarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_notification_action_bar, this);
+        init();
+    }
+
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.view_notification_action_bar, this);
 
         _countTextView = (TextView) findViewById(R.id.count_textview);
 
         if (isInEditMode())
             return;
 
-        _gs = (GlobalState) context.getApplicationContext();
+        AuthTopicService.startService(getContext());
+        AuthTopicService.subscribeAuthState(getContext(), 0, TAG + ":AuthTopicService", _authReceiver);
+
         setOnClickListener(_this_onClick);
 
-        _gs.requestAuthentication(_authclient);
+        TopicService.registerListener(getContext(), 1, TAG + ":TopicService", ProfileService.TOPIC_PROFILE_INVALIDATED, _topicReceiver);
+    }
 
-        TopicService.registerListener(getContext(), 1, TAG, "NOTIFICATION_TEST", _topicReceiver);
+    @Override
+    protected void finalize() throws Throwable {
+        TopicService.delete(getContext(), 0, TAG + ":AuthTopicService");
+        TopicService.delete(getContext(), 0, TAG + ":TopicService");
+        super.finalize();
     }
 
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
@@ -71,51 +81,47 @@ public class NotificationActionBarView extends RelativeLayout {
         }
     };
 
-    private AuthenticationClient _authclient = new AuthenticationClient() {
-
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            //Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
-            _gs.requestAuthenticationDelayed(_authclient);
-        }
-
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
-            getContext().startService(_profileService.getMyUserInformation(0, true));
+            if (_profileService == null) {
+                _profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
+                getContext().startService(_profileService.getMyUserInformation(0, true));
+            }
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationFailed() {
+            _profileService = null;
+        }
+
+        @Override
+        public void onAuthenticationInvalidated() {
+            _profileService = null;
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getContext());
         }
     };
 
-    private TopicReceiver _topicReceiver = new TopicReceiver() {
+
+    private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
-            // TODO STUB TopicReceiver.onRegister()
-            Log.v(TAG, "STUB .onRegister()");
-
         }
 
         @Override
         public void onUnregister(int resultCode, String topicId) {
-            // TODO STUB TopicReceiver.onUnregister()
-            Log.v(TAG, "STUB .onUnregister()");
-
         }
 
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            // TODO STUB TopicReceiver.onTopic()
-            Log.v(TAG, "STUB .onTopic()");
-
-        }
-
-        @Override
-        public void onDelete(int resultCode, String topicId) {
-
+            if (topicId.equals(ProfileService.TOPIC_PROFILE_INVALIDATED)) {
+                if (_profileService != null)
+                    getContext().startService(_profileService.getMyUserInformation(0, false));
+            }
         }
     };
 
@@ -129,7 +135,7 @@ public class NotificationActionBarView extends RelativeLayout {
                 //Log.v(TAG, raw);
                 JsonObject obj = new JsonObject(raw);
                 _profile = Profile.fromJson(obj);
-                refresh();
+                refresh(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -138,14 +144,12 @@ public class NotificationActionBarView extends RelativeLayout {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_profileService != null) {
-                _gs.invalidateAuthToken(_profileService.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authclient);
+            AuthTopicService.requestAuthInvalid(getContext());
+            _profileService = null;
         }
     };
 
-    private void refresh() {
+    private void refresh(boolean isCached) {
         if (_profile == null)
             return;
 
@@ -161,5 +165,7 @@ public class NotificationActionBarView extends RelativeLayout {
                 _countTextView.setText(count + "");
             }
         }
+
+        //TODO if is cached consider requesting a new version
     }
 }

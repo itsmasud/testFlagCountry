@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.topics.TopicService;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -43,13 +45,32 @@ public class MessageListActivity extends ItemListActivity<Message> {
         }
 
         v.setMessage(object);
+        v.setOnClickListener(_message_onClick);
 
         return v;
     }
 
+    private View.OnClickListener _message_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            MessageCardView mv = (MessageCardView) v;
+            Intent intent = new Intent(MessageListActivity.this, WorkorderActivity.class);
+            intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
+            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, mv.getMessage().getWorkorderId());
+            startActivity(intent);
+        }
+    };
+
     @Override
     public void onAuthentication(String username, String authToken, ResultReceiver resultReceiver) {
-        _service = new ProfileService(this, username, authToken, resultReceiver);
+        if (_service == null) {
+            _service = new ProfileService(this, username, authToken, resultReceiver);
+        }
+    }
+
+    @Override
+    public void invalidateService() {
+        _service = null;
     }
 
     @Override
@@ -71,11 +92,10 @@ public class MessageListActivity extends ItemListActivity<Message> {
             }
         }
 
+        // tell the system that the profile info is now invalid
+        TopicService.dispatchTopic(this, ProfileService.TOPIC_PROFILE_INVALIDATED, null);
+
         return list;
     }
 
-    @Override
-    public void invalidateService() {
-        _service = null;
-    }
 }

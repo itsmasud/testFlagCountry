@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
+import android.util.Log;
 import android.view.View;
 
 import com.fieldnation.R;
@@ -52,6 +53,12 @@ public class MyWorkActivity extends DrawerActivity {
 
 //        _customFieldDialog = CustomFieldDialog.getInstance(getSupportFragmentManager(), TAG);
 //        _customFieldDialog.sho
+    }
+
+    @Override
+    public void onAuthentication(String username, String authToken) {
+        // TODO STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()
+        Log.v(TAG, "STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()");
     }
 
     private void buildTabs(Bundle savedInstanceState) {

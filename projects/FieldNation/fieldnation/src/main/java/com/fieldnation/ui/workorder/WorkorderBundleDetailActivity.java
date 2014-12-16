@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
@@ -40,7 +40,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     private RelativeLayout _loadingLayout;
 
     // Data
-    private GlobalState _gs;
     private long _workorderId = 0;
     private long _bundleId = 0;
     private WorkorderService _service;
@@ -51,8 +50,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bundle_detail);
-
-        _gs = (GlobalState) getApplicationContext();
 
         Intent intent = getIntent();
 
@@ -81,9 +78,14 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         _requestButton.setOnClickListener(_request_onClick);
         _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
-        _gs.requestAuthentication(_authclient);
         _loadingLayout.setVisibility(View.VISIBLE);
         // TODO put into wait mode
+    }
+
+    @Override
+    public void onAuthentication(String username, String authToken) {
+        _service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
+        startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
     }
 
     private View.OnClickListener _request_onClick = new View.OnClickListener() {
@@ -91,24 +93,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         public void onClick(View v) {
             // TODO Method Stub: onClick()
             Log.v(TAG, "Method Stub: onClick()");
-        }
-    };
-
-    private AuthenticationClient _authclient = new AuthenticationClient() {
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authclient);
-        }
-
-        @Override
-        public void onAuthentication(String username, String authToken) {
-            _service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
-            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
-        }
-
-        @Override
-        public GlobalState getGlobalState() {
-            return _gs;
         }
     };
 
@@ -156,10 +140,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authclient);
+            AuthTopicService.requestAuthInvalid(WorkorderBundleDetailActivity.this);
         }
     };
 

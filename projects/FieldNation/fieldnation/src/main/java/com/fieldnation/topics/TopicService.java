@@ -10,8 +10,6 @@ import android.util.Log;
 
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,30 +45,43 @@ public class TopicService extends Service {
         return START_STICKY;
     }
 
+    private void send(ResultReceiver receiver, int code, Bundle bundle) {
+        try {
+            receiver.send(code, bundle);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     @Override
     public void onDestroy() {
+        Log.v(TAG, "onDestroy");
         _lastSent = null;
         super.onDestroy();
     }
 
     private void register(Intent intent) {
-        Log.v(TAG, "register");
         String topicId = intent.getStringExtra(TopicConstants.PARAM_TOPIC_ID);
         ResultReceiver receiver = intent.getParcelableExtra(TopicConstants.PARAM_TOPIC_RECEIVER);
         int resultCode = intent.getIntExtra(TopicConstants.PARAM_RESULT_CODE, 0);
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
 
-        TopicClient c = TopicClient.get(tag);
-        c.resultCode = resultCode;
-        c.receiver = receiver;
-        c.addTopic(topicId);
+        Log.v(TAG, "register(" + tag + ", " + topicId + ")");
+
+        TopicClient c = null;
+        synchronized (TAG) {
+            c = TopicClient.get(tag);
+            c.resultCode = resultCode;
+            c.receiver = receiver;
+            c.addTopic(topicId);
+        }
 
         Bundle bundle = new Bundle();
         bundle.putString(TopicConstants.ACTION, TopicConstants.ACTION_REGISTER_LISTENER);
         bundle.putString(TopicConstants.PARAM_TAG, c.tag);
         bundle.putString(TopicConstants.PARAM_TOPIC_ID, topicId);
 
-        receiver.send(resultCode, bundle);
+        send(receiver, resultCode, bundle);
 
         if (_lastSent.containsKey(topicId)) {
             bundle = new Bundle();
@@ -79,7 +90,7 @@ public class TopicService extends Service {
             bundle.putString(TopicConstants.PARAM_TAG, c.tag);
             bundle.putBundle(TopicConstants.PARAM_TOPIC_PARCEL, _lastSent.get(topicId));
 
-            receiver.send(resultCode, bundle);
+            send(receiver, resultCode, bundle);
         }
     }
 
@@ -89,15 +100,18 @@ public class TopicService extends Service {
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
         String topicId = intent.getStringExtra(TopicConstants.PARAM_TOPIC_ID);
 
-        TopicClient c = TopicClient.get(tag);
-        TopicClient.unregister(tag, topicId);
+        TopicClient c = null;
+        synchronized (TAG) {
+            c = TopicClient.get(tag);
+            TopicClient.unregister(tag, topicId);
+        }
 
         Bundle bundle = new Bundle();
         bundle.putString(TopicConstants.ACTION, TopicConstants.ACTION_UNREGISTER_LISTENER);
         bundle.putString(TopicConstants.PARAM_TAG, tag);
         bundle.putString(TopicConstants.PARAM_TOPIC_ID, topicId);
 
-        c.receiver.send(resultCode, bundle);
+        send(c.receiver, resultCode, bundle);
     }
 
     private void delete(Intent intent) {
@@ -106,18 +120,14 @@ public class TopicService extends Service {
         int resultCode = intent.getIntExtra(TopicConstants.PARAM_RESULT_CODE, 0);
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
 
-        TopicClient c = TopicClient.get(tag);
-        TopicClient.delete(tag);
-
-        Bundle bundle = new Bundle();
-        bundle.putString(TopicConstants.ACTION, TopicConstants.ACTION_DELETE_CLIENT);
-        bundle.putString(TopicConstants.PARAM_TAG, tag);
-
-        c.receiver.send(resultCode, bundle);
+        synchronized (TAG) {
+            TopicClient c = TopicClient.get(tag);
+            TopicClient.delete(tag);
+        }
     }
 
     private void dispatch(Intent intent) {
-        Log.v(TAG, "unregister");
+        Log.v(TAG, "dispatch");
         Bundle parcel = intent.getBundleExtra(TopicConstants.PARAM_TOPIC_PARCEL);
         String topicId = intent.getStringExtra(TopicConstants.PARAM_TOPIC_ID);
 
@@ -125,12 +135,19 @@ public class TopicService extends Service {
         bundle.putString(TopicConstants.ACTION, TopicConstants.ACTION_DISPATCH_EVENT);
         bundle.putString(TopicConstants.PARAM_TOPIC_ID, topicId);
 
-        Set<TopicClient> clients = TopicClient.getSet(topicId);
-        Iterator<TopicClient> iter = clients.iterator();
+        Set<TopicClient> clients = null;
+        Iterator<TopicClient> iter = null;
+        synchronized (TAG) {
+            clients = TopicClient.getSet(topicId);
+            iter = clients.iterator();
+        }
+        Log.v(TAG, "Topic: " + topicId);
+        Log.v(TAG, "Clients: " + clients.size());
         while (iter.hasNext()) {
             TopicClient c = iter.next();
+            Log.v(TAG, "Client: " + c.tag);
             bundle.putBundle(TopicConstants.PARAM_TOPIC_PARCEL, parcel);
-            c.receiver.send(c.resultCode, bundle);
+            send(c.receiver, c.resultCode, bundle);
         }
 
         _lastSent.put(topicId, parcel);

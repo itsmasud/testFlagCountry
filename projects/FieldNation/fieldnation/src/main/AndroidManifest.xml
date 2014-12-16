@@ -28,7 +28,7 @@
         android:required="false" />
 
     <application
-        android:name="com.fieldnation.GlobalState"
+        android:name=".GlobalState"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:logo="@drawable/ic_launcher"
@@ -40,7 +40,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.fieldnation.ui.workorder.MyWorkActivity"
+            android:name=".ui.workorder.MyWorkActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,20 +49,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fieldnation.ui.market.MarketActivity"
+            android:name=".ui.market.MarketActivity"
             android:exported="false" />
         <activity
-            android:name="com.fieldnation.ui.SignatureActivity"
+            android:name=".ui.SignatureActivity"
             android:exported="false"
             android:label="@string/signature_title"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.fieldnation.auth.server.AuthActivity"
+            android:name=".auth.server.AuthActivity"
             android:exported="true"
             android:noHistory="true"
             android:label="@string/activity_login_title" />
         <activity
-            android:name="com.fieldnation.ui.workorder.WorkorderActivity"
+            android:name=".ui.workorder.WorkorderActivity"
             android:exported="true"
             android:label="@string/work_order_detail_title">
             <intent-filter>
@@ -110,27 +110,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fieldnation.ui.MessageListActivity"
+            android:name=".ui.MessageListActivity"
             android:exported="false"
             android:label="@string/activity_message_list_title" />
         <activity
-            android:name="com.fieldnation.ui.payment.PaymentListActivity"
+            android:name=".ui.payment.PaymentListActivity"
             android:exported="false"
             android:label="@string/activity_payments_list_title" />
         <activity
-            android:name="com.fieldnation.ui.payment.PaymentDetailActivity"
+            android:name=".ui.payment.PaymentDetailActivity"
             android:exported="false"
             android:label="@string/activity_payments_list_title" />
         <activity
-            android:name="com.fieldnation.ui.NotificationListActivity"
+            android:name=".ui.NotificationListActivity"
             android:exported="false"
             android:label="@string/activity_notifications_list_title" />
         <activity
-            android:name="com.fieldnation.ui.workorder.WorkorderBundleDetailActivity"
+            android:name=".ui.workorder.WorkorderBundleDetailActivity"
             android:exported="false"
             android:label="@string/activity_bundle_detail" />
         <activity
-            android:name="com.fieldnation.ui.SettingsActivity"
+            android:name=".ui.SettingsActivity"
             android:exported="false"
             android:label="@string/settings" />
         <activity
@@ -143,9 +143,13 @@
             android:label="Signature Info" />
 
         <service
-            android:name="com.fieldnation.auth.server.AuthService"
+            android:name=".auth.client.AuthTopicService"
+            android:exported="false"
+            android:process=":topic" />
+        <service
+            android:name=".auth.server.AuthService"
             android:exported="true"
-            android:process="">
+            android:process=":auth">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -155,15 +159,15 @@
                 android:resource="@xml/authenticator" />
         </service>
         <service
-            android:name="com.fieldnation.rpc.server.DataService"
+            android:name=".rpc.server.DataService"
             android:exported="false"
-            android:process="" />
+            android:process=":data" />
         <service
             android:name=".topics.TopicService"
             android:exported="false"
-            android:process=":topics" />
+            android:process=":topic" />
         <service
-            android:name="com.fieldnation.rpc.server.SyncService"
+            android:name=".rpc.server.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>com.fieldnation.service
@@ -176,17 +180,17 @@
         </service>
 
         <provider
-            android:name="com.fieldnation.rpc.server.StubProvider"
+            android:name=".rpc.server.StubProvider"
             android:authorities="com.fieldnation.service"
             android:exported="false"
             android:syncable="true" />
 
-        <receiver android:name="com.fieldnation.rpc.server.BootReciever">
+        <receiver android:name=".rpc.server.BootReciever">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.fieldnation.rpc.server.ClockReceiver" />
+        <receiver android:name=".rpc.server.ClockReceiver" />
     </application>
 
 </manifest>

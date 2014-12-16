@@ -239,6 +239,9 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean isSignatureCollected() {
+        if (_collectedSignature == null)
+            return false;
+        
         return _collectedSignature;
     }
 
@@ -690,32 +693,32 @@ public class Workorder implements Parcelable {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED
                 || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN
-                    || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                    || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
+                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canChangeClosingNotes() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                    || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canViewDeliverables() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                    || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canModifyTasks() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
-                    && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                        || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
+                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canModifyTimeLog() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                    || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
     }
 
     public boolean canCheckout() {

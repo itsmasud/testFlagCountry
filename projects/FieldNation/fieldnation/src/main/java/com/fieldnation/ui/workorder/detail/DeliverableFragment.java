@@ -18,9 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Task;
@@ -32,6 +32,7 @@ import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -70,7 +71,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private AppPickerDialog _appPickerDialog;
 
     // Data
-    private GlobalState _gs;
     private Workorder _workorder;
     private WorkorderService _service;
     private ProfileService _profileService;
@@ -101,8 +101,6 @@ public class DeliverableFragment extends WorkorderFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        _gs = (GlobalState) getActivity().getApplicationContext();
-
         _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
@@ -122,8 +120,19 @@ public class DeliverableFragment extends WorkorderFragment {
 
         populateUi();
         executeDelayedAction();
+    }
 
-        _gs.requestAuthentication(_authClient);
+    @Override
+    public void onResume() {
+        super.onResume();
+        AuthTopicService.startService(getActivity());
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+    }
+
+    @Override
+    public void onPause() {
+        TopicService.delete(getActivity(), 0, TAG);
+        super.onPause();
     }
 
     private boolean checkMedia() {
@@ -150,10 +159,10 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     private PendingIntent getNotificationIntent() {
-        Intent intent = new Intent(_gs, WorkorderActivity.class);
+        Intent intent = new Intent(getActivity(), WorkorderActivity.class);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-        return PendingIntent.getActivity(_gs, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(getActivity(), _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void getData() {
@@ -162,7 +171,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _refreshView.startRefreshing();
         _profile = null;
-        _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+        getActivity().startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
 
     @Override
@@ -283,11 +292,11 @@ public class DeliverableFragment extends WorkorderFragment {
             _refreshView.startRefreshing();
 
             if (data == null) {
-                _gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                         _workorder.getWorkorderId(), _uploadingSlot.getSlotId(),
                         _tempFile.getAbsolutePath(), getNotificationIntent()));
             } else {
-                _gs.startService(_service.uploadDeliverable(
+                getActivity().startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                         _uploadingSlot.getSlotId(), data, getNotificationIntent()));
             }
@@ -318,7 +327,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
             // startLoading();
-            _gs.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
+            getActivity().startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
                     _workorder.getWorkorderId(),
                     document.getWorkorderUploadId()));
         }
@@ -377,24 +386,34 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private AuthenticationClient _authClient = new AuthenticationClient() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _service = new WorkorderService(_gs, username, authToken, _resultReceiver);
-            _profileService = new ProfileService(_gs, username, authToken, _resultReceiver);
+            if (_service == null)
+                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+            if (_profileService == null)
+                _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
             getData();
         }
 
         @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
+        public void onAuthenticationFailed() {
+            _service = null;
+            _profileService = null;
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationInvalidated() {
+            _service = null;
+            _profileService = null;
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getActivity());
         }
     };
+
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
@@ -437,12 +456,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            } else if (_profileService != null) {
-                _gs.invalidateAuthToken(_profileService.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(getActivity());
             _service = null;
             _profileService = null;
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();

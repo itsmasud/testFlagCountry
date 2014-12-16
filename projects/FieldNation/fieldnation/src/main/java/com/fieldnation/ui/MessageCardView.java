@@ -2,7 +2,6 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -42,24 +41,29 @@ public class MessageCardView extends RelativeLayout {
     /*-			LifeCycle			-*/
     /*-*****************************-*/
     public MessageCardView(Context context) {
-        this(context, null, -1);
+        super(context);
+        init();
     }
 
     public MessageCardView(Context context, AttributeSet attrs) {
-        this(context, attrs, -1);
+        super(context, attrs);
+        init();
     }
 
     public MessageCardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        final LayoutInflater inflater = LayoutInflater.from(getContext());
-        inflater.inflate(R.layout.view_message_card, this);
+        init();
+    }
+
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.view_message_card, this);
 
         if (isInEditMode())
             return;
 
         _substatus = getResources().getStringArray(R.array.workorder_substatus);
 
-        _photoService = new PhotoService(context, _resultReceiver);
+        _photoService = new PhotoService(getContext(), _resultReceiver);
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);

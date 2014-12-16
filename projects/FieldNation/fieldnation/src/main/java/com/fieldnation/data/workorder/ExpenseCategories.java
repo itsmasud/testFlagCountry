@@ -4,13 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.fieldnation.GlobalState;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 
 import java.util.Hashtable;
 
@@ -18,7 +19,7 @@ public class ExpenseCategories {
     private static final String TAG = "data.workorder.ExpenseCategories";
     private static Hashtable<Context, ExpenseCategories> _instances = new Hashtable<Context, ExpenseCategories>();
 
-    private GlobalState _gs;
+    private Context _context;
     private WorkorderService _ws;
     private ExpenseCategory[] _categories;
     private Listener _listener = null;
@@ -34,8 +35,16 @@ public class ExpenseCategories {
     }
 
     private ExpenseCategories(Context context) {
-        _gs = (GlobalState) context;
-        _gs.requestAuthentication(_authclient);
+        _context = context.getApplicationContext();
+        AuthTopicService.startService(context);
+        AuthTopicService.subscribeAuthState(context, 0, TAG, _authReceiver);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (_context != null)
+            TopicService.delete(_context, 1, TAG);
+        super.finalize();
     }
 
     public ExpenseCategory[] getCategories() {
@@ -50,25 +59,32 @@ public class ExpenseCategories {
         }
     }
 
+
     /*-*********************************-*/
     /*-				Events				-*/
-	/*-*********************************-*/
-    private AuthenticationClient _authclient = new AuthenticationClient() {
-
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authclient);
-        }
-
+    /*-*********************************-*/
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _ws = new WorkorderService(_gs, username, authToken, _resultReciever);
-            _gs.startService(_ws.listExpenseCategories(0, true));
+            if (_ws == null) {
+                _ws = new WorkorderService(_context, username, authToken, _resultReciever);
+                _context.startService(_ws.listExpenseCategories(0, true));
+            }
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationFailed() {
+            _ws = null;
+        }
+
+        @Override
+        public void onAuthenticationInvalidated() {
+            _ws = null;
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(_context);
         }
     };
 
@@ -94,6 +110,13 @@ public class ExpenseCategories {
                 e.printStackTrace();
             }
 
+        }
+
+        @Override
+        public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
+            _ws = null;
+            AuthTopicService.requestAuthInvalid(_context);
         }
     };
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
@@ -39,7 +39,6 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     private ListView _listView;
 
     // Data
-    private GlobalState _gs;
     private long _paymentId = -1;
     private PaymentService _service;
     private Payment _paid;
@@ -65,9 +64,6 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             finish();
         }
 
-        _gs = (GlobalState) getApplicationContext();
-        _gs.requestAuthentication(_authClient);
-
         _idTextView = (TextView) findViewById(R.id.id_textview);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _paymentTypeTextView = (TextView) findViewById(R.id.paymenttype_textview);
@@ -83,7 +79,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         if (_service == null)
             return;
 
-        _gs.startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
+        startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
     }
 
     private void populateUi() {
@@ -124,26 +120,15 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         _paymentTypeTextView.setText(misc.capitalize(_paid.getPayMethod()));
     }
 
+    @Override
+    public void onAuthentication(String username, String authToken) {
+        _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
+        requestData();
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
-	/*-*********************************-*/
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
-
-        @Override
-        public void onAuthentication(String username, String authToken) {
-            _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
-            requestData();
-        }
-
-        @Override
-        public GlobalState getGlobalState() {
-            return _gs;
-        }
-    };
+    /*-*********************************-*/
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
@@ -166,10 +151,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(PaymentDetailActivity.this);
         }
     };
 
