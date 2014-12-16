@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.json.JsonArray;
@@ -38,7 +37,7 @@ public class ExpenseCategories {
     private ExpenseCategories(Context context) {
         _context = context.getApplicationContext();
         AuthTopicService.startService(context);
-        AuthTopicService.subscribeAuthState(context, 1, TAG, _authReceiver);
+        AuthTopicService.subscribeAuthState(context, 0, TAG, _authReceiver);
     }
 
     @Override
@@ -64,21 +63,23 @@ public class ExpenseCategories {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _ws = new WorkorderService(_context, username, authToken, _resultReciever);
-            _context.startService(_ws.listExpenseCategories(0, true));
+            if (_ws == null) {
+                _ws = new WorkorderService(_context, username, authToken, _resultReciever);
+                _context.startService(_ws.listExpenseCategories(0, true));
+            }
         }
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(_context);
+            _ws = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(_context);
+            _ws = null;
         }
 
         @Override
@@ -109,6 +110,13 @@ public class ExpenseCategories {
                 e.printStackTrace();
             }
 
+        }
+
+        @Override
+        public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
+            _ws = null;
+            AuthTopicService.requestAuthInvalid(_context);
         }
     };
 

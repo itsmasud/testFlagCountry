@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -160,23 +159,25 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
+            if (_dataService == null) {
+                _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
 
-            getContext().startService(_dataService.getAll(1, 0, true));
-            _nextPage = 1;
+                getContext().startService(_dataService.getAll(1, 0, true));
+                _nextPage = 1;
+            }
         }
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(getContext());
+            _dataService = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(getContext());
+            _dataService = null;
         }
 
         @Override
@@ -253,6 +254,14 @@ public class DrawerView extends RelativeLayout {
                 //_nextPage = 1;
             }
             Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+        }
+
+        @Override
+        public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
+
+            _dataService = null;
+            AuthTopicService.requestAuthInvalid(getContext());
         }
     };
 

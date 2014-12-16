@@ -43,6 +43,7 @@ public class AuthTopicService extends Service {
     private boolean _authenticating = false;
     private boolean _removing = false;
     private String _authToken;
+    private String _username;
 
     // Services
     private AccountManager _accountManager;
@@ -65,6 +66,12 @@ public class AuthTopicService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        TopicService.delete(this, 0, TAG);
+        super.onDestroy();
     }
 
     private void requestAuthTokenFromAccountManager() {
@@ -109,6 +116,7 @@ public class AuthTopicService extends Service {
         }
 
         if (_account != null) {
+            Log.v(TAG, "got account");
             requestAuthTokenFromAccountManager();
         }
     }
@@ -118,7 +126,7 @@ public class AuthTopicService extends Service {
     /*-*****************************-*/
 
 
-    private TopicReceiver _topicReceiver = new TopicReceiver() {
+    private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
         }
@@ -134,24 +142,33 @@ public class AuthTopicService extends Service {
             if (BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
                 if (!_removing) {
                     _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
+                    _username = null;
+                    _authToken = null;
+                    dispatchAuthInvalid(AuthTopicService.this);
                 }
             } else if (BUNDLE_PARAM_TYPE_REQUEST.equals(type)) {
                 if (_account != null && !_removing) {
                     requestAuthTokenFromAccountManager();
                 } else if (!_authenticating) {
-                    getAccount();
+                    if (_username != null && _authToken != null) {
+                        dispatchAuthComplete(AuthTopicService.this, _username, _authToken);
+                    } else {
+                        getAccount();
+                    }
                 }
             } else if (BUNDLE_PARAM_TYPE_REMOVE.equals(type)) {
-                _removing = true;
+                if (!_removing && _account != null) {
+                    _removing = true;
+                    _authenticating = false;
+                    AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
+                    new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+                    _account = null;
+                    getAccount();
+                }
+            } else if (BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {
                 _authenticating = false;
-                AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
-                new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
-                _account = null;
+                getAccount();
             }
-        }
-
-        @Override
-        public void onDelete(int resultCode, String topicId) {
         }
     };
 
@@ -159,7 +176,15 @@ public class AuthTopicService extends Service {
     private FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
         @Override
         public void onComplete(Object result) {
-            if (!_removing) {
+            if (result instanceof Bundle && ((Bundle) result).containsKey("intent")) {
+                Log.v(TAG, "FutureWaitAsyncTask intent");
+                Bundle bundle = (Bundle) result;
+                Intent intent = bundle.getParcelable("intent");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+            } else if (!_removing) {
+                Log.v(TAG, "FutureWaitAsyncTask not removing");
                 Bundle bundle = (Bundle) result;
                 Log.v(TAG, "_futureWaitAsyncTaskListener.onComplete()");
                 String tokenString = bundle.getString("authtoken");
@@ -170,13 +195,20 @@ public class AuthTopicService extends Service {
                 // if however, data invalid, need to ask again.
                 if (tokenString == null) {
                     if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
+                        Log.v(TAG, "FutureWaitAsyncTask, getAccount");
                         getAccount();
+                    } else {
+                        // todo.. not sure
+                        Log.v(TAG, "FutureWaitAsyncTask, should not be here");
                     }
                 } else {
+                    Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
                     _authToken = tokenString;
-                    dispatchAuthComplete(AuthTopicService.this, bundle.getString("authAccount"), tokenString);
+                    _username = bundle.getString("authAccount");
+                    dispatchAuthComplete(AuthTopicService.this, _username, tokenString);
                 }
             } else if (_removing) {
+                Log.v(TAG, "FutureWaitAsyncTask removing");
                 _removing = false;
                 dispatchAuthInvalid(AuthTopicService.this);
             }
@@ -221,6 +253,13 @@ public class AuthTopicService extends Service {
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_INVALID);
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_STATE, bundle);
+    }
+
+    public static void dispatchAuthComplete(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_COMPLETE);
+
+        TopicService.dispatchTopic(context, TOPIC_AUTH_COMMAND, bundle);
     }
 
 

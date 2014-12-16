@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -108,6 +109,12 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             outState.putParcelable(STATE_WORKORDER, _wo);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onAuthentication(String username, String authToken) {
+        // TODO STUB com.fieldnation.ui.SignatureDisplayActivity.onAuthentication()
+        Log.v(TAG, "STUB com.fieldnation.ui.SignatureDisplayActivity.onAuthentication()");
     }
 
     @Override

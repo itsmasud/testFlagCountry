@@ -1,6 +1,7 @@
 package com.fieldnation.topics;
 
 import android.os.ResultReceiver;
+import android.util.Log;
 
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -11,16 +12,19 @@ import java.util.Set;
  * Created by michael.carver on 12/12/2014.
  */
 public class TopicClient {
+    private static final String TAG = "topics.TopicClient";
+
     public int resultCode;
     public ResultReceiver receiver;
     public String tag;
     public Set<String> topics = new HashSet<String>();
-    public boolean isValid = true;
-
-    private static Integer _counter = 0;
 
     private static Hashtable<String, TopicClient> _instances = new Hashtable<>();
     private static Hashtable<String, Set<TopicClient>> _topics = new Hashtable<>();
+
+    static {
+        Log.v(TAG, "TOPIC_CLIENT_RESET!");
+    }
 
     public TopicClient(String tag) {
         this.tag = tag;
@@ -69,7 +73,11 @@ public class TopicClient {
 
     public void addTopic(String topic) {
         topics.add(topic);
-        getSet(topic).add(this);
+        if (getSet(topic).add(this)) {
+            Log.v(TAG, "Added " + tag + " to  " + topic);
+        } else {
+            Log.v(TAG, "Add Fail " + tag + " to  " + topic);
+        }
     }
 
     @Override

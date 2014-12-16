@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.common.WebResultReceiver;
@@ -171,6 +170,4 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     public abstract List<O> onParseData(int page, boolean isCached, byte[] data);
 
     public abstract void invalidateService();
-
-
 }

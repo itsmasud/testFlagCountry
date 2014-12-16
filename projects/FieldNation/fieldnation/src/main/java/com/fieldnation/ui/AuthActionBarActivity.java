@@ -22,7 +22,7 @@ import com.fieldnation.topics.TopicService;
  * @author michael.carver
  */
 public abstract class AuthActionBarActivity extends ActionBarActivity {
-    private static final String TAG = "ui.BaseActivity";
+    private static final String TAG = "ui.AuthActionBarActivity";
 
     private final static int AUTH_SERVICE = 1;
 
@@ -39,9 +39,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         ClockReceiver.registerClock(this);
-
-        AuthTopicService.startService(this);
-        AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
 
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
@@ -64,6 +61,13 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        AuthTopicService.startService(this);
+        AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
+    }
+
+    @Override
     protected void onPause() {
         TopicService.delete(this, 0, TAG);
         super.onPause();
@@ -73,26 +77,25 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
-        }
-
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
             AuthActionBarActivity.this.onAuthentication(username, authToken);
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onRegister(int resultCode, String topicId) {
             AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
+        }
+
+
+        @Override
+        public void onAuthenticationFailed() {
             AuthActionBarActivity.this.onAuthenticationFailed();
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
             AuthActionBarActivity.this.onAuthenticationInvalidated();
         }
 

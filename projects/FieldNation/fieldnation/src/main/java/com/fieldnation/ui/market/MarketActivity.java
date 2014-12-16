@@ -24,9 +24,9 @@ import android.view.View;
 
 /**
  * Displays all the work orders in the market that are available to this user
- * 
+ *
  * @author michael.carver
- * 
+ *
  */
 public class MarketActivity extends DrawerActivity {
 	private static final String TAG = "ui.market.MarketActivity";
@@ -58,7 +58,13 @@ public class MarketActivity extends DrawerActivity {
 		_viewPager.setCurrentItem(_currentFragment, false);
 	}
 
-	private void buildTabs(Bundle savedInstanceState) {
+    @Override
+    public void onAuthentication(String username, String authToken) {
+        // TODO STUB com.fieldnation.ui.market.MarketActivity.onAuthentication()
+        Log.v(TAG, "STUB com.fieldnation.ui.market.MarketActivity.onAuthentication()");
+    }
+
+    private void buildTabs(Bundle savedInstanceState) {
 		_viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
 		_fragments = new WorkorderListFragment[2];

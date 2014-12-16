@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -23,7 +22,6 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -145,14 +143,6 @@ public class WorkorderListFragment extends Fragment {
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
 
-        AuthTopicService.startService(getActivity());
-        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
-    }
-
-    @Override
-    public void onPause() {
-        TopicService.delete(getActivity(), 0, TAG);
-        super.onPause();
     }
 
     @Override
@@ -175,6 +165,8 @@ public class WorkorderListFragment extends Fragment {
         super.onResume();
         _adapter.refreshPages();
         _loadingView.startRefreshing();
+        AuthTopicService.startService(getActivity());
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
     }
 
     public void update() {
@@ -468,7 +460,7 @@ public class WorkorderListFragment extends Fragment {
     private PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-            Log.v(TAG, "getView()");
+//            Log.v(TAG, "getView()");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -515,25 +507,28 @@ public class WorkorderListFragment extends Fragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-    private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _username = username;
-            _authToken = authToken;
-            if (getActivity() != null) {
-                _service = new WorkorderService(getActivity(), username, authToken, _resultReciever);
-                requestList(0, true);
+            Log.v(TAG, "onAuthentication");
+            if (_service == null) {
+                _username = username;
+                _authToken = authToken;
+                if (getActivity() != null) {
+                    _service = new WorkorderService(getActivity(), username, authToken, _resultReciever);
+                    requestList(0, true);
+                }
             }
         }
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _service = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _service = null;
         }
 
         @Override
@@ -601,6 +596,7 @@ public class WorkorderListFragment extends Fragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
+            _service = null;
             AuthTopicService.requestAuthInvalid(getActivity());
             _loadingView.refreshFailed();
             Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();

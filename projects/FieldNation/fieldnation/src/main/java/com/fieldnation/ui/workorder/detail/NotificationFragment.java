@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -31,6 +30,7 @@ import java.util.Random;
 
 public class NotificationFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.NotificationFragment";
+
     private int WEB_LIST_NOTIFICATIONS = 1;
 
     // UI
@@ -66,7 +66,11 @@ public class NotificationFragment extends WorkorderFragment {
         _listview.setOnOverScrollListener(_refreshView);
 
         _emptyTextView = (TextView) view.findViewById(R.id.empty_textview);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
@@ -182,22 +186,23 @@ public class NotificationFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            Log.v(TAG, "onAuthentication");
-            _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
-            getNotifications();
+            if (_service == null) {
+                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+                getNotifications();
+            }
         }
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _service = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _service = null;
         }
 
         @Override
@@ -235,6 +240,7 @@ public class NotificationFragment extends WorkorderFragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
+            _service = null;
             AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshComplete();

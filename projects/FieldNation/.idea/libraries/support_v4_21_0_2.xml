@@ -6,8 +6,6 @@
       <root url="jar://$PROJECT_DIR$/fieldnation/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.2/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../../../sdk/extras/android/m2repository/com/android/support/support-v4/21.0.2/support-v4-21.0.2-sources.jar!/" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>

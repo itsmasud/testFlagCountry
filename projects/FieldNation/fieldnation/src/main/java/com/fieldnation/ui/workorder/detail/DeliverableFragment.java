@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -121,7 +120,11 @@ public class DeliverableFragment extends WorkorderFragment {
 
         populateUi();
         executeDelayedAction();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
@@ -383,22 +386,26 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
-            _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
+            if (_service == null)
+                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+            if (_profileService == null)
+                _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
             getData();
         }
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _service = null;
+            _profileService = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _service = null;
+            _profileService = null;
         }
 
         @Override

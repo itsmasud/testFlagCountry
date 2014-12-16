@@ -1,6 +1,7 @@
 package com.fieldnation.auth.client;
 
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.fieldnation.topics.TopicReceiver;
 
@@ -8,6 +9,10 @@ import com.fieldnation.topics.TopicReceiver;
  * Created by Michael on 12/15/2014.
  */
 public abstract class AuthTopicReceiver extends TopicReceiver {
+
+    public AuthTopicReceiver(Handler handler) {
+        super(handler);
+    }
 
     @Override
     public void onUnregister(int resultCode, String topicId) {
@@ -24,10 +29,6 @@ public abstract class AuthTopicReceiver extends TopicReceiver {
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_FAILED.equals(type)) {
             onAuthenticationFailed();
         }
-    }
-
-    @Override
-    public void onDelete(int resultCode, String topicId) {
     }
 
     public abstract void onAuthentication(String username, String authToken);

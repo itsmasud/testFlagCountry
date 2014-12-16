@@ -10,7 +10,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
@@ -177,8 +176,22 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
     @Override
     public void onAuthentication(String username, String authToken) {
-        _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
-        getData(true);
+        if (_service == null) {
+            _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
+            getData(true);
+        }
+    }
+
+    @Override
+    public void onAuthenticationFailed() {
+        super.onAuthenticationFailed();
+        _service = null;
+    }
+
+    @Override
+    public void onAuthenticationInvalidated() {
+        super.onAuthenticationInvalidated();
+        _service = null;
     }
 
     private void buildFragments(Bundle savedInstanceState) {

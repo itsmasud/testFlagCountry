@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -69,7 +68,11 @@ public class MessageFragment extends WorkorderFragment {
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
@@ -90,6 +93,7 @@ public class MessageFragment extends WorkorderFragment {
 
     @Override
     public void update() {
+        Log.v(TAG, "update");
         getMessages();
     }
 
@@ -115,6 +119,8 @@ public class MessageFragment extends WorkorderFragment {
         if (_adapter != null)
             _adapter.notifyDataSetChanged();
 
+
+        Log.v(TAG, "getMessages");
         WEB_GET_MESSAGES = _rand.nextInt();
         getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
     }
@@ -172,6 +178,7 @@ public class MessageFragment extends WorkorderFragment {
         public void onClick(View v) {
             _refreshView.startRefreshing();
             WEB_NEW_MESSAGE = _rand.nextInt();
+            Log.v(TAG, "_send_onClick");
             getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
                     _inputView.getInputText()));
             _inputView.clearText();
@@ -181,24 +188,29 @@ public class MessageFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
-            _workorderService = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
-            WEB_GET_PROFILE = _rand.nextInt();
-            getActivity().startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
-            getMessages();
+            if (_profileService == null || _workorderService == null) {
+                _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
+                _workorderService = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+                WEB_GET_PROFILE = _rand.nextInt();
+                Log.v(TAG, "_authReceiver");
+                getActivity().startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+                getMessages();
+            }
         }
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _profileService = null;
+            _workorderService = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _profileService = null;
+            _workorderService = null;
         }
 
         @Override
@@ -258,6 +270,9 @@ public class MessageFragment extends WorkorderFragment {
 
             if (getActivity() == null)
                 return;
+
+            _profileService = null;
+            _workorderService = null;
 
             AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request.", Toast.LENGTH_LONG).show();

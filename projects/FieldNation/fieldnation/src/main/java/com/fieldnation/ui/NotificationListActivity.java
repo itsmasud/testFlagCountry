@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.topics.TopicService;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +50,8 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
 
     @Override
     public void onAuthentication(String username, String authToken, ResultReceiver resultReceiver) {
-        _service = new ProfileService(this, username, authToken, resultReceiver);
+        if (_service == null)
+            _service = new ProfileService(this, username, authToken, resultReceiver);
     }
 
     @Override
@@ -70,6 +72,8 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
                 e.printStackTrace();
             }
         }
+
+        TopicService.dispatchTopic(this, ProfileService.TOPIC_PROFILE_INVALIDATED, null);
 
         return list;
     }

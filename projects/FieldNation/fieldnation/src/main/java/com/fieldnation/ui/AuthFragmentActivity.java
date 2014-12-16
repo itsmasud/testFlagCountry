@@ -1,34 +1,24 @@
 package com.fieldnation.ui;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.fieldnation.FutureWaitAsyncTask;
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.topics.TopicService;
-import com.fieldnation.ui.workorder.MyWorkActivity;
 
 /**
  * Created by michael.carver on 12/5/2014.
  */
 public abstract class AuthFragmentActivity extends FragmentActivity {
-    private static final String TAG = "ui.BaseActivity";
+    private static final String TAG = "ui.AuthFragmentActivity";
 
     private static final int AUTH_SERVICE = 1;
 
@@ -43,9 +33,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        AuthTopicService.startService(this);
-        AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
 
         ClockReceiver.registerClock(this);
     }
@@ -62,6 +49,13 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        AuthTopicService.startService(this);
+        AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
+    }
+
+    @Override
     protected void onPause() {
         TopicService.delete(this, 0, TAG);
         super.onPause();
@@ -70,7 +64,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
             AuthTopicService.requestAuthentication(AuthFragmentActivity.this);
@@ -83,13 +77,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(AuthFragmentActivity.this);
             AuthFragmentActivity.this.onAuthenticationFailed();
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(AuthFragmentActivity.this);
             AuthFragmentActivity.this.onAuthenticationInvalidated();
         }
 

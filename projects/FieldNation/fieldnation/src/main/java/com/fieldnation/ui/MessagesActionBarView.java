@@ -1,6 +1,15 @@
 package com.fieldnation.ui;
 
-import com.fieldnation.GlobalState;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -11,16 +20,6 @@ import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 public class MessagesActionBarView extends RelativeLayout {
     private static final String TAG = "ui.MessagesActionBarView";
@@ -81,21 +80,23 @@ public class MessagesActionBarView extends RelativeLayout {
         }
     };
 
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
-            getContext().startService(_profileService.getMyUserInformation(0, true));
+            if (_profileService == null) {
+                _profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
+                getContext().startService(_profileService.getMyUserInformation(0, true));
+            }
         }
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(getContext());
+            _profileService = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(getContext());
+            _profileService = null;
         }
 
         @Override
@@ -105,7 +106,7 @@ public class MessagesActionBarView extends RelativeLayout {
     };
 
 
-    private TopicReceiver _topicReceiver = new TopicReceiver() {
+    private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
         }
@@ -120,10 +121,6 @@ public class MessagesActionBarView extends RelativeLayout {
                 if (_profileService != null)
                     getContext().startService(_profileService.getMyUserInformation(0, false));
             }
-        }
-
-        @Override
-        public void onDelete(int resultCode, String topicId) {
         }
     };
 
@@ -144,6 +141,7 @@ public class MessagesActionBarView extends RelativeLayout {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
+            _profileService = null;
             AuthTopicService.requestAuthInvalid(getContext());
         }
     };

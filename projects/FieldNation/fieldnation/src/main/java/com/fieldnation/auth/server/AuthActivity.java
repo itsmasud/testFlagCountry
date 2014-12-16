@@ -21,6 +21,7 @@ import android.widget.VideoView;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.client.AuthService;
 import com.fieldnation.rpc.server.ClockService;
 
@@ -144,6 +145,8 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                     // intent.putExtra(AccountManager.KEY_AUTHTOKEN,
                     // Constants.FIELD_NATION_ACCOUNT_TYPE);
                     intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString("authtoken"));
+
+                    AuthTopicService.dispatchAuthComplete(AuthActivity.this);
 
                     AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
                     AuthActivity.this.setResult(RESULT_OK, intent);

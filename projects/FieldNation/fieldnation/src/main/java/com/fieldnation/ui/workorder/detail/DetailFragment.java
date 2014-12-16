@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -149,7 +148,11 @@ public class DetailFragment extends WorkorderFragment {
         if (_workorder != null) {
             setWorkorder(_workorder, true);
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
@@ -537,20 +540,21 @@ public class DetailFragment extends WorkorderFragment {
 
 
     // Web
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken) {
-            _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+            if (_service == null)
+                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
         }
 
         @Override
         public void onAuthenticationFailed() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _service = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
-            AuthTopicService.requestAuthentication(getActivity());
+            _service = null;
         }
 
         @Override
@@ -574,6 +578,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
+            _service = null;
             AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
