@@ -130,13 +130,13 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     /*-*****************************-*/
 
     @Override
-    public void onAuthentication(String username, String authToken) {
+    public void onAuthentication(String username, String authToken, boolean isNew) {
         _authToken = authToken;
-        onAuthentication(username, authToken, _resultReceiver);
+        onAuthentication(username, authToken, isNew, _resultReceiver);
         getData(0, true);
     }
 
-    public abstract void onAuthentication(String username, String authToken, ResultReceiver resultReceiver);
+    public abstract void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver);
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {

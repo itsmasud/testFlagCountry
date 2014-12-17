@@ -1,213 +1,220 @@
 package com.fieldnation.rpc.server;
 
-import java.text.ParseException;
-import java.util.HashMap;
-
-import com.fieldnation.auth.server.AuthCache;
-import com.fieldnation.rpc.common.WebServiceConstants;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
+import com.fieldnation.auth.server.AuthCache;
+import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.utils.misc;
+
+import java.text.ParseException;
+import java.util.HashMap;
+
 public class WebRpc extends RpcInterface implements WebServiceConstants {
-	private static final String TAG = "rpc.server.WebRpc";
+    private static final String TAG = "rpc.server.WebRpc";
 
-	public WebRpc(HashMap<String, RpcInterface> map) {
-		super(map, ACTION_NAME);
-	}
+    public WebRpc(HashMap<String, RpcInterface> map) {
+        super(map, ACTION_NAME);
+    }
 
-	@Override
-	public void execute(Context context, Intent intent) {
-		String method = intent.getStringExtra(KEY_METHOD);
-		String authToken = intent.getStringExtra(KEY_PARAM_AUTH_TOKEN);
-		String username = intent.getStringExtra(KEY_PARAM_USERNAME);
-		String errorMessage = null;
-		String errorType = ERROR_NONE;
+    @Override
+    public void execute(Context context, Intent intent) {
+        String method = intent.getStringExtra(KEY_METHOD);
+        String authToken = intent.getStringExtra(KEY_PARAM_AUTH_TOKEN);
+        String username = intent.getStringExtra(KEY_PARAM_USERNAME);
+        String errorMessage = null;
+        String errorType = ERROR_NONE;
 
-		// Log.v(TAG, "username " + username);
+        // Log.v(TAG, "username " + username);
 
-		OAuth auth = null;
+        if (misc.isEmptyOrNull(username)) {
+            doHttpError(context, intent, ERROR_NO_USERNAME, "No username supplied!");
+            return;
+        }
 
-		// look up user in the cache
-		AuthCache authCache = AuthCache.get(context, username);
 
-		// not found
-		if (authCache == null) {
-			errorType = ERROR_USER_NOT_FOUND;
-			errorMessage = "Could not find the user.";
-		} else {
-			// validate session
-			if (authToken != null) {
-				// Log.v(TAG, authToken);
-			} else {
-				// Log.v(TAG, "null authToken");
-			}
-			if (authCache.validateSessionHash(authToken)) {
-				try {
-					auth = OAuth.fromCache(authCache.getOAuthBlob());
-				} catch (ParseException e) {
-					// this is handled below when we check for auth != null
-					e.printStackTrace();
-				}
-			} else {
-				errorType = ERROR_SESSION_INVALID;
-				errorMessage = "The authtoken is invalid or has expired.";
-			}
-		}
+        OAuth auth = null;
 
-		if (auth != null) {
-			if (METHOD_HTTP_READ.equals(method)) {
-				new Thread(new HttpReadRunnable(context, intent, auth)).start();
-				// doHttpRead(context, intent, auth);
-			} else if (METHOD_HTTP_WRITE.equals(method)) {
-				new Thread(new HttpWriteRunnable(context, intent, auth)).start();
-				// doHttpWrite(context, intent, auth);
-			} else if (METHOD_HTTP_POST_FILE.equals(method)) {
-				new Thread(new HttpPostFileRunnable(context, intent, auth)).start();
-			}
-		} else {
-			doHttpError(context, intent, errorType, errorMessage);
-		}
-	}
+        // look up user in the cache
+        AuthCache authCache = AuthCache.get(context, username);
 
-	private void doHttpError(Context context, Intent intent, String errorType, String message) {
-		Bundle bundle = intent.getExtras();
+        // not found
+        if (authCache == null) {
+            errorType = ERROR_USER_NOT_FOUND;
+            errorMessage = "Could not find the user.";
+        } else {
+            // validate session
+            if (authToken != null) {
+                // Log.v(TAG, authToken);
+            } else {
+                // Log.v(TAG, "null authToken");
+            }
+            if (authCache.validateSessionHash(authToken)) {
+                try {
+                    auth = OAuth.fromCache(authCache.getOAuthBlob());
+                } catch (ParseException e) {
+                    // this is handled below when we check for auth != null
+                    e.printStackTrace();
+                }
+            } else {
+                errorType = ERROR_SESSION_INVALID;
+                errorMessage = "The authtoken is invalid or has expired.";
+            }
+        }
 
-		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
-			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
+        if (auth != null) {
+            if (METHOD_HTTP_READ.equals(method)) {
+                new Thread(new HttpReadRunnable(context, intent, auth)).start();
+                // doHttpRead(context, intent, auth);
+            } else if (METHOD_HTTP_WRITE.equals(method)) {
+                new Thread(new HttpWriteRunnable(context, intent, auth)).start();
+                // doHttpWrite(context, intent, auth);
+            } else if (METHOD_HTTP_POST_FILE.equals(method)) {
+                new Thread(new HttpPostFileRunnable(context, intent, auth)).start();
+            }
+        } else {
+            doHttpError(context, intent, errorType, errorMessage);
+        }
+    }
 
-			bundle.putString(KEY_RESPONSE_ERROR_TYPE, errorType);
-			bundle.putString(KEY_RESPONSE_ERROR, message);
-			rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
-		}
-	}
+    private void doHttpError(Context context, Intent intent, String errorType, String message) {
+        Bundle bundle = intent.getExtras();
 
-	private void doHttpRead(Context context, Intent intent, OAuth at) {
-		Bundle bundle = intent.getExtras();
-		String method = bundle.getString(KEY_PARAM_METHOD);
-		String path = bundle.getString(KEY_PARAM_PATH);
-		String options = bundle.getString(KEY_PARAM_OPTIONS);
-		String contentType = bundle.getString(KEY_PARAM_CONTENT_TYPE);
-		boolean allowCache = bundle.getBoolean(KEY_ALLOW_CACHE);
+        if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
+            ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-		Log.v(TAG, "doHttpRead");
-		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
-			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
+            bundle.putString(KEY_RESPONSE_ERROR_TYPE, errorType);
+            bundle.putString(KEY_RESPONSE_ERROR, message);
+            rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
+        }
+    }
 
-			DataCacheNode cachedData = null;
+    private void doHttpRead(Context context, Intent intent, OAuth at) {
+        Bundle bundle = intent.getExtras();
+        String method = bundle.getString(KEY_PARAM_METHOD);
+        String path = bundle.getString(KEY_PARAM_PATH);
+        String options = bundle.getString(KEY_PARAM_OPTIONS);
+        String contentType = bundle.getString(KEY_PARAM_CONTENT_TYPE);
+        boolean allowCache = bundle.getBoolean(KEY_ALLOW_CACHE);
 
-			cachedData = DataCache.query(context, at, bundle);
+        Log.v(TAG, "doHttpRead");
+        if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
+            ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-			if (allowCache && cachedData != null) {
-				Log.v(TAG, "Cached Response");
-				bundle.putByteArray(KEY_RESPONSE_DATA, cachedData.getResponseData());
-				bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
-				bundle.putBoolean(KEY_RESPONSE_CACHED, true);
-				bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-			} else {
-				Log.v(TAG, "Atempting web request");
-				Ws ws = new Ws(at);
-				try {
-					Result result = ws.httpRead(method, path, options, contentType);
+            DataCacheNode cachedData = null;
 
-					try {
-						// happy path
-						bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
-						bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-						bundle.putBoolean(KEY_RESPONSE_CACHED, false);
-						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-						DataCache.store(context, at, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
-								bundle.getInt(KEY_RESPONSE_CODE));
-						Log.v(TAG, "web request success");
-					} catch (Exception ex) {
-						try {
-							// unhappy, but http error
-							bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
-							bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-						} catch (Exception ex1) {
-							// sad path
-							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
-							bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+            cachedData = DataCache.query(context, at, bundle);
 
-						}
-					}
+            if (allowCache && cachedData != null) {
+                Log.v(TAG, "Cached Response");
+                bundle.putByteArray(KEY_RESPONSE_DATA, cachedData.getResponseData());
+                bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
+                bundle.putBoolean(KEY_RESPONSE_CACHED, true);
+                bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
+            } else {
+                Log.v(TAG, "Atempting web request");
+                Ws ws = new Ws(at);
+                try {
+                    Result result = ws.httpRead(method, path, options, contentType);
 
-				} catch (Exception ex) {
-					Log.v(TAG, "web request fail");
-					bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NETWORK_ERROR);
-					bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());
-				}
-			}
-			rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
-		}
+                    try {
+                        // happy path
+                        bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
+                        bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+                        bundle.putBoolean(KEY_RESPONSE_CACHED, false);
+                        bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
+                        DataCache.store(context, at, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+                                bundle.getInt(KEY_RESPONSE_CODE));
+                        Log.v(TAG, "web request success");
+                    } catch (Exception ex) {
+                        try {
+                            // unhappy, but http error
+                            bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+                            bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+                            bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                        } catch (Exception ex1) {
+                            // sad path
+                            bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+                            bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
 
-	}
+                        }
+                    }
 
-	private void doHttpWrite(Context context, Intent intent, OAuth at) {
-		Bundle bundle = intent.getExtras();
-		String method = bundle.getString(KEY_PARAM_METHOD);
-		String path = bundle.getString(KEY_PARAM_PATH);
-		String options = bundle.getString(KEY_PARAM_OPTIONS);
-		String contentType = bundle.getString(KEY_PARAM_CONTENT_TYPE);
-		byte[] data = bundle.getByteArray(KEY_PARAM_DATA);
-		boolean allowCache = bundle.getBoolean(KEY_ALLOW_CACHE);
+                } catch (Exception ex) {
+                    Log.v(TAG, "web request fail");
+                    bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NETWORK_ERROR);
+                    bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());
+                }
+            }
+            rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
+        }
 
-		if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
-			ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
+    }
 
-			DataCacheNode cachedData = null;
+    private void doHttpWrite(Context context, Intent intent, OAuth at) {
+        Bundle bundle = intent.getExtras();
+        String method = bundle.getString(KEY_PARAM_METHOD);
+        String path = bundle.getString(KEY_PARAM_PATH);
+        String options = bundle.getString(KEY_PARAM_OPTIONS);
+        String contentType = bundle.getString(KEY_PARAM_CONTENT_TYPE);
+        byte[] data = bundle.getByteArray(KEY_PARAM_DATA);
+        boolean allowCache = bundle.getBoolean(KEY_ALLOW_CACHE);
 
-			if (allowCache)
-				cachedData = DataCache.query(context, at, bundle);
+        if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
+            ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-			if (cachedData != null) {
-				bundle.putByteArray(KEY_RESPONSE_DATA, cachedData.getResponseData());
-				bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
-				bundle.putBoolean(KEY_RESPONSE_CACHED, true);
-			} else {
-				Ws ws = new Ws(at);
-				Result result = null;
-				try {
-					result = ws.httpReadWrite(method, path, options, data, contentType);
+            DataCacheNode cachedData = null;
 
-					try {
-						// happy path
-						bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
-						bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-						bundle.putBoolean(KEY_RESPONSE_CACHED, false);
-						bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-						DataCache.store(context, at, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
-								bundle.getInt(KEY_RESPONSE_CODE));
-						Log.v(TAG, "web request success");
-					} catch (Exception ex) {
-						try {
-							// unhappy, but http error
-							bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
-							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
-							bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-						} catch (Exception ex1) {
-							// sad path
-							bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
-							bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
-						}
-					}
+            if (allowCache)
+                cachedData = DataCache.query(context, at, bundle);
 
-				} catch (Exception ex) {
-					Log.v(TAG, "web request fail");
-					bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
-					bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());
-					if (result != null) {
-						bundle.putLong(KEY_RESPONSE_CODE, result.getResponseCode());
-					}
-				}
-			}
+            if (cachedData != null) {
+                bundle.putByteArray(KEY_RESPONSE_DATA, cachedData.getResponseData());
+                bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
+                bundle.putBoolean(KEY_RESPONSE_CACHED, true);
+            } else {
+                Ws ws = new Ws(at);
+                Result result = null;
+                try {
+                    result = ws.httpReadWrite(method, path, options, data, contentType);
 
-			rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
-		}
+                    try {
+                        // happy path
+                        bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
+                        bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+                        bundle.putBoolean(KEY_RESPONSE_CACHED, false);
+                        bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
+                        DataCache.store(context, at, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+                                bundle.getInt(KEY_RESPONSE_CODE));
+                        Log.v(TAG, "web request success");
+                    } catch (Exception ex) {
+                        try {
+                            // unhappy, but http error
+                            bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+                            bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+                            bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                        } catch (Exception ex1) {
+                            // sad path
+                            bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+                            bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+                        }
+                    }
 
-	}
+                } catch (Exception ex) {
+                    Log.v(TAG, "web request fail");
+                    bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
+                    bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());
+                    if (result != null) {
+                        bundle.putLong(KEY_RESPONSE_CODE, result.getResponseCode());
+                    }
+                }
+            }
+
+            rr.send(bundle.getInt(KEY_RESULT_CODE), bundle);
+        }
+
+    }
 }

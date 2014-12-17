@@ -51,5 +51,4 @@
         <attr name="dialogDividerStyle" format="reference" />
     </declare-styleable>
 
-
 </resources>

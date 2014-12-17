@@ -388,12 +388,12 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            if (_service == null)
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_service == null || _profileService == null || isNew) {
                 _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
-            if (_profileService == null)
                 _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
-            getData();
+                getData();
+            }
         }
 
         @Override

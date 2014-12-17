@@ -542,8 +542,8 @@ public class DetailFragment extends WorkorderFragment {
     // Web
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            if (_service == null)
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_service == null || isNew)
                 _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
         }
 

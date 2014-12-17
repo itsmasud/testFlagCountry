@@ -71,8 +71,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
 
         @Override
-        public void onAuthentication(String username, String authToken) {
-            AuthFragmentActivity.this.onAuthentication(username, authToken);
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            AuthFragmentActivity.this.onAuthentication(username, authToken, isNew);
         }
 
         @Override
@@ -87,7 +87,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     };
 
-    public abstract void onAuthentication(String username, String authToken);
+    public abstract void onAuthentication(String username, String authToken, boolean isNew);
 
     public void onAuthenticationFailed() {
     }

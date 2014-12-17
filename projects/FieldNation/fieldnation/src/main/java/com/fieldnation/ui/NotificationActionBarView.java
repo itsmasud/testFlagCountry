@@ -83,8 +83,8 @@ public class NotificationActionBarView extends RelativeLayout {
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            if (_profileService == null) {
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_profileService == null || isNew) {
                 _profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
                 getContext().startService(_profileService.getMyUserInformation(0, true));
             }

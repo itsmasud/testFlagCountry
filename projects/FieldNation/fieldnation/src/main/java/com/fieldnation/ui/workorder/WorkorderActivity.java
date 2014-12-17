@@ -175,8 +175,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
     }
 
     @Override
-    public void onAuthentication(String username, String authToken) {
-        if (_service == null) {
+    public void onAuthentication(String username, String authToken, boolean isNew) {
+        if (_service == null || isNew) {
             _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
             getData(true);
         }

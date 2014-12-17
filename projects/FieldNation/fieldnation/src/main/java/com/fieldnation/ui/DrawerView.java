@@ -161,8 +161,8 @@ public class DrawerView extends RelativeLayout {
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            if (_dataService == null) {
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_dataService == null || isNew) {
                 _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
 
                 getContext().startService(_dataService.getAll(1, 0, true));

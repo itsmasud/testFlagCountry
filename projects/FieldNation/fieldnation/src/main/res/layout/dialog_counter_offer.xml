@@ -82,6 +82,9 @@
         </LinearLayout>
     </TabHost>
 
+    <View
+        style="?attr/dialogDividerStyle"
+        android:layout_above="@+id/actionbar_view" />
 
     <LinearLayout
         android:id="@+id/actionbar_view"
@@ -100,9 +103,6 @@
             android:text="NEXT" />
     </LinearLayout>
 
-    <View
-        style="@style/DividerFull"
-        android:layout_alignTop="@+id/actionbar_view" />
 
     <com.fieldnation.ui.LoadingView
         android:id="@+id/loading_view"

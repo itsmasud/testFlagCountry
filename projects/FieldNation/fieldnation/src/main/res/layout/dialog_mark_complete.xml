@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        style="?attr/dialogContainerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="?attr/dialogTitleStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mark as complete" />
+
+        <TextView
+            style="?attr/dialogBodyStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You are about to mark this work order as complete. You will no longer be able to edit this work order." />
+
+        <TextView
+            style="?attr/dialogBodyStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Would you like to continue?" />
+
+        <LinearLayout
+            android:id="@+id/signature_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View style="?attr/dialogDividerStyle" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_alignParentLeft="true"
+                    style="?attr/dialogBodyStyle"
+                    android:layout_marginBottom="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Collect a sign off signature" />
+
+                <TextView
+                    android:layout_alignParentRight="true"
+                    style="?attr/dialogCaptionStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OPTIONAL" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_gravity="left"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/TextViewLink"
+                android:text="Add a signature" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View style="?attr/dialogDividerStyle" />
+
+    <LinearLayout
+        style="?attr/dialogActionBarStyle"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="?attr/dialogCancelButtonStyle"
+            android:text="CANCEL" />
+
+        <Button
+            android:id="@+id/continue_button"
+            style="?attr/dialogOkButtonStyle"
+            android:text="CONTINUE" />
+
+    </LinearLayout>
+
+</LinearLayout>

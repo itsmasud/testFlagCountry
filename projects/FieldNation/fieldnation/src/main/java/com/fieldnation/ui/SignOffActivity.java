@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
@@ -120,11 +119,13 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     @Override
-    public void onAuthentication(String username, String authToken) {
-        try {
-            _service = new WorkorderService(SignOffActivity.this, username, authToken, _resultReceiver);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    public void onAuthentication(String username, String authToken, boolean isNew) {
+        if (_service == null || isNew) {
+            try {
+                _service = new WorkorderService(SignOffActivity.this, username, authToken, _resultReceiver);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

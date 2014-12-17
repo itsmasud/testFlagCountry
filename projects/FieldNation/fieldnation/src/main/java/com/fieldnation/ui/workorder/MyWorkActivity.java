@@ -56,7 +56,7 @@ public class MyWorkActivity extends DrawerActivity {
     }
 
     @Override
-    public void onAuthentication(String username, String authToken) {
+    public void onAuthentication(String username, String authToken, boolean isNew) {
         // TODO STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()
         Log.v(TAG, "STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()");
     }

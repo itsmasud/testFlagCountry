@@ -161,6 +161,12 @@ public class CustomFieldDialog extends DialogFragmentBase {
             case LIST:
                 _spinner.setVisibility(View.VISIBLE);
                 if (_customField.getPredefinedValues() != null) {
+                    Log.v(TAG, "PredefinedValues");
+                    for (int i = 0; i < _customField.getPredefinedValues().length; i++) {
+                        if (_customField.getPredefinedValues()[i] == null)
+                            _customField.getPredefinedValues()[i] = "";
+                    }
+
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                             android.R.layout.simple_spinner_item,
                             _customField.getPredefinedValues());
@@ -198,9 +204,10 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 case LIST:
                     _listener.onOk(_customField, (String) _spinner.getSelectedItem());
                     break;
+                default:
+                    _listener.onOk(_customField, _textEditText.getText().toString());
             }
-            Log.v(TAG, "_ok_onClick _textEditText = " + _textEditText.toString());
-            _listener.onOk(_customField, _textEditText.getText().toString());
+
         }
     };
 

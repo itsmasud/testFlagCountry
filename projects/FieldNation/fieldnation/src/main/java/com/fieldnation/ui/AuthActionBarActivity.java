@@ -79,8 +79,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            AuthActionBarActivity.this.onAuthentication(username, authToken);
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            AuthActionBarActivity.this.onAuthentication(username, authToken, isNew);
         }
 
         @Override
@@ -101,7 +101,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     };
 
-    public abstract void onAuthentication(String username, String authToken);
+    public abstract void onAuthentication(String username, String authToken, boolean isNew);
 
     public void onAuthenticationFailed() {
     }
