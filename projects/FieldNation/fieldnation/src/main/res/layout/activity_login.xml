@@ -43,40 +43,58 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <ImageView
-                android:id="@+id/loginpanel_imageview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/login_panel" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/loginpanel_imageview"
                 android:layout_centerHorizontal="true"
                 android:orientation="vertical"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingTop="50dp">
 
-                <EditText
-                    android:id="@+id/username_edittext"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:ems="10"
-                    android:hint="@string/username"
-                    android:text="@string/default_username" />
+                    android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/password_edittext"
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_lock" />
+
+                    <EditText
+                        style="@style/LoginEditText"
+                        android:id="@+id/username_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="2dp"
+                        android:ems="10"
+                        android:hint="@string/username"
+                        android:text="@string/default_username" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:ems="10"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:text="@string/default_password" />
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_lock" />
+
+                    <EditText
+                        style="@style/LoginEditText"
+                        android:id="@+id/password_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:ems="10"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"
+                        android:text="@string/default_password" />
+                </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="fill_parent"
