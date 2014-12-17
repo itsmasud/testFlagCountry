@@ -190,13 +190,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/error" />
-
-                <TextView
-                    android:id="@+id/workorderid_textview"
-                    style="@style/WorkorderCard_Item"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
             </LinearLayout>
 
             <!-- right panel -->
@@ -244,13 +237,27 @@
 
         </RelativeLayout>
 
-        <com.fieldnation.ui.AutoResizeTextButton
-            android:id="@+id/action_button"
-            style="@style/WorkorderCard_Button"
+        <RelativeLayout
+            android:layout_alignLeft="@+id/center_relativelayout"
+            android:paddingLeft="5dp"
             android:layout_below="@+id/center_relativelayout"
-            android:layout_alignParentRight="true"
-            android:text="@string/error"
-            android:visibility="visible" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/workorderid_textview"
+                style="@style/WorkorderCard_Item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="34234324" />
+
+            <com.fieldnation.ui.AutoResizeTextButton
+                android:id="@+id/action_button"
+                style="@style/WorkorderCard_Button"
+                android:layout_alignParentRight="true"
+                android:text="@string/error"
+                android:visibility="visible" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <!-- loading layout -->
