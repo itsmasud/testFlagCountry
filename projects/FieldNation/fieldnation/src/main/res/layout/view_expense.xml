@@ -63,7 +63,7 @@
     </RelativeLayout>
 
     <View
-        style="@style/DividerFull"
+        style="?attr/tileDividerStyle"
         android:layout_alignBottom="@+id/content_layout" />
 
 </RelativeLayout>

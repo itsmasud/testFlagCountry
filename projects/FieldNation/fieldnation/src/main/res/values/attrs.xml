@@ -23,6 +23,7 @@
         <attr name="tileCheckBoxStyle" format="reference" />
         <attr name="tileSpinnerButtonStyle" format="reference" />
         <attr name="tileButtonStyle" format="reference" />
+        <attr name="tileDividerStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="ButtonTheme">
