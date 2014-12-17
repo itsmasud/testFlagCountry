@@ -1,7 +1,6 @@
 package com.fieldnation.ui.workorder;
 
 import android.content.Context;
-import android.os.Debug;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -119,7 +118,7 @@ public class WorkorderCardView extends RelativeLayout {
         // connect UI components
         // not interested
         /*-_notInterestedLayout = (RelativeLayout) findViewById(R.id.notinterested_layout);-*/
-		/* _backImageView = (ImageView) findViewById(R.id.back_imageview); */
+        /* _backImageView = (ImageView) findViewById(R.id.back_imageview); */
 		/* _backImageView.setOnClickListener(_back_onClick); */
 		/* _backImageView.setClickable(false); */
 		/*
@@ -434,12 +433,12 @@ public class WorkorderCardView extends RelativeLayout {
             ex.printStackTrace();
         }
 
-        if (Debug.isDebuggerConnected()) {
-            _workorderIdTextView.setText("[ID " + _workorder.getWorkorderId() + "]");
-            _workorderIdTextView.setVisibility(VISIBLE);
-        } else {
-            _workorderIdTextView.setVisibility(GONE);
-        }
+//        if (Debug.isDebuggerConnected()) {
+        _workorderIdTextView.setText("ID: " + _workorder.getWorkorderId() + "");
+        _workorderIdTextView.setVisibility(VISIBLE);
+//        } else {
+//            _workorderIdTextView.setVisibility(GONE);
+//        }
 
         // bundle
         if (_workorder.getBundleCount() != null) {
