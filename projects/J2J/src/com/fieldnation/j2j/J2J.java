@@ -332,9 +332,9 @@ public class J2J {
 					Log.println("bundle");
 				}
 
-				try{
-				details.add(result.getResultsAsJsonObject());
-				} catch(Exception ex){
+				try {
+					details.add(result.getResultsAsJsonObject());
+				} catch (Exception ex) {
 					ex.printStackTrace();
 					Log.println(misc.getStackTrace(ex));
 				}
