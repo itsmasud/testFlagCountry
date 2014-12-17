@@ -1,6 +1,8 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,7 +74,8 @@ public class NotificationView extends RelativeLayout {
         if (msg.length() > 170) {
             msg = msg.substring(0, 170) + "...";
         }
-        _messageTextView.setText(msg);
+        _messageTextView.setText(misc.linkifyHtml(msg, Linkify.ALL));
+        _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
         _usernameTextView.setText(_notification.getFromUser().getFullName());
         try {

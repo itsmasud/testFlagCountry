@@ -101,8 +101,10 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         // request button
         if (_workorder.canAcceptWork()) {
             _requestButton.setText(R.string.accept_work);
+            _requestButton.setVisibility(View.VISIBLE);
         } else if (_workorder.canRequest()) {
             _requestButton.setText(R.string.request_work);
+            _requestButton.setVisibility(View.VISIBLE);
         } else {
             _requestButton.setVisibility(View.GONE);
         }

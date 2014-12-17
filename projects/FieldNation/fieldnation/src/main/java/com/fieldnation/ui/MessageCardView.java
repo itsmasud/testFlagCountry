@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,29 +73,41 @@ public class MessageCardView extends RelativeLayout {
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _statusView = findViewById(R.id.status_view);
+
+        populateUi();
     }
 
     public void setMessage(Message message) {
         _message = message;
+
+        populateUi();
+    }
+
+    private void populateUi() {
+        if (_statusView == null)
+            return;
+
+        if (_message == null)
+            return;
+
         _substatusTextView.setText(_substatus[_message.getStatus().getWorkorderSubstatus().ordinal()]);
 
-        _viewId = message.getMessageId() % Integer.MAX_VALUE;
+        _viewId = _message.getMessageId() % Integer.MAX_VALUE;
         try {
-            _titleTextView.setText(message.getWorkorderTitle() + "");
+            _titleTextView.setText(_message.getWorkorderTitle() + "");
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         try {
             // compress the data a bit
-            _messageBodyTextView.setText(message.getMessage());
+            _messageBodyTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
+            _messageBodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         try {
-            Calendar cal = ISO8601.toCalendar(message.getDate());
+            Calendar cal = ISO8601.toCalendar(_message.getDate());
 
             String date = misc.formatDateLong(cal);
 
@@ -107,7 +121,7 @@ public class MessageCardView extends RelativeLayout {
         try {
             // _profileImageView.setBackgroundDrawable(null);
             _profileImageView.setImageDrawable(null);
-            String url = message.getPhotoUrl();
+            String url = _message.getPhotoThumbUrl();
             getContext().startService(_photoService.getPhoto(_viewId, url, true));
         } catch (Exception ex) {
             ex.printStackTrace();

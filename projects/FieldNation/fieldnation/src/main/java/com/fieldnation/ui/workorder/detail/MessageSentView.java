@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -93,7 +95,8 @@ public class MessageSentView extends RelativeLayout {
         if (_message == null)
             return;
 
-        _messageTextView.setText(_message.getMessage());
+        _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
+        _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
         try {
             _timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
         } catch (ParseException e) {

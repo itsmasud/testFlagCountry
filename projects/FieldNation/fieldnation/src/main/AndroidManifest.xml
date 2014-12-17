@@ -69,39 +69,39 @@
                 <data
                     android:host="testlipo.fieldnation.com"
                     android:pathPrefix="/workorder/"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <data
                     android:host="testlipo.fieldnation.com"
                     android:pathPrefix="/marketplace/"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <data
                     android:host="testlipo.fieldnation.com"
                     android:pathPrefix="/wo/"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <data
                     android:host="dev.fieldnation.com"
                     android:pathPrefix="/workorder/"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <data
                     android:host="dev.fieldnation.com"
                     android:pathPrefix="/marketplace/"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <data
                     android:host="dev.fieldnation.com"
                     android:pathPrefix="/wo/"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <data
                     android:host="fieldnation.com"
                     android:pathPrefix="/workorder/"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <data
                     android:host="fieldnation.com"
                     android:pathPrefix="/marketplace/"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <data
                     android:host="fieldnation.com"
                     android:pathPrefix="/wo/"
-                    android:scheme="http" />
+                    android:scheme="https" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

@@ -241,7 +241,7 @@ public class Workorder implements Parcelable {
     public Boolean isSignatureCollected() {
         if (_collectedSignature == null)
             return false;
-        
+
         return _collectedSignature;
     }
 
