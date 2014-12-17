@@ -273,6 +273,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
         if (_tabview == null)
             return;
 
+        setTitle("WO: " + _workorder.getWorkorderId());
+
         if (_workorder.getAlertCount() != null) {
             _tabview.setAlertsCount(_workorder.getAlertCount());
         } else {
