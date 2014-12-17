@@ -64,4 +64,6 @@
 
     <style name="TileSpinnerButton" parent="@android:style/Widget.Spinner"></style>
 
+    <style name="TileDivider" parent="DividerFull" />
+
 </resources>

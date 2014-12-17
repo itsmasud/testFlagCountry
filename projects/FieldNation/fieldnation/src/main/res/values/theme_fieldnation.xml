@@ -57,6 +57,7 @@
         <item name="tileCheckBoxStyle">@style/TileCheckBox</item>
         <item name="tileSpinnerButtonStyle">@style/TileSpinnerButton</item>
         <item name="tileButtonStyle">@style/TileButton</item>
+        <item name="tileDividerStyle">@style/TileDivider</item>
 
         <!-- dialogs -->
         <item name="dialogStyle">@style/Dialog</item>
