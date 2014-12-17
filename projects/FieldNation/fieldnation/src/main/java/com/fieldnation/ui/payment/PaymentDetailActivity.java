@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
@@ -121,9 +120,11 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     }
 
     @Override
-    public void onAuthentication(String username, String authToken) {
-        _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
-        requestData();
+    public void onAuthentication(String username, String authToken, boolean isNew) {
+        if (_service == null || isNew) {
+            _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
+            requestData();
+        }
     }
 
     /*-*********************************-*/

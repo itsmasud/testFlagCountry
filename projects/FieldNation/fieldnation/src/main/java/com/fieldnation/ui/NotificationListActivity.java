@@ -49,8 +49,8 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
     @Override
-    public void onAuthentication(String username, String authToken, ResultReceiver resultReceiver) {
-        if (_service == null)
+    public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
+        if (_service == null || isNew)
             _service = new ProfileService(this, username, authToken, resultReceiver);
     }
 

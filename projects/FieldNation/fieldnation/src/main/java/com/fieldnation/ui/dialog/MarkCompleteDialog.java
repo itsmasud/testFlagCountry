@@ -104,9 +104,9 @@ public class MarkCompleteDialog extends DialogFragmentBase {
         boolean hasSignature = _workorder.isSignatureCollected();
 
         if (hasSignature)
-            _signatureLayout.setVisibility(View.VISIBLE);
-        else
             _signatureLayout.setVisibility(View.GONE);
+        else
+            _signatureLayout.setVisibility(View.VISIBLE);
 
     }
 

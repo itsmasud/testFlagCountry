@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -509,9 +508,9 @@ public class WorkorderListFragment extends Fragment {
     /*-*****************************-*/
     private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
+        public void onAuthentication(String username, String authToken, boolean isNew) {
             Log.v(TAG, "onAuthentication");
-            if (_service == null) {
+            if (_service == null || isNew) {
                 _username = username;
                 _authToken = authToken;
                 if (getActivity() != null) {

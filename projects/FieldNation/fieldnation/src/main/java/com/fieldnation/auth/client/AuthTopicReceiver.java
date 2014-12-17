@@ -27,12 +27,9 @@ public abstract class AuthTopicReceiver extends TopicReceiver {
         if (AuthTopicService.BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {
             String username = parcel.getString(AuthTopicService.BUNDLE_PARAM_USERNAME);
             String authtoken = parcel.getString(AuthTopicService.BUNDLE_PARAM_AUTH_TOKEN);
-
-            if (!username.equals(lastusername) || !authtoken.equals(lastauthtoken)) {
-                lastusername = username;
-                lastauthtoken = authtoken;
-                onAuthentication(lastusername, lastauthtoken);
-            }
+            onAuthentication(username, authtoken, !username.equals(lastusername) || !authtoken.equals(lastauthtoken));
+            lastusername = username;
+            lastauthtoken = authtoken;
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
             onAuthenticationInvalidated();
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_FAILED.equals(type)) {
@@ -40,7 +37,7 @@ public abstract class AuthTopicReceiver extends TopicReceiver {
         }
     }
 
-    public abstract void onAuthentication(String username, String authToken);
+    public abstract void onAuthentication(String username, String authToken, boolean isNew);
 
     public abstract void onAuthenticationFailed();
 

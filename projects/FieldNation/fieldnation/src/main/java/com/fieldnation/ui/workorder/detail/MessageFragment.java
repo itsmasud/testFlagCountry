@@ -190,8 +190,8 @@ public class MessageFragment extends WorkorderFragment {
     /*-*****************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            if (_profileService == null || _workorderService == null) {
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_profileService == null || _workorderService == null || isNew) {
                 _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
                 _workorderService = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
                 WEB_GET_PROFILE = _rand.nextInt();

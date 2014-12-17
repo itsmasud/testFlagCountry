@@ -1,8 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,19 +148,6 @@ public class ActionBarTopView extends RelativeLayout {
     private View.OnClickListener _complete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage(
-                    "Are you sure you want to mark this work order as complete?")
-                    .setPositiveButton("Yes", _complete_dialog)
-                    .setNegativeButton("No", null).show();
-        }
-    };
-
-    private DialogInterface.OnClickListener _complete_dialog = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            _completeButton.setEnabled(false);
             if (_listener != null)
                 _listener.onComplete();
         }

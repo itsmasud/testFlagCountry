@@ -13,7 +13,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
 public class J2J {
-	private static String hostname = "dev.fieldnation.com";
+	private static String hostname = "red.fieldnation.com";
 	private static String authToken = "";
 
 	public static void main(String[] args) {
@@ -30,19 +30,19 @@ public class J2J {
 				Log.println("Sarting: " + usernames[i]);
 
 				try {
-					authToken = Tools.authServer("dev.fieldnation.com", "/authentication/api/oauth/token", "password",
+					authToken = Tools.authServer("red.fieldnation.com", "/authentication/api/oauth/token", "password",
 							"demoapp", "demopass", usernames[i], passwords[i]);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
-				//getProfile();
+				getProfile();
 				getWorkorders();
-//				getExpenseCategories();
-//				getMessages();
-//				getPayments();
-//				getNotifications();
+				getExpenseCategories();
+				getMessages();
+				getPayments();
+				getNotifications();
 			}
 			exportClasses();
 

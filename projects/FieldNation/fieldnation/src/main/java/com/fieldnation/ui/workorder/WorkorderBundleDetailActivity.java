@@ -10,7 +10,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
@@ -83,9 +82,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     }
 
     @Override
-    public void onAuthentication(String username, String authToken) {
-        _service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
-        startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
+    public void onAuthentication(String username, String authToken, boolean isNew) {
+        if (_service == null || isNew) {
+            _service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
+            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
+        }
     }
 
     private View.OnClickListener _request_onClick = new View.OnClickListener() {

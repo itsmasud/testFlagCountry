@@ -65,8 +65,8 @@ public class ExpenseCategories {
     /*-*********************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            if (_ws == null) {
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_ws == null || isNew) {
                 _ws = new WorkorderService(_context, username, authToken, _resultReciever);
                 _context.startService(_ws.listExpenseCategories(0, true));
             }

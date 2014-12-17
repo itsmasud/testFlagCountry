@@ -112,7 +112,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     }
 
     @Override
-    public void onAuthentication(String username, String authToken) {
+    public void onAuthentication(String username, String authToken, boolean isNew) {
         // TODO STUB com.fieldnation.ui.SignatureDisplayActivity.onAuthentication()
         Log.v(TAG, "STUB com.fieldnation.ui.SignatureDisplayActivity.onAuthentication()");
     }

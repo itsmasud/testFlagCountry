@@ -45,6 +45,9 @@ public class AuthTopicService extends Service {
     private String _authToken;
     private String _username;
 
+    private long _invalidTimeout = 0;
+    private long _authTimeout = 0;
+
     // Services
     private AccountManager _accountManager;
 
@@ -75,6 +78,7 @@ public class AuthTopicService extends Service {
     }
 
     private void requestAuthTokenFromAccountManager() {
+        _authenticating = true;
         AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(_account, getAccoutnType(), null,
                 null, null, null);
         new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
@@ -139,8 +143,16 @@ public class AuthTopicService extends Service {
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             String type = parcel.getString(BUNDLE_PARAM_TYPE);
 
+            Log.v(TAG, "Type: " + type);
+
             if (BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
-                if (!_removing) {
+                if (System.currentTimeMillis() > _invalidTimeout) {
+                    _invalidTimeout = System.currentTimeMillis() + 5000;
+                } else {
+                    return;
+                }
+
+                if (!_removing && !_authenticating) {
                     _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
                     _username = null;
                     _authToken = null;
@@ -148,7 +160,13 @@ public class AuthTopicService extends Service {
                     requestAuthentication(AuthTopicService.this);
                 }
             } else if (BUNDLE_PARAM_TYPE_REQUEST.equals(type)) {
-                if (_account != null && !_removing) {
+                if (System.currentTimeMillis() > _authTimeout) {
+                    _authTimeout = System.currentTimeMillis() + 5000;
+                } else {
+                    return;
+                }
+
+                if (_account != null && !_removing && !_authenticating) {
                     requestAuthTokenFromAccountManager();
                 } else if (!_authenticating) {
                     if (_username != null && _authToken != null) {
@@ -191,12 +209,12 @@ public class AuthTopicService extends Service {
                 String tokenString = bundle.getString("authtoken");
 
                 // auth is complete
-                _authenticating = false;
 
                 // if however, data invalid, need to ask again.
                 if (tokenString == null) {
                     if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
                         Log.v(TAG, "FutureWaitAsyncTask, getAccount");
+                        _authenticating = false;
                         getAccount();
                     } else {
                         // todo.. not sure
@@ -206,6 +224,7 @@ public class AuthTopicService extends Service {
                     Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
                     _authToken = tokenString;
                     _username = bundle.getString("authAccount");
+                    _authenticating = false;
                     dispatchAuthComplete(AuthTopicService.this, _username, tokenString);
                 }
             } else if (_removing) {
