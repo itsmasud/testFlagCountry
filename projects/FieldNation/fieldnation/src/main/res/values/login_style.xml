@@ -1,0 +1,14 @@
+<resources>
+
+    <!-- Application theme. -->
+    <style name="ActivityLogin" parent="@style/Theme.AppCompat.Light"></style>
+
+    <style name="LoginEditText" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:background">@drawable/login_underline</item>
+        <item name="android:ems">10</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+</resources>

@@ -14,6 +14,7 @@ import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.topics.TopicService;
+import com.fieldnation.topics.TopicShutdownReciever;
 
 /**
  * This is the base of all the activities in this project. It provides
@@ -22,7 +23,10 @@ import com.fieldnation.topics.TopicService;
  * @author michael.carver
  */
 public abstract class AuthActionBarActivity extends ActionBarActivity {
-    private static final String TAG = "ui.AuthActionBarActivity";
+    private static final String TAG_ROOT = "ui.AuthActionBarActivity";
+    private String TAG = ":";
+    private static Integer TAG_COUNT = 0;
+
 
     private final static int AUTH_SERVICE = 1;
 
@@ -30,9 +34,20 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     NotificationActionBarView _notificationsView;
     MessagesActionBarView _messagesView;
 
+    // Services
+    private TopicShutdownReciever _shutdownListener;
+
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
+
+    public AuthActionBarActivity() {
+        super();
+        synchronized (TAG_COUNT) {
+            TAG = TAG_ROOT + ":" + TAG_COUNT;
+            TAG_COUNT++;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +63,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setDisplayShowHomeEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
+
     }
 
     @Override
@@ -65,18 +81,25 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         super.onResume();
         AuthTopicService.startService(this);
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
+
+        _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
     }
 
     @Override
     protected void onPause() {
-        TopicService.delete(this, 0, TAG);
+        TopicService.delete(this, TAG);
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        _shutdownListener.onPause();
+        super.onDestroy();
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {

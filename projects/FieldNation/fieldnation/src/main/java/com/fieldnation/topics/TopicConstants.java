@@ -14,6 +14,7 @@ public interface TopicConstants {
     public static final String PARAM_TOPIC_RECEIVER = "PARAM_TOPIC_RECEIVER";
     public static final String PARAM_TOPIC_PARCEL = "PARAM_TOPIC_PARCEL";
     public static final String PARAM_TAG = "PARAM_TAG";
+    public static final String PARAM_KEEP_LAST_SENT = "PARAM_KEEP_LAST_SENT";
 
     public static final String PARAM_RESULT_CODE = "PARAM_RESULT_CODE";
 

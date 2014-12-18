@@ -67,8 +67,8 @@ public class MessagesActionBarView extends RelativeLayout {
 
     @Override
     protected void finalize() throws Throwable {
-        TopicService.delete(getContext(), 0, TAG + ":AuthTopicService");
-        TopicService.delete(getContext(), 0, TAG + ":TopicService");
+        TopicService.delete(getContext(), TAG + ":AuthTopicService");
+        TopicService.delete(getContext(), TAG + ":TopicService");
         super.finalize();
     }
 

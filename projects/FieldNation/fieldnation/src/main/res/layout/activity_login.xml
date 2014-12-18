@@ -11,95 +11,98 @@
         android:scaleType="centerCrop"
         android:src="@drawable/loginscreen" />
 
-    <!--<com.fieldnation.auth.server.MoviePlayerView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent" />-->
-
-    <!--<SurfaceView-->
-    <!--android:id="@+id/video_surface"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent" />-->
-
     <com.fieldnation.auth.server.FnVideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_height="match_parent" />
 
-    <LinearLayout
+    <View
+        android:id="@+id/fader"
+        android:background="#FF000000"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="2">
+        android:layout_height="match_parent" />
 
-        <View
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
+
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="128dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/fn_logo"
+            android:layout_marginBottom="48dp" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/content_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/loginpanel_imageview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/login_panel" />
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="30dp"
+            android:layout_marginBottom="128dp"
+            android:paddingRight="30dp">
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/loginpanel_imageview"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="50dp">
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_user" />
 
                 <EditText
+                    style="@style/LoginEditText"
                     android:id="@+id/username_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:ems="10"
                     android:hint="@string/username"
                     android:text="@string/default_username" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_lock" />
 
                 <EditText
+                    style="@style/LoginEditText"
                     android:id="@+id/password_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:ems="10"
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:text="@string/default_password" />
-
-                <RelativeLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-
-                    <Button
-                        android:id="@+id/login_button"
-                        style="?attr/buttonOrangeStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_centerHorizontal="true"
-                        android:text="@string/login" />
-                </RelativeLayout>
             </LinearLayout>
-        </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    android:id="@+id/login_button"
+                    style="@style/ButtonOrangeMaterial"
+                    android:layout_width="150dp"
+                    android:layout_height="48dp"
+                    android:layout_centerHorizontal="true"
+                    android:text="LOGIN" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 
-    <ProgressBar
+    <com.fieldnation.ui.LoadingView
         android:id="@+id/loading_progressbar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
         android:visibility="gone" />
 
 </RelativeLayout>

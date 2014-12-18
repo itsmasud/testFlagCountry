@@ -159,7 +159,7 @@ public class DetailFragment extends WorkorderFragment {
 
     @Override
     public void onPause() {
-        TopicService.delete(getActivity(), 0, TAG);
+        TopicService.delete(getActivity(), TAG);
         super.onPause();
     }
 
