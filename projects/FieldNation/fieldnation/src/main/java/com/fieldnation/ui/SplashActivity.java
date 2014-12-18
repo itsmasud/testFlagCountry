@@ -20,7 +20,6 @@ public class SplashActivity extends AuthFragmentActivity {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
     }
 
     @Override

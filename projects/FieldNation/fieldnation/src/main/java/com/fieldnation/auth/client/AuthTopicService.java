@@ -15,6 +15,7 @@ import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.R;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
+import com.fieldnation.topics.Topics;
 
 /**
  * Created by Michael on 12/15/2014.
@@ -60,6 +61,7 @@ public class AuthTopicService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         subscribeAuthCommand(this, 0, TAG, _topicReceiver);
+        TopicService.registerListener(this, 0, TAG + ":SHUTDOWN", Topics.TOPIC_SHUTDOWN, _topic_shutdown);
 
         if (!_authenticating)
             getAccount();
@@ -75,6 +77,7 @@ public class AuthTopicService extends Service {
     @Override
     public void onDestroy() {
         TopicService.delete(this, TAG);
+        TopicService.delete(this, TAG + ":SHUTDOWN");
         super.onDestroy();
     }
 
@@ -129,6 +132,24 @@ public class AuthTopicService extends Service {
     /*-*****************************-*/
     /*-             Events          -*/
     /*-*****************************-*/
+
+    private TopicReceiver _topic_shutdown = new TopicReceiver(new Handler()) {
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+        }
+
+        @Override
+        public void onUnregister(int resultCode, String topicId) {
+        }
+
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            _authenticating = false;
+            _removing = false;
+            _account = null;
+            dispatchAuthInvalid(AuthTopicService.this);
+        }
+    };
 
 
     private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
