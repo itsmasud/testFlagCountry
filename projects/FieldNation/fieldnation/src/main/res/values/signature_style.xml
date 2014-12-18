@@ -4,7 +4,7 @@
     <color name="SignatureCardGrey">#FFc0bfbf</color>
 
     <style name="SignatureActivity">
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/activity_bg</item>
     </style>
 
     <style name="SignatureContents">
