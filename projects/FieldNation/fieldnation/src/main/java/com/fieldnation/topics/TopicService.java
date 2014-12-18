@@ -120,11 +120,9 @@ public class TopicService extends Service {
     private void delete(Intent intent) {
         Log.v(TAG, "delete");
 
-        int resultCode = intent.getIntExtra(TopicConstants.PARAM_RESULT_CODE, 0);
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
 
         synchronized (TAG) {
-            TopicClient c = TopicClient.get(tag);
             TopicClient.delete(tag);
         }
     }
@@ -133,6 +131,7 @@ public class TopicService extends Service {
         Log.v(TAG, "dispatch");
         Bundle parcel = intent.getBundleExtra(TopicConstants.PARAM_TOPIC_PARCEL);
         String topicId = intent.getStringExtra(TopicConstants.PARAM_TOPIC_ID);
+        boolean doKeep = intent.getBooleanExtra(TopicConstants.PARAM_KEEP_LAST_SENT, true);
 
         Bundle bundle = new Bundle();
         bundle.putString(TopicConstants.ACTION, TopicConstants.ACTION_DISPATCH_EVENT);
@@ -153,7 +152,8 @@ public class TopicService extends Service {
             send(c.receiver, c.resultCode, bundle);
         }
 
-        _lastSent.put(topicId, parcel);
+        if (doKeep)
+            _lastSent.put(topicId, parcel);
     }
 
     @Override
@@ -182,20 +182,24 @@ public class TopicService extends Service {
         context.startService(intent);
     }
 
-    public static void delete(Context context, int resultCode, String tag) {
+    public static void delete(Context context, String tag) {
         Intent intent = new Intent(context, TopicService.class);
 
         intent.setAction(TopicConstants.ACTION_DELETE_CLIENT);
-        intent.putExtra(TopicConstants.PARAM_RESULT_CODE, resultCode);
         intent.putExtra(TopicConstants.PARAM_TAG, tag);
         context.startService(intent);
     }
 
     public static void dispatchTopic(Context context, String topicId, Bundle parcel) {
+        dispatchTopic(context, topicId, parcel, true);
+    }
+
+    public static void dispatchTopic(Context context, String topicId, Bundle parcel, boolean keepLastSent) {
         Intent intent = new Intent(context, TopicService.class);
 
         intent.setAction(TopicConstants.ACTION_DISPATCH_EVENT);
         intent.putExtra(TopicConstants.PARAM_TOPIC_ID, topicId);
+        intent.putExtra(TopicConstants.PARAM_KEEP_LAST_SENT, keepLastSent);
         intent.putExtra(TopicConstants.PARAM_TOPIC_PARCEL, parcel == null ? new Bundle() : parcel);
         context.startService(intent);
     }

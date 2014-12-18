@@ -43,7 +43,7 @@ public class ExpenseCategories {
     @Override
     protected void finalize() throws Throwable {
         if (_context != null)
-            TopicService.delete(_context, 1, TAG);
+            TopicService.delete(_context, TAG);
         super.finalize();
     }
 

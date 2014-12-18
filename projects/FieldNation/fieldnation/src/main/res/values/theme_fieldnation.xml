@@ -24,6 +24,11 @@
     </style>
 
     <style name="FieldNation.Base.Theme" parent="FieldNation.ActionBar.Theme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@color/black</item>
+
+
         <item name="android:textColorLink">@color/text_link_color</item>
 
         <!-- android widgets -->

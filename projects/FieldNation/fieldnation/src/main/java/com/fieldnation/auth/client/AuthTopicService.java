@@ -37,6 +37,7 @@ public class AuthTopicService extends Service {
     public static final String BUNDLE_PARAM_TYPE_FAILED = "BUNDLE_PARAM_TYPE_FAILED";
     public static final String BUNDLE_PARAM_TYPE_COMPLETE = "BUNDLE_PARAM_TYPE_COMPLETE";
     public static final String BUNDLE_PARAM_TYPE_REMOVE = "BUNDLE_PARAM_TYPE_REMOVE";
+    public static final String BUNDLE_PARAM_TYPE_CANCELLED = "BUNDLE_PARAM_TYPE_CANCELLED";
 
     // Data
     private Account _account = null;
@@ -73,7 +74,7 @@ public class AuthTopicService extends Service {
 
     @Override
     public void onDestroy() {
-        TopicService.delete(this, 0, TAG);
+        TopicService.delete(this, TAG);
         super.onDestroy();
     }
 
@@ -146,12 +147,6 @@ public class AuthTopicService extends Service {
             Log.v(TAG, "Type: " + type);
 
             if (BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
-                if (System.currentTimeMillis() > _invalidTimeout) {
-                    _invalidTimeout = System.currentTimeMillis() + 5000;
-                } else {
-                    return;
-                }
-
                 if (!_removing && !_authenticating) {
                     _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
                     _username = null;
@@ -160,12 +155,6 @@ public class AuthTopicService extends Service {
                     requestAuthentication(AuthTopicService.this);
                 }
             } else if (BUNDLE_PARAM_TYPE_REQUEST.equals(type)) {
-                if (System.currentTimeMillis() > _authTimeout) {
-                    _authTimeout = System.currentTimeMillis() + 5000;
-                } else {
-                    return;
-                }
-
                 if (_account != null && !_removing && !_authenticating) {
                     requestAuthTokenFromAccountManager();
                 } else if (!_authenticating) {
@@ -182,11 +171,15 @@ public class AuthTopicService extends Service {
                     AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
                     new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
                     _account = null;
-                    getAccount();
                 }
             } else if (BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {
                 _authenticating = false;
                 getAccount();
+            } else if (BUNDLE_PARAM_TYPE_CANCELLED.equals(type)) {
+                _account = null;
+                _authenticating = false;
+                _removing = false;
+                dispatchAuthInvalid(AuthTopicService.this);
             }
         }
     };
@@ -231,6 +224,7 @@ public class AuthTopicService extends Service {
                 Log.v(TAG, "FutureWaitAsyncTask removing");
                 _removing = false;
                 dispatchAuthInvalid(AuthTopicService.this);
+                requestAuthentication(AuthTopicService.this);
             }
         }
 
@@ -278,6 +272,13 @@ public class AuthTopicService extends Service {
     public static void dispatchAuthComplete(Context context) {
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_COMPLETE);
+
+        TopicService.dispatchTopic(context, TOPIC_AUTH_COMMAND, bundle);
+    }
+
+    public static void dispatchAuthCancelled(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_CANCELLED);
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_COMMAND, bundle);
     }

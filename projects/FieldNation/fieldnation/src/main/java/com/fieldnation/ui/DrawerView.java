@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.auth.server.AuthActivity;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.PaymentService;
@@ -113,7 +114,7 @@ public class DrawerView extends RelativeLayout {
 
     @Override
     protected void finalize() throws Throwable {
-        TopicService.delete(getContext(), 0, TAG);
+        TopicService.delete(getContext(), TAG);
         super.finalize();
     }
 
@@ -156,6 +157,9 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AuthTopicService.requestAuthRemove(getContext());
+            Intent intent = new Intent(getContext(), AuthActivity.class);
+            getContext().startActivity(intent);
+            attachAnimations();
         }
     };
 

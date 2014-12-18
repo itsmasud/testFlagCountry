@@ -79,7 +79,7 @@ public class MessageFragment extends WorkorderFragment {
 
     @Override
     public void onPause() {
-        TopicService.delete(getActivity(), 0, TAG);
+        TopicService.delete(getActivity(), TAG);
 
         WEB_GET_MESSAGES = 1;
         WEB_GET_PROFILE = 2;
