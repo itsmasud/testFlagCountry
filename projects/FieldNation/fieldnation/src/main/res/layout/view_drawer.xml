@@ -2,12 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Drawer"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <!-- Work orders -->
 
@@ -15,7 +15,7 @@
             android:id="@+id/mywork_view"
             style="@style/DrawerItem"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/mywork_imageview"
@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/mywork_imageview"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/mywork_title_textView"
@@ -58,7 +58,7 @@
             android:id="@+id/market_view"
             style="@style/DrawerItem"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/market_imageview"
@@ -72,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/market_imageview"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/market_title_textview"
@@ -101,7 +101,7 @@
             android:id="@+id/payment_view"
             style="@style/DrawerItem"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/payment_imageview"
@@ -115,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/payment_imageview"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/payment_title_textview"
@@ -137,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
-                    android:visibility="gone" >
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/estimateddate_textview"
@@ -163,7 +163,7 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
-                    android:visibility="gone" >
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/paiddate_textview"
@@ -196,7 +196,7 @@
             android:id="@+id/settings_view"
             style="@style/DrawerItem"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/settings_imageview"
@@ -210,14 +210,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/settings_imageview"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/settings_title_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_title"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/settings_title_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_title"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/version_textview"
+                        android:layout_alignParentRight="true"
+                        style="?attr/dialogCaptionStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="garbage" />
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/settings_subtext_textview"
@@ -239,7 +252,7 @@
             android:id="@+id/logout_view"
             style="@style/DrawerItem"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/logout_imageview"
@@ -257,6 +270,18 @@
                 android:text="@string/logout_title"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </RelativeLayout>
+
+        <View
+            style="@style/DrawerSeparator"
+            android:layout_width="fill_parent"
+            android:layout_height="2px" />
+
+        <Button
+            android:id="@+id/feedback_button"
+            style="@style/Button.Material.Flat"
+            android:layout_width="match_parent"
+            android:text="Feedback Form" />
+
     </LinearLayout>
 
 </ScrollView>

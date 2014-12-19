@@ -3,12 +3,14 @@ package com.fieldnation.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -50,6 +52,8 @@ public class DrawerView extends RelativeLayout {
     private TextView _estimatedDateTextView;
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
+    private TextView _versionTextView;
+    private Button _feedbackButton;
 
     // Data
     private PaymentService _dataService;
@@ -110,6 +114,18 @@ public class DrawerView extends RelativeLayout {
         _estimatedLayout = (RelativeLayout) findViewById(R.id.estimated_layout);
         _estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
         _estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
+
+        _versionTextView = (TextView) findViewById(R.id.version_textview);
+        try {
+            _versionTextView.setText("v" + getContext().getPackageManager()
+                    .getPackageInfo(getContext().getPackageName(), 0).versionName);
+            _versionTextView.setVisibility(View.VISIBLE);
+        } catch (Exception ex) {
+            _versionTextView.setVisibility(View.GONE);
+        }
+
+        _feedbackButton = (Button) findViewById(R.id.feedback_button);
+        _feedbackButton.setOnClickListener(_feedback_onClick);
     }
 
     @Override
@@ -121,6 +137,13 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private OnClickListener _feedback_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/forms/d/1ImIpsrdzWdVUytIjEcKfGpbNFHm0cZP0q_ZHI2FUb48/viewform?usp=send_form"));
+            getContext().startActivity(intent);
+        }
+    };
     private View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
