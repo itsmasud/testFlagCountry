@@ -36,6 +36,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     private TextView _workorderCountTextView;
     private TextView _feesCountTextView;
     private ListView _listView;
+    private TextView _stateTextView;
 
     // Data
     private long _paymentId = -1;
@@ -69,6 +70,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _workorderCountTextView = (TextView) findViewById(R.id.workordercount_textview);
         _feesCountTextView = (TextView) findViewById(R.id.feescount_textview);
+        _stateTextView = (TextView) findViewById(R.id.state_textview);
 
         _listView = (ListView) findViewById(R.id.items_listview);
         // TODO set loading info
@@ -114,9 +116,11 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
         _adapter = new PaymentDetailAdapter(_paid);
         _listView.setAdapter(_adapter);
-        _idTextView.setText("ID " + _paid.getPaymentId());
+        _idTextView.setText("Payment Id " + _paid.getPaymentId());
         _paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
-        _paymentTypeTextView.setText(misc.capitalize(_paid.getPayMethod()));
+        String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
+        _paymentTypeTextView.setText(paymethod);
+        _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
     }
 
     @Override
