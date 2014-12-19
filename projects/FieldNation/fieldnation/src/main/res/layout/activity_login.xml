@@ -56,12 +56,24 @@
                     android:layout_height="36dp"
                     android:src="@drawable/ic_user" />
 
-                <EditText
-                    style="@style/LoginEditText"
-                    android:id="@+id/username_edittext"
-                    android:layout_marginBottom="2dp"
-                    android:hint="@string/username"
-                    android:text="@string/default_username" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/LoginEditText"
+                        android:id="@+id/username_edittext"
+                        android:layout_marginBottom="2dp"
+                        android:imeOptions="actionNext"
+                        android:hint="@string/username"
+                        android:text="@string/default_username" />
+
+                    <View
+                        android:layout_alignBottom="@+id/username_edittext"
+                        android:background="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="1px" />
+                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -74,13 +86,26 @@
                     android:layout_height="36dp"
                     android:src="@drawable/ic_lock" />
 
-                <EditText
-                    style="@style/LoginEditText"
-                    android:id="@+id/password_edittext"
-                    android:layout_marginBottom="5dp"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:text="@string/default_password" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/LoginEditText"
+                        android:id="@+id/password_edittext"
+                        android:layout_marginBottom="5dp"
+                        android:hint="@string/password"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword"
+                        android:text="@string/default_password" />
+
+                    <View
+                        android:layout_alignBottom="@+id/password_edittext"
+                        android:background="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="1px" />
+                </RelativeLayout>
+
             </LinearLayout>
 
             <RelativeLayout
