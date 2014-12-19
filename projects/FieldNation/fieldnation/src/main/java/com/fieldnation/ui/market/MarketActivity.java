@@ -41,7 +41,7 @@ public class MarketActivity extends DrawerActivity {
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +61,12 @@ public class MarketActivity extends DrawerActivity {
     public void onAuthentication(String username, String authToken, boolean isNew) {
         // TODO STUB com.fieldnation.ui.market.MarketActivity.onAuthentication()
         Log.v(TAG, "STUB com.fieldnation.ui.market.MarketActivity.onAuthentication()");
+    }
+
+    @Override
+    public void onNetworkDown() {
+        // TODO STUB com.fieldnation.ui.market.MarketActivity.onNetworkDown()
+        Log.v(TAG, "STUB com.fieldnation.ui.market.MarketActivity.onNetworkDown()");
     }
 
     private void buildTabs(Bundle savedInstanceState) {

@@ -36,7 +36,6 @@ public class ExpenseCategories {
 
     private ExpenseCategories(Context context) {
         _context = context.getApplicationContext();
-        AuthTopicService.startService(context);
         AuthTopicService.subscribeAuthState(context, 0, TAG, _authReceiver);
     }
 
@@ -64,6 +63,11 @@ public class ExpenseCategories {
     /*-				Events				-*/
     /*-*********************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+        @Override
+        public void onNoNetwork() {
+            _ws = null;
+        }
+
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_ws == null || isNew) {

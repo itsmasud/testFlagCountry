@@ -89,6 +89,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
     }
 
+    @Override
+    public void onNetworkDown() {
+        _service = null;
+    }
+
     private View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

@@ -255,7 +255,6 @@ public class TasksFragment extends WorkorderFragment {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
-
         }
     }
 
@@ -295,7 +294,6 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
@@ -885,7 +883,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void signatureOnClick(SignatureTileView view, Signature signature) {
-            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature, _workorder));
+            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder));
         }
     };
 
@@ -972,6 +970,11 @@ public class TasksFragment extends WorkorderFragment {
     /*-*************************************-*/
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+        @Override
+        public void onNoNetwork() {
+            _service = null;
+        }
+
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {

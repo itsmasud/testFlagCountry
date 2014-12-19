@@ -6,6 +6,8 @@ import android.accounts.AccountManagerFuture;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -39,6 +41,7 @@ public class AuthTopicService extends Service {
     public static final String BUNDLE_PARAM_TYPE_COMPLETE = "BUNDLE_PARAM_TYPE_COMPLETE";
     public static final String BUNDLE_PARAM_TYPE_REMOVE = "BUNDLE_PARAM_TYPE_REMOVE";
     public static final String BUNDLE_PARAM_TYPE_CANCELLED = "BUNDLE_PARAM_TYPE_CANCELLED";
+    public static final String BUNDLE_PARAM_TYPE_NO_NETWORK = "BUNDLE_PARAM_TYPE_NO_NETWORK";
 
     // Data
     private Account _account = null;
@@ -47,8 +50,10 @@ public class AuthTopicService extends Service {
     private String _authToken;
     private String _username;
 
-    private long _invalidTimeout = 0;
+    private boolean _isNetworkDown = false;
+
     private long _authTimeout = 0;
+    //private long _authDuration =
 
     // Services
     private AccountManager _accountManager;
@@ -59,7 +64,6 @@ public class AuthTopicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         subscribeAuthCommand(this, 0, TAG, _topicReceiver);
         TopicService.registerListener(this, 0, TAG + ":SHUTDOWN", Topics.TOPIC_SHUTDOWN, _topic_shutdown);
 
@@ -83,8 +87,8 @@ public class AuthTopicService extends Service {
 
     private void requestAuthTokenFromAccountManager() {
         _authenticating = true;
-        AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(_account, getAccoutnType(), null,
-                null, null, null);
+        AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
+                _account, getAccoutnType(), null, null, null, null);
         new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
     }
 
@@ -111,7 +115,9 @@ public class AuthTopicService extends Service {
         AccountManagerFuture<Bundle> future = null;
 
         if (accounts.length == 0) {
-            future = _accountManager.addAccount(getAccoutnType(), null, null, null, null, null, new Handler());
+            future = _accountManager.addAccount(
+                    getAccoutnType(), null, null, null, null, null, new Handler());
+
         } else if (accounts.length >= 1) {
             //TODO  always gets the first account, should probbaly present a picker of some kind
             _account = accounts[0];
@@ -164,47 +170,88 @@ public class AuthTopicService extends Service {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             String type = parcel.getString(BUNDLE_PARAM_TYPE);
-
             Log.v(TAG, "Type: " + type);
 
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNet = cm.getActiveNetworkInfo();
+
+            if (activeNet == null || !activeNet.isConnected()) {
+                _isNetworkDown = true;
+            } else {
+                _isNetworkDown = false;
+            }
+
+            if (_isNetworkDown) {
+                dispatchNoNetwork(AuthTopicService.this);
+                return;
+            }
+
             if (BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
-                if (!_removing && !_authenticating) {
-                    _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
-                    _username = null;
-                    _authToken = null;
-                    dispatchAuthInvalid(AuthTopicService.this);
-                    requestAuthentication(AuthTopicService.this);
-                }
+                handleInvalid();
             } else if (BUNDLE_PARAM_TYPE_REQUEST.equals(type)) {
-                if (_account != null && !_removing && !_authenticating) {
-                    requestAuthTokenFromAccountManager();
-                } else if (!_authenticating) {
-                    if (_username != null && _authToken != null) {
-                        dispatchAuthComplete(AuthTopicService.this, _username, _authToken);
-                    } else {
-                        getAccount();
-                    }
-                }
+                handleRequest();
             } else if (BUNDLE_PARAM_TYPE_REMOVE.equals(type)) {
-                if (!_removing && _account != null) {
-                    _removing = true;
-                    _authenticating = false;
-                    AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
-                    new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
-                    _account = null;
-                }
+                handleRemove();
             } else if (BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {
-                _authenticating = false;
-                getAccount();
+                handleComplete();
             } else if (BUNDLE_PARAM_TYPE_CANCELLED.equals(type)) {
-                _account = null;
-                _authenticating = false;
-                _removing = false;
-                dispatchAuthInvalid(AuthTopicService.this);
+                handleCancelled();
             }
         }
     };
 
+    private void handleInvalid() {
+        if (!_removing && !_authenticating) {
+            _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
+            _username = null;
+            _authToken = null;
+            dispatchAuthInvalid(AuthTopicService.this);
+            requestAuthentication(AuthTopicService.this);
+        }
+    }
+
+    private void handleRequest() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNet = cm.getActiveNetworkInfo();
+
+        if (activeNet == null || !activeNet.isConnected()) {
+            dispatchNoNetwork(this);
+            _isNetworkDown = true;
+            return;
+        }
+
+        if (_account != null && !_removing && !_authenticating) {
+            requestAuthTokenFromAccountManager();
+        } else if (!_authenticating) {
+            if (_username != null && _authToken != null) {
+                dispatchAuthComplete(AuthTopicService.this, _username, _authToken);
+            } else {
+                getAccount();
+            }
+        }
+    }
+
+    private void handleRemove() {
+        if (!_removing && _account != null) {
+            _removing = true;
+            _authenticating = false;
+            AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
+            new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+            _account = null;
+        }
+    }
+
+    private void handleComplete() {
+        _authenticating = false;
+        getAccount();
+    }
+
+    private void handleCancelled() {
+        _account = null;
+        _authenticating = false;
+        _removing = false;
+        dispatchAuthInvalid(AuthTopicService.this);
+    }
 
     private FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
         @Override
@@ -260,18 +307,26 @@ public class AuthTopicService extends Service {
     /*-********************************-*/
     /*-             Topic API          -*/
     /*-********************************-*/
-    public static void startService(Context context) {
+    private static void startService(Context context) {
         Intent intent = new Intent(context, AuthTopicService.class);
         context.startService(intent);
     }
 
     // function for client to subscribe to authentication events
     public static void subscribeAuthState(Context context, int resultCode, String tag, TopicReceiver topicReceiver) {
+        startService(context);
         TopicService.registerListener(context, resultCode, tag, TOPIC_AUTH_STATE, topicReceiver);
     }
 
     private static void subscribeAuthCommand(Context context, int resultCode, String tag, TopicReceiver topicReceiver) {
         TopicService.registerListener(context, resultCode, tag, TOPIC_AUTH_COMMAND, topicReceiver);
+    }
+
+    private static void dispatchNoNetwork(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_NO_NETWORK);
+
+        TopicService.dispatchTopic(context, TOPIC_AUTH_STATE, bundle);
     }
 
     // internal
@@ -291,6 +346,7 @@ public class AuthTopicService extends Service {
     }
 
     public static void dispatchAuthComplete(Context context) {
+        startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_COMPLETE);
 
@@ -298,6 +354,7 @@ public class AuthTopicService extends Service {
     }
 
     public static void dispatchAuthCancelled(Context context) {
+        startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_CANCELLED);
 
@@ -317,6 +374,7 @@ public class AuthTopicService extends Service {
 
     //external
     public static void requestAuthRemove(Context context) {
+        startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_REMOVE);
 
@@ -325,6 +383,7 @@ public class AuthTopicService extends Service {
 
     // external
     public static void requestAuthentication(Context context) {
+        startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_REQUEST);
 
@@ -332,6 +391,7 @@ public class AuthTopicService extends Service {
     }
 
     public static void requestAuthInvalid(Context context) {
+        startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_INVALID);
 

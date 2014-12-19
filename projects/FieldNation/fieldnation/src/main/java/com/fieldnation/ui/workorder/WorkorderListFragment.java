@@ -164,7 +164,6 @@ public class WorkorderListFragment extends Fragment {
         super.onResume();
         _adapter.refreshPages();
         _loadingView.startRefreshing();
-        AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
     }
 
@@ -507,6 +506,11 @@ public class WorkorderListFragment extends Fragment {
     /*-             WEB             -*/
     /*-*****************************-*/
     private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
+        @Override
+        public void onNoNetwork() {
+            _service = null;
+        }
+
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             Log.v(TAG, "onAuthentication");

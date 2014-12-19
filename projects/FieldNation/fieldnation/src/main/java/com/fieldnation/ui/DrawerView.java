@@ -89,7 +89,6 @@ public class DrawerView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        AuthTopicService.startService(getContext());
         AuthTopicService.subscribeAuthState(getContext(), 0, TAG, _authReceiver);
 
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
@@ -187,6 +186,11 @@ public class DrawerView extends RelativeLayout {
     };
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+        @Override
+        public void onNoNetwork() {
+            _dataService = null;
+        }
+
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_dataService == null || isNew) {

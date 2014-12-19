@@ -153,7 +153,6 @@ public class DetailFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
@@ -541,6 +540,11 @@ public class DetailFragment extends WorkorderFragment {
 
     // Web
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+        @Override
+        public void onNoNetwork() {
+            _service = null;
+        }
+
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew)

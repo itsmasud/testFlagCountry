@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -44,6 +45,11 @@ public class SplashActivity extends AuthFragmentActivity {
     @Override
     public void onAuthenticationInvalidated() {
         AuthTopicService.requestAuthentication(this);
+    }
+
+    @Override
+    public void onNetworkDown() {
+        Toast.makeText(this, "Please check your internet connection.", Toast.LENGTH_LONG).show();
     }
 
     @Override

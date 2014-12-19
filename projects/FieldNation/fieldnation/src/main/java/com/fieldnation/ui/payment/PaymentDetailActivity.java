@@ -131,6 +131,11 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         }
     }
 
+    @Override
+    public void onNetworkDown() {
+        _service = null;
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/

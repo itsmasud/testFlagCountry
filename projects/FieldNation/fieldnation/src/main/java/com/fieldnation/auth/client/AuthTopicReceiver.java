@@ -34,8 +34,12 @@ public abstract class AuthTopicReceiver extends TopicReceiver {
             onAuthenticationInvalidated();
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_FAILED.equals(type)) {
             onAuthenticationFailed();
+        } else if (AuthTopicService.BUNDLE_PARAM_TYPE_NO_NETWORK.equals(type)) {
+            onNoNetwork();
         }
     }
+
+    public abstract void onNoNetwork();
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew);
 

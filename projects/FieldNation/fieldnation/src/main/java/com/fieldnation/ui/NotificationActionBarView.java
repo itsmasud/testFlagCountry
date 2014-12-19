@@ -58,7 +58,6 @@ public class NotificationActionBarView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        AuthTopicService.startService(getContext());
         AuthTopicService.subscribeAuthState(getContext(), 0, TAG + ":AuthTopicService", _authReceiver);
 
         setOnClickListener(_this_onClick);
@@ -82,6 +81,11 @@ public class NotificationActionBarView extends RelativeLayout {
     };
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+        @Override
+        public void onNoNetwork() {
+            _profileService = null;
+        }
+
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_profileService == null || isNew) {

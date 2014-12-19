@@ -125,7 +125,6 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
@@ -387,6 +386,12 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-				Web				-*/
     /*-*****************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+        @Override
+        public void onNoNetwork() {
+            _service = null;
+            _profileService = null;
+        }
+
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || _profileService == null || isNew) {

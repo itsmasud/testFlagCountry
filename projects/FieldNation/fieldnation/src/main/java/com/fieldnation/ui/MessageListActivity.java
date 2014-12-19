@@ -69,6 +69,11 @@ public class MessageListActivity extends ItemListActivity<Message> {
     }
 
     @Override
+    public void onNetworkDown() {
+        _service = null;
+    }
+
+    @Override
     public void invalidateService() {
         _service = null;
     }

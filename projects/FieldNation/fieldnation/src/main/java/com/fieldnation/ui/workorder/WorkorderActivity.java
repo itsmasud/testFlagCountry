@@ -183,6 +183,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
     }
 
     @Override
+    public void onNetworkDown() {
+        _service = null;
+    }
+
+    @Override
     public void onAuthenticationFailed() {
         super.onAuthenticationFailed();
         _service = null;

@@ -130,6 +130,11 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     @Override
+    public void onNetworkDown() {
+        _service = null;
+    }
+
+    @Override
     public void onRefresh() {
         // TODO STUB com.fieldnation.ui.SignOffActivity.onRefresh()
         Log.v(TAG, "STUB com.fieldnation.ui.SignOffActivity.onRefresh()");
