@@ -83,7 +83,6 @@ public class TasksFragment extends WorkorderFragment {
     private static final int WEB_CHANGED = 1;
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
-    private static final int WEB_GET_SIGNATURES = 4;
 
     // Signature Flag
     private static final String SIGNATURE_COMPLETE_WHEN_DONE = TAG + ":SIGNATURE_COMPLETE_WHEN_DONE";
@@ -229,7 +228,6 @@ public class TasksFragment extends WorkorderFragment {
                 for (int i = 0; i < sigs.length; i++) {
                     _signatures.add((Signature) sigs[i]);
                 }
-                _signatureView.setSignatures(_signatures);
             }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
@@ -372,7 +370,6 @@ public class TasksFragment extends WorkorderFragment {
 
     private void requestData(boolean allowCache) {
         requestTaskData(allowCache);
-        requestSignatureData(allowCache);
     }
 
     private void requestTaskData(boolean allowCache) {
@@ -386,37 +383,12 @@ public class TasksFragment extends WorkorderFragment {
         getActivity().startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
     }
 
-    private void requestSignatureData(boolean allowCache) {
-        if (_service == null)
-            return;
-
-        if (_workorder == null)
-            return;
-
-        if (_workorder.isSignatureCollected()) {
-            setLoading(true);
-            getActivity().startService(_service.listSignatures(WEB_GET_SIGNATURES, _workorder.getWorkorderId(), allowCache));
-        }
-    }
-
     private void setTaskData(List<Task> tasks, boolean isCached) {
         _tasks = tasks;
         _taskList.setData(_workorder, tasks, isCached);
 
         if (isCached) {
             requestTaskData(false);
-            setLoading(true);
-        } else {
-            setLoading(false);
-        }
-    }
-
-    private void setSignatureData(List<Signature> sigs, boolean isCached) {
-        _signatures = sigs;
-        _signatureView.setSignatures(sigs);
-
-        if (isCached) {
-            requestSignatureData(false);
             setLoading(true);
         } else {
             setLoading(false);
@@ -1048,22 +1020,6 @@ public class TasksFragment extends WorkorderFragment {
                         }
                     }
                     setTaskData(tasks, resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            } else if (resultCode == WEB_GET_SIGNATURES) {
-                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                try {
-                    JsonArray array = new JsonArray(data);
-                    List<Signature> sigs = new LinkedList<Signature>();
-                    for (int i = 0; i < array.size(); i++) {
-                        try {
-                            sigs.add(Signature.fromJson(array.getJsonObject(i)));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    setSignatureData(sigs, resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

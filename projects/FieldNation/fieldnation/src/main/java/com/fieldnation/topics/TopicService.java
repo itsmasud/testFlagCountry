@@ -163,6 +163,8 @@ public class TopicService extends Service {
 
 
     public static void registerListener(Context context, int resultCode, String tag, String topicId, TopicReceiver topicReceiver) {
+        if (context == null)
+            return;
         Intent intent = new Intent(context, TopicService.class);
         intent.setAction(TopicConstants.ACTION_REGISTER_LISTENER);
         intent.putExtra(TopicConstants.PARAM_TOPIC_ID, topicId);
@@ -173,6 +175,8 @@ public class TopicService extends Service {
     }
 
     public static void unRegisterListener(Context context, int resultCode, String tag, String topic) {
+        if (context == null)
+            return;
         Intent intent = new Intent(context, TopicService.class);
 
         intent.setAction(TopicConstants.ACTION_UNREGISTER_LISTENER);
@@ -183,6 +187,8 @@ public class TopicService extends Service {
     }
 
     public static void delete(Context context, String tag) {
+        if (context == null)
+            return;
         Intent intent = new Intent(context, TopicService.class);
 
         intent.setAction(TopicConstants.ACTION_DELETE_CLIENT);
@@ -195,6 +201,9 @@ public class TopicService extends Service {
     }
 
     public static void dispatchTopic(Context context, String topicId, Bundle parcel, boolean keepLastSent) {
+        if (context == null)
+            return;
+
         Intent intent = new Intent(context, TopicService.class);
 
         intent.setAction(TopicConstants.ACTION_DISPATCH_EVENT);

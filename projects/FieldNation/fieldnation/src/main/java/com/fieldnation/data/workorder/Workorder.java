@@ -146,6 +146,8 @@ public class Workorder implements Parcelable {
     private ShipmentTracking[] _shipmentTracking;
     @Json(name = "showProviderWasLatePrompt")
     private Boolean _showProviderWasLatePrompt;
+    @Json(name = "signatureList")
+    private Signature[] _signatureList;
     @Json(name = "skillsets")
     private Skillset[] _skillsets;
     @Json(name = "standardInstruction")
@@ -443,6 +445,10 @@ public class Workorder implements Parcelable {
 
     public Boolean getShowProviderWasLatePrompt() {
         return _showProviderWasLatePrompt;
+    }
+
+    public Signature[] getSignatureList() {
+        return _signatureList;
     }
 
     public Skillset[] getSkillsets() {
