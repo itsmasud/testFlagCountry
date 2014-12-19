@@ -64,7 +64,7 @@ public class ThankYouFragment extends FragmentBase {
                 _timerComplete = true;
                 showDoneButton();
             }
-        }, 10000);
+        }, 5000);
     }
 
     public void setUploadComplete() {
