@@ -203,8 +203,8 @@ public class ConfirmDialog extends DialogFragmentBase {
                 _scheduleTextView.setText("You will need to arrive exactly on\n  " + dayDate + " at " + time + ".");
 
                 _startCalendar = cal;
-                _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-                _startDateButton.setEnabled(false);
+                _startDateButton.setVisibility(View.GONE);
+
                 setDuration(60000);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -237,7 +237,7 @@ public class ConfirmDialog extends DialogFragmentBase {
 
                 _startCalendar = cal;
                 _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-                _startDateButton.setEnabled(true);
+                _startDateButton.setVisibility(View.VISIBLE);
 
                 setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
 
