@@ -120,6 +120,13 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         } else {
             _completeButton.setVisibility(View.GONE);
         }
+
+        if (_workorder.canDeclineWork()) {
+            _notInterestedButton.setVisibility(View.VISIBLE);
+        } else {
+            _notInterestedButton.setVisibility(View.GONE);
+        }
+        
         setVisibility(View.VISIBLE);
     }
 
