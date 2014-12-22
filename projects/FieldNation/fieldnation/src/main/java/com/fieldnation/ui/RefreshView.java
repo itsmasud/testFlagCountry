@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
@@ -26,8 +27,11 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     private static final int STATE_REFRESHING = 4;
     private static final int STATE_HIDING = 5;
 
-    private View _contents;
+    private ImageView _spinnerImageView;
+    private View _contentLayout;
+    private ImageView _gradientImageView;
     private Animation _rotateAnim;
+    private Animation _rotateRevAnim;
     private int _state;
     private Listener _listener;
 
@@ -54,9 +58,12 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         if (isInEditMode())
             return;
 
-        _contents = findViewById(R.id.loading_imageview);
+        _contentLayout = findViewById(R.id.content_layout);
+        _spinnerImageView = (ImageView) findViewById(R.id.spinner_imageview);
+        _gradientImageView = (ImageView) findViewById(R.id.gradient_imageview);
 
         _rotateAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_cw);
+        _rotateRevAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_ccw);
 
         _state = STATE_IDLE;
     }
@@ -66,30 +73,34 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     private void startSpinning() {
-        _contents.clearAnimation();
+        _spinnerImageView.clearAnimation();
         _rotateAnim.reset();
-        _contents.startAnimation(_rotateAnim);
+        _spinnerImageView.startAnimation(_rotateAnim);
+        _gradientImageView.clearAnimation();
+        _rotateRevAnim.reset();
+        _gradientImageView.startAnimation(_rotateRevAnim);
     }
 
     private void stopSpinning() {
-        _contents.clearAnimation();
+        _spinnerImageView.clearAnimation();
+        _gradientImageView.clearAnimation();
     }
 
     private void setLoadingOffset(int px) {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contents.getLayoutParams();
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contentLayout.getLayoutParams();
         lp.topMargin = px;
-        _contents.setLayoutParams(lp);
+        _contentLayout.setLayoutParams(lp);
         requestLayout();
     }
 
     private int getLoadingOffset() {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contents.getLayoutParams();
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) _contentLayout.getLayoutParams();
         return lp.topMargin;
     }
 
     private int getMaxTravelDistance() {
 //        Log.v(TAG, "getMaxTravelDistance() = " + _contents.getHeight() * 4);
-        return _contents.getHeight() * 4;
+        return _contentLayout.getHeight() * 4;
     }
 
     private void startAnimation(int start, int end, Animator.AnimatorListener listener) {
@@ -183,10 +194,10 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
                 && _state != STATE_REFRESHING) {
             setLoadingOffset(pixelsY);
 
-            if (_state != STATE_RELEASE_TO_REFRESH && pixelsY > getMaxTravelDistance() - _contents.getHeight()) {
+            if (_state != STATE_RELEASE_TO_REFRESH && pixelsY > getMaxTravelDistance() - _contentLayout.getHeight()) {
                 _state = STATE_RELEASE_TO_REFRESH;
                 startSpinning();
-            } else if (_state == STATE_RELEASE_TO_REFRESH && pixelsY < getMaxTravelDistance() - _contents.getHeight()) {
+            } else if (_state == STATE_RELEASE_TO_REFRESH && pixelsY < getMaxTravelDistance() - _contentLayout.getHeight()) {
                 _state = STATE_PULLING;
                 stopSpinning();
             }
@@ -205,7 +216,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
 
             startAnimation(
                     pixelsY,
-                    (_contents.getHeight() * 3) / 2,
+                    (_contentLayout.getHeight() * 3) / 2,
                     _moveToRefresh_listener);
 
             if (_listener != null) {
@@ -224,9 +235,9 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     public void startRefreshing() {
-        Log.v(TAG, "startRefreshing " + _state + ":" + _contents.getHeight());
+        Log.v(TAG, "startRefreshing " + _state + ":" + _contentLayout.getHeight());
 
-        if (_contents.getHeight() == 0)
+        if (_contentLayout.getHeight() == 0)
             return;
 
         if (_state == STATE_IDLE) {
@@ -235,7 +246,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
             setLoadingOffset(0);
             startAnimation(
                     0,
-                    (_contents.getHeight() * 3) / 2,
+                    (_contentLayout.getHeight() * 3) / 2,
                     _moveToRefresh_listener);
             startSpinning();
         }

@@ -21,6 +21,8 @@ public class Signature implements Parcelable {
     private String _dateSaved;
     @Json(name = "signatureFormat")
     private String _signatureFormat;
+    @Json(name = "signatureId")
+    private long _signatureId;
     @Json(name = "workorderId")
     private int _workorderId;
     @Json(name = "printName")
@@ -47,6 +49,10 @@ public class Signature implements Parcelable {
 
     public String getSignatureFormat() {
         return _signatureFormat;
+    }
+
+    public long getSignatureId() {
+        return _signatureId;
     }
 
     public int getWorkorderId() {

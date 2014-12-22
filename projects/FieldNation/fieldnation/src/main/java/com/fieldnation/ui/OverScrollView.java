@@ -10,7 +10,7 @@ import android.widget.ScrollView;
  * Created by michael.carver on 11/25/2014.
  */
 public class OverScrollView extends ScrollView {
-    private static final String TAG = "ui.OverScrollListView";
+//    private static final String TAG = "ui.OverScrollListView";
 
     private OnOverScrollListener _onOverscrollListener;
 
@@ -54,7 +54,7 @@ public class OverScrollView extends ScrollView {
             isScrollRight = scrollAmountX < 0;
             isScrollDown = scrollAmountY < 0;
             if (_onOverscrollListener != null) {
-                Log.v(TAG, "OverScrollListView.overScrollBy(" + scrollAmountX + ", " + scrollAmountY + ") " + isTouchEvent);
+//                Log.v(TAG, "OverScrollListView.overScrollBy(" + scrollAmountX + ", " + scrollAmountY + ") " + isTouchEvent);
                 _onOverscrollListener.onOverScrolled(this, scrollAmountX, scrollAmountY);
             }
         }
@@ -63,7 +63,7 @@ public class OverScrollView extends ScrollView {
 
 
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.v(TAG, "onTouchEvent " + ev.getAction());
+//        Log.v(TAG, "onTouchEvent " + ev.getAction());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
 //                if (getCount() == 0)
@@ -102,7 +102,7 @@ public class OverScrollView extends ScrollView {
                         scrollAmountX = 1;
 
                     if (_onOverscrollListener != null) {
-                        Log.v(TAG, "ACTION_MOVE(" + scrollAmountX + ", " + scrollAmountY + ") ");
+//                        Log.v(TAG, "ACTION_MOVE(" + scrollAmountX + ", " + scrollAmountY + ") ");
                         _onOverscrollListener.onOverScrolled(this, scrollAmountX, scrollAmountY);
                     }
                     _startingPull = false;
@@ -141,7 +141,7 @@ public class OverScrollView extends ScrollView {
                     // notify the listener
                     if (_onOverscrollListener != null) {
                         if (scrollAmountX != 0 || scrollAmountY != 0) {
-                            Log.v(TAG, "OverScrollListView.overScrollBy(" + scrollAmountX + ", " + scrollAmountY + ")");
+//                            Log.v(TAG, "OverScrollListView.overScrollBy(" + scrollAmountX + ", " + scrollAmountY + ")");
                             _onOverscrollListener.onOverScrolled(this, scrollAmountX, scrollAmountY);
                         } else {
                             if (_onOverscrollListener != null) {

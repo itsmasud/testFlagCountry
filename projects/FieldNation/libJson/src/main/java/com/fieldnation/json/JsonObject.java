@@ -54,8 +54,10 @@ public class JsonObject {
             String key = tokenizer.nextToken();
 
             if (!tokenizer.nextToken().equals(":")) {
+//                throw new ParseException(
+//                        "token must be ':' (" + tokenizer.getTemp() + ")", 1);
                 throw new ParseException(
-                        "token must be ':' (" + tokenizer.getTemp() + ")", 1);
+                        "token must be ':' (bleh)", 1);
             }
 
             _fields.put(key, tokenizer.parseValue());

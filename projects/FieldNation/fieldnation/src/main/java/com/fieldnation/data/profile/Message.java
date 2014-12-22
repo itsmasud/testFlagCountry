@@ -27,7 +27,7 @@ public class Message {
 	@Json(name = "status")
 	private Status _status;
 	@Json(name = "workorderId")
-	private Integer _workorderId;
+	private Long _workorderId;
 	@Json(name = "workorderTitle")
 	private String _workorderTitle;
 
@@ -72,7 +72,7 @@ public class Message {
 		return _status;
 	}
 
-	public Integer getWorkorderId() {
+	public Long getWorkorderId() {
 		return _workorderId;
 	}
 

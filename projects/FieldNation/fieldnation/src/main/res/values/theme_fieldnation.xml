@@ -24,6 +24,11 @@
     </style>
 
     <style name="FieldNation.Base.Theme" parent="FieldNation.ActionBar.Theme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@color/black</item>
+
+
         <item name="android:textColorLink">@color/text_link_color</item>
 
         <!-- android widgets -->
@@ -57,6 +62,7 @@
         <item name="tileCheckBoxStyle">@style/TileCheckBox</item>
         <item name="tileSpinnerButtonStyle">@style/TileSpinnerButton</item>
         <item name="tileButtonStyle">@style/TileButton</item>
+        <item name="tileDividerStyle">@style/TileDivider</item>
 
         <!-- dialogs -->
         <item name="dialogStyle">@style/Dialog</item>

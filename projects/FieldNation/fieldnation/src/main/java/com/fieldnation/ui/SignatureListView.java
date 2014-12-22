@@ -14,8 +14,6 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.WorkorderRenderer;
 
-import java.util.List;
-
 /**
  * Created by michael.carver on 12/5/2014.
  */
@@ -30,7 +28,6 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     // Data
     private Workorder _workorder;
     private Listener _listener;
-    private List<Signature> _signatures;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -77,12 +74,6 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         _listener = listener;
     }
 
-    public void setSignatures(List<Signature> signatures) {
-        _signatures = signatures;
-
-        populateUI();
-    }
-
     private void populateUI() {
         setVisibility(View.GONE);
 
@@ -92,9 +83,14 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         if (_workorder == null)
             return;
 
+        if (!_workorder.getIsAssignedToWorkorder())
+            return;
+
         setVisibility(View.VISIBLE);
 
-        if (_signatures == null || _signatures.size() == 0) {
+        Signature[] list = _workorder.getSignatureList();
+
+        if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(View.VISIBLE);
             return;
         }
@@ -102,8 +98,8 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         _noDataTextView.setVisibility(View.GONE);
 
         _listView.removeAllViews();
-        for (int i = 0; i < _signatures.size(); i++) {
-            Signature sig = _signatures.get(i);
+        for (int i = 0; i < list.length; i++) {
+            Signature sig = list[i];
             SignatureTileView v = new SignatureTileView(getContext());
             v.setSignature(sig);
             v.setOnClickListener(_signature_onClick);

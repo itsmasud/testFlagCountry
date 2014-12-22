@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,9 +11,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
@@ -54,11 +54,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private ViewPager _viewPager;
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
-//    private RelativeLayout _loadingLayout;
 
     // Data
-    private GlobalState _gs;
-
     private String _authToken;
     private String _username;
     private long _workorderId = 0;
@@ -79,8 +76,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workorder);
-
-        _gs = (GlobalState) getApplicationContext();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -113,9 +108,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
             }
         }
 
-        if (savedInstanceState == null) {
-            _gs.requestAuthentication(_authClient);
-        } else {
+        if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
                 _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
             }
@@ -136,8 +129,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
             }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(this, _username, _authToken, _rpcReceiver);
-            } else {
-                _gs.requestAuthentication(_authClient);
             }
         }
 
@@ -181,6 +172,26 @@ public class WorkorderActivity extends AuthActionBarActivity {
             outState.putParcelable(STATE_WORKORDER, _workorder);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onAuthentication(String username, String authToken, boolean isNew) {
+        if (_service == null || isNew) {
+            _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
+            getData(true);
+        }
+    }
+
+    @Override
+    public void onAuthenticationFailed(boolean networkDown) {
+        super.onAuthenticationFailed(networkDown);
+        _service = null;
+    }
+
+    @Override
+    public void onAuthenticationInvalidated() {
+        super.onAuthenticationInvalidated();
+        _service = null;
     }
 
     private void buildFragments(Bundle savedInstanceState) {
@@ -261,6 +272,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
         if (_tabview == null)
             return;
+
+        setTitle("WO: " + _workorder.getWorkorderId());
 
         if (_workorder.getAlertCount() != null) {
             _tabview.setAlertsCount(_workorder.getAlertCount());
@@ -404,24 +417,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
     /*-			Web Events			-*/
     /*-*****************************-*/
 
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
-
-        @Override
-        public void onAuthentication(String username, String authToken) {
-            _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
-            getData(true);
-        }
-
-        @Override
-        public GlobalState getGlobalState() {
-            return _gs;
-        }
-    };
-
     private WebResultReceiver _rpcReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
@@ -446,12 +441,14 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
 
         @Override
+        public Context getContext() {
+            return WorkorderActivity.this;
+        }
+
+        @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(WorkorderActivity.this);
         }
     };
 

@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -54,19 +55,31 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         _feeTextView = (TextView) findViewById(R.id.expectedfee_textview);
         _payTextView = (TextView) findViewById(R.id.expectedpay_textview);
         _payStatusTextView = (TextView) findViewById(R.id.paystatus_textview);
+
+        populateUi();
     }
 
 	/*-*************************************-*/
-	/*-				Mutators				-*/
-	/*-*************************************-*/
+    /*-				Mutators				-*/
+    /*-*************************************-*/
 
     @Override
     public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
-        refresh();
+        populateUi();
     }
 
-    private void refresh() {
+    private void populateUi() {
+        if (_payStatusTextView == null)
+            return;
+
+        if (_workorder == null) {
+            setVisibility(View.GONE);
+            return;
+        }
+
+        setVisibility(View.VISIBLE);
+
         ExpectedPayment pay = _workorder.getExpectedPayment();
 
         if (pay == null) {

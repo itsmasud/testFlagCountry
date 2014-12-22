@@ -1,5 +1,6 @@
 package com.fieldnation.ui.payment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,9 +9,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.PaymentService;
@@ -37,9 +37,9 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     private TextView _workorderCountTextView;
     private TextView _feesCountTextView;
     private ListView _listView;
+    private TextView _stateTextView;
 
     // Data
-    private GlobalState _gs;
     private long _paymentId = -1;
     private PaymentService _service;
     private Payment _paid;
@@ -65,15 +65,13 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             finish();
         }
 
-        _gs = (GlobalState) getApplicationContext();
-        _gs.requestAuthentication(_authClient);
-
         _idTextView = (TextView) findViewById(R.id.id_textview);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _paymentTypeTextView = (TextView) findViewById(R.id.paymenttype_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _workorderCountTextView = (TextView) findViewById(R.id.workordercount_textview);
         _feesCountTextView = (TextView) findViewById(R.id.feescount_textview);
+        _stateTextView = (TextView) findViewById(R.id.state_textview);
 
         _listView = (ListView) findViewById(R.id.items_listview);
         // TODO set loading info
@@ -83,7 +81,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         if (_service == null)
             return;
 
-        _gs.startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
+        startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
     }
 
     private void populateUi() {
@@ -119,31 +117,24 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
         _adapter = new PaymentDetailAdapter(_paid);
         _listView.setAdapter(_adapter);
-        _idTextView.setText("ID " + _paid.getPaymentId());
+        _idTextView.setText("Payment Id " + _paid.getPaymentId());
         _paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
-        _paymentTypeTextView.setText(misc.capitalize(_paid.getPayMethod()));
+        String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
+        _paymentTypeTextView.setText(paymethod);
+        _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
+    }
+
+    @Override
+    public void onAuthentication(String username, String authToken, boolean isNew) {
+        if (_service == null || isNew) {
+            _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
+            requestData();
+        }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
-	/*-*********************************-*/
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
-
-        @Override
-        public void onAuthentication(String username, String authToken) {
-            _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
-            requestData();
-        }
-
-        @Override
-        public GlobalState getGlobalState() {
-            return _gs;
-        }
-    };
+    /*-*********************************-*/
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
@@ -164,12 +155,14 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         }
 
         @Override
+        public Context getContext() {
+            return PaymentDetailActivity.this;
+        }
+
+        @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(PaymentDetailActivity.this);
         }
     };
 

@@ -25,6 +25,7 @@ public interface WebServiceConstants {
 
     public static final String ERROR_SESSION_INVALID = "SESSION_INVALID";
     public static final String ERROR_USER_NOT_FOUND = "USER_NOT_FOUND";
+    public static final String ERROR_NO_USERNAME = "NO_USERNAME";
 
     public static final String ERROR_NONE = "NONE";
     public static final String ERROR_NETWORK_ERROR = "NETWORK_ERROR";

@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -9,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
@@ -21,6 +22,7 @@ import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
@@ -41,7 +43,6 @@ public class MessageFragment extends WorkorderFragment {
     private RefreshView _refreshView;
 
     // Data
-    private GlobalState _gs;
     private Random _rand = new Random(System.currentTimeMillis());
     private Profile _profile;
     private ProfileService _profileService;
@@ -63,9 +64,6 @@ public class MessageFragment extends WorkorderFragment {
         super.onViewCreated(view, savedInstanceState);
         Log.v(TAG, "onViewCreated");
 
-        _gs = (GlobalState) getActivity().getApplicationContext();
-        _gs.requestAuthentication(_authClient);
-
         _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
 
         _listview = (ListView) view.findViewById(R.id.messages_listview);
@@ -74,7 +72,15 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+    }
+
+    @Override
     public void onPause() {
+        TopicService.delete(getActivity(), TAG);
+
         WEB_GET_MESSAGES = 1;
         WEB_GET_PROFILE = 2;
         WEB_NEW_MESSAGE = 3;
@@ -87,6 +93,7 @@ public class MessageFragment extends WorkorderFragment {
 
     @Override
     public void update() {
+        Log.v(TAG, "update");
         getMessages();
     }
 
@@ -106,17 +113,16 @@ public class MessageFragment extends WorkorderFragment {
         if (_profile == null)
             return;
 
-        if (_gs == null)
-            return;
-
         _refreshView.startRefreshing();
 
         _messages.clear();
         if (_adapter != null)
             _adapter.notifyDataSetChanged();
 
+
+        Log.v(TAG, "getMessages");
         WEB_GET_MESSAGES = _rand.nextInt();
-        _gs.startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
+        getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
     }
 
     @Override
@@ -172,7 +178,8 @@ public class MessageFragment extends WorkorderFragment {
         public void onClick(View v) {
             _refreshView.startRefreshing();
             WEB_NEW_MESSAGE = _rand.nextInt();
-            _gs.startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
+            Log.v(TAG, "_send_onClick");
+            getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
                     _inputView.getInputText()));
             _inputView.clearText();
         }
@@ -181,27 +188,37 @@ public class MessageFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-
-    private AuthenticationClient _authClient = new AuthenticationClient() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            _profileService = new ProfileService(_gs, username, authToken, _resultReceiver);
-            _workorderService = new WorkorderService(_gs, username, authToken, _resultReceiver);
-            WEB_GET_PROFILE = _rand.nextInt();
-            _gs.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
-            getMessages();
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_profileService == null || _workorderService == null || isNew) {
+                _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
+                _workorderService = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+                WEB_GET_PROFILE = _rand.nextInt();
+                Log.v(TAG, "_authReceiver");
+                getActivity().startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+                getMessages();
+            }
         }
 
         @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
+        public void onAuthenticationFailed(boolean networkDown) {
+            _profileService = null;
+            _workorderService = null;
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationInvalidated() {
+            _profileService = null;
+            _workorderService = null;
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getActivity());
         }
     };
+
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
@@ -248,18 +265,21 @@ public class MessageFragment extends WorkorderFragment {
         }
 
         @Override
+        public Context getContext() {
+            return MessageFragment.this.getActivity();
+        }
+
+        @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
 
             if (getActivity() == null)
                 return;
-            
-            if (_profileService != null) {
-                _gs.invalidateAuthToken(_profileService.getAuthToken());
-            } else if (_workorderService != null) {
-                _gs.invalidateAuthToken(_workorderService.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+
+            _profileService = null;
+            _workorderService = null;
+
+            AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request.", Toast.LENGTH_LONG).show();
         }
     };

@@ -1,58 +1,61 @@
 package com.fieldnation.ui;
 
-import com.fieldnation.R;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import com.fieldnation.R;
+
 /**
  * Gives the user the ability to configure the app
- * 
+ *
  * @author michael.carver
- * 
  */
 public class SettingsActivity extends PreferenceActivity {
-	private static final String TAG = "ui.SettingsActivity";
+    private static final String TAG = "ui.SettingsActivity";
 
-	@SuppressWarnings("deprecation")
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		addPreferencesFromResource(R.xml.pref_general);
-		bindPreferenceSummaryToValue(findPreference("sync_frequency"));
-	}
+        getWindow().getDecorView().setBackgroundColor(0xFFFFFFFF);
 
-	private static Preference.OnPreferenceChangeListener _preference_onChange = new Preference.OnPreferenceChangeListener() {
 
-		@Override
-		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			String stringValue = newValue.toString();
+        addPreferencesFromResource(R.xml.pref_general);
+        bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+    }
 
-			if (preference instanceof ListPreference) {
-				ListPreference listPreference = (ListPreference) preference;
+    private static Preference.OnPreferenceChangeListener _preference_onChange = new Preference.OnPreferenceChangeListener() {
 
-				int index = listPreference.findIndexOfValue(stringValue);
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            String stringValue = newValue.toString();
 
-				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+            if (preference instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) preference;
 
-			}
-			return true;
-		}
-	};
+                int index = listPreference.findIndexOfValue(stringValue);
 
-	private static void bindPreferenceSummaryToValue(Preference preference) {
-		// Set the listener to watch for value changes.
-		preference.setOnPreferenceChangeListener(_preference_onChange);
+                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 
-		// Trigger the listener immediately with the preference's
-		// current value.
-		_preference_onChange.onPreferenceChange(
-				preference,
-				PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(),
-						""));
-	}
+            }
+            return true;
+        }
+    };
+
+    private static void bindPreferenceSummaryToValue(Preference preference) {
+        // Set the listener to watch for value changes.
+        preference.setOnPreferenceChangeListener(_preference_onChange);
+
+        // Trigger the listener immediately with the preference's
+        // current value.
+        _preference_onChange.onPreferenceChange(
+                preference,
+                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(),
+                        ""));
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,11 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -41,7 +41,9 @@ import java.util.List;
 import java.util.Set;
 
 public class WorkorderListFragment extends Fragment {
-    private static final String TAG = "ui.workorder.WorkorderListFragment";
+    private static final String TAG_ROOT = "ui.workorder.WorkorderListFragment";
+    private String TAG = ":";
+    private static Integer TAG_COUNT = 0;
 
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
@@ -68,7 +70,6 @@ public class WorkorderListFragment extends Fragment {
     private TermsDialog _termsDialog;
 
     // Data
-    private GlobalState _gs;
     private String _username;
     private String _authToken;
     private WorkorderService _service;
@@ -85,6 +86,13 @@ public class WorkorderListFragment extends Fragment {
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
+    public WorkorderListFragment() {
+        super();
+        synchronized (TAG_COUNT) {
+            TAG = TAG_ROOT + ":" + TAG_COUNT;
+            TAG_COUNT++;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,8 +116,6 @@ public class WorkorderListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        _gs = (GlobalState) getActivity().getApplicationContext();
 
         _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
         _loadingView.setListener(_refreshViewListener);
@@ -136,9 +142,8 @@ public class WorkorderListFragment extends Fragment {
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
-        _gs.requestAuthentication(_authClient);
-    }
 
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -160,6 +165,7 @@ public class WorkorderListFragment extends Fragment {
         super.onResume();
         _adapter.refreshPages();
         _loadingView.startRefreshing();
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
     }
 
     public void update() {
@@ -453,7 +459,7 @@ public class WorkorderListFragment extends Fragment {
     private PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-            Log.v(TAG, "getView()");
+//            Log.v(TAG, "getView()");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -500,27 +506,34 @@ public class WorkorderListFragment extends Fragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
+    private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
 
         @Override
-        public void onAuthentication(String username, String authToken) {
-            _username = username;
-            _authToken = authToken;
-            if (getActivity() != null) {
-                _service = new WorkorderService(getActivity(), username, authToken, _resultReciever);
-                requestList(0, true);
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            Log.v(TAG, "onAuthentication");
+            if (_service == null || isNew) {
+                _username = username;
+                _authToken = authToken;
+                if (getActivity() != null) {
+                    _service = new WorkorderService(getActivity(), username, authToken, _resultReciever);
+                    requestList(0, true);
+                }
             }
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationFailed(boolean networkDown) {
+            _service = null;
+        }
+
+        @Override
+        public void onAuthenticationInvalidated() {
+            _service = null;
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getActivity());
         }
     };
 
@@ -581,15 +594,17 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
+        public Context getContext() {
+            return WorkorderListFragment.this.getActivity();
+        }
+
+        @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null || _service.getAuthToken() != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            _service = null;
+            AuthTopicService.requestAuthInvalid(getActivity());
             _loadingView.refreshFailed();
-            Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
         }
     };
 

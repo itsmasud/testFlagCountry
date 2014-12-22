@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -12,17 +13,20 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.client.AuthService;
 import com.fieldnation.rpc.server.ClockService;
+import com.fieldnation.topics.TopicShutdownReciever;
+import com.fieldnation.topics.Topics;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -32,14 +36,13 @@ import com.fieldnation.rpc.server.ClockService;
  * @author michael.carver
  */
 public class AuthActivity extends AccountAuthenticatorActivity {
+    private static final String TAG = "auth.server.AuthActivity";
     // UI
-    private RelativeLayout _contentLayout;
-    private ProgressBar _loadingProgressBar;
+    private LinearLayout _contentLayout;
     private Button _loginButton;
     private EditText _usernameEditText;
     private EditText _passwordEditText;
-//    private SurfaceView _surfaceView;
-//    private SurfaceHolder _surfaceHolder;
+    private View _fader;
 
     private VideoView _videoView;
 
@@ -47,8 +50,13 @@ public class AuthActivity extends AccountAuthenticatorActivity {
     // data
     private String _username;
     private String _password;
-    private GlobalState _gs;
-    //private MediaPlayer _mp;
+    private boolean _authcomplete = false;
+
+    // animation
+    private Animation _fadeout;
+
+    // Services
+    private TopicShutdownReciever _shutdownService;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -65,19 +73,15 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         }
         setContentView(R.layout.activity_login);
 
-        _gs = (GlobalState) getApplicationContext();
-
-        _contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
+        _contentLayout = (LinearLayout) findViewById(R.id.content_layout);
+        _contentLayout.setVisibility(View.GONE);
         _loginButton = (Button) findViewById(R.id.login_button);
         _loginButton.setOnClickListener(_loginButton_onClick);
         _usernameEditText = (EditText) findViewById(R.id.username_edittext);
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
-        _loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
-        _loadingProgressBar.setVisibility(View.GONE);
-        _contentLayout.setVisibility(View.VISIBLE);
         _videoView = (VideoView) findViewById(R.id.video_view);
+        _fader = (View) findViewById(R.id.fader);
 
-//getResources().openRawResourceFd(R.raw.loading_vid).
         Uri video = Uri.parse("android.resource://" + getPackageName() + "/raw/" + R.raw.login_vid);
         _videoView.setVideoURI(video);
         _videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -87,22 +91,70 @@ public class AuthActivity extends AccountAuthenticatorActivity {
             }
         });
         _videoView.start();
+
+        _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        _fadeout.setAnimationListener(_fadeout_listener);
+
+        _authcomplete = false;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                _contentLayout.setVisibility(View.VISIBLE);
+                _fader.startAnimation(_fadeout);
+            }
+        }, 1000);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         _videoView.stopPlayback();
+        _shutdownService.onPause();
     }
 
     @Override
     public void onBackPressed() {
+        Topics.dispatchShutdown(this);
         return;
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (!_authcomplete) {
+            AuthTopicService.dispatchAuthCancelled(this);
+        }
+        super.onDestroy();
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private Animation.AnimationListener _fadeout_listener = new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            _fader.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+    };
+
     private View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -120,7 +172,6 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
             startService(intent);
 
-            _loadingProgressBar.setVisibility(View.VISIBLE);
             _contentLayout.setVisibility(View.GONE);
         }
     };
@@ -133,17 +184,20 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                 String error = resultData.getString("error");
 
                 if (authToken != null) {
-                    Account account = new Account(_username, _gs.accountType);
+                    Account account = new Account(_username, getString(R.string.accounttype));
                     AccountManager am = AccountManager.get(AuthActivity.this);
                     am.addAccountExplicitly(account, _password, null);
-                    am.setAuthToken(account, _gs.accountType, authToken);
+                    am.setAuthToken(account, getString(R.string.accounttype), authToken);
 
                     Intent intent = new Intent();
                     intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-                    intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, _gs.accountType);
+                    intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.accounttype));
                     // intent.putExtra(AccountManager.KEY_AUTHTOKEN,
                     // Constants.FIELD_NATION_ACCOUNT_TYPE);
                     intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString("authtoken"));
+
+                    AuthTopicService.dispatchAuthComplete(AuthActivity.this);
+                    _authcomplete = true;
 
                     AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
                     AuthActivity.this.setResult(RESULT_OK, intent);
@@ -151,7 +205,6 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
                     ClockService.enableClock(AuthActivity.this);
                 } else {
-                    _loadingProgressBar.setVisibility(View.GONE);
                     _contentLayout.setVisibility(View.VISIBLE);
                 }
 
@@ -163,8 +216,6 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                 e.printStackTrace();
             }
         }
-
-        ;
     };
 
 }

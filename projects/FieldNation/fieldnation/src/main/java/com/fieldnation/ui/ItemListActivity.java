@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,9 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 
@@ -44,8 +44,6 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_itemlist);
 
-        _gs = (GlobalState) getApplicationContext();
-
         _adapter.setListener(_adapter_lsitener);
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
@@ -54,8 +52,6 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         _listView = (OverScrollListView) findViewById(R.id.items_listview);
         _listView.setOnOverScrollListener(_refreshView);
         _listView.setAdapter(_adapter);
-
-        _gs.requestAuthentication(_authClient);
 
         addActionBarAndDrawer(R.id.container);
     }
@@ -133,29 +129,17 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-        @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
-        }
 
-        @Override
-        public void onAuthentication(String username, String authToken) {
-            _authToken = authToken;
-            ItemListActivity.this.onAuthentication(username, authToken, _resultReceiver);
-            getData(0, true);
-        }
+    @Override
+    public void onAuthentication(String username, String authToken, boolean isNew) {
+        _authToken = authToken;
+        onAuthentication(username, authToken, isNew, _resultReceiver);
+        getData(0, true);
+    }
 
-        @Override
-        public GlobalState getGlobalState() {
-            return _gs;
-        }
-    };
+    public abstract void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver);
 
-    public abstract void onAuthentication(String username, String authToken, ResultReceiver resultReceiver);
-
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(
-            new Handler()) {
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
 
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
@@ -173,13 +157,17 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         }
 
         @Override
+        public Context getContext() {
+            return ItemListActivity.this;
+        }
+
+        @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             invalidateService();
-            _gs.invalidateAuthToken(_authToken);
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(getApplicationContext());
             Toast.makeText(ItemListActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
-            _refreshView.refreshComplete();
+            _refreshView.refreshFailed();
         }
 
     };
@@ -187,6 +175,4 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     public abstract List<O> onParseData(int page, boolean isCached, byte[] data);
 
     public abstract void invalidateService();
-
-
 }

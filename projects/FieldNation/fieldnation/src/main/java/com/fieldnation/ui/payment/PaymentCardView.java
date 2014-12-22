@@ -96,15 +96,16 @@ public class PaymentCardView extends RelativeLayout {
         try {
             // TODO create string resources.
             if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length == 1) {
-                _descriptionTextView.setText(_paymentInfo.getWorkorders().length + " " + getContext().getString(
+                _descriptionTextView.setText(_paymentInfo.getWorkorders().length
+                        + " " + getContext().getString(
                         R.string.work_orders) + " / 1 Fee");
             } else if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length > 0) {
-                _descriptionTextView.setText(_paymentInfo.getWorkorders().length + " " + getContext().getString(
+                _descriptionTextView.setText(_paymentInfo.getWorkorders().length
+                        + " " + getContext().getString(
                         R.string.work_orders) + " / " + _paymentInfo.getFees().length + " Fees");
-
             } else {
-                _descriptionTextView.setText(_paymentInfo.getWorkorders().length + " " + getContext().getString(
-                        R.string.work_orders) + " / 0 Fees");
+                _descriptionTextView.setText(_paymentInfo.getWorkorders().length
+                        + " " + getContext().getString(R.string.work_orders) + " / 0 Fees");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -112,7 +113,7 @@ public class PaymentCardView extends RelativeLayout {
         }
         // pay_method
         try {
-            String method = _paymentInfo.getPayMethod().toLowerCase();
+            String method = _paymentInfo.getPayMethod().toLowerCase().replaceAll("_", " ");
             method = misc.capitalize(method);
             _paymentTypeTextView.setText(method);
         } catch (Exception ex) {
@@ -121,10 +122,10 @@ public class PaymentCardView extends RelativeLayout {
         }
         // payment_id
         try {
-            _idTextView.setText("ID " + _paymentInfo.getPaymentId());
+            _idTextView.setText("Payment Id " + _paymentInfo.getPaymentId());
         } catch (Exception ex) {
             ex.printStackTrace();
-            _idTextView.setText("ID ???");
+            _idTextView.setText("Payment Id ???");
         }
         // status
         try {

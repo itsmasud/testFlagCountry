@@ -1,8 +1,10 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,9 +24,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.fieldnation.FileHelper;
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.LoggedWork;
@@ -38,6 +40,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollView;
@@ -51,6 +54,7 @@ import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
+import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -74,12 +78,15 @@ public class TasksFragment extends WorkorderFragment {
     private static final int RESULT_CODE_SEND_EMAIL = RESULT_CODE_BASE + 1;
     private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 3;
     private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 4;
+    private static final int RESULT_CODE_GET_SIGNATURE = RESULT_CODE_BASE + 5;
 
     // Web request result codes
     private static final int WEB_CHANGED = 1;
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
-    private static final int WEB_GET_SIGNATURES = 4;
+
+    // Signature Flag
+    private static final String SIGNATURE_COMPLETE_WHEN_DONE = TAG + ":SIGNATURE_COMPLETE_WHEN_DONE";
 
     // saved state keys
     private static final String STATE_WORKORDER = "ui.workorder.detail.TasksFragment:STATE_WORKORDER";
@@ -110,9 +117,9 @@ public class TasksFragment extends WorkorderFragment {
     private CustomFieldDialog _customFieldDialog;
     private WorkLogDialog _worklogDialog;
     private TermsDialog _termsDialog;
+    private MarkCompleteDialog _markCompleteDialog;
 
     // Data
-    private GlobalState _gs;
     private WorkorderService _service;
 
     private String _authToken;
@@ -138,8 +145,6 @@ public class TasksFragment extends WorkorderFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.v(TAG, "TasksFragment onViewCreated");
-
-        _gs = (GlobalState) view.getContext().getApplicationContext();
 
         _shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
         _shipments.setListener(_shipments_listener);
@@ -194,9 +199,10 @@ public class TasksFragment extends WorkorderFragment {
 
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
-        if (savedInstanceState == null) {
-            _gs.requestAuthentication(_authClient);
-        } else {
+        _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
+        _markCompleteDialog.setListener(_markCompleteDialog_listener);
+
+        if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
@@ -223,12 +229,9 @@ public class TasksFragment extends WorkorderFragment {
                 for (int i = 0; i < sigs.length; i++) {
                     _signatures.add((Signature) sigs[i]);
                 }
-                _signatureView.setSignatures(_signatures);
             }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
-            } else {
-                _gs.requestAuthentication(_authClient);
             }
         }
 
@@ -253,7 +256,6 @@ public class TasksFragment extends WorkorderFragment {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
-
         }
     }
 
@@ -288,6 +290,18 @@ public class TasksFragment extends WorkorderFragment {
         }
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+    }
+
+    @Override
+    public void onPause() {
+        TopicService.delete(getActivity(), TAG);
+        super.onPause();
     }
 
     @Override
@@ -355,7 +369,6 @@ public class TasksFragment extends WorkorderFragment {
 
     private void requestData(boolean allowCache) {
         requestTaskData(allowCache);
-        requestSignatureData(allowCache);
     }
 
     private void requestTaskData(boolean allowCache) {
@@ -366,20 +379,7 @@ public class TasksFragment extends WorkorderFragment {
             return;
 
         setLoading(true);
-        _gs.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
-    }
-
-    private void requestSignatureData(boolean allowCache) {
-        if (_service == null)
-            return;
-
-        if (_workorder == null)
-            return;
-
-        if (_workorder.isSignatureCollected()) {
-            setLoading(true);
-            _gs.startService(_service.listSignatures(WEB_GET_SIGNATURES, _workorder.getWorkorderId(), allowCache));
-        }
+        getActivity().startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
     }
 
     private void setTaskData(List<Task> tasks, boolean isCached) {
@@ -394,26 +394,14 @@ public class TasksFragment extends WorkorderFragment {
         }
     }
 
-    private void setSignatureData(List<Signature> sigs, boolean isCached) {
-        _signatures = sigs;
-        _signatureView.setSignatures(sigs);
-
-        if (isCached) {
-            requestSignatureData(false);
-            setLoading(true);
-        } else {
-            setLoading(false);
-        }
-    }
-
     private PendingIntent getNotificationIntent() {
-        Intent intent = new Intent(_gs, WorkorderActivity.class);
+        Intent intent = new Intent(getActivity(), WorkorderActivity.class);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
                 WorkorderActivity.TAB_TASKS);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
                 _workorder.getWorkorderId());
 
-        return PendingIntent.getActivity(_gs, _rand.nextInt(), intent,
+        return PendingIntent.getActivity(getActivity(), _rand.nextInt(), intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -424,16 +412,19 @@ public class TasksFragment extends WorkorderFragment {
         if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
 
             if (data == null) {
-                _gs.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                         _workorder.getWorkorderId(), _currentTask.getSlotId(),
                         _tempFile.getAbsolutePath(), getNotificationIntent()));
             } else {
-                _gs.startService(_service.uploadDeliverable(
+                getActivity().startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                         _currentTask.getSlotId(), data, getNotificationIntent()));
             }
             // todo notify task view that the file is uploading
 
+        } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+            getActivity().startService(
+                    _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
         }
     }
 
@@ -449,6 +440,22 @@ public class TasksFragment extends WorkorderFragment {
         public void onStartRefresh() {
             if (_workorder != null)
                 _workorder.dispatchOnChange();
+        }
+    };
+
+    private MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
+        @Override
+        public void onSignatureClick() {
+            Intent intent = new Intent(getActivity(), SignOffActivity.class);
+            intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
+            intent.putExtra(SIGNATURE_COMPLETE_WHEN_DONE, true);
+            startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+        }
+
+        @Override
+        public void onContinueClick() {
+            getActivity().startService(
+                    _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
         }
     };
 
@@ -519,7 +526,7 @@ public class TasksFragment extends WorkorderFragment {
     private ActionBarTopView.Listener _actionBarTop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onComplete() {
-            getActivity().startService(_service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
+            _markCompleteDialog.show(_workorder);
         }
 
         @Override
@@ -877,7 +884,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void signatureOnClick(SignatureTileView view, Signature signature) {
-            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature, _workorder));
+            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder));
         }
     };
 
@@ -963,27 +970,30 @@ public class TasksFragment extends WorkorderFragment {
     /*-				WEB Events				-*/
     /*-*************************************-*/
 
-    private AuthenticationClient _authClient = new AuthenticationClient() {
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken) {
-            try {
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_service == null || isNew) {
                 _username = username;
                 _authToken = authToken;
                 _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
                 requestData(true);
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
         }
 
         @Override
-        public void onAuthenticationFailed(Exception ex) {
-            _gs.requestAuthenticationDelayed(_authClient);
+        public void onAuthenticationFailed(boolean networkDown) {
+            _service = null;
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationInvalidated() {
+            _service = null;
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getActivity());
         }
     };
 
@@ -1012,35 +1022,22 @@ public class TasksFragment extends WorkorderFragment {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            } else if (resultCode == WEB_GET_SIGNATURES) {
-                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                try {
-                    JsonArray array = new JsonArray(data);
-                    List<Signature> sigs = new LinkedList<Signature>();
-                    for (int i = 0; i < array.size(); i++) {
-                        try {
-                            sigs.add(Signature.fromJson(array.getJsonObject(i)));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    setSignatureData(sigs, resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
             } else {
             }
         }
 
         @Override
+        public Context getContext() {
+            return TasksFragment.this.getActivity();
+        }
+
+        @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            if (_service != null) {
-                _gs.invalidateAuthToken(_service.getAuthToken());
-            }
-            _gs.requestAuthenticationDelayed(_authClient);
+            AuthTopicService.requestAuthInvalid(getActivity());
             _username = null;
             _authToken = null;
+            _service = null;
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };

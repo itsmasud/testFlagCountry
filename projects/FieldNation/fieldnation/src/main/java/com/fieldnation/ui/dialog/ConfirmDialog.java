@@ -41,8 +41,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     private Button _durationButton;
     private Button _okButton;
     private Button _cancelButton;
-    private TextView _schedule1TextView;
-    private TextView _schedule2TextView;
+    private TextView _scheduleTextView;
     private CheckBox _tacCheckBox;
     private Button _tacButton;
 
@@ -115,8 +114,7 @@ public class ConfirmDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        _schedule1TextView = (TextView) v.findViewById(R.id.schedule1_textview);
-        _schedule2TextView = (TextView) v.findViewById(R.id.schedule2_textview);
+        _scheduleTextView = (TextView) v.findViewById(R.id.schedule_textview);
 
         _tacButton = (Button) v.findViewById(R.id.tac_button);
         _tacButton.setOnClickListener(_terms_onClick);
@@ -190,30 +188,28 @@ public class ConfirmDialog extends DialogFragmentBase {
         if (_schedule == null)
             return;
 
-        if (_schedule1TextView == null)
+        if (_scheduleTextView == null)
             return;
 
         _tacCheckBox.setChecked(_tacAccept);
 
         if (_schedule.isExact()) {
-            _schedule2TextView.setVisibility(View.GONE);
             try {
                 Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
                 String dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                 String time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false,
                         TimeZone.SHORT);
 
-                _schedule1TextView.setText("You will need to arrive exactly on " + dayDate + " at " + time + ".");
+                _scheduleTextView.setText("You will need to arrive exactly on\n  " + dayDate + " at " + time + ".");
 
                 _startCalendar = cal;
-                _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-                _startDateButton.setEnabled(false);
+                _startDateButton.setVisibility(View.GONE);
+
                 setDuration(60000);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {
-            _schedule2TextView.setVisibility(View.GONE);
             try {
                 Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
                 String dayDate;
@@ -222,26 +218,26 @@ public class ConfirmDialog extends DialogFragmentBase {
                 dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                 time = misc.formatTime(cal, false);
 
-                String msg = "You will need to arrive between\n\t" + dayDate + " at " + time + " and\n\t";
+                String msg = "You will need to arrive between\n  " + dayDate + " at " + time + " and\n  ";
 
                 Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
 
                 // same day
                 if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
                     time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += time + ".";
+                    msg += time;
 
                 } else {
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
                     time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += dayDate + " at " + time + ".";
+                    msg += dayDate + " at " + time;
                 }
 
-                _schedule1TextView.setText(msg);
+                _scheduleTextView.setText(msg);
 
                 _startCalendar = cal;
                 _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-                _startDateButton.setEnabled(true);
+                _startDateButton.setVisibility(View.VISIBLE);
 
                 setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
 

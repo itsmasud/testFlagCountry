@@ -3,23 +3,27 @@ package com.fieldnation.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthenticationClient;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.auth.server.AuthActivity;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -48,9 +52,10 @@ public class DrawerView extends RelativeLayout {
     private TextView _estimatedDateTextView;
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
+    private TextView _versionTextView;
+    private Button _feedbackButton;
 
     // Data
-    private GlobalState _gs;
     private PaymentService _dataService;
     private boolean _hasPaid = false;
     private boolean _hasEstimated = false;
@@ -62,7 +67,7 @@ public class DrawerView extends RelativeLayout {
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
     public DrawerView(Context context) {
         super(context);
         init();
@@ -84,8 +89,7 @@ public class DrawerView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _gs = (GlobalState) getContext().getApplicationContext();
-        _gs.requestAuthentication(_authClient);
+        AuthTopicService.subscribeAuthState(getContext(), 0, TAG, _authReceiver);
 
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
         _myworkView.setOnClickListener(_myworkView_onClick);
@@ -109,11 +113,36 @@ public class DrawerView extends RelativeLayout {
         _estimatedLayout = (RelativeLayout) findViewById(R.id.estimated_layout);
         _estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
         _estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
+
+        _versionTextView = (TextView) findViewById(R.id.version_textview);
+        try {
+            _versionTextView.setText("v" + getContext().getPackageManager()
+                    .getPackageInfo(getContext().getPackageName(), 0).versionName);
+            _versionTextView.setVisibility(View.VISIBLE);
+        } catch (Exception ex) {
+            _versionTextView.setVisibility(View.GONE);
+        }
+
+        _feedbackButton = (Button) findViewById(R.id.feedback_button);
+        _feedbackButton.setOnClickListener(_feedback_onClick);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        TopicService.delete(getContext(), TAG);
+        super.finalize();
     }
 
     /*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
+    private OnClickListener _feedback_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/forms/d/1ImIpsrdzWdVUytIjEcKfGpbNFHm0cZP0q_ZHI2FUb48/viewform?usp=send_form"));
+            getContext().startActivity(intent);
+        }
+    };
     private View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -149,29 +178,37 @@ public class DrawerView extends RelativeLayout {
     private View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _gs.requestRemoveAccount(_authClient);
+            AuthTopicService.requestAuthRemove(getContext());
+            Intent intent = new Intent(getContext(), AuthActivity.class);
+            getContext().startActivity(intent);
+            attachAnimations();
         }
     };
 
-    private AuthenticationClient _authClient = new AuthenticationClient() {
-
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthenticationFailed(Exception ex) {
-            Log.v(TAG, "onAuthenticationFailed(), delayed re-request");
-            _gs.requestAuthenticationDelayed(_authClient);
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_dataService == null || isNew) {
+                _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
+
+                getContext().startService(_dataService.getAll(1, 0, true));
+                _nextPage = 1;
+            }
         }
 
         @Override
-        public void onAuthentication(String username, String authToken) {
-            _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
-
-            getContext().startService(_dataService.getAll(1, 0, true));
-            _nextPage = 1;
+        public void onAuthenticationFailed(boolean networkDown) {
+            _dataService = null;
         }
 
         @Override
-        public GlobalState getGlobalState() {
-            return _gs;
+        public void onAuthenticationInvalidated() {
+            _dataService = null;
+        }
+
+        @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(getContext());
         }
     };
 
@@ -243,6 +280,19 @@ public class DrawerView extends RelativeLayout {
                 //_nextPage = 1;
             }
             Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+        }
+
+        @Override
+        public Context getContext() {
+            return DrawerView.this.getContext();
+        }
+
+        @Override
+        public void onError(int resultCode, Bundle resultData, String errorType) {
+            super.onError(resultCode, resultData, errorType);
+
+            _dataService = null;
+            AuthTopicService.requestAuthInvalid(getContext());
         }
     };
 

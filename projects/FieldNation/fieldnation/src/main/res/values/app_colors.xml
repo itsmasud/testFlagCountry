@@ -2,6 +2,10 @@
 <resources>
 
     <color name="fn_gray">#FFf3f3eb</color>
+    <color name="fn_white">#FFeeeeee</color>
+    <color name="fn_orange">#FFFC6102</color>
+
+    <color name="activity_bg">#FFeeeeee</color>
     <color name="transparent">#00000000</color>
     <color name="loading_bar_color_1">#FF47D3AF</color>
     <color name="loading_bar_color_2">#FF42CFB2</color>
@@ -33,7 +37,6 @@
     <color name="payment_header_bg_paid">#FF6a6a5e</color>
 
     <color name="actionBarTextColor">@color/white</color>
-
 
 
     <!-- tiles -->
