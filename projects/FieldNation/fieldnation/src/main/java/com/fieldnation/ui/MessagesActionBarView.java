@@ -57,7 +57,6 @@ public class MessagesActionBarView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        AuthTopicService.startService(getContext());
         AuthTopicService.subscribeAuthState(getContext(), 0, TAG + ":AuthTopicService", _authReceiver);
 
         setOnClickListener(_this_onClickListener);
@@ -90,7 +89,7 @@ public class MessagesActionBarView extends RelativeLayout {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _profileService = null;
         }
 
@@ -107,14 +106,6 @@ public class MessagesActionBarView extends RelativeLayout {
 
 
     private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-        }
-
-        @Override
-        public void onUnregister(int resultCode, String topicId) {
-        }
-
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (topicId.equals(ProfileService.TOPIC_PROFILE_INVALIDATED)) {
@@ -136,6 +127,11 @@ public class MessagesActionBarView extends RelativeLayout {
             } catch (Exception e) {
                 getContext().startService(_profileService.getMyUserInformation(0, false));
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return MessagesActionBarView.this.getContext();
         }
 
         @Override

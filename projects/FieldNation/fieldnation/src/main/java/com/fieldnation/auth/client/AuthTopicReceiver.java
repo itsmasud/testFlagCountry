@@ -33,13 +33,15 @@ public abstract class AuthTopicReceiver extends TopicReceiver {
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
             onAuthenticationInvalidated();
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_FAILED.equals(type)) {
-            onAuthenticationFailed();
+            onAuthenticationFailed(false);
+        } else if (AuthTopicService.BUNDLE_PARAM_TYPE_NO_NETWORK.equals(type)) {
+            onAuthenticationFailed(true);
         }
     }
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew);
 
-    public abstract void onAuthenticationFailed();
+    public abstract void onAuthenticationFailed(boolean networkDown);
 
     public abstract void onAuthenticationInvalidated();
 }

@@ -29,7 +29,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     NotificationActionBarView _notificationsView;
     MessagesActionBarView _messagesView;
 
-
     // Services
     private TopicShutdownReciever _shutdownListener;
 
@@ -56,7 +55,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.main, menu);
 
         _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
-        // _notificationsView.setCount(10);
         _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
 
         return true;
@@ -65,9 +63,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AuthTopicService.startService(this);
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
-
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
     }
 
@@ -87,6 +83,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
@@ -99,8 +96,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
 
         @Override
-        public void onAuthenticationFailed() {
-            AuthFragmentActivity.this.onAuthenticationFailed();
+        public void onAuthenticationFailed(boolean networkDown) {
+            AuthFragmentActivity.this.onAuthenticationFailed(networkDown);
         }
 
         @Override
@@ -112,7 +109,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew);
 
-    public void onAuthenticationFailed() {
+    public void onAuthenticationFailed(boolean networkDown) {
     }
 
     public void onAuthenticationInvalidated() {
@@ -129,17 +126,16 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 */
                 onBackPressed();
                 return true;
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_refresh:
-                onRefresh();
-                return true;
+//            case R.id.action_settings:
+//                Intent intent = new Intent(this, SettingsActivity.class);
+//                startActivity(intent);
+//                return true;
+//            case R.id.action_refresh:
+//                onRefresh();
+//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     public abstract void onRefresh();
-
 }

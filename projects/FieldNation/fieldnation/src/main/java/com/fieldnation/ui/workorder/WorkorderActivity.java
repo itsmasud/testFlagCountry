@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,7 +54,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private ViewPager _viewPager;
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
-//    private RelativeLayout _loadingLayout;
 
     // Data
     private String _authToken;
@@ -183,8 +183,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
     }
 
     @Override
-    public void onAuthenticationFailed() {
-        super.onAuthenticationFailed();
+    public void onAuthenticationFailed(boolean networkDown) {
+        super.onAuthenticationFailed(networkDown);
         _service = null;
     }
 
@@ -438,6 +438,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
                     getData(false);
                 }
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return WorkorderActivity.this;
         }
 
         @Override

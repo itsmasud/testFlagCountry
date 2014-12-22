@@ -26,12 +26,13 @@
 
         <!-- loading layout -->
 
-        <com.fieldnation.ui.LoadingView
-            android:id="@+id/loading_layout"
+        <com.fieldnation.ui.ReconnectWarningView
+            android:id="@+id/reconnect_view"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:visibility="gone" />
+            android:layout_height="wrap_content" />
+
     </RelativeLayout>
     <!-- The navigation drawer -->
 

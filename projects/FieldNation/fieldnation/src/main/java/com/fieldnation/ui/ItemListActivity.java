@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -138,8 +139,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver);
 
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(
-            new Handler()) {
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
 
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
@@ -157,12 +157,17 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         }
 
         @Override
+        public Context getContext() {
+            return ItemListActivity.this;
+        }
+
+        @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             invalidateService();
             AuthTopicService.requestAuthInvalid(getApplicationContext());
             Toast.makeText(ItemListActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
-            _refreshView.refreshComplete();
+            _refreshView.refreshFailed();
         }
 
     };

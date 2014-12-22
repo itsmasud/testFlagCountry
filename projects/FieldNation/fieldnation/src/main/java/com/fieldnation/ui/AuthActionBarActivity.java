@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -79,9 +78,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AuthTopicService.startService(this);
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
-
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
     }
 
@@ -113,8 +110,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
 
         @Override
-        public void onAuthenticationFailed() {
-            AuthActionBarActivity.this.onAuthenticationFailed();
+        public void onAuthenticationFailed(boolean networkDown) {
+            AuthActionBarActivity.this.onAuthenticationFailed(networkDown);
         }
 
         @Override
@@ -126,12 +123,11 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew);
 
-    public void onAuthenticationFailed() {
+    public void onAuthenticationFailed(boolean networkDown) {
     }
 
     public void onAuthenticationInvalidated() {
     }
-
 
     // Menu
     @Override
@@ -144,13 +140,13 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 */
                 onBackPressed();
                 return true;
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_refresh:
-                onRefresh();
-                return true;
+//            case R.id.action_settings:
+//                Intent intent = new Intent(this, SettingsActivity.class);
+//                startActivity(intent);
+//                return true;
+//            case R.id.action_refresh:
+//                onRefresh();
+//                return true;
         }
         return super.onOptionsItemSelected(item);
     }

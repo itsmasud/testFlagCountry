@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -265,6 +266,11 @@ public class SignOffActivity extends AuthFragmentActivity {
                     _thankYouFrag.setUploadComplete();
                 }
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return SignOffActivity.this;
         }
 
         @Override

@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -153,7 +154,6 @@ public class DetailFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
@@ -548,7 +548,7 @@ public class DetailFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _service = null;
         }
 
@@ -573,6 +573,11 @@ public class DetailFragment extends WorkorderFragment {
             } else {
 
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return DetailFragment.this.getActivity();
         }
 
         @Override

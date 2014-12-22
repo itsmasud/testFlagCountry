@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -255,7 +256,6 @@ public class TasksFragment extends WorkorderFragment {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
-
         }
     }
 
@@ -295,7 +295,6 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
@@ -885,7 +884,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void signatureOnClick(SignatureTileView view, Signature signature) {
-            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature, _workorder));
+            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder));
         }
     };
 
@@ -983,7 +982,7 @@ public class TasksFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _service = null;
         }
 
@@ -1025,6 +1024,11 @@ public class TasksFragment extends WorkorderFragment {
                 }
             } else {
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return TasksFragment.this.getActivity();
         }
 
         @Override

@@ -3,7 +3,7 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -15,6 +15,10 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
+import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.misc;
 
 /**
@@ -26,10 +30,14 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     // State
     private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
+    private static final String STATE_SIGNATURE_ID = "STATE_SIGNATURE_ID";
 
     // Intent Params
     public static final String INTENT_PARAM_SIGNATURE = "ui.SignatureDisplayActivity:INTENT_PARAM_SIGNATURE";
     public static final String INTENT_PARAM_WORKORDER = "ui.SignatureDisplayActivity:INTENT_PARAM_WORKORDER";
+
+    // Web
+    public static int WEB_GET_SIGNATURE = 1;
 
     // Ui
     private TextView _titleTextView;
@@ -51,9 +59,15 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private TextView _nameTextView;
     private Button _doneButton;
 
+    private LoadingView _loadingView;
+
     // Data
     private Signature _signature;
     private Workorder _wo;
+    private long _signatureId = -1;
+
+    // Service
+    private WorkorderService _service;
 
 
     @Override
@@ -82,18 +96,23 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _doneButton = (Button) findViewById(R.id.done_button);
         _doneButton.setOnClickListener(_done_onClick);
 
+        _loadingView = (LoadingView) findViewById(R.id.loading_view);
+
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_SIGNATURE))
                 _signature = savedInstanceState.getParcelable(STATE_SIGNATURE);
 
             if (savedInstanceState.containsKey(STATE_WORKORDER))
                 _wo = savedInstanceState.getParcelable(STATE_WORKORDER);
+
+            if (savedInstanceState.containsKey(STATE_SIGNATURE_ID))
+                _signatureId = savedInstanceState.getLong(STATE_SIGNATURE_ID);
         }
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             if (extras.containsKey(INTENT_PARAM_SIGNATURE))
-                _signature = extras.getParcelable(INTENT_PARAM_SIGNATURE);
+                _signatureId = extras.getLong(INTENT_PARAM_SIGNATURE);
 
             if (extras.containsKey(INTENT_PARAM_WORKORDER))
                 _wo = extras.getParcelable(INTENT_PARAM_WORKORDER);
@@ -108,28 +127,41 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         if (_wo != null)
             outState.putParcelable(STATE_WORKORDER, _wo);
 
+        outState.putLong(STATE_SIGNATURE_ID, _signatureId);
+
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
-        // TODO STUB com.fieldnation.ui.SignatureDisplayActivity.onAuthentication()
-        Log.v(TAG, "STUB com.fieldnation.ui.SignatureDisplayActivity.onAuthentication()");
+        if (_service == null || isNew) {
+            _service = new WorkorderService(this, username, authToken, _resultReceiver);
+            getData();
+        }
+    }
+
+    private void getData() {
+        if (_service == null)
+            return;
+
+        _loadingView.setVisibility(View.VISIBLE);
+
+        startService(
+                _service.getSignature(WEB_GET_SIGNATURE, _wo.getWorkorderId(), _signatureId, true));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        populateUi();
+        populateUi(false);
     }
 
-    private void populateUi() {
+    private void populateUi(boolean isCached) {
         if (_signature == null)
             return;
 
         if (_doneButton == null)
             return;
-
 
         _signatureView.setSignatureJson(_signature.getSignature(), true);
         _nameTextView.setText(_signature.getPrintName());
@@ -201,6 +233,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             _closingNotesDivider.setVisibility(View.GONE);
             _closingNotesLabelTextView.setVisibility(View.GONE);
         }
+
+        _loadingView.setVisibility(View.GONE);
     }
 
     @Override
@@ -217,10 +251,38 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         }
     };
 
+    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
+        @Override
+        public Context getContext() {
+            return SignatureDisplayActivity.this;
+        }
 
-    public static Intent startIntent(Context context, Signature signature, Workorder workorder) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            if (resultCode == WEB_GET_SIGNATURE) {
+                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+
+                try {
+                    JsonObject obj = new JsonObject(data);
+
+                    Signature signature = Signature.fromJson(obj);
+
+                    _signature = signature;
+
+                    populateUi(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    };
+
+
+    public static Intent startIntent(Context context, long signatureId, Workorder workorder) {
         Intent intent = new Intent(context, SignatureDisplayActivity.class);
-        intent.putExtra(INTENT_PARAM_SIGNATURE, signature);
+        intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
         intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
         return intent;
     }

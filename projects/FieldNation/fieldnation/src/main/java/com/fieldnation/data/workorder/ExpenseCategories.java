@@ -36,7 +36,6 @@ public class ExpenseCategories {
 
     private ExpenseCategories(Context context) {
         _context = context.getApplicationContext();
-        AuthTopicService.startService(context);
         AuthTopicService.subscribeAuthState(context, 0, TAG, _authReceiver);
     }
 
@@ -73,7 +72,7 @@ public class ExpenseCategories {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _ws = null;
         }
 
@@ -110,6 +109,11 @@ public class ExpenseCategories {
                 e.printStackTrace();
             }
 
+        }
+
+        @Override
+        public Context getContext() {
+            return _context;
         }
 
         @Override

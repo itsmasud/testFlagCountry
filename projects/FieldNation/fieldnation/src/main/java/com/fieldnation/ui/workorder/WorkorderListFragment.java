@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -164,7 +165,6 @@ public class WorkorderListFragment extends Fragment {
         super.onResume();
         _adapter.refreshPages();
         _loadingView.startRefreshing();
-        AuthTopicService.startService(getActivity());
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
     }
 
@@ -507,6 +507,7 @@ public class WorkorderListFragment extends Fragment {
     /*-             WEB             -*/
     /*-*****************************-*/
     private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
+
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             Log.v(TAG, "onAuthentication");
@@ -521,7 +522,7 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _service = null;
         }
 
@@ -590,6 +591,11 @@ public class WorkorderListFragment extends Fragment {
             } else {
                 _loadingView.refreshComplete();
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return WorkorderListFragment.this.getActivity();
         }
 
         @Override

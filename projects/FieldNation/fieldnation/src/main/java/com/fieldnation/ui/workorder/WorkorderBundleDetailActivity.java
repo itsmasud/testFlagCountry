@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -98,7 +99,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     };
 
     private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             // TODO Method Stub: onSuccess()
@@ -136,6 +136,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
                     e.printStackTrace();
                 }
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return WorkorderBundleDetailActivity.this;
         }
 
         @Override

@@ -516,4 +516,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
         return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/signature", null, allowCache);
     }
 
+    public Intent getSignature(int resultCode, long workorderId, long signatureId, boolean allowCache) {
+        return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId, null, allowCache);
+    }
+
 }

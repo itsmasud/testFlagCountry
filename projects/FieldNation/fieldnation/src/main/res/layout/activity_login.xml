@@ -124,10 +124,10 @@
         </LinearLayout>
     </LinearLayout>
 
-    <com.fieldnation.ui.LoadingView
-        android:id="@+id/loading_progressbar"
-        android:layout_height="match_parent"
+    <com.fieldnation.ui.ReconnectWarningView
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:visibility="gone" />
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

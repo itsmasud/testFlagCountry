@@ -97,7 +97,6 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
 
         _noDataTextView.setVisibility(View.GONE);
 
-
         _listView.removeAllViews();
         for (int i = 0; i < list.length; i++) {
             Signature sig = list[i];

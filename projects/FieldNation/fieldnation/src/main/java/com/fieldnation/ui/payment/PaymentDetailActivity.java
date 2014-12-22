@@ -1,5 +1,6 @@
 package com.fieldnation.ui.payment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -151,6 +152,11 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
                 }
                 Log.v(TAG, "BP");
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return PaymentDetailActivity.this;
         }
 
         @Override

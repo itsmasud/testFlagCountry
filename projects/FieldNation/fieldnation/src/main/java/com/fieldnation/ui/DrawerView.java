@@ -89,7 +89,6 @@ public class DrawerView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        AuthTopicService.startService(getContext());
         AuthTopicService.subscribeAuthState(getContext(), 0, TAG, _authReceiver);
 
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
@@ -198,7 +197,7 @@ public class DrawerView extends RelativeLayout {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _dataService = null;
         }
 
@@ -281,6 +280,11 @@ public class DrawerView extends RelativeLayout {
                 //_nextPage = 1;
             }
             Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+        }
+
+        @Override
+        public Context getContext() {
+            return DrawerView.this.getContext();
         }
 
         @Override

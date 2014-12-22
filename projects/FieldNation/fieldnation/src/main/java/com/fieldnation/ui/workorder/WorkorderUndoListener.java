@@ -98,6 +98,11 @@ public class WorkorderUndoListener implements AdvancedUndoListener {
         }
 
         @Override
+        public Context getContext() {
+            return WorkorderUndoListener.this._context;
+        }
+
+        @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             _failed.add(_workorders.get(resultCode));
