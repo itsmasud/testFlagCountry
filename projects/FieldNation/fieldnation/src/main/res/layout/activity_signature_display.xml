@@ -120,6 +120,8 @@
     </ScrollView>
 
     <com.fieldnation.ui.ReconnectWarningView
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
         android:id="@+id/reconnect_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
