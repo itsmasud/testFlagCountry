@@ -24,9 +24,11 @@ public abstract class TopicReceiver extends ResultReceiver implements TopicConst
         }
     }
 
-    public abstract void onRegister(int resultCode, String topicId);
+    public void onRegister(int resultCode, String topicId) {
+    }
 
-    public abstract void onUnregister(int resultCode, String topicId);
+    public void onUnregister(int resultCode, String topicId) {
+    }
 
     public abstract void onTopic(int resultCode, String topicId, Bundle parcel);
 }

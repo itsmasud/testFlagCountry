@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -971,11 +972,6 @@ public class TasksFragment extends WorkorderFragment {
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onNoNetwork() {
-            _service = null;
-        }
-
-        @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {
                 _username = username;
@@ -986,7 +982,7 @@ public class TasksFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _service = null;
         }
 
@@ -1028,6 +1024,11 @@ public class TasksFragment extends WorkorderFragment {
                 }
             } else {
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return TasksFragment.this.getActivity();
         }
 
         @Override

@@ -132,11 +132,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         }
     }
 
-    @Override
-    public void onNetworkDown() {
-        _service = null;
-    }
-
     private void getData() {
         // Todo get data here!
     }
@@ -242,6 +237,11 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     };
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
+        @Override
+        public Context getContext() {
+            return SignatureDisplayActivity.this;
+        }
+
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             // TODO STUB .onSuccess()

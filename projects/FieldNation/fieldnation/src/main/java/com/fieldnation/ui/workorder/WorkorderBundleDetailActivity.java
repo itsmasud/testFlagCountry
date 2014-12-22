@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -89,11 +90,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
     }
 
-    @Override
-    public void onNetworkDown() {
-        _service = null;
-    }
-
     private View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -141,6 +137,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
                     e.printStackTrace();
                 }
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return WorkorderBundleDetailActivity.this;
         }
 
         @Override

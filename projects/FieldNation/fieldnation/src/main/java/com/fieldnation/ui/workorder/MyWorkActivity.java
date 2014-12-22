@@ -61,12 +61,6 @@ public class MyWorkActivity extends DrawerActivity {
         Log.v(TAG, "STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()");
     }
 
-    @Override
-    public void onNetworkDown() {
-        // TODO STUB com.fieldnation.ui.workorder.MyWorkActivity.onNetworkDown()
-        Log.v(TAG, "STUB com.fieldnation.ui.workorder.MyWorkActivity.onNetworkDown()");
-    }
-
     private void buildTabs(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 

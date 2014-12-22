@@ -6,8 +6,6 @@ import android.accounts.AccountManagerFuture;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -51,9 +49,7 @@ public class AuthTopicService extends Service {
     private String _username;
 
     private boolean _isNetworkDown = false;
-
-    private long _authTimeout = 0;
-    //private long _authDuration =
+    private boolean _isStarted = false;
 
     // Services
     private AccountManager _accountManager;
@@ -64,12 +60,14 @@ public class AuthTopicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        subscribeAuthCommand(this, 0, TAG, _topicReceiver);
-        TopicService.registerListener(this, 0, TAG + ":SHUTDOWN", Topics.TOPIC_SHUTDOWN, _topic_shutdown);
-
-        if (!_authenticating)
-            getAccount();
-
+        if (!_isStarted) {
+            subscribeAuthCommand(this, 0, TAG, _topicReceiver);
+            TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_SHUTDOWN, _topics);
+            TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_NETWORK_DOWN, _topics);
+            TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_NETWORK_UP, _topics);
+            _isStarted = true;
+            requestAuthentication(this);
+        }
         return START_STICKY;
     }
 
@@ -139,47 +137,30 @@ public class AuthTopicService extends Service {
     /*-             Events          -*/
     /*-*****************************-*/
 
-    private TopicReceiver _topic_shutdown = new TopicReceiver(new Handler()) {
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-        }
-
-        @Override
-        public void onUnregister(int resultCode, String topicId) {
-        }
-
+    private TopicReceiver _topics = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            _authenticating = false;
-            _removing = false;
-            _account = null;
-            dispatchAuthInvalid(AuthTopicService.this);
+            if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
+                _isNetworkDown = true;
+                dispatchNoNetwork(AuthTopicService.this);
+            } else if (Topics.TOPIC_NETWORK_UP.equals(topicId)) {
+                _isNetworkDown = false;
+                requestAuthentication(AuthTopicService.this);
+            } else {
+                _authenticating = false;
+                _removing = false;
+                _account = null;
+                dispatchAuthInvalid(AuthTopicService.this);
+            }
         }
     };
 
 
     private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
-        public void onRegister(int resultCode, String topicId) {
-        }
-
-        @Override
-        public void onUnregister(int resultCode, String topicId) {
-        }
-
-        @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             String type = parcel.getString(BUNDLE_PARAM_TYPE);
             Log.v(TAG, "Type: " + type);
-
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNet = cm.getActiveNetworkInfo();
-
-            if (activeNet == null || !activeNet.isConnected()) {
-                _isNetworkDown = true;
-            } else {
-                _isNetworkDown = false;
-            }
 
             if (_isNetworkDown) {
                 dispatchNoNetwork(AuthTopicService.this);
@@ -211,12 +192,8 @@ public class AuthTopicService extends Service {
     }
 
     private void handleRequest() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNet = cm.getActiveNetworkInfo();
-
-        if (activeNet == null || !activeNet.isConnected()) {
+        if (_isNetworkDown) {
             dispatchNoNetwork(this);
-            _isNetworkDown = true;
             return;
         }
 

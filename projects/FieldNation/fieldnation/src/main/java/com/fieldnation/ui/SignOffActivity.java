@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -127,11 +128,6 @@ public class SignOffActivity extends AuthFragmentActivity {
                 ex.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void onNetworkDown() {
-        _service = null;
     }
 
     @Override
@@ -270,6 +266,11 @@ public class SignOffActivity extends AuthFragmentActivity {
                     _thankYouFrag.setUploadComplete();
                 }
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return SignOffActivity.this;
         }
 
         @Override

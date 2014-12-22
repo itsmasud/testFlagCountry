@@ -66,7 +66,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
-
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
     }
 
@@ -86,15 +85,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
             AuthTopicService.requestAuthentication(AuthFragmentActivity.this);
-        }
-
-        @Override
-        public void onNoNetwork() {
-            AuthFragmentActivity.this.onNetworkDown();
         }
 
         @Override
@@ -103,8 +98,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
 
         @Override
-        public void onAuthenticationFailed() {
-            AuthFragmentActivity.this.onAuthenticationFailed();
+        public void onAuthenticationFailed(boolean networkDown) {
+            AuthFragmentActivity.this.onAuthenticationFailed(networkDown);
         }
 
         @Override
@@ -116,9 +111,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew);
 
-    public abstract void onNetworkDown();
-
-    public void onAuthenticationFailed() {
+    public void onAuthenticationFailed(boolean networkDown) {
     }
 
     public void onAuthenticationInvalidated() {

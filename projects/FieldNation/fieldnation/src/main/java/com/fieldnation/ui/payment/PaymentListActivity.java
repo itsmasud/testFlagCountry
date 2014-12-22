@@ -56,11 +56,6 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     }
 
     @Override
-    public void onNetworkDown() {
-        _service = null;
-    }
-
-    @Override
     public List<Payment> onParseData(int page, boolean isCached, byte[] data) {
         JsonArray objects = null;
         try {

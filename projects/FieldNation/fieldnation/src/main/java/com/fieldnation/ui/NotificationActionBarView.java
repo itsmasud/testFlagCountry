@@ -82,11 +82,6 @@ public class NotificationActionBarView extends RelativeLayout {
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onNoNetwork() {
-            _profileService = null;
-        }
-
-        @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_profileService == null || isNew) {
                 _profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
@@ -95,7 +90,7 @@ public class NotificationActionBarView extends RelativeLayout {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _profileService = null;
         }
 
@@ -143,6 +138,11 @@ public class NotificationActionBarView extends RelativeLayout {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return NotificationActionBarView.this.getContext();
         }
 
         @Override

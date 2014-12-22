@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -183,13 +184,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
     }
 
     @Override
-    public void onNetworkDown() {
-        _service = null;
-    }
-
-    @Override
-    public void onAuthenticationFailed() {
-        super.onAuthenticationFailed();
+    public void onAuthenticationFailed(boolean networkDown) {
+        super.onAuthenticationFailed(networkDown);
         _service = null;
     }
 
@@ -443,6 +439,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
                     getData(false);
                 }
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return WorkorderActivity.this;
         }
 
         @Override

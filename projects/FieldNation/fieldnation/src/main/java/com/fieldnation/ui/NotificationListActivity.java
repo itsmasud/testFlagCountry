@@ -55,11 +55,6 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
     @Override
-    public void onNetworkDown() {
-        _service = null;
-    }
-
-    @Override
     public List<Notification> onParseData(int page, boolean isCached, byte[] data) {
         JsonArray objects = null;
         try {

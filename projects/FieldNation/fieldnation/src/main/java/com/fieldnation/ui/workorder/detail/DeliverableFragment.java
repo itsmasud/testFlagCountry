@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -387,12 +388,6 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onNoNetwork() {
-            _service = null;
-            _profileService = null;
-        }
-
-        @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || _profileService == null || isNew) {
                 _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
@@ -402,7 +397,7 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _service = null;
             _profileService = null;
         }
@@ -456,6 +451,11 @@ public class DeliverableFragment extends WorkorderFragment {
             } else if (resultCode == WEB_CHANGE) {
                 _workorder.dispatchOnChange();
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return DeliverableFragment.this.getActivity();
         }
 
         @Override

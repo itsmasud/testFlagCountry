@@ -80,7 +80,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
-
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
     }
 
@@ -101,11 +100,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     /*-*********************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onNoNetwork() {
-            AuthActionBarActivity.this.onNetworkDown();
-        }
-
-        @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             AuthActionBarActivity.this.onAuthentication(username, authToken, isNew);
         }
@@ -117,8 +111,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
 
         @Override
-        public void onAuthenticationFailed() {
-            AuthActionBarActivity.this.onAuthenticationFailed();
+        public void onAuthenticationFailed(boolean networkDown) {
+            AuthActionBarActivity.this.onAuthenticationFailed(networkDown);
         }
 
         @Override
@@ -130,14 +124,11 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew);
 
-    public abstract void onNetworkDown();
-
-    public void onAuthenticationFailed() {
+    public void onAuthenticationFailed(boolean networkDown) {
     }
 
     public void onAuthenticationInvalidated() {
     }
-
 
     // Menu
     @Override

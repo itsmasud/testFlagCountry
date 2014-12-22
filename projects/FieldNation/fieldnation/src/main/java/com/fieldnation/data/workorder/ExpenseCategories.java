@@ -64,11 +64,6 @@ public class ExpenseCategories {
     /*-*********************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onNoNetwork() {
-            _ws = null;
-        }
-
-        @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_ws == null || isNew) {
                 _ws = new WorkorderService(_context, username, authToken, _resultReciever);
@@ -77,7 +72,7 @@ public class ExpenseCategories {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _ws = null;
         }
 
@@ -114,6 +109,11 @@ public class ExpenseCategories {
                 e.printStackTrace();
             }
 
+        }
+
+        @Override
+        public Context getContext() {
+            return _context;
         }
 
         @Override

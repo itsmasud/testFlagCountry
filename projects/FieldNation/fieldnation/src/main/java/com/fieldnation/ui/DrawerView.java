@@ -187,11 +187,6 @@ public class DrawerView extends RelativeLayout {
 
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onNoNetwork() {
-            _dataService = null;
-        }
-
-        @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_dataService == null || isNew) {
                 _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
@@ -202,7 +197,7 @@ public class DrawerView extends RelativeLayout {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _dataService = null;
         }
 
@@ -285,6 +280,11 @@ public class DrawerView extends RelativeLayout {
                 //_nextPage = 1;
             }
             Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+        }
+
+        @Override
+        public Context getContext() {
+            return DrawerView.this.getContext();
         }
 
         @Override

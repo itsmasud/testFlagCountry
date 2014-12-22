@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -187,11 +188,6 @@ public class NotificationFragment extends WorkorderFragment {
     /*-*****************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onNoNetwork() {
-            _service = null;
-        }
-
-        @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {
                 _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
@@ -200,7 +196,7 @@ public class NotificationFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAuthenticationFailed() {
+        public void onAuthenticationFailed(boolean networkDown) {
             _service = null;
         }
 
@@ -239,6 +235,11 @@ public class NotificationFragment extends WorkorderFragment {
                 }
             } else {
             }
+        }
+
+        @Override
+        public Context getContext() {
+            return NotificationFragment.this.getActivity();
         }
 
         @Override

@@ -63,12 +63,6 @@ public class MarketActivity extends DrawerActivity {
         Log.v(TAG, "STUB com.fieldnation.ui.market.MarketActivity.onAuthentication()");
     }
 
-    @Override
-    public void onNetworkDown() {
-        // TODO STUB com.fieldnation.ui.market.MarketActivity.onNetworkDown()
-        Log.v(TAG, "STUB com.fieldnation.ui.market.MarketActivity.onNetworkDown()");
-    }
-
     private void buildTabs(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
@@ -140,7 +134,7 @@ public class MarketActivity extends DrawerActivity {
     }
 
     /*-*********************************-*/
-	/*-				Events				-*/
+    /*-				Events				-*/
 	/*-*********************************-*/
     // swaps fragments on a pager transition
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {

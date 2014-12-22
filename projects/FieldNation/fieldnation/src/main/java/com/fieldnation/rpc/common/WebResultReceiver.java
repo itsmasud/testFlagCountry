@@ -1,9 +1,12 @@
 package com.fieldnation.rpc.common;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
+
+import com.fieldnation.topics.Topics;
 
 /**
  * Performs some basic parsing on the response and provides some convenience
@@ -18,15 +21,20 @@ public abstract class WebResultReceiver extends ResultReceiver implements WebSer
         super(handler);
     }
 
+    public abstract Context getContext();
+
     @Override
     protected void onReceiveResult(int resultCode, Bundle resultData) {
         String errorType = resultData.getString(KEY_RESPONSE_ERROR_TYPE);
 
-        if (ERROR_NONE.equals(errorType))
+        if (ERROR_NONE.equals(errorType)) {
             onSuccess(resultCode, resultData);
-        else
+        } else {
+            if (ERROR_NETWORK_ERROR.equals(errorType)) {
+                Topics.dispatchNetworkDown(getContext());
+            }
             onError(resultCode, resultData, errorType);
-
+        }
         super.onReceiveResult(resultCode, resultData);
     }
 
