@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
+import com.fieldnation.auth.client.AuthTopicReceiver;
+import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.Topics;
@@ -18,7 +20,10 @@ import com.fieldnation.topics.Topics;
  * Created by michael.carver on 12/22/2014.
  */
 public class ReconnectWarningView extends RelativeLayout {
-    private static final String TAG = "ui.ReconnectWarningView";
+    private static final String TAG_ROOT = "ui.ReconnectWarningView";
+    private String TAG = ":";
+    private static Integer TAG_COUNT = 0;
+
 
     // Ui
     private Button _retryButton;
@@ -40,6 +45,10 @@ public class ReconnectWarningView extends RelativeLayout {
     }
 
     private void init() {
+        synchronized (TAG_COUNT) {
+            TAG = TAG_ROOT + ":" + TAG_COUNT;
+            TAG_COUNT++;
+        }
         LayoutInflater.from(getContext()).inflate(R.layout.view_reconnect, this);
 
         if (isInEditMode())
@@ -49,7 +58,25 @@ public class ReconnectWarningView extends RelativeLayout {
         _retryButton.setOnClickListener(_retry_onClick);
 
         TopicService.registerListener(getContext(), 0, TAG, Topics.TOPIC_NETWORK_DOWN, _networkTopic);
+        AuthTopicService.subscribeAuthState(getContext(), 0, TAG + ":AUTH", _authReceiver);
     }
+
+    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+        @Override
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            ReconnectWarningView.this.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onAuthenticationFailed(boolean networkDown) {
+            if (networkDown)
+                ReconnectWarningView.this.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onAuthenticationInvalidated() {
+        }
+    };
 
     private TopicReceiver _networkTopic = new TopicReceiver(new Handler()) {
         @Override
