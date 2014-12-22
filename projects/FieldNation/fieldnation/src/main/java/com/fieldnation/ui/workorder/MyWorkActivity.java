@@ -103,9 +103,9 @@ public class MyWorkActivity extends DrawerActivity {
 
         // ActionBar.Tab tab1 =
         // actionbar.newTab().setText(R.string.my_work_category1);
-        ActionBar.Tab tab2 = actionbar.newTab().setText(R.string.my_work_category2);
-        ActionBar.Tab tab3 = actionbar.newTab().setText(R.string.my_work_category3);
-        ActionBar.Tab tab4 = actionbar.newTab().setText(R.string.my_work_category4);
+        ActionBar.Tab tab2 = actionbar.newTab().setText(R.string.assigned);
+        ActionBar.Tab tab3 = actionbar.newTab().setText(R.string.completed);
+        ActionBar.Tab tab4 = actionbar.newTab().setText(R.string.canceled);
 
         // tab1.setTabListener(_tabListener);
         tab2.setTabListener(_tabListener);

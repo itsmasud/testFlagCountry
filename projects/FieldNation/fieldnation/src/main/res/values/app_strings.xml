@@ -6,13 +6,7 @@
     <!-- /connection info -->
     <string name="default_username">hexixtech</string>
 
-    <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
-    <string name="pull_to_refresh_release_label">Release to refresh...</string>
-    <string name="pull_to_refresh_refreshing_label">Loading...</string>
-    <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
-
     <!-- general strings -->
-    <string name="hello_world">Hello world!</string>
     <string name="activity_login_title">Field Nation Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -133,7 +127,7 @@
     <string name="and">and</string>
     <string name="offer_expires_colon">Offer Expires:</string>
     <string name="never">Never</string>
-    <string name="confirm">CONFIRM</string>
+    <string name="confirm">Confirm</string>
     <string name="tasks">Tasks</string>
     <string name="completed_devices_colon">Completed Devices:</string>
     <string name="device_count">Device Count</string>
@@ -181,13 +175,13 @@
 
     <!-- my work categories -->
     <string name="routed">Routed</string>
-    <string name="my_work_category1">In Progress</string>
-    <string name="my_work_category2">Assigned</string>
-    <string name="my_work_category3">Completed</string>
-    <string name="my_work_category4">Canceled</string>
-    <string name="my_work_category5">In Review</string>
-    <string name="my_work_category6">Approved</string>
-    <string name="my_work_category7">Paid</string>
+    <string name="in_progress">In Progress</string>
+    <string name="assigned">Assigned</string>
+    <string name="completed">Completed</string>
+    <string name="canceled">Canceled</string>
+    <string name="in_review">In Review</string>
+    <string name="approved">Approved</string>
+    <string name="paid">Paid</string>
 
 
     <!-- market categories -->

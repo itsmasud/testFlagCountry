@@ -105,7 +105,7 @@ public class Workorder implements Parcelable {
     @Json(name = "isGpsRequired")
     private Boolean _isGpsRequired;
     @Json(name = "isRemoteWork")
-    private Integer _isRemoteWork;
+    private Boolean _isRemoteWork;
     @Json(name = "isRequest")
     private Boolean _isRequest;
     @Json(name = "isRequestedByProvider")
@@ -179,7 +179,7 @@ public class Workorder implements Parcelable {
     @Json(name = "workorderId")
     private Long _workorderId;
     @Json(name = "workorderPenaltyInfo")
-    private WorkorderPenaltyInfo[] _workorderPenaltyInfo;
+    private JsonObject[] _workorderPenaltyInfo;
 
     public Workorder() {
     }
@@ -363,7 +363,7 @@ public class Workorder implements Parcelable {
         return _isGpsRequired;
     }
 
-    public Integer getIsRemoteWork() {
+    public Boolean getIsRemoteWork() {
         return _isRemoteWork;
     }
 
@@ -511,7 +511,7 @@ public class Workorder implements Parcelable {
         return _workorderId;
     }
 
-    public WorkorderPenaltyInfo[] getWorkorderPenaltyInfo() {
+    public JsonObject[] getWorkorderPenaltyInfo() {
         return _workorderPenaltyInfo;
     }
 
@@ -706,6 +706,11 @@ public class Workorder implements Parcelable {
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN
                 || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
                 || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+    }
+
+    public boolean canAcceptSignature() {
+        WorkorderStatus status = getWorkorderStatus();
+        return status == WorkorderStatus.ASSIGNED || status == WorkorderStatus.INPROGRESS;
     }
 
     public boolean canChangeClosingNotes() {

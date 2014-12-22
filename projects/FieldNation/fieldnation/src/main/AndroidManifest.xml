@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.fieldnation"
-    android:versionCode="9"
-    android:versionName="0.009">
+    package="com.fieldnation">
     <!-- note! don't change versions here, change them in build.gradle! -->
-
-    <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
