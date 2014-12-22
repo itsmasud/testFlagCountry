@@ -135,7 +135,7 @@ public class MarketActivity extends DrawerActivity {
 
     /*-*********************************-*/
     /*-				Events				-*/
-	/*-*********************************-*/
+    /*-*********************************-*/
     // swaps fragments on a pager transition
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         public ScreenSlidePagerAdapter(FragmentManager fm) {

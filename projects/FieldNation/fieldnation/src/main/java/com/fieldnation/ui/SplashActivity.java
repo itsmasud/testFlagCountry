@@ -38,7 +38,8 @@ public class SplashActivity extends AuthFragmentActivity {
 
     @Override
     public void onAuthenticationFailed(boolean networkDown) {
-        AuthTopicService.requestAuthentication(this);
+        if (!networkDown)
+            AuthTopicService.requestAuthentication(this);
     }
 
     @Override

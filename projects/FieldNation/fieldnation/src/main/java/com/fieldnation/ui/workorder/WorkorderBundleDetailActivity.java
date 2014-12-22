@@ -99,7 +99,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     };
 
     private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             // TODO Method Stub: onSuccess()

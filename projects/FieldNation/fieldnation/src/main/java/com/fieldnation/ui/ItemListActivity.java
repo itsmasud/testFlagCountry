@@ -167,7 +167,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
             invalidateService();
             AuthTopicService.requestAuthInvalid(getApplicationContext());
             Toast.makeText(ItemListActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
-            _refreshView.refreshComplete();
+            _refreshView.refreshFailed();
         }
 
     };

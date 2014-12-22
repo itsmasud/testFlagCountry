@@ -54,7 +54,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private ViewPager _viewPager;
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
-//    private RelativeLayout _loadingLayout;
 
     // Data
     private String _authToken;

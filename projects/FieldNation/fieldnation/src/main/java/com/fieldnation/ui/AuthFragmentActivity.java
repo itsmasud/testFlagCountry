@@ -29,7 +29,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     NotificationActionBarView _notificationsView;
     MessagesActionBarView _messagesView;
 
-
     // Services
     private TopicShutdownReciever _shutdownListener;
 
@@ -56,7 +55,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.main, menu);
 
         _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
-        // _notificationsView.setCount(10);
         _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
 
         return true;
@@ -128,17 +126,16 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 */
                 onBackPressed();
                 return true;
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_refresh:
-                onRefresh();
-                return true;
+//            case R.id.action_settings:
+//                Intent intent = new Intent(this, SettingsActivity.class);
+//                startActivity(intent);
+//                return true;
+//            case R.id.action_refresh:
+//                onRefresh();
+//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     public abstract void onRefresh();
-
 }

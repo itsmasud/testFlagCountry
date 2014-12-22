@@ -48,6 +48,7 @@ public class MyWorkActivity extends DrawerActivity {
             buildTabs(savedInstanceState);
             _created = true;
         }
+
         _currentFragment = getSupportActionBar().getSelectedNavigationIndex();
         _viewPager.setCurrentItem(_currentFragment, false);
 

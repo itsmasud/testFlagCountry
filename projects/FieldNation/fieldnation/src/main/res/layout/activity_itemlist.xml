@@ -21,6 +21,13 @@
             android:dividerHeight="0dp"
             android:smoothScrollbar="false" />
 
+        <com.fieldnation.ui.ReconnectWarningView
+            android:id="@+id/reconnect_view"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <com.fieldnation.ui.RefreshView
             android:id="@+id/refresh_view"
             android:layout_width="wrap_content"

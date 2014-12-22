@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -141,13 +140,13 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 */
                 onBackPressed();
                 return true;
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_refresh:
-                onRefresh();
-                return true;
+//            case R.id.action_settings:
+//                Intent intent = new Intent(this, SettingsActivity.class);
+//                startActivity(intent);
+//                return true;
+//            case R.id.action_refresh:
+//                onRefresh();
+//                return true;
         }
         return super.onOptionsItemSelected(item);
     }

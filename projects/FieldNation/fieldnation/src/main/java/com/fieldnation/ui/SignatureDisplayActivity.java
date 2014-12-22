@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -16,8 +15,10 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.misc;
 
 /**
@@ -34,6 +35,9 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     // Intent Params
     public static final String INTENT_PARAM_SIGNATURE = "ui.SignatureDisplayActivity:INTENT_PARAM_SIGNATURE";
     public static final String INTENT_PARAM_WORKORDER = "ui.SignatureDisplayActivity:INTENT_PARAM_WORKORDER";
+
+    // Web
+    public static int WEB_GET_SIGNATURE = 1;
 
     // Ui
     private TextView _titleTextView;
@@ -54,6 +58,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private SignatureView _signatureView;
     private TextView _nameTextView;
     private Button _doneButton;
+
+    private LoadingView _loadingView;
 
     // Data
     private Signature _signature;
@@ -89,6 +95,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         _doneButton = (Button) findViewById(R.id.done_button);
         _doneButton.setOnClickListener(_done_onClick);
+
+        _loadingView = (LoadingView) findViewById(R.id.loading_view);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_SIGNATURE))
@@ -133,22 +141,27 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     }
 
     private void getData() {
-        // Todo get data here!
+        if (_service == null)
+            return;
+
+        _loadingView.setVisibility(View.VISIBLE);
+
+        startService(
+                _service.getSignature(WEB_GET_SIGNATURE, _wo.getWorkorderId(), _signatureId, true));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        populateUi();
+        populateUi(false);
     }
 
-    private void populateUi() {
+    private void populateUi(boolean isCached) {
         if (_signature == null)
             return;
 
         if (_doneButton == null)
             return;
-
 
         _signatureView.setSignatureJson(_signature.getSignature(), true);
         _nameTextView.setText(_signature.getPrintName());
@@ -220,6 +233,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             _closingNotesDivider.setVisibility(View.GONE);
             _closingNotesLabelTextView.setVisibility(View.GONE);
         }
+
+        _loadingView.setVisibility(View.GONE);
     }
 
     @Override
@@ -244,9 +259,23 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
-            // TODO STUB .onSuccess()
-            Log.v(TAG, "STUB .onSuccess()");
+            if (resultCode == WEB_GET_SIGNATURE) {
+                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
 
+                try {
+                    JsonObject obj = new JsonObject(data);
+
+                    Signature signature = Signature.fromJson(obj);
+
+                    _signature = signature;
+
+                    populateUi(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
     };
 

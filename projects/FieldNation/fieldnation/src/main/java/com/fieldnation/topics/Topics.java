@@ -17,10 +17,10 @@ public class Topics {
     }
 
     public static void dispatchNetworkUp(Context context) {
-        TopicService.dispatchTopic(context, TOPIC_NETWORK_UP, null, false);
+        TopicService.dispatchTopic(context, TOPIC_NETWORK_UP, null, true);
     }
 
     public static void dispatchNetworkDown(Context context) {
-        TopicService.dispatchTopic(context, TOPIC_NETWORK_DOWN, null, false);
+        TopicService.dispatchTopic(context, TOPIC_NETWORK_DOWN, null, true);
     }
 }
