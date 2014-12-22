@@ -1,0 +1,367 @@
+-- Merging decision tree log ---
+manifest
+ADDED from AndroidManifest.xml:2:1
+	xmlns:android
+		ADDED from AndroidManifest.xml:2:11
+	package
+		ADDED from AndroidManifest.xml:3:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:versionName
+		ADDED from AndroidManifest.xml:5:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:versionCode
+		ADDED from AndroidManifest.xml:4:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+uses-sdk
+ADDED from AndroidManifest.xml:8:5
+MERGED from FieldNation:libUndobar:unspecified:23:5
+MERGED from com.android.support:appcompat-v7:21.0.2:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from FieldNation:libDateTimePicker:unspecified:7:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.android.support:appcompat-v7:21.0.2:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.google.android.gms:play-services:6.1.71:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.android.support:gridlayout-v7:21.0.2:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.android.support:appcompat-v7:21.0.2:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+	android:targetSdkVersion
+		ADDED from AndroidManifest.xml:10:9
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:minSdkVersion
+		ADDED from AndroidManifest.xml:9:9
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+uses-permission#android.permission.AUTHENTICATE_ACCOUNTS
+ADDED from AndroidManifest.xml:12:5
+	android:name
+		ADDED from AndroidManifest.xml:12:22
+uses-permission#android.permission.INTERNET
+ADDED from AndroidManifest.xml:13:5
+	android:name
+		ADDED from AndroidManifest.xml:13:22
+uses-permission#android.permission.GET_ACCOUNTS
+ADDED from AndroidManifest.xml:14:5
+	android:name
+		ADDED from AndroidManifest.xml:14:22
+uses-permission#android.permission.MANAGE_ACCOUNTS
+ADDED from AndroidManifest.xml:15:5
+	android:name
+		ADDED from AndroidManifest.xml:15:22
+uses-permission#android.permission.USE_CREDENTIALS
+ADDED from AndroidManifest.xml:16:5
+	android:name
+		ADDED from AndroidManifest.xml:16:22
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from AndroidManifest.xml:17:5
+	android:name
+		ADDED from AndroidManifest.xml:17:22
+uses-permission#android.permission.READ_SYNC_SETTINGS
+ADDED from AndroidManifest.xml:18:5
+	android:name
+		ADDED from AndroidManifest.xml:18:22
+uses-permission#android.permission.WRITE_SYNC_SETTINGS
+ADDED from AndroidManifest.xml:19:5
+	android:name
+		ADDED from AndroidManifest.xml:19:22
+uses-permission#android.permission.VIBRATE
+ADDED from AndroidManifest.xml:20:5
+	android:name
+		ADDED from AndroidManifest.xml:20:22
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from AndroidManifest.xml:21:5
+	android:name
+		ADDED from AndroidManifest.xml:21:22
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from AndroidManifest.xml:22:5
+	android:name
+		ADDED from AndroidManifest.xml:22:22
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from AndroidManifest.xml:23:5
+	android:name
+		ADDED from AndroidManifest.xml:23:22
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from AndroidManifest.xml:24:5
+	android:name
+		ADDED from AndroidManifest.xml:24:22
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from AndroidManifest.xml:25:5
+	android:name
+		ADDED from AndroidManifest.xml:25:22
+uses-feature#android.hardware.camera
+ADDED from AndroidManifest.xml:27:5
+	android:required
+		ADDED from AndroidManifest.xml:29:9
+	android:name
+		ADDED from AndroidManifest.xml:28:9
+application
+ADDED from AndroidManifest.xml:31:5
+MERGED from FieldNation:libUndobar:unspecified:27:5
+MERGED from com.android.support:appcompat-v7:21.0.2:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from FieldNation:libDateTimePicker:unspecified:11:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from com.android.support:appcompat-v7:21.0.2:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from com.google.android.gms:play-services:6.1.71:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from com.android.support:gridlayout-v7:21.0.2:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from com.android.support:appcompat-v7:21.0.2:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+	android:label
+		ADDED from AndroidManifest.xml:36:9
+	android:allowBackup
+		ADDED from AndroidManifest.xml:33:9
+	android:icon
+		ADDED from AndroidManifest.xml:34:9
+	android:theme
+		ADDED from AndroidManifest.xml:37:9
+	android:name
+		ADDED from AndroidManifest.xml:32:9
+	android:logo
+		ADDED from AndroidManifest.xml:35:9
+meta-data#com.google.android.gms.version
+ADDED from AndroidManifest.xml:39:9
+	android:name
+		ADDED from AndroidManifest.xml:40:13
+	android:value
+		ADDED from AndroidManifest.xml:41:13
+activity#com.fieldnation.ui.workorder.MyWorkActivity
+ADDED from AndroidManifest.xml:43:9
+	android:exported
+		ADDED from AndroidManifest.xml:45:13
+	android:name
+		ADDED from AndroidManifest.xml:44:13
+activity#com.fieldnation.ui.SplashActivity
+ADDED from AndroidManifest.xml:46:9
+	android:exported
+		ADDED from AndroidManifest.xml:48:13
+	android:name
+		ADDED from AndroidManifest.xml:47:13
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:49:13
+action#android.intent.action.MAIN
+ADDED from AndroidManifest.xml:50:17
+	android:name
+		ADDED from AndroidManifest.xml:50:25
+category#android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:52:17
+	android:name
+		ADDED from AndroidManifest.xml:52:27
+activity#com.fieldnation.ui.market.MarketActivity
+ADDED from AndroidManifest.xml:56:9
+	android:exported
+		ADDED from AndroidManifest.xml:58:13
+	android:name
+		ADDED from AndroidManifest.xml:57:13
+activity#com.fieldnation.ui.SignatureActivity
+ADDED from AndroidManifest.xml:59:9
+	android:screenOrientation
+		ADDED from AndroidManifest.xml:63:13
+	android:label
+		ADDED from AndroidManifest.xml:62:13
+	android:exported
+		ADDED from AndroidManifest.xml:61:13
+	android:name
+		ADDED from AndroidManifest.xml:60:13
+activity#com.fieldnation.auth.server.AuthActivity
+ADDED from AndroidManifest.xml:64:9
+	android:noHistory
+		ADDED from AndroidManifest.xml:67:13
+	android:label
+		ADDED from AndroidManifest.xml:68:13
+	android:exported
+		ADDED from AndroidManifest.xml:66:13
+	android:name
+		ADDED from AndroidManifest.xml:65:13
+activity#com.fieldnation.ui.workorder.WorkorderActivity
+ADDED from AndroidManifest.xml:69:9
+	android:label
+		ADDED from AndroidManifest.xml:72:13
+	android:exported
+		ADDED from AndroidManifest.xml:71:13
+	android:name
+		ADDED from AndroidManifest.xml:70:13
+intent-filter#android.intent.action.VIEW+android.intent.category.BROWSABLE+android.intent.category.DEFAULT
+ADDED from AndroidManifest.xml:73:13
+data
+ADDED from AndroidManifest.xml:74:17
+	android:host
+		ADDED from AndroidManifest.xml:75:21
+	android:pathPrefix
+		ADDED from AndroidManifest.xml:76:21
+	android:scheme
+		ADDED from AndroidManifest.xml:77:21
+category#android.intent.category.DEFAULT
+ADDED from AndroidManifest.xml:111:17
+	android:name
+		ADDED from AndroidManifest.xml:111:27
+category#android.intent.category.BROWSABLE
+ADDED from AndroidManifest.xml:112:17
+	android:name
+		ADDED from AndroidManifest.xml:112:27
+action#android.intent.action.VIEW
+ADDED from AndroidManifest.xml:114:17
+	android:name
+		ADDED from AndroidManifest.xml:114:25
+activity#com.fieldnation.ui.MessageListActivity
+ADDED from AndroidManifest.xml:117:9
+	android:label
+		ADDED from AndroidManifest.xml:120:13
+	android:exported
+		ADDED from AndroidManifest.xml:119:13
+	android:name
+		ADDED from AndroidManifest.xml:118:13
+activity#com.fieldnation.ui.payment.PaymentListActivity
+ADDED from AndroidManifest.xml:121:9
+	android:label
+		ADDED from AndroidManifest.xml:124:13
+	android:exported
+		ADDED from AndroidManifest.xml:123:13
+	android:name
+		ADDED from AndroidManifest.xml:122:13
+activity#com.fieldnation.ui.payment.PaymentDetailActivity
+ADDED from AndroidManifest.xml:125:9
+	android:label
+		ADDED from AndroidManifest.xml:128:13
+	android:exported
+		ADDED from AndroidManifest.xml:127:13
+	android:name
+		ADDED from AndroidManifest.xml:126:13
+activity#com.fieldnation.ui.NotificationListActivity
+ADDED from AndroidManifest.xml:129:9
+	android:label
+		ADDED from AndroidManifest.xml:132:13
+	android:exported
+		ADDED from AndroidManifest.xml:131:13
+	android:name
+		ADDED from AndroidManifest.xml:130:13
+activity#com.fieldnation.ui.workorder.WorkorderBundleDetailActivity
+ADDED from AndroidManifest.xml:133:9
+	android:label
+		ADDED from AndroidManifest.xml:136:13
+	android:exported
+		ADDED from AndroidManifest.xml:135:13
+	android:name
+		ADDED from AndroidManifest.xml:134:13
+activity#com.fieldnation.ui.SettingsActivity
+ADDED from AndroidManifest.xml:137:9
+	android:label
+		ADDED from AndroidManifest.xml:140:13
+	android:exported
+		ADDED from AndroidManifest.xml:139:13
+	android:name
+		ADDED from AndroidManifest.xml:138:13
+activity#com.fieldnation.ui.SignOffActivity
+ADDED from AndroidManifest.xml:141:9
+	android:label
+		ADDED from AndroidManifest.xml:144:13
+	android:exported
+		ADDED from AndroidManifest.xml:143:13
+	android:name
+		ADDED from AndroidManifest.xml:142:13
+activity#com.fieldnation.ui.SignatureDisplayActivity
+ADDED from AndroidManifest.xml:145:9
+	android:label
+		ADDED from AndroidManifest.xml:148:13
+	android:exported
+		ADDED from AndroidManifest.xml:147:13
+	android:name
+		ADDED from AndroidManifest.xml:146:13
+service#com.fieldnation.auth.client.AuthTopicService
+ADDED from AndroidManifest.xml:150:9
+	android:process
+		ADDED from AndroidManifest.xml:153:13
+	android:exported
+		ADDED from AndroidManifest.xml:152:13
+	android:name
+		ADDED from AndroidManifest.xml:151:13
+service#com.fieldnation.auth.server.AuthService
+ADDED from AndroidManifest.xml:154:9
+	android:process
+		ADDED from AndroidManifest.xml:157:13
+	android:exported
+		ADDED from AndroidManifest.xml:156:13
+	android:name
+		ADDED from AndroidManifest.xml:155:13
+intent-filter#android.accounts.AccountAuthenticator
+ADDED from AndroidManifest.xml:158:13
+action#android.accounts.AccountAuthenticator
+ADDED from AndroidManifest.xml:159:17
+	android:name
+		ADDED from AndroidManifest.xml:159:25
+meta-data#android.accounts.AccountAuthenticator
+ADDED from AndroidManifest.xml:162:13
+	android:resource
+		ADDED from AndroidManifest.xml:164:17
+	android:name
+		ADDED from AndroidManifest.xml:163:17
+service#com.fieldnation.rpc.server.DataService
+ADDED from AndroidManifest.xml:166:9
+	android:process
+		ADDED from AndroidManifest.xml:169:13
+	android:exported
+		ADDED from AndroidManifest.xml:168:13
+	android:name
+		ADDED from AndroidManifest.xml:167:13
+service#com.fieldnation.topics.TopicService
+ADDED from AndroidManifest.xml:170:9
+	android:process
+		ADDED from AndroidManifest.xml:173:13
+	android:exported
+		ADDED from AndroidManifest.xml:172:13
+	android:name
+		ADDED from AndroidManifest.xml:171:13
+service#com.fieldnation.rpc.server.SyncService
+ADDED from AndroidManifest.xml:174:9
+	android:process
+		ADDED from AndroidManifest.xml:177:13
+	android:exported
+		ADDED from AndroidManifest.xml:176:13
+	android:name
+		ADDED from AndroidManifest.xml:175:13
+intent-filter#android.content.SyncAdapter
+ADDED from AndroidManifest.xml:178:13
+action#android.content.SyncAdapter
+ADDED from AndroidManifest.xml:179:17
+	android:name
+		ADDED from AndroidManifest.xml:179:25
+meta-data#android.content.SyncAdapter
+ADDED from AndroidManifest.xml:182:13
+	android:resource
+		ADDED from AndroidManifest.xml:184:17
+	android:name
+		ADDED from AndroidManifest.xml:183:17
+provider#com.fieldnation.rpc.server.StubProvider
+ADDED from AndroidManifest.xml:187:9
+	android:syncable
+		ADDED from AndroidManifest.xml:191:13
+	android:exported
+		ADDED from AndroidManifest.xml:190:13
+	android:authorities
+		ADDED from AndroidManifest.xml:189:13
+	android:name
+		ADDED from AndroidManifest.xml:188:13
+receiver#com.fieldnation.rpc.server.BootReciever
+ADDED from AndroidManifest.xml:193:9
+	android:name
+		ADDED from AndroidManifest.xml:193:19
+intent-filter#android.intent.action.BOOT_COMPLETED
+ADDED from AndroidManifest.xml:194:13
+action#android.intent.action.BOOT_COMPLETED
+ADDED from AndroidManifest.xml:195:17
+	android:name
+		ADDED from AndroidManifest.xml:195:25
+receiver#com.fieldnation.rpc.server.ClockReceiver
+ADDED from AndroidManifest.xml:198:9
+	android:name
+		ADDED from AndroidManifest.xml:198:19
