@@ -140,6 +140,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/forms/d/1ImIpsrdzWdVUytIjEcKfGpbNFHm0cZP0q_ZHI2FUb48/viewform?usp=send_form"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
         }
     };
@@ -147,6 +148,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MyWorkActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }
@@ -155,6 +157,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MarketActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }
@@ -163,6 +166,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), PaymentListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }
@@ -171,6 +175,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }
@@ -180,6 +185,7 @@ public class DrawerView extends RelativeLayout {
         public void onClick(View v) {
             AuthTopicService.requestAuthRemove(getContext());
             Intent intent = new Intent(getContext(), AuthActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }

@@ -40,7 +40,6 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.ISO8601;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -292,10 +291,12 @@ public class DeliverableFragment extends WorkorderFragment {
             _refreshView.startRefreshing();
 
             if (data == null) {
+                Log.v(TAG, "local path");
                 getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                         _workorder.getWorkorderId(), _uploadingSlot.getSlotId(),
                         _tempFile.getAbsolutePath(), getNotificationIntent()));
             } else {
+                Log.v(TAG, "from intent");
                 getActivity().startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                         _uploadingSlot.getSlotId(), data, getNotificationIntent()));
@@ -373,7 +374,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 String packageName = getActivity().getPackageName();
                 File externalPath = Environment.getExternalStorageDirectory();
                 new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + ISO8601.now() + ".png");
+                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
@@ -462,6 +463,10 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             AuthTopicService.requestAuthInvalid(getActivity());
+            if (resultCode == WEB_DELETE_DELIVERABLE)
+                _deleteCount--;
+            if (resultCode == WEB_SEND_DELIVERABLE)
+                _uploadCount--;
             _service = null;
             _profileService = null;
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();

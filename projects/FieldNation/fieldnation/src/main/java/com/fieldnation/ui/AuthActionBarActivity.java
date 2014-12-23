@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.server.ClockReceiver;
@@ -22,10 +23,7 @@ import com.fieldnation.topics.TopicShutdownReciever;
  * @author michael.carver
  */
 public abstract class AuthActionBarActivity extends ActionBarActivity {
-    private static final String TAG_ROOT = "ui.AuthActionBarActivity";
-    private String TAG = ":";
-    private static Integer TAG_COUNT = 0;
-
+    private String TAG = UniqueTag.makeTag("ui.AuthActionBarActivity");
 
     private final static int AUTH_SERVICE = 1;
 
@@ -39,14 +37,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
-    public AuthActionBarActivity() {
-        super();
-        synchronized (TAG_COUNT) {
-            TAG = TAG_ROOT + ":" + TAG_COUNT;
-            TAG_COUNT++;
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

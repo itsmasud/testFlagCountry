@@ -910,7 +910,7 @@ public class TasksFragment extends WorkorderFragment {
                 String packageName = getActivity().getPackageName();
                 File externalPath = Environment.getExternalStorageDirectory();
                 new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + ISO8601.now() + ".png");
+                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
@@ -976,7 +976,8 @@ public class TasksFragment extends WorkorderFragment {
             if (_service == null || isNew) {
                 _username = username;
                 _authToken = authToken;
-                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+                if (getActivity() != null)
+                    _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
                 requestData(true);
             }
         }

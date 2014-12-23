@@ -420,20 +420,10 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                                     PendingIntent notificationIntent) {
         if (deliverableSlotId <= 0) {
             return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables",
-                    null,
-                    "file",
-                    localFilename,
-                    null,
-                    null,
-                    notificationIntent);
+                    null, "file", localFilename, null, null, notificationIntent);
         }
         return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
-                null,
-                "file",
-                localFilename,
-                null,
-                null,
-                notificationIntent);
+                null, "file", localFilename, null, null, notificationIntent);
     }
 
     public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, Intent data, PendingIntent notificationIntent) {

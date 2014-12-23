@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Expense;
@@ -42,9 +43,7 @@ import java.util.List;
 import java.util.Set;
 
 public class WorkorderListFragment extends Fragment {
-    private static final String TAG_ROOT = "ui.workorder.WorkorderListFragment";
-    private String TAG = ":";
-    private static Integer TAG_COUNT = 0;
+    private String TAG = UniqueTag.makeTag("ui.workorder.WorkorderListFragment");
 
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
@@ -84,18 +83,9 @@ public class WorkorderListFragment extends Fragment {
     private Set<Long> _selected = new HashSet<Long>();
 
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
-    public WorkorderListFragment() {
-        super();
-        synchronized (TAG_COUNT) {
-            TAG = TAG_ROOT + ":" + TAG_COUNT;
-            TAG_COUNT++;
-        }
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
