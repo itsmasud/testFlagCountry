@@ -94,7 +94,13 @@ public class Schedule implements Parcelable {
                 }
                 when += " @ ";
 
-                when += cal.get(Calendar.HOUR) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
+                if (cal.get(Calendar.HOUR) == 0) {
+                    when += "12";
+                } else {
+                    when += cal.get(Calendar.HOUR);
+                }
+
+                when += (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
 
                 return when;
             } else {
@@ -112,7 +118,7 @@ public class Schedule implements Parcelable {
 
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
-	/*-*********************************************-*/
+    /*-*********************************************-*/
     public static final Parcelable.Creator<Schedule> CREATOR = new Parcelable.Creator<Schedule>() {
 
         @Override
