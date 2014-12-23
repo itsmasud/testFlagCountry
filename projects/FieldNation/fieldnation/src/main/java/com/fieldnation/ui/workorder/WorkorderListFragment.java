@@ -25,6 +25,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
+import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
@@ -68,6 +69,7 @@ public class WorkorderListFragment extends Fragment {
     private DeviceCountDialog _deviceCountDialog;
     private CounterOfferDialog _counterOfferDialog;
     private TermsDialog _termsDialog;
+    private AcceptBundleDialog _acceptBundleDialog;
 
     // Data
     private String _username;
@@ -139,6 +141,9 @@ public class WorkorderListFragment extends Fragment {
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
 
+        _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
+        _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
@@ -204,7 +209,11 @@ public class WorkorderListFragment extends Fragment {
     private WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
-            _expiresDialog.show(workorder);
+            if (workorder.isBundle()) {
+                _acceptBundleDialog.show(workorder);
+            } else {
+                _expiresDialog.show(workorder);
+            }
         }
 
         @Override
@@ -307,6 +316,13 @@ public class WorkorderListFragment extends Fragment {
     /*-*****************************************-*/
     /*-				Events Dialogs				-*/
     /*-*****************************************-*/
+    private AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder) {
+            _expiresDialog.show(workorder);
+        }
+    };
+
     private DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
