@@ -37,7 +37,7 @@
                 style="@style/WorkorderDetail_Field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ljksdkjf lksd jflskdfj lksdjf lasiefj sldkfsel slekjf lskl;skejf liksgfrjlsgfljkhdrfglkijhdsrfg,j.h dzfg, jh  lksg ldsfhfg lksrjgfflis jfglks hlkshjgfr kl lwrgf lisrjgf,lkrsngloidsghewl lk" />
+                android:text="@string/placeholder_paragraph" />
 
             <View
                 android:id="@+id/time_divider"

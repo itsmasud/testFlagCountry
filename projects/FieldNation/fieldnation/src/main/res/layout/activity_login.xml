@@ -65,7 +65,7 @@
                         android:id="@+id/username_edittext"
                         android:layout_marginBottom="2dp"
                         android:imeOptions="actionNext"
-                        android:hint="@string/username"
+                        android:hint="@string/activity_login_username"
                         android:text="@string/default_username" />
 
                     <View
@@ -94,7 +94,7 @@
                         style="@style/LoginEditText"
                         android:id="@+id/password_edittext"
                         android:layout_marginBottom="5dp"
-                        android:hint="@string/password"
+                        android:hint="@string/activity_login_password"
                         android:imeOptions="actionDone"
                         android:inputType="textPassword"
                         android:text="@string/default_password" />
@@ -119,7 +119,7 @@
                     android:layout_width="150dp"
                     android:layout_height="48dp"
                     android:layout_centerHorizontal="true"
-                    android:text="LOGIN" />
+                    android:text="@string/activity_login_button" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

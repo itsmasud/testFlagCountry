@@ -16,12 +16,12 @@ public class Schedule implements Parcelable {
 
     @Json(name = "endTime")
     private String _endTime;
-	@Json(name="endTimeHours")
-	private String _endTimeHours;
+    @Json(name = "endTimeHours")
+    private String _endTimeHours;
     @Json(name = "startTime")
     private String _startTime;
-	@Json(name="startTimeHours")
-	private String _startTimeHours;
+    @Json(name = "startTimeHours")
+    private String _startTimeHours;
 
     public Schedule() {
     }
@@ -30,17 +30,17 @@ public class Schedule implements Parcelable {
         return _endTime;
     }
 
-	public String getEndTimeHours(){
-		return _endTimeHours;
-	}
+    public String getEndTimeHours() {
+        return _endTimeHours;
+    }
 
     public String getStartTime() {
         return _startTime;
     }
 
-	public String getStartTimeHours(){
-		return _startTimeHours;
-	}
+    public String getStartTimeHours() {
+        return _startTimeHours;
+    }
 
     public JsonObject toJson() {
         return toJson(this);
@@ -94,7 +94,7 @@ public class Schedule implements Parcelable {
                 }
                 when += " @ ";
 
-                when += (cal.get(Calendar.HOUR) + 1) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
+                when += cal.get(Calendar.HOUR) + (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
 
                 return when;
             } else {
@@ -111,7 +111,7 @@ public class Schedule implements Parcelable {
     }
 
     /*-*********************************************-*/
-	/*-			Parcelable Implementation			-*/
+    /*-			Parcelable Implementation			-*/
 	/*-*********************************************-*/
     public static final Parcelable.Creator<Schedule> CREATOR = new Parcelable.Creator<Schedule>() {
 

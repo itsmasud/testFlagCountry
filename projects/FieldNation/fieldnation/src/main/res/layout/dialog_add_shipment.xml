@@ -110,12 +110,12 @@
             <Button
                 android:id="@+id/cancel_button"
                 style="?attr/dialogCancelButtonStyle"
-                android:text="@string/cancel" />
+                android:text="@string/btn_cancel" />
 
             <Button
                 android:id="@+id/ok_button"
                 style="?attr/dialogOkButtonStyle"
-                android:text="@string/save" />
+                android:text="@string/btn_save" />
         </LinearLayout>
 
     </LinearLayout>

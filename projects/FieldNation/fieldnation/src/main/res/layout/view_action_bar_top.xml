@@ -14,7 +14,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:text="@string/check_in"
+        android:text="@string/btn_check_in"
         android:visibility="gone" />
 
     <Button
@@ -25,7 +25,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:text="@string/check_out"
+        android:text="@string/btn_check_out"
         android:visibility="gone" />
 
     <Button
@@ -36,7 +36,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:text="@string/acknowledge_hold"
+        android:text="@string/btn_acknowledge_hold"
         android:visibility="gone" />
 
     <Button
@@ -47,7 +47,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:text="@string/mark_completed"
+        android:text="@string/btn_mark_completed"
         android:visibility="gone" />
 
     <Button
@@ -58,7 +58,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:text="@string/closing_notes"
+        android:text="@string/btn_closing_notes"
         android:visibility="gone" />
 
     <Button
@@ -69,7 +69,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:text="@string/confirm"
+        android:text="@string/btn_confirm"
         android:visibility="gone" />
 
 </LinearLayout>

@@ -83,7 +83,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:gravity="center"
-            android:text="@string/error" />
+            android:text="@string/placeholder_word" />
 
         <!-- bundle bar -->
 
@@ -114,7 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="@string/error" />
+                android:text="@string/placeholder_word" />
         </RelativeLayout>
 
         <!-- center panel -->
@@ -159,7 +159,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@+id/notification_alert_imageview"
-                        android:text="@string/error" />
+                        android:text="@string/placeholder_word" />
                 </RelativeLayout>
 
                 <TextView
@@ -167,14 +167,14 @@
                     style="@style/WorkorderCard_Item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/error" />
+                    android:text="@string/placeholder_word" />
 
                 <TextView
                     android:id="@+id/distance_textview"
                     style="@style/WorkorderCard_Item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/error"
+                    android:text="@string/placeholder_word"
                     android:visibility="gone" />
 
                 <TextView
@@ -182,14 +182,14 @@
                     style="@style/WorkorderCard_Item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/error" />
+                    android:text="@string/placeholder_word" />
 
                 <TextView
                     android:id="@+id/when_textview"
                     style="@style/WorkorderCard_Item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/error" />
+                    android:text="@string/placeholder_word" />
             </LinearLayout>
 
             <!-- right panel -->
@@ -214,7 +214,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="top"
-                        android:text="@string/money" />
+                        android:text="@string/symbol_money" />
 
                     <TextView
                         android:id="@+id/payment_textview"
@@ -232,7 +232,7 @@
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:layout_gravity="right"
-                    android:text="@string/error" />
+                    android:text="@string/placeholder_word" />
             </LinearLayout>
 
         </RelativeLayout>
@@ -255,7 +255,7 @@
                 android:id="@+id/action_button"
                 style="@style/WorkorderCard_Button"
                 android:layout_alignParentRight="true"
-                android:text="@string/error"
+                android:text="@string/placeholder_word"
                 android:visibility="visible" />
         </RelativeLayout>
     </RelativeLayout>

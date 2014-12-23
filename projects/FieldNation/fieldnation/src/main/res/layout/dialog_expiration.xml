@@ -13,13 +13,13 @@
         <TextView
             android:id="@+id/title_textview"
             style="?attr/dialogTitleStyle"
-            android:text="Request Workorder" />
+            android:text="@string/request_workorder" />
 
         <TextView
             style="@style/WorkorderDetail_Field_Bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="When does this request expire?" />
+            android:text="@string/when_does_this_request_expire" />
 
         <Button
             android:id="@+id/expiration_button"
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginLeft="10dp"
-            android:text="@string/never" />
+            android:text="@string/btn_never" />
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"
@@ -39,12 +39,12 @@
             <Button
                 android:id="@+id/cancel_button"
                 style="?attr/dialogCancelButtonStyle"
-                android:text="@string/cancel" />
+                android:text="@string/btn_cancel" />
 
             <Button
                 android:id="@+id/ok_button"
                 style="?attr/dialogOkButtonStyle"
-                android:text="@string/ok" />
+                android:text="@string/btn_ok" />
         </LinearLayout>
 
     </LinearLayout>

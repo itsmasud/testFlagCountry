@@ -612,7 +612,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canCounterOffer() {
-        return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE;
+        return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE && !isBundle();
     }
 
     public boolean canComplete() {

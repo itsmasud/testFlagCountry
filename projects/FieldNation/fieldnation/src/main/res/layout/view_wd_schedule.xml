@@ -14,7 +14,7 @@
         android:id="@+id/add_button"
         style="?attr/buttonOrangeStyle"
         android:layout_width="wrap_content"
-        android:text="@string/add" />
+        android:text="@string/btn_add" />
 
     <TextView
         style="@style/WorkorderDetail_FieldSubTitle"

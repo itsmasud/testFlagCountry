@@ -130,7 +130,7 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:exported="false"
-            android:label="@string/settings" />
+            android:label="@string/activity_settings_title" />
         <activity
             android:name=".ui.SignOffActivity"
             android:exported="false"
