@@ -87,6 +87,9 @@ public class UploadSlotView extends RelativeLayout {
         _docListener = listener;
         _profileId = profileId;
 
+        _uploadUrl = _workorder.getWorkorderId() + "/deliverables/" + _slot.getSlotId();
+        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
+
         populateUi();
     }
 
@@ -96,9 +99,6 @@ public class UploadSlotView extends RelativeLayout {
 
         if (_workorder == null)
             return;
-
-        _uploadUrl = _workorder.getWorkorderId() + "/deliverables/" + _slot.getSlotId();
-        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
 
         UploadedDocument[] docs = _slot.getUploadedDocuments();
         _titleTextView.setText(_slot.getSlotName());
