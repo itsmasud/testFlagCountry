@@ -94,7 +94,7 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void update() {
         Log.v(TAG, "update");
-        getMessages();
+        //getMessages();
     }
 
     @Override

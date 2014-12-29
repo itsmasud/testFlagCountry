@@ -7,6 +7,8 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.rpc.server.DataCacheNode;
 import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.Ws;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -26,10 +28,22 @@ public class GlobalState extends Application {
 //    private long _waitTime = 5000;
 //    private long _lastDelayed = 0;
 
+    private Tracker _tracker;
+
     public GlobalState() {
         super();
 
         Ws.USE_HTTPS = BuildConfig.USE_HTTPS;
+    }
+
+    synchronized Tracker getTracker() {
+
+        if (_tracker == null) {
+
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            _tracker = analytics.newTracker(R.xml.ga_config);
+        }
+        return _tracker;
     }
 
     @Override

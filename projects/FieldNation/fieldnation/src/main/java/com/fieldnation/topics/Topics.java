@@ -36,6 +36,9 @@ public class Topics {
 
 
     public static void dispatchFileUploadStart(Context context, String url, String filename) {
+        if (context == null)
+            return;
+
         Bundle bundle = new Bundle();
         bundle.putString(TOPIC_FILE_UPLOAD_PARAM_URL, url);
         bundle.putString(TOPIC_FILE_UPLOAD_PARAM_FILENAME, filename);
@@ -45,6 +48,9 @@ public class Topics {
     }
 
     public static void dispatchFileUploadFinish(Context context, String url, String filename) {
+        if (context == null)
+            return;
+
         Bundle bundle = new Bundle();
         bundle.putString(TOPIC_FILE_UPLOAD_PARAM_URL, url);
         bundle.putString(TOPIC_FILE_UPLOAD_PARAM_FILENAME, filename);
@@ -54,6 +60,9 @@ public class Topics {
     }
 
     public static void dispatchFileUploadError(Context context, String url, String filename, String errorMessage) {
+        if (context == null)
+            return;
+
         Bundle bundle = new Bundle();
         bundle.putString(TOPIC_FILE_UPLOAD_PARAM_URL, url);
         bundle.putString(TOPIC_FILE_UPLOAD_PARAM_FILENAME, filename);
@@ -64,6 +73,9 @@ public class Topics {
     }
 
     public static void subscribeFileUpload(Context context, String tag, TopicReceiver topicReceiver) {
+        if (context == null)
+            return;
+
         TopicService.registerListener(context, 0, tag, TOPIC_FILE_UPLOAD, topicReceiver);
     }
 }

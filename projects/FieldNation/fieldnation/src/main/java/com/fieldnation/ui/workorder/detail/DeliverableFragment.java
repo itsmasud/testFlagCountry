@@ -40,6 +40,8 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -71,15 +73,15 @@ public class DeliverableFragment extends WorkorderFragment {
     private AppPickerDialog _appPickerDialog;
 
     // Data
+    private Context _context;
     private Workorder _workorder;
     private WorkorderService _service;
     private ProfileService _profileService;
     private Profile _profile = null;
     private Bundle _delayedAction = null;
-
     private SecureRandom _rand = new SecureRandom();
 
-    // temporary storage
+    // Temporary storage
     private UploadSlot _uploadingSlot;
     private UploadSlotView _uploadingSlotView;
     private int _uploadCount = 0;
@@ -125,12 +127,13 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+        _context = getActivity().getApplicationContext();
+        AuthTopicService.subscribeAuthState(_context, 0, TAG, _authReceiver);
     }
 
     @Override
     public void onPause() {
-        TopicService.delete(getActivity(), TAG);
+        TopicService.delete(_context, TAG);
         super.onPause();
     }
 
@@ -144,9 +147,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void update() {
-        getData();
+//        getData();
         checkMedia();
-        executeDelayedAction();
+//        executeDelayedAction();
     }
 
     @Override
@@ -158,10 +161,10 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     private PendingIntent getNotificationIntent() {
-        Intent intent = new Intent(getActivity(), WorkorderActivity.class);
+        Intent intent = new Intent(_context, WorkorderActivity.class);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-        return PendingIntent.getActivity(getActivity(), _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(_context, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void getData() {
@@ -170,7 +173,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _refreshView.startRefreshing();
         _profile = null;
-        getActivity().startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
+        _context.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
 
     @Override
@@ -199,7 +202,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (docs != null && docs.length > 0) {
             for (int i = 0; i < docs.length; i++) {
                 Document doc = docs[i];
-                DocumentView v = new DocumentView(getActivity());
+                DocumentView v = new DocumentView(_context);
                 _reviewList.addView(v);
                 v.setData(_workorder, doc);
             }
@@ -213,9 +216,8 @@ public class DeliverableFragment extends WorkorderFragment {
         if (slots != null) {
             for (int i = 0; i < slots.length; i++) {
                 UploadSlot slot = slots[i];
-                UploadSlotView v = new UploadSlotView(getActivity());
-                v.setData(_workorder, _profile.getUserId(), slot,
-                        _uploaded_document_listener);
+                UploadSlotView v = new UploadSlotView(_context);
+                v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                 v.setListener(_uploadSlot_listener);
 
                 _filesLayout.addView(v);
@@ -270,15 +272,17 @@ public class DeliverableFragment extends WorkorderFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        _context = getActivity().getApplicationContext();
+
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
+        _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Get Content");
 
-        if (getActivity().getPackageManager().hasSystemFeature(
+        if (_context.getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
+            _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Take Picture");
         }
     }
 
@@ -292,17 +296,15 @@ public class DeliverableFragment extends WorkorderFragment {
 
             if (data == null) {
                 Log.v(TAG, "local path");
-                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                _context.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                         _workorder.getWorkorderId(), _uploadingSlot.getSlotId(),
                         _tempFile.getAbsolutePath(), getNotificationIntent()));
             } else {
                 Log.v(TAG, "from intent");
-                getActivity().startService(_service.uploadDeliverable(
+                _context.startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                         _uploadingSlot.getSlotId(), data, getNotificationIntent()));
             }
-
-            _uploadingSlotView.addUploading("Selected File");
         }
     }
 
@@ -327,8 +329,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
-            // startLoading();
-            getActivity().startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
+            _context.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
                     _workorder.getWorkorderId(),
                     document.getWorkorderUploadId()));
         }
@@ -341,14 +342,13 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onUploadClick(UploadSlotView view, UploadSlot slot) {
             if (checkMedia()) {
                 // start of the upload process
-                _uploadCount++;
                 _uploadingSlot = slot;
                 _uploadingSlotView = view;
                 _appPickerDialog.show();
             } else {
                 Toast.makeText(
-                        getActivity(),
-                        "Need External Storage, pleaswe insert storage device before continuing",
+                        _context,
+                        "Need External Storage, please insert storage device before continuing",
                         Toast.LENGTH_LONG).show();
             }
         }
@@ -368,10 +368,12 @@ public class DeliverableFragment extends WorkorderFragment {
                     info.activityInfo.applicationInfo.packageName,
                     info.activityInfo.name));
 
+            _uploadCount++;
+
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                String packageName = getActivity().getPackageName();
+                String packageName = _context.getPackageName();
                 File externalPath = Environment.getExternalStorageDirectory();
                 new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
                 File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
@@ -391,8 +393,8 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || _profileService == null || isNew) {
-                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
-                _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
+                _service = new WorkorderService(_context, username, authToken, _resultReceiver);
+                _profileService = new ProfileService(_context, username, authToken, _resultReceiver);
                 getData();
             }
         }
@@ -411,7 +413,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(getActivity());
+            AuthTopicService.requestAuthentication(_context);
         }
     };
 
@@ -456,20 +458,20 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public Context getContext() {
-            return DeliverableFragment.this.getActivity();
+            return DeliverableFragment.this._context;
         }
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(getActivity());
+            AuthTopicService.requestAuthInvalid(_context);
             if (resultCode == WEB_DELETE_DELIVERABLE)
                 _deleteCount--;
             if (resultCode == WEB_SEND_DELIVERABLE)
                 _uploadCount--;
             _service = null;
             _profileService = null;
-            Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
+            Toast.makeText(_context, "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshComplete();
         }
     };
