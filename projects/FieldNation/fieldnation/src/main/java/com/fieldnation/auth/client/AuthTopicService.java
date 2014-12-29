@@ -296,6 +296,7 @@ public class AuthTopicService extends Service {
     public static void subscribeAuthState(Context context, int resultCode, String tag, TopicReceiver topicReceiver) {
         if (context == null)
             return;
+        
         startService(context);
         TopicService.registerListener(context, resultCode, tag, TOPIC_AUTH_STATE, topicReceiver);
     }

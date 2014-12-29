@@ -29,6 +29,7 @@ public class TaskRowView extends RelativeLayout {
     private Workorder _workorder;
     private Task _task;
     private Listener _listener = null;
+    private String _uploadUrl;
 
     public TaskRowView(Context context) {
         super(context);
@@ -54,7 +55,6 @@ public class TaskRowView extends RelativeLayout {
         _checkbox = (CheckBox) findViewById(R.id.checkbox);
         _checkbox.setOnClickListener(_checkbox_onClick);
 
-        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
 
         populateUi();
     }
@@ -69,6 +69,12 @@ public class TaskRowView extends RelativeLayout {
     public void setData(Workorder workorder, Task task) {
         _task = task;
         _workorder = workorder;
+
+        if (_task.getSlotId() != null) {
+            _uploadUrl = _workorder.getWorkorderId() + "/deliverables/" + _task.getSlotId();
+            Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
+        }
+
 
         populateUi();
     }
@@ -102,8 +108,10 @@ public class TaskRowView extends RelativeLayout {
         @Override
         public void onStart(String url, String filename) {
             if (_task != null && _workorder != null) {
-                if (url.contains(_workorder.getWorkorderId() + "/deliverables/" + _task.getSlotId())) {
+                if (url.contains(_uploadUrl)) {
                     Log.v(TAG, "This task is uploading a file..." + url);
+                    TaskType type = _task.getTaskType();
+                    _checkbox.setText(type.getDisplay(getContext()) + "\nUploading: " + filename);
                 }
             }
         }
@@ -111,8 +119,10 @@ public class TaskRowView extends RelativeLayout {
         @Override
         public void onFinish(String url, String filename) {
             if (_task != null && _workorder != null) {
-                if (url.contains(_workorder.getWorkorderId() + "/deliverables/" + _task.getSlotId())) {
+                if (url.contains(_uploadUrl)) {
                     Log.v(TAG, "This task is uploading a file..." + url);
+                    TaskType type = _task.getTaskType();
+                    _checkbox.setText(type.getDisplay(getContext()) + "\nUploaded: " + filename);
                 }
             }
         }
@@ -120,8 +130,10 @@ public class TaskRowView extends RelativeLayout {
         @Override
         public void onError(String url, String filename, String message) {
             if (_task != null && _workorder != null) {
-                if (url.contains(_workorder.getWorkorderId() + "/deliverables/" + _task.getSlotId())) {
+                if (url.contains(_uploadUrl)) {
                     Log.v(TAG, "This task is uploading a file..." + url);
+                    TaskType type = _task.getTaskType();
+                    _checkbox.setText(type.getDisplay(getContext()) + "\nFailed: " + filename);
                 }
             }
         }
