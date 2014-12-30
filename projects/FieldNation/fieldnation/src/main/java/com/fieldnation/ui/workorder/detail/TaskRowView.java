@@ -122,7 +122,7 @@ public class TaskRowView extends RelativeLayout {
                 if (url.contains(_uploadUrl)) {
                     Log.v(TAG, "This task is uploading a file..." + url);
                     TaskType type = _task.getTaskType();
-                    _checkbox.setText(type.getDisplay(getContext()) + "\nUploaded: " + filename);
+                    _checkbox.setText(type.getDisplay(getContext()) + "\n" + filename);
                 }
             }
         }

@@ -49,13 +49,12 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-//        accountType = getString(R.string.accounttype);
-//        authority = getString(R.string.authority);
         DataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
 
         ExpenseCategories.getInstance(this);
+
+        getTracker();
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepalive", "false");

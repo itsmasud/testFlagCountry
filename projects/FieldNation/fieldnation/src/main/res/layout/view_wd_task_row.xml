@@ -11,18 +11,29 @@
         android:layout_height="wrap_content"
         android:checked="true" />
 
-    <RelativeLayout
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignBottom="@+id/checkbox"
-        android:layout_alignRight="@+id/checkbox"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--<RelativeLayout-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_alignBottom="@+id/checkbox"-->
+    <!--android:layout_alignRight="@+id/checkbox"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/task_border" />
-    </RelativeLayout>
+    <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@drawable/task_grey_fill" />-->
+
+    <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@drawable/task_green_fill" />-->
+
+    <!--<View-->
+    <!--android:layout_marginLeft="10dp"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@drawable/task_slash_bitmap" />-->
+    <!--</RelativeLayout>-->
 
 </RelativeLayout>
