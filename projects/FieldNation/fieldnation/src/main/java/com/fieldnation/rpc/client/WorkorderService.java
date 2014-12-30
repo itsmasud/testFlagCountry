@@ -231,8 +231,10 @@ public class WorkorderService extends WebService implements WebServiceConstants 
         return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/shipments", null,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName))
-                        + "&tracking_number=" + trackingNumber, "application/x-www-form-urlencoded", false);
+                        + "&carrier=" + carrier
+                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber),
+                "application/x-www-form-urlencoded", false);
     }
 
     public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
@@ -243,8 +245,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 null,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName))
-                        + "&tracking_number=" + trackingNumber
+                        + "&carrier=" + carrier
+                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber)
                         + "&task_id=" + taskId,
                 "application/x-www-form-urlencoded", false);
     }
@@ -259,7 +262,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 resultCode,
                 "api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId,
                 null,
-                "description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber,
+                "description=" + misc.escapeForURL(description)
+                        + "&direction=" + (isToSite ? "to_site" : "from_site")
+                        + "&carrier=" + carrier
+                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber),
                 "application/x-www-form-urlencoded", false);
     }
 
