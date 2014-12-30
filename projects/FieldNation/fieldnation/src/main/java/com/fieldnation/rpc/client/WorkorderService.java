@@ -131,7 +131,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 
     public Intent closingNotes(int resultCode, long workorderId, String notes) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/closing-notes", null,
-                "notes=" + misc.escapeForURL(notes), "application/x-www-form-urlencoded", false);
+                "notes=" + (notes == null ? "" : misc.escapeForURL(notes)), "application/x-www-form-urlencoded", false);
     }
 
     public Intent acknowledgeHold(int resultCode, long workorderId) {
