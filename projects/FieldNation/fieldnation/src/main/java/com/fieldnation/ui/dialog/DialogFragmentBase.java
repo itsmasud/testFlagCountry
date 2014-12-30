@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ public class DialogFragmentBase extends DialogFragment {
     // Data
     protected FragmentManager _fm;
     protected String _tag;
+    protected boolean _isDismissed = true;
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -97,6 +99,11 @@ public class DialogFragmentBase extends DialogFragment {
      */
     @Override
     public int show(FragmentTransaction transaction, String tag) {
+        if (!_isDismissed)
+            return -1;
+
+        _isDismissed = false;
+
         return super.show(transaction, tag);
     }
 
@@ -108,11 +115,25 @@ public class DialogFragmentBase extends DialogFragment {
      */
     @Override
     public void show(FragmentManager manager, String tag) {
+        if (!_isDismissed)
+            return;
+
         super.show(manager, tag);
+
+        _isDismissed = false;
     }
 
     public void show() {
+        if (!_isDismissed)
+            return;
+
         super.show(_fm, _tag);
+        _isDismissed = false;
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        _isDismissed = true;
+    }
 }
