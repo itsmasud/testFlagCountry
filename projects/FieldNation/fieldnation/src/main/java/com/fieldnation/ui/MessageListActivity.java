@@ -2,9 +2,12 @@ package com.fieldnation.ui;
 
 import android.content.Intent;
 import android.os.ResultReceiver;
+import android.support.v4.view.MenuItemCompat;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.ProfileService;
@@ -60,6 +63,16 @@ public class MessageListActivity extends ItemListActivity<Message> {
             startActivity(intent);
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.messages, menu);
+
+        _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
+
+        return true;
+    }
+
 
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
