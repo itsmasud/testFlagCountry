@@ -2,7 +2,6 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
 
@@ -140,13 +139,12 @@ public class OverScrollView extends ScrollView {
 
                     // notify the listener
                     if (_onOverscrollListener != null) {
-                        if (scrollAmountX != 0 || scrollAmountY != 0) {
+                        if (scrollAmountX < 0 || scrollAmountY < 0) {
 //                            Log.v(TAG, "OverScrollListView.overScrollBy(" + scrollAmountX + ", " + scrollAmountY + ")");
                             _onOverscrollListener.onOverScrolled(this, scrollAmountX, scrollAmountY);
+                            return true;
                         } else {
-                            if (_onOverscrollListener != null) {
-                                _onOverscrollListener.onOverScrollComplete(this, scrollAmountX, scrollAmountY);
-                            }
+                            _onOverscrollListener.onOverScrollComplete(this, scrollAmountX, scrollAmountY);
                             scrollAmountX = 0;
                             scrollAmountY = 0;
                             lastScrollX = 0;
@@ -154,7 +152,7 @@ public class OverScrollView extends ScrollView {
                         }
                     }
                     // we don't allow the list to scroll when we are in overscroll mode.
-                    return true;
+                    //return true;
                 }
                 break;
         }
