@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.1'
+    buildToolsVersion '21.1.2'
 
     lintOptions {
         abortOnError false
@@ -48,7 +48,7 @@ dependencies {
     compile project(':libUndobar')
     compile project(':libDateTimePicker')
     compile 'com.android.support:support-v4:21.0.2'
-    compile 'com.google.android.gms:play-services:6.1.71'
     compile 'com.android.support:gridlayout-v7:21.0.2'
     compile 'com.android.support:appcompat-v7:21.0.2'
+    compile 'com.google.android.gms:play-services:6.5.87'
 }
