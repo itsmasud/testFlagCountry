@@ -560,7 +560,7 @@ public class Workorder implements Parcelable {
     private static final int[] _STATUS_LOOKUP_TABLE = {
             R.drawable.card_status_white, R.drawable.card_status_orange,
             R.drawable.card_status_green, R.drawable.card_status_gray};
-    
+
     private static final int[] _STATUS_TEXT_TABLE = {
             R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
             R.color.woCardStatusLabel3, R.color.woCardStatusLabel4};
@@ -713,7 +713,8 @@ public class Workorder implements Parcelable {
 
     public boolean canAcceptSignature() {
         WorkorderStatus status = getWorkorderStatus();
-        return status == WorkorderStatus.ASSIGNED || status == WorkorderStatus.INPROGRESS;
+        return (status == WorkorderStatus.ASSIGNED && getWorkorderSubstatus() != WorkorderSubstatus.UNCONFIRMED)
+                || status == WorkorderStatus.INPROGRESS;
     }
 
     public boolean canChangeClosingNotes() {
