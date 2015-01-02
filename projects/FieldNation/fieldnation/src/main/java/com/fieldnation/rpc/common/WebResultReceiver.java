@@ -7,6 +7,7 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 import com.fieldnation.topics.Topics;
+import com.fieldnation.utils.Stopwatch;
 
 /**
  * Performs some basic parsing on the response and provides some convenience
@@ -28,7 +29,9 @@ public abstract class WebResultReceiver extends ResultReceiver implements WebSer
         String errorType = resultData.getString(KEY_RESPONSE_ERROR_TYPE);
 
         if (ERROR_NONE.equals(errorType)) {
+            Stopwatch stopwatch = new Stopwatch(true);
             onSuccess(resultCode, resultData);
+            Log.v(TAG, "onSuccess time: " + stopwatch.finish());
         } else {
             if (ERROR_NETWORK_ERROR.equals(errorType)) {
                 Topics.dispatchNetworkDown(getContext());

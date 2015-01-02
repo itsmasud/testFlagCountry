@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -35,6 +36,7 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.Stopwatch;
 
 import java.text.ParseException;
 import java.util.HashSet;
@@ -543,38 +545,56 @@ public class WorkorderListFragment extends Fragment {
         }
     };
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+    private class WorkorderParseAsync extends AsyncTaskEx<Bundle, Object, List<Workorder>> {
+        private int page;
+        private boolean cached;
 
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
+        protected List<Workorder> doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
 
-            if (resultCode == WEB_GET_LIST) {
-                int page = resultData.getInt(KEY_PAGE_NUM);
+            page = resultData.getInt(KEY_PAGE_NUM);
+            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+            cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
 
-                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                boolean cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
+            JsonArray objects = null;
+            try {
+                objects = new JsonArray(data);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                if (cached)
+                    requestList(page, false);
+                return null;
+            }
 
-                JsonArray objects = null;
+            List<Workorder> list = new LinkedList<Workorder>();
+            for (int i = 0; i < objects.size(); i++) {
                 try {
-                    objects = new JsonArray(data);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    if (cached)
-                        requestList(page, false);
-                    return;
+                    list.add(Workorder.fromJson(objects.getJsonObject(i)));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            }
+            return list;
+        }
 
-                List<Workorder> list = new LinkedList<Workorder>();
-                for (int i = 0; i < objects.size(); i++) {
-                    try {
-                        list.add(Workorder.fromJson(objects.getJsonObject(i)));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+        @Override
+        protected void onPostExecute(List<Workorder> workorders) {
+            super.onPostExecute(workorders);
+            if (workorders != null)
+                addPage(page, workorders, cached);
+            _loadingView.refreshComplete();
+        }
+    }
 
-                addPage(page, list, cached);
-                _loadingView.refreshComplete();
+    ;
+
+    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            if (resultCode == WEB_GET_LIST) {
+                new WorkorderParseAsync().executeEx(resultData);
+
             } else if (resultCode == WEB_CHANGING_WORKORDER) {
                 long woId = resultData.getLong(KEY_WORKORDER_ID);
                 //_requestWorking.remove(woId);
@@ -597,6 +617,7 @@ public class WorkorderListFragment extends Fragment {
             } else {
                 _loadingView.refreshComplete();
             }
+
         }
 
         @Override

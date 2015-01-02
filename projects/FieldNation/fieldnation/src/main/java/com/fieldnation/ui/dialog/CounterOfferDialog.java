@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private TabHost _tabHost;
     private Button _backButton;
     private Button _okButton;
+    private HorizontalScrollView _tabScrollView;
 
     private PaymentCoView _paymentView;
     private ScheduleCoView _scheduleView;
@@ -70,7 +72,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private List<Expense> _expenses = new LinkedList<Expense>();
     private Schedule _counterSchedule;
     private String _counterReason;
-    private boolean _expires;
+    private boolean _expires = false;
     private String _expirationDate;
 
     // Data
@@ -78,7 +80,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private Listener _listener;
     private Calendar _pickerCal;
     private int _savedTabPos = -1;
-
+    private boolean _clear = false;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -221,6 +223,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
         _expenseDialog.setListener(_expenseDialog_listener);
 
+        _tabScrollView = (HorizontalScrollView) v.findViewById(R.id.tabscroll_view);
+
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         final Calendar c = Calendar.getInstance();
@@ -260,7 +264,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
             _savedTabPos = -1;
         }
 
-
         populateUi();
     }
 
@@ -285,10 +288,21 @@ public class CounterOfferDialog extends DialogFragmentBase {
             _scheduleView.setSchedule(_workorder.getSchedule(), false);
         }
 
-
         _expenseView.setData(_workorder, _expenses);
 
-        _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate);
+        _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate, _clear);
+
+        if (_clear) {
+            _tabScrollView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //hsv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                    _tabScrollView.scrollTo(0, 0);
+                    _tabHost.setCurrentTab(0);
+                }
+            }, 100);
+            _clear = false;
+        }
     }
 
     public void setListener(Listener listener) {
@@ -300,6 +314,13 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _workorder = workorder;
 
         CounterOfferInfo info = _workorder.getCounterOfferInfo();
+
+        _counterPay = null;
+        _counterSchedule = null;
+        _counterReason = null;
+        _expires = false;
+        _expirationDate = null;
+        _clear = true;
 
         if (info != null) {
             if (info.getPay() != null) {
