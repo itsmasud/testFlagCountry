@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -25,6 +26,7 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.Stopwatch;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -219,16 +221,45 @@ public class MessageFragment extends WorkorderFragment {
         }
     };
 
+    private class MessageAsyncTask extends AsyncTaskEx<Bundle, Object, List<Message>> {
+
+        @Override
+        protected List<Message> doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
+            List<Message> list = new LinkedList<>();
+            try {
+                JsonArray messages = new JsonArray(new String(
+                        resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
+
+                for (int i = 0; i < messages.size(); i++) {
+                    JsonObject obj = messages.getJsonObject(i);
+                    list.add(Message.fromJson(obj));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return list;
+        }
+
+        @Override
+        protected void onPostExecute(List<Message> messages) {
+            super.onPostExecute(messages);
+            _messages = messages;
+            rebuildList();
+            if (_messages.size() == 0) {
+                _inputView.setHint(R.string.start_the_conversation);
+            } else {
+                _inputView.setHint(R.string.continue_the_conversation);
+            }
+        }
+    }
+
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "resultCode:" + resultCode);
-            Log.v(TAG, "WEB_GET_PROFILE:" + WEB_GET_PROFILE);
-            Log.v(TAG, "WEB_GET_MESSAGES:" + WEB_GET_MESSAGES);
-            Log.v(TAG, "WEB_NEW_MESSAGE:" + WEB_NEW_MESSAGE);
-
             if (resultCode == WEB_GET_PROFILE) {
+                Stopwatch stopwatch = new Stopwatch(true);
                 try {
                     _profile = Profile.fromJson(new JsonObject(new String(
                             resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
@@ -238,29 +269,14 @@ public class MessageFragment extends WorkorderFragment {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+                Log.v(TAG, "WEB_GET_PROFILE time " + stopwatch.finish());
             } else if (resultCode == WEB_GET_MESSAGES) {
-                try {
-                    JsonArray messages = new JsonArray(new String(
-                            resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-
-                    for (int i = 0; i < messages.size(); i++) {
-                        JsonObject obj = messages.getJsonObject(i);
-                        _messages.add(Message.fromJson(obj));
-                    }
-
-                    rebuildList();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-
-                if (_messages.size() == 0) {
-                    _inputView.setHint(R.string.start_the_conversation);
-                } else {
-                    _inputView.setHint(R.string.continue_the_conversation);
-                }
+                new MessageAsyncTask().executeEx(resultData);
             } else if (resultCode == WEB_NEW_MESSAGE) {
+                Stopwatch stopwatch = new Stopwatch(true);
                 _inputView.clearText();
                 getMessages();
+                Log.v(TAG, "WEB_NEW_MESSAGE time " + stopwatch.finish());
             }
         }
 

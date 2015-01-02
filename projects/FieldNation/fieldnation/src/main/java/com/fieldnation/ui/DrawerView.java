@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -57,12 +58,8 @@ public class DrawerView extends RelativeLayout {
 
     // Data
     private PaymentService _dataService;
-    private boolean _hasPaid = false;
-    private boolean _hasEstimated = false;
-    private double _paidAmount = 0;
-    private long _lastPaidDate = Long.MIN_VALUE;
-    private double _estimatedAmount = 0;
-    private long _lastEstimatedDate = Long.MIN_VALUE;
+    private Payment _paidPayment = null;
+    private Payment _estPayment = null;
     private int _nextPage = 0;
 
     /*-*************************************-*/
@@ -218,9 +215,14 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+    private class PaymentParseAsyncTask extends AsyncTaskEx<Bundle, Object, Payment[]> {
+
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
+        protected Payment[] doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
+
+            Payment selPaid = _paidPayment;
+            Payment selEst = _estPayment;
             try {
                 JsonArray ja = new JsonArray(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
 
@@ -239,16 +241,12 @@ public class DrawerView extends RelativeLayout {
                         long date = ISO8601.toUtc(payment.getDatePaid());
 
                         if ("paid".equals(payment.getStatus())) {
-                            if (date >= _lastPaidDate) {
-                                _lastPaidDate = date;
-                                _paidAmount = payment.getAmount();
-                                _hasPaid = true;
+                            if (selPaid == null || date >= ISO8601.toUtc(selPaid.getDatePaid())) {
+                                selPaid = payment;
                             }
                         } else {
-                            if (date >= _lastEstimatedDate) {
-                                _lastEstimatedDate = date;
-                                _estimatedAmount = payment.getAmount();
-                                _hasEstimated = true;
+                            if (selEst == null || date >= ISO8601.toUtc(selEst.getDatePaid())) {
+                                selEst = payment;
                             }
                         }
                     } catch (Exception ex) {
@@ -257,35 +255,63 @@ public class DrawerView extends RelativeLayout {
                 }
 
                 if (ja.size() == 0) {
-                    if (_hasEstimated) {
-                        _estimatedLayout.setVisibility(VISIBLE);
-                        _estimatedAmountTextView.setText(misc.toCurrency(_estimatedAmount));
-                        Calendar cal = Calendar.getInstance();
-                        cal.setTimeInMillis(_lastEstimatedDate);
-                        _estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
-                    } else {
-                        _estimatedLayout.setVisibility(GONE);
-                    }
-
-                    if (_hasPaid) {
-                        _paidLayout.setVisibility(VISIBLE);
-                        _paidAmountTextView.setText(misc.toCurrency(_paidAmount));
-                        Calendar cal = Calendar.getInstance();
-                        cal.setTimeInMillis(_lastPaidDate);
-                        _paidDateTextView.setText("Paid " + misc.formatDate(cal));
-                    } else {
-                        _paidLayout.setVisibility(GONE);
-                    }
+                    return new Payment[]{selPaid, selEst};
                 } else {
                     getContext().startService(_dataService.getAll(1, _nextPage, true));
                     _nextPage++;
+                    return new Payment[]{selPaid, selEst};
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                //getContext().startService(_dataService.getAll(1, 0, true));
-                //_nextPage = 1;
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-            Log.v(TAG, "WebServiceResultReceiver.onSuccess");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Payment[] payments) {
+            super.onPostExecute(payments);
+            if (payments != null) {
+                _paidPayment = payments[0];
+                _estPayment = payments[1];
+                populateUi();
+            }
+        }
+    }
+
+    private void populateUi() {
+        if (_estPayment != null) {
+            _estimatedLayout.setVisibility(View.VISIBLE);
+            _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
+            try {
+                Calendar cal = ISO8601.toCalendar(_estPayment.getDatePaid());
+                _estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                _estimatedDateTextView.setText("");
+            }
+        } else {
+            _estimatedLayout.setVisibility(View.GONE);
+        }
+
+        if (_paidPayment != null) {
+            _paidLayout.setVisibility(View.VISIBLE);
+            _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
+            try {
+                Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
+                _paidDateTextView.setText("Estimated " + misc.formatDate(cal));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                _paidDateTextView.setText("");
+            }
+        } else {
+            _paidLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            new PaymentParseAsyncTask().executeEx(resultData);
         }
 
         @Override

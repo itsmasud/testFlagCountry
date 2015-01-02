@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -62,6 +63,7 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.Stopwatch;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -1003,6 +1005,38 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
+    private class TaskParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Task>> {
+        private boolean cached = false;
+
+        @Override
+        protected List<Task> doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
+            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+            cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
+            List<Task> tasks = new LinkedList<Task>();
+            try {
+                JsonArray array = new JsonArray(data);
+
+                for (int i = 0; i < array.size(); i++) {
+                    try {
+                        tasks.add(Task.fromJson(array.getJsonObject(i)));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return tasks;
+        }
+
+        @Override
+        protected void onPostExecute(List<Task> tasks) {
+            super.onPostExecute(tasks);
+            setTaskData(tasks, cached);
+        }
+    }
+
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
@@ -1012,22 +1046,7 @@ public class TasksFragment extends WorkorderFragment {
 
 			/*-			Tasks			-*/
             } else if (resultCode == WEB_GET_TASKS) {
-                // TODO populate
-                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                try {
-                    JsonArray array = new JsonArray(data);
-                    List<Task> tasks = new LinkedList<Task>();
-                    for (int i = 0; i < array.size(); i++) {
-                        try {
-                            tasks.add(Task.fromJson(array.getJsonObject(i)));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    setTaskData(tasks, resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                new TaskParseAsyncTask().executeEx(resultData);
             } else {
             }
         }

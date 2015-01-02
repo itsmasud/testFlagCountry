@@ -41,6 +41,7 @@ import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
@@ -197,6 +198,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
+        Stopwatch stopwatch = new Stopwatch(true);
         _reviewList.removeAllViews();
         Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
@@ -210,7 +212,9 @@ public class DeliverableFragment extends WorkorderFragment {
         } else {
             _noDocsTextView.setVisibility(View.VISIBLE);
         }
+        Log.v(TAG, "pop docs time " + stopwatch.finish());
 
+        stopwatch.start();
         _filesLayout.removeAllViews();
         UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null) {
@@ -223,6 +227,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _filesLayout.addView(v);
             }
         }
+        Log.v(TAG, "upload docs time " + stopwatch.finish());
         _refreshView.refreshComplete();
     }
 
