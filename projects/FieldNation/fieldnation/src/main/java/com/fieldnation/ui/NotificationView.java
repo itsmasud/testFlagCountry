@@ -80,8 +80,8 @@ public class NotificationView extends RelativeLayout {
     }
 
     /*-*****************************-*/
-	/*-			Modifiers			-*/
-	/*-*****************************-*/
+    /*-			Modifiers			-*/
+    /*-*****************************-*/
     public void setNotification(Notification notification) {
         _note = notification;
         populateUi();
@@ -94,9 +94,18 @@ public class NotificationView extends RelativeLayout {
             _statusTextView.setText(_substatus[work.getStatus().getWorkorderSubstatus().ordinal()]);
             _statusTextView.setTextColor(_colors[work.getStatus().getStatusIntent().ordinal()]);
             _titleLayout.setVisibility(View.VISIBLE);
+            _statusLayout.setVisibility(View.VISIBLE);
         } else {
             _titleLayout.setVisibility(View.GONE);
+            _statusLayout.setVisibility(View.GONE);
+
         }
+        if (_note.getViewed() != null && _note.getViewed() == 1) {
+            _titleThumbImageView.setVisibility(View.GONE);
+        } else {
+            _titleThumbImageView.setVisibility(View.VISIBLE);
+        }
+
         _messageTextView.setText(misc.linkifyHtml(_note.getMessage(), Linkify.ALL));
         _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
         try {
@@ -107,7 +116,7 @@ public class NotificationView extends RelativeLayout {
     }
 
     /*-*************************-*/
-	/*-			Events			-*/
+    /*-			Events			-*/
 	/*-*************************-*/
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
