@@ -8,6 +8,8 @@ import com.fieldnation.rpc.server.DataCacheNode;
 import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.Ws;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 
 /**
@@ -36,12 +38,20 @@ public class GlobalState extends Application {
         Ws.USE_HTTPS = BuildConfig.USE_HTTPS;
     }
 
-    synchronized Tracker getTracker() {
+    public synchronized Tracker getTracker() {
 
         if (_tracker == null) {
-
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
+            analytics.enableAutoActivityReports(this);
+            analytics.setLocalDispatchPeriod(60);
+            analytics.setDryRun(false);
             _tracker = analytics.newTracker(R.xml.ga_config);
+            _tracker.enableAdvertisingIdCollection(true);
+            _tracker.enableAutoActivityTracking(true);
+            _tracker.enableExceptionReporting(true);
+            //_tracker.setAppName("AndroidApp");
+
         }
         return _tracker;
     }
@@ -59,6 +69,13 @@ public class GlobalState extends Application {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepalive", "false");
         }
+
+        Tracker t = getTracker();
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("AndroidTest")
+                .setAction("AppStart")
+                .setLabel("AppStarted")
+                .build());
     }
 
     private long getNextDelay() {

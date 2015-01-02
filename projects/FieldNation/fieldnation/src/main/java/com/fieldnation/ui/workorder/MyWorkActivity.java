@@ -15,9 +15,12 @@ import android.support.v7.app.ActionBar.TabListener;
 import android.util.Log;
 import android.view.View;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.List;
 
@@ -54,6 +57,13 @@ public class MyWorkActivity extends DrawerActivity {
 
 //        _customFieldDialog = CustomFieldDialog.getInstance(getSupportFragmentManager(), TAG);
 //        _customFieldDialog.sho
+
+        Tracker t = ((GlobalState) getApplication()).getTracker();
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("AndroidTest")
+                .setAction("Activity")
+                .setLabel("MyWorkActivityStart")
+                .build());
     }
 
     @Override

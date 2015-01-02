@@ -560,11 +560,14 @@ public class Workorder implements Parcelable {
     private static final int[] _STATUS_LOOKUP_TABLE = {
             R.drawable.card_status_white, R.drawable.card_status_orange,
             R.drawable.card_status_green, R.drawable.card_status_gray};
+    
     private static final int[] _STATUS_TEXT_TABLE = {
             R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
             R.color.woCardStatusLabel3, R.color.woCardStatusLabel4};
+
     private static final int[] _STATUS_BUTTON_FG = {R.color.btn_white_fg,
             R.color.btn_orange_fg, R.color.btn_green_fg, R.color.btn_gray_fg};
+
     private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_white,
             R.drawable.btn_orange, R.drawable.btn_green, R.drawable.btn_white};
 

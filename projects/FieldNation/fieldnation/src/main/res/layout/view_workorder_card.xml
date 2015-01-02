@@ -251,7 +251,7 @@
                 android:layout_height="wrap_content"
                 android:text="34234324" />
 
-            <com.fieldnation.ui.AutoResizeTextButton
+            <Button
                 android:id="@+id/action_button"
                 style="@style/WorkorderCard_Button"
                 android:layout_alignParentRight="true"
