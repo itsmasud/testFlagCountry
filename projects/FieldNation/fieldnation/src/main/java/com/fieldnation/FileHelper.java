@@ -112,6 +112,8 @@ public class FileHelper {
             intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         }
 
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
             context.startActivity(intent);
         } else {
