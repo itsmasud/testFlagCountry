@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 /**
@@ -139,51 +142,73 @@ public class SignOffFragment extends FragmentBase {
         _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
         //_descriptionTextView.setLinksClickable(false);
 
-        LoggedWork[] logs = _workorder.getLoggedWork();
+        final LoggedWork[] logs = _workorder.getLoggedWork();
         if (logs != null && logs.length > 0) {
+            Stopwatch stopwatch = new Stopwatch(true);
             _timeLinearLayout.setVisibility(View.VISIBLE);
             _timeTextView.setVisibility(View.VISIBLE);
             _timeDivider.setVisibility(View.VISIBLE);
 
             _timeLinearLayout.removeAllViews();
-            for (int i = 0; i < logs.length; i++) {
-                LoggedWork work = logs[i];
-                WorklogTile v = new WorklogTile(getActivity());
-                v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
-                _timeLinearLayout.addView(v);
-            }
+            ForLoopRunnable r = new ForLoopRunnable(logs.length) {
+                private LoggedWork[] _logs = logs;
+
+                @Override
+                public void next(int i) {
+                    LoggedWork work = _logs[i];
+                    WorklogTile v = new WorklogTile(getActivity());
+                    v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
+                    _timeLinearLayout.addView(v);
+
+                    SignOffFragment.this._container.post(this);
+                }
+            };
+            _container.post(r);
+
+            Log.v(TAG, "Logs time " + stopwatch.finish());
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
             _timeTextView.setVisibility(View.GONE);
             _timeDivider.setVisibility(View.GONE);
         }
 
-        Task[] tasks = _workorder.getTasks();
+        final Task[] tasks = _workorder.getTasks();
         if (tasks != null && tasks.length > 0) {
+            Stopwatch stopwatch = new Stopwatch(true);
             _tasksDivider.setVisibility(View.VISIBLE);
             _tasksTextView.setVisibility(View.VISIBLE);
             _tasksLinearLayout.setVisibility(View.VISIBLE);
 
             _tasksLinearLayout.removeAllViews();
-            for (int i = 0; i < tasks.length; i++) {
-                Task task = tasks[i];
 
-                String display = "";
-                if (task.getTypeId() != null) {
-                    TaskType type = task.getTaskType();
-                    display = type.getDisplay(getActivity());
-                } else {
-                    display = task.getType();
-                }
+            ForLoopRunnable r = new ForLoopRunnable(tasks.length) {
+                private Task[] _tasks = tasks;
 
-                TaskRowSimpleView v = new TaskRowSimpleView(getActivity());
-                if (misc.isEmptyOrNull(task.getDescription())) {
-                    v.setText(display);
-                } else {
-                    v.setText(display + "\n" + task.getDescription());
+                @Override
+                public void next(int i) {
+                    Task task = _tasks[i];
+
+                    String display = "";
+                    if (task.getTypeId() != null) {
+                        TaskType type = task.getTaskType();
+                        display = type.getDisplay(getActivity());
+                    } else {
+                        display = task.getType();
+                    }
+
+                    TaskRowSimpleView v = new TaskRowSimpleView(getActivity());
+                    if (misc.isEmptyOrNull(task.getDescription())) {
+                        v.setText(display);
+                    } else {
+                        v.setText(display + "\n" + task.getDescription());
+                    }
+                    _tasksLinearLayout.addView(v);
+                    SignOffFragment.this._container.post(this);
                 }
-                _tasksLinearLayout.addView(v);
-            }
+            };
+            _container.post(r);
+
+            Log.v(TAG, "tasks time " + stopwatch.finish());
         } else {
             _tasksDivider.setVisibility(View.GONE);
             _tasksTextView.setVisibility(View.GONE);
