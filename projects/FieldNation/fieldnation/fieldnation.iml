@@ -113,7 +113,6 @@
     <orderEntry type="module" module-name="libDateTimePicker" exported="" />
     <orderEntry type="module" module-name="libUtils" exported="" />
     <orderEntry type="module" module-name="libJson" exported="" />
-    <orderEntry type="module" module-name="libUndobar" exported="" />
   </component>
 </module>
 

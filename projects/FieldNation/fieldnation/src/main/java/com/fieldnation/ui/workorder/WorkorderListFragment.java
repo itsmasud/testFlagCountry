@@ -78,8 +78,6 @@ public class WorkorderListFragment extends Fragment {
     private WorkorderService _service;
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
     //private ActionMode _actionMode = null;
-    private WorkorderUndoListener _wosumUndoListener;
-
     private Set<Long> _pendingNotInterested = new HashSet<Long>();
     private Set<Long> _requestWorking = new HashSet<Long>();
     private Set<Long> _selected = new HashSet<Long>();
