@@ -453,7 +453,7 @@ public class TasksFragment extends WorkorderFragment {
     private MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
         @Override
         public void onSignatureClick() {
-            Intent intent = new Intent(_context, SignOffActivity.class);
+            Intent intent = new Intent(getActivity(), SignOffActivity.class);
             intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
             intent.putExtra(SIGNATURE_COMPLETE_WHEN_DONE, true);
             startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
@@ -719,10 +719,10 @@ public class TasksFragment extends WorkorderFragment {
                     break;
                 case SIGNATURE: {
                     _currentTask = task;
-                    Intent intent = new Intent(_context, SignOffActivity.class);
+                    Intent intent = new Intent(getActivity(), SignOffActivity.class);
                     intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
                     intent.putExtra(SignOffActivity.INTENT_PARAM_TASK_ID, task.getTaskId());
-                    _context.startActivity(intent);
+                    getActivity().startActivity(intent);
                     break;
                 }
                 case UPLOAD_FILE: {
@@ -885,7 +885,7 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void addSignature() {
             try {
-                Intent intent = new Intent(_context, SignOffActivity.class);
+                Intent intent = new Intent(getActivity(), SignOffActivity.class);
                 intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 _context.startActivity(intent);
@@ -896,7 +896,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void signatureOnClick(SignatureTileView view, Signature signature) {
-            startActivity(SignatureDisplayActivity.startIntent(_context, signature.getSignatureId(), _workorder));
+            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder));
         }
     };
 

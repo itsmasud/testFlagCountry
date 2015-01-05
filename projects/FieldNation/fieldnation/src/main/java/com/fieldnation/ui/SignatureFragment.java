@@ -8,8 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.fieldnation.R;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by michael.carver on 12/2/2014.
@@ -107,8 +109,15 @@ public class SignatureFragment extends FragmentBase {
     private View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onSubmit(_nameEditText.getText().toString(), _signatureView.getSignatureJson());
+            if (_listener != null) {
+                if (misc.isEmptyOrNull(_nameEditText.getText().toString())) {
+                    Toast.makeText(getActivity(), "Please enter your name", Toast.LENGTH_SHORT).show();
+                    // TODO flash name thing
+                    _nameEditText.requestFocus();
+                } else {
+                    _listener.onSubmit(_nameEditText.getText().toString(), _signatureView.getSignatureJson());
+                }
+            }
         }
     };
 

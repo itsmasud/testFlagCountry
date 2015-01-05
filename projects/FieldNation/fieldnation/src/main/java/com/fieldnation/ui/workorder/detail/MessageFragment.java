@@ -115,6 +115,9 @@ public class MessageFragment extends WorkorderFragment {
         if (_profile == null)
             return;
 
+        if (getActivity() == null)
+            return;
+
         _refreshView.startRefreshing();
 
         _messages.clear();
