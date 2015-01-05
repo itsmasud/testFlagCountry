@@ -510,7 +510,7 @@ public class TasksFragment extends WorkorderFragment {
         public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
             final Workorder _workorder = workorder;
             final LoggedWork _loggedWork = loggedWork;
-            AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Are you sure you want to delete this work log?");
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override

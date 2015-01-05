@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -296,7 +297,9 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
 
-        if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
+        if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+                && resultCode == Activity.RESULT_OK) {
+
             _refreshView.startRefreshing();
 
             if (data == null) {
@@ -327,6 +330,9 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onStartRefresh() {
             getData();
+            if (_workorder != null) {
+                _workorder.dispatchOnChange();
+            }
         }
     };
 
