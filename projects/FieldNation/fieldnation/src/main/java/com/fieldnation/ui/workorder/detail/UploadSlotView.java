@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UploadSlotView extends RelativeLayout {
-    private String TAG = UniqueTag.makeTag("ui.workorder.detail.UploadSlotView");
+    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.UploadSlotView");
 
     // Ui
     private TextView _titleTextView;

@@ -23,7 +23,7 @@ import com.fieldnation.topics.TopicShutdownReciever;
  * @author michael.carver
  */
 public abstract class AuthActionBarActivity extends ActionBarActivity {
-    private String TAG = UniqueTag.makeTag("ui.AuthActionBarActivity");
+    private final String TAG = UniqueTag.makeTag("ui.AuthActionBarActivity");
 
     private final static int AUTH_SERVICE = 1;
 

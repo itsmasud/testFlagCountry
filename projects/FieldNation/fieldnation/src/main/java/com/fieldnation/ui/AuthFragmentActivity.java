@@ -19,7 +19,7 @@ import com.fieldnation.topics.TopicShutdownReciever;
  * Created by michael.carver on 12/5/2014.
  */
 public abstract class AuthFragmentActivity extends FragmentActivity {
-    private String TAG = UniqueTag.makeTag("ui.AuthFragmentActivity");
+    private final String TAG = UniqueTag.makeTag("ui.AuthFragmentActivity");
 
     private static final int AUTH_SERVICE = 1;
 

@@ -20,7 +20,7 @@ import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.misc;
 
 public class TaskRowView extends RelativeLayout {
-    private String TAG = UniqueTag.makeTag("ui.workorder.detail.TaskRowView");
+    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.TaskRowView");
 
     // Ui
     private CheckBox _checkbox;

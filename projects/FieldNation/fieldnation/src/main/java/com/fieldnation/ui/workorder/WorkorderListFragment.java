@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 public class WorkorderListFragment extends Fragment {
-    private String TAG = UniqueTag.makeTag("ui.workorder.WorkorderListFragment");
+    private final String TAG = UniqueTag.makeTag("ui.workorder.WorkorderListFragment");
 
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
