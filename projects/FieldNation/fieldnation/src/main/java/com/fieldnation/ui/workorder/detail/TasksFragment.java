@@ -884,9 +884,14 @@ public class TasksFragment extends WorkorderFragment {
     private SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            Intent intent = new Intent(_context, SignOffActivity.class);
-            intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
-            _context.startActivity(intent);
+            try {
+                Intent intent = new Intent(_context, SignOffActivity.class);
+                intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                _context.startActivity(intent);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         @Override
