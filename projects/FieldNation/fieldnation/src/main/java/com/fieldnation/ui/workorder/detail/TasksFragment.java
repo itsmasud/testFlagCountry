@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -62,6 +63,7 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.Stopwatch;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -120,6 +122,7 @@ public class TasksFragment extends WorkorderFragment {
     private MarkCompleteDialog _markCompleteDialog;
 
     // Data
+    private Context _context;
     private WorkorderService _service;
 
     private String _authToken;
@@ -247,15 +250,18 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        _context = getActivity().getApplicationContext();
+
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
+        _appDialog.addIntent(_context.getPackageManager(), intent, "Get Content");
 
-        if (getActivity().getPackageManager().hasSystemFeature(
+        if (_context.getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
+            _appDialog.addIntent(_context.getPackageManager(), intent, "Take Picture");
         }
     }
 
@@ -295,18 +301,19 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+        _context = getActivity().getApplicationContext();
+        AuthTopicService.subscribeAuthState(_context, 0, TAG, _authReceiver);
     }
 
     @Override
     public void onPause() {
-        TopicService.delete(getActivity(), TAG);
+        TopicService.delete(_context, TAG);
         super.onPause();
     }
 
     @Override
     public void update() {
-        configureUi();
+        //configureUi();
     }
 
     @Override
@@ -379,7 +386,7 @@ public class TasksFragment extends WorkorderFragment {
             return;
 
         setLoading(true);
-        getActivity().startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
+        _context.startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
     }
 
     private void setTaskData(List<Task> tasks, boolean isCached) {
@@ -395,13 +402,13 @@ public class TasksFragment extends WorkorderFragment {
     }
 
     private PendingIntent getNotificationIntent() {
-        Intent intent = new Intent(getActivity(), WorkorderActivity.class);
+        Intent intent = new Intent(_context, WorkorderActivity.class);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
                 WorkorderActivity.TAB_TASKS);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
                 _workorder.getWorkorderId());
 
-        return PendingIntent.getActivity(getActivity(), _rand.nextInt(), intent,
+        return PendingIntent.getActivity(_context, _rand.nextInt(), intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -423,7 +430,7 @@ public class TasksFragment extends WorkorderFragment {
             // todo notify task view that the file is uploading
 
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
-            getActivity().startService(
+            _context.startService(
                     _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
         }
     }
@@ -446,7 +453,7 @@ public class TasksFragment extends WorkorderFragment {
     private MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
         @Override
         public void onSignatureClick() {
-            Intent intent = new Intent(getActivity(), SignOffActivity.class);
+            Intent intent = new Intent(_context, SignOffActivity.class);
             intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
             intent.putExtra(SIGNATURE_COMPLETE_WHEN_DONE, true);
             startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
@@ -454,7 +461,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onContinueClick() {
-            getActivity().startService(
+            _context.startService(
                     _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
         }
     };
@@ -464,19 +471,19 @@ public class TasksFragment extends WorkorderFragment {
         public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
             if (loggedWork == null) {
                 if (deviceCount <= 0) {
-                    getActivity().startService(_service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
+                    _context.startService(_service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
                             end.getTimeInMillis()));
                 } else {
-                    getActivity().startService(_service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
+                    _context.startService(_service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
                             end.getTimeInMillis(), deviceCount));
                 }
             } else {
                 if (deviceCount <= 0) {
-                    getActivity().startService(
+                    _context.startService(
                             _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
                                     loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis()));
                 } else {
-                    getActivity().startService(
+                    _context.startService(
                             _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
                                     loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount));
                 }
@@ -503,12 +510,12 @@ public class TasksFragment extends WorkorderFragment {
         public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
             final Workorder _workorder = workorder;
             final LoggedWork _loggedWork = loggedWork;
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(_context);
             builder.setMessage("Are you sure you want to delete this work log?");
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    getActivity().startService(
+                    _context.startService(
                             _service.deleteLogTime(WEB_CHANGED,
                                     _workorder.getWorkorderId(), _loggedWork.getLoggedHoursId()));
                     _refreshView.startRefreshing();
@@ -540,13 +547,13 @@ public class TasksFragment extends WorkorderFragment {
                         Location location = _gPSLocationService.getLocation();
                         double lat = location.getLatitude();
                         double log = location.getLongitude();
-                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                        _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                     } catch (Exception e) {
                         _gPSLocationService.showSettingsOffAlert(getView().getContext());
                     }
                 } else {
                     _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                    getActivity().startService(
+                    _context.startService(
                             _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                 }
             }
@@ -559,20 +566,20 @@ public class TasksFragment extends WorkorderFragment {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                    _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                 } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
             } else {
                 _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                getActivity().startService(
+                _context.startService(
                         _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
             }
         }
 
         @Override
         public void onAcknowledge() {
-            getActivity().startService(_service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
+            _context.startService(_service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
         }
 
         @Override
@@ -604,13 +611,13 @@ public class TasksFragment extends WorkorderFragment {
                             Location location = _gPSLocationService.getLocation();
                             double lat = location.getLatitude();
                             double log = location.getLongitude();
-                            getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                            _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                         } catch (Exception e) {
                             _gPSLocationService.showSettingsOffAlert(getView().getContext());
                         }
                     } else {
                         _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                        getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+                        _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
                     }
 
                     break;
@@ -624,13 +631,13 @@ public class TasksFragment extends WorkorderFragment {
                                 Location location = _gPSLocationService.getLocation();
                                 double lat = location.getLatitude();
                                 double log = location.getLongitude();
-                                getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                                _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                             } catch (Exception e) {
                                 _gPSLocationService.showSettingsOffAlert(getView().getContext());
                             }
                         } else {
                             _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                            getActivity().startService(
+                            _context.startService(
                                     _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                         }
                     }
@@ -657,12 +664,12 @@ public class TasksFragment extends WorkorderFragment {
                             if (doc.getDocumentId().equals(_identifier)) {
                                 // task completed here
                                 if (!task.getCompleted()) {
-                                    getActivity().startService(
+                                    _context.startService(
                                             _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(),
                                                     task.getTaskId()));
                                 }
 
-                                FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
+                                FileHelper.viewOrDownloadFile(_context, doc.getFilePath(),
                                         doc.getFileName(), doc.getFileType());
 
                                 break;
@@ -678,7 +685,7 @@ public class TasksFragment extends WorkorderFragment {
                     startActivityForResult(intent, RESULT_CODE_SEND_EMAIL);
 
                     if (!task.getCompleted()) {
-                        getActivity().startService(
+                        _context.startService(
                                 _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
                     }
                     break;
@@ -687,7 +694,7 @@ public class TasksFragment extends WorkorderFragment {
                     try {
                         if (task.getPhoneNumber() != null) {
                             if (!task.getCompleted()) {
-                                getActivity().startService(
+                                _context.startService(
                                         _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
                             }
 
@@ -712,10 +719,10 @@ public class TasksFragment extends WorkorderFragment {
                     break;
                 case SIGNATURE: {
                     _currentTask = task;
-                    Intent intent = new Intent(getActivity(), SignOffActivity.class);
+                    Intent intent = new Intent(_context, SignOffActivity.class);
                     intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
                     intent.putExtra(SignOffActivity.INTENT_PARAM_TASK_ID, task.getTaskId());
-                    getActivity().startActivity(intent);
+                    _context.startActivity(intent);
                     break;
                 }
                 case UPLOAD_FILE: {
@@ -731,7 +738,7 @@ public class TasksFragment extends WorkorderFragment {
                 case UNIQUE_TASK:
                     if (task.getCompleted())
                         return;
-                    getActivity().startService(
+                    _context.startService(
                             _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
                     break;
                 default:
@@ -743,14 +750,14 @@ public class TasksFragment extends WorkorderFragment {
     private TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
-            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+            _context.startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
         }
 
         @Override
         public void onAssign(Workorder workorder, int shipmentId, long taskId) {
             // @TODO
             Log.v(TAG, "Method Stub: onAssign()" + shipmentId + "=" + taskId);
-            getActivity().startService(
+            _context.startService(
                     _service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));
         }
 
@@ -760,13 +767,13 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            getActivity().startService(
+            _context.startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite, carrier, carrierName, trackingId));
         }
 
         @Override
         public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-            getActivity().startService(
+            _context.startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
                             carrier, carrierName, trackingId, taskId));
         }
@@ -785,7 +792,7 @@ public class TasksFragment extends WorkorderFragment {
     private CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
         @Override
         public void onOk(CustomField field, String value) {
-            getActivity().startService(
+            _context.startService(
                     _service.setCustomField(WEB_CHANGED, _workorder.getWorkorderId(), field.getCustomLabelId(), value));
         }
     };
@@ -796,14 +803,14 @@ public class TasksFragment extends WorkorderFragment {
     private ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            getActivity().startService(
+            _context.startService(
                     _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
                             carrier, carrierName, trackingId));
         }
 
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-            getActivity().startService(
+            _context.startService(
                     _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
                             carrier, carrierName, trackingId, taskId));
         }
@@ -822,7 +829,7 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
-            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+            _context.startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
         }
 
         @Override
@@ -835,7 +842,7 @@ public class TasksFragment extends WorkorderFragment {
 //        @Override
 //        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
 //                                         String trackingId) {
-//            getActivity().startService(
+//            _context.startService(
 //                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
 //                            carrier, null, trackingId));
 //            Log.v(TAG, "Method Stub: onAddShipmentDetails()");
@@ -844,7 +851,7 @@ public class TasksFragment extends WorkorderFragment {
 //        @Override
 //        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
 //                                         String trackingId, long taskId) {
-//            getActivity().startService(
+//            _context.startService(
 //                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
 //                            carrier, null, trackingId, taskId));
 //        }
@@ -857,7 +864,7 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onOk(String message) {
             Log.v(TAG, "On Ok");
-            getActivity().startService(
+            _context.startService(
                     _service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
 
         }
@@ -877,14 +884,14 @@ public class TasksFragment extends WorkorderFragment {
     private SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            Intent intent = new Intent(getActivity(), SignOffActivity.class);
+            Intent intent = new Intent(_context, SignOffActivity.class);
             intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
-            getActivity().startActivity(intent);
+            _context.startActivity(intent);
         }
 
         @Override
         public void signatureOnClick(SignatureTileView view, Signature signature) {
-            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder));
+            startActivity(SignatureDisplayActivity.startIntent(_context, signature.getSignatureId(), _workorder));
         }
     };
 
@@ -907,10 +914,10 @@ public class TasksFragment extends WorkorderFragment {
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                String packageName = getActivity().getPackageName();
+                String packageName = _context.getPackageName();
                 File externalPath = Environment.getExternalStorageDirectory();
                 new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + ISO8601.now() + ".png");
+                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
@@ -926,7 +933,7 @@ public class TasksFragment extends WorkorderFragment {
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 Intent intent = _service.confirmAssignment(WEB_CHANGED, _workorder.getWorkorderId(),
                         startDate, ISO8601.fromUTC(end));
-                getActivity().startService(intent);
+                _context.startService(intent);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -953,14 +960,14 @@ public class TasksFragment extends WorkorderFragment {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
+                    _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
                 } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
 
             } else {
                 _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                getActivity().startService(
+                _context.startService(
                         _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
             }
         }
@@ -976,7 +983,8 @@ public class TasksFragment extends WorkorderFragment {
             if (_service == null || isNew) {
                 _username = username;
                 _authToken = authToken;
-                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+                if (_context != null)
+                    _service = new WorkorderService(_context, username, authToken, _resultReceiver);
                 requestData(true);
             }
         }
@@ -993,9 +1001,41 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(getActivity());
+            AuthTopicService.requestAuthentication(_context);
         }
     };
+
+    private class TaskParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Task>> {
+        private boolean cached = false;
+
+        @Override
+        protected List<Task> doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
+            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+            cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
+            List<Task> tasks = new LinkedList<Task>();
+            try {
+                JsonArray array = new JsonArray(data);
+
+                for (int i = 0; i < array.size(); i++) {
+                    try {
+                        tasks.add(Task.fromJson(array.getJsonObject(i)));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return tasks;
+        }
+
+        @Override
+        protected void onPostExecute(List<Task> tasks) {
+            super.onPostExecute(tasks);
+            setTaskData(tasks, cached);
+        }
+    }
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
@@ -1006,39 +1046,24 @@ public class TasksFragment extends WorkorderFragment {
 
 			/*-			Tasks			-*/
             } else if (resultCode == WEB_GET_TASKS) {
-                // TODO populate
-                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                try {
-                    JsonArray array = new JsonArray(data);
-                    List<Task> tasks = new LinkedList<Task>();
-                    for (int i = 0; i < array.size(); i++) {
-                        try {
-                            tasks.add(Task.fromJson(array.getJsonObject(i)));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    setTaskData(tasks, resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                new TaskParseAsyncTask().executeEx(resultData);
             } else {
             }
         }
 
         @Override
         public Context getContext() {
-            return TasksFragment.this.getActivity();
+            return TasksFragment.this._context;
         }
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(getActivity());
+            AuthTopicService.requestAuthInvalid(_context);
             _username = null;
             _authToken = null;
             _service = null;
-            Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
+            Toast.makeText(_context, "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };
 

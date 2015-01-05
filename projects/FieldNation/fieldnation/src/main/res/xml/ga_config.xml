@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ga_sessionTimeout">300</integer>
+
+    <!-- Enable automatic Activity measurement -->
+    <bool name="ga_autoActivityTracking">true</bool>
+
+    <!--  The following value should be replaced with correct property id. -->
+    <string name="ga_trackingId">UA-3952637-1</string>
+
+    <screenName name="com.fieldnation.ui.workorder.MyWorkActivity">MyWorkActivity</screenName>
+    <screenName name="com.fieldnation.ui.market.MarketActivity">MarketActivity</screenName>
+    <screenName name="com.fieldnation.ui.workorder.WorkorderActivity">WorkorderActivity</screenName>
+    <screenName name="com.fieldnation.ui.MessageListActivity">MessageListActivity</screenName>
+    <screenName name="com.fieldnation.ui.NotificationListActivity">NotificationListActivity</screenName>
+    <screenName name="com.fieldnation.ui.payment.PaymentDetailActivity">PaymentDetailActivity</screenName>
+    <screenName name="com.fieldnation.ui.payment.PaymentListActivity">PaymentListActivity</screenName>
+</resources>

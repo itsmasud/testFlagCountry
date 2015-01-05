@@ -35,6 +35,7 @@ public class ReasonCoView extends RelativeLayout {
     private boolean _expires;
     private Calendar _expirationDate;
     private boolean _tacAccepted = false;
+    private boolean _reset = false;
 
     public ReasonCoView(Context context) {
         super(context);
@@ -82,7 +83,8 @@ public class ReasonCoView extends RelativeLayout {
         _listener = listener;
     }
 
-    public void setCounterOffer(String reason, boolean expires, String expirationDate) {
+    public void setCounterOffer(String reason, boolean expires, String expirationDate, boolean reset) {
+        _reset = true;
         _reason = reason;
         _expires = expires;
 
@@ -113,6 +115,11 @@ public class ReasonCoView extends RelativeLayout {
         }
         if (_expirationDate != null) {
             _expiresButton.setText(misc.formatDateTime(_expirationDate, false));
+        }
+
+        if (_reset) {
+            _reset = false;
+            _tacCheckBox.setChecked(false);
         }
 
     }

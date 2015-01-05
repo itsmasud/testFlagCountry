@@ -36,7 +36,7 @@ public class FileHelper {
         try {
             File tempfile = null;
 
-            if (data.getExtras().containsKey(MediaStore.EXTRA_OUTPUT)) {
+            if (data != null && data.getExtras() != null && data.getExtras().containsKey(MediaStore.EXTRA_OUTPUT)) {
                 Log.v(TAG, data.getParcelableExtra(MediaStore.EXTRA_OUTPUT).toString());
                 tempfile = new File(data.getParcelableExtra(MediaStore.EXTRA_OUTPUT).toString());
                 listener.fileReady(tempfile.getName(), tempfile);

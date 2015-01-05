@@ -19,7 +19,7 @@
             android:id="@+id/shipments_linearlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical" />
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"
@@ -31,12 +31,12 @@
             <Button
                 android:id="@+id/cancel_button"
                 style="?attr/dialogCancelButtonStyle"
-                android:text="@string/cancel" />
+                android:text="@string/btn_cancel" />
 
             <Button
                 android:id="@+id/add_button"
                 style="?attr/dialogOkButtonStyle"
-                android:text="@string/add" />
+                android:text="@string/btn_add" />
         </LinearLayout>
 
     </LinearLayout>

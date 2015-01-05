@@ -285,21 +285,33 @@ public class AuthTopicService extends Service {
     /*-             Topic API          -*/
     /*-********************************-*/
     private static void startService(Context context) {
+        if (context == null)
+            return;
+
         Intent intent = new Intent(context, AuthTopicService.class);
         context.startService(intent);
     }
 
     // function for client to subscribe to authentication events
     public static void subscribeAuthState(Context context, int resultCode, String tag, TopicReceiver topicReceiver) {
+        if (context == null)
+            return;
+        
         startService(context);
         TopicService.registerListener(context, resultCode, tag, TOPIC_AUTH_STATE, topicReceiver);
     }
 
     private static void subscribeAuthCommand(Context context, int resultCode, String tag, TopicReceiver topicReceiver) {
+        if (context == null)
+            return;
+
         TopicService.registerListener(context, resultCode, tag, TOPIC_AUTH_COMMAND, topicReceiver);
     }
 
     private static void dispatchNoNetwork(Context context) {
+        if (context == null)
+            return;
+
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_NO_NETWORK);
 
@@ -308,6 +320,9 @@ public class AuthTopicService extends Service {
 
     // internal
     private static void dispatchAuthFailed(Context context) {
+        if (context == null)
+            return;
+
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_FAILED);
 
@@ -316,6 +331,9 @@ public class AuthTopicService extends Service {
 
     // internal
     private static void dispatchAuthInvalid(Context context) {
+        if (context == null)
+            return;
+
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_INVALID);
 
@@ -323,6 +341,9 @@ public class AuthTopicService extends Service {
     }
 
     public static void dispatchAuthComplete(Context context) {
+        if (context == null)
+            return;
+
         startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_COMPLETE);
@@ -331,6 +352,9 @@ public class AuthTopicService extends Service {
     }
 
     public static void dispatchAuthCancelled(Context context) {
+        if (context == null)
+            return;
+
         startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_CANCELLED);
@@ -341,6 +365,9 @@ public class AuthTopicService extends Service {
 
     // internal
     private static void dispatchAuthComplete(Context context, String username, String authToken) {
+        if (context == null)
+            return;
+
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_COMPLETE);
         bundle.putString(BUNDLE_PARAM_AUTH_TOKEN, authToken);
@@ -351,6 +378,9 @@ public class AuthTopicService extends Service {
 
     //external
     public static void requestAuthRemove(Context context) {
+        if (context == null)
+            return;
+
         startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_REMOVE);
@@ -360,6 +390,9 @@ public class AuthTopicService extends Service {
 
     // external
     public static void requestAuthentication(Context context) {
+        if (context == null)
+            return;
+
         startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_REQUEST);
@@ -368,6 +401,9 @@ public class AuthTopicService extends Service {
     }
 
     public static void requestAuthInvalid(Context context) {
+        if (context == null)
+            return;
+
         startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_INVALID);

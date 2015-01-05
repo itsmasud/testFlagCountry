@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -149,6 +150,12 @@ public class DetailFragment extends WorkorderFragment {
         if (_workorder != null) {
             setWorkorder(_workorder, true);
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
     @Override
@@ -543,7 +550,7 @@ public class DetailFragment extends WorkorderFragment {
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || isNew)
+            if ((_service == null || isNew) && getActivity() != null)
                 _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
         }
 

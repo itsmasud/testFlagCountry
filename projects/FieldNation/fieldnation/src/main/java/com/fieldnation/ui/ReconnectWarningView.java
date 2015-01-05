@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.topics.TopicReceiver;
@@ -20,9 +21,7 @@ import com.fieldnation.topics.Topics;
  * Created by michael.carver on 12/22/2014.
  */
 public class ReconnectWarningView extends RelativeLayout {
-    private static final String TAG_ROOT = "ui.ReconnectWarningView";
-    private String TAG = ":";
-    private static Integer TAG_COUNT = 0;
+    private final String TAG = UniqueTag.makeTag("ui.ReconnectWarningView");
 
 
     // Ui
@@ -45,10 +44,6 @@ public class ReconnectWarningView extends RelativeLayout {
     }
 
     private void init() {
-        synchronized (TAG_COUNT) {
-            TAG = TAG_ROOT + ":" + TAG_COUNT;
-            TAG_COUNT++;
-        }
         LayoutInflater.from(getContext()).inflate(R.layout.view_reconnect, this);
 
         if (isInEditMode())

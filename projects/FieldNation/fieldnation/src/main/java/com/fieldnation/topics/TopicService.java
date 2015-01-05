@@ -189,6 +189,7 @@ public class TopicService extends Service {
     public static void delete(Context context, String tag) {
         if (context == null)
             return;
+
         Intent intent = new Intent(context, TopicService.class);
 
         intent.setAction(TopicConstants.ACTION_DELETE_CLIENT);
@@ -197,6 +198,9 @@ public class TopicService extends Service {
     }
 
     public static void dispatchTopic(Context context, String topicId, Bundle parcel) {
+        if (context == null)
+            return;
+
         dispatchTopic(context, topicId, parcel, true);
     }
 

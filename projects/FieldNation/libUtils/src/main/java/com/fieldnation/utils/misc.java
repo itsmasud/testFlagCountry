@@ -3,6 +3,7 @@ package com.fieldnation.utils;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -10,6 +11,7 @@ import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.view.View;
+import android.widget.ScrollView;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -35,6 +37,12 @@ public class misc {
 
     // private static NumberFormat _normalNumber =
     // NumberFormat.getIntegerInstance();
+
+    public static boolean isViewVisisble(ScrollView scrollView, View childView) {
+        Rect scrollBounds = new Rect();
+        scrollView.getHitRect(scrollBounds);
+        return childView.getLocalVisibleRect(scrollBounds);
+    }
 
     public static Bitmap getViewBitmap(View view) {
         int width = view.getWidth();

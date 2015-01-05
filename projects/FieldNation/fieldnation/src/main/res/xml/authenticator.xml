@@ -3,5 +3,5 @@
     android:accountPreferences="@xml/pref_account"
     android:accountType="com.fieldnation"
     android:icon="@drawable/ic_launcher"
-    android:label="@string/fieldnation_provider_name"
+    android:label="@string/auth_account_name"
     android:smallIcon="@drawable/ic_launcher" />

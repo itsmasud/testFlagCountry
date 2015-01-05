@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
@@ -22,7 +23,7 @@ import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 
 public class NotificationActionBarView extends RelativeLayout {
-    private static final String TAG = "ui.NotificationActionBarView";
+    private final String TAG = UniqueTag.makeTag("ui.NotificationActionBarView");
 
     // UI
     private TextView _countTextView;

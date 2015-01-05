@@ -1,6 +1,6 @@
 package com.fieldnation.ui.dialog;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,6 +44,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private Listener _listener;
     private long _taskId = 0;
     private String _title;
+    private boolean _clear = false;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -119,6 +119,18 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
         if (_title != null)
             _titleTextView.setText(_title);
+
+        if (_clear) {
+            _clear = false;
+            _carrierEditText.setText("");
+            _descriptionEditText.setText("");
+            _trackingIdEditText.setText("");
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
     }
 
     public void setListener(Listener listener) {
@@ -132,6 +144,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     public void show(CharSequence title, long taskId) {
         _title = (String) title;
         _taskId = taskId;
+        _clear = true;
         show();
     }
 

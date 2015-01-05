@@ -11,6 +11,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
@@ -25,6 +26,7 @@ import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
 import com.fieldnation.ui.workorder.detail.TasksFragment;
+import com.fieldnation.utils.Stopwatch;
 
 import java.util.List;
 
@@ -416,20 +418,20 @@ public class WorkorderActivity extends AuthActionBarActivity {
     /*-*****************************-*/
     /*-			Web Events			-*/
     /*-*****************************-*/
+    private class WorkorderParseAsyncTask extends AsyncTaskEx<Bundle, Object, Workorder> {
+        private boolean cached;
 
-    private WebResultReceiver _rpcReceiver = new WebResultReceiver(new Handler()) {
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "onSuccess()");
-            Log.v(TAG, resultData.toString());
-
+        protected Workorder doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
+            Workorder workorder = null;
             try {
                 String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
                 Log.v(TAG, data);
-                _workorder = Workorder.fromJson(new JsonObject(data));
+                workorder = Workorder.fromJson(new JsonObject(data));
 
-                _workorder.addListener(_workorder_listener);
-                populateUi(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
+                workorder.addListener(_workorder_listener);
+                cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
                 Log.v(TAG, "Have workorder");
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -438,6 +440,23 @@ public class WorkorderActivity extends AuthActionBarActivity {
                     getData(false);
                 }
             }
+            return workorder;
+        }
+
+        @Override
+        protected void onPostExecute(Workorder workorder) {
+            super.onPostExecute(workorder);
+            if (workorder != null) {
+                _workorder = workorder;
+                populateUi(cached);
+            }
+        }
+    }
+
+    private WebResultReceiver _rpcReceiver = new WebResultReceiver(new Handler()) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            new WorkorderParseAsyncTask().executeEx(resultData);
         }
 
         @Override

@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.server.ClockReceiver;
@@ -19,9 +19,7 @@ import com.fieldnation.topics.TopicShutdownReciever;
  * Created by michael.carver on 12/5/2014.
  */
 public abstract class AuthFragmentActivity extends FragmentActivity {
-    private static final String TAG_ROOT = "ui.AuthFragmentActivity";
-    private String TAG = ":";
-    private static Integer TAG_COUNT = 0;
+    private final String TAG = UniqueTag.makeTag("ui.AuthFragmentActivity");
 
     private static final int AUTH_SERVICE = 1;
 
@@ -35,14 +33,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-    public AuthFragmentActivity() {
-        super();
-        synchronized (TAG_COUNT) {
-            TAG = TAG_ROOT + ":" + TAG_COUNT;
-            TAG_COUNT++;
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

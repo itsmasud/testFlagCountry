@@ -7,6 +7,10 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.rpc.server.DataCacheNode;
 import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.Ws;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Logger;
+import com.google.android.gms.analytics.Tracker;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -26,26 +30,52 @@ public class GlobalState extends Application {
 //    private long _waitTime = 5000;
 //    private long _lastDelayed = 0;
 
+    private Tracker _tracker;
+
     public GlobalState() {
         super();
 
         Ws.USE_HTTPS = BuildConfig.USE_HTTPS;
     }
 
+    public synchronized Tracker getTracker() {
+
+        if (_tracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
+            analytics.enableAutoActivityReports(this);
+            analytics.setLocalDispatchPeriod(60);
+            analytics.setDryRun(false);
+            _tracker = analytics.newTracker(R.xml.ga_config);
+            _tracker.enableAdvertisingIdCollection(true);
+            _tracker.enableAutoActivityTracking(true);
+            _tracker.enableExceptionReporting(true);
+            //_tracker.setAppName("AndroidApp");
+
+        }
+        return _tracker;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-
-//        accountType = getString(R.string.accounttype);
-//        authority = getString(R.string.authority);
         DataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
 
         ExpenseCategories.getInstance(this);
 
+        getTracker();
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepalive", "false");
         }
+
+        Tracker t = getTracker();
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("AndroidTest")
+                .setAction("AppStart")
+                .setLabel("AppStarted")
+                .build());
     }
 
     private long getNextDelay() {

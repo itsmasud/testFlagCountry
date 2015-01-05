@@ -131,7 +131,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
 
     public Intent closingNotes(int resultCode, long workorderId, String notes) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/closing-notes", null,
-                "notes=" + misc.escapeForURL(notes), "application/x-www-form-urlencoded", false);
+                "notes=" + (notes == null ? "" : misc.escapeForURL(notes)), "application/x-www-form-urlencoded", false);
     }
 
     public Intent acknowledgeHold(int resultCode, long workorderId) {
@@ -145,7 +145,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     // custom fields
     public Intent setCustomField(int resultCode, long workorderId, long customFieldId, String value) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/custom-fields/" + customFieldId, null,
-                "value=" + value, "application/x-www-form-urlencoded", false);
+                "value=" + misc.escapeForURL(value), "application/x-www-form-urlencoded", false);
     }
 
     // messages
@@ -174,7 +174,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 resultCode,
                 "/api/rest/v1/workorder/" + workorderId + "/expense",
                 null,
-                "description=" + misc.escapeForURL(description) + "&price=" + price + "&category_id=" + category.getId(),
+                "description=" + misc.escapeForURL(description)
+                        + "&price=" + price
+                        + "&category_id=" + category.getId(),
                 "application/x-www-form-urlencoded", false);
     }
 
@@ -189,7 +191,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     // time
     public Intent logTime(int resultCode, long workorderId, long startDate, long endDate) {
         return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/log", null,
-                "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate),
+                "startDate=" + ISO8601.fromUTC(startDate)
+                        + "&endDate=" + ISO8601.fromUTC(endDate),
                 "application/x-www-form-urlencoded", false);
     }
 
@@ -198,7 +201,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 resultCode,
                 "api/rest/v1/workorder/" + workorderId + "/log",
                 null,
-                "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&noOfDevices=" + numberOfDevices,
+                "startDate=" + ISO8601.fromUTC(startDate)
+                        + "&endDate=" + ISO8601.fromUTC(endDate)
+                        + "&noOfDevices=" + numberOfDevices,
                 "application/x-www-form-urlencoded", false);
     }
 
@@ -207,7 +212,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 resultCode,
                 "api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId,
                 null,
-                "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate),
+                "startDate=" + ISO8601.fromUTC(startDate)
+                        + "&endDate=" + ISO8601.fromUTC(endDate),
                 "application/x-www-form-urlencoded", false);
     }
 
@@ -216,12 +222,15 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 resultCode,
                 "api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId,
                 null,
-                "startDate=" + ISO8601.fromUTC(startDate) + "&endDate=" + ISO8601.fromUTC(endDate) + "&noOfDevices=" + numberOfDevices,
+                "startDate=" + ISO8601.fromUTC(startDate)
+                        + "&endDate=" + ISO8601.fromUTC(endDate)
+                        + "&noOfDevices=" + numberOfDevices,
                 "application/x-www-form-urlencoded", false);
     }
 
     public Intent deleteLogTime(int resultCode, long workorderId, long loggedHoursId) {
-        return httpDelete(resultCode, "api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId,
+        return httpDelete(resultCode,
+                "api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId,
                 "", false);
     }
 
@@ -231,8 +240,10 @@ public class WorkorderService extends WebService implements WebServiceConstants 
         return httpPost(resultCode, "api/rest/v1/workorder/" + workorderId + "/shipments", null,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName))
-                        + "&tracking_number=" + trackingNumber, "application/x-www-form-urlencoded", false);
+                        + "&carrier=" + carrier
+                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber),
+                "application/x-www-form-urlencoded", false);
     }
 
     public Intent addShipmentDetails(int resultCode, long workorderId, String description, boolean isToSite,
@@ -243,8 +254,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 null,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName))
-                        + "&tracking_number=" + trackingNumber
+                        + "&carrier=" + carrier
+                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber)
                         + "&task_id=" + taskId,
                 "application/x-www-form-urlencoded", false);
     }
@@ -259,7 +271,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 resultCode,
                 "api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId,
                 null,
-                "description=" + misc.escapeForURL(description) + "&direction=" + (isToSite ? "to_site" : "from_site") + "&carrier=" + carrier + (carrierName == null ? "" : ("&carrier_name=" + carrierName)) + "&tracking_number=" + trackingNumber,
+                "description=" + misc.escapeForURL(description)
+                        + "&direction=" + (isToSite ? "to_site" : "from_site")
+                        + "&carrier=" + carrier
+                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber),
                 "application/x-www-form-urlencoded", false);
     }
 
@@ -420,20 +436,10 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                                     PendingIntent notificationIntent) {
         if (deliverableSlotId <= 0) {
             return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables",
-                    null,
-                    "file",
-                    localFilename,
-                    null,
-                    null,
-                    notificationIntent);
+                    null, "file", localFilename, null, null, notificationIntent);
         }
         return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
-                null,
-                "file",
-                localFilename,
-                null,
-                null,
-                notificationIntent);
+                null, "file", localFilename, null, null, notificationIntent);
     }
 
     public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, Intent data, PendingIntent notificationIntent) {

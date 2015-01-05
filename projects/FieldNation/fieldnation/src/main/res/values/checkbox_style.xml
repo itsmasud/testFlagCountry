@@ -5,7 +5,7 @@
         <item name="android:drawableLeft">@drawable/ic_checkbox_check</item>
         <item name="android:button">@null</item>
         <item name="android:background">@drawable/task_border</item>
-        <item name="android:layout_marginBottom">5dp</item>
+        <!--<item name="android:layout_marginBottom">5dp</item>-->
         <item name="android:padding">8dp</item>
     </style>
 

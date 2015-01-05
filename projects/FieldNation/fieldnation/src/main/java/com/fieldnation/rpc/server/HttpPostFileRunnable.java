@@ -13,6 +13,7 @@ import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.Topics;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,9 +57,11 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
         _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
 
         if (_bundle.containsKey(KEY_PARAM_FILE_DATA_INTENT)) {
+            Log.v(TAG, "intent");
             Intent data = _bundle.getParcelable(KEY_PARAM_FILE_DATA_INTENT);
             FileHelper.getFileFromActivityResult(_context, data, this);
         } else {
+            Log.v(TAG, "local");
             String filename = _bundle.getString(KEY_PARAM_FILE_NAME);
             File f = new File(filename);
             fileReady(f.getName(), f);
@@ -72,6 +75,9 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
         String fieldName = _bundle.getString(KEY_PARAM_FILE_FIELD_NAME);
         String fieldMapString = _bundle.getString(KEY_PARAM_FIELD_MAP);
         Map<String, String> fields = null;
+
+        Log.v(TAG, "Uploading: " + path + ":" + filename);
+        Topics.dispatchFileUploadStart(_context, path, filename);
 
         if (fieldMapString != null) {
             try {
@@ -105,6 +111,7 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                 _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                 _bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
                 _noteBuilder.setContentText("Failed!");
+                Topics.dispatchFileUploadError(_context, path, filename, result.getResponseMessage());
                 _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
             } else {
                 try {
@@ -116,9 +123,11 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                     DataCache.store(_context, _auth, _bundle, _bundle.getByteArray(KEY_RESPONSE_DATA),
                             _bundle.getInt(KEY_RESPONSE_CODE));
                     Log.v(TAG, "web request success");
+                    Topics.dispatchFileUploadFinish(_context, path, filename);
                     _noteBuilder.setContentText("Success!");
                     _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     _noteBuilder.setContentText("Failed!");
                     _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
                     try {
@@ -126,20 +135,25 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                         _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                         _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                         _bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                        Topics.dispatchFileUploadError(_context, path, filename, result.getResponseMessage());
                     } catch (Exception ex1) {
+                        ex1.printStackTrace();
                         // sad path
                         _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
                         _bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+                        Topics.dispatchFileUploadError(_context, path, filename, ex1.getMessage());
                     }
                 }
             }
 
         } catch (Exception ex) {
+            ex.printStackTrace();
             _noteBuilder.setContentText("Failed!");
             _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
             Log.v(TAG, "web request fail");
             _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
             _bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());
+            Topics.dispatchFileUploadError(_context, path, filename, ex.getMessage());
             if (result != null) {
                 _bundle.putLong(KEY_RESPONSE_CODE, result.getResponseCode());
             }

@@ -149,7 +149,7 @@
                 style="@style/WorkorderDetail_Field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ljksdkjf lksd jflskdfj lksdjf lasiefj sldkfsel slekjf lskl;skejf liksgfrjlsgfljkhdrfglkijhdsrfg,j.h dzfg, jh  lksg ldsfhfg lksrjgfflis jfglks hlkshjgfr kl lwrgf lisrjgf,lkrsngloidsghewl lk" />
+                android:text="@string/placeholder_paragraph" />
 
             <View
                 android:id="@+id/time_divider"
@@ -161,7 +161,7 @@
                 style="@style/WorkorderDetail_FieldTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Time Logged" />
+                android:text="@string/time_logged" />
 
             <LinearLayout
                 android:id="@+id/time_list"
@@ -219,7 +219,7 @@
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginRight="16dp"
-                    android:text="REJECT" />
+                    android:text="@string/btn_reject" />
 
                 <Button
                     android:id="@+id/signoff_button"
@@ -229,7 +229,7 @@
                     android:layout_gravity="right"
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="SIGN OFF" />
+                    android:text="@string/btn_sign_off" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

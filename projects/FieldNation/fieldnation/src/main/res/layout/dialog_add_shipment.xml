@@ -33,8 +33,7 @@
                 android:gravity="center_vertical"
                 android:hint="@string/tracking_id"
                 android:imeOptions="actionNext"
-                android:inputType="text"
-                android:paddingLeft="10dp" />
+                android:inputType="text"/>
 
             <Spinner
                 android:id="@+id/carrier_spinner"
@@ -110,12 +109,12 @@
             <Button
                 android:id="@+id/cancel_button"
                 style="?attr/dialogCancelButtonStyle"
-                android:text="@string/cancel" />
+                android:text="@string/btn_cancel" />
 
             <Button
                 android:id="@+id/ok_button"
                 style="?attr/dialogOkButtonStyle"
-                android:text="@string/save" />
+                android:text="@string/btn_save" />
         </LinearLayout>
 
     </LinearLayout>

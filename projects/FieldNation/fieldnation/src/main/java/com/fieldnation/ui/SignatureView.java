@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.shortstraw.Point;
@@ -209,6 +210,75 @@ public class SignatureView extends View {
         populateUi();
     }
 
+    private class SignatureParseAsyncTask extends AsyncTaskEx<String, Object, List<Shape>> {
+
+        @Override
+        protected List<Shape> doInBackground(String... params) {
+            try {
+                JsonArray signature = new JsonArray(params[0]);
+
+                Point lp = null;
+                for (int i = 0; i < signature.size(); i++) {
+                    JsonObject seg = signature.getJsonObject(i);
+
+                    Point l = new Point(seg.getFloat("lx"), seg.getFloat("ly"), 0);
+                    Point m = new Point(seg.getFloat("mx"), seg.getFloat("my"), 0);
+
+                    if (lp == null) {
+                        _shape.add(l);
+                        _shape.add(m);
+                        lp = m;
+                    } else if ((int) lp.x == (int) l.x && (int) lp.y == (int) l.y) {
+                        _shape.add(m);
+                        lp = m;
+                    } else {
+                        _shape = new Shape();
+                        _shapes.add(_shape);
+                        _shape.add(l);
+                        _shape.add(m);
+                        lp = m;
+                    }
+                }
+
+                float maxX = Float.MIN_VALUE;
+                float maxY = Float.MIN_VALUE;
+                float minX = Float.MAX_VALUE;
+                float minY = Float.MAX_VALUE;
+                for (int i = 0; i < _shapes.size(); i++) {
+                    Shape s = _shapes.get(i);
+                    maxX = Math.max(maxX, s.getMaxX());
+                    maxY = Math.max(maxY, s.getMaxY());
+                    minX = Math.min(minX, s.getMinX());
+                    minY = Math.min(minY, s.getMinY());
+                }
+
+                _xOff = minX;
+                _yOff = minY;
+
+                _scale = getMeasuredWidth() / (maxX - minX);
+                if (getMeasuredHeight() / (maxY - minY) < _scale)
+                    _scale = getMeasuredHeight() / (maxY - minY);
+
+                float height = _scale * (maxY - minY);
+                float width = _scale * (maxX - minX);
+
+                _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
+                _xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
+
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Shape> shapes) {
+            super.onPostExecute(shapes);
+            invalidate();
+        }
+    }
+
     private void populateUi() {
         if (_json == null)
             return;
@@ -217,61 +287,62 @@ public class SignatureView extends View {
             return;
 
         clear();
-        try {
-            JsonArray signature = new JsonArray(_json);
-
-            Point lp = null;
-            for (int i = 0; i < signature.size(); i++) {
-                JsonObject seg = signature.getJsonObject(i);
-
-                Point l = new Point(seg.getFloat("lx"), seg.getFloat("ly"), 0);
-                Point m = new Point(seg.getFloat("mx"), seg.getFloat("my"), 0);
-
-                if (lp == null) {
-                    _shape.add(l);
-                    _shape.add(m);
-                    lp = m;
-                } else if ((int) lp.x == (int) l.x && (int) lp.y == (int) l.y) {
-                    _shape.add(m);
-                    lp = m;
-                } else {
-                    _shape = new Shape();
-                    _shapes.add(_shape);
-                    _shape.add(l);
-                    _shape.add(m);
-                    lp = m;
-                }
-            }
-
-            float maxX = Float.MIN_VALUE;
-            float maxY = Float.MIN_VALUE;
-            float minX = Float.MAX_VALUE;
-            float minY = Float.MAX_VALUE;
-            for (int i = 0; i < _shapes.size(); i++) {
-                Shape s = _shapes.get(i);
-                maxX = Math.max(maxX, s.getMaxX());
-                maxY = Math.max(maxY, s.getMaxY());
-                minX = Math.min(minX, s.getMinX());
-                minY = Math.min(minY, s.getMinY());
-            }
-
-            _xOff = minX;
-            _yOff = minY;
-
-            _scale = getMeasuredWidth() / (maxX - minX);
-            if (getMeasuredHeight() / (maxY - minY) < _scale)
-                _scale = getMeasuredHeight() / (maxY - minY);
-
-            float height = _scale * (maxY - minY);
-            float width = _scale * (maxX - minX);
-
-            _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
-            _xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
-
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        new SignatureParseAsyncTask().executeEx(_json);
+//        try {
+//            JsonArray signature = new JsonArray(_json);
+//
+//            Point lp = null;
+//            for (int i = 0; i < signature.size(); i++) {
+//                JsonObject seg = signature.getJsonObject(i);
+//
+//                Point l = new Point(seg.getFloat("lx"), seg.getFloat("ly"), 0);
+//                Point m = new Point(seg.getFloat("mx"), seg.getFloat("my"), 0);
+//
+//                if (lp == null) {
+//                    _shape.add(l);
+//                    _shape.add(m);
+//                    lp = m;
+//                } else if ((int) lp.x == (int) l.x && (int) lp.y == (int) l.y) {
+//                    _shape.add(m);
+//                    lp = m;
+//                } else {
+//                    _shape = new Shape();
+//                    _shapes.add(_shape);
+//                    _shape.add(l);
+//                    _shape.add(m);
+//                    lp = m;
+//                }
+//            }
+//
+//            float maxX = Float.MIN_VALUE;
+//            float maxY = Float.MIN_VALUE;
+//            float minX = Float.MAX_VALUE;
+//            float minY = Float.MAX_VALUE;
+//            for (int i = 0; i < _shapes.size(); i++) {
+//                Shape s = _shapes.get(i);
+//                maxX = Math.max(maxX, s.getMaxX());
+//                maxY = Math.max(maxY, s.getMaxY());
+//                minX = Math.min(minX, s.getMinX());
+//                minY = Math.min(minY, s.getMinY());
+//            }
+//
+//            _xOff = minX;
+//            _yOff = minY;
+//
+//            _scale = getMeasuredWidth() / (maxX - minX);
+//            if (getMeasuredHeight() / (maxY - minY) < _scale)
+//                _scale = getMeasuredHeight() / (maxY - minY);
+//
+//            float height = _scale * (maxY - minY);
+//            float width = _scale * (maxX - minX);
+//
+//            _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
+//            _xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
+//
+//
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
 
     }
 

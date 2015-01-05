@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -211,6 +212,38 @@ public class NotificationFragment extends WorkorderFragment {
         }
     };
 
+    private class NotificationParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Notification>> {
+
+        @Override
+        protected List<Notification> doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
+
+            Log.v(TAG, "onSuccess2");
+            List<Notification> list = new LinkedList<>();
+            try {
+                JsonArray ja = new JsonArray(new String(
+                        resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
+
+                for (int i = 0; i < ja.size(); i++) {
+                    JsonObject obj = ja.getJsonObject(i);
+                    list.add(Notification.fromJson(obj));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return list;
+        }
+
+        @Override
+        protected void onPostExecute(List<Notification> notifications) {
+            super.onPostExecute(notifications);
+            if (notifications != null) {
+                _notes = notifications;
+                populateUi();
+            }
+        }
+    }
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
@@ -218,21 +251,7 @@ public class NotificationFragment extends WorkorderFragment {
             Log.v(TAG, "onSuccess");
 
             if (resultCode == WEB_LIST_NOTIFICATIONS) {
-                Log.v(TAG, "onSuccess2");
-                try {
-                    JsonArray ja = new JsonArray(new String(
-                            resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-                    _notes = new LinkedList<Notification>();
-
-                    for (int i = 0; i < ja.size(); i++) {
-                        JsonObject obj = ja.getJsonObject(i);
-                        _notes.add(Notification.fromJson(obj));
-                    }
-
-                    populateUi();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                new NotificationParseAsyncTask().executeEx(resultData);
             } else {
             }
         }

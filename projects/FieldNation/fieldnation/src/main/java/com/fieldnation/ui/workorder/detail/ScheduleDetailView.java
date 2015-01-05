@@ -133,7 +133,7 @@ public class ScheduleDetailView extends RelativeLayout {
             setClickable(false);
         }
 
-        if (_workorder.getPay().isPerDeviceRate()) {
+        if (_workorder.getPay() != null && _workorder.getPay().isPerDeviceRate()) {
             enableDevices(true);
             _devicesTextView.setText(_loggedWork.getNoOfDevices() + "");
         } else {

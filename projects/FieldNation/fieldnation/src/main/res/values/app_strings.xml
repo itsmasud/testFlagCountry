@@ -6,23 +6,45 @@
     <!-- /connection info -->
     <string name="default_username">hexixtech</string>
 
-    <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
-    <string name="pull_to_refresh_release_label">Release to refresh...</string>
-    <string name="pull_to_refresh_refreshing_label">Loading...</string>
-    <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
-
     <!-- general strings -->
-    <string name="hello_world">Hello world!</string>
+    <string name="placeholder_word">NA</string>
+    <string name="placeholder_phrase">Should not see this.</string>
+    <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays.</string>
+    <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
+    <string name="placeholder_date_short">10/20/1963</string>
+
     <string name="activity_login_title">Field Nation Login</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="login">Login</string>
-    <string name="settings">Settings</string>
-    <string name="fieldnation_provider_name">Field Nation</string>
-    <string name="refresh">Refresh</string>
-    <string name="money">$</string>
-    <string name="error">ERROR!</string>
-    <string name="could_not_load_payment">Could not load payment!</string>
+    <string name="activity_login_username">Username</string>
+    <string name="activity_login_password">Password</string>
+    <string name="activity_login_button">LOGIN</string>
+
+    <string name="activity_settings_title">Settings</string>
+    <string name="auth_account_name">Field Nation</string>
+
+    <string name="btn_ok">OK</string>
+    <string name="btn_add">ADD</string>
+    <string name="btn_send">SEND</string>
+    <string name="btn_save">SAVE</string>
+    <string name="btn_done">Done</string>
+    <string name="btn_clear">Clear</string>
+    <string name="btn_cancel">CANCEL</string>
+    <string name="btn_send_counter">SEND COUNTER</string>
+    <string name="btn_confirm">CONFIRM</string>
+    <string name="btn_never">Never</string>
+    <string name="btn_closing_notes">Closing Notes</string>
+    <string name="btn_mark_completed">Mark Completed</string>
+    <string name="btn_acknowledge_hold">Acknowledge Hold</string>
+    <string name="btn_check_in">Check In</string>
+    <string name="btn_check_out">Check Out</string>
+    <string name="btn_reject">REJECT</string>
+    <string name="btn_sign_off">SIGN OFF</string>
+
+
+    <string name="time_logged">Time Logged</string>
+    <string name="confirm">Confirm</string>
+    <string name="request_workorder">Request Work Order</string>
+    <string name="when_does_this_request_expire">When does this request expire?</string>
+    <string name="closing_notes">Closing Notes</string>
     <string name="estimated">Estimated</string>
     <string name="work_orders">Work Orders</string>
     <string name="processing">Processing</string>
@@ -38,13 +60,11 @@
     <string name="shipment_description">Shipment Description</string>
     <string name="shipping_to_site">Shipping to site</string>
     <string name="shipping_from_size">Shipping from site</string>
-    <string name="add">ADD</string>
     <string name="travel_time">Travel Time</string>
     <string name="on_site_work">On Site Work</string>
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="number_of_devices">Number of Devices</string>
-    <string name="ok">OK</string>
     <string name="amount">Amount</string>
     <string name="description">Description</string>
     <string name="by">by</string>
@@ -64,7 +84,6 @@
     <string name="my_additional_files">My Additional Files</string>
     <string name="upload_file">Upload File</string>
     <string name="status_colon">Status: </string>
-    <string name="send">SEND</string>
     <string name="continue_the_conversation">Continue the conversation...</string>
     <string name="start_the_conversation">Start the conversation...</string>
     <string name="pending">...pending</string>
@@ -72,9 +91,7 @@
     <string name="shipment">Shipment</string>
     <string name="schedule">Schedule</string>
     <string name="work_performed_colon">Work Performed: </string>
-    <string name="closing_notes">Closing Notes</string>
     <string name="enter_closing_notes_here">Enter closing notes here...</string>
-    <string name="save">SAVE</string>
     <string name="request_work">Request Work</string>
     <string name="accept_work">Accept Work</string>
     <string name="counter_offer">Counter Offer</string>
@@ -100,8 +117,6 @@
     <string name="edit">Edit</string>
     <string name="uploading">Uploading...</string>
     <string name="deleting">Deleting...</string>
-    <string name="done">Done</string>
-    <string name="clear">Clear</string>
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="departure_date_and_time_colon">Departure Date and Time:</string>
     <string name="tap_to_set_a_time">Tap to set a time</string>
@@ -114,12 +129,10 @@
     <string name="add_expense_to_counter_offer">Add Expense to Counter Offer</string>
     <string name="add_another_expense">Add Another Expense</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
-    <string name="reason_for_request">Reason For Request</string>
+    <string name="reason_for_request">Reason For Request (required)</string>
     <string name="delete_counter_if_not_accepted_by">Delete counter of not accepted by</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>
-    <string name="cancel">CANCEL</string>
-    <string name="send_counter">SEND COUNTER</string>
     <string name="pay_rate_basis">Pay Rate Basis</string>
     <string name="hourly">Hourly</string>
     <string name="blended">Blended</string>
@@ -132,15 +145,9 @@
     <string name="between">Between</string>
     <string name="and">and</string>
     <string name="offer_expires_colon">Offer Expires:</string>
-    <string name="never">Never</string>
-    <string name="confirm">CONFIRM</string>
     <string name="tasks">Tasks</string>
     <string name="completed_devices_colon">Completed Devices:</string>
     <string name="device_count">Device Count</string>
-    <string name="mark_completed">Mark Completed</string>
-    <string name="check_in">Check In</string>
-    <string name="check_out">Check Out</string>
-    <string name="acknowledge_hold">Acknowledge Hold</string>
     <string name="tip_colon_space">Tip: </string>
     <string name="counter_offer_schedule">Counter Offer Schedule</string>
     <string name="please_change_the_schedule_or_tap_cancel">Please change the schedule or tap Cancel</string>
@@ -148,6 +155,10 @@
     <string name="devices">Devices</string>
 
     <!-- /general strings -->
+
+    <!-- symbols -->
+    <string name="symbol_money">$</string>
+    <!-- /symbols -->
 
 
     <!-- main activity strings -->
@@ -181,13 +192,13 @@
 
     <!-- my work categories -->
     <string name="routed">Routed</string>
-    <string name="my_work_category1">In Progress</string>
-    <string name="my_work_category2">Assigned</string>
-    <string name="my_work_category3">Completed</string>
-    <string name="my_work_category4">Canceled</string>
-    <string name="my_work_category5">In Review</string>
-    <string name="my_work_category6">Approved</string>
-    <string name="my_work_category7">Paid</string>
+    <string name="in_progress">In Progress</string>
+    <string name="assigned">Assigned</string>
+    <string name="completed">Completed</string>
+    <string name="canceled">Canceled</string>
+    <string name="in_review">In Review</string>
+    <string name="approved">Approved</string>
+    <string name="paid">Paid</string>
 
 
     <!-- market categories -->

@@ -94,7 +94,8 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
         }
         _noTimeTextView.setVisibility(View.GONE);
 
-        enableDevices(_workorder.getPay().isPerDeviceRate());
+        if (_workorder != null && _workorder.getPay() != null)
+            enableDevices(_workorder.getPay().isPerDeviceRate());
 
         _logList.removeAllViews();
         for (int i = 0; i < logs.length; i++) {

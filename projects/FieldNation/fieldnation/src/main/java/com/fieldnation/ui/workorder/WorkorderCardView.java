@@ -73,7 +73,7 @@ public class WorkorderCardView extends RelativeLayout {
     private TextView _moneySymbolTextView;
     private TextView _paymentTextView;
     private TextView _basisTextView;
-    private AutoResizeTextButton _actionButton;
+    private Button _actionButton;
 
     // loading layout
     private RelativeLayout _loadingLayout;
@@ -119,8 +119,8 @@ public class WorkorderCardView extends RelativeLayout {
         // not interested
         /*-_notInterestedLayout = (RelativeLayout) findViewById(R.id.notinterested_layout);-*/
         /* _backImageView = (ImageView) findViewById(R.id.back_imageview); */
-		/* _backImageView.setOnClickListener(_back_onClick); */
-		/* _backImageView.setClickable(false); */
+        /* _backImageView.setOnClickListener(_back_onClick); */
+        /* _backImageView.setClickable(false); */
 		/*
 		 * _notInterestedButtonLayout = (LinearLayout)
 		 * findViewById(R.id.notinterested_button_layout);
@@ -166,9 +166,10 @@ public class WorkorderCardView extends RelativeLayout {
         _basisTextView = (TextView) findViewById(R.id.basis_textview);
         _moneySymbolTextView = (TextView) findViewById(R.id.moneysymbol_textview);
 
-        _actionButton = (AutoResizeTextButton) findViewById(R.id.action_button);
+        _actionButton = (Button) findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_actionButton_onClick);
-        _actionButton.setMinTextSize(1F);
+        //_actionButton.setEnabled(false);
+        //_actionButton.setMinTextSize(1F);
 
         // loading layout
         _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);

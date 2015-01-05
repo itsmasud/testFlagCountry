@@ -105,7 +105,7 @@ public class Workorder implements Parcelable {
     @Json(name = "isGpsRequired")
     private Boolean _isGpsRequired;
     @Json(name = "isRemoteWork")
-    private Integer _isRemoteWork;
+    private Boolean _isRemoteWork;
     @Json(name = "isRequest")
     private Boolean _isRequest;
     @Json(name = "isRequestedByProvider")
@@ -179,7 +179,7 @@ public class Workorder implements Parcelable {
     @Json(name = "workorderId")
     private Long _workorderId;
     @Json(name = "workorderPenaltyInfo")
-    private WorkorderPenaltyInfo[] _workorderPenaltyInfo;
+    private JsonObject[] _workorderPenaltyInfo;
 
     public Workorder() {
     }
@@ -363,7 +363,7 @@ public class Workorder implements Parcelable {
         return _isGpsRequired;
     }
 
-    public Integer getIsRemoteWork() {
+    public Boolean getIsRemoteWork() {
         return _isRemoteWork;
     }
 
@@ -511,7 +511,7 @@ public class Workorder implements Parcelable {
         return _workorderId;
     }
 
-    public WorkorderPenaltyInfo[] getWorkorderPenaltyInfo() {
+    public JsonObject[] getWorkorderPenaltyInfo() {
         return _workorderPenaltyInfo;
     }
 
@@ -560,11 +560,14 @@ public class Workorder implements Parcelable {
     private static final int[] _STATUS_LOOKUP_TABLE = {
             R.drawable.card_status_white, R.drawable.card_status_orange,
             R.drawable.card_status_green, R.drawable.card_status_gray};
+
     private static final int[] _STATUS_TEXT_TABLE = {
             R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
             R.color.woCardStatusLabel3, R.color.woCardStatusLabel4};
+
     private static final int[] _STATUS_BUTTON_FG = {R.color.btn_white_fg,
             R.color.btn_orange_fg, R.color.btn_green_fg, R.color.btn_gray_fg};
+
     private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_white,
             R.drawable.btn_orange, R.drawable.btn_green, R.drawable.btn_white};
 
@@ -612,7 +615,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canCounterOffer() {
-        return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE;
+        return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE && !isBundle();
     }
 
     public boolean canComplete() {
@@ -706,6 +709,12 @@ public class Workorder implements Parcelable {
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN
                 || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
                 || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
+    }
+
+    public boolean canAcceptSignature() {
+        WorkorderStatus status = getWorkorderStatus();
+        return (status == WorkorderStatus.ASSIGNED && getWorkorderSubstatus() != WorkorderSubstatus.UNCONFIRMED)
+                || status == WorkorderStatus.INPROGRESS;
     }
 
     public boolean canChangeClosingNotes() {

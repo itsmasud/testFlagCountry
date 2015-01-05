@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Signature;
@@ -241,6 +242,41 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     public void onRefresh() {
     }
 
+    private class SignatureParseAsyncTask extends AsyncTaskEx<Bundle, Object, Signature> {
+        private boolean isCached;
+
+        @Override
+        protected Signature doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
+            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+            isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
+            Signature signature = null;
+
+            try {
+                JsonObject obj = new JsonObject(data);
+                signature = Signature.fromJson(obj);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            return signature;
+        }
+
+        @Override
+        protected void onPostExecute(Signature signature) {
+            super.onPostExecute(signature);
+
+            if (_signature == null) {
+                _signature = signature;
+                populateUi(isCached);
+            } else {
+                // Todo re-request? pop error?
+            }
+
+        }
+    }
+
     /*-*************************************-*/
     /*-                 Events              -*/
     /*-*************************************-*/
@@ -260,21 +296,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             if (resultCode == WEB_GET_SIGNATURE) {
-                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-
-                try {
-                    JsonObject obj = new JsonObject(data);
-
-                    Signature signature = Signature.fromJson(obj);
-
-                    _signature = signature;
-
-                    populateUi(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                new SignatureParseAsyncTask().executeEx(resultData);
             }
         }
     };
