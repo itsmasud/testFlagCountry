@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/fieldnation/fieldnation.iml" filepath="$PROJECT_DIR$/fieldnation/fieldnation.iml" />
       <module fileurl="file://$PROJECT_DIR$/libDateTimePicker/libDateTimePicker.iml" filepath="$PROJECT_DIR$/libDateTimePicker/libDateTimePicker.iml" />
       <module fileurl="file://$PROJECT_DIR$/libJson/libJson.iml" filepath="$PROJECT_DIR$/libJson/libJson.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libUndobar/libUndobar.iml" filepath="$PROJECT_DIR$/libUndobar/libUndobar.iml" />
       <module fileurl="file://$PROJECT_DIR$/libUtils/libUtils.iml" filepath="$PROJECT_DIR$/libUtils/libUtils.iml" />
     </modules>
   </component>

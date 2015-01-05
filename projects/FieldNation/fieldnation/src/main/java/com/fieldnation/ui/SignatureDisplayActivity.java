@@ -306,6 +306,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         Intent intent = new Intent(context, SignatureDisplayActivity.class);
         intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
         intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
 
