@@ -172,7 +172,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), SettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }
@@ -181,10 +181,6 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AuthTopicService.requestAuthRemove(getContext());
-            Intent intent = new Intent(getContext(), AuthActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            attachAnimations();
         }
     };
 
@@ -207,6 +203,10 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onAuthenticationInvalidated() {
             _dataService = null;
+            Intent intent = new Intent(getContext(), SplashActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+            attachAnimations();
         }
 
         @Override
