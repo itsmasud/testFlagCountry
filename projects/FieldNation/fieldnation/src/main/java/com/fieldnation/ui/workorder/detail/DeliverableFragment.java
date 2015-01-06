@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -80,7 +81,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private WorkorderService _service;
     private ProfileService _profileService;
     private Profile _profile = null;
-    private Bundle _delayedAction = null;
+    //private Bundle _delayedAction = null;
     private SecureRandom _rand = new SecureRandom();
 
     // Temporary storage
@@ -123,7 +124,6 @@ public class DeliverableFragment extends WorkorderFragment {
         checkMedia();
 
         populateUi();
-        executeDelayedAction();
     }
 
     @Override
@@ -159,7 +159,6 @@ public class DeliverableFragment extends WorkorderFragment {
         _workorder = workorder;
         _isCached = isCached;
         getData();
-        executeDelayedAction();
     }
 
     private PendingIntent getNotificationIntent() {
@@ -173,7 +172,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_profileService == null)
             return;
 
-        _refreshView.startRefreshing();
+        setLoading(true);
         _profile = null;
         _context.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
@@ -201,14 +200,22 @@ public class DeliverableFragment extends WorkorderFragment {
 
         Stopwatch stopwatch = new Stopwatch(true);
         _reviewList.removeAllViews();
-        Document[] docs = _workorder.getDocuments();
+        final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
-            for (int i = 0; i < docs.length; i++) {
-                Document doc = docs[i];
-                DocumentView v = new DocumentView(_context);
-                _reviewList.addView(v);
-                v.setData(_workorder, doc);
-            }
+            ForLoopRunnable r = new ForLoopRunnable(docs.length) {
+                private Document[] _docs = docs;
+
+                @Override
+                public void next(int i) {
+                    Document doc = _docs[i];
+                    DocumentView v = new DocumentView(_context);
+                    _reviewList.addView(v);
+                    v.setData(_workorder, doc);
+
+                    _reviewList.postDelayed(this, 50);
+                }
+            };
+            _reviewList.post(r);
             _noDocsTextView.setVisibility(View.GONE);
         } else {
             _noDocsTextView.setVisibility(View.VISIBLE);
@@ -217,61 +224,27 @@ public class DeliverableFragment extends WorkorderFragment {
 
         stopwatch.start();
         _filesLayout.removeAllViews();
-        UploadSlot[] slots = _workorder.getUploadSlots();
+        final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null) {
-            for (int i = 0; i < slots.length; i++) {
-                UploadSlot slot = slots[i];
-                UploadSlotView v = new UploadSlotView(_context);
-                v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
-                v.setListener(_uploadSlot_listener);
+            ForLoopRunnable r = new ForLoopRunnable(slots.length) {
+                private UploadSlot[] _slots = slots;
 
-                _filesLayout.addView(v);
-            }
+                @Override
+                public void next(int i) {
+                    UploadSlot slot = _slots[i];
+                    UploadSlotView v = new UploadSlotView(getActivity());
+                    v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
+                    v.setListener(_uploadSlot_listener);
+
+                    _filesLayout.addView(v);
+                    _filesLayout.postDelayed(this, 50);
+                }
+            };
+            _filesLayout.post(r);
         }
         Log.v(TAG, "upload docs time " + stopwatch.finish());
-        _refreshView.refreshComplete();
-    }
 
-    private void executeDelayedAction() {
-        if (_delayedAction == null)
-            return;
-
-        if (_workorder == null)
-            return;
-
-        if (_filesLayout == null)
-            return;
-
-        int taskId = _delayedAction.getInt(PR_TASK_ID);
-
-        // find slot
-        UploadSlot[] slots = _workorder.getUploadSlots();
-        UploadSlot slot = null;
-        for (int i = 0; i < slots.length; i++) {
-            Task task = slots[i].getTask();
-            if (task != null) {
-                if (task.getTaskId() == taskId) {
-                    slot = slots[i];
-                    break;
-                }
-            }
-        }
-
-        for (int i = 0; i < _filesLayout.getChildCount(); i++) {
-            View v = _filesLayout.getChildAt(i);
-
-            if (v instanceof UploadSlotView) {
-                UploadSlotView uv = (UploadSlotView) v;
-                if (uv.getUploadSlotId() == taskId) {
-                    _uploadCount++;
-                    _uploadingSlot = slot;
-                    _uploadingSlotView = uv;
-                    _appPickerDialog.show();
-                    break;
-                }
-            }
-        }
-        _delayedAction = null;
+        setLoading(false);
     }
 
     @Override
@@ -300,7 +273,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                 && resultCode == Activity.RESULT_OK) {
 
-            _refreshView.startRefreshing();
+            setLoading(true);
 
             if (data == null) {
                 Log.v(TAG, "local path");
@@ -316,12 +289,6 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     }
 
-    @Override
-    public void doAction(Bundle bundle) {
-        _delayedAction = bundle;
-        executeDelayedAction();
-    }
-
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -329,9 +296,10 @@ public class DeliverableFragment extends WorkorderFragment {
     private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            getData();
             if (_workorder != null) {
                 _workorder.dispatchOnChange();
+            } else {
+                getData();
             }
         }
     };
@@ -459,11 +427,14 @@ public class DeliverableFragment extends WorkorderFragment {
                     _uploadCount = 0;
 
                 // TODO, update individual UI elements when complete.
-                if (_deleteCount == 0 && _uploadCount == 0)
+                if (_deleteCount == 0 && _uploadCount == 0) {
                     _workorder.dispatchOnChange();
+                    setLoading(true);
+                }
 
             } else if (resultCode == WEB_CHANGE) {
                 _workorder.dispatchOnChange();
+                setLoading(true);
             }
         }
 
@@ -483,7 +454,7 @@ public class DeliverableFragment extends WorkorderFragment {
             _service = null;
             _profileService = null;
             Toast.makeText(_context, "Could not complete request", Toast.LENGTH_LONG).show();
-            _refreshView.refreshComplete();
+            setLoading(false);
         }
     };
 

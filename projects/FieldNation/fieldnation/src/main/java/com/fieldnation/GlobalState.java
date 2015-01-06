@@ -49,7 +49,7 @@ public class GlobalState extends Application {
             _tracker = analytics.newTracker(R.xml.ga_config);
             _tracker.enableAdvertisingIdCollection(true);
             _tracker.enableAutoActivityTracking(true);
-            _tracker.enableExceptionReporting(true);
+            _tracker.enableExceptionReporting(false);
             //_tracker.setAppName("AndroidApp");
 
         }

@@ -30,8 +30,6 @@ public abstract class WorkorderFragment extends Fragment {
             _loadingListener.setLoading(isLoading);
     }
 
-    public abstract void doAction(Bundle bundle);
-
     public interface LoadingListener {
         public void setLoading(boolean isLoading);
     }

@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Signature;
@@ -21,6 +23,8 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.misc;
+
+import java.util.Objects;
 
 /**
  * Created by michael.carver on 12/9/2014.
@@ -64,7 +68,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
     // Data
     private Signature _signature;
-    private Workorder _wo;
+    private Workorder _workorder;
     private long _signatureId = -1;
 
     // Service
@@ -99,25 +103,66 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         _loadingView = (LoadingView) findViewById(R.id.loading_view);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_SIGNATURE))
-                _signature = savedInstanceState.getParcelable(STATE_SIGNATURE);
-
-            if (savedInstanceState.containsKey(STATE_WORKORDER))
-                _wo = savedInstanceState.getParcelable(STATE_WORKORDER);
-
-            if (savedInstanceState.containsKey(STATE_SIGNATURE_ID))
-                _signatureId = savedInstanceState.getLong(STATE_SIGNATURE_ID);
-        }
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if (extras.containsKey(INTENT_PARAM_SIGNATURE))
-                _signatureId = extras.getLong(INTENT_PARAM_SIGNATURE);
+            new AsyncTaskEx<Bundle, Object, Object[]>() {
+                @Override
+                protected Object[] doInBackground(Bundle... params) {
+                    Bundle extras = params[0];
+                    Long signatureId = _signatureId;
+                    Workorder workorder = _workorder;
 
-            if (extras.containsKey(INTENT_PARAM_WORKORDER))
-                _wo = extras.getParcelable(INTENT_PARAM_WORKORDER);
+                    if (extras.containsKey(INTENT_PARAM_SIGNATURE))
+                        signatureId = extras.getLong(INTENT_PARAM_SIGNATURE);
+
+                    if (extras.containsKey(INTENT_PARAM_WORKORDER))
+                        workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
+
+                    return new Object[]{signatureId, workorder};
+                }
+
+                @Override
+                protected void onPostExecute(Object[] objects) {
+                    super.onPostExecute(objects);
+                    _signatureId = (Long) objects[0];
+                    _workorder = (Workorder) objects[1];
+                    getData();
+                }
+            }.executeEx(extras);
+
+        } else if (savedInstanceState != null) {
+            new AsyncTaskEx<Bundle, Object, Object[]>() {
+                @Override
+                protected Object[] doInBackground(Bundle... params) {
+                    Bundle savedInstanceState = params[0];
+
+                    Signature signature = _signature;
+                    Workorder workorder = _workorder;
+                    Long signatureId = _signatureId;
+
+                    if (savedInstanceState.containsKey(STATE_SIGNATURE))
+                        signature = savedInstanceState.getParcelable(STATE_SIGNATURE);
+
+                    if (savedInstanceState.containsKey(STATE_WORKORDER))
+                        workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+
+                    if (savedInstanceState.containsKey(STATE_SIGNATURE_ID))
+                        signatureId = savedInstanceState.getLong(STATE_SIGNATURE_ID);
+
+                    return new Object[]{signature, workorder, signatureId};
+                }
+
+                @Override
+                protected void onPostExecute(Object[] objects) {
+                    super.onPostExecute(objects);
+                    _signature = (Signature) objects[0];
+                    _workorder = (Workorder) objects[1];
+                    _signatureId = (Long) objects[2];
+                    populateUi(true);
+                }
+            }.executeEx(savedInstanceState);
         }
+
     }
 
     @Override
@@ -125,8 +170,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         if (_signature != null)
             outState.putParcelable(STATE_SIGNATURE, _signature);
 
-        if (_wo != null)
-            outState.putParcelable(STATE_WORKORDER, _wo);
+        if (_workorder != null)
+            outState.putParcelable(STATE_WORKORDER, _workorder);
 
         outState.putLong(STATE_SIGNATURE_ID, _signatureId);
 
@@ -145,10 +190,13 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         if (_service == null)
             return;
 
+        if (_workorder == null)
+            return;
+
         _loadingView.setVisibility(View.VISIBLE);
 
         startService(
-                _service.getSignature(WEB_GET_SIGNATURE, _wo.getWorkorderId(), _signatureId, true));
+                _service.getSignature(WEB_GET_SIGNATURE, _workorder.getWorkorderId(), _signatureId, true));
     }
 
     @Override
@@ -164,34 +212,44 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         if (_doneButton == null)
             return;
 
+        if (_workorder == null)
+            return;
+
         _signatureView.setSignatureJson(_signature.getSignature(), true);
         _nameTextView.setText(_signature.getPrintName());
 
-        _titleTextView.setText(_wo.getTitle());
-        _descriptionTextView.setText(misc.htmlify(_wo.getFullWorkDescription()));
+        _titleTextView.setText(_workorder.getTitle());
+        _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
         _descriptionTextView.setLinksClickable(false);
         _descriptionTextView.setLinkTextColor(0xFF000000);
 
-        LoggedWork[] logs = _signature.getWorklog();
+        final LoggedWork[] logs = _signature.getWorklog();
         if (logs != null && logs.length > 0) {
             _timeLinearLayout.setVisibility(View.VISIBLE);
             _timeTextView.setVisibility(View.VISIBLE);
             _timeDivider.setVisibility(View.VISIBLE);
 
             _timeLinearLayout.removeAllViews();
-            for (int i = 0; i < logs.length; i++) {
-                LoggedWork work = logs[i];
-                WorklogTile v = new WorklogTile(this);
-                v.setWorklog(work, _wo.getPay().isPerDeviceRate());
-                _timeLinearLayout.addView(v);
-            }
+            ForLoopRunnable r = new ForLoopRunnable(logs.length) {
+                private LoggedWork[] _logs = logs;
+
+                @Override
+                public void next(int i) {
+                    LoggedWork work = _logs[i];
+                    WorklogTile v = new WorklogTile(SignatureDisplayActivity.this);
+                    v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
+                    _timeLinearLayout.addView(v);
+                    _timeLinearLayout.postDelayed(this, 50);
+                }
+            };
+            _timeLinearLayout.post(r);
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
             _timeTextView.setVisibility(View.GONE);
             _timeDivider.setVisibility(View.GONE);
         }
 
-        Task[] tasks = _wo.getTasks();
+        Task[] tasks = _workorder.getTasks();
         if (tasks != null && tasks.length > 0) {
             _tasksDivider.setVisibility(View.VISIBLE);
             _tasksTextView.setVisibility(View.VISIBLE);
@@ -267,7 +325,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         protected void onPostExecute(Signature signature) {
             super.onPostExecute(signature);
 
-            if (_signature == null) {
+            if (signature != null) {
                 _signature = signature;
                 populateUi(isCached);
             } else {
@@ -302,12 +360,25 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     };
 
 
-    public static Intent startIntent(Context context, long signatureId, Workorder workorder) {
-        Intent intent = new Intent(context, SignatureDisplayActivity.class);
-        intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
-        intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        return intent;
+    public static void startIntent(Context context, long signatureId, Workorder workorder) {
+        new AsyncTaskEx<Object, Object, Object>() {
+
+            @Override
+            protected Object doInBackground(Object... params) {
+                Context context = (Context) params[0];
+                long signatureId = (Long) params[1];
+                Workorder workorder = (Workorder) params[2];
+
+                Intent intent = new Intent(context, SignatureDisplayActivity.class);
+                intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
+                intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
+                if (!(context instanceof Activity)) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                }
+                context.startActivity(intent);
+                return null;
+            }
+        }.executeEx(context, signatureId, workorder);
     }
 
 }

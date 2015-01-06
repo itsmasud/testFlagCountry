@@ -247,13 +247,6 @@ public class DetailFragment extends WorkorderFragment {
         }
     }
 
-    @Override
-    public void doAction(Bundle bundle) {
-        // TODO Method Stub: doAction()
-        Log.v(TAG, "Method Stub: doAction()");
-
-    }
-
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -289,7 +282,7 @@ public class DetailFragment extends WorkorderFragment {
     private TaskSumView.Listener _taskSum_listener = new TaskSumView.Listener() {
         @Override
         public void onShowTasksTab() {
-            pageRequestListener.requestPage(TasksFragment.class, null);
+            pageRequestListener.requestPage(TasksFragment.class);
         }
     };
 
