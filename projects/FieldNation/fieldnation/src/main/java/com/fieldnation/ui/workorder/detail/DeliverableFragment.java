@@ -172,7 +172,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_profileService == null)
             return;
 
-        _refreshView.startRefreshing();
+        setLoading(true);
         _profile = null;
         _context.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
@@ -215,7 +215,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     _reviewList.postDelayed(this, 50);
                 }
             };
-            _reviewList.postDelayed(r, 100);
+            _reviewList.post(r);
             _noDocsTextView.setVisibility(View.GONE);
         } else {
             _noDocsTextView.setVisibility(View.VISIBLE);
@@ -232,7 +232,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 @Override
                 public void next(int i) {
                     UploadSlot slot = _slots[i];
-                    UploadSlotView v = new UploadSlotView(_context);
+                    UploadSlotView v = new UploadSlotView(getActivity());
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                     v.setListener(_uploadSlot_listener);
 
@@ -240,10 +240,11 @@ public class DeliverableFragment extends WorkorderFragment {
                     _filesLayout.postDelayed(this, 50);
                 }
             };
-            _filesLayout.postDelayed(r, 100);
+            _filesLayout.post(r);
         }
         Log.v(TAG, "upload docs time " + stopwatch.finish());
-        _refreshView.refreshComplete();
+
+        setLoading(false);
     }
 
     @Override
@@ -272,7 +273,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                 && resultCode == Activity.RESULT_OK) {
 
-            _refreshView.startRefreshing();
+            setLoading(true);
 
             if (data == null) {
                 Log.v(TAG, "local path");
@@ -300,7 +301,6 @@ public class DeliverableFragment extends WorkorderFragment {
             } else {
                 getData();
             }
-            setLoading(true);
         }
     };
 
@@ -427,11 +427,14 @@ public class DeliverableFragment extends WorkorderFragment {
                     _uploadCount = 0;
 
                 // TODO, update individual UI elements when complete.
-                if (_deleteCount == 0 && _uploadCount == 0)
+                if (_deleteCount == 0 && _uploadCount == 0) {
                     _workorder.dispatchOnChange();
+                    setLoading(true);
+                }
 
             } else if (resultCode == WEB_CHANGE) {
                 _workorder.dispatchOnChange();
+                setLoading(true);
             }
         }
 
@@ -451,7 +454,7 @@ public class DeliverableFragment extends WorkorderFragment {
             _service = null;
             _profileService = null;
             Toast.makeText(_context, "Could not complete request", Toast.LENGTH_LONG).show();
-            _refreshView.refreshComplete();
+            setLoading(false);
         }
     };
 

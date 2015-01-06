@@ -23,6 +23,7 @@ public class DocumentView extends RelativeLayout {
     private ImageView _fileTypeImageView;
     private TextView _filenameTextView;
     private TextView _dateTextView;
+    private TextView _byTextView;
     private TextView _usernameTextView;
     private ImageButton _deleteButton;
 
@@ -57,6 +58,7 @@ public class DocumentView extends RelativeLayout {
         _fileTypeImageView = (ImageView) findViewById(R.id.filetype_imageview);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _byTextView = (TextView) findViewById(R.id.by_textview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
         _deleteButton = (ImageButton) findViewById(R.id.delete_imagebutton);
         _deleteButton.setVisibility(GONE);
@@ -85,10 +87,19 @@ public class DocumentView extends RelativeLayout {
             _dateTextView.setVisibility(View.GONE);
         }
         try {
-            _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+            if (!misc.isEmptyOrNull(_document.getUpdatedBy().getFullName())) {
+                _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+                _usernameTextView.setVisibility(View.VISIBLE);
+                _byTextView.setVisibility(View.VISIBLE);
+            } else {
+                _usernameTextView.setVisibility(View.GONE);
+                _byTextView.setVisibility(View.GONE);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             _usernameTextView.setVisibility(View.GONE);
+            _byTextView.setVisibility(View.GONE);
         }
 
         if (_workorder.canChangeDeliverables()) {
