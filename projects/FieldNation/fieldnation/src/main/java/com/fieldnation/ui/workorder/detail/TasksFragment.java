@@ -87,9 +87,6 @@ public class TasksFragment extends WorkorderFragment {
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
 
-    // Signature Flag
-    private static final String SIGNATURE_COMPLETE_WHEN_DONE = TAG + ":SIGNATURE_COMPLETE_WHEN_DONE";
-
     // saved state keys
     private static final String STATE_WORKORDER = "ui.workorder.detail.TasksFragment:STATE_WORKORDER";
     private static final String STATE_AUTHTOKEN = "ui.workorder.detail.TasksFragment:STATE_AUTHTOKEN";
@@ -308,6 +305,7 @@ public class TasksFragment extends WorkorderFragment {
     @Override
     public void onPause() {
         TopicService.delete(_context, TAG);
+        setLoading(false);
         super.onPause();
     }
 
@@ -453,10 +451,19 @@ public class TasksFragment extends WorkorderFragment {
     private MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
         @Override
         public void onSignatureClick() {
-            Intent intent = new Intent(getActivity(), SignOffActivity.class);
-            intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
-            intent.putExtra(SIGNATURE_COMPLETE_WHEN_DONE, true);
-            startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+            new AsyncTaskEx<Object, Object, Object>() {
+                @Override
+                protected Object doInBackground(Object... params) {
+                    Context context = (Context) params[0];
+                    Workorder workorder = (Workorder) params[1];
+
+                    Intent intent = new Intent(context, SignOffActivity.class);
+                    intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
+                    intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
+                    startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+                    return null;
+                }
+            }.executeEx(getActivity(), _workorder);
         }
 
         @Override
@@ -719,10 +726,7 @@ public class TasksFragment extends WorkorderFragment {
                     break;
                 case SIGNATURE: {
                     _currentTask = task;
-                    Intent intent = new Intent(getActivity(), SignOffActivity.class);
-                    intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
-                    intent.putExtra(SignOffActivity.INTENT_PARAM_TASK_ID, task.getTaskId());
-                    getActivity().startActivity(intent);
+                    SignOffActivity.startSignOff(getActivity(), _workorder, task.getTaskId());
                     break;
                 }
                 case UPLOAD_FILE: {
@@ -884,19 +888,14 @@ public class TasksFragment extends WorkorderFragment {
     private SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            try {
-                Intent intent = new Intent(getActivity(), SignOffActivity.class);
-                intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, _workorder);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                _context.startActivity(intent);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            SignOffActivity.startSignOff(getActivity(), _workorder);
+            setLoading(true);
         }
 
         @Override
         public void signatureOnClick(SignatureTileView view, Signature signature) {
-            startActivity(SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder));
+            SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
+            setLoading(true);
         }
     };
 
@@ -1071,10 +1070,5 @@ public class TasksFragment extends WorkorderFragment {
             Toast.makeText(_context, "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };
-
-    @Override
-    public void doAction(Bundle bundle) {
-        // do nothing
-    }
 
 }

@@ -150,12 +150,6 @@ public class NotificationFragment extends WorkorderFragment {
         }
     }
 
-    @Override
-    public void doAction(Bundle bundle) {
-        // TODO Method Stub: doAction()
-        Log.v(TAG, "Method Stub: doAction()");
-    }
-
     private NotificationListAdapter getAdapter() {
         if (this.getActivity() == null)
             return null;

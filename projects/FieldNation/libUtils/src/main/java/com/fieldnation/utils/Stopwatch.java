@@ -6,6 +6,11 @@ public class Stopwatch {
 	private long pause_time;
 	private boolean paused;
 
+    public Stopwatch(){
+        start_time = System.currentTimeMillis();
+        running = true;
+        paused = false;
+    }
 
 	public Stopwatch(boolean start) {
 		if (start) {

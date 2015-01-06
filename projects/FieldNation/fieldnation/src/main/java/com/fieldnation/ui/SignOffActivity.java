@@ -1,6 +1,8 @@
 package com.fieldnation.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,11 +11,13 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.utils.Stopwatch;
 
 /**
  * Created by michael.carver on 12/2/2014.
@@ -64,6 +68,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Stopwatch stopwatch = new Stopwatch();
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signoff);
@@ -82,41 +87,85 @@ public class SignOffActivity extends AuthFragmentActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if (extras.containsKey(INTENT_PARAM_WORKORDER))
-                _workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
+            new AsyncTaskEx<Bundle, Object, Object[]>() {
+                @Override
+                protected Object[] doInBackground(Bundle... params) {
+                    Bundle extras = params[0];
+                    Workorder workorder = null;
+                    Long taskId = _taskId;
+                    Boolean completeWorkorder = _completeWorkorder;
 
-            if (extras.containsKey(INTENT_PARAM_TASK_ID))
-                _taskId = extras.getLong(INTENT_PARAM_TASK_ID);
+                    if (extras.containsKey(INTENT_PARAM_WORKORDER))
+                        workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
 
-            if (extras.containsKey(INTENT_COMPLETE_WORKORDER))
-                _completeWorkorder = extras.getBoolean(INTENT_COMPLETE_WORKORDER);
+                    if (extras.containsKey(INTENT_PARAM_TASK_ID))
+                        taskId = extras.getLong(INTENT_PARAM_TASK_ID);
+
+                    if (extras.containsKey(INTENT_COMPLETE_WORKORDER))
+                        completeWorkorder = extras.getBoolean(INTENT_COMPLETE_WORKORDER);
+
+                    return new Object[]{workorder, taskId, completeWorkorder};
+                }
+
+                @Override
+                protected void onPostExecute(Object[] objects) {
+                    _workorder = (Workorder) objects[0];
+                    _taskId = (Long) objects[1];
+                    _completeWorkorder = (Boolean) objects[2];
+
+                }
+            }.executeEx(extras);
+
+            if (savedInstanceState == null) {
+                _signOffFrag.setArguments(getIntent().getExtras());
+                getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
+            }
+        } else if (savedInstanceState != null) {
+            new AsyncTaskEx<Bundle, Object, Object[]>() {
+                @Override
+                protected Object[] doInBackground(Bundle... params) {
+                    Bundle savedInstanceState = params[0];
+                    int displayMode = _displayMode;
+                    String name = _name;
+                    String signatureJson = _signatureJson;
+                    Workorder workorder = _workorder;
+                    Long taskId = _taskId;
+                    Boolean completeWorkorder = _completeWorkorder;
+
+                    if (savedInstanceState.containsKey(STATE_DISPLAY_MODE))
+                        displayMode = savedInstanceState.getInt(STATE_DISPLAY_MODE);
+
+                    if (savedInstanceState.containsKey(STATE_NAME))
+                        name = savedInstanceState.getString(STATE_NAME);
+
+                    if (savedInstanceState.containsKey(STATE_SIGNATURE))
+                        signatureJson = savedInstanceState.getString(STATE_SIGNATURE);
+
+                    if (savedInstanceState.containsKey(STATE_WORKORDER))
+                        workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+
+                    if (savedInstanceState.containsKey(STATE_TASK_ID))
+                        taskId = savedInstanceState.getLong(STATE_TASK_ID);
+
+                    if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
+                        completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
+                    return new Object[]{displayMode, name, signatureJson, workorder, taskId, completeWorkorder};
+                }
+
+                @Override
+                protected void onPostExecute(Object[] objects) {
+                    super.onPostExecute(objects);
+                    _displayMode = (Integer) objects[0];
+                    _name = (String) objects[1];
+                    _signatureJson = (String) objects[2];
+                    _workorder = (Workorder) objects[3];
+                    _taskId = (Long) objects[4];
+                    _completeWorkorder = (Boolean) objects[5];
+                }
+            }.executeEx(savedInstanceState);
         }
 
-        if (savedInstanceState == null) {
-            _signOffFrag.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
-
-            _sigFrag.setArguments(extras);
-            _thankYouFrag.setArguments(extras);
-        } else {
-            if (savedInstanceState.containsKey(STATE_DISPLAY_MODE))
-                _displayMode = savedInstanceState.getInt(STATE_DISPLAY_MODE);
-
-            if (savedInstanceState.containsKey(STATE_NAME))
-                _name = savedInstanceState.getString(STATE_NAME);
-
-            if (savedInstanceState.containsKey(STATE_SIGNATURE))
-                _signatureJson = savedInstanceState.getString(STATE_SIGNATURE);
-
-            if (savedInstanceState.containsKey(STATE_WORKORDER))
-                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
-
-            if (savedInstanceState.containsKey(STATE_TASK_ID))
-                _taskId = savedInstanceState.getLong(STATE_TASK_ID);
-
-            if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
-                _completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
-        }
+        Log.v(TAG, "onCreate time " + stopwatch.finish());
     }
 
     @Override
@@ -138,6 +187,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Stopwatch stopwatch = new Stopwatch();
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
         outState.putLong(STATE_TASK_ID, _taskId);
         outState.putBoolean(STATE_COMPLETE_WORKORDER, _completeWorkorder);
@@ -152,6 +202,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             outState.putParcelable(STATE_WORKORDER, _workorder);
 
         super.onSaveInstanceState(outState);
+        Log.v(TAG, "onSave time " + stopwatch.finish());
     }
 
     private void sendSignature() {
@@ -282,5 +333,49 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
     };
 
+
+    public static void startSignOff(Context context, Workorder workorder) {
+        startSignOff(context, workorder, false);
+    }
+
+    public static void startSignOff(Context context, Workorder workorder, boolean markComplete) {
+        new AsyncTaskEx<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object... params) {
+                Context context = (Context) params[0];
+                Workorder workorder = (Workorder) params[1];
+                Boolean markComplete = (Boolean) params[2];
+
+                Intent intent = new Intent(context, SignOffActivity.class);
+                intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
+                if (markComplete)
+                    intent.putExtra(INTENT_COMPLETE_WORKORDER, true);
+
+                if (!(context instanceof Activity))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+                return null;
+            }
+        }.executeEx(context, workorder, markComplete);
+    }
+
+    public static void startSignOff(Context context, Workorder workorder, long taskId) {
+        new AsyncTaskEx<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object... params) {
+                Context context = (Context) params[0];
+                Workorder workorder = (Workorder) params[1];
+                Long taskId = (Long) params[2];
+
+                Intent intent = new Intent(context, SignOffActivity.class);
+                intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
+                intent.putExtra(INTENT_PARAM_TASK_ID, workorder);
+                if (!(context instanceof Activity))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+                return null;
+            }
+        }.executeEx(context, workorder, taskId);
+    }
 
 }

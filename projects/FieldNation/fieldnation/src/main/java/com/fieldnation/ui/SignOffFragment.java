@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
@@ -52,6 +53,7 @@ public class SignOffFragment extends FragmentBase {
     private Button _signOffButton;
     private Button _rejectButton;
 
+    private LoadingView _loadingView;
 
     // Data
     private Workorder _workorder;
@@ -71,7 +73,18 @@ public class SignOffFragment extends FragmentBase {
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
-                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+                new AsyncTaskEx<Bundle, Object, Workorder>() {
+                    @Override
+                    protected Workorder doInBackground(Bundle... params) {
+                        return params[0].getParcelable(STATE_WORKORDER);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Workorder workorder) {
+                        super.onPostExecute(workorder);
+                        _workorder = workorder;
+                    }
+                }.executeEx(savedInstanceState);
             }
         }
 
@@ -112,7 +125,19 @@ public class SignOffFragment extends FragmentBase {
         _rejectButton = (Button) v.findViewById(R.id.reject_button);
         _rejectButton.setOnClickListener(_reject_onClick);
 
+        _loadingView = (LoadingView) v.findViewById(R.id.loading_view);
+
+        setLoading(true);
+
         return v;
+    }
+
+    private void setLoading(boolean isLoading) {
+        if (isLoading) {
+            _loadingView.setVisibility(View.VISIBLE);
+        } else {
+            _loadingView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -121,10 +146,20 @@ public class SignOffFragment extends FragmentBase {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            _workorder = bundle.getParcelable(SignOffActivity.INTENT_PARAM_WORKORDER);
-        }
+            new AsyncTaskEx<Bundle, Object, Workorder>() {
+                @Override
+                protected Workorder doInBackground(Bundle... params) {
+                    return params[0].getParcelable(SignOffActivity.INTENT_PARAM_WORKORDER);
+                }
 
-        populateUi();
+                @Override
+                protected void onPostExecute(Workorder workorder) {
+                    super.onPostExecute(workorder);
+                    _workorder = workorder;
+                    populateUi();
+                }
+            }.executeEx(bundle);
+        }
     }
 
     public void setListener(Listener listener) {
@@ -138,13 +173,14 @@ public class SignOffFragment extends FragmentBase {
         if (_workorder == null)
             return;
 
+        Stopwatch stopwatch = new Stopwatch(true);
+
         _titleTextView.setText(_workorder.getTitle());
         _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
         //_descriptionTextView.setLinksClickable(false);
 
         final LoggedWork[] logs = _workorder.getLoggedWork();
         if (logs != null && logs.length > 0) {
-            Stopwatch stopwatch = new Stopwatch(true);
             _timeLinearLayout.setVisibility(View.VISIBLE);
             _timeTextView.setVisibility(View.VISIBLE);
             _timeDivider.setVisibility(View.VISIBLE);
@@ -155,17 +191,19 @@ public class SignOffFragment extends FragmentBase {
 
                 @Override
                 public void next(int i) {
+                    if (getActivity() == null) {
+                        return;
+                    }
                     LoggedWork work = _logs[i];
                     WorklogTile v = new WorklogTile(getActivity());
                     v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
                     _timeLinearLayout.addView(v);
 
-                    SignOffFragment.this._container.post(this);
+                    SignOffFragment.this._container.postDelayed(this, 50);
                 }
             };
             _container.post(r);
 
-            Log.v(TAG, "Logs time " + stopwatch.finish());
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
             _timeTextView.setVisibility(View.GONE);
@@ -174,7 +212,6 @@ public class SignOffFragment extends FragmentBase {
 
         final Task[] tasks = _workorder.getTasks();
         if (tasks != null && tasks.length > 0) {
-            Stopwatch stopwatch = new Stopwatch(true);
             _tasksDivider.setVisibility(View.VISIBLE);
             _tasksTextView.setVisibility(View.VISIBLE);
             _tasksLinearLayout.setVisibility(View.VISIBLE);
@@ -186,6 +223,9 @@ public class SignOffFragment extends FragmentBase {
 
                 @Override
                 public void next(int i) {
+                    if (getActivity() == null)
+                        return;
+
                     Task task = _tasks[i];
 
                     String display = "";
@@ -203,12 +243,10 @@ public class SignOffFragment extends FragmentBase {
                         v.setText(display + "\n" + task.getDescription());
                     }
                     _tasksLinearLayout.addView(v);
-                    SignOffFragment.this._container.post(this);
+                    SignOffFragment.this._container.postDelayed(this, 50);
                 }
             };
             _container.post(r);
-
-            Log.v(TAG, "tasks time " + stopwatch.finish());
         } else {
             _tasksDivider.setVisibility(View.GONE);
             _tasksTextView.setVisibility(View.GONE);
@@ -226,7 +264,9 @@ public class SignOffFragment extends FragmentBase {
             _closingNotesDivider.setVisibility(View.GONE);
             _closingNotesLabelTextView.setVisibility(View.GONE);
         }
+        Log.v(TAG, "pop time " + stopwatch.finish());
 
+        setLoading(false);
     }
 
     /*-*********************************-*/

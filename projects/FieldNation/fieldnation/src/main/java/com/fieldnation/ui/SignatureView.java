@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -16,6 +17,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.shortstraw.Point;
 import com.fieldnation.shortstraw.Shape;
+import com.fieldnation.utils.Stopwatch;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
@@ -74,6 +76,7 @@ public class SignatureView extends View {
 
     @Override
     protected Parcelable onSaveInstanceState() {
+        Stopwatch stopwatch = new Stopwatch();
         Bundle bundle = new Bundle();
         bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
 
@@ -89,11 +92,15 @@ public class SignatureView extends View {
 
         bundle.putString(STATE_SHAPES, jshapes.toString());
 
+        Log.v(TAG, "onSaveInstanceState time " + stopwatch.finish());
+
         return bundle;
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
+        Stopwatch stopwatch = new Stopwatch();
+
         if (state instanceof Bundle) {
             super.onRestoreInstanceState(((Bundle) state).getParcelable(STATE_SUPER));
 
@@ -121,6 +128,7 @@ public class SignatureView extends View {
         } else {
             super.onRestoreInstanceState(state);
         }
+        Log.v(TAG, "onRestoreInstanceState time " + stopwatch.finish());
     }
 
     public byte[] getSignaturePng() {
@@ -355,6 +363,7 @@ public class SignatureView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Stopwatch stopwatch = new Stopwatch();
         // walk through the shapes list... draw those
         try {
             for (int i = 0; i < _shapes.size(); i++) {
@@ -413,6 +422,8 @@ public class SignatureView extends View {
             ex.printStackTrace();
         }
         super.onDraw(canvas);
+
+        Log.v(TAG, "onDraw time " + stopwatch.finish());
     }
 
     public void clear() {

@@ -184,6 +184,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
             Intent intent = new Intent(WorkorderBundleDetailActivity.this, WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
             WorkorderBundleDetailActivity.this.startActivity(intent);
+            // Todo set loading here
         }
 
         @Override
