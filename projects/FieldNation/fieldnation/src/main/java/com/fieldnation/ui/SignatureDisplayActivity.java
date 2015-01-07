@@ -230,16 +230,15 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             _timeDivider.setVisibility(View.VISIBLE);
 
             _timeLinearLayout.removeAllViews();
-            ForLoopRunnable r = new ForLoopRunnable(logs.length) {
+            ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
                 private LoggedWork[] _logs = logs;
 
                 @Override
-                public void next(int i) {
+                public void next(int i) throws Exception {
                     LoggedWork work = _logs[i];
                     WorklogTile v = new WorklogTile(SignatureDisplayActivity.this);
                     v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
                     _timeLinearLayout.addView(v);
-                    _timeLinearLayout.postDelayed(this, 50);
                 }
             };
             _timeLinearLayout.post(r);

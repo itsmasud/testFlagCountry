@@ -1,24 +1,40 @@
 package com.fieldnation;
 
+
+import android.os.Handler;
+
 /**
  * Created by Michael Carver on 1/5/2015.
  */
 public abstract class ForLoopRunnable implements Runnable {
     private int i;
-    private int count;
+    private final int count;
+    private final long delay;
+    private final Handler handler;
 
-    public ForLoopRunnable(int count) {
+    public ForLoopRunnable(int count, Handler handler, long delay) {
         this.count = count;
         i = 0;
+        this.handler = handler;
+        this.delay = delay;
+    }
+
+    public ForLoopRunnable(int count, Handler handler) {
+        this(count, handler, 50);
     }
 
     @Override
     public void run() {
-        if (i < count) {
-            next(i);
+        try {
+            if (i < count) {
+                next(i);
+            }
+            i++;
+            handler.postDelayed(this, delay);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        i++;
     }
 
-    public abstract void next(int i);
+    public abstract void next(int i) throws Exception;
 }
