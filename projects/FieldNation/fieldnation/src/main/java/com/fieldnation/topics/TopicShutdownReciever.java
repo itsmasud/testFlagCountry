@@ -23,12 +23,9 @@ public class TopicShutdownReciever extends TopicReceiver {
     }
 
     @Override
-    public void onUnregister(int resultCode, String topicId) {
-    }
-
-    @Override
     public void onTopic(int resultCode, String topicId, Bundle parcel) {
-        activity.finish();
+        if (Topics.TOPIC_SHUTDOWN.equals(topicId))
+            activity.finish();
     }
 
     public void onPause() {

@@ -48,11 +48,15 @@ public class TopicService extends Service {
         return START_STICKY;
     }
 
-    private void send(ResultReceiver receiver, int code, Bundle bundle) {
+    private void send(ResultReceiver receiver, int code, Bundle bundle, String tag) {
         try {
             receiver.send(code, bundle);
         } catch (Exception ex) {
+            Log.e(TAG, tag);
             ex.printStackTrace();
+            synchronized (TAG) {
+                TopicClient.delete(tag);
+            }
         }
     }
 
@@ -84,7 +88,7 @@ public class TopicService extends Service {
         bundle.putString(TopicConstants.PARAM_TAG, c.tag);
         bundle.putString(TopicConstants.PARAM_TOPIC_ID, topicId);
 
-        send(receiver, resultCode, bundle);
+        send(receiver, resultCode, bundle, c.tag);
 
         if (_lastSent.containsKey(topicId)) {
             bundle = new Bundle();
@@ -93,7 +97,7 @@ public class TopicService extends Service {
             bundle.putString(TopicConstants.PARAM_TAG, c.tag);
             bundle.putBundle(TopicConstants.PARAM_TOPIC_PARCEL, _lastSent.get(topicId));
 
-            send(receiver, resultCode, bundle);
+            send(receiver, resultCode, bundle, c.tag);
         }
     }
 
@@ -113,8 +117,6 @@ public class TopicService extends Service {
         bundle.putString(TopicConstants.ACTION, TopicConstants.ACTION_UNREGISTER_LISTENER);
         bundle.putString(TopicConstants.PARAM_TAG, tag);
         bundle.putString(TopicConstants.PARAM_TOPIC_ID, topicId);
-
-        send(c.receiver, resultCode, bundle);
     }
 
     private void delete(Intent intent) {
@@ -149,11 +151,15 @@ public class TopicService extends Service {
             TopicClient c = iter.next();
             Log.v(TAG, "Client: " + c.tag);
             bundle.putBundle(TopicConstants.PARAM_TOPIC_PARCEL, parcel);
-            send(c.receiver, c.resultCode, bundle);
+            send(c.receiver, c.resultCode, bundle, c.tag);
         }
 
         if (doKeep)
             _lastSent.put(topicId, parcel);
+
+        if (topicId.equals(Topics.TOPIC_SHUTDOWN)) {
+            stopSelf();
+        }
     }
 
     @Override

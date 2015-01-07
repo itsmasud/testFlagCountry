@@ -16,82 +16,82 @@ import android.util.Log;
 /**
  * The OS will call this when authenticating a user. It is mostly a wrapper for
  * the AuthRpc
- * 
+ *
  * @author michael.carver
- * 
  */
 public class Authenticator extends AbstractAccountAuthenticator {
-	private static final String TAG = "auth.server.Authenticator";
-	private Context _context;
+    private static final String TAG = "auth.server.Authenticator";
+    private Context _context;
 
-	public Authenticator(Context context) {
-		super(context.getApplicationContext());
-		_context = context.getApplicationContext();
-		Log.v(TAG, "Constructor");
-	}
+    public Authenticator(Context context) {
+        super(context.getApplicationContext());
+        _context = context.getApplicationContext();
+        Log.v(TAG, "Constructor");
+    }
 
-	@Override
-	public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType,
-			String[] requiredFeatures, Bundle options) throws NetworkErrorException {
+    @Override
+    public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType,
+                             String[] requiredFeatures, Bundle options) throws NetworkErrorException {
 
-		Log.v(TAG, "addAccount");
-		Intent intent = new Intent(_context, AuthActivity.class);
-		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+        Log.v(TAG, "addAccount");
+        Intent intent = new Intent(_context, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
-		Bundle result = new Bundle();
-		result.putParcelable(AccountManager.KEY_INTENT, intent);
+        Bundle result = new Bundle();
+        result.putParcelable(AccountManager.KEY_INTENT, intent);
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType,
-			Bundle options) throws NetworkErrorException {
-		Log.v(TAG, "getAuthToken");
-		AccountManager am = AccountManager.get(_context);
-		String password = am.getPassword(account);
-		String hostname = _context.getString(R.string.fn_hostname);
-		String grantType = _context.getString(R.string.fn_grant_type);
-		String clientId = _context.getString(R.string.fn_client_id);
-		String clientSecret = _context.getString(R.string.fn_client_secret);
+    @Override
+    public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType,
+                               Bundle options) throws NetworkErrorException {
+        Log.v(TAG, "getAuthToken");
+        AccountManager am = AccountManager.get(_context);
+        String password = am.getPassword(account);
+        String hostname = _context.getString(R.string.fn_hostname);
+        String grantType = _context.getString(R.string.fn_grant_type);
+        String clientId = _context.getString(R.string.fn_client_id);
+        String clientSecret = _context.getString(R.string.fn_client_secret);
 
-		AuthService authServe = new AuthService(_context);
-		Intent intent = authServe.authenticateWeb(response, hostname, grantType, clientId, clientSecret, account.name,
-				password);
+        AuthService authServe = new AuthService(_context);
+        Intent intent = authServe.authenticateWeb(response, hostname, grantType, clientId, clientSecret, account.name,
+                password);
 
-		_context.startService(intent);
-		return null;
-	}
+        _context.startService(intent);
+        return null;
+    }
 
-	@Override
-	public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
-		Log.v(TAG, "Method Stub: editProperties()");
-		return null;
-	}
+    @Override
+    public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
+        Log.v(TAG, "Method Stub: editProperties()");
+        return null;
+    }
 
-	@Override
-	public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) throws NetworkErrorException {
-		Log.v(TAG, "Method Stub: confirmCredentials()");
-		return null;
-	}
+    @Override
+    public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) throws NetworkErrorException {
+        Log.v(TAG, "Method Stub: confirmCredentials()");
+        return null;
+    }
 
-	@Override
-	public String getAuthTokenLabel(String authTokenType) {
-		Log.v(TAG, "Method Stub: getAuthTokenLabel()");
-		return null;
-	}
+    @Override
+    public String getAuthTokenLabel(String authTokenType) {
+        Log.v(TAG, "Method Stub: getAuthTokenLabel()");
+        return null;
+    }
 
-	@Override
-	public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType,
-			Bundle options) throws NetworkErrorException {
-		Log.v(TAG, "Method Stub: updateCredentials()");
-		return null;
-	}
+    @Override
+    public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType,
+                                    Bundle options) throws NetworkErrorException {
+        Log.v(TAG, "Method Stub: updateCredentials()");
+        return null;
+    }
 
-	@Override
-	public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
-		Log.v(TAG, "Method Stub: hasFeatures()");
-		return null;
-	}
+    @Override
+    public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
+        Log.v(TAG, "Method Stub: hasFeatures()");
+        return null;
+    }
 
 }

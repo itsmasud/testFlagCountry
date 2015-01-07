@@ -28,6 +28,7 @@ import com.fieldnation.rpc.client.AuthService;
 import com.fieldnation.rpc.server.ClockService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.SplashActivity;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -65,6 +66,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         getWindow().setFormat(PixelFormat.UNKNOWN);
@@ -113,25 +115,32 @@ public class AuthActivity extends AccountAuthenticatorActivity {
 
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
         _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
     }
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         super.onPause();
         _videoView.stopPlayback();
-        _shutdownService.onPause();
     }
 
     @Override
     public void onBackPressed() {
-        Topics.dispatchShutdown(this);
-        return;
+        Log.v(TAG, "onBackPressed");
+        //Topics.dispatchShutdown(this);
+        if (!_authcomplete) {
+            AuthTopicService.dispatchAuthCancelled(this);
+        }
+        super.onBackPressed();
     }
 
     @Override
     protected void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        _shutdownService.onPause();
         if (!_authcomplete) {
             AuthTopicService.dispatchAuthCancelled(this);
         }
@@ -186,6 +195,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                 String error = resultData.getString("error");
 
                 if (authToken != null) {
+                    Log.v(TAG, "have authtoken");
                     Account account = new Account(_username, getString(R.string.accounttype));
                     AccountManager am = AccountManager.get(AuthActivity.this);
                     am.addAccountExplicitly(account, _password, null);
@@ -204,6 +214,10 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                     AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
                     AuthActivity.this.setResult(RESULT_OK, intent);
                     AuthActivity.this.finish();
+
+                    Intent splash = new Intent(AuthActivity.this, SplashActivity.class);
+                    splash.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(splash);
 
                     ClockService.enableClock(AuthActivity.this);
                 } else {

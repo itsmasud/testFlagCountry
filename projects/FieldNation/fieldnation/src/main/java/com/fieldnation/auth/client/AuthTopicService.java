@@ -41,12 +41,16 @@ public class AuthTopicService extends Service {
     public static final String BUNDLE_PARAM_TYPE_CANCELLED = "BUNDLE_PARAM_TYPE_CANCELLED";
     public static final String BUNDLE_PARAM_TYPE_NO_NETWORK = "BUNDLE_PARAM_TYPE_NO_NETWORK";
 
+    private static final int STATE_NOT_AUTHENTICATED = 0;
+    private static final int STATE_AUTHENTICATING = 2;
+    private static final int STATE_AUTHENTICATED = 3;
+    private static final int STATE_REMOVING = 4;
+
     // Data
     private Account _account = null;
-    private boolean _authenticating = false;
-    private boolean _removing = false;
     private String _authToken;
     private String _username;
+    private int _state = STATE_NOT_AUTHENTICATED;
 
     private boolean _isNetworkDown = false;
     private boolean _isStarted = false;
@@ -83,28 +87,112 @@ public class AuthTopicService extends Service {
         super.onDestroy();
     }
 
+    private String getAccoutnType() {
+        return getString(R.string.accounttype);
+    }
+
+    /*-*************************-*/
+    /*-         Topics          -*/
+    /*-*************************-*/
+
+    private TopicReceiver _topics = new TopicReceiver(new Handler()) {
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
+                _isNetworkDown = true;
+                dispatchNoNetwork(AuthTopicService.this);
+            } else if (Topics.TOPIC_NETWORK_UP.equals(topicId)) {
+                _isNetworkDown = false;
+                requestAuthentication(AuthTopicService.this);
+            } else if (Topics.TOPIC_SHUTDOWN.equals(topicId)) {
+                _state = STATE_NOT_AUTHENTICATED;
+                _account = null;
+                dispatchAuthInvalid(AuthTopicService.this);
+            }
+        }
+    };
+
+    private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            String type = parcel.getString(BUNDLE_PARAM_TYPE);
+            Log.v(TAG, "Type: " + type);
+
+            if (_isNetworkDown) {
+                dispatchNoNetwork(AuthTopicService.this);
+                return;
+            }
+
+            if (BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
+                handleInvalid();
+            } else if (BUNDLE_PARAM_TYPE_REQUEST.equals(type)) {
+                handleRequest();
+            } else if (BUNDLE_PARAM_TYPE_REMOVE.equals(type)) {
+                handleRemove();
+            } else if (BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {
+                handleComplete();
+            } else if (BUNDLE_PARAM_TYPE_CANCELLED.equals(type)) {
+                handleCancelled();
+            }
+        }
+    };
+
+
+    /*-*****************************-*/
+    /*-             Events          -*/
+    /*-*****************************-*/
+
+
+    private void handleInvalid() {
+        if (_state == STATE_AUTHENTICATED) {
+            _state = STATE_NOT_AUTHENTICATED;
+            _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
+            _username = null;
+            _authToken = null;
+            dispatchAuthInvalid(AuthTopicService.this);
+            requestAuthentication(AuthTopicService.this);
+        }
+    }
+
+    private void handleRequest() {
+        if (_isNetworkDown) {
+            Log.v(TAG, "handleRequest._isNetworkDown");
+            dispatchNoNetwork(this);
+            return;
+        }
+
+        if (_state == STATE_AUTHENTICATED) {
+            Log.v(TAG, "handleRequest STATE_AUTHENTICATED");
+            if (_authToken == null) {
+                Log.v(TAG, "handleRequest requestAuthTokenFromAccountManager");
+                requestAuthTokenFromAccountManager();
+            } else {
+                Log.v(TAG, "handleRequest dispatchAuthComplete");
+                dispatchAuthComplete(AuthTopicService.this, _username, _authToken);
+            }
+        } else if (_state == STATE_NOT_AUTHENTICATED) {
+            Log.v(TAG, "handleRequest STATE_NOT_AUTHENTICATED");
+            getAccount();
+        } else {
+            Log.v(TAG, "handleRequest NA :" + _state);
+        }
+    }
+
     private void requestAuthTokenFromAccountManager() {
-        _authenticating = true;
+        _state = STATE_AUTHENTICATING;
         AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
                 _account, getAccoutnType(), null, null, null, null);
         new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
     }
 
-    private String getAccoutnType() {
-        return getString(R.string.accounttype);
-    }
-
     private void getAccount() {
         Log.v(TAG, "getAccount()");
-        if (_authenticating)
-            return;
-
-        if (_removing)
+        if (_state != STATE_AUTHENTICATED && _state != STATE_NOT_AUTHENTICATED)
             return;
 
         Log.v(TAG, "getAccount() not authenticating");
 
-        _authenticating = true;
+        _state = STATE_AUTHENTICATING;
         if (_accountManager == null)
             _accountManager = AccountManager.get(this);
 
@@ -133,100 +221,28 @@ public class AuthTopicService extends Service {
         }
     }
 
-    /*-*****************************-*/
-    /*-             Events          -*/
-    /*-*****************************-*/
-
-    private TopicReceiver _topics = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
-                _isNetworkDown = true;
-                dispatchNoNetwork(AuthTopicService.this);
-            } else if (Topics.TOPIC_NETWORK_UP.equals(topicId)) {
-                _isNetworkDown = false;
-                requestAuthentication(AuthTopicService.this);
-            } else {
-                _authenticating = false;
-                _removing = false;
-                _account = null;
-                dispatchAuthInvalid(AuthTopicService.this);
-            }
-        }
-    };
-
-
-    private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            String type = parcel.getString(BUNDLE_PARAM_TYPE);
-            Log.v(TAG, "Type: " + type);
-
-            if (_isNetworkDown) {
-                dispatchNoNetwork(AuthTopicService.this);
-                return;
-            }
-
-            if (BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
-                handleInvalid();
-            } else if (BUNDLE_PARAM_TYPE_REQUEST.equals(type)) {
-                handleRequest();
-            } else if (BUNDLE_PARAM_TYPE_REMOVE.equals(type)) {
-                handleRemove();
-            } else if (BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {
-                handleComplete();
-            } else if (BUNDLE_PARAM_TYPE_CANCELLED.equals(type)) {
-                handleCancelled();
-            }
-        }
-    };
-
-    private void handleInvalid() {
-        if (!_removing && !_authenticating) {
-            _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
-            _username = null;
-            _authToken = null;
-            dispatchAuthInvalid(AuthTopicService.this);
-            requestAuthentication(AuthTopicService.this);
-        }
-    }
-
-    private void handleRequest() {
-        if (_isNetworkDown) {
-            dispatchNoNetwork(this);
-            return;
-        }
-
-        if (_account != null && !_removing && !_authenticating) {
-            requestAuthTokenFromAccountManager();
-        } else if (!_authenticating) {
-            if (_username != null && _authToken != null) {
-                dispatchAuthComplete(AuthTopicService.this, _username, _authToken);
-            } else {
-                getAccount();
-            }
-        }
-    }
-
     private void handleRemove() {
-        if (!_removing && _account != null) {
-            _removing = true;
-            _authenticating = false;
+        if (_state == STATE_AUTHENTICATED) {
+            _state = STATE_REMOVING;
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
             new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
             _account = null;
+        } else if (_state == STATE_NOT_AUTHENTICATED) {
+            dispatchAuthInvalid(this);
         }
     }
 
+    /**
+     * called when the auth service is complete
+     */
     private void handleComplete() {
-        _authenticating = false;
+        _state = STATE_AUTHENTICATED;
         getAccount();
     }
 
     private void handleCancelled() {
+        _state = STATE_NOT_AUTHENTICATED;
         _account = null;
-        _authenticating = false;
-        _removing = false;
         dispatchAuthInvalid(AuthTopicService.this);
     }
 
@@ -234,13 +250,14 @@ public class AuthTopicService extends Service {
         @Override
         public void onComplete(Object result) {
             if (result instanceof Bundle && ((Bundle) result).containsKey("intent")) {
+                _state = STATE_AUTHENTICATING;
                 Log.v(TAG, "FutureWaitAsyncTask intent");
                 Bundle bundle = (Bundle) result;
                 Intent intent = bundle.getParcelable("intent");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
-            } else if (!_removing) {
+            } else if (_state == STATE_AUTHENTICATED || _state == STATE_AUTHENTICATING) {
                 Log.v(TAG, "FutureWaitAsyncTask not removing");
                 Bundle bundle = (Bundle) result;
                 Log.v(TAG, "_futureWaitAsyncTaskListener.onComplete()");
@@ -252,7 +269,7 @@ public class AuthTopicService extends Service {
                 if (tokenString == null) {
                     if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
                         Log.v(TAG, "FutureWaitAsyncTask, getAccount");
-                        _authenticating = false;
+                        _state = STATE_AUTHENTICATED;
                         getAccount();
                     } else {
                         // todo.. not sure
@@ -262,12 +279,12 @@ public class AuthTopicService extends Service {
                     Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
                     _authToken = tokenString;
                     _username = bundle.getString("authAccount");
-                    _authenticating = false;
+                    _state = STATE_AUTHENTICATED;
                     dispatchAuthComplete(AuthTopicService.this, _username, tokenString);
                 }
-            } else if (_removing) {
+            } else if (_state == STATE_REMOVING) {
                 Log.v(TAG, "FutureWaitAsyncTask removing");
-                _removing = false;
+                _state = STATE_NOT_AUTHENTICATED;
                 dispatchAuthInvalid(AuthTopicService.this);
                 requestAuthentication(AuthTopicService.this);
             }
@@ -276,8 +293,7 @@ public class AuthTopicService extends Service {
         @Override
         public void onFail(Exception ex) {
             dispatchAuthFailed(AuthTopicService.this);
-            _authenticating = false;
-            _removing = false;
+            _state = STATE_NOT_AUTHENTICATED;
         }
     };
 
@@ -296,9 +312,17 @@ public class AuthTopicService extends Service {
     public static void subscribeAuthState(Context context, int resultCode, String tag, TopicReceiver topicReceiver) {
         if (context == null)
             return;
-        
+
         startService(context);
         TopicService.registerListener(context, resultCode, tag, TOPIC_AUTH_STATE, topicReceiver);
+    }
+
+    public static void unsubscribeAuthState(Context context, String tag) {
+        if (context == null)
+            return;
+
+        startService(context);
+        TopicService.unRegisterListener(context, 0, tag, TOPIC_AUTH_STATE);
     }
 
     private static void subscribeAuthCommand(Context context, int resultCode, String tag, TopicReceiver topicReceiver) {

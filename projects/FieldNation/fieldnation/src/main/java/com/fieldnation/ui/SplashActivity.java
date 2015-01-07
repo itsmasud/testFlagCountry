@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Window;
 
 import com.fieldnation.R;
@@ -24,29 +25,32 @@ public class SplashActivity extends AuthFragmentActivity {
 
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, MyWorkActivity.class);
+        Log.v(TAG, "onAuthentication");
+        Intent intent = new Intent(SplashActivity.this, MyWorkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
 
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        }, 1000);
+        finish();
     }
 
     @Override
     public void onAuthenticationFailed(boolean networkDown) {
+        Log.v(TAG, "onAuthenticationFailed");
         if (!networkDown)
             AuthTopicService.requestAuthentication(this);
     }
 
     @Override
     public void onAuthenticationInvalidated() {
+        Log.v(TAG, "onAuthenticationInvalidated");
         AuthTopicService.requestAuthentication(this);
     }
 
+    @Override
+    protected void onResume() {
+        Log.v(TAG, "onResume");
+        super.onResume();
+    }
 
     @Override
     public void onRefresh() {
