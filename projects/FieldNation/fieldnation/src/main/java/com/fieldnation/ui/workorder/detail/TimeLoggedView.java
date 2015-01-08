@@ -100,6 +100,16 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
             enableDevices(_workorder.getPay().isPerDeviceRate());
 
         _logList.removeAllViews();
+
+//        for (int i = 0; i < logs.length; i++) {
+//            LoggedWork log = logs[i];
+//            ScheduleDetailView v = new ScheduleDetailView(getContext());
+//            v.setListener(_scheduleDetailView_listener);
+//            v.setData(_workorder, log);
+//            _logList.addView(v);
+//        }
+
+
         ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
             private LoggedWork[] _logs = logs;
 
