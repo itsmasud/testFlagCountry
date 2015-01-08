@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
@@ -74,7 +76,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
     public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
 
-        LoggedWork[] logs = _workorder.getLoggedWork();
+        final LoggedWork[] logs = _workorder.getLoggedWork();
 
         if (_workorder.canModifyTimeLog()) {
             _addLogLinearLayout.setVisibility(View.VISIBLE);
@@ -98,14 +100,19 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
             enableDevices(_workorder.getPay().isPerDeviceRate());
 
         _logList.removeAllViews();
-        for (int i = 0; i < logs.length; i++) {
-            LoggedWork log = logs[i];
-            ScheduleDetailView v = new ScheduleDetailView(getContext());
-            v.setListener(_scheduleDetailView_listener);
-            v.setData(_workorder, log);
-            _logList.addView(v);
-        }
+        ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
+            private LoggedWork[] _logs = logs;
 
+            @Override
+            public void next(int i) throws Exception {
+                LoggedWork log = _logs[i];
+                ScheduleDetailView v = new ScheduleDetailView(getContext());
+                v.setListener(_scheduleDetailView_listener);
+                v.setData(_workorder, log);
+                _logList.addView(v);
+            }
+        };
+        post(r);
     }
 
     /*-*************************-*/

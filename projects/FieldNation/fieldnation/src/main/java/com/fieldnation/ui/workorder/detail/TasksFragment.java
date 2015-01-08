@@ -414,7 +414,8 @@ public class TasksFragment extends WorkorderFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-        if (requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC) {
+        if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+                && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
                 getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
@@ -425,8 +426,6 @@ public class TasksFragment extends WorkorderFragment {
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                         _currentTask.getSlotId(), data, getNotificationIntent()));
             }
-            // todo notify task view that the file is uploading
-
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
             _context.startService(
                     _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));

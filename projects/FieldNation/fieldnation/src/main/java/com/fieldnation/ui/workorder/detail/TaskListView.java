@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
@@ -99,41 +101,51 @@ public class TaskListView extends RelativeLayout {
             _onSiteLayout.setVisibility(View.GONE);
             _postVisitLayout.setVisibility(View.GONE);
 
-            for (int i = 0; i < _tasks.size(); i++) {
-                Task task = _tasks.get(i);
+            ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
+                @Override
+                public void next(int i) throws Exception {
+                    Task task = _tasks.get(i);
 
-                TaskRowView row = new TaskRowView(getContext());
-                row.setData(_workorder, task);
+                    TaskRowView row = new TaskRowView(getContext());
+                    row.setData(_workorder, task);
 
-                if (_workorder.canModifyTasks()) {
-                    row.setOnTaskClickListener(_task_onClick);
+                    if (_workorder.canModifyTasks()) {
+                        row.setOnTaskClickListener(_task_onClick);
+                    }
+
+                    _preVisistList.addView(row);
                 }
-
-                _preVisistList.addView(row);
-            }
+            };
+            post(r);
         } else {
             _preVisistTextView.setVisibility(View.VISIBLE);
             _onSiteLayout.setVisibility(View.VISIBLE);
             _postVisitLayout.setVisibility(View.VISIBLE);
-            for (int i = 0; i < _tasks.size(); i++) {
-                Task task = _tasks.get(i);
 
-                TaskRowView row = new TaskRowView(getContext());
-                row.setData(_workorder, task);
+            ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
+                @Override
+                public void next(int i) throws Exception {
+                    Task task = _tasks.get(i);
 
-                //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder.canModifyTasks()) {
-                    row.setOnTaskClickListener(_task_onClick);
+                    TaskRowView row = new TaskRowView(getContext());
+                    row.setData(_workorder, task);
+
+                    //if work order completed or canceled then hide/disable any controls actions
+                    if (_workorder.canModifyTasks()) {
+                        row.setOnTaskClickListener(_task_onClick);
+                    }
+
+                    if ("prep".equals(task.getStage())) {
+                        _preVisistList.addView(row);
+                    } else if ("onsite".equals(task.getStage())) {
+                        _onSiteList.addView(row);
+                    } else if ("post".equals(task.getStage())) {
+                        _postVisitList.addView(row);
+                    }
+
                 }
-
-                if ("prep".equals(task.getStage())) {
-                    _preVisistList.addView(row);
-                } else if ("onsite".equals(task.getStage())) {
-                    _onSiteList.addView(row);
-                } else if ("post".equals(task.getStage())) {
-                    _postVisitList.addView(row);
-                }
-            }
+            };
+            post(r);
         }
     }
 

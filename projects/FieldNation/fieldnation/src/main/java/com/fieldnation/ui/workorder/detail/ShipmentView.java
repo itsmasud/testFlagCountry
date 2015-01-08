@@ -1,11 +1,13 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
@@ -55,7 +57,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void refresh() {
-        ShipmentTracking[] shipments = _workorder.getShipmentTracking();
+        final ShipmentTracking[] shipments = _workorder.getShipmentTracking();
 
         _shipmentsLayout.removeAllViews();
 
@@ -74,12 +76,18 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         if (shipments == null || shipments.length == 0)
             return;
 
-        for (int i = 0; i < shipments.length; i++) {
-            ShipmentSummary view = new ShipmentSummary(getContext());
-            view.setData(_workorder, shipments[i]);
-            view.setListener(_summaryListener);
-            _shipmentsLayout.addView(view);
-        }
+        ForLoopRunnable r = new ForLoopRunnable(shipments.length, new Handler()) {
+            private ShipmentTracking[] _shipments = shipments;
+
+            @Override
+            public void next(int i) throws Exception {
+                ShipmentSummary view = new ShipmentSummary(getContext());
+                view.setData(_workorder, _shipments[i]);
+                view.setListener(_summaryListener);
+                _shipmentsLayout.addView(view);
+            }
+        };
+        post(r);
     }
 
     /*-*********************************-*/

@@ -1,6 +1,7 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
@@ -88,7 +90,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
 
         setVisibility(View.VISIBLE);
 
-        Signature[] list = _workorder.getSignatureList();
+        final Signature[] list = _workorder.getSignatureList();
 
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(View.VISIBLE);
@@ -98,14 +100,19 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         _noDataTextView.setVisibility(View.GONE);
 
         _listView.removeAllViews();
-        for (int i = 0; i < list.length; i++) {
-            Signature sig = list[i];
-            SignatureTileView v = new SignatureTileView(getContext());
-            v.setSignature(sig);
-            v.setOnClickListener(_signature_onClick);
-            _listView.addView(v);
-        }
+        ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
+            private Signature[] _list = list;
 
+            @Override
+            public void next(int i) throws Exception {
+                Signature sig = _list[i];
+                SignatureTileView v = new SignatureTileView(getContext());
+                v.setSignature(sig);
+                v.setOnClickListener(_signature_onClick);
+                _listView.addView(v);
+            }
+        };
+        post(r);
     }
 
 

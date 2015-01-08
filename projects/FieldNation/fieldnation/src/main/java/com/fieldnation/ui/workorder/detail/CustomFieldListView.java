@@ -1,12 +1,14 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
@@ -61,13 +63,16 @@ public class CustomFieldListView extends RelativeLayout {
         setVisibility(View.VISIBLE);
 
         _fieldsList.removeAllViews();
-        for (int i = 0; i < _fields.length; i++) {
-            CustomField field = _fields[i];
-
-            CustomFieldRowView v = new CustomFieldRowView(getContext());
-            v.setData(_workorder, field, _listener);
-            _fieldsList.addView(v);
-        }
+        ForLoopRunnable r = new ForLoopRunnable(_fields.length, new Handler()) {
+            @Override
+            public void next(int i) throws Exception {
+                CustomField field = _fields[i];
+                CustomFieldRowView v = new CustomFieldRowView(getContext());
+                v.setData(_workorder, field, _listener);
+                _fieldsList.addView(v);
+            }
+        };
+        post(r);
     }
 
     public void setListener(CustomFieldRowView.Listener listener) {

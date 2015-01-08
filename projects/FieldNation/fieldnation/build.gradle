@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 19
-        versionCode 20
-        versionName "0.020"
+        versionCode 21
+        versionName "0.021"
         applicationId "com.fieldnation.android"
     }
     buildTypes {
