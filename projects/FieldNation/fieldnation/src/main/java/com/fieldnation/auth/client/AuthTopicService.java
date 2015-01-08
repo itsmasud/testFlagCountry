@@ -123,9 +123,11 @@ public class AuthTopicService extends Service {
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
                 _isNetworkDown = true;
+                setState(STATE_NOT_AUTHENTICATED);
                 dispatchNoNetwork(AuthTopicService.this);
             } else if (Topics.TOPIC_NETWORK_UP.equals(topicId)) {
                 _isNetworkDown = false;
+                setState(STATE_NOT_AUTHENTICATED);
                 requestAuthentication(AuthTopicService.this);
             } else if (Topics.TOPIC_SHUTDOWN.equals(topicId)) {
                 setState(STATE_NOT_AUTHENTICATED);
