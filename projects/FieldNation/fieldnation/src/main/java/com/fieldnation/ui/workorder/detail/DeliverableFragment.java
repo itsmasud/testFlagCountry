@@ -20,13 +20,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.ActivityResult;
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
-import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
@@ -42,15 +43,13 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.security.SecureRandom;
 
 public class DeliverableFragment extends WorkorderFragment {
-    private static final String TAG = "ui.workorder.detail.DeliverableFragment";
+    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.DeliverableFragment");
 
     // pageRequest parameters
     public static final String PR_TASK_ID = "PR_TASK_ID";
@@ -65,6 +64,10 @@ public class DeliverableFragment extends WorkorderFragment {
     private static final int WEB_DELETE_DELIVERABLE = 3;
     private static final int WEB_SEND_DELIVERABLE = 4;
     private static final int WEB_CHANGE = 5;
+
+    // State
+    private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
+    private static final String STATE_TEMP_FILE = "STATE_TEMP_FILE";
 
     // UI
     private OverScrollView _scrollView;
@@ -83,23 +86,34 @@ public class DeliverableFragment extends WorkorderFragment {
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
     private SecureRandom _rand = new SecureRandom();
-
-    // Temporary storage
-    private UploadSlot _uploadingSlot;
-    private UploadSlotView _uploadingSlotView;
+    private int _uploadingSlotId = -1;
     private int _uploadCount = 0;
     private int _deleteCount = 0;
-    private boolean _isCached = true;
     private File _tempFile;
+
+    // Temporary storage
+    private boolean _isCached = true;
+    private ActivityResult _activityResult = null;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
 
+    public DeliverableFragment() {
+        super();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_workorder_deliverables,
-                container, false);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TEMP_FILE))
+                _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
+
+            if (savedInstanceState.containsKey(STATE_UPLOAD_SLOTID))
+                _uploadingSlotId = savedInstanceState.getInt(STATE_UPLOAD_SLOTID);
+        }
+
+        return inflater.inflate(R.layout.fragment_workorder_deliverables, container, false);
     }
 
     @Override
@@ -124,6 +138,35 @@ public class DeliverableFragment extends WorkorderFragment {
         checkMedia();
 
         populateUi();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        _context = getActivity().getApplicationContext();
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Get Content");
+
+        if (_context.getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Take Picture");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_uploadingSlotId > 0)
+            outState.putInt(STATE_UPLOAD_SLOTID, _uploadingSlotId);
+
+        if (_tempFile != null)
+            outState.putString(STATE_TEMP_FILE, _tempFile.getAbsolutePath());
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -188,6 +231,15 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     }
 
+    private void tryActivityResult() {
+        if (_activityResult != null) {
+            Log.v(TAG, "recovering");
+            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
+                _activityResult = null;
+        }
+
+    }
+
     private void populateUi() {
         if (_workorder == null)
             return;
@@ -197,6 +249,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
         if (getActivity() == null)
             return;
+
+        tryActivityResult();
 
         Stopwatch stopwatch = new Stopwatch(true);
         _reviewList.removeAllViews();
@@ -244,28 +298,21 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
-        _context = getActivity().getApplicationContext();
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Get Content");
-
-        if (_context.getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
-            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Take Picture");
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    private boolean performActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
+        if (_workorder == null)
+            return false;
+
+        if (_uploadingSlotId < 0)
+            return false;
+
+        if (_service == null)
+            return false;
+
+        if (getActivity() == null)
+            return false;
 
         if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                 && resultCode == Activity.RESULT_OK) {
@@ -273,17 +320,30 @@ public class DeliverableFragment extends WorkorderFragment {
             setLoading(true);
 
             if (data == null) {
+                if (_tempFile == null)
+                    return false;
+
                 Log.v(TAG, "local path");
-                _context.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-                        _workorder.getWorkorderId(), _uploadingSlot.getSlotId(),
+                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                        _workorder.getWorkorderId(), _uploadingSlotId,
                         _tempFile.getAbsolutePath(), getNotificationIntent()));
+
+                return true;
             } else {
                 Log.v(TAG, "from intent");
-                _context.startService(_service.uploadDeliverable(
+                getActivity().startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _uploadingSlot.getSlotId(), data, getNotificationIntent()));
+                        _uploadingSlotId, data, getNotificationIntent()));
+                return true;
             }
         }
+        return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        _activityResult = new ActivityResult(requestCode, resultCode, data);
+        tryActivityResult();
     }
 
     /*-*********************************-*/
@@ -318,8 +378,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onUploadClick(UploadSlotView view, UploadSlot slot) {
             if (checkMedia()) {
                 // start of the upload process
-                _uploadingSlot = slot;
-                _uploadingSlotView = view;
+                _uploadingSlotId = slot.getSlotId();
                 _appPickerDialog.show();
             } else {
                 Toast.makeText(
@@ -400,6 +459,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onSuccess(int resultCode, Bundle resultData) {
             Log.v(TAG, "Method Stub: onSuccess()");
             if (resultCode == WEB_GET_PROFILE) {
+                Log.v(TAG, "WEB_GET_PROFILE");
                 _profile = null;
                 try {
                     _profile = Profile.fromJson(
@@ -412,6 +472,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 populateUi();
             } else if (resultCode == WEB_DELETE_DELIVERABLE
                     || resultCode == WEB_SEND_DELIVERABLE) {
+                Log.v(TAG, "WEB_DELETE_DELIVERABLE || WEB_SEND_DELIVERABLE");
                 if (resultCode == WEB_DELETE_DELIVERABLE)
                     _deleteCount--;
 
@@ -430,8 +491,11 @@ public class DeliverableFragment extends WorkorderFragment {
                 }
 
             } else if (resultCode == WEB_CHANGE) {
-                _workorder.dispatchOnChange();
+                Log.v(TAG, "WEB_CHANGE");
                 setLoading(true);
+                _workorder.dispatchOnChange();
+            } else {
+                Log.v(TAG, "unknown resultcode");
             }
         }
 

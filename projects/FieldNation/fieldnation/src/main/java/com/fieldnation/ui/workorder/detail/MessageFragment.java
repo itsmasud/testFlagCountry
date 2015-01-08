@@ -124,7 +124,6 @@ public class MessageFragment extends WorkorderFragment {
         if (_adapter != null)
             _adapter.notifyDataSetChanged();
 
-
         Log.v(TAG, "getMessages");
         WEB_GET_MESSAGES = _rand.nextInt();
         getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
