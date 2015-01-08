@@ -42,15 +42,15 @@ public class AuthTopicService extends Service {
     public static final String BUNDLE_PARAM_TYPE_NO_NETWORK = "BUNDLE_PARAM_TYPE_NO_NETWORK";
 
     private static final int STATE_NOT_AUTHENTICATED = 0;
-    private static final int STATE_AUTHENTICATING = 2;
-    private static final int STATE_AUTHENTICATED = 3;
-    private static final int STATE_REMOVING = 4;
+    private static final int STATE_AUTHENTICATING = 1;
+    private static final int STATE_AUTHENTICATED = 2;
+    private static final int STATE_REMOVING = 3;
 
     // Data
     private Account _account = null;
     private String _authToken;
     private String _username;
-    private int _state = STATE_NOT_AUTHENTICATED;
+    private int _state;
 
     private boolean _isNetworkDown = false;
     private boolean _isStarted = false;
@@ -61,6 +61,11 @@ public class AuthTopicService extends Service {
     /*-*********************************-*/
     /*-             Life Cycle          -*/
     /*-*********************************-*/
+
+    public AuthTopicService() {
+        super();
+        setState(STATE_NOT_AUTHENTICATED);
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -91,6 +96,24 @@ public class AuthTopicService extends Service {
         return getString(R.string.accounttype);
     }
 
+    private void setState(int state) {
+        _state = state;
+        switch (_state) {
+            case STATE_AUTHENTICATED:
+                Log.v(TAG, "STATE_AUTHENTICATED");
+                break;
+            case STATE_AUTHENTICATING:
+                Log.v(TAG, "STATE_AUTHENTICATING");
+                break;
+            case STATE_NOT_AUTHENTICATED:
+                Log.v(TAG, "STATE_NOT_AUTHENTICATED");
+                break;
+            case STATE_REMOVING:
+                Log.v(TAG, "STATE_REMOVING");
+                break;
+        }
+    }
+
     /*-*************************-*/
     /*-         Topics          -*/
     /*-*************************-*/
@@ -105,7 +128,7 @@ public class AuthTopicService extends Service {
                 _isNetworkDown = false;
                 requestAuthentication(AuthTopicService.this);
             } else if (Topics.TOPIC_SHUTDOWN.equals(topicId)) {
-                _state = STATE_NOT_AUTHENTICATED;
+                setState(STATE_NOT_AUTHENTICATED);
                 _account = null;
                 dispatchAuthInvalid(AuthTopicService.this);
             }
@@ -145,7 +168,7 @@ public class AuthTopicService extends Service {
 
     private void handleInvalid() {
         if (_state == STATE_AUTHENTICATED) {
-            _state = STATE_NOT_AUTHENTICATED;
+            setState(STATE_NOT_AUTHENTICATED);
             _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
             _username = null;
             _authToken = null;
@@ -179,7 +202,7 @@ public class AuthTopicService extends Service {
     }
 
     private void requestAuthTokenFromAccountManager() {
-        _state = STATE_AUTHENTICATING;
+        setState(STATE_AUTHENTICATING);
         AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
                 _account, getAccoutnType(), null, null, null, null);
         new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
@@ -187,12 +210,14 @@ public class AuthTopicService extends Service {
 
     private void getAccount() {
         Log.v(TAG, "getAccount()");
-        if (_state != STATE_AUTHENTICATED && _state != STATE_NOT_AUTHENTICATED)
+        if (_state == STATE_REMOVING) {
+            Log.v(TAG, "removing");
             return;
+        }
 
         Log.v(TAG, "getAccount() not authenticating");
 
-        _state = STATE_AUTHENTICATING;
+        setState(STATE_AUTHENTICATING);
         if (_accountManager == null)
             _accountManager = AccountManager.get(this);
 
@@ -223,7 +248,7 @@ public class AuthTopicService extends Service {
 
     private void handleRemove() {
         if (_state == STATE_AUTHENTICATED) {
-            _state = STATE_REMOVING;
+            setState(STATE_REMOVING);
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
             new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
             _account = null;
@@ -236,25 +261,25 @@ public class AuthTopicService extends Service {
      * called when the auth service is complete
      */
     private void handleComplete() {
-        _state = STATE_AUTHENTICATED;
+        setState(STATE_AUTHENTICATING);
         getAccount();
     }
 
     private void handleCancelled() {
-        _state = STATE_NOT_AUTHENTICATED;
+        setState(STATE_NOT_AUTHENTICATED);
         _account = null;
-        dispatchAuthInvalid(AuthTopicService.this);
+        //dispatchAuthInvalid(AuthTopicService.this);
     }
 
     private FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
         @Override
         public void onComplete(Object result) {
             if (result instanceof Bundle && ((Bundle) result).containsKey("intent")) {
-                _state = STATE_AUTHENTICATING;
+                setState(STATE_AUTHENTICATING);
                 Log.v(TAG, "FutureWaitAsyncTask intent");
                 Bundle bundle = (Bundle) result;
                 Intent intent = bundle.getParcelable("intent");
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
             } else if (_state == STATE_AUTHENTICATED || _state == STATE_AUTHENTICATING) {
@@ -269,7 +294,7 @@ public class AuthTopicService extends Service {
                 if (tokenString == null) {
                     if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
                         Log.v(TAG, "FutureWaitAsyncTask, getAccount");
-                        _state = STATE_AUTHENTICATED;
+                        setState(STATE_AUTHENTICATING);
                         getAccount();
                     } else {
                         // todo.. not sure
@@ -279,21 +304,23 @@ public class AuthTopicService extends Service {
                     Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
                     _authToken = tokenString;
                     _username = bundle.getString("authAccount");
-                    _state = STATE_AUTHENTICATED;
+                    setState(STATE_AUTHENTICATED);
                     dispatchAuthComplete(AuthTopicService.this, _username, tokenString);
                 }
             } else if (_state == STATE_REMOVING) {
                 Log.v(TAG, "FutureWaitAsyncTask removing");
-                _state = STATE_NOT_AUTHENTICATED;
+                setState(STATE_NOT_AUTHENTICATED);
                 dispatchAuthInvalid(AuthTopicService.this);
                 requestAuthentication(AuthTopicService.this);
+            } else {
+                Log.v(TAG, "FutureWaitAsyncTask unknown " + _state);
             }
         }
 
         @Override
         public void onFail(Exception ex) {
+            setState(STATE_NOT_AUTHENTICATED);
             dispatchAuthFailed(AuthTopicService.this);
-            _state = STATE_NOT_AUTHENTICATED;
         }
     };
 

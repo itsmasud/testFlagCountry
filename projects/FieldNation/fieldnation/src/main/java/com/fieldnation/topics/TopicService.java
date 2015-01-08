@@ -29,11 +29,14 @@ public class TopicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand");
-        if (intent == null)
+        if (intent == null) {
+            Log.v(TAG, "onStartCommand no data");
             return START_STICKY;
+        }
 
         String action = intent.getAction();
+
+        Log.v(TAG, "onStateCommand " + action);
 
         if (TopicConstants.ACTION_REGISTER_LISTENER.equals(action)) {
             register(intent);
@@ -102,10 +105,11 @@ public class TopicService extends Service {
     }
 
     private void unregister(Intent intent) {
-        Log.v(TAG, "unregister");
         int resultCode = intent.getIntExtra(TopicConstants.PARAM_RESULT_CODE, 0);
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
         String topicId = intent.getStringExtra(TopicConstants.PARAM_TOPIC_ID);
+
+        Log.v(TAG, "unregister " + tag + ":" + topicId);
 
         TopicClient c = null;
         synchronized (TAG) {
@@ -120,9 +124,9 @@ public class TopicService extends Service {
     }
 
     private void delete(Intent intent) {
-        Log.v(TAG, "delete");
-
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
+
+        Log.v(TAG, "delete " + tag);
 
         synchronized (TAG) {
             TopicClient.delete(tag);

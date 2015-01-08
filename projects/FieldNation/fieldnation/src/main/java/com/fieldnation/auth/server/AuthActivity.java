@@ -130,7 +130,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
     @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
-        //Topics.dispatchShutdown(this);
+        Topics.dispatchShutdown(this);
         if (!_authcomplete) {
             AuthTopicService.dispatchAuthCancelled(this);
         }
@@ -214,10 +214,6 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                     AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
                     AuthActivity.this.setResult(RESULT_OK, intent);
                     AuthActivity.this.finish();
-
-                    Intent splash = new Intent(AuthActivity.this, SplashActivity.class);
-                    splash.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(splash);
 
                     ClockService.enableClock(AuthActivity.this);
                 } else {

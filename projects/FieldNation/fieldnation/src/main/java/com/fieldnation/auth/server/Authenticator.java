@@ -35,7 +35,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
         Log.v(TAG, "addAccount");
         Intent intent = new Intent(_context, AuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 
         Bundle result = new Bundle();
