@@ -202,17 +202,15 @@ public class DeliverableFragment extends WorkorderFragment {
         _reviewList.removeAllViews();
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
-            ForLoopRunnable r = new ForLoopRunnable(docs.length) {
+            ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
                 private Document[] _docs = docs;
 
                 @Override
-                public void next(int i) {
+                public void next(int i) throws Exception {
                     Document doc = _docs[i];
                     DocumentView v = new DocumentView(_context);
                     _reviewList.addView(v);
                     v.setData(_workorder, doc);
-
-                    _reviewList.postDelayed(this, 50);
                 }
             };
             _reviewList.post(r);
@@ -226,18 +224,17 @@ public class DeliverableFragment extends WorkorderFragment {
         _filesLayout.removeAllViews();
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null) {
-            ForLoopRunnable r = new ForLoopRunnable(slots.length) {
+            ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private UploadSlot[] _slots = slots;
 
                 @Override
-                public void next(int i) {
+                public void next(int i) throws Exception {
                     UploadSlot slot = _slots[i];
                     UploadSlotView v = new UploadSlotView(getActivity());
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                     v.setListener(_uploadSlot_listener);
 
                     _filesLayout.addView(v);
-                    _filesLayout.postDelayed(this, 50);
                 }
             };
             _filesLayout.post(r);

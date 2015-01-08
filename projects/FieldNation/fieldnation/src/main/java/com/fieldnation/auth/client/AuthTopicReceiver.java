@@ -18,10 +18,6 @@ public abstract class AuthTopicReceiver extends TopicReceiver {
     }
 
     @Override
-    public void onUnregister(int resultCode, String topicId) {
-    }
-
-    @Override
     public void onTopic(int resultCode, String topicId, Bundle parcel) {
         String type = parcel.getString(AuthTopicService.BUNDLE_PARAM_TYPE);
         if (AuthTopicService.BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {

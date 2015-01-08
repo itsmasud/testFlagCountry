@@ -56,6 +56,13 @@ public class ReconnectWarningView extends RelativeLayout {
         AuthTopicService.subscribeAuthState(getContext(), 0, TAG + ":AUTH", _authReceiver);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        TopicService.delete(getContext(), TAG);
+        TopicService.delete(getContext(), TAG + ":AUTH");
+        super.onDetachedFromWindow();
+    }
+
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {

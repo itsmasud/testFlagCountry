@@ -2,6 +2,7 @@ package com.fieldnation.ui;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -186,7 +187,7 @@ public class SignOffFragment extends FragmentBase {
             _timeDivider.setVisibility(View.VISIBLE);
 
             _timeLinearLayout.removeAllViews();
-            ForLoopRunnable r = new ForLoopRunnable(logs.length) {
+            ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
                 private LoggedWork[] _logs = logs;
 
                 @Override
@@ -198,8 +199,6 @@ public class SignOffFragment extends FragmentBase {
                     WorklogTile v = new WorklogTile(getActivity());
                     v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
                     _timeLinearLayout.addView(v);
-
-                    SignOffFragment.this._container.postDelayed(this, 50);
                 }
             };
             _container.post(r);
@@ -218,7 +217,7 @@ public class SignOffFragment extends FragmentBase {
 
             _tasksLinearLayout.removeAllViews();
 
-            ForLoopRunnable r = new ForLoopRunnable(tasks.length) {
+            ForLoopRunnable r = new ForLoopRunnable(tasks.length, new Handler()) {
                 private Task[] _tasks = tasks;
 
                 @Override
@@ -243,7 +242,6 @@ public class SignOffFragment extends FragmentBase {
                         v.setText(display + "\n" + task.getDescription());
                     }
                     _tasksLinearLayout.addView(v);
-                    SignOffFragment.this._container.postDelayed(this, 50);
                 }
             };
             _container.post(r);

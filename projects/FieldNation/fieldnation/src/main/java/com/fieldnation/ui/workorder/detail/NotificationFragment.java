@@ -259,6 +259,9 @@ public class NotificationFragment extends WorkorderFragment {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             _service = null;
+            if (getActivity() == null)
+                return;
+            
             AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshComplete();

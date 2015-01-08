@@ -60,7 +60,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         TopicService.delete(this, TAG);
-
         super.onPause();
     }
 
