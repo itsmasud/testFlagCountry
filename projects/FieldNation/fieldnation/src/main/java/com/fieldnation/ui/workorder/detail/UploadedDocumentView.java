@@ -103,10 +103,13 @@ public class UploadedDocumentView extends RelativeLayout {
 
     public void setUploading(String filename) {
         setLoading(true, R.string.uploading);
+        _doc = null;
+        _workorder = null;
         _filenameTextView.setText(filename);
     }
 
     public void setData(Workorder workorder, long profileId, UploadedDocument deliverable) {
+        setLoading(false, R.string.uploading);
         _doc = deliverable;
         _profileId = profileId;
         _workorder = workorder;
@@ -157,9 +160,9 @@ public class UploadedDocumentView extends RelativeLayout {
     private View.OnClickListener _delete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLoading(true, R.string.deleting);
             if (_listener != null)
                 _listener.onDelete(UploadedDocumentView.this, _doc);
+            ((LinearLayout) getParent()).removeView(UploadedDocumentView.this);
         }
     };
 

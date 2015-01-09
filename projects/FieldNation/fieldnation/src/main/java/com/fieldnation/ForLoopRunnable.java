@@ -28,6 +28,9 @@ public abstract class ForLoopRunnable implements Runnable {
         try {
             if (i < count) {
                 next(i);
+            } else {
+                finish(count);
+                return;
             }
             i++;
             handler.postDelayed(this, delay);
@@ -37,4 +40,7 @@ public abstract class ForLoopRunnable implements Runnable {
     }
 
     public abstract void next(int i) throws Exception;
+
+    public void finish(int count) throws Exception {
+    }
 }

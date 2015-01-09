@@ -84,7 +84,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
         }
 
         @Override
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
+        public void deleteWorklog(ScheduleDetailView view, Workorder workorder, LoggedWork loggedWork) {
             if (_listener != null)
                 _listener.deleteWorklog(workorder, loggedWork);
         }

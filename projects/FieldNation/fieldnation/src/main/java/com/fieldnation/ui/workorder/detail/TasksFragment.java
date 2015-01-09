@@ -214,7 +214,7 @@ public class TasksFragment extends WorkorderFragment {
             }
             if (savedInstanceState.containsKey(STATE_TASKS)) {
                 Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
-                _tasks = new LinkedList<Task>();
+                _tasks = new LinkedList<>();
                 for (int i = 0; i < tasks.length; i++) {
                     _tasks.add((Task) tasks[i]);
                 }
@@ -225,7 +225,7 @@ public class TasksFragment extends WorkorderFragment {
             }
             if (savedInstanceState.containsKey(STATE_SIGNATURES)) {
                 Parcelable[] sigs = savedInstanceState.getParcelableArray(STATE_SIGNATURES);
-                _signatures = new LinkedList<Signature>();
+                _signatures = new LinkedList<>();
                 for (int i = 0; i < sigs.length; i++) {
                     _signatures.add((Signature) sigs[i]);
                 }
@@ -514,21 +514,10 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-            final Workorder _workorder = workorder;
-            final LoggedWork _loggedWork = loggedWork;
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Are you sure you want to delete this work log?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    _context.startService(
-                            _service.deleteLogTime(WEB_CHANGED,
-                                    _workorder.getWorkorderId(), _loggedWork.getLoggedHoursId()));
-                    _refreshView.startRefreshing();
-                }
-            });
-            builder.setNegativeButton("No", null);
-            builder.show();
+            _context.startService(
+                    _service.deleteLogTime(WEB_CHANGED,
+                            workorder.getWorkorderId(), loggedWork.getLoggedHoursId()));
+            _refreshView.startRefreshing();
         }
     };
 

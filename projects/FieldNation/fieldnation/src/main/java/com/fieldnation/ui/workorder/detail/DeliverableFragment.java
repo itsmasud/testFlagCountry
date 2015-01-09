@@ -253,7 +253,6 @@ public class DeliverableFragment extends WorkorderFragment {
         tryActivityResult();
 
         Stopwatch stopwatch = new Stopwatch(true);
-        _reviewList.removeAllViews();
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
             ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
@@ -261,37 +260,63 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 @Override
                 public void next(int i) throws Exception {
+                    DocumentView v = null;
+                    if (i < _reviewList.getChildCount()) {
+                        v = (DocumentView) _reviewList.getChildAt(i);
+                    } else {
+                        v = new DocumentView(_context);
+                        _reviewList.addView(v);
+                    }
                     Document doc = _docs[i];
-                    DocumentView v = new DocumentView(_context);
-                    _reviewList.addView(v);
                     v.setData(_workorder, doc);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    if (_reviewList.getChildCount() > count) {
+                        _reviewList.removeViews(count - 1, _reviewList.getChildCount() - count);
+                    }
                 }
             };
             _reviewList.post(r);
             _noDocsTextView.setVisibility(View.GONE);
         } else {
+            _reviewList.removeAllViews();
             _noDocsTextView.setVisibility(View.VISIBLE);
         }
         Log.v(TAG, "pop docs time " + stopwatch.finish());
 
         stopwatch.start();
-        _filesLayout.removeAllViews();
+
         final UploadSlot[] slots = _workorder.getUploadSlots();
-        if (slots != null) {
+        if (slots != null && slots.length > 0) {
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private UploadSlot[] _slots = slots;
 
                 @Override
                 public void next(int i) throws Exception {
+                    UploadSlotView v = null;
+                    if (i < _filesLayout.getChildCount()) {
+                        v = (UploadSlotView) _filesLayout.getChildAt(i);
+                    } else {
+                        v = new UploadSlotView(_context);
+                        _filesLayout.addView(v);
+                    }
                     UploadSlot slot = _slots[i];
-                    UploadSlotView v = new UploadSlotView(getActivity());
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                     v.setListener(_uploadSlot_listener);
+                }
 
-                    _filesLayout.addView(v);
+                @Override
+                public void finish(int count) throws Exception {
+                    if (_filesLayout.getChildCount() > count) {
+                        _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
+                    }
                 }
             };
             _filesLayout.post(r);
+        } else {
+            _filesLayout.removeAllViews();
         }
         Log.v(TAG, "upload docs time " + stopwatch.finish());
 

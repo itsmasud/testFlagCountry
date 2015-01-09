@@ -59,8 +59,6 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     private void refresh() {
         final ShipmentTracking[] shipments = _workorder.getShipmentTracking();
 
-        _shipmentsLayout.removeAllViews();
-
         if (_workorder.canChangeShipments()) {
             _addLayout.setVisibility(View.VISIBLE);
         } else {
@@ -81,10 +79,22 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
             @Override
             public void next(int i) throws Exception {
-                ShipmentSummary view = new ShipmentSummary(getContext());
-                view.setData(_workorder, _shipments[i]);
-                view.setListener(_summaryListener);
-                _shipmentsLayout.addView(view);
+                ShipmentSummary v = null;
+                if (i < _shipmentsLayout.getChildCount()) {
+                    v = (ShipmentSummary) _shipmentsLayout.getChildAt(i);
+                } else {
+                    v = new ShipmentSummary(getContext());
+                    _shipmentsLayout.addView(v);
+                }
+                v.setData(_workorder, _shipments[i]);
+                v.setListener(_summaryListener);
+            }
+
+            @Override
+            public void finish(int count) throws Exception {
+                if (_shipmentsLayout.getChildCount() > count) {
+                    _shipmentsLayout.removeViews(count - 1, _shipmentsLayout.getChildCount() - count);
+                }
             }
         };
         post(r);

@@ -62,14 +62,25 @@ public class CustomFieldListView extends RelativeLayout {
 
         setVisibility(View.VISIBLE);
 
-        _fieldsList.removeAllViews();
         ForLoopRunnable r = new ForLoopRunnable(_fields.length, new Handler()) {
             @Override
             public void next(int i) throws Exception {
+                CustomFieldRowView v = null;
+                if (i < _fieldsList.getChildCount()) {
+                    v = (CustomFieldRowView) _fieldsList.getChildAt(i);
+                } else {
+                    v = new CustomFieldRowView(getContext());
+                    _fieldsList.addView(v);
+                }
                 CustomField field = _fields[i];
-                CustomFieldRowView v = new CustomFieldRowView(getContext());
                 v.setData(_workorder, field, _listener);
-                _fieldsList.addView(v);
+            }
+
+            @Override
+            public void finish(int count) throws Exception {
+                if (_fieldsList.getChildCount() > count) {
+                    _fieldsList.removeViews(count - 1, _fieldsList.getChildCount() - count);
+                }
             }
         };
         post(r);
