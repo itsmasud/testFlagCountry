@@ -1,6 +1,8 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -99,7 +101,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
         if (_workorder != null && _workorder.getPay() != null)
             enableDevices(_workorder.getPay().isPerDeviceRate());
 
-        _logList.removeAllViews();
+        //_logList.removeAllViews();
 
 //        for (int i = 0; i < logs.length; i++) {
 //            LoggedWork log = logs[i];
@@ -109,17 +111,28 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 //            _logList.addView(v);
 //        }
 
-
         ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
             private LoggedWork[] _logs = logs;
 
             @Override
             public void next(int i) throws Exception {
+                ScheduleDetailView v = null;
+                if (i < _logList.getChildCount()) {
+                    v = (ScheduleDetailView) _logList.getChildAt(i);
+                } else {
+                    v = new ScheduleDetailView(getContext());
+                    _logList.addView(v);
+                }
                 LoggedWork log = _logs[i];
-                ScheduleDetailView v = new ScheduleDetailView(getContext());
                 v.setListener(_scheduleDetailView_listener);
                 v.setData(_workorder, log);
-                _logList.addView(v);
+            }
+
+            @Override
+            public void finish(int count) throws Exception {
+                if (_logList.getChildCount() > count) {
+                    _logList.removeViews(count - 1, _logList.getChildCount() - count);
+                }
             }
         };
         post(r);
@@ -138,9 +151,19 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
         }
 
         @Override
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-            if (_listener != null)
-                _listener.deleteWorklog(workorder, loggedWork);
+        public void deleteWorklog(final ScheduleDetailView view, final Workorder workorder, final LoggedWork loggedWork) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Are you sure you want to delete this work log?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    _logList.removeView(view);
+                    if (_listener != null)
+                        _listener.deleteWorklog(workorder, loggedWork);
+                }
+            });
+            builder.setNegativeButton("No", null);
+            builder.show();
         }
     };
 
