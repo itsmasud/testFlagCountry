@@ -45,7 +45,7 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _myworkView;
     private RelativeLayout _marketView;
     private RelativeLayout _paymentView;
-    private RelativeLayout _settingsView;
+//    private RelativeLayout _settingsView;
     private RelativeLayout _logoutView;
     private TextView _paidAmountTextView;
     private TextView _paidDateTextView;
@@ -97,8 +97,8 @@ public class DrawerView extends RelativeLayout {
         _paymentView = (RelativeLayout) findViewById(R.id.payment_view);
         _paymentView.setOnClickListener(_paymentView_onClick);
 
-        _settingsView = (RelativeLayout) findViewById(R.id.settings_view);
-        _settingsView.setOnClickListener(_settingsView_onClick);
+//        _settingsView = (RelativeLayout) findViewById(R.id.settings_view);
+//        _settingsView.setOnClickListener(_settingsView_onClick);
 
         _logoutView = (RelativeLayout) findViewById(R.id.logout_view);
         _logoutView.setOnClickListener(_logoutView_onClick);
