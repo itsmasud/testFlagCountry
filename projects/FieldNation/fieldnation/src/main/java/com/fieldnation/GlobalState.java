@@ -64,7 +64,7 @@ public class GlobalState extends Application {
         DataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
 
-        ExpenseCategories.getInstance(this);
+        new ExpenseCategories(this);
 
         getTracker();
 

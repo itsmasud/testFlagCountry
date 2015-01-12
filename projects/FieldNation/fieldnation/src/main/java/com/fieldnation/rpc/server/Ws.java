@@ -55,8 +55,6 @@ public class Ws {
         if (_accessToken != null)
             options = _accessToken.applyToUrlOptions(options);
 
-        Log.v(TAG, path + options);
-
         HttpURLConnection conn = null;
         if (USE_HTTPS) {
             // only disabled if debugging
@@ -64,12 +62,14 @@ public class Ws {
                 trustAllHosts();
 
             conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "https://" + _accessToken.getHostname() + path + options);
 
             if (DEBUG)
                 ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
 
         } else {
             conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "http://" + _accessToken.getHostname() + path + options);
         }
 
         conn.setRequestMethod(method);
@@ -105,19 +105,21 @@ public class Ws {
         if (_accessToken != null)
             options = _accessToken.applyToUrlOptions(options);
 
-        Log.v(TAG, path + options);
-
         HttpURLConnection conn = null;
         if (USE_HTTPS) {
-            // only enabled if debugging
+            // only disabled if debugging
             if (DEBUG)
                 trustAllHosts();
+
             conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "https://" + _accessToken.getHostname() + path + options);
 
             if (DEBUG)
                 ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+
         } else {
             conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "http://" + _accessToken.getHostname() + path + options);
         }
 
         conn.setRequestMethod(method);
@@ -133,9 +135,9 @@ public class Ws {
             out.flush();
             out.close();
             try {
-                System.out.println("Output:" + new String(data));
+                Log.v(TAG, "Output:" + new String(data));
             } catch (Exception ex) {
-                System.out.println("Can't show data");
+                Log.v(TAG, "Can't show data");
             }
         }
 
@@ -154,19 +156,21 @@ public class Ws {
         if (_accessToken != null)
             options = _accessToken.applyToUrlOptions(options);
 
-        Log.v(TAG, path + options);
-
         HttpURLConnection conn = null;
         if (USE_HTTPS) {
-            // only enabled if debugging
+            // only disabled if debugging
             if (DEBUG)
                 trustAllHosts();
+
             conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "https://" + _accessToken.getHostname() + path + options);
 
             if (DEBUG)
                 ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+
         } else {
             conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "http://" + _accessToken.getHostname() + path + options);
         }
 
         conn.setRequestMethod(method);
@@ -189,6 +193,7 @@ public class Ws {
         }
 
         try {
+            conn.connect();
             return new Result(conn);
         } finally {
             conn.disconnect();
@@ -215,19 +220,21 @@ public class Ws {
         if (_accessToken != null)
             options = _accessToken.applyToUrlOptions(options);
 
-        Log.v(TAG, path + options);
-
         HttpURLConnection conn = null;
         if (USE_HTTPS) {
-            // only enabled if debugging
+            // only disabled if debugging
             if (DEBUG)
                 trustAllHosts();
+
             conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "https://" + _accessToken.getHostname() + path + options);
 
             if (DEBUG)
                 ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+
         } else {
             conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "http://" + _accessToken.getHostname() + path + options);
         }
         conn.setReadTimeout(10000);
 
@@ -257,19 +264,21 @@ public class Ws {
         if (_accessToken != null)
             options = _accessToken.applyToUrlOptions(options);
 
-        Log.v(TAG, path + options);
-
         HttpURLConnection conn = null;
         if (USE_HTTPS) {
-            // only enabled if debugging
+            // only disabled if debugging
             if (DEBUG)
                 trustAllHosts();
+
             conn = (HttpURLConnection) new URL("https://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "https://" + _accessToken.getHostname() + path + options);
 
             if (DEBUG)
                 ((HttpsURLConnection) conn).setHostnameVerifier(DO_NOT_VERIFY);
+
         } else {
             conn = (HttpURLConnection) new URL("http://" + _accessToken.getHostname() + path + options).openConnection();
+            Log.v(TAG, "http://" + _accessToken.getHostname() + path + options);
         }
         conn.setReadTimeout(10000);
 

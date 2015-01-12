@@ -82,6 +82,7 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
                     }
 
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     Log.v(TAG, "web request fail");
                     bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NETWORK_ERROR);
                     bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());

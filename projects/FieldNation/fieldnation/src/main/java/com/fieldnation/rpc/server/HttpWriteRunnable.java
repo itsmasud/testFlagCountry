@@ -45,10 +45,15 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
                 Ws ws = new Ws(_auth);
                 Result result = null;
                 try {
-                    result = ws.httpReadWrite(method, path, options, data, contentType);
+                    result = ws.httpWrite(method, path, options, data, contentType);
 
                     if (result.getResponseCode() / 100 != 2) {
                         Log.v(TAG, "Error response: " + result.getResponseCode());
+                        try {
+                            Log.v(TAG, result.getResponseMessage());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                         bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                         bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                         bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
@@ -59,8 +64,8 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
                             bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                             bundle.putBoolean(KEY_RESPONSE_CACHED, false);
                             bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-                            DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
-                                    bundle.getInt(KEY_RESPONSE_CODE));
+//                            DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+//                                    bundle.getInt(KEY_RESPONSE_CODE));
                             Log.v(TAG, "web request success");
                         } catch (Exception ex) {
                             try {

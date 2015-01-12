@@ -706,7 +706,7 @@ public class TasksFragment extends WorkorderFragment {
                 case SHIPMENT_TRACKING:
                     ShipmentTracking[] shipments = _workorder.getShipmentTracking();
                     if (shipments == null) {
-                        _shipmentAddDialog.show(R.string.add_shipment, task.getTaskId());
+                        _shipmentAddDialog.show(getText(R.string.add_shipment), task.getTaskId());
                     } else {
                         _taskShipmentAddDialog.show("Assign/Add New", _workorder, task.getTaskId());
                     }

@@ -150,10 +150,10 @@ public class TopicService extends Service {
             iter = clients.iterator();
         }
         Log.v(TAG, "Topic: " + topicId);
-        Log.v(TAG, "Clients: " + clients.size());
+//        Log.v(TAG, "Clients: " + clients.size());
         while (iter.hasNext()) {
             TopicClient c = iter.next();
-            Log.v(TAG, "Client: " + c.tag);
+//            Log.v(TAG, "Client: " + c.tag);
             bundle.putBundle(TopicConstants.PARAM_TOPIC_PARCEL, parcel);
             send(c.receiver, c.resultCode, bundle, c.tag);
         }

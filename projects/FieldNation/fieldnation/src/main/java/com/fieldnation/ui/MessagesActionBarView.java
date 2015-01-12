@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -85,7 +86,8 @@ public class MessagesActionBarView extends RelativeLayout {
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_profileService == null || isNew) {
                 _profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
-                getContext().startService(_profileService.getMyUserInformation(0, true));
+                if (_profile == null)
+                    getContext().startService(_profileService.getMyUserInformation(0, true));
             }
         }
 
@@ -117,17 +119,37 @@ public class MessagesActionBarView extends RelativeLayout {
     };
 
     private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+        private boolean isCached;
+
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
-            //Log.v(TAG, "WebServiceResultReceiver.onSuccess");
-            try {
-                JsonObject obj = new JsonObject(new String(
-                        resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-                _profile = Profile.fromJson(obj);
-                refresh(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
-            } catch (Exception e) {
-                getContext().startService(_profileService.getMyUserInformation(0, false));
-            }
+            new AsyncTaskEx<Bundle, Object, Profile>() {
+
+                @Override
+                protected Profile doInBackground(Bundle... params) {
+                    Bundle resultData = params[0];
+                    try {
+                        JsonObject obj = new JsonObject(new String(
+                                resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
+                        isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
+                        return Profile.fromJson(obj);
+                    } catch (Exception e) {
+
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Profile profile) {
+                    super.onPostExecute(profile);
+                    if (profile == null) {
+                        getContext().startService(_profileService.getMyUserInformation(0, false));
+                    } else {
+                        _profile = profile;
+                        refresh(isCached);
+                    }
+                }
+            }.executeEx(resultData);
         }
 
         @Override

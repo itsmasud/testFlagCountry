@@ -124,7 +124,7 @@ public class AuthTopicService extends Service {
             if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
                 _isNetworkDown = true;
                 setState(STATE_NOT_AUTHENTICATED);
-                dispatchNoNetwork(AuthTopicService.this);
+//                dispatchNoNetwork(AuthTopicService.this);
             } else if (Topics.TOPIC_NETWORK_UP.equals(topicId)) {
                 _isNetworkDown = false;
                 setState(STATE_NOT_AUTHENTICATED);
@@ -144,7 +144,7 @@ public class AuthTopicService extends Service {
             Log.v(TAG, "Type: " + type);
 
             if (_isNetworkDown) {
-                dispatchNoNetwork(AuthTopicService.this);
+//                dispatchNoNetwork(AuthTopicService.this);
                 return;
             }
 
@@ -182,7 +182,7 @@ public class AuthTopicService extends Service {
     private void handleRequest() {
         if (_isNetworkDown) {
             Log.v(TAG, "handleRequest._isNetworkDown");
-            dispatchNoNetwork(this);
+//            dispatchNoNetwork(this);
             return;
         }
 
@@ -291,7 +291,6 @@ public class AuthTopicService extends Service {
                 String tokenString = bundle.getString("authtoken");
 
                 // auth is complete
-
                 // if however, data invalid, need to ask again.
                 if (tokenString == null) {
                     if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
@@ -361,6 +360,7 @@ public class AuthTopicService extends Service {
         TopicService.registerListener(context, resultCode, tag, TOPIC_AUTH_COMMAND, topicReceiver);
     }
 
+/*
     private static void dispatchNoNetwork(Context context) {
         if (context == null)
             return;
@@ -370,6 +370,7 @@ public class AuthTopicService extends Service {
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_STATE, bundle);
     }
+*/
 
     // internal
     private static void dispatchAuthFailed(Context context) {

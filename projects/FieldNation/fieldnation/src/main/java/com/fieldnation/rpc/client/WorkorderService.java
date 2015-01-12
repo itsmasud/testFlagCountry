@@ -174,9 +174,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 resultCode,
                 "/api/rest/v1/workorder/" + workorderId + "/expense",
                 null,
-                "description=" + misc.escapeForURL(description)
-                        + "&price=" + price
-                        + "&category_id=" + category.getId(),
+                ("description=" + misc.escapeForURL(description)
+                        + "&price=" + misc.escapeForURL(price + "")
+                        + "&category_id=" + category.getId()).trim(),
                 "application/x-www-form-urlencoded", false);
     }
 
