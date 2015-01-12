@@ -55,7 +55,7 @@ public class ExpenseView extends LinearLayout {
         _deleteImageButton = (ImageButton) findViewById(R.id.delete_imagebutton);
         _deleteImageButton.setOnClickListener(_delete_onClick);
 
-        ExpenseCategories categories = ExpenseCategories.getInstance(getContext());
+        ExpenseCategories categories = new ExpenseCategories(getContext());
         categories.setListener(_categoriesListener);
     }
 

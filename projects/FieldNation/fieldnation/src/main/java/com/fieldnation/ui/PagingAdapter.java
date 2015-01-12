@@ -50,7 +50,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     }
 
     public void refreshPages() {
-        for (int i = 0; i < _pages.size(); i++) {
+        for (int i = 0; i <= _pages.size(); i++) {
             preRequestPage(i, false);
         }
     }

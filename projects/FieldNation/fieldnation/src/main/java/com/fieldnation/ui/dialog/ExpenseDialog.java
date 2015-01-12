@@ -88,8 +88,6 @@ public class ExpenseDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancelButton_onClick);
 
-        ExpenseCategories.getInstance(getActivity()).setListener(_categoriesListener);
-
         _imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -101,7 +99,21 @@ public class ExpenseDialog extends DialogFragmentBase {
     public void onResume() {
         super.onResume();
 
+        new ExpenseCategories(getActivity()).setListener(_categoriesListener);
+
         populateUi();
+    }
+
+    private void setCategories(ExpenseCategory[] categories) {
+        try {
+            _categories = categories;
+            _adapter = new ArrayAdapter<ExpenseCategory>(getActivity(), android.R.layout.simple_spinner_dropdown_item,
+                    categories);
+            _categorySpinner.setAdapter(_adapter);
+            _categorySpinner.setSelection(0);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void populateUi() {
@@ -140,14 +152,22 @@ public class ExpenseDialog extends DialogFragmentBase {
     }
 
     public Double getAmount() {
-        return Double.parseDouble(_amountEditText.getText().toString());
+        try {
+            return Double.parseDouble(_amountEditText.getText().toString());
+        } catch (Exception ex) {
+            return 0.0;
+        }
     }
 
     public ExpenseCategory getCategory() {
-        if (_showCategories)
-            return _adapter.getItem(_categorySpinner.getSelectedItemPosition());
-        else
+        try {
+            if (_showCategories)
+                return _adapter.getItem(_categorySpinner.getSelectedItemPosition());
+            else
+                return null;
+        } catch (Exception ex) {
             return null;
+        }
     }
 
     /*-*********************************-*/
@@ -163,11 +183,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     private ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
-            _categories = categories;
-            _adapter = new ArrayAdapter<ExpenseCategory>(getActivity(), android.R.layout.simple_spinner_dropdown_item,
-                    categories);
-            _categorySpinner.setAdapter(_adapter);
-            _categorySpinner.setSelection(0);
+            setCategories(categories);
         }
     };
 
@@ -189,9 +205,7 @@ public class ExpenseDialog extends DialogFragmentBase {
             if (_listener != null)
                 _listener.onOk(getDescription(), getAmount(), getCategory());
 
-            ExpenseDialog.this.
-
-                    dismiss();
+            ExpenseDialog.this.dismiss();
         }
     };
 
