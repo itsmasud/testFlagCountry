@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.common.WebResultReceiver;
@@ -144,15 +145,28 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             if (resultCode == WEB_LIST) {
-                int page = resultData.getInt(PARAM_PAGE_NUM);
+                new AsyncTaskEx<Bundle, Object, List<O>>() {
+                    private boolean isCached;
+                    private int page;
 
-                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                boolean isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
+                    @Override
+                    protected List<O> doInBackground(Bundle... params) {
+                        Bundle resultData = params[0];
+                        page = resultData.getInt(PARAM_PAGE_NUM);
 
-                List<O> list = onParseData(page, isCached, resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+//                        String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+                        isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
 
-                addPage(page, list, isCached);
-                _refreshView.refreshComplete();
+                        return onParseData(page, isCached, resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+                    }
+
+                    @Override
+                    protected void onPostExecute(List<O> os) {
+                        super.onPostExecute(os);
+                        addPage(page, os, isCached);
+                        _refreshView.refreshComplete();
+                    }
+                }.executeEx(resultData);
             }
         }
 

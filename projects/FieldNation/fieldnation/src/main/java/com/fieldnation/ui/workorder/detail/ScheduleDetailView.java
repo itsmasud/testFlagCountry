@@ -163,7 +163,7 @@ public class ScheduleDetailView extends RelativeLayout {
         @Override
         public boolean onLongClick(View v) {
             if (_listener != null) {
-                _listener.deleteWorklog(_workorder, _loggedWork);
+                _listener.deleteWorklog(ScheduleDetailView.this, _workorder, _loggedWork);
                 return true;
             }
             return false;
@@ -173,6 +173,6 @@ public class ScheduleDetailView extends RelativeLayout {
     public interface Listener {
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
 
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
+        public void deleteWorklog(ScheduleDetailView view, Workorder workorder, LoggedWork loggedWork);
     }
 }

@@ -29,7 +29,6 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     private String _notes;
     private Listener _listener;
 
-
     /*-*****************************-*/
     /*-			Life Cycle			-*/
     /*-*****************************-*/
@@ -64,7 +63,11 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
-        populateUi();
+
+        if (!misc.isEmptyOrNull(_notes))
+            _editText.setText(_notes);
+        else
+            _editText.setText("");
     }
 
 
@@ -73,20 +76,8 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     }
 
     public void show(String notes) {
-        if (!misc.isEmptyOrNull(notes)) {
-            _notes = notes;
-        }
+        _notes = notes;
         super.show();
-    }
-
-    private void populateUi() {
-        if (_editText == null)
-            return;
-        if (_notes == null)
-            return;
-
-        if (!misc.isEmptyOrNull(_notes))
-            _editText.setText(_notes);
     }
 
     /*-*************************-*/

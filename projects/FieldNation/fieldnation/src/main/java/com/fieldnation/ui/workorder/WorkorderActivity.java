@@ -337,12 +337,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
     /*-*************************-*/
     private PageRequestListener _pageRequestListener = new PageRequestListener() {
         @Override
-        public void requestPage(Class<? extends WorkorderFragment> clazz, Bundle request) {
+        public void requestPage(Class<? extends WorkorderFragment> clazz) {
             for (int i = 0; i < _fragments.length; i++) {
                 WorkorderFragment fragment = _fragments[i];
                 if (clazz.isInstance(fragment)) {
                     _viewPager.setCurrentItem(i, true);
-                    fragment.doAction(request);
                 }
             }
         }
@@ -412,7 +411,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
 
     public interface PageRequestListener {
-        public void requestPage(Class<? extends WorkorderFragment> clazz, Bundle request);
+        public void requestPage(Class<? extends WorkorderFragment> clazz);
     }
 
     /*-*****************************-*/
@@ -435,10 +434,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 Log.v(TAG, "Have workorder");
             } catch (Exception ex) {
                 ex.printStackTrace();
-
-                if (resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED)) {
-                    getData(false);
-                }
             }
             return workorder;
         }

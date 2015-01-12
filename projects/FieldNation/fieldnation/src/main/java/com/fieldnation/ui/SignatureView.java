@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -16,6 +17,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.shortstraw.Point;
 import com.fieldnation.shortstraw.Shape;
+import com.fieldnation.utils.Stopwatch;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
@@ -74,6 +76,7 @@ public class SignatureView extends View {
 
     @Override
     protected Parcelable onSaveInstanceState() {
+        Stopwatch stopwatch = new Stopwatch();
         Bundle bundle = new Bundle();
         bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
 
@@ -89,11 +92,15 @@ public class SignatureView extends View {
 
         bundle.putString(STATE_SHAPES, jshapes.toString());
 
+        Log.v(TAG, "onSaveInstanceState time " + stopwatch.finish());
+
         return bundle;
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
+        Stopwatch stopwatch = new Stopwatch();
+
         if (state instanceof Bundle) {
             super.onRestoreInstanceState(((Bundle) state).getParcelable(STATE_SUPER));
 
@@ -121,6 +128,7 @@ public class SignatureView extends View {
         } else {
             super.onRestoreInstanceState(state);
         }
+        Log.v(TAG, "onRestoreInstanceState time " + stopwatch.finish());
     }
 
     public byte[] getSignaturePng() {
@@ -355,60 +363,67 @@ public class SignatureView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Stopwatch stopwatch = new Stopwatch();
         // walk through the shapes list... draw those
-        for (int i = 0; i < _shapes.size(); i++) {
-            Shape shape = _shapes.get(i);
-            if (shape.size() > 0) {
-                Point lp = shape.get(0);
-                Point p = null;
+        try {
+            for (int i = 0; i < _shapes.size(); i++) {
+                Shape shape = _shapes.get(i);
+                if (shape.size() > 0) {
+                    Point lp = shape.get(0);
+                    Point p = null;
 
-                for (int j = 1; j < shape.size(); j++) {
-                    p = shape.get(j);
-                    // this way we calculate the stroke for new points only
-                    // makes rendering the drawing faster in the future
-                    if (p.stroke == null) {
-                        long dur = (p.t - lp.t);
-                        float d1 = p.x - lp.x;
-                        float d2 = p.y - lp.y;
-                        float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
-                        // inverted speed calc, we want thinner lines for faster
-                        // speeds
-                        float stroke = dur / dist;
+                    for (int j = 1; j < shape.size(); j++) {
+                        p = shape.get(j);
+                        // this way we calculate the stroke for new points only
+                        // makes rendering the drawing faster in the future
+                        if (p.stroke == null) {
+                            long dur = (p.t - lp.t);
+                            float d1 = p.x - lp.x;
+                            float d2 = p.y - lp.y;
+                            float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
+                            // inverted speed calc, we want thinner lines for faster
+                            // speeds
+                            float stroke = dur / dist;
 
-                        // scale
-                        stroke = ((stroke - _min) / _max) * 8 + 3;
+                            // scale
+                            stroke = ((stroke - _min) / _max) * 8 + 3;
 
-                        // cap
-                        if (stroke < 4) {
-                            stroke = 4;
-                        } else if (stroke > 10) {
-                            stroke = 10;
-                        }
-
-                        if (lp.stroke != null) {
-                            if (stroke > lp.stroke + 1.0) {
-                                stroke = lp.stroke + 1.0F;
-                            } else if (stroke < lp.stroke - 1.0) {
-                                stroke = lp.stroke - 1.0F;
+                            // cap
+                            if (stroke < 4) {
+                                stroke = 4;
+                            } else if (stroke > 10) {
+                                stroke = 10;
                             }
+
+                            if (lp.stroke != null) {
+                                if (stroke > lp.stroke + 1.0) {
+                                    stroke = lp.stroke + 1.0F;
+                                } else if (stroke < lp.stroke - 1.0) {
+                                    stroke = lp.stroke - 1.0F;
+                                }
+                            }
+
+                            p.stroke = stroke;
                         }
 
-                        p.stroke = stroke;
+                        _myPaint.setStrokeWidth(p.stroke);
+                        canvas.drawLine(
+                                (lp.x - _xOff) * _scale,
+                                (lp.y - _yOff) * _scale,
+                                (p.x - _xOff) * _scale,
+                                (p.y - _yOff) * _scale,
+                                _myPaint);
+                        lp = p;
                     }
-
-                    _myPaint.setStrokeWidth(p.stroke);
-                    canvas.drawLine(
-                            (lp.x - _xOff) * _scale,
-                            (lp.y - _yOff) * _scale,
-                            (p.x - _xOff) * _scale,
-                            (p.y - _yOff) * _scale,
-                            _myPaint);
-                    lp = p;
                 }
             }
+            // Log.v(TAG, "min: " + _min + "  max:" + _max);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        // Log.v(TAG, "min: " + _min + "  max:" + _max);
         super.onDraw(canvas);
+
+        Log.v(TAG, "onDraw time " + stopwatch.finish());
     }
 
     public void clear() {

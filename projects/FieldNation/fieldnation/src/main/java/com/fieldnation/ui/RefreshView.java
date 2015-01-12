@@ -13,12 +13,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by michael.carver on 11/25/2014.
  */
 public class RefreshView extends RelativeLayout implements OnOverScrollListener {
-    private static final String TAG = "ui.RefreshView";
+    private final String TAG = UniqueTag.makeTag("ui.RefreshView");
 
     private static final int STATE_IDLE = 0;
     private static final int STATE_PULLING = 1;
@@ -136,6 +138,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
             _state = STATE_REFRESHING;
             if (_completeWhenAble) {
                 refreshComplete();
+                _completeWhenAble = false;
             }
         }
 
@@ -208,6 +211,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     @Override
     public void onOverScrollComplete(View view, int pixelsX, int pixelsY) {
         if (_state == STATE_RELEASE_TO_REFRESH) {
+            Log.v(TAG, "onOverScrollComplete, STATE_RELEASE_TO_REFRESH");
             _state = STATE_MOVE_TO_REFRESH;
 
             pixelsY = cleanYPixels(pixelsY);
@@ -224,6 +228,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
             }
 
         } else if (_state == STATE_PULLING) {
+            Log.v(TAG, "onOverScrollComplete, STATE_PULLING");
             _state = STATE_HIDING;
 
             pixelsY = cleanYPixels(pixelsY);
@@ -264,7 +269,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
             setLoadingOffset(0);
 
             startAnimation(off, 0, _hiding_listener);
-        } else {
+        } else if (_state == STATE_MOVE_TO_REFRESH || _state == STATE_PULLING || _state == STATE_RELEASE_TO_REFRESH) {
             _completeWhenAble = true;
         }
     }

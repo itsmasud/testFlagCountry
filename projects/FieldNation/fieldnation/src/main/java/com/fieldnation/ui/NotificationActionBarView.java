@@ -113,10 +113,6 @@ public class NotificationActionBarView extends RelativeLayout {
         }
 
         @Override
-        public void onUnregister(int resultCode, String topicId) {
-        }
-
-        @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (topicId.equals(ProfileService.TOPIC_PROFILE_INVALIDATED)) {
                 if (_profileService != null)

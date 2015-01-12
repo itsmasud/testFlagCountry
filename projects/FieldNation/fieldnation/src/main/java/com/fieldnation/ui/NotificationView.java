@@ -106,18 +106,28 @@ public class NotificationView extends RelativeLayout {
             _titleThumbImageView.setVisibility(View.VISIBLE);
         }
 
-        _messageTextView.setText(misc.linkifyHtml(_note.getMessage(), Linkify.ALL));
-        _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        _messageTextView.setVisibility(View.VISIBLE);
+        try {
+            _messageTextView.setText(misc.linkifyHtml(_note.getMessage(), Linkify.ALL));
+            _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            if (misc.isEmptyOrNull(_note.getMessage())) {
+                _messageTextView.setVisibility(View.GONE);
+            } else {
+                _messageTextView.setText(_note.getMessage());
+            }
+        }
         try {
             _dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_note.getDate())));
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /*-*************************-*/
     /*-			Events			-*/
-	/*-*************************-*/
+    /*-*************************-*/
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

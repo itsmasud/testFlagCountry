@@ -5,8 +5,8 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ExpectedPayment {
-	@Json(name = "bonuses")
-	private Bonuses[] _bonuses;
+//	@Json(name = "bonuses")
+//	private Bonuses[] _bonuses;
 	@Json(name="discounts")
 	private Double _discounts;
 	@Json(name = "expectedAmount")
@@ -23,15 +23,15 @@ public class ExpectedPayment {
 	private Double _maxPayLimit;
 	@Json(name = "paymentStatus")
 	private String _paymentStatus;
-	@Json(name="penalties")
-	private Penalty[] _penalties;
+//	@Json(name="penalties")
+//	private Penalty[] _penalties;
 
 	public ExpectedPayment() {
 	}
 
-	public Bonuses[] getBonuses() {
-		return _bonuses;
-	}
+//	public Bonuses[] getBonuses() {
+//		return _bonuses;
+//	}
 
 	public Double getDiscounts(){
 		return _discounts;
@@ -65,9 +65,9 @@ public class ExpectedPayment {
 		return _paymentStatus;
 	}
 
-	public Penalty[] getPenalties(){
-		return _penalties;
-	}
+//	public Penalty[] getPenalties(){
+//		return _penalties;
+//	}
 
 	public JsonObject toJson() {
 		return toJson(this);

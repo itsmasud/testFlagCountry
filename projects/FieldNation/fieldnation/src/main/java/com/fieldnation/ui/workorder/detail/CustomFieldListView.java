@@ -1,12 +1,14 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
@@ -60,14 +62,28 @@ public class CustomFieldListView extends RelativeLayout {
 
         setVisibility(View.VISIBLE);
 
-        _fieldsList.removeAllViews();
-        for (int i = 0; i < _fields.length; i++) {
-            CustomField field = _fields[i];
+        ForLoopRunnable r = new ForLoopRunnable(_fields.length, new Handler()) {
+            @Override
+            public void next(int i) throws Exception {
+                CustomFieldRowView v = null;
+                if (i < _fieldsList.getChildCount()) {
+                    v = (CustomFieldRowView) _fieldsList.getChildAt(i);
+                } else {
+                    v = new CustomFieldRowView(getContext());
+                    _fieldsList.addView(v);
+                }
+                CustomField field = _fields[i];
+                v.setData(_workorder, field, _listener);
+            }
 
-            CustomFieldRowView v = new CustomFieldRowView(getContext());
-            v.setData(_workorder, field, _listener);
-            _fieldsList.addView(v);
-        }
+            @Override
+            public void finish(int count) throws Exception {
+                if (_fieldsList.getChildCount() > count) {
+                    _fieldsList.removeViews(count - 1, _fieldsList.getChildCount() - count);
+                }
+            }
+        };
+        post(r);
     }
 
     public void setListener(CustomFieldRowView.Listener listener) {

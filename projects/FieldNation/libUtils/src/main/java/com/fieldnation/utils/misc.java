@@ -38,6 +38,14 @@ public class misc {
     // private static NumberFormat _normalNumber =
     // NumberFormat.getIntegerInstance();
 
+    public static void printStackTrace(String message) {
+        try {
+            throw new Exception(message);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static boolean isViewVisisble(ScrollView scrollView, View childView) {
         Rect scrollBounds = new Rect();
         scrollView.getHitRect(scrollBounds);

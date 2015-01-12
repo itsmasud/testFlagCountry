@@ -20,12 +20,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.ActivityResult;
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
-import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
@@ -41,15 +43,13 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.security.SecureRandom;
 
 public class DeliverableFragment extends WorkorderFragment {
-    private static final String TAG = "ui.workorder.detail.DeliverableFragment";
+    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.DeliverableFragment");
 
     // pageRequest parameters
     public static final String PR_TASK_ID = "PR_TASK_ID";
@@ -64,6 +64,10 @@ public class DeliverableFragment extends WorkorderFragment {
     private static final int WEB_DELETE_DELIVERABLE = 3;
     private static final int WEB_SEND_DELIVERABLE = 4;
     private static final int WEB_CHANGE = 5;
+
+    // State
+    private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
+    private static final String STATE_TEMP_FILE = "STATE_TEMP_FILE";
 
     // UI
     private OverScrollView _scrollView;
@@ -80,25 +84,36 @@ public class DeliverableFragment extends WorkorderFragment {
     private WorkorderService _service;
     private ProfileService _profileService;
     private Profile _profile = null;
-    private Bundle _delayedAction = null;
+    //private Bundle _delayedAction = null;
     private SecureRandom _rand = new SecureRandom();
-
-    // Temporary storage
-    private UploadSlot _uploadingSlot;
-    private UploadSlotView _uploadingSlotView;
+    private int _uploadingSlotId = -1;
     private int _uploadCount = 0;
     private int _deleteCount = 0;
-    private boolean _isCached = true;
     private File _tempFile;
+
+    // Temporary storage
+    private boolean _isCached = true;
+    private ActivityResult _activityResult = null;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
 
+    public DeliverableFragment() {
+        super();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_workorder_deliverables,
-                container, false);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TEMP_FILE))
+                _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
+
+            if (savedInstanceState.containsKey(STATE_UPLOAD_SLOTID))
+                _uploadingSlotId = savedInstanceState.getInt(STATE_UPLOAD_SLOTID);
+        }
+
+        return inflater.inflate(R.layout.fragment_workorder_deliverables, container, false);
     }
 
     @Override
@@ -123,7 +138,35 @@ public class DeliverableFragment extends WorkorderFragment {
         checkMedia();
 
         populateUi();
-        executeDelayedAction();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        _context = getActivity().getApplicationContext();
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Get Content");
+
+        if (_context.getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Take Picture");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_uploadingSlotId > 0)
+            outState.putInt(STATE_UPLOAD_SLOTID, _uploadingSlotId);
+
+        if (_tempFile != null)
+            outState.putString(STATE_TEMP_FILE, _tempFile.getAbsolutePath());
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -159,7 +202,6 @@ public class DeliverableFragment extends WorkorderFragment {
         _workorder = workorder;
         _isCached = isCached;
         getData();
-        executeDelayedAction();
     }
 
     private PendingIntent getNotificationIntent() {
@@ -173,7 +215,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_profileService == null)
             return;
 
-        _refreshView.startRefreshing();
+        setLoading(true);
         _profile = null;
         _context.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
@@ -189,6 +231,15 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     }
 
+    private void tryActivityResult() {
+        if (_activityResult != null) {
+            Log.v(TAG, "recovering");
+            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
+                _activityResult = null;
+        }
+
+    }
+
     private void populateUi() {
         if (_workorder == null)
             return;
@@ -199,127 +250,125 @@ public class DeliverableFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
+        tryActivityResult();
+
         Stopwatch stopwatch = new Stopwatch(true);
-        _reviewList.removeAllViews();
-        Document[] docs = _workorder.getDocuments();
+        final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
-            for (int i = 0; i < docs.length; i++) {
-                Document doc = docs[i];
-                DocumentView v = new DocumentView(_context);
-                _reviewList.addView(v);
-                v.setData(_workorder, doc);
-            }
+            ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
+                private Document[] _docs = docs;
+
+                @Override
+                public void next(int i) throws Exception {
+                    DocumentView v = null;
+                    if (i < _reviewList.getChildCount()) {
+                        v = (DocumentView) _reviewList.getChildAt(i);
+                    } else {
+                        v = new DocumentView(_context);
+                        _reviewList.addView(v);
+                    }
+                    Document doc = _docs[i];
+                    v.setData(_workorder, doc);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    if (_reviewList.getChildCount() > count) {
+                        _reviewList.removeViews(count - 1, _reviewList.getChildCount() - count);
+                    }
+                }
+            };
+            _reviewList.post(r);
             _noDocsTextView.setVisibility(View.GONE);
         } else {
+            _reviewList.removeAllViews();
             _noDocsTextView.setVisibility(View.VISIBLE);
         }
         Log.v(TAG, "pop docs time " + stopwatch.finish());
 
         stopwatch.start();
-        _filesLayout.removeAllViews();
-        UploadSlot[] slots = _workorder.getUploadSlots();
-        if (slots != null) {
-            for (int i = 0; i < slots.length; i++) {
-                UploadSlot slot = slots[i];
-                UploadSlotView v = new UploadSlotView(_context);
-                v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
-                v.setListener(_uploadSlot_listener);
 
-                _filesLayout.addView(v);
-            }
+        final UploadSlot[] slots = _workorder.getUploadSlots();
+        if (slots != null && slots.length > 0) {
+            ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
+                private UploadSlot[] _slots = slots;
+
+                @Override
+                public void next(int i) throws Exception {
+                    UploadSlotView v = null;
+                    if (i < _filesLayout.getChildCount()) {
+                        v = (UploadSlotView) _filesLayout.getChildAt(i);
+                    } else {
+                        v = new UploadSlotView(_context);
+                        _filesLayout.addView(v);
+                    }
+                    UploadSlot slot = _slots[i];
+                    v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
+                    v.setListener(_uploadSlot_listener);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    if (_filesLayout.getChildCount() > count) {
+                        _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
+                    }
+                }
+            };
+            _filesLayout.post(r);
+        } else {
+            _filesLayout.removeAllViews();
         }
         Log.v(TAG, "upload docs time " + stopwatch.finish());
-        _refreshView.refreshComplete();
+
+        setLoading(false);
     }
 
-    private void executeDelayedAction() {
-        if (_delayedAction == null)
-            return;
 
-        if (_workorder == null)
-            return;
-
-        if (_filesLayout == null)
-            return;
-
-        int taskId = _delayedAction.getInt(PR_TASK_ID);
-
-        // find slot
-        UploadSlot[] slots = _workorder.getUploadSlots();
-        UploadSlot slot = null;
-        for (int i = 0; i < slots.length; i++) {
-            Task task = slots[i].getTask();
-            if (task != null) {
-                if (task.getTaskId() == taskId) {
-                    slot = slots[i];
-                    break;
-                }
-            }
-        }
-
-        for (int i = 0; i < _filesLayout.getChildCount(); i++) {
-            View v = _filesLayout.getChildAt(i);
-
-            if (v instanceof UploadSlotView) {
-                UploadSlotView uv = (UploadSlotView) v;
-                if (uv.getUploadSlotId() == taskId) {
-                    _uploadCount++;
-                    _uploadingSlot = slot;
-                    _uploadingSlotView = uv;
-                    _appPickerDialog.show();
-                    break;
-                }
-            }
-        }
-        _delayedAction = null;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        _context = getActivity().getApplicationContext();
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Get Content");
-
-        if (_context.getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
-            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Take Picture");
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    private boolean performActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
+        if (_workorder == null)
+            return false;
+
+        if (_uploadingSlotId < 0)
+            return false;
+
+        if (_service == null)
+            return false;
+
+        if (getActivity() == null)
+            return false;
 
         if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                 && resultCode == Activity.RESULT_OK) {
 
-            _refreshView.startRefreshing();
+            setLoading(true);
 
             if (data == null) {
+                if (_tempFile == null)
+                    return false;
+
                 Log.v(TAG, "local path");
-                _context.startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-                        _workorder.getWorkorderId(), _uploadingSlot.getSlotId(),
+                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                        _workorder.getWorkorderId(), _uploadingSlotId,
                         _tempFile.getAbsolutePath(), getNotificationIntent()));
+
+                return true;
             } else {
                 Log.v(TAG, "from intent");
-                _context.startService(_service.uploadDeliverable(
+                getActivity().startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _uploadingSlot.getSlotId(), data, getNotificationIntent()));
+                        _uploadingSlotId, data, getNotificationIntent()));
+                return true;
             }
         }
+        return true;
     }
 
     @Override
-    public void doAction(Bundle bundle) {
-        _delayedAction = bundle;
-        executeDelayedAction();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        _activityResult = new ActivityResult(requestCode, resultCode, data);
+        tryActivityResult();
     }
 
     /*-*********************************-*/
@@ -329,9 +378,10 @@ public class DeliverableFragment extends WorkorderFragment {
     private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            getData();
             if (_workorder != null) {
                 _workorder.dispatchOnChange();
+            } else {
+                getData();
             }
         }
     };
@@ -353,8 +403,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onUploadClick(UploadSlotView view, UploadSlot slot) {
             if (checkMedia()) {
                 // start of the upload process
-                _uploadingSlot = slot;
-                _uploadingSlotView = view;
+                _uploadingSlotId = slot.getSlotId();
                 _appPickerDialog.show();
             } else {
                 Toast.makeText(
@@ -435,6 +484,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onSuccess(int resultCode, Bundle resultData) {
             Log.v(TAG, "Method Stub: onSuccess()");
             if (resultCode == WEB_GET_PROFILE) {
+                Log.v(TAG, "WEB_GET_PROFILE");
                 _profile = null;
                 try {
                     _profile = Profile.fromJson(
@@ -447,6 +497,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 populateUi();
             } else if (resultCode == WEB_DELETE_DELIVERABLE
                     || resultCode == WEB_SEND_DELIVERABLE) {
+                Log.v(TAG, "WEB_DELETE_DELIVERABLE || WEB_SEND_DELIVERABLE");
                 if (resultCode == WEB_DELETE_DELIVERABLE)
                     _deleteCount--;
 
@@ -459,11 +510,17 @@ public class DeliverableFragment extends WorkorderFragment {
                     _uploadCount = 0;
 
                 // TODO, update individual UI elements when complete.
-                if (_deleteCount == 0 && _uploadCount == 0)
+                if (_deleteCount == 0 && _uploadCount == 0) {
                     _workorder.dispatchOnChange();
+                    setLoading(true);
+                }
 
             } else if (resultCode == WEB_CHANGE) {
+                Log.v(TAG, "WEB_CHANGE");
+                setLoading(true);
                 _workorder.dispatchOnChange();
+            } else {
+                Log.v(TAG, "unknown resultcode");
             }
         }
 
@@ -483,7 +540,7 @@ public class DeliverableFragment extends WorkorderFragment {
             _service = null;
             _profileService = null;
             Toast.makeText(_context, "Could not complete request", Toast.LENGTH_LONG).show();
-            _refreshView.refreshComplete();
+            setLoading(false);
         }
     };
 

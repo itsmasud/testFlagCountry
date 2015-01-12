@@ -1,6 +1,7 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
@@ -75,20 +77,24 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     }
 
     private void populateUI() {
-        setVisibility(View.GONE);
-
-        if (_addButton == null)
+        if (_addButton == null) {
+            setVisibility(View.GONE);
             return;
+        }
 
-        if (_workorder == null)
+        if (_workorder == null) {
+            setVisibility(View.GONE);
             return;
+        }
 
-        if (!_workorder.canAcceptSignature())
+        if (!_workorder.canAcceptSignature()) {
+            setVisibility(View.GONE);
             return;
+        }
 
         setVisibility(View.VISIBLE);
 
-        Signature[] list = _workorder.getSignatureList();
+        final Signature[] list = _workorder.getSignatureList();
 
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(View.VISIBLE);
@@ -97,15 +103,31 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
 
         _noDataTextView.setVisibility(View.GONE);
 
-        _listView.removeAllViews();
-        for (int i = 0; i < list.length; i++) {
-            Signature sig = list[i];
-            SignatureTileView v = new SignatureTileView(getContext());
-            v.setSignature(sig);
-            v.setOnClickListener(_signature_onClick);
-            _listView.addView(v);
-        }
+        ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
+            private Signature[] _list = list;
 
+            @Override
+            public void next(int i) throws Exception {
+                SignatureTileView v = null;
+                if (i < _listView.getChildCount()) {
+                    v = (SignatureTileView) _listView.getChildAt(i);
+                } else {
+                    v = new SignatureTileView(getContext());
+                    _listView.addView(v);
+                }
+                Signature sig = _list[i];
+                v.setSignature(sig);
+                v.setOnClickListener(_signature_onClick);
+            }
+
+            @Override
+            public void finish(int count) throws Exception {
+                if (_listView.getChildCount() > count) {
+                    _listView.removeViews(count - 1, _listView.getChildCount() - count);
+                }
+            }
+        };
+        post(r);
     }
 
 

@@ -124,7 +124,6 @@ public class MessageFragment extends WorkorderFragment {
         if (_adapter != null)
             _adapter.notifyDataSetChanged();
 
-
         Log.v(TAG, "getMessages");
         WEB_GET_MESSAGES = _rand.nextInt();
         getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
@@ -168,13 +167,6 @@ public class MessageFragment extends WorkorderFragment {
         }
     }
 
-    @Override
-    public void doAction(Bundle bundle) {
-        // TODO Method Stub: doAction()
-        Log.v(TAG, "Method Stub: doAction()");
-
-    }
-
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -196,6 +188,9 @@ public class MessageFragment extends WorkorderFragment {
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (getActivity() == null)
+                return;
+
             if (_profileService == null || _workorderService == null || isNew) {
                 _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
                 _workorderService = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
@@ -263,15 +258,26 @@ public class MessageFragment extends WorkorderFragment {
         public void onSuccess(int resultCode, Bundle resultData) {
             if (resultCode == WEB_GET_PROFILE) {
                 Stopwatch stopwatch = new Stopwatch(true);
-                try {
-                    _profile = Profile.fromJson(new JsonObject(new String(
-                            resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+                new AsyncTaskEx<Bundle, Object, Profile>() {
+                    @Override
+                    protected Profile doInBackground(Bundle... params) {
+                        try {
+                            return Profile.fromJson(new JsonObject(new String(
+                                    params[0].getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        return null;
+                    }
 
-                    getAdapter();
-                    getMessages();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                    @Override
+                    protected void onPostExecute(Profile profile) {
+                        super.onPostExecute(profile);
+                        _profile = profile;
+                        getAdapter();
+                        getMessages();
+                    }
+                }.executeEx(resultData);
                 Log.v(TAG, "WEB_GET_PROFILE time " + stopwatch.finish());
             } else if (resultCode == WEB_GET_MESSAGES) {
                 new MessageAsyncTask().executeEx(resultData);

@@ -29,11 +29,14 @@ public class TopicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand");
-        if (intent == null)
+        if (intent == null) {
+            Log.v(TAG, "onStartCommand no data");
             return START_STICKY;
+        }
 
         String action = intent.getAction();
+
+        Log.v(TAG, "onStateCommand " + action);
 
         if (TopicConstants.ACTION_REGISTER_LISTENER.equals(action)) {
             register(intent);
@@ -48,11 +51,15 @@ public class TopicService extends Service {
         return START_STICKY;
     }
 
-    private void send(ResultReceiver receiver, int code, Bundle bundle) {
+    private void send(ResultReceiver receiver, int code, Bundle bundle, String tag) {
         try {
             receiver.send(code, bundle);
         } catch (Exception ex) {
+            Log.e(TAG, tag);
             ex.printStackTrace();
+            synchronized (TAG) {
+                TopicClient.delete(tag);
+            }
         }
     }
 
@@ -84,7 +91,7 @@ public class TopicService extends Service {
         bundle.putString(TopicConstants.PARAM_TAG, c.tag);
         bundle.putString(TopicConstants.PARAM_TOPIC_ID, topicId);
 
-        send(receiver, resultCode, bundle);
+        send(receiver, resultCode, bundle, c.tag);
 
         if (_lastSent.containsKey(topicId)) {
             bundle = new Bundle();
@@ -93,15 +100,16 @@ public class TopicService extends Service {
             bundle.putString(TopicConstants.PARAM_TAG, c.tag);
             bundle.putBundle(TopicConstants.PARAM_TOPIC_PARCEL, _lastSent.get(topicId));
 
-            send(receiver, resultCode, bundle);
+            send(receiver, resultCode, bundle, c.tag);
         }
     }
 
     private void unregister(Intent intent) {
-        Log.v(TAG, "unregister");
         int resultCode = intent.getIntExtra(TopicConstants.PARAM_RESULT_CODE, 0);
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
         String topicId = intent.getStringExtra(TopicConstants.PARAM_TOPIC_ID);
+
+        Log.v(TAG, "unregister " + tag + ":" + topicId);
 
         TopicClient c = null;
         synchronized (TAG) {
@@ -113,14 +121,12 @@ public class TopicService extends Service {
         bundle.putString(TopicConstants.ACTION, TopicConstants.ACTION_UNREGISTER_LISTENER);
         bundle.putString(TopicConstants.PARAM_TAG, tag);
         bundle.putString(TopicConstants.PARAM_TOPIC_ID, topicId);
-
-        send(c.receiver, resultCode, bundle);
     }
 
     private void delete(Intent intent) {
-        Log.v(TAG, "delete");
-
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
+
+        Log.v(TAG, "delete " + tag);
 
         synchronized (TAG) {
             TopicClient.delete(tag);
@@ -149,11 +155,15 @@ public class TopicService extends Service {
             TopicClient c = iter.next();
             Log.v(TAG, "Client: " + c.tag);
             bundle.putBundle(TopicConstants.PARAM_TOPIC_PARCEL, parcel);
-            send(c.receiver, c.resultCode, bundle);
+            send(c.receiver, c.resultCode, bundle, c.tag);
         }
 
         if (doKeep)
             _lastSent.put(topicId, parcel);
+
+        if (topicId.equals(Topics.TOPIC_SHUTDOWN)) {
+            stopSelf();
+        }
     }
 
     @Override

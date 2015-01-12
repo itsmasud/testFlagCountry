@@ -58,7 +58,6 @@
         <activity
             android:name=".auth.server.AuthActivity"
             android:exported="true"
-            android:noHistory="true"
             android:label="@string/activity_login_title" />
         <activity
             android:name=".ui.workorder.WorkorderActivity"

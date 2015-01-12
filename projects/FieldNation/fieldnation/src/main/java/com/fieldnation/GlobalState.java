@@ -2,6 +2,7 @@ package com.fieldnation;
 
 import android.app.Application;
 import android.os.Build;
+import android.util.Log;
 
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.rpc.server.DataCacheNode;
@@ -46,10 +47,11 @@ public class GlobalState extends Application {
             analytics.enableAutoActivityReports(this);
             analytics.setLocalDispatchPeriod(60);
             analytics.setDryRun(false);
+            Log.v(TAG, "is opt out: " + analytics.getAppOptOut());
             _tracker = analytics.newTracker(R.xml.ga_config);
             _tracker.enableAdvertisingIdCollection(true);
             _tracker.enableAutoActivityTracking(true);
-            _tracker.enableExceptionReporting(true);
+            _tracker.enableExceptionReporting(false);
             //_tracker.setAppName("AndroidApp");
 
         }

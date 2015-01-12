@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
@@ -91,49 +93,105 @@ public class TaskListView extends RelativeLayout {
 
         boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage()) || "any".equals(_tasks.get(0).getStage());
 
-        _preVisistList.removeAllViews();
-        _onSiteList.removeAllViews();
-        _postVisitList.removeAllViews();
         if (nocategories) {
+            _onSiteList.removeAllViews();
+            _postVisitList.removeAllViews();
             _preVisistTextView.setVisibility(View.GONE);
             _onSiteLayout.setVisibility(View.GONE);
             _postVisitLayout.setVisibility(View.GONE);
 
-            for (int i = 0; i < _tasks.size(); i++) {
-                Task task = _tasks.get(i);
+            ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
+                @Override
+                public void next(int i) throws Exception {
+                    TaskRowView row = null;
+                    if (i < _preVisistList.getChildCount()) {
+                        row = (TaskRowView) _preVisistList.getChildAt(i);
+                    } else {
+                        row = new TaskRowView(getContext());
+                        _preVisistList.addView(row);
+                    }
 
-                TaskRowView row = new TaskRowView(getContext());
-                row.setData(_workorder, task);
-
-                if (_workorder.canModifyTasks()) {
-                    row.setOnTaskClickListener(_task_onClick);
+                    Task task = _tasks.get(i);
+                    row.setData(_workorder, task);
+                    if (_workorder.canModifyTasks()) {
+                        row.setOnTaskClickListener(_task_onClick);
+                    }
                 }
 
-                _preVisistList.addView(row);
-            }
+                @Override
+                public void finish(int count) throws Exception {
+                    if (_preVisistList.getChildCount() > count) {
+                        _preVisistList.removeViews(count - 1, count - _preVisistList.getChildCount());
+                    }
+                }
+            };
+            post(r);
         } else {
             _preVisistTextView.setVisibility(View.VISIBLE);
             _onSiteLayout.setVisibility(View.VISIBLE);
             _postVisitLayout.setVisibility(View.VISIBLE);
-            for (int i = 0; i < _tasks.size(); i++) {
-                Task task = _tasks.get(i);
 
-                TaskRowView row = new TaskRowView(getContext());
-                row.setData(_workorder, task);
+            ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
+                private int pre = 0;
+                private int ons = 0;
+                private int post = 0;
 
-                //if work order completed or canceled then hide/disable any controls actions
-                if (_workorder.canModifyTasks()) {
-                    row.setOnTaskClickListener(_task_onClick);
+                @Override
+                public void next(int i) throws Exception {
+                    Task task = _tasks.get(i);
+                    TaskRowView row = null;
+
+                    if ("prep".equals(task.getStage())) {
+                        if (pre < _preVisistList.getChildCount()) {
+                            row = (TaskRowView) _preVisistList.getChildAt(pre);
+                        } else {
+                            row = new TaskRowView(getContext());
+                            _preVisistList.addView(row);
+                        }
+                        pre++;
+                    } else if ("onsite".equals(task.getStage())) {
+                        if (ons < _onSiteList.getChildCount()) {
+                            row = (TaskRowView) _onSiteList.getChildAt(ons);
+                        } else {
+                            row = new TaskRowView(getContext());
+                            _onSiteList.addView(row);
+                        }
+                        ons++;
+                    } else if ("post".equals(task.getStage())) {
+                        if (post < _postVisitList.getChildCount()) {
+                            row = (TaskRowView) _postVisitList.getChildAt(post);
+                        } else {
+                            row = new TaskRowView(getContext());
+                            _postVisitList.addView(row);
+                        }
+                        post++;
+                    }
+
+                    if (row != null) {
+                        row.setData(_workorder, task);
+                        //if work order completed or canceled then hide/disable any controls actions
+                        if (_workorder.canModifyTasks()) {
+                            row.setOnTaskClickListener(_task_onClick);
+                        }
+                    } else {
+                        // TODO this should never happen!
+                    }
                 }
 
-                if ("prep".equals(task.getStage())) {
-                    _preVisistList.addView(row);
-                } else if ("onsite".equals(task.getStage())) {
-                    _onSiteList.addView(row);
-                } else if ("post".equals(task.getStage())) {
-                    _postVisitList.addView(row);
+                @Override
+                public void finish(int count) throws Exception {
+                    if (_preVisistList.getChildCount() > pre) {
+                        _preVisistList.removeViews(pre, pre - _preVisistList.getChildCount());
+                    }
+                    if (_onSiteList.getChildCount() > ons) {
+                        _onSiteList.removeViews(ons, ons - _onSiteList.getChildCount());
+                    }
+                    if (_postVisitList.getChildCount() > post) {
+                        _postVisitList.removeViews(post, post - _postVisitList.getChildCount());
+                    }
                 }
-            }
+            };
+            post(r);
         }
     }
 

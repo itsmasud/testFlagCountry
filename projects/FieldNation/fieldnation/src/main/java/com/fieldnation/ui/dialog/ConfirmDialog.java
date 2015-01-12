@@ -148,7 +148,7 @@ public class ConfirmDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void setDuration(long timeMilliseconds) {
+    private void setDuration(long timeMilliseconds) {
         _durationMilliseconds = timeMilliseconds;
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
     }
@@ -205,7 +205,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 _startCalendar = cal;
                 _startDateButton.setVisibility(View.GONE);
 
-                setDuration(60000);
+                setDuration(3600000);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

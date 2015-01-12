@@ -1,11 +1,13 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
@@ -55,9 +57,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void refresh() {
-        ShipmentTracking[] shipments = _workorder.getShipmentTracking();
-
-        _shipmentsLayout.removeAllViews();
+        final ShipmentTracking[] shipments = _workorder.getShipmentTracking();
 
         if (_workorder.canChangeShipments()) {
             _addLayout.setVisibility(View.VISIBLE);
@@ -74,12 +74,30 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         if (shipments == null || shipments.length == 0)
             return;
 
-        for (int i = 0; i < shipments.length; i++) {
-            ShipmentSummary view = new ShipmentSummary(getContext());
-            view.setData(_workorder, shipments[i]);
-            view.setListener(_summaryListener);
-            _shipmentsLayout.addView(view);
-        }
+        ForLoopRunnable r = new ForLoopRunnable(shipments.length, new Handler()) {
+            private ShipmentTracking[] _shipments = shipments;
+
+            @Override
+            public void next(int i) throws Exception {
+                ShipmentSummary v = null;
+                if (i < _shipmentsLayout.getChildCount()) {
+                    v = (ShipmentSummary) _shipmentsLayout.getChildAt(i);
+                } else {
+                    v = new ShipmentSummary(getContext());
+                    _shipmentsLayout.addView(v);
+                }
+                v.setData(_workorder, _shipments[i]);
+                v.setListener(_summaryListener);
+            }
+
+            @Override
+            public void finish(int count) throws Exception {
+                if (_shipmentsLayout.getChildCount() > count) {
+                    _shipmentsLayout.removeViews(count - 1, _shipmentsLayout.getChildCount() - count);
+                }
+            }
+        };
+        post(r);
     }
 
     /*-*********************************-*/

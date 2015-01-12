@@ -150,12 +150,6 @@ public class NotificationFragment extends WorkorderFragment {
         }
     }
 
-    @Override
-    public void doAction(Bundle bundle) {
-        // TODO Method Stub: doAction()
-        Log.v(TAG, "Method Stub: doAction()");
-    }
-
     private NotificationListAdapter getAdapter() {
         if (this.getActivity() == null)
             return null;
@@ -190,6 +184,9 @@ public class NotificationFragment extends WorkorderFragment {
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (getActivity() == null)
+                return;
+
             if (_service == null || isNew) {
                 _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
                 getNotifications();
@@ -265,6 +262,9 @@ public class NotificationFragment extends WorkorderFragment {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             _service = null;
+            if (getActivity() == null)
+                return;
+
             AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshComplete();
