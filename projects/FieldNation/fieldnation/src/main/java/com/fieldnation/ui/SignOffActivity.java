@@ -369,7 +369,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
                 Intent intent = new Intent(context, SignOffActivity.class);
                 intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
-                intent.putExtra(INTENT_PARAM_TASK_ID, workorder);
+                intent.putExtra(INTENT_PARAM_TASK_ID, taskId);
                 if (!(context instanceof Activity))
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);

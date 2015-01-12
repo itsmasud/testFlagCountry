@@ -76,6 +76,7 @@ public class NotificationView extends RelativeLayout {
         _statusTextView = (TextView) findViewById(R.id.status_textview);
         _messageTextView = (TextView) findViewById(R.id.message_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _statusLayout.setVisibility(View.GONE);
         setOnClickListener(_this_onClick);
     }
 
@@ -94,10 +95,10 @@ public class NotificationView extends RelativeLayout {
             _statusTextView.setText(_substatus[work.getStatus().getWorkorderSubstatus().ordinal()]);
             _statusTextView.setTextColor(_colors[work.getStatus().getStatusIntent().ordinal()]);
             _titleLayout.setVisibility(View.VISIBLE);
-            _statusLayout.setVisibility(View.VISIBLE);
+//            _statusLayout.setVisibility(View.VISIBLE);
         } else {
             _titleLayout.setVisibility(View.GONE);
-            _statusLayout.setVisibility(View.GONE);
+//            _statusLayout.setVisibility(View.GONE);
 
         }
         if (_note.getViewed() != null && _note.getViewed() == 1) {

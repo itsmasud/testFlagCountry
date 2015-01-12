@@ -20,9 +20,10 @@ import java.util.Hashtable;
 public class ExpenseCategories {
     private final String TAG = UniqueTag.makeTag("data.workorder.ExpenseCategories");
 
+    private static ExpenseCategory[] _categories = null;
+
     private Context _context;
     private WorkorderService _ws;
-    private ExpenseCategory[] _categories = null;
     private Listener _listener = null;
 
     public ExpenseCategories(Context context) {
@@ -59,9 +60,7 @@ public class ExpenseCategories {
                 AuthTopicService.requestAuthentication(_context);
             }
         }
-
     }
-
 
     /*-*********************************-*/
     /*-				Events				-*/
