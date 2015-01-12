@@ -196,6 +196,10 @@ public class UploadSlotView extends RelativeLayout {
 
         @Override
         public void onError(String url, String filename, String message) {
+            if (url.contains(_uploadUrl)) {
+                _uploadingFiles.remove(filename);
+                //populateUi();
+            }
         }
     };
 
