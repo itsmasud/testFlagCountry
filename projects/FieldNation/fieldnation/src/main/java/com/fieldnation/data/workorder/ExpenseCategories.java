@@ -78,13 +78,11 @@ public class ExpenseCategories {
         @Override
         public void onAuthenticationFailed(boolean networkDown) {
             _ws = null;
-            AuthTopicService.requestAuthentication(_context);
         }
 
         @Override
         public void onAuthenticationInvalidated() {
             _ws = null;
-            AuthTopicService.requestAuthentication(_context);
         }
 
         @Override

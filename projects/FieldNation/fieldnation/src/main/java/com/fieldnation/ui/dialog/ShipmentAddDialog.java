@@ -137,10 +137,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(int titleResId, long taskId) {
-        show(getActivity().getText(titleResId), taskId);
-    }
-
     public void show(CharSequence title, long taskId) {
         _title = (String) title;
         _taskId = taskId;
