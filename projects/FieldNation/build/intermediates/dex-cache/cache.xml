@@ -2,11 +2,39 @@
 <items version="2" >
 
     <item
+        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\libJson\build\libs\libJson.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="e5e9371c4670d9bd6869fc205d609ce2d3acb912">
+        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\libJson-ee90de1fc8453aec6f9e0b9f059701c19a58855c.jar" />
+    </item>
+    <item
+        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\21.0.2\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="9742ced04aafd9ac97dd2c66c1aa0e32d2ae7e54">
+        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\classes-093f707c2b9650b2578c0d2afb955e270ffe2d50.jar" />
+    </item>
+    <item
+        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.5.87\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="dd9247ea0fabe8ee479638c4b4a23e93752be256">
+        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\classes-dcb8fbd6f0b40aa86e7d330b5a87a84227ec1eaf.jar" />
+    </item>
+    <item
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\classes.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="d1bf02de1c56d942e7a9d093b8610ba1ef4128e3">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\classes-27cbd9e9e8b65bddb643c3702f8ddaa7cf3fb6bb.jar" />
+    </item>
+    <item
+        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\libs\internal_impl-21.0.2.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="962e8b12569c56dbdcf8367eb4eac8bb129cd18f">
+        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\internal_impl-21.0.2-973dc27dfa7990020abf9235af5ce8f510aa7f3c.jar" />
     </item>
     <item
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.2\classes.jar"
@@ -42,34 +70,6 @@
         revision="21.1.2"
         sha1="99373741f99a0556ee293c41e8faa1ca3ae8a4e6">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\support-annotations-21.0.2-7e1d40d3ebdb2ac22da7c5b22ba112fc6158c3bf.jar" />
-    </item>
-    <item
-        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\libJson\build\libs\libJson.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="e5e9371c4670d9bd6869fc205d609ce2d3acb912">
-        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\libJson-ee90de1fc8453aec6f9e0b9f059701c19a58855c.jar" />
-    </item>
-    <item
-        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\21.0.2\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="9742ced04aafd9ac97dd2c66c1aa0e32d2ae7e54">
-        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\classes-093f707c2b9650b2578c0d2afb955e270ffe2d50.jar" />
-    </item>
-    <item
-        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.5.87\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="dd9247ea0fabe8ee479638c4b4a23e93752be256">
-        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\classes-dcb8fbd6f0b40aa86e7d330b5a87a84227ec1eaf.jar" />
-    </item>
-    <item
-        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\libs\internal_impl-21.0.2.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="962e8b12569c56dbdcf8367eb4eac8bb129cd18f">
-        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\prod\release\internal_impl-21.0.2-973dc27dfa7990020abf9235af5ce8f510aa7f3c.jar" />
     </item>
 
 </items>

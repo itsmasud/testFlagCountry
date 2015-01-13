@@ -2,9 +2,13 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,6 +42,7 @@ public class NotificationView extends RelativeLayout {
     private Notification _note;
     private String[] _substatus;
     private int[] _colors = new int[5];
+    private URLSpan _span = null;
 
     /*-*****************************-*/
     /*-			Lifecycle			-*/
@@ -109,8 +114,17 @@ public class NotificationView extends RelativeLayout {
 
         _messageTextView.setVisibility(View.VISIBLE);
         try {
-            _messageTextView.setText(misc.linkifyHtml(_note.getMessage(), Linkify.ALL));
+            Spannable msg = misc.linkifyHtml(_note.getMessage(), Linkify.ALL);
+            _messageTextView.setText(msg);
             _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            if (_note.getWorkorder() == null) {
+                Log.v(TAG, "BP");
+                URLSpan[] spans = msg.getSpans(0, msg.length(), URLSpan.class);
+                if (spans.length > 0) {
+                    _span = spans[0];
+                }
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
             if (misc.isEmptyOrNull(_note.getMessage())) {
@@ -134,11 +148,13 @@ public class NotificationView extends RelativeLayout {
         public void onClick(View v) {
             if (_note.getWorkorder() != null) {
                 Intent intent = new Intent(getContext(), WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_NOTIFICATIONS);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _note.getWorkorder().getWorkorderId());
                 getContext().startActivity(intent);
+            } else if (_span != null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_span.getURL()));
+                getContext().startActivity(intent);
             } else {
-                Toast.makeText(getContext(), "No workorder associated with this notification.", Toast.LENGTH_LONG).show();
             }
         }
     };
