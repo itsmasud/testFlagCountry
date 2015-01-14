@@ -2,12 +2,16 @@ package com.fieldnation;
 
 import android.app.Application;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.rpc.server.DataCacheNode;
 import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.Ws;
+import com.fieldnation.topics.TopicReceiver;
+import com.fieldnation.topics.Topics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Logger;
@@ -39,21 +43,18 @@ public class GlobalState extends Application {
         Ws.USE_HTTPS = BuildConfig.USE_HTTPS;
     }
 
-    public synchronized Tracker getTracker() {
+    private synchronized Tracker getTracker() {
 
         if (_tracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             analytics.enableAutoActivityReports(this);
-            analytics.setLocalDispatchPeriod(60);
+            analytics.setLocalDispatchPeriod(1800);
             analytics.setDryRun(false);
-            Log.v(TAG, "is opt out: " + analytics.getAppOptOut());
             _tracker = analytics.newTracker(R.xml.ga_config);
             _tracker.enableAdvertisingIdCollection(true);
             _tracker.enableAutoActivityTracking(true);
             _tracker.enableExceptionReporting(false);
-            //_tracker.setAppName("AndroidApp");
-
         }
         return _tracker;
     }
@@ -72,12 +73,36 @@ public class GlobalState extends Application {
             System.setProperty("http.keepalive", "false");
         }
 
+        Topics.subscribeGaEvent(this, TAG, _gaevent_receiver);
+    }
+
+    private TopicReceiver _gaevent_receiver = new TopicReceiver(new Handler()) {
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            String category = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_CATEGORY);
+            String action = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_ACTION);
+            String label = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_LABEL);
+
+            Long value = null;
+            if (parcel.containsKey(Topics.TOPIC_GA_EVENT_PARAM_VALUE)) {
+                value = parcel.getLong(Topics.TOPIC_GA_EVENT_PARAM_VALUE);
+            }
+
+            sendGaEvent(category, action, label, value);
+        }
+    };
+
+    public void sendGaEvent(String category, String action, String label, Long value) {
         Tracker t = getTracker();
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("AndroidTest")
-                .setAction("AppStart")
-                .setLabel("AppStarted")
-                .build());
+        HitBuilders.EventBuilder event = new HitBuilders.EventBuilder();
+
+        event.setCategory(category).setAction(action).setLabel(label);
+
+        if (value != null) {
+            event.setValue(value);
+        }
+
+        t.send(event.build());
     }
 
     private long getNextDelay() {

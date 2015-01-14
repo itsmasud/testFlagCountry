@@ -115,10 +115,14 @@ public class ScheduleDetailView extends RelativeLayout {
         }
 
         try {
-            Calendar endCal = ISO8601.toCalendar(_loggedWork.getEndDate());
-            date = misc.formatTime2(endCal);
-            date += endCal.get(Calendar.AM_PM) == Calendar.AM ? " AM" : " PM";
-            _endTextView.setText(date);
+            if (_loggedWork.getEndTime() != null) {
+                Calendar endCal = ISO8601.toCalendar(_loggedWork.getEndDate());
+                date = misc.formatTime2(endCal);
+                date += endCal.get(Calendar.AM_PM) == Calendar.AM ? " AM" : " PM";
+                _endTextView.setText(date);
+            } else {
+                _endTextView.setText("----");
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

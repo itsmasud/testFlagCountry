@@ -57,13 +57,6 @@ public class MyWorkActivity extends DrawerActivity {
 
 //        _customFieldDialog = CustomFieldDialog.getInstance(getSupportFragmentManager(), TAG);
 //        _customFieldDialog.sho
-
-        Tracker t = ((GlobalState) getApplication()).getTracker();
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("AndroidTest")
-                .setAction("Activity")
-                .setLabel("MyWorkActivityStart")
-                .build());
     }
 
     @Override
