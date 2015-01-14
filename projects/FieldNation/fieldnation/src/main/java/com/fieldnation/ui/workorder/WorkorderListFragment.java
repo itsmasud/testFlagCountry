@@ -280,11 +280,13 @@ public class WorkorderListFragment extends Fragment {
             } else {
                 Intent intent = new Intent(getActivity(), WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+/*
                 if (workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS || workorder.getStatus().getWorkorderStatus() == WorkorderStatus.ASSIGNED) {
                     intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_TASKS);
                 } else {
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-                }
+*/
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+//                }
                 getActivity().startActivity(intent);
                 view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
             }
@@ -609,7 +611,7 @@ public class WorkorderListFragment extends Fragment {
                 _pendingNotInterested.remove(woId);
                 Intent intent = new Intent(getActivity(), WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, woId);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_TASKS);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                 getActivity().startActivity(intent);
                 _adapter.refreshPages();
                 _loadingView.refreshComplete();

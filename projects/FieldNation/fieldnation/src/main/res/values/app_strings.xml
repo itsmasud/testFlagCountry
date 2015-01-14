@@ -40,6 +40,7 @@
     <string name="btn_login">LOGIN</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
+    <string name="toast_could_not_complete_request">Could not complete request</string>
 
     <string name="notification_title_start_upload">Starting Upload...</string>
     <string name="notification_context_getting_file">Getting file</string>
@@ -79,6 +80,7 @@
     <string name="by">by</string>
     <string name="fixed_pay_amount">Fixed Pay Amount</string>
     <string name="hourly_rate">Hourly Rate</string>
+    <string name="fixed_rate">Fixed Rate</string>
     <string name="max_hours">Max Hours</string>
     <string name="per_device_rate">Per Device Rate</string>
     <string name="max_devices">Max Devices</string>

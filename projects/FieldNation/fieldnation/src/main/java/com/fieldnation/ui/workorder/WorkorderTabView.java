@@ -14,7 +14,7 @@ public class WorkorderTabView extends RelativeLayout {
 
     // UI
     private RelativeLayout _detailLayout;
-    private RelativeLayout _tasksLayout;
+    //    private RelativeLayout _tasksLayout;
     private TextView _messagesTextView;
     private RelativeLayout _messagesLayout;
     private TextView _alertTextView;
@@ -53,8 +53,10 @@ public class WorkorderTabView extends RelativeLayout {
         _detailLayout = (RelativeLayout) findViewById(R.id.detail_layout);
         _detailLayout.setOnClickListener(_detailLayout_onClick);
 
+/*
         _tasksLayout = (RelativeLayout) findViewById(R.id.tasks_layout);
         _tasksLayout.setOnClickListener(_tasksLayout_onClick);
+*/
 
         _messagesTextView = (TextView) findViewById(R.id.messages_textview);
         _messagesLayout = (RelativeLayout) findViewById(R.id.messages_layout);
@@ -67,19 +69,19 @@ public class WorkorderTabView extends RelativeLayout {
         _attachmentsLayout = (RelativeLayout) findViewById(R.id.attachments_layout);
         _attachmentsLayout.setOnClickListener(_attachmentsLayout_onClick);
 
-        _buttons = new View[5];
+        _buttons = new View[4];
         _buttons[0] = _detailLayout;
-        _buttons[1] = _tasksLayout;
-        _buttons[2] = _messagesLayout;
-        _buttons[3] = _attachmentsLayout;
-        _buttons[4] = _alertLayout;
+//        _buttons[1] = _tasksLayout;
+        _buttons[1] = _messagesLayout;
+        _buttons[2] = _attachmentsLayout;
+        _buttons[3] = _alertLayout;
 
         _layouts = new RelativeLayout[5];
         _layouts[0] = _detailLayout;
-        _layouts[1] = _tasksLayout;
-        _layouts[2] = _messagesLayout;
-        _layouts[3] = _attachmentsLayout;
-        _layouts[4] = _alertLayout;
+//        _layouts[1] = _tasksLayout;
+        _layouts[1] = _messagesLayout;
+        _layouts[2] = _attachmentsLayout;
+        _layouts[3] = _alertLayout;
 
         setSelected(0);
     }
@@ -96,6 +98,7 @@ public class WorkorderTabView extends RelativeLayout {
         }
     };
 
+/*
     private View.OnClickListener _tasksLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -104,8 +107,18 @@ public class WorkorderTabView extends RelativeLayout {
                 _listener.onChange(1);
         }
     };
+*/
 
     private View.OnClickListener _messagesLayout_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setSelected(1);
+            if (_listener != null)
+                _listener.onChange(1);
+        }
+    };
+
+    private View.OnClickListener _attachmentsLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setSelected(2);
@@ -117,15 +130,6 @@ public class WorkorderTabView extends RelativeLayout {
     private View.OnClickListener _alertLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setSelected(4);
-            if (_listener != null)
-                _listener.onChange(4);
-        }
-    };
-
-    private View.OnClickListener _attachmentsLayout_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
             setSelected(3);
             if (_listener != null)
                 _listener.onChange(3);
@@ -134,7 +138,7 @@ public class WorkorderTabView extends RelativeLayout {
 
     /*-*************************************-*/
     /*-				Mutators				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
     public void setSelected(int index) {
         for (int i = 0; i < _buttons.length; i++) {
             _buttons[i].setSelected(i == index);
@@ -172,8 +176,8 @@ public class WorkorderTabView extends RelativeLayout {
     }
 
     /*-*********************************-*/
-	/*-				Private				-*/
-	/*-*********************************-*/
+    /*-				Private				-*/
+    /*-*********************************-*/
     public interface Listener {
         public void onChange(int index);
     }
