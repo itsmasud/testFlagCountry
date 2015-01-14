@@ -40,7 +40,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
     @Override
     protected void onResume() {
         super.onResume();
-        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "MessageListActivity");
+        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "MessageListActivity", 1);
 
     }
 

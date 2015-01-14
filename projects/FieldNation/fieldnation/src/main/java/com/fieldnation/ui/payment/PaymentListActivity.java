@@ -52,7 +52,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     @Override
     protected void onResume() {
         super.onResume();
-        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "PaymentListActivity");
+        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "PaymentListActivity", 1);
     }
 
     @Override

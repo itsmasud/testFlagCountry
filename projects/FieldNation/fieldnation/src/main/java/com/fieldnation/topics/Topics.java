@@ -88,6 +88,7 @@ public class Topics {
     public static final String GA_CATEGORY_GENERAL = "General";
     public static final String GA_ACTION_VIEW = "Viewing";
 
+/*
     public static void dispatchGaEvent(Context context, String category, String action, String label) {
         if (context == null)
             return;
@@ -99,6 +100,7 @@ public class Topics {
 
         TopicService.dispatchTopic(context, TOPIC_GA_EVENT, bundle, false);
     }
+*/
 
     public static void dispatchGaEvent(Context context, String category, String action, String label, long value) {
         if (context == null)

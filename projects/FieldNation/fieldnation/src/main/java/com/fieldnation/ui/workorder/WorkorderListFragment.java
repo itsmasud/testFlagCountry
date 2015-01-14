@@ -163,7 +163,7 @@ public class WorkorderListFragment extends Fragment {
         _adapter.refreshPages();
         _loadingView.startRefreshing();
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
-        Topics.dispatchGaEvent(getActivity(), Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "Work" + misc.capitalize(_displayView.getCall()) + "List");
+        Topics.dispatchGaEvent(getActivity(), Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "Work" + misc.capitalize(_displayView.getCall()) + "List", 1);
     }
 
     public void update() {

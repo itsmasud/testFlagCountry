@@ -55,7 +55,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     @Override
     protected void onResume() {
         super.onResume();
-        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "NotificationListActivity");
+        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "NotificationListActivity",1);
     }
 
     @Override
