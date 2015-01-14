@@ -28,7 +28,6 @@ import com.fieldnation.rpc.client.AuthService;
 import com.fieldnation.rpc.server.ClockService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
-import com.fieldnation.ui.SplashActivity;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -191,7 +190,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             Log.v(TAG, "onReceiveResult");
             try {
-                String authToken = resultData.getString("authtoken");
+                String authToken = resultData.getString(AccountManager.KEY_AUTHTOKEN);
                 String error = resultData.getString("error");
 
                 if (authToken != null) {
@@ -206,7 +205,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                     intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.accounttype));
                     // intent.putExtra(AccountManager.KEY_AUTHTOKEN,
                     // Constants.FIELD_NATION_ACCOUNT_TYPE);
-                    intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString("authtoken"));
+                    intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString(AccountManager.KEY_AUTHTOKEN));
 
                     AuthTopicService.dispatchAuthComplete(AuthActivity.this);
                     _authcomplete = true;
@@ -223,7 +222,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                 Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
 
             } catch (Exception e) {
-                Toast.makeText(AuthActivity.this, "An unexpected error occurred. Could not connect to account.",
+                Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect,
                         Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }

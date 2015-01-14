@@ -16,7 +16,6 @@
     <string name="activity_login_title">Field Nation Login</string>
     <string name="activity_login_username">Username</string>
     <string name="activity_login_password">Password</string>
-    <string name="activity_login_button">LOGIN</string>
 
     <string name="activity_settings_title">Settings</string>
     <string name="auth_account_name">Field Nation</string>
@@ -38,8 +37,18 @@
     <string name="btn_check_out">Check Out</string>
     <string name="btn_reject">REJECT</string>
     <string name="btn_sign_off">SIGN OFF</string>
+    <string name="btn_login">LOGIN</string>
 
+    <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
 
+    <string name="notification_title_start_upload">Starting Upload...</string>
+    <string name="notification_context_getting_file">Getting file</string>
+    <string name="notification_uploading">Uploading</string>
+    <string name="notification_uploading_dot">Uploading...</string>
+    <string name="notification_failed">Failed!</string>
+    <string name="notification_success">Success!</string>
+
+    <string name="downloading">Downloading</string>
     <string name="time_logged">Time Logged</string>
     <string name="confirm">Confirm</string>
     <string name="request_workorder">Request Work Order</string>

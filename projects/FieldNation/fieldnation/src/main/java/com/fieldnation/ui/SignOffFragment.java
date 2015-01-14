@@ -60,6 +60,8 @@ public class SignOffFragment extends FragmentBase {
     private Workorder _workorder;
     private Listener _listener;
     private Bitmap _image;
+    private boolean _waitTasks = false;
+    private boolean _waitLogs = false;
 
     /*-*************----------**************-*/
     /*-             Life Cycle              -*/
@@ -93,11 +95,13 @@ public class SignOffFragment extends FragmentBase {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Stopwatch stopwatch = new Stopwatch();
         if (_workorder != null) {
             outState.putParcelable(STATE_WORKORDER, _workorder);
         }
 
         super.onSaveInstanceState(outState);
+        Log.v(TAG, "onSaveInstanceState time " + stopwatch.finish());
     }
 
     @Override
@@ -143,6 +147,7 @@ public class SignOffFragment extends FragmentBase {
 
     @Override
     public void onResume() {
+        Stopwatch stopwatch = new Stopwatch();
         super.onResume();
 
         Bundle bundle = getArguments();
@@ -161,6 +166,7 @@ public class SignOffFragment extends FragmentBase {
                 }
             }.executeEx(bundle);
         }
+        Log.v(TAG, "onResume time " + stopwatch.finish());
     }
 
     public void setListener(Listener listener) {
@@ -182,6 +188,7 @@ public class SignOffFragment extends FragmentBase {
 
         final LoggedWork[] logs = _workorder.getLoggedWork();
         if (logs != null && logs.length > 0) {
+            _waitLogs = true;
             _timeLinearLayout.setVisibility(View.VISIBLE);
             _timeTextView.setVisibility(View.VISIBLE);
             _timeDivider.setVisibility(View.VISIBLE);
@@ -195,10 +202,20 @@ public class SignOffFragment extends FragmentBase {
                     if (getActivity() == null) {
                         return;
                     }
+
                     LoggedWork work = _logs[i];
                     WorklogTile v = new WorklogTile(getActivity());
                     v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
                     _timeLinearLayout.addView(v);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    super.finish(count);
+                    if (!_waitTasks) {
+                        setLoading(false);
+                    }
+                    _waitLogs = false;
                 }
             };
             _container.post(r);
@@ -211,6 +228,7 @@ public class SignOffFragment extends FragmentBase {
 
         final Task[] tasks = _workorder.getTasks();
         if (tasks != null && tasks.length > 0) {
+            _waitTasks = true;
             _tasksDivider.setVisibility(View.VISIBLE);
             _tasksTextView.setVisibility(View.VISIBLE);
             _tasksLinearLayout.setVisibility(View.VISIBLE);
@@ -243,12 +261,23 @@ public class SignOffFragment extends FragmentBase {
                     }
                     _tasksLinearLayout.addView(v);
                 }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    super.finish(count);
+                    if (!_waitLogs) {
+                        setLoading(false);
+                    }
+                    _waitTasks = false;
+
+                }
             };
             _container.post(r);
         } else {
             _tasksDivider.setVisibility(View.GONE);
             _tasksTextView.setVisibility(View.GONE);
             _tasksLinearLayout.setVisibility(View.GONE);
+            setLoading(false);
         }
 
         if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
@@ -264,7 +293,8 @@ public class SignOffFragment extends FragmentBase {
         }
         Log.v(TAG, "pop time " + stopwatch.finish());
 
-        setLoading(false);
+        if (!_waitTasks && !_waitLogs)
+            setLoading(false);
     }
 
     /*-*********************************-*/

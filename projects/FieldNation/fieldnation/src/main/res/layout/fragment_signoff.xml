@@ -122,7 +122,6 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:animateLayoutChanges="true"
             android:scrollbarStyle="outsideOverlay"
             android:padding="10dp">
 
@@ -169,7 +168,7 @@
 
                 <LinearLayout
                     android:id="@+id/time_list"
-                    android:animateLayoutChanges="true"
+                    android:animateLayoutChanges="false"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
@@ -189,7 +188,7 @@
                 <LinearLayout
                     android:id="@+id/tasks_list"
                     android:layout_width="match_parent"
-                    android:animateLayoutChanges="true"
+                    android:animateLayoutChanges="false"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
 

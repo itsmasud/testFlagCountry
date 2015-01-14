@@ -58,7 +58,7 @@ public class SorryFragment extends FragmentBase {
                 _timerComplete = true;
                 showDoneButton();
             }
-        }, 10000);
+        }, 5000);
     }
 
     public void setListener(Listener listener) {

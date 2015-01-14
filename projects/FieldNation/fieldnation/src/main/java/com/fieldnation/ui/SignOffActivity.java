@@ -339,10 +339,12 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     public static void startSignOff(Context context, Workorder workorder, boolean markComplete) {
-        new AsyncTaskEx<Object, Object, Object>() {
+        new AsyncTaskEx<Object, Object, Intent>() {
+            private Context context;
+
             @Override
-            protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
+            protected Intent doInBackground(Object... params) {
+                context = (Context) params[0];
                 Workorder workorder = (Workorder) params[1];
                 Boolean markComplete = (Boolean) params[2];
 
@@ -353,8 +355,13 @@ public class SignOffActivity extends AuthFragmentActivity {
 
                 if (!(context instanceof Activity))
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                return intent;
+            }
+
+            @Override
+            protected void onPostExecute(Intent intent) {
+                super.onPostExecute(intent);
                 context.startActivity(intent);
-                return null;
             }
         }.executeEx(context, workorder, markComplete);
     }

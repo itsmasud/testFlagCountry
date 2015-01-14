@@ -77,6 +77,7 @@ public class Schedule implements Parcelable {
         _endTime = endTime;
     }
 
+    // Todo, localize this
     public String getFormatedTime() {
         try {
             if (!misc.isEmptyOrNull(getStartTime())) {

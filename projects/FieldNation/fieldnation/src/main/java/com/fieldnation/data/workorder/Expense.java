@@ -90,6 +90,7 @@ public class Expense implements Parcelable {
         }
         _description = description;
         _price = amount;
+        // Todo, localize this?
         _status = "New";
     }
 

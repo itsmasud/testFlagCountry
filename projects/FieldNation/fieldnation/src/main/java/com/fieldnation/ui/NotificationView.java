@@ -118,7 +118,6 @@ public class NotificationView extends RelativeLayout {
             _messageTextView.setText(msg);
             _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
             if (_note.getWorkorder() == null) {
-                Log.v(TAG, "BP");
                 URLSpan[] spans = msg.getSpans(0, msg.length(), URLSpan.class);
                 if (spans.length > 0) {
                     _span = spans[0];

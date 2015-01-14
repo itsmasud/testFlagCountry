@@ -2,6 +2,7 @@ package com.fieldnation.data.workorder;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
@@ -542,6 +543,7 @@ public class Workorder implements Parcelable {
     /*-*********************************************-*/
     /*-				Not Generated Code				-*/
     /*-*********************************************-*/
+    private static final String TAG = "data.workorder.Workorder";
     public static final int BUTTON_ACTION_NONE = 0;
     public static final int BUTTON_ACTION_REQUEST = 1;
     public static final int BUTTON_ACTION_ASSIGNMENT = 2;
@@ -784,17 +786,16 @@ public class Workorder implements Parcelable {
     public Status getStatus() {
         if (_status == null) {
             String data = "Status is null: " + _workorderId;
-            System.out.println(data);
+            Log.v(TAG, data);
         } else if (_status.getWorkorderStatus() == null) {
             String data = "Could not get status: " + _workorderId + "\r\n";
             data += _status.toJson().display();
 
-            System.out.println(data);
+            Log.v(TAG, data);
         } else if (_status.getWorkorderSubstatus() == null) {
             String data = "Could not get substatus: " + _workorderId + "\r\n";
             data += _status.toJson().display();
-
-            System.out.println(data);
+            Log.v(TAG, data);
         }
 
         return _status;
@@ -853,7 +854,7 @@ public class Workorder implements Parcelable {
                 buildStatusInProgress(status);
                 break;
             default:
-                System.out.println("Unknown Status (" + _workorderId + "): "
+                Log.v(TAG, "Unknown Status (" + _workorderId + "): "
                         + status.toJson().toString());
                 break;
 
