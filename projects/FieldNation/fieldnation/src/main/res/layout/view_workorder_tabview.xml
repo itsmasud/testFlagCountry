@@ -27,6 +27,7 @@
 
         <!-- tasks -->
 
+<!--
         <RelativeLayout
             android:id="@+id/tasks_layout"
             style="@style/WorkorderTabView_TabContainer" >
@@ -38,6 +39,7 @@
         </RelativeLayout>
 
         <View style="@style/WorkorderTabView_Sep_Vert" />
+-->
 
         <!-- messages -->
 
