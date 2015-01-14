@@ -27,7 +27,6 @@ public class TaskListView extends RelativeLayout {
     private LinearLayout _onSiteList;
     private LinearLayout _postVisitLayout;
     private LinearLayout _postVisitList;
-    private TextView _noDataTextView;
 
     // Data
     private List<Task> _tasks;
@@ -61,8 +60,6 @@ public class TaskListView extends RelativeLayout {
         _onSiteList = (LinearLayout) findViewById(R.id.onsite_list);
         _postVisitLayout = (LinearLayout) findViewById(R.id.postvisit_layout);
         _postVisitList = (LinearLayout) findViewById(R.id.postvisit_list);
-        _noDataTextView = (TextView) findViewById(R.id.nodata_textview);
-
     }
 
     public void setTaskListViewListener(TaskListView.Listener l) {
@@ -83,12 +80,10 @@ public class TaskListView extends RelativeLayout {
         setVisibility(View.VISIBLE);
 
         if (_tasks.size() == 0) {
-            //setVisibility(View.GONE);
-            _noDataTextView.setVisibility(View.VISIBLE);
+            setVisibility(View.GONE);
             return;
         } else {
-            //setVisibility(View.VISIBLE);
-            _noDataTextView.setVisibility(View.GONE);
+            setVisibility(View.VISIBLE);
         }
 
         boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage()) || "any".equals(_tasks.get(0).getStage());
