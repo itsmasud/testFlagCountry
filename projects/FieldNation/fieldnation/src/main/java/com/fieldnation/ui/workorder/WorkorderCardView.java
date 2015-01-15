@@ -16,7 +16,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.topics.GaTopic;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
@@ -305,7 +305,7 @@ public class WorkorderCardView extends RelativeLayout {
     private View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Topics.dispatchGaEvent(getContext(), "WorkorderCardView", "ActionClick", _actionButton.getText().toString(), 1);
+            GaTopic.dispatchEvent(getContext(), "WorkorderCardView", "ActionClick", _actionButton.getText().toString(), 1);
 
             switch (_workorder.getButtonAction()) {
                 case Workorder.BUTTON_ACTION_CHECKIN:

@@ -23,7 +23,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.topics.GaTopic;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -165,7 +165,7 @@ public class WorkorderListFragment extends Fragment {
         _adapter.refreshPages();
         _loadingView.startRefreshing();
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
-        Topics.dispatchGaScreenView(getActivity(), getGaLabel());
+        GaTopic.dispatchScreenView(getActivity(), getGaLabel());
     }
 
     public void update() {
@@ -217,7 +217,7 @@ public class WorkorderListFragment extends Fragment {
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog.show(workorder, pay.getMaxDevice());
             } else {
-                Topics.dispatchGaEvent(getActivity(), getGaLabel(), Topics.GA_ACTION_CHECKOUT, "WorkorderCardView", 1);
+                GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
                 Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
                 intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
                 getActivity().startService(intent);
@@ -229,7 +229,7 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void actionCheckin(WorkorderCardView view, Workorder workorder) {
-            Topics.dispatchGaEvent(getActivity(), getGaLabel(), Topics.GA_ACTION_CHECKIN, "WorkorderCardView", 1);
+            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
             Intent intent = _service.checkin(WEB_CHECKING_IN, workorder.getWorkorderId());
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getActivity().startService(intent);
@@ -260,8 +260,8 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void onLongClick(WorkorderCardView view, Workorder workorder) {
-            Topics.dispatchGaEvent(getActivity(),
-                    getGaLabel(), Topics.GA_ACTION_LONG_CLICK, "WorkorderCardView", 1);
+            GaTopic.dispatchEvent(getActivity(),
+                    getGaLabel(), GaTopic.ACTION_LONG_CLICK, "WorkorderCardView", 1);
 
 //            if (_selected.contains(workorder.getWorkorderId())) {
 //                _selected.remove(workorder.getWorkorderId());
@@ -329,7 +329,7 @@ public class WorkorderListFragment extends Fragment {
     private DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-            Topics.dispatchGaEvent(getActivity(), getGaLabel(), Topics.GA_ACTION_CHECKOUT, "WorkorderCardView", 1);
+            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
             Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), count);
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getActivity().startService(intent);
@@ -352,7 +352,7 @@ public class WorkorderListFragment extends Fragment {
                 }
             }
             // request the workorder
-            Topics.dispatchGaEvent(getActivity(), getGaLabel(), Topics.GA_ACTION_REQUEST_WORK, "WorkorderCardView", 1);
+            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_REQUEST_WORK, "WorkorderCardView", 1);
             Intent intent = _service.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), time);
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getActivity().startService(intent);
@@ -367,7 +367,7 @@ public class WorkorderListFragment extends Fragment {
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             //set  loading mode
             try {
-                Topics.dispatchGaEvent(getActivity(), getGaLabel(), Topics.GA_ACTION_CONFIRM_ASSIGN, "WorkorderCardView", 1);
+                GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CONFIRM_ASSIGN, "WorkorderCardView", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 Intent intent = _service.confirmAssignment(WEB_CHANGING_WORKORDER,
                         workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
@@ -394,7 +394,7 @@ public class WorkorderListFragment extends Fragment {
     private CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
-            Topics.dispatchGaEvent(getActivity(), getGaLabel(), Topics.GA_ACTION_COUNTER, "WorkorderCardView", 1);
+            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_COUNTER, "WorkorderCardView", 1);
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGING_WORKORDER,
                             workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,

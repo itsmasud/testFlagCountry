@@ -43,8 +43,8 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.GaTopic;
 import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollView;
@@ -587,7 +587,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
-                Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CONFIRM_ASSIGN, "WorkFragment", 1);
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CONFIRM_ASSIGN, "WorkFragment", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 getActivity().startService(_service.confirmAssignment(WEB_CHANGED,
                         _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end)));
@@ -612,7 +612,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
                          Pay pay, Schedule schedule, Expense[] expenses) {
-            Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_COUNTER, "WorkFragment", 1);
+            GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_COUNTER, "WorkFragment", 1);
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGED, workorder.getWorkorderId(), expires, reason,
                             expirationInSeconds, pay, schedule, expenses));
@@ -647,7 +647,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(Workorder workorder, int count) {
             if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                 try {
-                    Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKOUT, "WorkFragment", 1);
+                    GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
                     getActivity().startService(
                             _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, _gpsLocationService.getLocation()));
                 } catch (Exception e) {
@@ -655,7 +655,7 @@ public class WorkFragment extends WorkorderFragment {
                 }
 
             } else {
-                Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKOUT, "WorkFragment", 1);
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
                 _gpsLocationService.showCheckInOutAlert(getView().getContext());
                 getActivity().startService(
                         _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
@@ -697,7 +697,7 @@ public class WorkFragment extends WorkorderFragment {
             try {
                 long seconds;
                 seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_REQUEST_WORK, "WorkFragment", 1);
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_REQUEST_WORK, "WorkFragment", 1);
                 getActivity().startService(
                         _service.request(WEB_CHANGED,
                                 _workorder.getWorkorderId(), seconds));
@@ -729,7 +729,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onContinueClick() {
-            Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_COMPLETE_WORK, "WorkFragment", 1);
+            GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "WorkFragment", 1);
             getActivity().startService(
                     _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
         }
@@ -834,14 +834,14 @@ public class WorkFragment extends WorkorderFragment {
             } else {
                 if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                     try {
-                        Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKOUT, "WorkFragment", 1);
+                        GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
                         getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
                     } catch (Exception e) {
                         _gpsLocationService.showSettingsOffAlert(getView().getContext());
                     }
                 } else {
                     _gpsLocationService.showCheckInOutAlert(getView().getContext());
-                    Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKOUT, "WorkFragment", 1);
+                    GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
                     getActivity().startService(
                             _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                 }
@@ -852,14 +852,14 @@ public class WorkFragment extends WorkorderFragment {
         public void onCheckIn() {
             if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                 try {
-                    Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKIN, "WorkFragment", 1);
+                    GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
                     getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
                 } catch (Exception e) {
                     _gpsLocationService.showSettingsOffAlert(getView().getContext());
                 }
             } else {
                 _gpsLocationService.showCheckInOutAlert(getView().getContext());
-                Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKIN, "WorkFragment", 1);
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
                 getActivity().startService(
                         _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
             }
@@ -1034,14 +1034,14 @@ public class WorkFragment extends WorkorderFragment {
         public void onCheckin(Task task) {
             if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                 try {
-                    Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKIN, "WorkFragment", 1);
+                    GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
                     getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
                 } catch (Exception e) {
                     _gpsLocationService.showSettingsOffAlert(getView().getContext());
                 }
             } else {
                 _gpsLocationService.showCheckInOutAlert(getView().getContext());
-                Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKIN, "WorkFragment", 1);
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
                 getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
             }
         }
@@ -1054,14 +1054,14 @@ public class WorkFragment extends WorkorderFragment {
             } else {
                 if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                     try {
-                        Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKOUT, "WorkFragment", 1);
+                        GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
                         getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
                     } catch (Exception e) {
                         _gpsLocationService.showSettingsOffAlert(getView().getContext());
                     }
                 } else {
                     _gpsLocationService.showCheckInOutAlert(getView().getContext());
-                    Topics.dispatchGaEvent(getActivity(), "WorkorderActivity", Topics.GA_ACTION_CHECKOUT, "WorkFragment", 1);
+                    GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
                     getActivity().startService(
                             _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                 }

@@ -18,7 +18,7 @@ import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.topics.GaTopic;
 import com.fieldnation.utils.Stopwatch;
 
 /**
@@ -121,7 +121,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             if (savedInstanceState == null) {
                 _signOffFrag.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
-                Topics.dispatchGaScreenView(this, "SignOffFragment");
+                GaTopic.dispatchScreenView(this, "SignOffFragment");
             }
         } else if (savedInstanceState != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -233,7 +233,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
-            Topics.dispatchGaScreenView(SignOffActivity.this, "SignatureFragment");
+            GaTopic.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sigFrag);
@@ -244,7 +244,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
-            Topics.dispatchGaScreenView(SignOffActivity.this, "SorryFragment");
+            GaTopic.dispatchScreenView(SignOffActivity.this, "SorryFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sorryFrag);
@@ -264,7 +264,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureJson = signatureJson;
-            Topics.dispatchGaScreenView(SignOffActivity.this, "ThankYouFragment");
+            GaTopic.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _thankYouFrag);
@@ -322,7 +322,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                 // we finished uploading the signature
                 if (_completeWorkorder) {
                     // if we need to complete, then start that process
-                    Topics.dispatchGaEvent(SignOffActivity.this, "WorkorderActivity", Topics.GA_ACTION_COMPLETE_WORK, "SignOffActivity", 1);
+                    GaTopic.dispatchEvent(SignOffActivity.this, "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "SignOffActivity", 1);
                     startService(
                             _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
 
