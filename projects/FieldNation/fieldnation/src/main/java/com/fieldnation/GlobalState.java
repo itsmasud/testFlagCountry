@@ -1,6 +1,7 @@
 package com.fieldnation;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,10 @@ import com.google.android.gms.analytics.Tracker;
  */
 public class GlobalState extends Application {
     private static final String TAG = "GlobalState";
+
+    public static final String PREF_NAME = "GlobalPreferences";
+    public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
+    public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
 
 //    private AuthenticationServer _authServer = null;
 
@@ -105,9 +110,38 @@ public class GlobalState extends Application {
         t.send(event.build());
     }
 
-    private long getNextDelay() {
-        return 3000;
+    public boolean hasShownReviewDialog() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.contains(PREF_SHOWN_REVIEW_DIALOG);
     }
+
+    public boolean hasCompletedWorkorder() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.contains(PREF_COMPLETED_WORKORDER);
+    }
+
+    public boolean shouldShowReviewDialog() {
+        return !hasShownReviewDialog() && hasCompletedWorkorder();
+    }
+
+    public void setShownReviewDialog() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_SHOWN_REVIEW_DIALOG, true);
+        edit.commit();
+    }
+
+    public void setCompletedWorkorder() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_COMPLETED_WORKORDER, true);
+        edit.commit();
+    }
+
+
+//    private long getNextDelay() {
+//        return 3000;
+//    }
 
     /**
      * Call this to connect an authentication server. Note, only one server can

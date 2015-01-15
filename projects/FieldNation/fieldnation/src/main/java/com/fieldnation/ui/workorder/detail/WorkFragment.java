@@ -1,9 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.location.Location;
@@ -13,6 +15,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -91,6 +95,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final int WEB_CHANGED = 1;
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
+    private static final int WEB_COMPLETE_WORKORDER = 4;
 
     // saved state keys
     private static final String STATE_WORKORDER = "ui.workorder.detail.WorkFragment:STATE_WORKORDER";
@@ -495,9 +500,26 @@ public class WorkFragment extends WorkorderFragment {
                         _currentTask.getSlotId(), data, getNotificationIntent()));
             }
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
-            getActivity().startService(
-                    _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
+            GlobalState gs = (GlobalState) getActivity().getApplication();
+            if (gs.shouldShowReviewDialog()) {
+                showReviewDialog();
+                gs.setShownReviewDialog();
+            }
         }
+    }
+
+    private void showReviewDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.dialog_review_message);
+        builder.setTitle(R.string.dialog_review_title);
+        builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Uri marketUri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
+            }
+        });
+        builder.create().show();
     }
 
     private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -528,7 +550,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onContinueClick() {
             getActivity().startService(
-                    _service.complete(WEB_CHANGED, _workorder.getWorkorderId()));
+                    _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
         }
     };
 
@@ -614,8 +636,7 @@ public class WorkFragment extends WorkorderFragment {
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onComplete() {
-            _markCompleteDialog.show(_workorder);
-        }
+ _markCompleteDialog.show(_workorder);        }
 
         @Override
         public void onCheckOut() {
@@ -946,7 +967,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onComplete(Workorder workorder) {
             getActivity().startService(
-                    _service.complete(WEB_CHANGED, workorder.getWorkorderId()));
+                    _service.complete(WEB_COMPLETE_WORKORDER, workorder.getWorkorderId()));
 
         }
     };
@@ -1259,7 +1280,15 @@ public class WorkFragment extends WorkorderFragment {
                 requestWorkorder(false);
             } else if (resultCode == WEB_GET_TASKS) {
                 new TaskParseAsyncTask().executeEx(resultData);
-            } else {
+            } else if (resultCode == WEB_COMPLETE_WORKORDER) {
+                GlobalState gs = (GlobalState) getActivity().getApplication();
+                gs.setCompletedWorkorder();
+
+                if (gs.shouldShowReviewDialog()) {
+                    showReviewDialog();
+                    gs.setShownReviewDialog();
+                }
+                requestWorkorder(false);
             }
         }
 

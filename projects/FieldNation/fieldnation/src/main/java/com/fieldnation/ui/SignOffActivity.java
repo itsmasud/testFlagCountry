@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
@@ -304,6 +306,8 @@ public class SignOffActivity extends AuthFragmentActivity {
             if (resultCode == WEB_COMPLETE_WORKORDER) {
                 // we completed the workorder... done
                 _thankYouFrag.setUploadComplete();
+
+                ((GlobalState) getApplication()).setCompletedWorkorder();
 
             } else if (resultCode == WEB_COMPLETE_TASK || resultCode == WEB_UPLOAD_SIGNATURE) {
                 // we finished uploading the signature
