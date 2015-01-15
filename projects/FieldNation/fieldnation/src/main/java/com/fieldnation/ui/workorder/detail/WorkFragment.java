@@ -515,7 +515,7 @@ public class WorkFragment extends WorkorderFragment {
         builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Uri marketUri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+                Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
                 startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
             }
         });
