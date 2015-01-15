@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.rpc.server.DataCacheNode;
@@ -54,7 +53,7 @@ public class GlobalState extends Application {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             analytics.enableAutoActivityReports(this);
-            analytics.setLocalDispatchPeriod(1800);
+            analytics.setLocalDispatchPeriod(60);
             analytics.setDryRun(false);
             _tracker = analytics.newTracker(R.xml.ga_config);
             _tracker.enableAdvertisingIdCollection(true);
@@ -79,21 +78,28 @@ public class GlobalState extends Application {
         }
 
         Topics.subscribeGaEvent(this, TAG, _gaevent_receiver);
+        Topics.subscribeGaScreenView(this, TAG, _gaevent_receiver);
     }
 
     private TopicReceiver _gaevent_receiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            String category = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_CATEGORY);
-            String action = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_ACTION);
-            String label = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_LABEL);
+            if (Topics.TOPIC_GA_EVENT.equals(topicId)) {
+                String category = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_CATEGORY);
+                String action = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_ACTION);
+                String label = parcel.getString(Topics.TOPIC_GA_EVENT_PARAM_LABEL);
 
-            Long value = null;
-            if (parcel.containsKey(Topics.TOPIC_GA_EVENT_PARAM_VALUE)) {
-                value = parcel.getLong(Topics.TOPIC_GA_EVENT_PARAM_VALUE);
+                Long value = null;
+                if (parcel.containsKey(Topics.TOPIC_GA_EVENT_PARAM_VALUE)) {
+                    value = parcel.getLong(Topics.TOPIC_GA_EVENT_PARAM_VALUE);
+                }
+
+                sendGaEvent(category, action, label, value);
+            } else if (Topics.TOPIC_GA_SCREENVIEW.equals(topicId)) {
+                String screenName = parcel.getString(Topics.TOPIC_GA_SCREENVIEW_PARAM_NAME);
+
+                sendGaScreen(screenName);
             }
-
-            sendGaEvent(category, action, label, value);
         }
     };
 
@@ -108,6 +114,12 @@ public class GlobalState extends Application {
         }
 
         t.send(event.build());
+    }
+
+    public void sendGaScreen(String screenName) {
+        Tracker t = getTracker();
+        t.setScreenName(screenName);
+        t.send(new HitBuilders.AppViewBuilder().build());
     }
 
     public boolean hasShownReviewDialog() {

@@ -18,4 +18,6 @@
     <screenName name="com.fieldnation.ui.SignatureActivity">SignatureActivity</screenName>
     <screenName name="com.fieldnation.ui.SignOffActivity">SignOffActivity</screenName>
     <screenName name="com.fieldnation.ui.workorder.WorkorderBundleDetailActivity">WorkorderBundleDetailActivity</screenName>
+    <screenName name="com.fieldnation.ui.SplashActivity">SplashActivity</screenName>
+    <screenName name="com.fieldnation.auth.server.AuthActivity">AuthActivity</screenName>
 </resources>

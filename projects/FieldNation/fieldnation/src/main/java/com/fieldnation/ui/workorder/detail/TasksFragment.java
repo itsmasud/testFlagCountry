@@ -539,7 +539,7 @@ public class TasksFragment extends WorkorderFragment {
                         Location location = _gPSLocationService.getLocation();
                         double lat = location.getLatitude();
                         double log = location.getLongitude();
-                        _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+//                        _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                     } catch (Exception e) {
                         _gPSLocationService.showSettingsOffAlert(getView().getContext());
                     }
@@ -558,7 +558,7 @@ public class TasksFragment extends WorkorderFragment {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+//                    _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                 } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
@@ -603,7 +603,7 @@ public class TasksFragment extends WorkorderFragment {
                             Location location = _gPSLocationService.getLocation();
                             double lat = location.getLatitude();
                             double log = location.getLongitude();
-                            _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+//                            _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                         } catch (Exception e) {
                             _gPSLocationService.showSettingsOffAlert(getView().getContext());
                         }
@@ -623,7 +623,7 @@ public class TasksFragment extends WorkorderFragment {
                                 Location location = _gPSLocationService.getLocation();
                                 double lat = location.getLatitude();
                                 double log = location.getLongitude();
-                                _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+//                                _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                             } catch (Exception e) {
                                 _gPSLocationService.showSettingsOffAlert(getView().getContext());
                             }
@@ -1011,7 +1011,7 @@ public class TasksFragment extends WorkorderFragment {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
+//                    _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
                 } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }

@@ -105,10 +105,10 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "checkin_time=" + ISO8601.now(), "application/x-www-form-urlencoded", false);
     }
 
-    public Intent checkin(int resultCode, long workorderId, double gps_lat, double gps_lon) {
-        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
-                "checkin_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
-    }
+//    public Intent checkin(int resultCode, long workorderId, double gps_lat, double gps_lon) {
+//        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
+//                "checkin_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+//    }
 
     public Intent checkin(int resultCode, long workorderId, Location location) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
@@ -120,20 +120,20 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "checkout_time=" + ISO8601.now(), "application/x-www-form-urlencoded", false);
     }
 
-    public Intent checkout(int resultCode, long workorderId, double gps_lat, double gps_lon) {
-        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-                "checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
-    }
+//    public Intent checkout(int resultCode, long workorderId, double gps_lat, double gps_lon) {
+//        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
+//                "checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+//    }
 
     public Intent checkout(int resultCode, long workorderId, Location location) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
                 "checkout_time=" + ISO8601.now() + "&gps_lat=" + location.getLatitude() + "&gps_lon=" + location.getLongitude(), "application/x-www-form-urlencoded", false);
     }
 
-    public Intent checkout(int resultCode, long workorderId, int deviceCount, double gps_lat, double gps_lon) {
-        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-                "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
-    }
+//    public Intent checkout(int resultCode, long workorderId, int deviceCount, double gps_lat, double gps_lon) {
+//        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
+//                "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+//    }
 
     public Intent checkout(int resultCode, long workorderId, int deviceCount, Location location) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
@@ -301,6 +301,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     }
 
     // counter offers
+/*
     public Intent setFixedCounterOffer(int resultCode, long workorderId, double fixedTotalAmount, String explanation,
                                        boolean expire, int expireAfterMinutes) {
         if (expire) {
@@ -377,6 +378,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                     "application/x-www-form-urlencoded", false);
         }
     }
+*/
 
     public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
         String payload = "";

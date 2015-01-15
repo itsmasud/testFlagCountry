@@ -12,7 +12,6 @@ import com.fieldnation.data.profile.Message;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.util.LinkedList;
@@ -40,8 +39,6 @@ public class MessageListActivity extends ItemListActivity<Message> {
     @Override
     protected void onResume() {
         super.onResume();
-        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "MessageListActivity", 1);
-
     }
 
     @Override
@@ -104,7 +101,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
             return null;
         }
 
-        List<Message> list = new LinkedList<Message>();
+        List<Message> list = new LinkedList<>();
         for (int i = 0; i < objects.size(); i++) {
             try {
                 list.add(Message.fromJson(objects.getJsonObject(i)));

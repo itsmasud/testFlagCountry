@@ -12,7 +12,6 @@ import com.fieldnation.data.profile.Notification;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +54,6 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     @Override
     protected void onResume() {
         super.onResume();
-        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "NotificationListActivity",1);
     }
 
     @Override

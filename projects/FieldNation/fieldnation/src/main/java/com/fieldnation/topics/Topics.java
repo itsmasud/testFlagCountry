@@ -85,8 +85,15 @@ public class Topics {
     public static final String TOPIC_GA_EVENT_PARAM_LABEL = "TOPIC_GA_EVENT_PARAM_LABEL";
     public static final String TOPIC_GA_EVENT_PARAM_VALUE = "TOPIC_GA_EVENT_PARAM_VALUE";
 
-    public static final String GA_CATEGORY_GENERAL = "General";
-    public static final String GA_ACTION_VIEW = "Viewing";
+    public static final String GA_ACTION_LONG_CLICK = "LongClick";
+    public static final String GA_ACTION_REQUEST_WORK = "RequestWork";
+    public static final String GA_ACTION_COUNTER = "CounterOffer";
+    public static final String GA_ACTION_CONFIRM_ASSIGN = "ConfirmAssign";
+    public static final String GA_ACTION_CHECKIN = "Checkin";
+    public static final String GA_ACTION_CHECKOUT = "Checkout";
+    public static final String GA_ACTION_COMPLETE_WORK = "CompleteWork";
+    public static final String GA_ACTION_START_MAP = "ViewLocation";
+
 
 /*
     public static void dispatchGaEvent(Context context, String category, String action, String label) {
@@ -121,5 +128,25 @@ public class Topics {
 
         TopicService.registerListener(context, 0, tag, TOPIC_GA_EVENT, topicReceiver);
 
+    }
+
+    public static final String TOPIC_GA_SCREENVIEW = "TOPIC_GA_SCREENVIEW";
+    public static final String TOPIC_GA_SCREENVIEW_PARAM_NAME = "TOPIC_GA_SCREENVIEW_PARAM_NAME";
+
+    public static void subscribeGaScreenView(Context context, String tag, TopicReceiver topicReceiver) {
+        if (context == null)
+            return;
+
+        TopicService.registerListener(context, 0, tag, TOPIC_GA_SCREENVIEW, topicReceiver);
+    }
+
+    public static void dispatchGaScreenView(Context context, String screenName) {
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putString(TOPIC_GA_SCREENVIEW_PARAM_NAME, screenName);
+
+        TopicService.dispatchTopic(context, TOPIC_GA_SCREENVIEW, bundle, false);
     }
 }

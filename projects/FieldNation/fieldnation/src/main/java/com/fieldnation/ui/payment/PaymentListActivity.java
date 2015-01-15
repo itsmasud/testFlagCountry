@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.PaymentService;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.ItemListActivity;
 
 import java.util.LinkedList;
@@ -52,7 +51,6 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     @Override
     protected void onResume() {
         super.onResume();
-        Topics.dispatchGaEvent(this, Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "PaymentListActivity", 1);
     }
 
     @Override

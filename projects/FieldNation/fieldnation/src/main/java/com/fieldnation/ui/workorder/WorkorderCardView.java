@@ -16,7 +16,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.AutoResizeTextButton;
+import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
@@ -121,11 +121,11 @@ public class WorkorderCardView extends RelativeLayout {
         /* _backImageView = (ImageView) findViewById(R.id.back_imageview); */
         /* _backImageView.setOnClickListener(_back_onClick); */
         /* _backImageView.setClickable(false); */
-		/*
-		 * _notInterestedButtonLayout = (LinearLayout)
+        /*
+         * _notInterestedButtonLayout = (LinearLayout)
 		 * findViewById(R.id.notinterested_button_layout);
 		 */
-		/*
+        /*
 		 * _notInterestedButtonLayout.setOnClickListener(
 		 * _notInterestedButton_onClick);
 		 */
@@ -266,9 +266,9 @@ public class WorkorderCardView extends RelativeLayout {
         return _isBundle;
     }
 
-    public void setNotInterestedEnabled(boolean enabled) {
-        this.setLongClickable(enabled);
-    }
+//    public void setNotInterestedEnabled(boolean enabled) {
+//        this.setLongClickable(enabled);
+//    }
 
     public void setWorkorderSummaryListener(Listener listener) {
         _listener = listener;
@@ -293,6 +293,7 @@ public class WorkorderCardView extends RelativeLayout {
             if (_listener != null) {
                 _listener.onLongClick(WorkorderCardView.this, _workorder);
             }
+
             // _backImageView.setClickable(true);
             // _notInterestedButtonLayout.setClickable(true);
             // _contentLayout.startAnimation(_slideAnimation);
@@ -304,6 +305,8 @@ public class WorkorderCardView extends RelativeLayout {
     private View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Topics.dispatchGaEvent(getContext(), "WorkorderCardView", "ActionClick", _actionButton.getText().toString(), 1);
+
             switch (_workorder.getButtonAction()) {
                 case Workorder.BUTTON_ACTION_CHECKIN:
                     if (_listener != null) {
@@ -554,7 +557,7 @@ public class WorkorderCardView extends RelativeLayout {
         }
         setIsBundle(_workorder.isBundle());
 
-        setNotInterestedEnabled(false);
+        //setNotInterestedEnabled(false);
         _titleTextView.setVisibility(GONE);
         _whenTextView.setVisibility(GONE);
         _clientNameTextView.setVisibility(GONE);
@@ -620,7 +623,7 @@ public class WorkorderCardView extends RelativeLayout {
                 break;
             case UNCONFIRMED:
                 _actionButton.setText("Confirm");
-                setNotInterestedEnabled(true);
+                //setNotInterestedEnabled(true);
                 _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
@@ -661,7 +664,7 @@ public class WorkorderCardView extends RelativeLayout {
     }
 
     public void buildStatusAvailable() {
-        setNotInterestedEnabled(true);
+        //setNotInterestedEnabled(true);
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
             case AVAILABLE:
                 _actionButton.setText("Request");

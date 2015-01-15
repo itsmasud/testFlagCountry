@@ -22,6 +22,7 @@ public class DialogFragmentBase extends DialogFragment {
     protected FragmentManager _fm;
     protected String _tag;
     protected boolean _isDismissed = true;
+    protected boolean _reset = false;
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -84,6 +85,19 @@ public class DialogFragmentBase extends DialogFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if (_reset){
+            reset();
+            _reset = false;
+        }
+    }
+
+    public void reset() {
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         if (_tag != null)
             outState.putString(STATE_TAG, _tag);
@@ -102,6 +116,8 @@ public class DialogFragmentBase extends DialogFragment {
         if (!_isDismissed)
             return -1;
 
+        _reset = true;
+
         _isDismissed = false;
 
         return super.show(transaction, tag);
@@ -118,6 +134,8 @@ public class DialogFragmentBase extends DialogFragment {
         if (!_isDismissed)
             return;
 
+        _reset = true;
+
         super.show(manager, tag);
 
         _isDismissed = false;
@@ -126,6 +144,8 @@ public class DialogFragmentBase extends DialogFragment {
     public void show() {
         if (!_isDismissed)
             return;
+
+        _reset = true;
 
         super.show(_fm, _tag);
         _isDismissed = false;

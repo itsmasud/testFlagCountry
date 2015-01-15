@@ -77,6 +77,11 @@ public class DeclineDialog extends DialogFragmentBase {
         return v;
     }
 
+    @Override
+    public void reset() {
+        super.reset();
+    }
+
     public void setListener(Listener listener) {
         _listener = listener;
     }
