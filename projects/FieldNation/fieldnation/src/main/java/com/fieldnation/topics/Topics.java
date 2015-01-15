@@ -78,4 +78,48 @@ public class Topics {
 
         TopicService.registerListener(context, 0, tag, TOPIC_FILE_UPLOAD, topicReceiver);
     }
+
+    public static final String TOPIC_GA_EVENT = "TOPIC_GA_EVENT";
+    public static final String TOPIC_GA_EVENT_PARAM_CATEGORY = "TOPIC_GA_EVENT_PARAM_CATEGORY";
+    public static final String TOPIC_GA_EVENT_PARAM_ACTION = "TOPIC_GA_EVENT_PARAM_ACTION";
+    public static final String TOPIC_GA_EVENT_PARAM_LABEL = "TOPIC_GA_EVENT_PARAM_LABEL";
+    public static final String TOPIC_GA_EVENT_PARAM_VALUE = "TOPIC_GA_EVENT_PARAM_VALUE";
+
+    public static final String GA_CATEGORY_GENERAL = "General";
+    public static final String GA_ACTION_VIEW = "Viewing";
+
+/*
+    public static void dispatchGaEvent(Context context, String category, String action, String label) {
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putString(TOPIC_GA_EVENT_PARAM_CATEGORY, category);
+        bundle.putString(TOPIC_GA_EVENT_PARAM_ACTION, action);
+        bundle.putString(TOPIC_GA_EVENT_PARAM_LABEL, label);
+
+        TopicService.dispatchTopic(context, TOPIC_GA_EVENT, bundle, false);
+    }
+*/
+
+    public static void dispatchGaEvent(Context context, String category, String action, String label, long value) {
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putString(TOPIC_GA_EVENT_PARAM_CATEGORY, category);
+        bundle.putString(TOPIC_GA_EVENT_PARAM_ACTION, action);
+        bundle.putString(TOPIC_GA_EVENT_PARAM_LABEL, label);
+        bundle.putLong(TOPIC_GA_EVENT_PARAM_VALUE, value);
+
+        TopicService.dispatchTopic(context, TOPIC_GA_EVENT, bundle, false);
+    }
+
+    public static void subscribeGaEvent(Context context, String tag, TopicReceiver topicReceiver) {
+        if (context == null)
+            return;
+
+        TopicService.registerListener(context, 0, tag, TOPIC_GA_EVENT, topicReceiver);
+
+    }
 }

@@ -24,6 +24,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -37,6 +38,7 @@ import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
 import java.util.HashSet;
@@ -161,6 +163,7 @@ public class WorkorderListFragment extends Fragment {
         _adapter.refreshPages();
         _loadingView.startRefreshing();
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
+        Topics.dispatchGaEvent(getActivity(), Topics.GA_CATEGORY_GENERAL, Topics.GA_ACTION_VIEW, "Work" + misc.capitalize(_displayView.getCall()) + "List", 1);
     }
 
     public void update() {
