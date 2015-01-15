@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -147,16 +146,16 @@ public class WorkFragment extends WorkorderFragment {
     // Data
     private WorkorderService _service;
 
-    private Workorder _workorder;
+    private boolean _isCached = true;
+    private File _tempFile;
+    private GPSLocationService _gpsLocationService;
+    private List<Signature> _signatures = null;
+    private List<Task> _tasks = null;
+    private SecureRandom _rand = new SecureRandom();
     private String _authToken;
     private String _username;
-    private List<Task> _tasks = null;
     private Task _currentTask;
-    private SecureRandom _rand = new SecureRandom();
-    private GPSLocationService _gPSLocationService;
-    private boolean _isCached = true;
-    private List<Signature> _signatures = null;
-    private File _tempFile;
+    private Workorder _workorder;
 
 
 	/*-*************************************-*/
@@ -307,10 +306,10 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
-        _gPSLocationService = new GPSLocationService(getActivity());
+        _gpsLocationService = new GPSLocationService(getActivity());
         // GPS settings dialog should only be displayed if the GPS is failing
-        if (_gPSLocationService.isGooglePlayServicesAvailable() && !_gPSLocationService.isGpsEnabled()) {
-            _gPSLocationService.showSettingsAlert(view.getContext());
+        if (_gpsLocationService.isGooglePlayServicesAvailable() && !_gpsLocationService.isGpsEnabled()) {
+            _gpsLocationService.showSettingsAlert(view.getContext());
         }
 
         populateUi(true);
@@ -641,18 +640,16 @@ public class WorkFragment extends WorkorderFragment {
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+            if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                 try {
-                    Location location = _gPSLocationService.getLocation();
-                    double lat = location.getLatitude();
-                    double log = location.getLongitude();
-                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
+                    getActivity().startService(
+                            _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, _gpsLocationService.getLocation()));
                 } catch (Exception e) {
-                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                    _gpsLocationService.showSettingsOffAlert(getView().getContext());
                 }
 
             } else {
-                _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                _gpsLocationService.showCheckInOutAlert(getView().getContext());
                 getActivity().startService(
                         _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
             }
@@ -826,17 +823,14 @@ public class WorkFragment extends WorkorderFragment {
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog.show(_workorder, pay.getMaxDevice());
             } else {
-                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                     try {
-                        Location location = _gPSLocationService.getLocation();
-                        double lat = location.getLatitude();
-                        double log = location.getLongitude();
-                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
                     } catch (Exception e) {
-                        _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                        _gpsLocationService.showSettingsOffAlert(getView().getContext());
                     }
                 } else {
-                    _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                    _gpsLocationService.showCheckInOutAlert(getView().getContext());
                     getActivity().startService(
                             _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                 }
@@ -845,17 +839,14 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCheckIn() {
-            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+            if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                 try {
-                    Location location = _gPSLocationService.getLocation();
-                    double lat = location.getLatitude();
-                    double log = location.getLongitude();
-                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
                 } catch (Exception e) {
-                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                    _gpsLocationService.showSettingsOffAlert(getView().getContext());
                 }
             } else {
-                _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                _gpsLocationService.showCheckInOutAlert(getView().getContext());
                 getActivity().startService(
                         _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
             }
@@ -1030,17 +1021,14 @@ public class WorkFragment extends WorkorderFragment {
     private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onCheckin(Task task) {
-            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+            if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                 try {
-                    Location location = _gPSLocationService.getLocation();
-                    double lat = location.getLatitude();
-                    double log = location.getLongitude();
-                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
                 } catch (Exception e) {
-                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                    _gpsLocationService.showSettingsOffAlert(getView().getContext());
                 }
             } else {
-                _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                _gpsLocationService.showCheckInOutAlert(getView().getContext());
                 getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
             }
         }
@@ -1051,17 +1039,14 @@ public class WorkFragment extends WorkorderFragment {
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog.show(_workorder, pay.getMaxDevice());
             } else {
-                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
                     try {
-                        Location location = _gPSLocationService.getLocation();
-                        double lat = location.getLatitude();
-                        double log = location.getLongitude();
-                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
                     } catch (Exception e) {
-                        _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                        _gpsLocationService.showSettingsOffAlert(getView().getContext());
                     }
                 } else {
-                    _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                    _gpsLocationService.showCheckInOutAlert(getView().getContext());
                     getActivity().startService(
                             _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
                 }
@@ -1091,8 +1076,7 @@ public class WorkFragment extends WorkorderFragment {
             Log.v(TAG, "_identifier: " + _identifier);
             Document[] docs = _workorder.getDocuments();
             if (docs != null && docs.length > 0) {
-                for (int i = 0; i < docs.length; i++) {
-                    Document doc = docs[i];
+                for (Document doc : docs) {
                     Log.v(TAG, "docid: " + doc.getDocumentId());
                     if (doc.getDocumentId().equals(_identifier)) {
                         // task completed here
@@ -1286,7 +1270,7 @@ public class WorkFragment extends WorkorderFragment {
             Bundle resultData = params[0];
             String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
             cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-            List<Task> tasks = new LinkedList<Task>();
+            List<Task> tasks = new LinkedList<>();
             try {
                 JsonArray array = new JsonArray(data);
 

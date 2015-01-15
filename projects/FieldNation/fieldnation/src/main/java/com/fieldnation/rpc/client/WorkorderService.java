@@ -3,6 +3,7 @@ package com.fieldnation.rpc.client;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.ResultReceiver;
 
 import com.fieldnation.data.workorder.Expense;
@@ -109,6 +110,11 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "checkin_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
     }
 
+    public Intent checkin(int resultCode, long workorderId, Location location) {
+        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
+                "checkin_time=" + ISO8601.now() + "&gps_lat=" + location.getLatitude() + "&gps_lon=" + location.getLongitude(), "application/x-www-form-urlencoded", false);
+    }
+
     public Intent checkout(int resultCode, long workorderId) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
                 "checkout_time=" + ISO8601.now(), "application/x-www-form-urlencoded", false);
@@ -119,9 +125,19 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
     }
 
+    public Intent checkout(int resultCode, long workorderId, Location location) {
+        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
+                "checkout_time=" + ISO8601.now() + "&gps_lat=" + location.getLatitude() + "&gps_lon=" + location.getLongitude(), "application/x-www-form-urlencoded", false);
+    }
+
     public Intent checkout(int resultCode, long workorderId, int deviceCount, double gps_lat, double gps_lon) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
                 "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+    }
+
+    public Intent checkout(int resultCode, long workorderId, int deviceCount, Location location) {
+        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
+                "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + location.getLatitude() + "&gps_lon=" + location.getLongitude(), "application/x-www-form-urlencoded", false);
     }
 
     public Intent checkout(int resultCode, long workorderId, int deviceCount) {
