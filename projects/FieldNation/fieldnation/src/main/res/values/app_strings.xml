@@ -57,8 +57,8 @@
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="dialog_block_details">Additional details</string>
     <string-array name="dialog_block_reasons">
-        <item>Scope of work not as described</item>
-        <item>Scope changed without sufficient pay increase</item>
+        <item>Scope not as described</item>
+        <item>Scope changed w/o sufficient pay increase</item>
         <item>Difficult to work with</item>
         <item>Pay is too low</item>
         <item>Other</item>

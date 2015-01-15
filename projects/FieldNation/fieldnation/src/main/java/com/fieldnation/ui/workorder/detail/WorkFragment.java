@@ -628,12 +628,14 @@ public class WorkFragment extends WorkorderFragment {
     private DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
         @Override
         public void onOk(boolean blockBuyer, String reason, String details) {
-            // TODO onOk(boolean blockBuyer, String reason, String details) {
+            getActivity().startService(_service.decline(WEB_CHANGED, _workorder.getWorkorderId()));
+            if (blockBuyer) {
+                // TODO onOk(boolean blockBuyer, String reason, String details) {
+            }
         }
 
         @Override
         public void onCancel() {
-            // TODO onCancel
         }
     };
 
@@ -891,9 +893,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onNotInterested(Workorder workorder) {
-            getActivity().startService(
-                    _service.decline(WEB_CHANGED, _workorder.getWorkorderId()));
-
+            _declineDialog.show();
         }
 
         @Override

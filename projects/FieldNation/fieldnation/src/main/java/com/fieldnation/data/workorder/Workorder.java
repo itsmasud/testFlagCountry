@@ -693,7 +693,7 @@ public class Workorder implements Parcelable {
 
     public boolean canDeclineWork() {
         return getWorkorderStatus() == WorkorderStatus.AVAILABLE
-                && getWorkorderSubstatus() == WorkorderSubstatus.ROUTED;
+                || getWorkorderSubstatus() == WorkorderSubstatus.ROUTED;
     }
 
     public boolean canChangeDeliverables() {

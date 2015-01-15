@@ -54,7 +54,7 @@ public class GlobalState extends Application {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             analytics.enableAutoActivityReports(this);
-            analytics.setLocalDispatchPeriod(60);
+            analytics.setLocalDispatchPeriod(1800);
             analytics.setDryRun(false);
             _tracker = analytics.newTracker(R.xml.ga_config);
             _tracker.enableAdvertisingIdCollection(true);
