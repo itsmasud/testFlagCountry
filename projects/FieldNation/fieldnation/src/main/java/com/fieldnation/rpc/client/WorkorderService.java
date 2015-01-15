@@ -400,8 +400,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 payload += "&maxDevices=" + pay.getMaxDevice();
             } else if (pay.isBlendedRate()) {
                 payload += "&payBasis=blended";
-                payload += "&hourlyRate=" + pay.getBlendedFirstHours();
-                payload += "&maxHours=" + pay.getBlendedStartRate();
+                payload += "&hourlyRate=" + pay.getBlendedStartRate();
+                payload += "&maxHours=" + pay.getBlendedFirstHours();
                 payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
                 payload += "&additionalMaxHours=" + pay.getBlendedAdditionalHours();
             } else if (pay.isFixedRate()) {

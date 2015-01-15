@@ -79,6 +79,7 @@ public class GlobalState extends Application {
 
         GaTopic.subscribeEvent(this, TAG, _gaevent_receiver);
         GaTopic.subscribeScreenView(this, TAG, _gaevent_receiver);
+        GaTopic.subscribeTiming(this, TAG, _gaevent_receiver);
     }
 
     private TopicReceiver _gaevent_receiver = new TopicReceiver(new Handler()) {
@@ -99,6 +100,25 @@ public class GlobalState extends Application {
                 String screenName = parcel.getString(GaTopic.SCREENVIEW_PARAM_NAME);
 
                 sendGaScreen(screenName);
+            } else if (GaTopic.TIMING.equals(topicId)) {
+                String category = null;
+                String variable = null;
+                String label = null;
+                Long value = null;
+
+                if (parcel.containsKey(GaTopic.TIMING_PARAM_CATEGORY))
+                    category = parcel.getString(GaTopic.TIMING_PARAM_CATEGORY);
+
+                if (parcel.containsKey(GaTopic.TIMING_PARAM_LABEL))
+                    label = parcel.getString(GaTopic.EVENT_PARAM_LABEL);
+
+                if (parcel.containsKey(GaTopic.TIMING_PARAM_VARIABLE))
+                    variable = parcel.getString(GaTopic.TIMING_PARAM_VARIABLE);
+
+                if (parcel.containsKey(GaTopic.TIMING_PARAM_VALUE))
+                    value = parcel.getLong(GaTopic.TIMING_PARAM_VALUE);
+
+                sendGaTiming(category, variable, label, value);
             }
         }
     };
@@ -120,6 +140,25 @@ public class GlobalState extends Application {
         Tracker t = getTracker();
         t.setScreenName(screenName);
         t.send(new HitBuilders.AppViewBuilder().build());
+    }
+
+    public void sendGaTiming(String category, String variable, String label, Long value) {
+        HitBuilders.TimingBuilder timing = new HitBuilders.TimingBuilder();
+        Tracker t = getTracker();
+
+        if (category != null)
+            timing.setCategory(category);
+
+        if (variable != null)
+            timing.setVariable(variable);
+
+        if (label != null)
+            timing.setLabel(label);
+
+        if (value != null)
+            timing.setValue(value);
+
+        t.send(timing.build());
     }
 
     public boolean hasShownReviewDialog() {
