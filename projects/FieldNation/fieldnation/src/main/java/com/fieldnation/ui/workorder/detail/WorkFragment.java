@@ -15,7 +15,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +59,7 @@ import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
+import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
@@ -133,6 +133,7 @@ public class WorkFragment extends WorkorderFragment {
     private ConfirmDialog _confirmDialog;
     private CounterOfferDialog _counterOfferDialog;
     private CustomFieldDialog _customFieldDialog;
+    private DeclineDialog _declineDialog;
     private DeviceCountDialog _deviceCountDialog;
     private DiscountDialog _discountDialog;
     private ExpenseDialog _expenseDialog;
@@ -237,6 +238,9 @@ public class WorkFragment extends WorkorderFragment {
 
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog.setListener(_counterOffer_listener);
+
+        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
+        _declineDialog.setListener(_declineDialog_listener);
 
         _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
         _discountDialog.setListener(_discountDialog_listener);
@@ -480,6 +484,20 @@ public class WorkFragment extends WorkorderFragment {
             _closingDialog.show(_workorder.getClosingNotes());
     }
 
+    private void showReviewDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.dialog_review_message);
+        builder.setTitle(R.string.dialog_review_title);
+        builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
+            }
+        });
+        builder.create().show();
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -508,24 +526,181 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-    private void showReviewDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.dialog_review_message);
-        builder.setTitle(R.string.dialog_review_title);
-        builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
-                startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
-            }
-        });
-        builder.create().show();
-    }
 
-    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+    /*-*********************************************-*/
+    /*-				Dialog Listeners				-*/
+    /*-*********************************************-*/
+    private AcceptBundleDialog.Listener _acceptBundleDialogConfirmListener = new AcceptBundleDialog.Listener() {
+
         @Override
-        public void onStartRefresh() {
-            requestWorkorder(false);
+        public void onOk(Workorder workorder) {
+            _confirmDialog.show(_workorder, workorder.getSchedule());
+        }
+    };
+
+    private AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder) {
+            _expiresDialog.show(workorder);
+        }
+    };
+
+    private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
+
+        @Override
+        public void onClick(AppPickerPackage pack) {
+            Intent src = pack.intent;
+
+            ResolveInfo info = pack.resolveInfo;
+
+            src.setComponent(new ComponentName(
+                    info.activityInfo.applicationInfo.packageName,
+                    info.activityInfo.name));
+
+            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
+            } else {
+                String packageName = getActivity().getPackageName();
+                File externalPath = Environment.getExternalStorageDirectory();
+                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
+                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                _tempFile = temppath;
+                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
+                startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
+            }
+        }
+    };
+
+    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+        @Override
+        public void onOk(String message) {
+            getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
+            try {
+                long end = durationMilliseconds + ISO8601.toUtc(startDate);
+                getActivity().startService(_service.confirmAssignment(WEB_CHANGED,
+                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end)));
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onCancel(Workorder workorder) {
+        }
+
+        @Override
+        public void termsOnClick(Workorder workorder) {
+            _termsDialog.show();
+        }
+
+    };
+
+    private CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
+                         Pay pay, Schedule schedule, Expense[] expenses) {
+            getActivity().startService(
+                    _service.setCounterOffer(WEB_CHANGED, workorder.getWorkorderId(), expires, reason,
+                            expirationInSeconds, pay, schedule, expenses));
+
+        }
+    };
+
+    private CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
+        @Override
+        public void onOk(CustomField field, String value) {
+            getActivity().startService(
+                    _service.setCustomField(WEB_CHANGED, _workorder.getWorkorderId(), field.getCustomLabelId(), value));
+        }
+    };
+
+    private DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
+        @Override
+        public void onOk(boolean blockBuyer, String reason, String details) {
+            // TODO onOk(boolean blockBuyer, String reason, String details) {
+        }
+
+        @Override
+        public void onCancel() {
+            // TODO onCancel
+        }
+    };
+
+    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, int count) {
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                try {
+                    Location location = _gPSLocationService.getLocation();
+                    double lat = location.getLatitude();
+                    double log = location.getLongitude();
+                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
+                } catch (Exception e) {
+                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                }
+
+            } else {
+                _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
+            }
+        }
+    };
+
+    private DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
+        @Override
+        public void onOk(String description, double amount) {
+            getActivity().startService(
+                    _service.addDiscount(WEB_CHANGED,
+                            _workorder.getWorkorderId(), amount, description));
+
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
+        @Override
+        public void onOk(String description, double amount, ExpenseCategory category) {
+            getActivity().startService(
+                    _service.addExpense(WEB_CHANGED, _workorder.getWorkorderId(),
+                            description, amount, category));
+
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String dateTime) {
+            try {
+                long seconds;
+                seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
+                getActivity().startService(
+                        _service.request(WEB_CHANGED,
+                                _workorder.getWorkorderId(), seconds));
+
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     };
 
@@ -551,6 +726,58 @@ public class WorkFragment extends WorkorderFragment {
         public void onContinueClick() {
             getActivity().startService(
                     _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
+        }
+    };
+
+    private ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
+        @Override
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
+            getActivity().startService(
+                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
+                            carrier, carrierName, trackingId));
+        }
+
+        @Override
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
+            getActivity().startService(
+                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
+                            carrier, carrierName, trackingId, taskId));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
+        @Override
+        public void onDelete(Workorder workorder, int shipmentId) {
+            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+        }
+
+        @Override
+        public void onAssign(Workorder workorder, int shipmentId, long taskId) {
+            Log.v(TAG, "Method Stub: onAssign()" + shipmentId + "=" + taskId);
+            getActivity().startService(
+                    _service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));
+        }
+
+        @Override
+        public void onCancel() {
+        }
+
+        @Override
+        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
+            getActivity().startService(
+                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description,
+                            shipToSite, carrier, carrierName, trackingId));
+        }
+
+        @Override
+        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
+            getActivity().startService(
+                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description,
+                            shipToSite, carrier, carrierName, trackingId, taskId));
         }
     };
 
@@ -583,55 +810,9 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private TimeLoggedView.Listener _timeLoggedView_listener = new TimeLoggedView.Listener() {
-        @Override
-        public void addWorklog(boolean showdevice) {
-            _worklogDialog.show("Add Worklog", null, showdevice);
-        }
-
-        @Override
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
-            _worklogDialog.show("Add Worklog", loggedWork, showDeviceCount);
-        }
-
-        @Override
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-            getActivity().startService(
-                    _service.deleteLogTime(WEB_CHANGED,
-                            workorder.getWorkorderId(), loggedWork.getLoggedHoursId()));
-            _refreshView.startRefreshing();
-        }
-    };
-
-
-    private SummaryView.Listener _summaryView_listener = new SummaryView.Listener() {
-        @Override
-        public void showConfidentialInfo(String body) {
-            _termsDialog.show("Confidential Information", body);
-        }
-
-        @Override
-        public void showCustomerPolicies(String body) {
-            _termsDialog.show("Policies And Procedures", body);
-        }
-    };
-
-    private View.OnClickListener _bundle_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
-            getActivity().startActivity(intent);
-        }
-    };
-
-    private TaskSumView.Listener _taskSum_listener = new TaskSumView.Listener() {
-        @Override
-        public void onShowTasksTab() {
-            pageRequestListener.requestPage(TasksFragment.class);
-        }
-    };
+    /*-*****************************************-*/
+    /*-				View Listeners				-*/
+    /*-*****************************************-*/
 
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
@@ -701,181 +882,55 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    /*-*************************-*/
-    /*-         Tasks           -*/
-    /*-*************************-*/
-    private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
+    private ActionView.Listener _actionView_listener = new ActionView.Listener() {
+
         @Override
-        public void onTaskClick(Task task) {
-            switch (task.getTaskType()) {
-                case CHECKIN:
-                    if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-                        try {
-                            Location location = _gPSLocationService.getLocation();
-                            double lat = location.getLatitude();
-                            double log = location.getLongitude();
-                            getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-                        } catch (Exception e) {
-                            _gPSLocationService.showSettingsOffAlert(getView().getContext());
-                        }
-                    } else {
-                        _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                        getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
-                    }
-
-                    break;
-                case CHECKOUT:
-                    Pay pay = _workorder.getPay();
-                    if (pay != null && pay.isPerDeviceRate()) {
-                        _deviceCountDialog.show(_workorder, pay.getMaxDevice());
-                    } else {
-                        if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
-                            try {
-                                Location location = _gPSLocationService.getLocation();
-                                double lat = location.getLatitude();
-                                double log = location.getLongitude();
-                                getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
-                            } catch (Exception e) {
-                                _gPSLocationService.showSettingsOffAlert(getView().getContext());
-                            }
-                        } else {
-                            _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                            getActivity().startService(
-                                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
-                        }
-                    }
-                    break;
-                case CLOSE_OUT_NOTES:
-                    showClosingNotesDialog();
-                    break;
-                case CONFIRM_ASSIGNMENT:
-                    _confirmDialog.show(_workorder, _workorder.getSchedule());
-                    break;
-                case CUSTOM_FIELD:
-                    if (task.getCompleted())
-                        return;
-                    // TODO, get custom field info, preset dialog
-                    break;
-                case DOWNLOAD:
-                    Integer _identifier = task.getIdentifier();
-                    Log.v(TAG, "_identifier: " + _identifier);
-                    Document[] docs = _workorder.getDocuments();
-                    if (docs != null && docs.length > 0) {
-                        for (int i = 0; i < docs.length; i++) {
-                            Document doc = docs[i];
-                            Log.v(TAG, "docid: " + doc.getDocumentId());
-                            if (doc.getDocumentId().equals(_identifier)) {
-                                // task completed here
-                                if (!task.getCompleted()) {
-                                    getActivity().startService(
-                                            _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(),
-                                                    task.getTaskId()));
-                                }
-
-                                FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
-                                        doc.getFileName(), doc.getFileType());
-
-                                break;
-                            }
-                        } // end for
-                    }
-
-                    break;
-                case EMAIL: {
-                    String email = task.getEmailAddress();
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:" + email));
-                    startActivityForResult(intent, RESULT_CODE_SEND_EMAIL);
-
-                    if (!task.getCompleted()) {
-                        getActivity().startService(
-                                _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-                    }
-                    break;
-                }
-                case PHONE:
-                    try {
-                        if (task.getPhoneNumber() != null) {
-                            if (!task.getCompleted()) {
-                                getActivity().startService(
-                                        _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-                            }
-
-                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                            String phNum = "tel:" + task.getPhoneNumber();
-                            callIntent.setData(Uri.parse(phNum));
-                            startActivity(callIntent);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-
-                    break;
-                case SHIPMENT_TRACKING:
-                    ShipmentTracking[] shipments = _workorder.getShipmentTracking();
-                    if (shipments == null) {
-                        _shipmentAddDialog.show(getText(R.string.add_shipment), task.getTaskId());
-                    } else {
-                        _taskShipmentAddDialog.show("Assign/Add New", _workorder, task.getTaskId());
-                    }
-
-                    break;
-                case SIGNATURE: {
-                    _currentTask = task;
-                    SignOffActivity.startSignOff(getActivity(), _workorder, task.getTaskId());
-                    break;
-                }
-                case UPLOAD_FILE: {
-                    _currentTask = task;
-                    _appDialog.show();
-                    break;
-                }
-                case UPLOAD_PICTURE: {
-                    _currentTask = task;
-                    _appDialog.show();
-                    break;
-                }
-                case UNIQUE_TASK:
-                    if (task.getCompleted())
-                        return;
-                    getActivity().startService(
-                            _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-                    break;
-                default:
-                    break;
+        public void onRequest(Workorder workorder) {
+            if (workorder.isBundle()) {
+                _acceptBundleWOExpiresDialog.show(workorder);
+            } else {
+                _expiresDialog.show(workorder);
             }
+        }
+
+        @Override
+        public void onShowCounterOfferDialog(Workorder workorder) {
+            _counterOfferDialog.show(workorder);
+        }
+
+        @Override
+        public void onNotInterested(Workorder workorder) {
+            getActivity().startService(
+                    _service.decline(WEB_CHANGED, _workorder.getWorkorderId()));
+
+        }
+
+        @Override
+        public void onConfirmAssignment(Workorder workorder) {
+            if (workorder.isBundle()) {
+                _acceptBundleWOConfirmDialog.show(workorder);
+            } else {
+                _confirmDialog.show(_workorder, workorder.getSchedule());
+            }
+        }
+
+        @Override
+        public void onComplete(Workorder workorder) {
+            _markCompleteDialog.show(_workorder);
         }
     };
 
-    private TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
+    private ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
-        public void onDelete(Workorder workorder, int shipmentId) {
-            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+        public void onChangeClosingNotes(String closingNotes) {
+            showClosingNotesDialog();
         }
+    };
 
+    private CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override
-        public void onAssign(Workorder workorder, int shipmentId, long taskId) {
-            // @TODO
-            Log.v(TAG, "Method Stub: onAssign()" + shipmentId + "=" + taskId);
-            getActivity().startService(
-                    _service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));
-        }
-
-        @Override
-        public void onCancel() {
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite, carrier, carrierName, trackingId));
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
-                            carrier, carrierName, trackingId, taskId));
+        public void onClick(CustomFieldRowView view, CustomField field) {
+            _customFieldDialog.show(field);
         }
     };
 
@@ -918,79 +973,11 @@ public class WorkFragment extends WorkorderFragment {
 
         }
     };
-    private CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
+
+    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
-        public void onClick(CustomFieldRowView view, CustomField field) {
-            _customFieldDialog.show(field);
-        }
-    };
-
-    private CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
-        @Override
-        public void onOk(CustomField field, String value) {
-            getActivity().startService(
-                    _service.setCustomField(WEB_CHANGED, _workorder.getWorkorderId(), field.getCustomLabelId(), value));
-        }
-    };
-
-    private ActionView.Listener _actionView_listener = new ActionView.Listener() {
-
-        @Override
-        public void onRequest(Workorder workorder) {
-            if (workorder.isBundle()) {
-                _acceptBundleWOExpiresDialog.show(workorder);
-            } else {
-                _expiresDialog.show(workorder);
-            }
-        }
-
-        @Override
-        public void onShowCounterOfferDialog(Workorder workorder) {
-            _counterOfferDialog.show(workorder);
-        }
-
-        @Override
-        public void onNotInterested(Workorder workorder) {
-            getActivity().startService(
-                    _service.decline(WEB_CHANGED, _workorder.getWorkorderId()));
-
-        }
-
-        @Override
-        public void onConfirmAssignment(Workorder workorder) {
-            if (workorder.isBundle()) {
-                _acceptBundleWOConfirmDialog.show(workorder);
-            } else {
-                _confirmDialog.show(_workorder, workorder.getSchedule());
-            }
-        }
-
-        @Override
-        public void onComplete(Workorder workorder) {
-            _markCompleteDialog.show(_workorder);
-        }
-    };
-
-    /*-*****************************-*/
-    /*-         Shipments           -*/
-    /*-*****************************-*/
-    private ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
-        @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
-                            carrier, carrierName, trackingId));
-        }
-
-        @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
-                            carrier, carrierName, trackingId, taskId));
-        }
-
-        @Override
-        public void onCancel() {
+        public void onStartRefresh() {
+            requestWorkorder(false);
         }
     };
 
@@ -1010,112 +997,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onAssign(Workorder workorder, int shipmentId) {
             // TODO STUB .onAssign()
             Log.v(TAG, "STUB .onAssign()");
-        }
-
-
-//        @Override
-//        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-//                                         String trackingId) {
-//            _context.startService(
-//                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
-//                            carrier, null, trackingId));
-//            Log.v(TAG, "Method Stub: onAddShipmentDetails()");
-//        }
-//
-//        @Override
-//        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-//                                         String trackingId, long taskId) {
-//            _context.startService(
-//                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description, shipToSite,
-//                            carrier, null, trackingId, taskId));
-//        }
-    };
-
-    /*-*****************************************-*/
-    /*-				Dialog Events				-*/
-    /*-*****************************************-*/
-    private ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
-        @Override
-        public void onOk(String description, double amount, ExpenseCategory category) {
-            getActivity().startService(
-                    _service.addExpense(WEB_CHANGED, _workorder.getWorkorderId(),
-                            description, amount, category));
-
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    private CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
-                         Pay pay, Schedule schedule, Expense[] expenses) {
-            getActivity().startService(
-                    _service.setCounterOffer(WEB_CHANGED, workorder.getWorkorderId(), expires, reason,
-                            expirationInSeconds, pay, schedule, expenses));
-
-        }
-    };
-
-    private DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
-        @Override
-        public void onOk(String description, double amount) {
-            getActivity().startService(
-                    _service.addDiscount(WEB_CHANGED,
-                            _workorder.getWorkorderId(), amount, description));
-
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-
-    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
-        @Override
-        public void onOk(String message) {
-            getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
-
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    private ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
-        @Override
-        public void onChangeClosingNotes(String closingNotes) {
-            showClosingNotesDialog();
-        }
-    };
-
-    private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
-
-        @Override
-        public void onClick(AppPickerPackage pack) {
-            Intent src = pack.intent;
-
-            ResolveInfo info = pack.resolveInfo;
-
-            src.setComponent(new ComponentName(
-                    info.activityInfo.applicationInfo.packageName,
-                    info.activityInfo.name));
-
-            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
-            } else {
-                String packageName = getActivity().getPackageName();
-                File externalPath = Environment.getExternalStorageDirectory();
-                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
-                _tempFile = temppath;
-                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
-            }
+            // TODO present a picker of the tasks that this can be assigned too
         }
     };
 
@@ -1133,84 +1015,205 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+    private SummaryView.Listener _summaryView_listener = new SummaryView.Listener() {
         @Override
-        public void onOk(Workorder workorder, int count) {
+        public void showConfidentialInfo(String body) {
+            _termsDialog.show("Confidential Information", body);
+        }
+
+        @Override
+        public void showCustomerPolicies(String body) {
+            _termsDialog.show("Policies And Procedures", body);
+        }
+    };
+
+    private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
+        @Override
+        public void onCheckin(Task task) {
             if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
                 try {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
+                    getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                 } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
-
             } else {
                 _gPSLocationService.showCheckInOutAlert(getView().getContext());
-                getActivity().startService(
-                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count));
+                getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
             }
         }
-    };
 
-    private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
         @Override
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
-            try {
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                getActivity().startService(_service.confirmAssignment(WEB_CHANGED,
-                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end)));
+        public void onCheckout(Task task) {
+            Pay pay = _workorder.getPay();
+            if (pay != null && pay.isPerDeviceRate()) {
+                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
+            } else {
+                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                    try {
+                        Location location = _gPSLocationService.getLocation();
+                        double lat = location.getLatitude();
+                        double log = location.getLongitude();
+                        getActivity().startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+                    } catch (Exception e) {
+                        _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                    }
+                } else {
+                    _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                    getActivity().startService(
+                            _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+                }
+            }
+        }
 
+        @Override
+        public void onCloseOutNotes(Task task) {
+            showClosingNotesDialog();
+        }
+
+        @Override
+        public void onConfirmAssignment(Task task) {
+            _confirmDialog.show(_workorder, _workorder.getSchedule());
+        }
+
+        @Override
+        public void onCustomField(Task task) {
+            if (task.getCompleted())
+                return;
+            // TODO, get custom field info, preset dialog
+        }
+
+        @Override
+        public void onDownload(Task task) {
+            Integer _identifier = task.getIdentifier();
+            Log.v(TAG, "_identifier: " + _identifier);
+            Document[] docs = _workorder.getDocuments();
+            if (docs != null && docs.length > 0) {
+                for (int i = 0; i < docs.length; i++) {
+                    Document doc = docs[i];
+                    Log.v(TAG, "docid: " + doc.getDocumentId());
+                    if (doc.getDocumentId().equals(_identifier)) {
+                        // task completed here
+                        if (!task.getCompleted()) {
+                            getActivity().startService(
+                                    _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(),
+                                            task.getTaskId()));
+                        }
+
+                        FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
+                                doc.getFileName(), doc.getFileType());
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onEmail(Task task) {
+            String email = task.getEmailAddress();
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:" + email));
+            startActivityForResult(intent, RESULT_CODE_SEND_EMAIL);
+
+            if (!task.getCompleted()) {
+                getActivity().startService(
+                        _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+            }
+        }
+
+        @Override
+        public void onPhone(Task task) {
+            try {
+                if (task.getPhoneNumber() != null) {
+                    if (!task.getCompleted()) {
+                        getActivity().startService(
+                                _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+                    }
+
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    String phNum = "tel:" + task.getPhoneNumber();
+                    callIntent.setData(Uri.parse(phNum));
+                    startActivity(callIntent);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         @Override
-        public void onCancel(Workorder workorder) {
-        }
-
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            _termsDialog.show();
-        }
-
-    };
-
-    private AcceptBundleDialog.Listener _acceptBundleDialogConfirmListener = new AcceptBundleDialog.Listener() {
-
-        @Override
-        public void onOk(Workorder workorder) {
-            _confirmDialog.show(_workorder, workorder.getSchedule());
-        }
-    };
-    private AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder) {
-            _expiresDialog.show(workorder);
-        }
-    };
-
-    private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String dateTime) {
-            try {
-                long seconds;
-                seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                getActivity().startService(
-                        _service.request(WEB_CHANGED,
-                                _workorder.getWorkorderId(), seconds));
-
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        public void onShipment(Task task) {
+            ShipmentTracking[] shipments = _workorder.getShipmentTracking();
+            if (shipments == null) {
+                _shipmentAddDialog.show(getText(R.string.add_shipment), task.getTaskId());
+            } else {
+                _taskShipmentAddDialog.show("Assign/Add New", _workorder, task.getTaskId());
             }
         }
+
+        @Override
+        public void onSignature(Task task) {
+            _currentTask = task;
+            SignOffActivity.startSignOff(getActivity(), _workorder, task.getTaskId());
+        }
+
+        @Override
+        public void onUploadFile(Task task) {
+            _currentTask = task;
+            _appDialog.show();
+
+        }
+
+        @Override
+        public void onUploadPicture(Task task) {
+            _currentTask = task;
+            _appDialog.show();
+        }
+
+        @Override
+        public void onUniqueTask(Task task) {
+            if (task.getCompleted())
+                return;
+            getActivity().startService(
+                    _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+        }
     };
 
+    private TimeLoggedView.Listener _timeLoggedView_listener = new TimeLoggedView.Listener() {
+        @Override
+        public void addWorklog(boolean showdevice) {
+            _worklogDialog.show("Add Worklog", null, showdevice);
+        }
 
-    // Web
+        @Override
+        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
+            _worklogDialog.show("Add Worklog", loggedWork, showDeviceCount);
+        }
+
+        @Override
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
+            getActivity().startService(
+                    _service.deleteLogTime(WEB_CHANGED,
+                            workorder.getWorkorderId(), loggedWork.getLoggedHoursId()));
+            _refreshView.startRefreshing();
+        }
+    };
+
+    private View.OnClickListener _bundle_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
+            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
+            getActivity().startActivity(intent);
+        }
+    };
+
+    /*-*****************************-*/
+    /*-				Web				-*/
+    /*-*****************************-*/
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -1237,38 +1240,6 @@ public class WorkFragment extends WorkorderFragment {
             AuthTopicService.requestAuthentication(getActivity());
         }
     };
-
-    private class TaskParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Task>> {
-        private boolean cached = false;
-
-        @Override
-        protected List<Task> doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-            cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-            List<Task> tasks = new LinkedList<Task>();
-            try {
-                JsonArray array = new JsonArray(data);
-
-                for (int i = 0; i < array.size(); i++) {
-                    try {
-                        tasks.add(Task.fromJson(array.getJsonObject(i)));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return tasks;
-        }
-
-        @Override
-        protected void onPostExecute(List<Task> tasks) {
-            super.onPostExecute(tasks);
-            setTasks(tasks, cached);
-        }
-    }
 
     private WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
@@ -1306,4 +1277,36 @@ public class WorkFragment extends WorkorderFragment {
             Toast.makeText(getActivity(), R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
         }
     };
+
+    private class TaskParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Task>> {
+        private boolean cached = false;
+
+        @Override
+        protected List<Task> doInBackground(Bundle... params) {
+            Bundle resultData = params[0];
+            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+            cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
+            List<Task> tasks = new LinkedList<Task>();
+            try {
+                JsonArray array = new JsonArray(data);
+
+                for (int i = 0; i < array.size(); i++) {
+                    try {
+                        tasks.add(Task.fromJson(array.getJsonObject(i)));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return tasks;
+        }
+
+        @Override
+        protected void onPostExecute(List<Task> tasks) {
+            super.onPostExecute(tasks);
+            setTasks(tasks, cached);
+        }
+    }
 }

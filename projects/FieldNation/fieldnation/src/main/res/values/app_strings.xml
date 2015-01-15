@@ -24,7 +24,7 @@
     <string name="btn_add">ADD</string>
     <string name="btn_send">SEND</string>
     <string name="btn_save">SAVE</string>
-    <string name="btn_done">Done</string>
+    <string name="btn_done">DONE</string>
     <string name="btn_clear">Clear</string>
     <string name="btn_cancel">CANCEL</string>
     <string name="btn_send_counter">SEND COUNTER</string>
@@ -51,6 +51,19 @@
 
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>
+
+    <string name="dialog_decline_title">Not interetsed</string>
+    <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
+    <string name="dialog_block_message">Block all work from this buyer</string>
+    <string name="dialog_block_details">Additional details</string>
+    <string-array name="dialog_block_reasons">
+        <item>Scope of work not as described</item>
+        <item>Scope changed without sufficient pay increase</item>
+        <item>Difficult to work with</item>
+        <item>Pay is too low</item>
+        <item>Other</item>
+    </string-array>
+
 
     <string name="downloading">Downloading</string>
     <string name="time_logged">Time Logged</string>

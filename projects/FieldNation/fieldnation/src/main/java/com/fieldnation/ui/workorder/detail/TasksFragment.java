@@ -1,11 +1,9 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -63,7 +61,6 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.Stopwatch;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -598,7 +595,6 @@ public class TasksFragment extends WorkorderFragment {
     /*-         Tasks           -*/
     /*-*************************-*/
     private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
-        @Override
         public void onTaskClick(Task task) {
             switch (task.getTaskType()) {
                 case CHECKIN:
@@ -737,6 +733,71 @@ public class TasksFragment extends WorkorderFragment {
                 default:
                     break;
             }
+        }
+
+        @Override
+        public void onCheckin(Task task) {
+
+        }
+
+        @Override
+        public void onCheckout(Task task) {
+
+        }
+
+        @Override
+        public void onCloseOutNotes(Task task) {
+
+        }
+
+        @Override
+        public void onConfirmAssignment(Task task) {
+
+        }
+
+        @Override
+        public void onCustomField(Task task) {
+
+        }
+
+        @Override
+        public void onDownload(Task task) {
+
+        }
+
+        @Override
+        public void onEmail(Task task) {
+
+        }
+
+        @Override
+        public void onPhone(Task task) {
+
+        }
+
+        @Override
+        public void onShipment(Task task) {
+
+        }
+
+        @Override
+        public void onSignature(Task task) {
+
+        }
+
+        @Override
+        public void onUploadFile(Task task) {
+
+        }
+
+        @Override
+        public void onUploadPicture(Task task) {
+
+        }
+
+        @Override
+        public void onUniqueTask(Task task) {
+
         }
     };
 
