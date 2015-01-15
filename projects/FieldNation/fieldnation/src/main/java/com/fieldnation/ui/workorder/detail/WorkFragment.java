@@ -636,7 +636,8 @@ public class WorkFragment extends WorkorderFragment {
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onComplete() {
- _markCompleteDialog.show(_workorder);        }
+            _markCompleteDialog.show(_workorder);
+        }
 
         @Override
         public void onCheckOut() {
@@ -966,9 +967,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onComplete(Workorder workorder) {
-            getActivity().startService(
-                    _service.complete(WEB_COMPLETE_WORKORDER, workorder.getWorkorderId()));
-
+            _markCompleteDialog.show(_workorder);
         }
     };
 
