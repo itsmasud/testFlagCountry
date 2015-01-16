@@ -26,6 +26,7 @@
                 android:text="@string/dialog_decline_message" />
 
             <CheckBox
+                android:visibility="gone"
                 android:id="@+id/block_checkbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
