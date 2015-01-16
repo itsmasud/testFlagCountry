@@ -10,7 +10,10 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class Schedule implements Parcelable {
 
@@ -111,6 +114,53 @@ public class Schedule implements Parcelable {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    public String getDiaplsyString() {
+        if (isExact()) {
+            try {
+                String dayDate;
+                String time = "";
+                Calendar cal;
+
+                cal = ISO8601.toCalendar(getStartTime());
+                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
+                time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+
+                return "You will need to arrive exactly on " + dayDate + " at " + time + ".";
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                Calendar cal = ISO8601.toCalendar(getStartTime());
+                String dayDate;
+                String time = "";
+
+                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
+                time = misc.formatTime(cal, false);
+
+                String msg = "You will need to arrive between " + dayDate + " at " + time + " and ";
+
+                Calendar cal2 = ISO8601.toCalendar(getEndTime());
+
+                // same day
+                if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                    msg += time + ".";
+
+                } else {
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
+                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                    msg += dayDate + " at " + time + ".";
+                }
+
+                return msg;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public boolean isExact() {

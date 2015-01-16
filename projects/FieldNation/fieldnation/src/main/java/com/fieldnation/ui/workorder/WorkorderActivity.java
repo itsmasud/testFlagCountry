@@ -22,12 +22,9 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
-import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
-import com.fieldnation.ui.workorder.detail.TasksFragment;
 import com.fieldnation.ui.workorder.detail.WorkFragment;
-import com.fieldnation.utils.Stopwatch;
 
 import java.util.List;
 
@@ -38,9 +35,9 @@ public class WorkorderActivity extends AuthActionBarActivity {
     public static final String INTENT_FIELD_CURRENT_TAB = "com.fieldnation.ui.workorder.WorkorderActivity:current_tab";
 
     public static final int TAB_DETAILS = 0;
-    public static final int TAB_MESSAGE = 2;
-    public static final int TAB_DELIVERABLES = 3;
-    public static final int TAB_NOTIFICATIONS = 4;
+    public static final int TAB_MESSAGE = 1;
+    public static final int TAB_DELIVERABLES = 2;
+    public static final int TAB_NOTIFICATIONS = 3;
 
     private static final int RPC_GET_DETAIL = 1;
 
