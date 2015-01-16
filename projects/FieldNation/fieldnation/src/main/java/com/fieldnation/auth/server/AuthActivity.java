@@ -1,7 +1,6 @@
 package com.fieldnation.auth.server;
 
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -22,12 +21,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.client.AuthService;
 import com.fieldnation.rpc.server.ClockService;
+import com.fieldnation.topics.TopicReceiver;
+import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -36,7 +39,7 @@ import com.fieldnation.topics.Topics;
  *
  * @author michael.carver
  */
-public class AuthActivity extends AccountAuthenticatorActivity {
+public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private static final String TAG = "auth.server.AuthActivity";
     // UI
     private LinearLayout _contentLayout;
@@ -46,6 +49,8 @@ public class AuthActivity extends AccountAuthenticatorActivity {
     private View _fader;
 
     private VideoView _videoView;
+
+    private UpdateDialog _updateDialog;
 
 
     // data
@@ -97,6 +102,8 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
 
+        _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
+
         _authcomplete = false;
 
         Handler handler = new Handler();
@@ -117,6 +124,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         Log.v(TAG, "onResume");
         super.onResume();
         _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
+        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topic_needUpdate);
     }
 
     @Override
@@ -124,6 +132,7 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         Log.v(TAG, "onPause");
         super.onPause();
         _videoView.stopPlayback();
+        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
     }
 
     @Override
@@ -164,6 +173,15 @@ public class AuthActivity extends AccountAuthenticatorActivity {
         }
     };
 
+    private TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
+                _updateDialog.show();
+            }
+        }
+    };
+
     private View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -193,7 +211,9 @@ public class AuthActivity extends AccountAuthenticatorActivity {
                 String authToken = resultData.getString(AccountManager.KEY_AUTHTOKEN);
                 String error = resultData.getString("error");
 
-                if (authToken != null) {
+                if (getString(R.string.login_error_update_app).equals(error)) {
+                    Topics.dispatchNeedUpdate(AuthActivity.this);
+                } else if (authToken != null) {
                     Log.v(TAG, "have authtoken");
                     Account account = new Account(_username, getString(R.string.accounttype));
                     AccountManager am = AccountManager.get(AuthActivity.this);
