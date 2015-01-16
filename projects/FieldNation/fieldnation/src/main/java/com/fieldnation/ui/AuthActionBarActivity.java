@@ -13,8 +13,11 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.server.ClockReceiver;
+import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
+import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
  * This is the base of all the activities in this project. It provides
@@ -30,6 +33,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     // UI
     NotificationActionBarView _notificationsView;
     MessagesActionBarView _messagesView;
+
+    private UpdateDialog _updateDialog;
 
     // Services
     private TopicShutdownReciever _shutdownListener;
@@ -53,6 +58,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         actionbar.setDisplayShowHomeEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
 
+        _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
+
     }
 
     @Override
@@ -70,11 +77,13 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
+        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topic_needUpdate);
     }
 
     @Override
     protected void onPause() {
         TopicService.delete(this, TAG);
+        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
         super.onPause();
     }
 
@@ -109,6 +118,15 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             AuthActionBarActivity.this.onAuthenticationInvalidated();
         }
 
+    };
+
+    private TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
+                _updateDialog.show();
+            }
+        }
     };
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew);

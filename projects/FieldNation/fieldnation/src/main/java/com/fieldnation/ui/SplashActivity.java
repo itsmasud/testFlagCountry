@@ -2,7 +2,6 @@ package com.fieldnation.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Window;
 
@@ -29,7 +28,6 @@ public class SplashActivity extends AuthFragmentActivity {
         Intent intent = new Intent(SplashActivity.this, MyWorkActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-
         finish();
     }
 
@@ -50,6 +48,7 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+        AuthTopicService.requestAuthInvalid(this);
     }
 
     @Override

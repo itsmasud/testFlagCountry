@@ -12,8 +12,11 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.server.ClockReceiver;
+import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
+import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
  * Created by michael.carver on 12/5/2014.
@@ -27,6 +30,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     NotificationActionBarView _notificationsView;
     MessagesActionBarView _messagesView;
 
+    private UpdateDialog _updateDialog;
+
     // Services
     private TopicShutdownReciever _shutdownListener;
 
@@ -38,6 +43,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         ClockReceiver.registerClock(this);
+
+        _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
     }
 
     @Override
@@ -55,11 +62,13 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
+        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topic_needUpdate);
     }
 
     @Override
     protected void onPause() {
         TopicService.delete(this, TAG);
+        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
         super.onPause();
     }
 
@@ -94,6 +103,15 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             AuthFragmentActivity.this.onAuthenticationInvalidated();
         }
 
+    };
+
+    private TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
+                _updateDialog.show();
+            }
+        }
     };
 
     public abstract void onAuthentication(String username, String authToken, boolean isNew);

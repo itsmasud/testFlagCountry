@@ -9,7 +9,7 @@
     <!-- general strings -->
     <string name="placeholder_word">NA</string>
     <string name="placeholder_phrase">Should not see this.</string>
-    <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays.</string>
+    <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
     <string name="placeholder_date_short">10/20/1963</string>
 
@@ -38,6 +38,7 @@
     <string name="btn_reject">REJECT</string>
     <string name="btn_sign_off">SIGN OFF</string>
     <string name="btn_login">LOGIN</string>
+    <string name="btn_update_now">UPDATE NOW</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
@@ -64,6 +65,8 @@
         <item>Other</item>
     </string-array>
 
+    <string name="dialog_update_title">Please Update</string>
+    <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
 
     <string name="downloading">Downloading</string>
     <string name="time_logged">Time Logged</string>
@@ -259,6 +262,7 @@
     <string name="login_error_not_found_in_db">Authentication Failed, check your network settings, and retry.[1]</string>
     <string name="login_error_invalid_local_creds">Authentication Failed, check your network settings, and retry.[2]</string>
     <string name="login_error_invalid_remote_creds">Authentication Failed, please check username and password</string>
+    <string name="login_error_update_app">This app version is no longer supported and needs to be updated.</string>
 
     <!-- shipment support list -->
     <string-array name="carrier_list">

@@ -151,17 +151,25 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
                 }
             }
         } else {
-            Log.d(TAG, "Saving user");
-            // store to local
-            AuthCache authCache = AuthCache.get(context, username);
-            if (authCache == null) {
-                authCache = AuthCache.create(context, username, password);
+            if (at.hasError()) {
+                if (at.getErrorType().equals("invalid_client")) {
+                    errorMessage = context.getString(R.string.login_error_update_app);
+                } else {
+                    errorMessage = at.getErrorDescription();
+                }
             } else {
-                authCache.setPassword(password);
+                Log.d(TAG, "Saving user");
+                // store to local
+                AuthCache authCache = AuthCache.get(context, username);
+                if (authCache == null) {
+                    authCache = AuthCache.create(context, username, password);
+                } else {
+                    authCache.setPassword(password);
+                }
+                authCache.setRequestBlob(requestBlob);
+                authCache.setOAuthBlob(at.toString());
+                accessToken = authCache.startSession(password, 3600);
             }
-            authCache.setRequestBlob(requestBlob);
-            authCache.setOAuthBlob(at.toString());
-            accessToken = authCache.startSession(password, 3600);
         }
 
         if (errorMessage == null)

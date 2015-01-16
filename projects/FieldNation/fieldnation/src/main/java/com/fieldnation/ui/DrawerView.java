@@ -18,7 +18,6 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
-import com.fieldnation.auth.server.AuthActivity;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.PaymentService;
@@ -45,7 +44,7 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _myworkView;
     private RelativeLayout _marketView;
     private RelativeLayout _paymentView;
-//    private RelativeLayout _settingsView;
+    //    private RelativeLayout _settingsView;
     private RelativeLayout _logoutView;
     private TextView _paidAmountTextView;
     private TextView _paidDateTextView;
@@ -171,10 +170,11 @@ public class DrawerView extends RelativeLayout {
     private View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), SettingsActivity.class);
+//            Intent intent = new Intent(getContext(), SettingsActivity.class);
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            attachAnimations();
+//            getContext().startActivity(intent);
+//            attachAnimations();
+            AuthTopicService.requestAuthInvalid(getContext());
         }
     };
     private View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
