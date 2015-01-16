@@ -128,6 +128,7 @@ public class Schedule implements Parcelable {
                 time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
 
                 return "You will need to arrive exactly on " + dayDate + " at " + time + ".";
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -140,7 +141,7 @@ public class Schedule implements Parcelable {
                 dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                 time = misc.formatTime(cal, false);
 
-                String msg = "You will need to arrive between " + dayDate + " at " + time + " and ";
+                String msg = "You will need to arrive between \n\t" + dayDate + " at " + time + " and\n\t";
 
                 Calendar cal2 = ISO8601.toCalendar(getEndTime());
 
@@ -156,6 +157,7 @@ public class Schedule implements Parcelable {
                 }
 
                 return msg;
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }

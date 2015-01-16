@@ -10,14 +10,6 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Created by michael.carver on 11/5/2014.
@@ -100,51 +92,8 @@ public class ScheduleCoView extends RelativeLayout {
             _statusTextView.setText("Buyer's Schedule");
         }
 
-        if (_schedule.isExact()) {
-            try {
-                String dayDate;
-                String time = "";
-                Calendar cal;
-
-                cal = ISO8601.toCalendar(_schedule.getStartTime());
-                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
-                time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-
-                _bodyTextView.setText("Arrive exactly on " + dayDate + " at " + time + ".");
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else if (_schedule != null) {
-            try {
-                Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
-                String dayDate;
-                String time = "";
-
-                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
-                time = misc.formatTime(cal, false);
-
-                String msg = "Arrive between " + dayDate + " at " + time + " and ";
-
-                Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
-
-                // same day
-                if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
-                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += time + ".";
-
-                } else {
-                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
-                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += dayDate + " at " + time + ".";
-                }
-
-                _bodyTextView.setText(msg);
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
+        String display = _schedule.getDiaplsyString();
+        _bodyTextView.setText(display);
     }
 
     /*-*****************************-*/

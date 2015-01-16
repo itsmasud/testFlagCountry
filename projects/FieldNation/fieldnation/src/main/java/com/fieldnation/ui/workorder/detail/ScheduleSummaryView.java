@@ -74,7 +74,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         _coLabelTextView.setVisibility(View.GONE);
         _coTextView.setVisibility(View.GONE);
 
-        if (_workorder.getCounterOfferInfo() != null && _workorder.getCounterOfferInfo().getSchedule() != null) {
+        if (_workorder.getCounterOfferInfo() != null
+                && _workorder.getCounterOfferInfo().getSchedule() != null) {
             Schedule schedule = _workorder.getCounterOfferInfo().getSchedule();
 
             String display = schedule.getDiaplsyString();
