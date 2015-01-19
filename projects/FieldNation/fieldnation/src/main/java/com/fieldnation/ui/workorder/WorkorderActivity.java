@@ -22,11 +22,9 @@ import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
-import com.fieldnation.ui.workorder.detail.DetailFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
-import com.fieldnation.ui.workorder.detail.TasksFragment;
-import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.ui.workorder.detail.WorkFragment;
 
 import java.util.List;
 
@@ -37,10 +35,9 @@ public class WorkorderActivity extends AuthActionBarActivity {
     public static final String INTENT_FIELD_CURRENT_TAB = "com.fieldnation.ui.workorder.WorkorderActivity:current_tab";
 
     public static final int TAB_DETAILS = 0;
-    public static final int TAB_TASKS = 1;
-    public static final int TAB_MESSAGE = 2;
-    public static final int TAB_DELIVERABLES = 3;
-    public static final int TAB_NOTIFICATIONS = 4;
+    public static final int TAB_MESSAGE = 1;
+    public static final int TAB_DELIVERABLES = 2;
+    public static final int TAB_NOTIFICATIONS = 3;
 
     private static final int RPC_GET_DETAIL = 1;
 
@@ -201,56 +198,65 @@ public class WorkorderActivity extends AuthActionBarActivity {
         _viewPager.setOffscreenPageLimit(4);
 
         if (_fragments == null) {
-            _fragments = new WorkorderFragment[5];
+            _fragments = new WorkorderFragment[4];
 
             if (savedInstanceState != null) {
                 List<Fragment> fragments = getSupportFragmentManager().getFragments();
                 if (fragments != null) {
                     for (int i = 0; i < fragments.size(); i++) {
                         Fragment frag = fragments.get(i);
-                        if (frag instanceof DetailFragment) {
+
+                        if (frag instanceof WorkFragment) {
                             _fragments[0] = (WorkorderFragment) frag;
                             _fragments[0].setPageRequestListener(_pageRequestListener);
                             _fragments[0].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
-                        if (frag instanceof TasksFragment) {
+//                        if (frag instanceof DetailFragment) {
+//                            _fragments[0] = (WorkorderFragment) frag;
+//                            _fragments[0].setPageRequestListener(_pageRequestListener);
+//                            _fragments[0].setLoadingListener(_workorderFrag_loadingListener);
+//                        }
+//
+//                        if (frag instanceof TasksFragment) {
+//                            _fragments[1] = (WorkorderFragment) frag;
+//                            _fragments[1].setPageRequestListener(_pageRequestListener);
+//                            _fragments[1].setLoadingListener(_workorderFrag_loadingListener);
+//                        }
+
+                        if (frag instanceof MessageFragment) {
                             _fragments[1] = (WorkorderFragment) frag;
                             _fragments[1].setPageRequestListener(_pageRequestListener);
                             _fragments[1].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
-                        if (frag instanceof MessageFragment) {
+                        if (frag instanceof DeliverableFragment) {
                             _fragments[2] = (WorkorderFragment) frag;
                             _fragments[2].setPageRequestListener(_pageRequestListener);
                             _fragments[2].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
-                        if (frag instanceof DeliverableFragment) {
+                        if (frag instanceof NotificationFragment) {
                             _fragments[3] = (WorkorderFragment) frag;
                             _fragments[3].setPageRequestListener(_pageRequestListener);
                             _fragments[3].setLoadingListener(_workorderFrag_loadingListener);
-                        }
-
-                        if (frag instanceof NotificationFragment) {
-                            _fragments[4] = (WorkorderFragment) frag;
-                            _fragments[4].setPageRequestListener(_pageRequestListener);
-                            _fragments[4].setLoadingListener(_workorderFrag_loadingListener);
                         }
                     }
                 }
             }
 
             if (_fragments[0] == null)
-                _fragments[0] = new DetailFragment();
+                _fragments[0] = new WorkFragment();
+//            if (_fragments[0] == null)
+//                _fragments[0] = new DetailFragment();
+//            if (_fragments[1] == null)
+//                _fragments[1] = new TasksFragment();
             if (_fragments[1] == null)
-                _fragments[1] = new TasksFragment();
+                _fragments[1] = new MessageFragment();
             if (_fragments[2] == null)
-                _fragments[2] = new MessageFragment();
+                _fragments[2] = new DeliverableFragment();
             if (_fragments[3] == null)
-                _fragments[3] = new DeliverableFragment();
-            if (_fragments[4] == null)
-                _fragments[4] = new NotificationFragment();
+                _fragments[3] = new NotificationFragment();
 
             for (int i = 0; i < _fragments.length; i++) {
                 _fragments[i].setPageRequestListener(_pageRequestListener);

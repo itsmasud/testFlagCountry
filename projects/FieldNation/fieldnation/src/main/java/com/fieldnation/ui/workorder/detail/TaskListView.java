@@ -27,7 +27,6 @@ public class TaskListView extends RelativeLayout {
     private LinearLayout _onSiteList;
     private LinearLayout _postVisitLayout;
     private LinearLayout _postVisitList;
-    private TextView _noDataTextView;
 
     // Data
     private List<Task> _tasks;
@@ -61,8 +60,6 @@ public class TaskListView extends RelativeLayout {
         _onSiteList = (LinearLayout) findViewById(R.id.onsite_list);
         _postVisitLayout = (LinearLayout) findViewById(R.id.postvisit_layout);
         _postVisitList = (LinearLayout) findViewById(R.id.postvisit_list);
-        _noDataTextView = (TextView) findViewById(R.id.nodata_textview);
-
     }
 
     public void setTaskListViewListener(TaskListView.Listener l) {
@@ -83,12 +80,10 @@ public class TaskListView extends RelativeLayout {
         setVisibility(View.VISIBLE);
 
         if (_tasks.size() == 0) {
-            //setVisibility(View.GONE);
-            _noDataTextView.setVisibility(View.VISIBLE);
+            setVisibility(View.GONE);
             return;
         } else {
-            //setVisibility(View.VISIBLE);
-            _noDataTextView.setVisibility(View.GONE);
+            setVisibility(View.VISIBLE);
         }
 
         boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage()) || "any".equals(_tasks.get(0).getStage());
@@ -202,12 +197,76 @@ public class TaskListView extends RelativeLayout {
         @Override
         public void onTaskClick(Task task) {
             if (_listener != null) {
-                _listener.onTaskClick(task);
+                switch (task.getTaskType()) {
+                    case CONFIRM_ASSIGNMENT:
+                        _listener.onConfirmAssignment(task);
+                        break;
+                    case CLOSE_OUT_NOTES:
+                        _listener.onCloseOutNotes(task);
+                        break;
+                    case CHECKIN:
+                        _listener.onCheckin(task);
+                        break;
+                    case CHECKOUT:
+                        _listener.onCheckout(task);
+                        break;
+                    case UPLOAD_FILE:
+                        _listener.onUploadFile(task);
+                        break;
+                    case UPLOAD_PICTURE:
+                        _listener.onUploadPicture(task);
+                        break;
+                    case CUSTOM_FIELD:
+                        _listener.onCustomField(task);
+                        break;
+                    case PHONE:
+                        _listener.onPhone(task);
+                        break;
+                    case EMAIL:
+                        _listener.onEmail(task);
+                        break;
+                    case UNIQUE_TASK:
+                        _listener.onUniqueTask(task);
+                        break;
+                    case SIGNATURE:
+                        _listener.onSignature(task);
+                        break;
+                    case SHIPMENT_TRACKING:
+                        _listener.onShipment(task);
+                        break;
+                    case DOWNLOAD:
+                        _listener.onDownload(task);
+                        break;
+                }
             }
         }
     };
 
     public interface Listener {
-        public void onTaskClick(Task task);
+        public void onCheckin(Task task);
+
+        public void onCheckout(Task task);
+
+        public void onCloseOutNotes(Task task);
+
+        public void onConfirmAssignment(Task task);
+
+        public void onCustomField(Task task);
+
+        public void onDownload(Task task);
+
+        public void onEmail(Task task);
+
+        public void onPhone(Task task);
+
+        public void onShipment(Task task);
+
+        public void onSignature(Task task);
+
+        public void onUploadFile(Task task);
+
+        public void onUploadPicture(Task task);
+
+        public void onUniqueTask(Task task);
     }
 }

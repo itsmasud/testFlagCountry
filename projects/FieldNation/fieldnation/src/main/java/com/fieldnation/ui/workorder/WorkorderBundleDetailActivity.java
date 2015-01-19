@@ -18,6 +18,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.GaTopic;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -176,6 +177,8 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         public void onLongClick(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: onLongClick()
             Log.v(TAG, "Method Stub: onLongClick()");
+            GaTopic.dispatchEvent(WorkorderBundleDetailActivity.this,
+                    "BundleActivity", GaTopic.ACTION_LONG_CLICK, "WorkorderCard", 1);
 
         }
 

@@ -19,11 +19,11 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.GaTopic;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -36,7 +36,7 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
 import java.util.HashSet;
@@ -155,12 +155,17 @@ public class WorkorderListFragment extends Fragment {
         return _displayView;
     }
 
+    public String getGaLabel() {
+        return "Work" + misc.capitalize(_displayView.getCall()) + "List";
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         _adapter.refreshPages();
         _loadingView.startRefreshing();
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
+        GaTopic.dispatchScreenView(getActivity(), getGaLabel());
     }
 
     public void update() {
@@ -212,6 +217,7 @@ public class WorkorderListFragment extends Fragment {
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog.show(workorder, pay.getMaxDevice());
             } else {
+                GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
                 Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
                 intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
                 getActivity().startService(intent);
@@ -223,6 +229,7 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void actionCheckin(WorkorderCardView view, Workorder workorder) {
+            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
             Intent intent = _service.checkin(WEB_CHECKING_IN, workorder.getWorkorderId());
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getActivity().startService(intent);
@@ -253,20 +260,23 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void onLongClick(WorkorderCardView view, Workorder workorder) {
-            if (_selected.contains(workorder.getWorkorderId())) {
-                _selected.remove(workorder.getWorkorderId());
-                view.setDisplayMode(WorkorderCardView.MODE_NORMAL);
+            GaTopic.dispatchEvent(getActivity(),
+                    getGaLabel(), GaTopic.ACTION_LONG_CLICK, "WorkorderCardView", 1);
+
+//            if (_selected.contains(workorder.getWorkorderId())) {
+//                _selected.remove(workorder.getWorkorderId());
+//                view.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 //                if (_actionMode != null && _selected.size() == 0) {
 //                    _actionMode.finish();
 //                    _actionMode = null;
 //                }
-            } else {
-                _selected.add(workorder.getWorkorderId());
-                view.setDisplayMode(WorkorderCardView.MODE_SELECTED);
+//            } else {
+//                _selected.add(workorder.getWorkorderId());
+//                view.setDisplayMode(WorkorderCardView.MODE_SELECTED);
 //                if (_actionMode == null) {
 //                    _actionMode = ((ActionBarActivity) getActivity()).startSupportActionMode(_actionMode_Callback);
 //                }
-            }
+//            }
         }
 
         @Override
@@ -280,11 +290,13 @@ public class WorkorderListFragment extends Fragment {
             } else {
                 Intent intent = new Intent(getActivity(), WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+/*
                 if (workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS || workorder.getStatus().getWorkorderStatus() == WorkorderStatus.ASSIGNED) {
                     intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_TASKS);
                 } else {
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-                }
+*/
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+//                }
                 getActivity().startActivity(intent);
                 view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
             }
@@ -317,6 +329,7 @@ public class WorkorderListFragment extends Fragment {
     private DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
+            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
             Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), count);
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getActivity().startService(intent);
@@ -339,6 +352,7 @@ public class WorkorderListFragment extends Fragment {
                 }
             }
             // request the workorder
+            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_REQUEST_WORK, "WorkorderCardView", 1);
             Intent intent = _service.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), time);
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getActivity().startService(intent);
@@ -353,6 +367,7 @@ public class WorkorderListFragment extends Fragment {
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             //set  loading mode
             try {
+                GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CONFIRM_ASSIGN, "WorkorderCardView", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 Intent intent = _service.confirmAssignment(WEB_CHANGING_WORKORDER,
                         workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
@@ -379,6 +394,7 @@ public class WorkorderListFragment extends Fragment {
     private CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
+            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_COUNTER, "WorkorderCardView", 1);
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGING_WORKORDER,
                             workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,
@@ -609,7 +625,7 @@ public class WorkorderListFragment extends Fragment {
                 _pendingNotInterested.remove(woId);
                 Intent intent = new Intent(getActivity(), WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, woId);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_TASKS);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                 getActivity().startActivity(intent);
                 _adapter.refreshPages();
                 _loadingView.refreshComplete();

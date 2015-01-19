@@ -298,8 +298,12 @@ public class AuthTopicService extends Service {
                         setState(STATE_AUTHENTICATING);
                         getAccount();
                     } else {
+                        Log.v(TAG, "FutureWaitAsyncTask, auth failure");
                         // todo.. not sure
-                        Log.v(TAG, "FutureWaitAsyncTask, should not be here");
+                        setState(STATE_NOT_AUTHENTICATED);
+                        if (bundle.containsKey(AccountManager.KEY_AUTH_FAILED_MESSAGE) && getString(R.string.login_error_update_app).equals(bundle.getString(AccountManager.KEY_AUTH_FAILED_MESSAGE))) {
+                            Topics.dispatchNeedUpdate(AuthTopicService.this);
+                        }
                     }
                 } else {
                     Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
@@ -415,7 +419,6 @@ public class AuthTopicService extends Service {
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_COMMAND, bundle);
     }
-
 
     // internal
     private static void dispatchAuthComplete(Context context, String username, String authToken) {

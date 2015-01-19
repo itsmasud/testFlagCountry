@@ -22,10 +22,7 @@ import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class ConfirmDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.ConfirmDialog";
@@ -193,18 +190,14 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         _tacCheckBox.setChecked(_tacAccept);
 
+        String display = _schedule.getDisplayString();
+        _scheduleTextView.setText(display);
+        setDuration(3600000);
         if (_schedule.isExact()) {
             try {
                 Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
-                String dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
-                String time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false,
-                        TimeZone.SHORT);
-
-                _scheduleTextView.setText("You will need to arrive exactly on\n  " + dayDate + " at " + time + ".");
-
                 _startCalendar = cal;
                 _startDateButton.setVisibility(View.GONE);
-
                 setDuration(3600000);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -212,35 +205,11 @@ public class ConfirmDialog extends DialogFragmentBase {
         } else {
             try {
                 Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
-                String dayDate;
-                String time = "";
-
-                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
-                time = misc.formatTime(cal, false);
-
-                String msg = "You will need to arrive between\n  " + dayDate + " at " + time + " and\n  ";
-
                 Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
-
-                // same day
-                if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
-                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += time;
-
-                } else {
-                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
-                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += dayDate + " at " + time;
-                }
-
-                _scheduleTextView.setText(msg);
-
                 _startCalendar = cal;
                 _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
                 _startDateButton.setVisibility(View.VISIBLE);
-
                 setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

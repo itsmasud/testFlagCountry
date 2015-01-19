@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.topics.GaTopic;
 import com.fieldnation.utils.misc;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
@@ -136,6 +137,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Location location = _workorder.getLocation();
                 if (location != null) {
                     try {
+                        GaTopic.dispatchEvent(getContext(), "WorkorderActivity", GaTopic.ACTION_START_MAP, "WorkFragment", 1);
                         String _fullAddress = misc.escapeForURL(location.getFullAddress());
                         String _uriString = "geo:0,0?q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);

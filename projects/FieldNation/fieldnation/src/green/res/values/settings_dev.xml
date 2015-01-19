@@ -8,4 +8,5 @@
     <string name="fn_client_id">demoapp</string>
     <string name="fn_client_secret">demopass</string>
     <string name="app_name">Field Nation[G]</string>
+    <integer name="ga_local_dispatch_period">60</integer>
 </resources>

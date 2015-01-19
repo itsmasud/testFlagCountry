@@ -38,7 +38,7 @@ public class GPSLocationService {
     private LocationRequest _locationRequest;
     private GoogleApiClient _googleApiClient;
     private Location _location;
-    private FusedLocationProviderApi fusedLocationProviderApi = LocationServices.FusedLocationApi;
+    private FusedLocationProviderApi _fusedLocationProviderApi = LocationServices.FusedLocationApi;
     private LocationManager _locationManager;
 
     public GPSLocationService(Activity locationActivity) {
@@ -190,7 +190,7 @@ public class GPSLocationService {
                 _location = location;
                 //if the accuracy is not better, remove all location updates for this listener
                 if (location.getAccuracy() < MINIMUM_ACCURACY) {
-                    fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
+                    _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
                 }
             }
         }
@@ -200,21 +200,21 @@ public class GPSLocationService {
 
         @Override
         public void onConnected(Bundle bundle) {
-            Location currentLocation = fusedLocationProviderApi.getLastLocation(_googleApiClient);
+            Location currentLocation = _fusedLocationProviderApi.getLastLocation(_googleApiClient);
             // Todo this doesn't work: currentLocation.getTime() > REFRESH_TIME
             if (currentLocation != null && currentLocation.getTime() > REFRESH_TIME) {
                 _location = currentLocation;
             } else {
-                fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
+                _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
                 // Schedule a Thread to unregister location listeners
                 Executors.newScheduledThreadPool(1).schedule(new Runnable() {
                     @Override
                     public void run() {
-                        fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
+                        _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
                     }
                 }, ONE_MIN, TimeUnit.MILLISECONDS);
 
-                _location = fusedLocationProviderApi.getLastLocation(_googleApiClient);
+                _location = _fusedLocationProviderApi.getLastLocation(_googleApiClient);
             }
         }
 

@@ -52,6 +52,11 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.notifications, menu);
 

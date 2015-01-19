@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        style="?attr/dialogContainerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <TextView
+                style="?attr/dialogTitleStyle"
+                android:text="@string/dialog_decline_title" />
+
+            <TextView
+                style="?attr/dialogBodyStyle"
+                android:text="@string/dialog_decline_message" />
+
+            <CheckBox
+                android:visibility="gone"
+                android:id="@+id/block_checkbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_block_message" />
+
+            <LinearLayout
+                android:id="@+id/block_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <Spinner
+                    android:id="@+id/block_spinner"
+                    style="?attr/dialogSpinnerButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/blockdetails_edittext"
+                    style="?attr/dialogEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:hint="@string/dialog_block_details" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            style="?attr/dialogActionBarStyle"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="?attr/dialogCancelButtonStyle"
+                android:text="@string/btn_cancel" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="?attr/dialogOkButtonStyle"
+                android:text="@string/btn_done" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

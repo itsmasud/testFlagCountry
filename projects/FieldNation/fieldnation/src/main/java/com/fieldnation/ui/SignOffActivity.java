@@ -12,11 +12,13 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.topics.GaTopic;
 import com.fieldnation.utils.Stopwatch;
 
 /**
@@ -119,6 +121,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             if (savedInstanceState == null) {
                 _signOffFrag.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
+                GaTopic.dispatchScreenView(this, "SignOffFragment");
             }
         } else if (savedInstanceState != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -180,6 +183,11 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onRefresh() {
         // TODO STUB com.fieldnation.ui.SignOffActivity.onRefresh()
         Log.v(TAG, "STUB com.fieldnation.ui.SignOffActivity.onRefresh()");
@@ -225,6 +233,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
+            GaTopic.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sigFrag);
@@ -235,6 +244,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
+            GaTopic.dispatchScreenView(SignOffActivity.this, "SorryFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sorryFrag);
@@ -254,6 +264,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureJson = signatureJson;
+            GaTopic.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _thankYouFrag);
@@ -305,10 +316,13 @@ public class SignOffActivity extends AuthFragmentActivity {
                 // we completed the workorder... done
                 _thankYouFrag.setUploadComplete();
 
+                ((GlobalState) getApplication()).setCompletedWorkorder();
+
             } else if (resultCode == WEB_COMPLETE_TASK || resultCode == WEB_UPLOAD_SIGNATURE) {
                 // we finished uploading the signature
                 if (_completeWorkorder) {
                     // if we need to complete, then start that process
+                    GaTopic.dispatchEvent(SignOffActivity.this, "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "SignOffActivity", 1);
                     startService(
                             _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
 
@@ -339,10 +353,12 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     public static void startSignOff(Context context, Workorder workorder, boolean markComplete) {
-        new AsyncTaskEx<Object, Object, Object>() {
+        new AsyncTaskEx<Object, Object, Intent>() {
+            private Context context;
+
             @Override
-            protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
+            protected Intent doInBackground(Object... params) {
+                context = (Context) params[0];
                 Workorder workorder = (Workorder) params[1];
                 Boolean markComplete = (Boolean) params[2];
 
@@ -353,8 +369,13 @@ public class SignOffActivity extends AuthFragmentActivity {
 
                 if (!(context instanceof Activity))
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                return intent;
+            }
+
+            @Override
+            protected void onPostExecute(Intent intent) {
+                super.onPostExecute(intent);
                 context.startActivity(intent);
-                return null;
             }
         }.executeEx(context, workorder, markComplete);
     }

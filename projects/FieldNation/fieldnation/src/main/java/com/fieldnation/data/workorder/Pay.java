@@ -162,12 +162,13 @@ public class Pay implements Parcelable {
 
 		String basis = getPayRateBasis();
 
+        // Todo, need to localize this
 		if ("Fixed".equals(basis)) {
 			line1 = "Fixed " + misc.toCurrency(getFixedAmount());
 		} else if ("Hourly".equals(basis)) {
 			line1 = misc.toCurrency(getPerHour()) + " per hr up to " + getMaxHour() + " hours.";
 		} else if ("Blended".equals(basis)) {
-			line1 = misc.toCurrency(getBlendedStartRate()) + " per hr for the first " + getBlendedFirstHours() + " hours.";
+			line1 = misc.toCurrency(getBlendedStartRate()) + " for the first " + getBlendedFirstHours() + " hours.";
 			line2 = "Then " + misc.toCurrency(getBlendedAdditionalRate()) + " per hr up to " + getBlendedAdditionalHours() + " hours.";
 		} else if ("Per Device".equals(basis)) {
 			line1 = misc.toCurrency(getPerDevice()) + " per device up to " + getMaxDevice() + " devices.";
@@ -179,6 +180,7 @@ public class Pay implements Parcelable {
 	public String toDisplayStringShort() {
 		String basis = getPayRateBasis();
 
+        // Todo, localize this
 		if ("Fixed".equals(basis)) {
 			return misc.toCurrency(getFixedAmount());
 		} else if ("Hourly".equals(basis)) {

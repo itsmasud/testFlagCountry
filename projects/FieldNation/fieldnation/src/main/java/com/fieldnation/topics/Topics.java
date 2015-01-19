@@ -11,6 +11,7 @@ public class Topics {
     public static final String TOPIC_SHUTDOWN = "TOPIC_SHUTDOWN";
     public static final String TOPIC_NETWORK_DOWN = "TOPIC_NETWORK_DOWN";
     public static final String TOPIC_NETWORK_UP = "TOPIC_NETWORK_UP";
+    public static final String TOPIC_NEED_UPDATE = "TOPIC_NEED_UPDATE";
 
 
     public static void dispatchShutdown(Context context) {
@@ -23,6 +24,10 @@ public class Topics {
 
     public static void dispatchNetworkDown(Context context) {
         TopicService.dispatchTopic(context, TOPIC_NETWORK_DOWN, null, true);
+    }
+
+    public static void dispatchNeedUpdate(Context context) {
+        TopicService.dispatchTopic(context, TOPIC_NEED_UPDATE, null, true);
     }
 
     public static final String TOPIC_FILE_UPLOAD = "TOPIC_FILE_UPLOAD";
@@ -78,4 +83,5 @@ public class Topics {
 
         TopicService.registerListener(context, 0, tag, TOPIC_FILE_UPLOAD, topicReceiver);
     }
+
 }

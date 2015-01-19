@@ -37,6 +37,11 @@ public class MessageListActivity extends ItemListActivity<Message> {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public View getView(Message object, View convertView, ViewGroup parent) {
         MessageCardView v = null;
         if (convertView == null) {
@@ -96,7 +101,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
             return null;
         }
 
-        List<Message> list = new LinkedList<Message>();
+        List<Message> list = new LinkedList<>();
         for (int i = 0; i < objects.size(); i++) {
             try {
                 list.add(Message.fromJson(objects.getJsonObject(i)));

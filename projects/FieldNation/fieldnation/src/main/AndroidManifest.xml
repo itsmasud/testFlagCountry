@@ -100,6 +100,18 @@
                     android:host="fieldnation.com"
                     android:pathPrefix="/wo/"
                     android:scheme="https" />
+                <data
+                    android:host="app.fieldnation.com"
+                    android:pathPrefix="/workorder/"
+                    android:scheme="https" />
+                <data
+                    android:host="app.fieldnation.com"
+                    android:pathPrefix="/marketplace/"
+                    android:scheme="https" />
+                <data
+                    android:host="app.fieldnation.com"
+                    android:pathPrefix="/wo/"
+                    android:scheme="https" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -147,7 +159,7 @@
         <service
             android:name=".auth.server.AuthService"
             android:exported="true"
-            android:process=":auth">
+            android:process="">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>

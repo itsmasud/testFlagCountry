@@ -6,7 +6,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal" >
@@ -27,6 +27,7 @@
 
         <!-- tasks -->
 
+<!--
         <RelativeLayout
             android:id="@+id/tasks_layout"
             style="@style/WorkorderTabView_TabContainer" >
@@ -38,6 +39,7 @@
         </RelativeLayout>
 
         <View style="@style/WorkorderTabView_Sep_Vert" />
+-->
 
         <!-- messages -->
 

@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.fieldnation.R;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 /**
@@ -41,11 +43,6 @@ public class SignatureFragment extends FragmentBase {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
 
         if (_nameEditText != null)
@@ -58,6 +55,7 @@ public class SignatureFragment extends FragmentBase {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Stopwatch stopwatch = new Stopwatch();
         View v = inflater.inflate(R.layout.fragment_signature, container, false);
 
         _nameEditText = (EditText) v.findViewById(R.id.name_edittext);
@@ -81,6 +79,7 @@ public class SignatureFragment extends FragmentBase {
         }
 
 
+        Log.v(TAG, "onCreate time " + stopwatch.finish());
         return v;
     }
 

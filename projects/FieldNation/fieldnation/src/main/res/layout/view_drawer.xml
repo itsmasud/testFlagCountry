@@ -196,7 +196,7 @@
 
             <!-- Settings -->
 
-            <!--
+<!--
                     <RelativeLayout
                         android:id="@+id/settings_view"
                         style="@style/DrawerItem"
@@ -251,8 +251,8 @@
                         style="@style/DrawerSeparator"
                         android:layout_width="fill_parent"
                         android:layout_height="2px" />
+-->
 
-            -->
             <!-- Logout -->
 
             <RelativeLayout

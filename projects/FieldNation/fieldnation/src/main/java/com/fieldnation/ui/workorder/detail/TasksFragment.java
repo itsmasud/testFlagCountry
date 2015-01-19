@@ -1,11 +1,9 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -63,7 +61,6 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.Stopwatch;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -107,16 +104,16 @@ public class TasksFragment extends WorkorderFragment {
     private SignatureListView _signatureView;
 
     // Dialogs
-    private ClosingNotesDialog _closingDialog;
-    private TaskShipmentAddDialog _taskShipmentAddDialog;
-    private ShipmentAddDialog _shipmentAddDialog;
     private AppPickerDialog _appDialog;
+    private ClosingNotesDialog _closingDialog;
     private ConfirmDialog _confirmDialog;
-    private DeviceCountDialog _deviceCountDialog;
     private CustomFieldDialog _customFieldDialog;
-    private WorkLogDialog _worklogDialog;
-    private TermsDialog _termsDialog;
+    private DeviceCountDialog _deviceCountDialog;
     private MarkCompleteDialog _markCompleteDialog;
+    private ShipmentAddDialog _shipmentAddDialog;
+    private TaskShipmentAddDialog _taskShipmentAddDialog;
+    private TermsDialog _termsDialog;
+    private WorkLogDialog _worklogDialog;
 
     // Data
     private Context _context;
@@ -402,7 +399,7 @@ public class TasksFragment extends WorkorderFragment {
     private PendingIntent getNotificationIntent() {
         Intent intent = new Intent(_context, WorkorderActivity.class);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
-                WorkorderActivity.TAB_TASKS);
+                WorkorderActivity.TAB_DETAILS);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
                 _workorder.getWorkorderId());
 
@@ -542,7 +539,7 @@ public class TasksFragment extends WorkorderFragment {
                         Location location = _gPSLocationService.getLocation();
                         double lat = location.getLatitude();
                         double log = location.getLongitude();
-                        _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+//                        _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                     } catch (Exception e) {
                         _gPSLocationService.showSettingsOffAlert(getView().getContext());
                     }
@@ -561,7 +558,7 @@ public class TasksFragment extends WorkorderFragment {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+//                    _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                 } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }
@@ -574,7 +571,8 @@ public class TasksFragment extends WorkorderFragment {
 
         @Override
         public void onAcknowledge() {
-            _context.startService(_service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
+            _context.startService(
+                    _service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
         }
 
         @Override
@@ -597,7 +595,6 @@ public class TasksFragment extends WorkorderFragment {
     /*-         Tasks           -*/
     /*-*************************-*/
     private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
-        @Override
         public void onTaskClick(Task task) {
             switch (task.getTaskType()) {
                 case CHECKIN:
@@ -606,7 +603,7 @@ public class TasksFragment extends WorkorderFragment {
                             Location location = _gPSLocationService.getLocation();
                             double lat = location.getLatitude();
                             double log = location.getLongitude();
-                            _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+//                            _context.startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                         } catch (Exception e) {
                             _gPSLocationService.showSettingsOffAlert(getView().getContext());
                         }
@@ -626,7 +623,7 @@ public class TasksFragment extends WorkorderFragment {
                                 Location location = _gPSLocationService.getLocation();
                                 double lat = location.getLatitude();
                                 double log = location.getLongitude();
-                                _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
+//                                _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), lat, log));
                             } catch (Exception e) {
                                 _gPSLocationService.showSettingsOffAlert(getView().getContext());
                             }
@@ -736,6 +733,71 @@ public class TasksFragment extends WorkorderFragment {
                 default:
                     break;
             }
+        }
+
+        @Override
+        public void onCheckin(Task task) {
+
+        }
+
+        @Override
+        public void onCheckout(Task task) {
+
+        }
+
+        @Override
+        public void onCloseOutNotes(Task task) {
+
+        }
+
+        @Override
+        public void onConfirmAssignment(Task task) {
+
+        }
+
+        @Override
+        public void onCustomField(Task task) {
+
+        }
+
+        @Override
+        public void onDownload(Task task) {
+
+        }
+
+        @Override
+        public void onEmail(Task task) {
+
+        }
+
+        @Override
+        public void onPhone(Task task) {
+
+        }
+
+        @Override
+        public void onShipment(Task task) {
+
+        }
+
+        @Override
+        public void onSignature(Task task) {
+
+        }
+
+        @Override
+        public void onUploadFile(Task task) {
+
+        }
+
+        @Override
+        public void onUploadPicture(Task task) {
+
+        }
+
+        @Override
+        public void onUniqueTask(Task task) {
+
         }
     };
 
@@ -938,9 +1000,6 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void termsOnClick(Workorder workorder) {
             _termsDialog.show();
-            // TODO STUB .termsOnClick()
-            Log.v(TAG, "STUB .termsOnClick()");
-
         }
     };
 
@@ -952,7 +1011,7 @@ public class TasksFragment extends WorkorderFragment {
                     Location location = _gPSLocationService.getLocation();
                     double lat = location.getLatitude();
                     double log = location.getLongitude();
-                    _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
+//                    _context.startService(_service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), count, lat, log));
                 } catch (Exception e) {
                     _gPSLocationService.showSettingsOffAlert(getView().getContext());
                 }

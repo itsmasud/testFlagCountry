@@ -49,6 +49,11 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
         if (_service == null || isNew) {
             _service = new PaymentService(this, username, authToken, resultReceiver);

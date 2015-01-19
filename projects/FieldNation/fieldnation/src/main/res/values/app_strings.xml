@@ -9,14 +9,13 @@
     <!-- general strings -->
     <string name="placeholder_word">NA</string>
     <string name="placeholder_phrase">Should not see this.</string>
-    <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays.</string>
+    <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
     <string name="placeholder_date_short">10/20/1963</string>
 
     <string name="activity_login_title">Field Nation Login</string>
     <string name="activity_login_username">Username</string>
     <string name="activity_login_password">Password</string>
-    <string name="activity_login_button">LOGIN</string>
 
     <string name="activity_settings_title">Settings</string>
     <string name="auth_account_name">Field Nation</string>
@@ -25,7 +24,7 @@
     <string name="btn_add">ADD</string>
     <string name="btn_send">SEND</string>
     <string name="btn_save">SAVE</string>
-    <string name="btn_done">Done</string>
+    <string name="btn_done">DONE</string>
     <string name="btn_clear">Clear</string>
     <string name="btn_cancel">CANCEL</string>
     <string name="btn_send_counter">SEND COUNTER</string>
@@ -38,8 +37,38 @@
     <string name="btn_check_out">Check Out</string>
     <string name="btn_reject">REJECT</string>
     <string name="btn_sign_off">SIGN OFF</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_update_now">UPDATE NOW</string>
 
+    <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
+    <string name="toast_could_not_complete_request">Could not complete request</string>
 
+    <string name="notification_title_start_upload">Starting Upload...</string>
+    <string name="notification_context_getting_file">Getting file</string>
+    <string name="notification_uploading">Uploading</string>
+    <string name="notification_uploading_dot">Uploading...</string>
+    <string name="notification_failed">Failed!</string>
+    <string name="notification_success">Success!</string>
+
+    <string name="dialog_review_title">Review App?</string>
+    <string name="dialog_review_message">Would you like to review this app in the play store?</string>
+
+    <string name="dialog_decline_title">Not interetsed</string>
+    <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
+    <string name="dialog_block_message">Block all work from this buyer</string>
+    <string name="dialog_block_details">Additional details</string>
+    <string-array name="dialog_block_reasons">
+        <item>Scope not as described</item>
+        <item>Scope changed w/o sufficient pay increase</item>
+        <item>Difficult to work with</item>
+        <item>Pay is too low</item>
+        <item>Other</item>
+    </string-array>
+
+    <string name="dialog_update_title">Please Update</string>
+    <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
+
+    <string name="downloading">Downloading</string>
     <string name="time_logged">Time Logged</string>
     <string name="confirm">Confirm</string>
     <string name="request_workorder">Request Work Order</string>
@@ -70,6 +99,7 @@
     <string name="by">by</string>
     <string name="fixed_pay_amount">Fixed Pay Amount</string>
     <string name="hourly_rate">Hourly Rate</string>
+    <string name="fixed_rate">Fixed Rate</string>
     <string name="max_hours">Max Hours</string>
     <string name="per_device_rate">Per Device Rate</string>
     <string name="max_devices">Max Devices</string>
@@ -232,6 +262,7 @@
     <string name="login_error_not_found_in_db">Authentication Failed, check your network settings, and retry.[1]</string>
     <string name="login_error_invalid_local_creds">Authentication Failed, check your network settings, and retry.[2]</string>
     <string name="login_error_invalid_remote_creds">Authentication Failed, please check username and password</string>
+    <string name="login_error_update_app">This app version is no longer supported and needs to be updated.</string>
 
     <!-- shipment support list -->
     <string-array name="carrier_list">

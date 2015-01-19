@@ -127,33 +127,8 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-//    private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
-//        @Override
-//        public void onOk(String trackingId, String carrier, String description, boolean shipToSite) {
-//            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-//                _listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId);
-//            }
-//        }
-//
-//        @Override
-//        public void onOk(String trackingId, String carrier, String description, boolean shipToSite, long taskId) {
-//            if (_listener != null && !Arrays.asList(woStatus).contains(_workorder.getStatusId())) {
-//                _listener.onAddShipmentDetails(_workorder, description, shipToSite, carrier, trackingId, taskId);
-//            }
-//        }
-//
-//        @Override
-//        public void onCancel() {
-//        }
-//    };
-
     public interface Listener {
         public void addShipment();
-//        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-//                                         String trackingId);
-//
-//        public void onAddShipmentDetails(Workorder workorder, String description, boolean shipToSite, String carrier,
-//                                         String trackingId, long taskId);
 
         public void onDelete(Workorder workorder, int shipmentId);
 

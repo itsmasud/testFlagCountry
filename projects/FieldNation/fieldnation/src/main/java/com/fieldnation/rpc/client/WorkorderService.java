@@ -3,6 +3,7 @@ package com.fieldnation.rpc.client;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.ResultReceiver;
 
 import com.fieldnation.data.workorder.Expense;
@@ -104,9 +105,14 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "checkin_time=" + ISO8601.now(), "application/x-www-form-urlencoded", false);
     }
 
-    public Intent checkin(int resultCode, long workorderId, double gps_lat, double gps_lon) {
+//    public Intent checkin(int resultCode, long workorderId, double gps_lat, double gps_lon) {
+//        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
+//                "checkin_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+//    }
+
+    public Intent checkin(int resultCode, long workorderId, Location location) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
-                "checkin_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+                "checkin_time=" + ISO8601.now() + "&gps_lat=" + location.getLatitude() + "&gps_lon=" + location.getLongitude(), "application/x-www-form-urlencoded", false);
     }
 
     public Intent checkout(int resultCode, long workorderId) {
@@ -114,14 +120,24 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 "checkout_time=" + ISO8601.now(), "application/x-www-form-urlencoded", false);
     }
 
-    public Intent checkout(int resultCode, long workorderId, double gps_lat, double gps_lon) {
+//    public Intent checkout(int resultCode, long workorderId, double gps_lat, double gps_lon) {
+//        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
+//                "checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+//    }
+
+    public Intent checkout(int resultCode, long workorderId, Location location) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-                "checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+                "checkout_time=" + ISO8601.now() + "&gps_lat=" + location.getLatitude() + "&gps_lon=" + location.getLongitude(), "application/x-www-form-urlencoded", false);
     }
 
-    public Intent checkout(int resultCode, long workorderId, int deviceCount, double gps_lat, double gps_lon) {
+//    public Intent checkout(int resultCode, long workorderId, int deviceCount, double gps_lat, double gps_lon) {
+//        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
+//                "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+//    }
+
+    public Intent checkout(int resultCode, long workorderId, int deviceCount, Location location) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-                "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
+                "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + location.getLatitude() + "&gps_lon=" + location.getLongitude(), "application/x-www-form-urlencoded", false);
     }
 
     public Intent checkout(int resultCode, long workorderId, int deviceCount) {
@@ -285,6 +301,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     }
 
     // counter offers
+/*
     public Intent setFixedCounterOffer(int resultCode, long workorderId, double fixedTotalAmount, String explanation,
                                        boolean expire, int expireAfterMinutes) {
         if (expire) {
@@ -361,6 +378,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                     "application/x-www-form-urlencoded", false);
         }
     }
+*/
 
     public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
         String payload = "";
@@ -382,8 +400,8 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 payload += "&maxDevices=" + pay.getMaxDevice();
             } else if (pay.isBlendedRate()) {
                 payload += "&payBasis=blended";
-                payload += "&hourlyRate=" + pay.getBlendedFirstHours();
-                payload += "&maxHours=" + pay.getBlendedStartRate();
+                payload += "&hourlyRate=" + pay.getBlendedStartRate();
+                payload += "&maxHours=" + pay.getBlendedFirstHours();
                 payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
                 payload += "&additionalMaxHours=" + pay.getBlendedAdditionalHours();
             } else if (pay.isFixedRate()) {

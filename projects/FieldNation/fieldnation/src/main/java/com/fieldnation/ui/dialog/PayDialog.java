@@ -184,9 +184,9 @@ public class PayDialog extends DialogFragmentBase {
 
         if (_pay.isBlendedRate()) {
             setMode(MODE_BLENDED);
-            _blendedHourlyEditText.setText(_pay.getBlendedFirstHours() + "");
-            _blendedMaxHoursEditText.setText(_pay.getBlendedAdditionalRate() + "");
-            _extraHourlyEditText.setText(_pay.getBlendedAdditionalHours() + "");
+            _blendedHourlyEditText.setText(_pay.getBlendedStartRate() + "");
+            _blendedMaxHoursEditText.setText(_pay.getBlendedFirstHours() + "");
+            _extraHourlyEditText.setText(_pay.getBlendedAdditionalRate() + "");
             _extraMaxHoursEditText.setText(_pay.getBlendedAdditionalHours() + "");
         } else if (_pay.isFixedRate()) {
             setMode(MODE_FIXED);

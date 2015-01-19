@@ -148,7 +148,7 @@
                     style="?attr/dialogLabelStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/hourly_rate" />
+                    android:text="@string/fixed_rate" />
 
                 <LinearLayout
                     android:layout_marginBottom="@dimen/dialogContentPadding"
