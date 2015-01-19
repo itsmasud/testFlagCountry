@@ -307,12 +307,6 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
-        _gpsLocationService = new GPSLocationService(getActivity());
-        // GPS settings dialog should only be displayed if the GPS is failing
-        if (_gpsLocationService.isGooglePlayServicesAvailable() && !_gpsLocationService.isGpsEnabled()) {
-            _gpsLocationService.showSettingsAlert(view.getContext());
-        }
-
         populateUi(true);
     }
 
@@ -326,11 +320,18 @@ public class WorkFragment extends WorkorderFragment {
     public void onResume() {
         super.onResume();
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+
+        _gpsLocationService = new GPSLocationService(getActivity());
+        // GPS settings dialog should only be displayed if the GPS is failing
+        if (_gpsLocationService.isGooglePlayServicesAvailable() && !_gpsLocationService.isGpsEnabled()) {
+            _gpsLocationService.showSettingsAlert(getActivity());
+        }
     }
 
     @Override
     public void onPause() {
         TopicService.delete(getActivity(), TAG);
+        _gpsLocationService.stopLocationUpdates();
         super.onPause();
     }
 

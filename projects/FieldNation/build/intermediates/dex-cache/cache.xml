@@ -9,6 +9,13 @@
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libJson-ee90de1fc8453aec6f9e0b9f059701c19a58855c.jar" />
     </item>
     <item
+        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="9824fadf0b07efb2a63d62e91690dcf5b38276a8">
+        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-be906b0d11d27ba15624dbdbb84007a83d675f70.jar" />
+    </item>
+    <item
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\21.0.2\classes.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -30,6 +37,20 @@
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-27cbd9e9e8b65bddb643c3702f8ddaa7cf3fb6bb.jar" />
     </item>
     <item
+        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\libUtils\build\libs\libUtils.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="39af6b546e3b059b53f248ae41b5dbf68263a526">
+        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libUtils-9d4066e34d1d71b58066cc252a5cc9b781f8fae0.jar" />
+    </item>
+    <item
+        jar="C:\Users\Michael Carver\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\library-2.4.0-67602fb317e6f1ed2b13a57abd5f451f41c9948d.jar" />
+    </item>
+    <item
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\libs\internal_impl-21.0.2.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -42,27 +63,6 @@
         revision="21.1.2"
         sha1="7ae2d38807a43b2f2185ff4089a92c790b579e54">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-4a0f3a13d48e71b73c5896fb6b1bd352c0cc235e.jar" />
-    </item>
-    <item
-        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="9824fadf0b07efb2a63d62e91690dcf5b38276a8">
-        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-be906b0d11d27ba15624dbdbb84007a83d675f70.jar" />
-    </item>
-    <item
-        jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\libUtils\build\libs\libUtils.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="191ebed2d3a792e0fc3d9be765f71d75c3eda0d5">
-        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libUtils-9d4066e34d1d71b58066cc252a5cc9b781f8fae0.jar" />
-    </item>
-    <item
-        jar="C:\Users\Michael Carver\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
-        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\library-2.4.0-67602fb317e6f1ed2b13a57abd5f451f41c9948d.jar" />
     </item>
     <item
         jar="C:\Users\Michael Carver\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.2\support-annotations-21.0.2.jar"
