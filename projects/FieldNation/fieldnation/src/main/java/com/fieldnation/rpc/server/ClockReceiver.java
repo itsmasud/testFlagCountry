@@ -15,16 +15,19 @@ public class ClockReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+/*
 		ClockService.pulseClock(context);
 
 		// setup next clock
 		if (intent.hasExtra("IS_ONE_TIME")) {
 			registerClock(context);
 		}
+*/
 	}
 
 	// repeating alarm
 	public static void registerClock(Context context) {
+/*
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 		long duration_min = 15;
 
@@ -38,8 +41,10 @@ public class ClockReceiver extends BroadcastReceiver {
 		if (duration_min != -1) {
 			registerOneTimeAlarm(context, duration_min * 60000);
 		}
+*/
 	}
 
+/*
 	private static void registerClock(Context context, long delay) {
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 		sp.edit().putString("sync_frequency", (delay / 60000) + "").commit();
@@ -93,5 +98,6 @@ public class ClockReceiver extends BroadcastReceiver {
 
 		alarm.cancel(pintent);
 	}
+*/
 
 }
