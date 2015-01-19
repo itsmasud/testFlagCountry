@@ -78,7 +78,7 @@ public class Workorder implements Parcelable {
     @Json(name = "documents")
     private Document[] _documents;
     @Json(name = "estimatedSchedule")
-    private EstimatedSchedule _estimatedSchedule;
+    private Schedule _estimatedSchedule;
     @Json(name = "expectedPayment")
     private ExpectedPayment _expectedPayment;
     @Json(name = "financeId")
@@ -308,7 +308,7 @@ public class Workorder implements Parcelable {
         return _documents;
     }
 
-    public EstimatedSchedule getEstimatedSchedule() {
+    public Schedule getEstimatedSchedule() {
         return _estimatedSchedule;
     }
 

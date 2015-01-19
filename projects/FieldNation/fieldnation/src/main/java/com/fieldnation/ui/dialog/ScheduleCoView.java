@@ -92,7 +92,7 @@ public class ScheduleCoView extends RelativeLayout {
             _statusTextView.setText("Buyer's Schedule");
         }
 
-        String display = _schedule.getDiaplsyString();
+        String display = _schedule.getDisplayString();
         _bodyTextView.setText(display);
     }
 

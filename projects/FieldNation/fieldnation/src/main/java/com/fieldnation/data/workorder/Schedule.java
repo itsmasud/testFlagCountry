@@ -99,9 +99,15 @@ public class Schedule implements Parcelable {
                 when += " @ ";
 
                 if (cal.get(Calendar.HOUR) == 0) {
-                    when += "12";
+                    when += "12:";
                 } else {
-                    when += cal.get(Calendar.HOUR);
+                    when += cal.get(Calendar.HOUR) + ":";
+                }
+                int min = cal.get(Calendar.MINUTE);
+                if (min < 10) {
+                    when += "0" + min;
+                } else {
+                    when += min + "";
                 }
 
                 when += (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
@@ -116,7 +122,7 @@ public class Schedule implements Parcelable {
         }
     }
 
-    public String getDiaplsyString() {
+    public String getDisplayString() {
         if (isExact()) {
             try {
                 String dayDate;
