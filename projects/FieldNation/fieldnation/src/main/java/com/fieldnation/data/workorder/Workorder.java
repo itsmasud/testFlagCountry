@@ -646,7 +646,8 @@ public class Workorder implements Parcelable {
         WorkorderStatus status = getWorkorderStatus();
         WorkorderSubstatus substatus = getWorkorderSubstatus();
 
-        if (status == WorkorderStatus.ASSIGNED || status == WorkorderStatus.INPROGRESS) {
+        if (status == WorkorderStatus.ASSIGNED
+                || status == WorkorderStatus.INPROGRESS) {
             if (substatus == WorkorderSubstatus.CHECKEDIN
                     || substatus == WorkorderSubstatus.CONFIRMED
                     || substatus == WorkorderSubstatus.CHECKEDOUT) {
