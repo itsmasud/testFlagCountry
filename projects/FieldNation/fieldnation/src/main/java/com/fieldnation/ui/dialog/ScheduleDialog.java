@@ -133,8 +133,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void init() {
         populateUi();
     }
 
@@ -145,6 +144,16 @@ public class ScheduleDialog extends DialogFragmentBase {
     public void show(Schedule schedule) {
         _sched = schedule;
         super.show();
+    }
+
+    private Schedule makeSchedule() {
+        switch (_mode) {
+            case MODE_EXACT:
+                return new Schedule(ISO8601.fromCalendar(_startCal));
+            case MODE_RANGE:
+                return new Schedule(ISO8601.fromCalendar(_startCal), ISO8601.fromCalendar(_endCal));
+        }
+        return null;
     }
 
     private void populateUi() {
@@ -248,14 +257,7 @@ public class ScheduleDialog extends DialogFragmentBase {
             if (_startIsSet || _endIsSet) {
                 dismiss();
                 if (_listener != null) {
-                    switch (_mode) {
-                        case MODE_EXACT:
-                            _listener.onExact(ISO8601.fromCalendar(_startCal));
-                            break;
-                        case MODE_RANGE:
-                            _listener.onRange(ISO8601.fromCalendar(_startCal), ISO8601.fromCalendar(_endCal));
-                            break;
-                    }
+                    _listener.onComplete(makeSchedule());
                 }
             } else {
                 Toast.makeText(getActivity(), R.string.please_change_the_schedule_or_tap_cancel, Toast.LENGTH_LONG).show();
@@ -294,9 +296,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onExact(String startDateTime);
-
-        public void onRange(String startDateTime, String endDateTime);
+        public void onComplete(Schedule schedule);
 
         public void onCancel();
     }

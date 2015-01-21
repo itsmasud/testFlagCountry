@@ -102,8 +102,11 @@ public class CustomFieldDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void reset() {
+    }
+
+    @Override
+    public void init() {
         populateUi();
     }
 
@@ -113,7 +116,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     public void show(CustomField customField) {
         _customField = customField;
-
         show();
     }
 
