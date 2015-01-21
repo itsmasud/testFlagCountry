@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import com.fieldnation.ui.workorder.MyWorkActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -54,6 +56,10 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _paidLayout;
     private TextView _versionTextView;
     private Button _feedbackButton;
+    private Button _piButton;
+
+    private LinearLayout _sendLogLayout;
+    private Button _sendLogButton;
 
     // Data
     private PaymentService _dataService;
@@ -121,6 +127,14 @@ public class DrawerView extends RelativeLayout {
 
         _feedbackButton = (Button) findViewById(R.id.feedback_button);
         _feedbackButton.setOnClickListener(_feedback_onClick);
+
+        _sendLogLayout = (LinearLayout) findViewById(R.id.sendlog_layout);
+        _sendLogButton = (Button) findViewById(R.id.sendlog_button);
+        _sendLogButton.setOnClickListener(_sendlog_onClick);
+
+        _piButton = (Button) findViewById(R.id.pi_button);
+        _piButton.setOnClickListener(_pi_onClick);
+
     }
 
     @Override
@@ -132,6 +146,27 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private OnClickListener _pi_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _sendLogLayout.setVisibility(View.VISIBLE);
+        }
+    };
+
+    private OnClickListener _sendlog_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            File tempfile = misc.dumpLogcat(getContext());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"michael.carver@fieldnation.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
+            intent.putExtra(Intent.EXTRA_TEXT, "Logcat log, insert other stuff here.");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
+            getContext().startActivity(intent);
+        }
+    };
+
     private OnClickListener _feedback_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
