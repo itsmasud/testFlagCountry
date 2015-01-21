@@ -7,7 +7,7 @@
     <string name="default_username">hexixtech</string>
 
     <!-- general strings -->
-    <string name="placeholder_word">NA</string>
+    <string name="placeholder_word">Word</string>
     <string name="placeholder_phrase">Should not see this.</string>
     <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>

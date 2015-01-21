@@ -2,27 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/MessageView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/message_layout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/profile_imageview"
-            style="@style/MessageView_ProfileImage"
-            android:layout_alignParentLeft="true" />
+            style="@style/MessageView_ProfileImageRcvd" />
 
         <TextView
             android:id="@+id/message_textview"
             style="@style/MessageView_MessageRcvd"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/profile_imageview"
-            android:text="Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. Some random crap that should be word wrapped. " />
+            android:text="@string/placeholder_paragraph" />
     </RelativeLayout>
 
     <TextView
@@ -36,20 +31,15 @@
 
     <LinearLayout
         style="@style/MessageView_StatusBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/message_layout"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView style="@style/MessageView_Status_Clock" />
 
         <TextView
             android:id="@+id/time_textview"
             style="@style/MessageView_Status_Time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Today 8:30 AM" />
+            android:text="@string/placeholder_date_short" />
 
         <ImageView
             android:id="@+id/check_imageview"
