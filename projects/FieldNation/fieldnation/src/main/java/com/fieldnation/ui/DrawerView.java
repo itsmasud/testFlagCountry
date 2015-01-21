@@ -56,6 +56,7 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _paidLayout;
     private TextView _versionTextView;
     private Button _feedbackButton;
+    private Button _piButton;
 
     private LinearLayout _sendLogLayout;
     private Button _sendLogButton;
@@ -130,6 +131,10 @@ public class DrawerView extends RelativeLayout {
         _sendLogLayout = (LinearLayout) findViewById(R.id.sendlog_layout);
         _sendLogButton = (Button) findViewById(R.id.sendlog_button);
         _sendLogButton.setOnClickListener(_sendlog_onClick);
+
+        _piButton = (Button) findViewById(R.id.pi_button);
+        _piButton.setOnClickListener(_pi_onClick);
+
     }
 
     @Override
@@ -141,6 +146,13 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private OnClickListener _pi_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _sendLogLayout.setVisibility(View.VISIBLE);
+        }
+    };
+
     private OnClickListener _sendlog_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
