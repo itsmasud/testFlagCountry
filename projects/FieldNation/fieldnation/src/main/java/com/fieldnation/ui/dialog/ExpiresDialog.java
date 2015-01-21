@@ -90,11 +90,6 @@ public class ExpiresDialog extends DialogFragmentBase {
         return v;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     public void setListener(Listener listener) {
         _listener = listener;
     }

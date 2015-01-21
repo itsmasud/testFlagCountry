@@ -79,11 +79,15 @@ public class ReasonCoView extends RelativeLayout {
         return _requestReasonEditText.getText().toString();
     }
 
+    public String getExpiration() {
+        return ISO8601.fromCalendar(_expirationDate);
+    }
+
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
-    public void setCounterOffer(String reason, boolean expires, String expirationDate, boolean reset) {
+    public void setCounterOffer(String reason, boolean expires, String expirationDate) {
         _reset = true;
         _reason = reason;
         _expires = expires;

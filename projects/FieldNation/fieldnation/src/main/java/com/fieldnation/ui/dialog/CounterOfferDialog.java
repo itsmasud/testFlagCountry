@@ -46,7 +46,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private static final String STATE_EXPIRES = "STATE_EXPIRES";
     private static final String STATE_EXPIRATION_DATE = "STATE_EXPIRATION_DATE";
     private static final String STATE_TAC = "STATE_TAC";
-    private static final String STATE_TAB_POS = "STATE_TAB_POS";
 
     // Ui
     private TabHost _tabHost;
@@ -79,8 +78,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private boolean _tacAccpet;
     private Listener _listener;
     private Calendar _pickerCal;
-    private int _savedTabPos = -1;
-    private boolean _clear = false;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -120,9 +117,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_TAC))
                 _tacAccpet = savedInstanceState.getBoolean(STATE_TAC);
-
-            if (savedInstanceState.containsKey(STATE_TAB_POS))
-                _savedTabPos = savedInstanceState.getInt(STATE_TAB_POS);
         }
         super.onCreate(savedInstanceState);
     }
@@ -152,13 +146,10 @@ public class CounterOfferDialog extends DialogFragmentBase {
             outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
 
         if (_counterReason != null)
-            outState.putString(STATE_COUNTER_REASON, _counterReason);
+            outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
 
         if (_expirationDate != null)
-            outState.putString(STATE_EXPIRATION_DATE, _expirationDate);
-
-        if (_tabHost != null)
-            outState.putInt(STATE_TAB_POS, _tabHost.getCurrentTab());
+            outState.putString(STATE_EXPIRATION_DATE, _reasonView.getExpiration());
 
         super.onSaveInstanceState(outState);
     }
@@ -258,12 +249,10 @@ public class CounterOfferDialog extends DialogFragmentBase {
         } else {
             window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
         }
+    }
 
-        if (_savedTabPos != -1) {
-            _tabHost.setCurrentTab(_savedTabPos);
-            _savedTabPos = -1;
-        }
-
+    @Override
+    public void init() {
         populateUi();
     }
 
@@ -290,19 +279,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
         _expenseView.setData(_workorder, _expenses);
 
-        _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate, _clear);
-
-        if (_clear) {
-            _tabScrollView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //hsv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-                    _tabScrollView.scrollTo(0, 0);
-                    _tabHost.setCurrentTab(0);
-                }
-            }, 100);
-            _clear = false;
-        }
+        _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate);
     }
 
     public void setListener(Listener listener) {
@@ -320,7 +297,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _counterReason = null;
         _expires = false;
         _expirationDate = null;
-        _clear = true;
 
         if (info != null) {
             if (info.getPay() != null) {
@@ -426,14 +402,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     private ScheduleDialog.Listener _scheduleDialog_listener = new ScheduleDialog.Listener() {
         @Override
-        public void onExact(String startDateTime) {
-            _counterSchedule = new Schedule(startDateTime);
-            populateUi();
-        }
-
-        @Override
-        public void onRange(String startDateTime, String endDateTime) {
-            _counterSchedule = new Schedule(startDateTime, endDateTime);
+        public void onComplete(Schedule schedule) {
+            _counterSchedule = schedule;
             populateUi();
         }
 
@@ -457,26 +427,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     private PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
         @Override
-        public void onPerDevices(double rate, double max) {
-            _counterPay = new Pay(rate, (int) max);
-            populateUi();
-        }
-
-        @Override
-        public void onHourly(double rate, double max) {
-            _counterPay = new Pay(rate, max);
-            populateUi();
-        }
-
-        @Override
-        public void onFixed(double amount) {
-            _counterPay = new Pay(amount);
-            populateUi();
-        }
-
-        @Override
-        public void onBlended(double rate, double max, double rate2, double max2) {
-            _counterPay = new Pay(rate, max, rate2, max2);
+        public void onComplete(Pay pay) {
+            _counterPay = pay;
             populateUi();
         }
 
