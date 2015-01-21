@@ -93,7 +93,8 @@ public class GPSLocationService {
 
     public void stopLocationUpdates() {
         Log.v(TAG, "stopLocationUpdates");
-        _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
+        if (_googleApiClient.isConnected())
+            _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
     }
 
     public boolean isGooglePlayServicesAvailable() {
