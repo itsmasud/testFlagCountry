@@ -117,6 +117,7 @@
 
     <style name="WorkorderCard_Title">
         <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:ellipsize">end</item>
     </style>
@@ -137,6 +138,7 @@
 
     <style name="WorkorderCard_PaymentLabel">
         <item name="android:ellipsize">none</item>
+        <item name="android:singleLine">true</item>
         <item name="android:maxLines">1</item>
         <item name="android:textSize">24sp</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
