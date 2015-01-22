@@ -14,6 +14,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1128,15 +1132,43 @@ public class WorkFragment extends WorkorderFragment {
         public void onPhone(Task task) {
             try {
                 if (task.getPhoneNumber() != null) {
+                    // Todo, need to figure out if there is a phone number here
+                    Spannable test = new SpannableString(task.getPhoneNumber());
+                    Linkify.addLinks(test, Linkify.PHONE_NUMBERS);
+                    if (test.getSpans(0, test.length(), URLSpan.class).length == 0) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage(R.string.dialog_no_number_message);
+                        builder.setTitle(R.string.dialog_no_number_title);
+                        builder.setPositiveButton(R.string.btn_ok, null);
+                        builder.show();
+
+                        if (!task.getCompleted()) {
+                            getActivity().startService(
+                                    _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+                        }
+                    } else {
+
+                        if (!task.getCompleted()) {
+                            getActivity().startService(
+                                    _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+                        }
+
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        String phNum = "tel:" + task.getPhoneNumber();
+                        callIntent.setData(Uri.parse(phNum));
+                        startActivity(callIntent);
+                    }
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage(R.string.dialog_no_number_message);
+                    builder.setTitle(R.string.dialog_no_number_title);
+                    builder.setPositiveButton(R.string.btn_ok, null);
+                    builder.show();
+
                     if (!task.getCompleted()) {
                         getActivity().startService(
                                 _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
                     }
-
-                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                    String phNum = "tel:" + task.getPhoneNumber();
-                    callIntent.setData(Uri.parse(phNum));
-                    startActivity(callIntent);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
