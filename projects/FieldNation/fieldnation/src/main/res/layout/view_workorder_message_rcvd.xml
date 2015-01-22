@@ -24,13 +24,13 @@
         android:id="@+id/username_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/message_layout"
-        android:layout_below="@+id/message_layout"
+        android:layout_alignLeft="@id/message_layout"
         android:layout_marginLeft="58dp"
+        android:layout_below="@id/message_layout"
         android:text="Name" />
 
     <LinearLayout
-        style="@style/MessageView_StatusBar"
+        style="@style/MessageView_StatusBarRcvd"
         android:layout_below="@+id/message_layout"
         android:orientation="horizontal">
 

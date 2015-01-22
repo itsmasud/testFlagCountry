@@ -22,7 +22,7 @@
     </RelativeLayout>
 
     <LinearLayout
-        style="@style/MessageView_StatusBar"
+        style="@style/MessageView_StatusBarSent"
         android:layout_below="@+id/message_layout"
         android:orientation="horizontal">
 

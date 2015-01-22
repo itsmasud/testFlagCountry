@@ -1130,6 +1130,10 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onPhone(Task task) {
+            if (!task.getCompleted()) {
+                getActivity().startService(
+                        _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+            }
             try {
                 if (task.getPhoneNumber() != null) {
                     // Todo, need to figure out if there is a phone number here
@@ -1142,17 +1146,7 @@ public class WorkFragment extends WorkorderFragment {
                         builder.setPositiveButton(R.string.btn_ok, null);
                         builder.show();
 
-                        if (!task.getCompleted()) {
-                            getActivity().startService(
-                                    _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-                        }
                     } else {
-
-                        if (!task.getCompleted()) {
-                            getActivity().startService(
-                                    _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-                        }
-
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
                         String phNum = "tel:" + task.getPhoneNumber();
                         callIntent.setData(Uri.parse(phNum));
@@ -1164,11 +1158,6 @@ public class WorkFragment extends WorkorderFragment {
                     builder.setTitle(R.string.dialog_no_number_title);
                     builder.setPositiveButton(R.string.btn_ok, null);
                     builder.show();
-
-                    if (!task.getCompleted()) {
-                        getActivity().startService(
-                                _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
