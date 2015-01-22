@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.URLSpan;
@@ -315,6 +317,23 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
+
+        if (getActivity().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
+        }
+    }
+
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
@@ -500,6 +519,7 @@ public class WorkFragment extends WorkorderFragment {
                 startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
             }
         });
+        builder.setNegativeButton(R.string.btn_no_thanks, null);
         builder.create().show();
     }
 
@@ -527,6 +547,7 @@ public class WorkFragment extends WorkorderFragment {
             if (gs.shouldShowReviewDialog()) {
                 showReviewDialog();
                 gs.setShownReviewDialog();
+                requestWorkorder(false);
             }
         }
     }

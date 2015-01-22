@@ -1,8 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -126,7 +124,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         } else {
             _notInterestedButton.setVisibility(View.GONE);
         }
-        
+
         setVisibility(View.VISIBLE);
     }
 
@@ -161,23 +159,10 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             setLoading(true);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage(
-                    "Are you sure you want to mark this work order as complete?")
-                    .setPositiveButton("Yes", _complete_dialog)
-                    .setNegativeButton("No", null).show();
-        }
-    };
-
-    private final DialogInterface.OnClickListener _complete_dialog = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
             if (_listener != null)
                 _listener.onComplete(_workorder);
         }
     };
-
 
     private final View.OnClickListener _counteroffer_onClick = new View.OnClickListener() {
         @Override

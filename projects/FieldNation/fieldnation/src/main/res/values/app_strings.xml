@@ -52,6 +52,7 @@
     <string name="btn_update_now">UPDATE NOW</string>
     <string name="btn_add_shipment">Add Shipment</string>
     <string name="btn_submit">SUBMIT</string>
+    <string name="btn_no_thanks">NO THANKS</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
