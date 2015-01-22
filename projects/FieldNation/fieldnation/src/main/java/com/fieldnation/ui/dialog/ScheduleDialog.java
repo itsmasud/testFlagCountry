@@ -126,7 +126,6 @@ public class ScheduleDialog extends DialogFragmentBase {
         _startCal = Calendar.getInstance();
         _endCal = Calendar.getInstance();
 
-        //getDialog().setTitle(R.string.counter_offer_schedule);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -260,7 +259,7 @@ public class ScheduleDialog extends DialogFragmentBase {
                     _listener.onComplete(makeSchedule());
                 }
             } else {
-                Toast.makeText(getActivity(), R.string.please_change_the_schedule_or_tap_cancel, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.toast_change_schedule_or_cancel, Toast.LENGTH_LONG).show();
             }
         }
     };

@@ -408,7 +408,7 @@ public class WorkorderCardView extends RelativeLayout {
 
         _backgroundView.setBackgroundResource(R.drawable.card_right_selected);
         _statusView.setBackgroundResource(R.drawable.card_status_black);
-        _statusTextView.setText(getResources().getString(R.string.workorder_selected));
+        _statusTextView.setText(getResources().getString(R.string.workorder_card_status_selected));
         _bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg_select);
     }
 

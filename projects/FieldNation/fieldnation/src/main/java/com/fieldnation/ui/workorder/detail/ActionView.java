@@ -134,7 +134,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     /*-			Events			-*/
     /*-*************************-*/
 
-    private View.OnClickListener _request_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setLoading(true);
@@ -148,7 +148,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         }
     };
 
-    private View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setLoading(true);
@@ -157,7 +157,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         }
     };
 
-    private View.OnClickListener _complete_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _complete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setLoading(true);
@@ -169,7 +169,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         }
     };
 
-    private DialogInterface.OnClickListener _complete_dialog = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener _complete_dialog = new DialogInterface.OnClickListener() {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -179,7 +179,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     };
 
 
-    private View.OnClickListener _counteroffer_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _counteroffer_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)

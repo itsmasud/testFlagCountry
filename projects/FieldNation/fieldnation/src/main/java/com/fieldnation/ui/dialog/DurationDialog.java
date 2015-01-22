@@ -149,7 +149,7 @@ public class DurationDialog extends DialogFragmentBase {
         _minTextView.setText(padded.substring(4, 6));
     }
 
-    private View.OnClickListener _number_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _number_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             String tag = (String) v.getTag();
@@ -160,7 +160,7 @@ public class DurationDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
@@ -173,7 +173,7 @@ public class DurationDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -182,7 +182,7 @@ public class DurationDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _delete_onClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {

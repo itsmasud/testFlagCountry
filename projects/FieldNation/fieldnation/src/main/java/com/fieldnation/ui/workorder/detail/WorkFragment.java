@@ -1168,7 +1168,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onShipment(Task task) {
             ShipmentTracking[] shipments = _workorder.getShipmentTracking();
             if (shipments == null) {
-                _shipmentAddDialog.show(getText(R.string.add_shipment), task.getTaskId());
+                _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task.getTaskId());
             } else {
                 _taskShipmentAddDialog.show("Assign/Add New", _workorder, task.getTaskId());
             }

@@ -187,7 +187,7 @@ public class GPSLocationService {
         alertDialog.show();
     }
 
-    private LocationListener _locationListener = new LocationListener() {
+    private final LocationListener _locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
             Log.v(TAG, "LocationListener.onLocationChanged()");
@@ -203,7 +203,7 @@ public class GPSLocationService {
         }
     };
 
-    private GoogleApiClient.ConnectionCallbacks _connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
+    private final GoogleApiClient.ConnectionCallbacks _connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
 
         @Override
         public void onConnected(Bundle bundle) {

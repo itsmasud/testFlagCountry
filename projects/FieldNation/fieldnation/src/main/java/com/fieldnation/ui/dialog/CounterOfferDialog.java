@@ -332,7 +332,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
+    private final ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
         @Override
         public void onTacClick() {
             _termsDialog.show();
@@ -349,7 +349,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
+    private final ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
             _expenseDialog.show(false);
@@ -375,7 +375,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
+    private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
             _expenses.add(new Expense(description, amount, category));
@@ -387,7 +387,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
+    private final ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
         @Override
         public void onClear() {
             _counterSchedule = null;
@@ -400,7 +400,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private ScheduleDialog.Listener _scheduleDialog_listener = new ScheduleDialog.Listener() {
+    private final ScheduleDialog.Listener _scheduleDialog_listener = new ScheduleDialog.Listener() {
         @Override
         public void onComplete(Schedule schedule) {
             _counterSchedule = schedule;
@@ -412,7 +412,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private PaymentCoView.Listener _payment_listener = new PaymentCoView.Listener() {
+    private final PaymentCoView.Listener _payment_listener = new PaymentCoView.Listener() {
         @Override
         public void onClearClick() {
             _counterPay = null;
@@ -425,7 +425,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
         @Override
         public void onComplete(Pay pay) {
             _counterPay = pay;
@@ -437,7 +437,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _pickerCal.set(year, month, day);
@@ -445,7 +445,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
@@ -459,7 +459,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
+    private final TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
         @Override
         public void onTabChanged(String tabId) {
             _backButton.setVisibility(View.VISIBLE);
@@ -473,7 +473,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // start?
@@ -510,7 +510,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _back_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _back_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _tabHost.setCurrentTab(_tabHost.getCurrentTab() - 1);

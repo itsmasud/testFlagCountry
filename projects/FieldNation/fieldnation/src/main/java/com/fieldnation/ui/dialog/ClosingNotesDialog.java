@@ -88,7 +88,6 @@ public class ClosingNotesDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        //getDialog().setTitle(R.string.closing_notes);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -127,7 +126,7 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private TextView.OnEditorActionListener _onEditor_listener = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener _onEditor_listener = new TextView.OnEditorActionListener() {
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -140,7 +139,7 @@ public class ClosingNotesDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -150,7 +149,7 @@ public class ClosingNotesDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();

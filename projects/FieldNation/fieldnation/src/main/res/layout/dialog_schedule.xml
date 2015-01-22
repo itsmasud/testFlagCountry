@@ -50,7 +50,7 @@
                     android:id="@+id/start_date_button"
                     style="?attr/dialogSpinnerButtonStyle"
                     android:layout_width="match_parent"
-                    android:hint="March 4, 2014 @ 1:00 pm" />
+                    android:hint="@string/placeholder_date_long" />
 
                 <TextView
                     style="?attr/dialogLabelStyle"
@@ -62,7 +62,7 @@
                     android:id="@+id/end_date_button"
                     style="?attr/dialogSpinnerButtonStyle"
                     android:layout_width="match_parent"
-                    android:hint="March 6, 2014 @ 1:00 pm" />
+                    android:hint="@string/placeholder_date_long" />
             </LinearLayout>
 
             <LinearLayout

@@ -146,14 +146,14 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private OnClickListener _pi_onClick = new OnClickListener() {
+    private final OnClickListener _pi_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             _sendLogLayout.setVisibility(View.VISIBLE);
         }
     };
 
-    private OnClickListener _sendlog_onClick = new OnClickListener() {
+    private final OnClickListener _sendlog_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             File tempfile = misc.dumpLogcat(getContext());
@@ -167,7 +167,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private OnClickListener _feedback_onClick = new OnClickListener() {
+    private final OnClickListener _feedback_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/forms/d/1ImIpsrdzWdVUytIjEcKfGpbNFHm0cZP0q_ZHI2FUb48/viewform?usp=send_form"));
@@ -175,7 +175,7 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
         }
     };
-    private View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MyWorkActivity.class);
@@ -184,7 +184,7 @@ public class DrawerView extends RelativeLayout {
             attachAnimations();
         }
     };
-    private View.OnClickListener _marketView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _marketView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MarketActivity.class);
@@ -193,7 +193,7 @@ public class DrawerView extends RelativeLayout {
             attachAnimations();
         }
     };
-    private View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), PaymentListActivity.class);
@@ -202,7 +202,7 @@ public class DrawerView extends RelativeLayout {
             attachAnimations();
         }
     };
-    private View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 //            Intent intent = new Intent(getContext(), SettingsActivity.class);
@@ -212,7 +212,7 @@ public class DrawerView extends RelativeLayout {
             AuthTopicService.requestAuthInvalid(getContext());
         }
     };
-    private View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             AuthTopicService.requestAuthRemove(getContext());
@@ -224,7 +224,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_dataService == null || isNew) {
@@ -344,7 +344,7 @@ public class DrawerView extends RelativeLayout {
         }
     }
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             new PaymentParseAsyncTask().executeEx(resultData);

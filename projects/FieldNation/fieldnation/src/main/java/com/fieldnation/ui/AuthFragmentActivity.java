@@ -82,7 +82,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
             AuthTopicService.requestAuthentication(AuthFragmentActivity.this);
@@ -105,7 +105,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     };
 
-    private TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {

@@ -191,14 +191,14 @@ public class CustomFieldDialog extends DialogFragmentBase {
         }
     }
 
-    private View.OnClickListener _dateTime_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _dateTime_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // TODO need to get date/time
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -213,7 +213,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();

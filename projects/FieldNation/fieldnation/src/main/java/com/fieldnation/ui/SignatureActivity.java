@@ -173,7 +173,7 @@ public class SignatureActivity extends FragmentActivity {
         public void onClick(DialogInterface dialog, int which) {
             _name = _textDialog.getInput();
             if (misc.isEmptyOrNull(_name.trim())) {
-                _nameTextView.setText(R.string.tap_to_set_name);
+                _nameTextView.setText(R.string.activity_signature_name);
             } else {
                 _nameTextView.setText(_name);
             }
@@ -186,7 +186,7 @@ public class SignatureActivity extends FragmentActivity {
         public void onClick(DialogInterface dialog, int which) {
             _name = _textDialog.getInput();
             if (misc.isEmptyOrNull(_name.trim())) {
-                _nameTextView.setText(R.string.tap_to_set_name);
+                _nameTextView.setText(R.string.activity_signature_name);
             } else {
                 _nameTextView.setText(_name);
             }

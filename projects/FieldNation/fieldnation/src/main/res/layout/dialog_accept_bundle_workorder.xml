@@ -64,7 +64,7 @@
                 <Button
                     android:id="@+id/cancel_button"
                     style="?attr/dialogCancelButtonStyle"
-                    android:text="CANCEL" />
+                    android:text="@string/btn_cancel" />
 
                 <Button
                     android:id="@+id/ok_button"
