@@ -206,9 +206,6 @@ public class WorkFragment extends WorkorderFragment {
         _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
-        _closingDialog.setListener(_closingNotes_onOk);
-
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog.setListener(_deviceCountListener);
 
@@ -314,6 +311,39 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         populateUi(true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_authToken != null) {
+            outState.putString(STATE_AUTHTOKEN, _authToken);
+        }
+        if (_username != null) {
+            outState.putString(STATE_USERNAME, _username);
+        }
+        if (_workorder != null) {
+            outState.putParcelable(STATE_WORKORDER, _workorder);
+        }
+        if (_tasks != null && _tasks.size() > 0) {
+            Task[] tasks = new Task[_tasks.size()];
+            for (int i = 0; i < _tasks.size(); i++) {
+                tasks[i] = _tasks.get(i);
+            }
+            outState.putParcelableArray(STATE_TASKS, tasks);
+        }
+        if (_signatures != null && _signatures.size() > 0) {
+            Signature[] sigs = new Signature[_signatures.size()];
+            for (int i = 0; i < _signatures.size(); i++) {
+                sigs[i] = _signatures.get(i);
+            }
+            outState.putParcelableArray(STATE_SIGNATURES, sigs);
+        }
+
+        if (_currentTask != null) {
+            outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
+        }
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -755,7 +785,6 @@ public class WorkFragment extends WorkorderFragment {
                     intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
                     intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
                     startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
-                    setLoading(true);
                     return null;
                 }
             }.executeEx(getActivity(), _workorder);
@@ -1342,7 +1371,12 @@ public class WorkFragment extends WorkorderFragment {
             _authToken = null;
             _service = null;
             AuthTopicService.requestAuthInvalid(getActivity());
-            Toast.makeText(getActivity(), new String(resultData.getByteArray(KEY_RESPONSE_DATA)), Toast.LENGTH_LONG).show();
+            try {
+                Toast.makeText(getActivity(), new String(resultData.getByteArray(KEY_RESPONSE_DATA)), Toast.LENGTH_LONG).show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Toast.makeText(getActivity(), R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
+            }
         }
     };
 

@@ -50,31 +50,31 @@ public class DataCacheNode {
     public static DataCacheNode get(Context context, String key) {
         DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
         SQLiteDatabase db = helper.getReadableDatabase();
-
+        DataCacheNode node = null;
         try {
             Cursor cursor = db.query(DataCacheSqlHelper.TABLE_NAME, DataCacheSqlHelper.getColumnNames(),
                     DataCacheSqlHelper.Column.KEY + "=?", new String[]{key}, null, null, null);
             try {
                 if (cursor.moveToFirst()) {
                     // hit
-                    DataCacheNode node = new DataCacheNode(context, cursor);
-
-                    // expired
-                    if (node.getExpiresOn() < System.currentTimeMillis()) {
-                        delete(context, node.getId());
-                        return null;
-                    }
-                    // ok
-                    return node;
+                    node = new DataCacheNode(context, cursor);
                 }
-                // miss
-                return null;
             } finally {
                 cursor.close();
             }
         } finally {
             helper.close();
         }
+        if (node == null)
+            return null;
+
+        // expired
+        if (node.getExpiresOn() < System.currentTimeMillis()) {
+            delete(context, node.getId());
+            return null;
+        }
+
+        return node;
     }
 
     public static void put(Context context, String key, byte[] responseData, int responseCode) {
