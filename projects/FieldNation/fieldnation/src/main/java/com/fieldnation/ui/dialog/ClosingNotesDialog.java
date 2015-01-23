@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,9 @@ import com.fieldnation.utils.misc;
 public class ClosingNotesDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.ClosingNotesDialog";
 
+    // State
+    private static final String STATE_NOTES = "ui.dialog.ClosingNotesDialog.ClosingNotesDialog";
+
     // UI
     private EditText _editText;
     private Button _okButton;
@@ -33,18 +37,48 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     /*-			Life Cycle			-*/
     /*-*****************************-*/
     public static ClosingNotesDialog getInstance(FragmentManager fm, String tag) {
+        Log.v(TAG, "getInstance");
         return getInstance(fm, tag, ClosingNotesDialog.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_NOTES))
+                _notes = savedInstanceState.getString(STATE_NOTES);
+        }
+
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
     @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onViewStateRestored");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_NOTES))
+                _notes = savedInstanceState.getString(STATE_NOTES);
+        }
+
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
+        if (_editText != null && !misc.isEmptyOrNull(_editText.getText().toString())) {
+            _notes = _editText.getText().toString();
+            outState.putString(STATE_NOTES, _notes);
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_closing_notes, container, false);
 
         _editText = (EditText) v.findViewById(R.id.notes_edittext);
@@ -54,7 +88,6 @@ public class ClosingNotesDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        //getDialog().setTitle(R.string.closing_notes);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -62,6 +95,7 @@ public class ClosingNotesDialog extends DialogFragmentBase {
 
     @Override
     public void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
 
         if (!misc.isEmptyOrNull(_notes))
@@ -76,14 +110,23 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     }
 
     public void show(String notes) {
+        Log.v(TAG, "show");
         _notes = notes;
         super.show();
+    }
+
+    @Override
+    public void reset() {
+        Log.v(TAG, "reset");
+        super.reset();
+
+        _notes = "";
     }
 
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private TextView.OnEditorActionListener _onEditor_listener = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener _onEditor_listener = new TextView.OnEditorActionListener() {
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -96,7 +139,7 @@ public class ClosingNotesDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -106,7 +149,7 @@ public class ClosingNotesDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();

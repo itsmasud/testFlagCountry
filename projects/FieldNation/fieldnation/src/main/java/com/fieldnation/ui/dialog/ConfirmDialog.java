@@ -195,8 +195,7 @@ public class ConfirmDialog extends DialogFragmentBase {
         setDuration(3600000);
         if (_schedule.isExact()) {
             try {
-                Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
-                _startCalendar = cal;
+                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
                 _startDateButton.setVisibility(View.GONE);
                 setDuration(3600000);
             } catch (Exception ex) {
@@ -220,7 +219,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     /*-*****************************-*/
     /*-				Events			-*/
     /*-*****************************-*/
-    private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _startCalendar.set(year, month, day);
@@ -228,7 +227,7 @@ public class ConfirmDialog extends DialogFragmentBase {
         }
     };
 
-    private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
@@ -252,14 +251,14 @@ public class ConfirmDialog extends DialogFragmentBase {
             }
         }
     };
-    private CompoundButton.OnCheckedChangeListener _tacCheck_change = new CompoundButton.OnCheckedChangeListener() {
+    private final CompoundButton.OnCheckedChangeListener _tacCheck_change = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             _tacAccept = isChecked;
         }
     };
 
-    private View.OnClickListener _terms_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _terms_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -267,7 +266,7 @@ public class ConfirmDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _startDate_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _startDate_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {
@@ -289,14 +288,14 @@ public class ConfirmDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -310,14 +309,14 @@ public class ConfirmDialog extends DialogFragmentBase {
             dismiss();
         }
     };
-    private View.OnClickListener _duration_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _duration_onClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
             _durationDialog.show(_durationMilliseconds);
         }
     };
-    private DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {
+    private final DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {
 
         @Override
         public void onOk(long timeMilliseconds) {

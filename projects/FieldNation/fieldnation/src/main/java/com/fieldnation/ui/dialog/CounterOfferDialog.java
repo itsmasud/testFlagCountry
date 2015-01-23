@@ -46,7 +46,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private static final String STATE_EXPIRES = "STATE_EXPIRES";
     private static final String STATE_EXPIRATION_DATE = "STATE_EXPIRATION_DATE";
     private static final String STATE_TAC = "STATE_TAC";
-    private static final String STATE_TAB_POS = "STATE_TAB_POS";
 
     // Ui
     private TabHost _tabHost;
@@ -79,8 +78,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private boolean _tacAccpet;
     private Listener _listener;
     private Calendar _pickerCal;
-    private int _savedTabPos = -1;
-    private boolean _clear = false;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -120,9 +117,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_TAC))
                 _tacAccpet = savedInstanceState.getBoolean(STATE_TAC);
-
-            if (savedInstanceState.containsKey(STATE_TAB_POS))
-                _savedTabPos = savedInstanceState.getInt(STATE_TAB_POS);
         }
         super.onCreate(savedInstanceState);
     }
@@ -152,13 +146,10 @@ public class CounterOfferDialog extends DialogFragmentBase {
             outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
 
         if (_counterReason != null)
-            outState.putString(STATE_COUNTER_REASON, _counterReason);
+            outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
 
         if (_expirationDate != null)
-            outState.putString(STATE_EXPIRATION_DATE, _expirationDate);
-
-        if (_tabHost != null)
-            outState.putInt(STATE_TAB_POS, _tabHost.getCurrentTab());
+            outState.putString(STATE_EXPIRATION_DATE, _reasonView.getExpiration());
 
         super.onSaveInstanceState(outState);
     }
@@ -258,12 +249,10 @@ public class CounterOfferDialog extends DialogFragmentBase {
         } else {
             window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
         }
+    }
 
-        if (_savedTabPos != -1) {
-            _tabHost.setCurrentTab(_savedTabPos);
-            _savedTabPos = -1;
-        }
-
+    @Override
+    public void init() {
         populateUi();
     }
 
@@ -290,19 +279,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
         _expenseView.setData(_workorder, _expenses);
 
-        _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate, _clear);
-
-        if (_clear) {
-            _tabScrollView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //hsv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-                    _tabScrollView.scrollTo(0, 0);
-                    _tabHost.setCurrentTab(0);
-                }
-            }, 100);
-            _clear = false;
-        }
+        _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate);
     }
 
     public void setListener(Listener listener) {
@@ -320,7 +297,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _counterReason = null;
         _expires = false;
         _expirationDate = null;
-        _clear = true;
 
         if (info != null) {
             if (info.getPay() != null) {
@@ -356,7 +332,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
+    private final ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
         @Override
         public void onTacClick() {
             _termsDialog.show();
@@ -373,7 +349,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
+    private final ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
             _expenseDialog.show(false);
@@ -399,7 +375,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
+    private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
             _expenses.add(new Expense(description, amount, category));
@@ -411,7 +387,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
+    private final ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
         @Override
         public void onClear() {
             _counterSchedule = null;
@@ -424,16 +400,10 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private ScheduleDialog.Listener _scheduleDialog_listener = new ScheduleDialog.Listener() {
+    private final ScheduleDialog.Listener _scheduleDialog_listener = new ScheduleDialog.Listener() {
         @Override
-        public void onExact(String startDateTime) {
-            _counterSchedule = new Schedule(startDateTime);
-            populateUi();
-        }
-
-        @Override
-        public void onRange(String startDateTime, String endDateTime) {
-            _counterSchedule = new Schedule(startDateTime, endDateTime);
+        public void onComplete(Schedule schedule) {
+            _counterSchedule = schedule;
             populateUi();
         }
 
@@ -442,7 +412,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private PaymentCoView.Listener _payment_listener = new PaymentCoView.Listener() {
+    private final PaymentCoView.Listener _payment_listener = new PaymentCoView.Listener() {
         @Override
         public void onClearClick() {
             _counterPay = null;
@@ -455,28 +425,10 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
         @Override
-        public void onPerDevices(double rate, double max) {
-            _counterPay = new Pay(rate, (int) max);
-            populateUi();
-        }
-
-        @Override
-        public void onHourly(double rate, double max) {
-            _counterPay = new Pay(rate, max);
-            populateUi();
-        }
-
-        @Override
-        public void onFixed(double amount) {
-            _counterPay = new Pay(amount);
-            populateUi();
-        }
-
-        @Override
-        public void onBlended(double rate, double max, double rate2, double max2) {
-            _counterPay = new Pay(rate, max, rate2, max2);
+        public void onComplete(Pay pay) {
+            _counterPay = pay;
             populateUi();
         }
 
@@ -485,7 +437,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _pickerCal.set(year, month, day);
@@ -493,7 +445,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
@@ -507,7 +459,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
+    private final TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
         @Override
         public void onTabChanged(String tabId) {
             _backButton.setVisibility(View.VISIBLE);
@@ -521,7 +473,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // start?
@@ -558,7 +510,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _back_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _back_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _tabHost.setCurrentTab(_tabHost.getCurrentTab() - 1);

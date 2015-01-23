@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import com.fieldnation.ui.workorder.MyWorkActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -54,6 +56,10 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _paidLayout;
     private TextView _versionTextView;
     private Button _feedbackButton;
+    private Button _piButton;
+
+    private LinearLayout _sendLogLayout;
+    private Button _sendLogButton;
 
     // Data
     private PaymentService _dataService;
@@ -121,6 +127,14 @@ public class DrawerView extends RelativeLayout {
 
         _feedbackButton = (Button) findViewById(R.id.feedback_button);
         _feedbackButton.setOnClickListener(_feedback_onClick);
+
+        _sendLogLayout = (LinearLayout) findViewById(R.id.sendlog_layout);
+        _sendLogButton = (Button) findViewById(R.id.sendlog_button);
+        _sendLogButton.setOnClickListener(_sendlog_onClick);
+
+        _piButton = (Button) findViewById(R.id.pi_button);
+        _piButton.setOnClickListener(_pi_onClick);
+
     }
 
     @Override
@@ -132,7 +146,28 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private OnClickListener _feedback_onClick = new OnClickListener() {
+    private final OnClickListener _pi_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _sendLogLayout.setVisibility(View.VISIBLE);
+        }
+    };
+
+    private final OnClickListener _sendlog_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            File tempfile = misc.dumpLogcat(getContext());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"michael.carver@fieldnation.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
+            intent.putExtra(Intent.EXTRA_TEXT, "Logcat log, insert other stuff here.");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
+            getContext().startActivity(intent);
+        }
+    };
+
+    private final OnClickListener _feedback_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/forms/d/1ImIpsrdzWdVUytIjEcKfGpbNFHm0cZP0q_ZHI2FUb48/viewform?usp=send_form"));
@@ -140,7 +175,7 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
         }
     };
-    private View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MyWorkActivity.class);
@@ -149,7 +184,7 @@ public class DrawerView extends RelativeLayout {
             attachAnimations();
         }
     };
-    private View.OnClickListener _marketView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _marketView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MarketActivity.class);
@@ -158,7 +193,7 @@ public class DrawerView extends RelativeLayout {
             attachAnimations();
         }
     };
-    private View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), PaymentListActivity.class);
@@ -167,7 +202,7 @@ public class DrawerView extends RelativeLayout {
             attachAnimations();
         }
     };
-    private View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 //            Intent intent = new Intent(getContext(), SettingsActivity.class);
@@ -177,7 +212,7 @@ public class DrawerView extends RelativeLayout {
             AuthTopicService.requestAuthInvalid(getContext());
         }
     };
-    private View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             AuthTopicService.requestAuthRemove(getContext());
@@ -189,7 +224,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_dataService == null || isNew) {
@@ -309,7 +344,7 @@ public class DrawerView extends RelativeLayout {
         }
     }
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             new PaymentParseAsyncTask().executeEx(resultData);

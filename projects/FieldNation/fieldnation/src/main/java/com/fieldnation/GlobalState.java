@@ -82,7 +82,7 @@ public class GlobalState extends Application {
         GaTopic.subscribeTiming(this, TAG, _gaevent_receiver);
     }
 
-    private TopicReceiver _gaevent_receiver = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _gaevent_receiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (GaTopic.EVENT.equals(topicId)) {
@@ -179,14 +179,14 @@ public class GlobalState extends Application {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putBoolean(PREF_SHOWN_REVIEW_DIALOG, true);
-        edit.commit();
+        edit.apply();
     }
 
     public void setCompletedWorkorder() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putBoolean(PREF_COMPLETED_WORKORDER, true);
-        edit.commit();
+        edit.apply();
     }
 
 

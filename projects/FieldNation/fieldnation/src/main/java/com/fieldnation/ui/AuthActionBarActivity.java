@@ -96,7 +96,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             AuthActionBarActivity.this.onAuthentication(username, authToken, isNew);
@@ -120,7 +120,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     };
 
-    private TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {

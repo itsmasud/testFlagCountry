@@ -91,7 +91,7 @@ public class DeclineDialog extends DialogFragmentBase {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -104,7 +104,7 @@ public class DeclineDialog extends DialogFragmentBase {
             }
         }
     };
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -113,7 +113,7 @@ public class DeclineDialog extends DialogFragmentBase {
             }
         }
     };
-    private CompoundButton.OnCheckedChangeListener _blockCheckBox_onChecked = new CompoundButton.OnCheckedChangeListener() {
+    private final CompoundButton.OnCheckedChangeListener _blockCheckBox_onChecked = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked)

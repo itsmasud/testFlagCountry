@@ -90,7 +90,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private View.OnClickListener _notes_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _notes_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null && _workorder.canChangeClosingNotes()) {

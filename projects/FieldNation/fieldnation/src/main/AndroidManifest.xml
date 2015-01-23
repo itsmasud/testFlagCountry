@@ -138,7 +138,7 @@
         <activity
             android:name=".ui.workorder.WorkorderBundleDetailActivity"
             android:exported="false"
-            android:label="@string/activity_bundle_detail" />
+            android:label="@string/activity_bundle_detail_title" />
         <activity
             android:name=".ui.SettingsActivity"
             android:exported="false"
@@ -146,11 +146,11 @@
         <activity
             android:name=".ui.SignOffActivity"
             android:exported="false"
-            android:label="Sign Off" />
+            android:label="@string/activity_sign_off_title" />
         <activity
             android:name=".ui.SignatureDisplayActivity"
             android:exported="false"
-            android:label="Signature Info" />
+            android:label="@string/activity_signature_info_title" />
 
         <service
             android:name=".auth.client.AuthTopicService"

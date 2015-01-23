@@ -646,8 +646,6 @@ public class WorkorderListFragment extends Fragment {
         }
     }
 
-    ;
-
     private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {

@@ -46,7 +46,7 @@ public class MarketActivity extends DrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
-        setTitle(R.string.market_title);
+        setTitle(R.string.activity_market_title);
 
         if (!_created) {
             addActionBarAndDrawer(R.id.container);
@@ -85,8 +85,8 @@ public class MarketActivity extends DrawerActivity {
         ActionBar actionbar = getSupportActionBar();
         actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        ActionBar.Tab tab1 = actionbar.newTab().setText(R.string.market_available);
-        ActionBar.Tab tab2 = actionbar.newTab().setText(R.string.market_requested);
+        ActionBar.Tab tab1 = actionbar.newTab().setText(R.string.activity_market_tab1);
+        ActionBar.Tab tab2 = actionbar.newTab().setText(R.string.activity_market_tab2);
 
         tab1.setTabListener(_tabListener);
         tab2.setTabListener(_tabListener);
@@ -165,8 +165,6 @@ public class MarketActivity extends DrawerActivity {
             } catch (Exception ex) {
             }
         }
-
-        ;
     };
 
     // sync pageviewer based on tab selection

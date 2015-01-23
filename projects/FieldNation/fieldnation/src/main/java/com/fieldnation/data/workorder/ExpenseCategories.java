@@ -65,7 +65,7 @@ public class ExpenseCategories {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_ws == null || isNew) {
@@ -90,7 +90,7 @@ public class ExpenseCategories {
         }
     };
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
 
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {

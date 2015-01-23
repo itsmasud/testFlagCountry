@@ -91,6 +91,12 @@ public class GPSLocationService {
         }
     }
 
+    public void stopLocationUpdates() {
+        Log.v(TAG, "stopLocationUpdates");
+        if (_googleApiClient.isConnected())
+            _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
+    }
+
     public boolean isGooglePlayServicesAvailable() {
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(_locationActivity);
         if (ConnectionResult.SUCCESS == status) {
@@ -181,9 +187,10 @@ public class GPSLocationService {
         alertDialog.show();
     }
 
-    private LocationListener _locationListener = new LocationListener() {
+    private final LocationListener _locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
+            Log.v(TAG, "LocationListener.onLocationChanged()");
             //the current location accuracy is greater than existing accuracy
             //then store the current location
             if (_location == null || _location.getAccuracy() < location.getAccuracy()) {
@@ -196,20 +203,24 @@ public class GPSLocationService {
         }
     };
 
-    private GoogleApiClient.ConnectionCallbacks _connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
+    private final GoogleApiClient.ConnectionCallbacks _connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
 
         @Override
         public void onConnected(Bundle bundle) {
+            Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected");
             Location currentLocation = _fusedLocationProviderApi.getLastLocation(_googleApiClient);
             // Todo this doesn't work: currentLocation.getTime() > REFRESH_TIME
             if (currentLocation != null && currentLocation.getTime() > REFRESH_TIME) {
+                Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected Done");
                 _location = currentLocation;
+                _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
             } else {
                 _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
                 // Schedule a Thread to unregister location listeners
                 Executors.newScheduledThreadPool(1).schedule(new Runnable() {
                     @Override
                     public void run() {
+                        Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected.removeLocationUpdates");
                         _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
                     }
                 }, ONE_MIN, TimeUnit.MILLISECONDS);
@@ -230,7 +241,6 @@ public class GPSLocationService {
         public void onConnectionFailed(ConnectionResult connectionResult) {
             // TODO STUB .onConnectionFailed()
             Log.v(TAG, "STUB .onConnectionFailed()");
-
         }
     };
 

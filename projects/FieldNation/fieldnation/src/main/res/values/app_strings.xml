@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="accounttype">com.fieldnation</string>
-    <string name="authority">com.fieldnation.service</string>
-    <!-- /connection info -->
-    <string name="default_username">hexixtech</string>
-
     <!-- general strings -->
-    <string name="placeholder_word">NA</string>
+    <string name="placeholder_word">Word</string>
     <string name="placeholder_phrase">Should not see this.</string>
     <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
@@ -17,8 +12,24 @@
     <string name="activity_login_username">Username</string>
     <string name="activity_login_password">Password</string>
 
+    <string name="activity_message_list_title">Messages</string>
+
+    <string name="activity_payments_list_title">Payments</string>
+
+    <string name="activity_notifications_list_title">Notifications</string>
+
+    <string name="activity_bundle_detail_title">Bundle Details</string>
+
     <string name="activity_settings_title">Settings</string>
-    <string name="auth_account_name">Field Nation</string>
+
+    <string name="activity_market_title">Marketplace</string>
+    <string name="activity_market_tab1">Requested</string>
+    <string name="activity_market_tab2">Available</string>
+
+    <string name="activity_sign_off_title">Sign Off</string>
+
+    <string name="activity_signature_info_title">Signature Info</string>
+    <string name="activity_signature_name">Tap to set signer\'s name</string>
 
     <string name="btn_ok">OK</string>
     <string name="btn_add">ADD</string>
@@ -39,9 +50,14 @@
     <string name="btn_sign_off">SIGN OFF</string>
     <string name="btn_login">LOGIN</string>
     <string name="btn_update_now">UPDATE NOW</string>
+    <string name="btn_add_shipment">Add Shipment</string>
+    <string name="btn_submit">SUBMIT</string>
+    <string name="btn_no_thanks">NO THANKS</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
+    <string name="toast_downloading">Downloading</string>
+    <string name="toast_change_schedule_or_cancel">Please change the schedule or tap Cancel</string>
 
     <string name="notification_title_start_upload">Starting Upload...</string>
     <string name="notification_context_getting_file">Getting file</string>
@@ -52,6 +68,9 @@
 
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>
+
+    <string name="dialog_no_number_title">No number found</string>
+    <string name="dialog_no_number_message">There is no number associated with this task. Please check the work order details for a phone number.\r\n\r\nThis task will now be marked as complete.</string>
 
     <string name="dialog_decline_title">Not interetsed</string>
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
@@ -68,16 +87,16 @@
     <string name="dialog_update_title">Please Update</string>
     <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
 
-    <string name="downloading">Downloading</string>
+    <string name="dialog_shipment_title">Add Shipment</string>
+
+    <string name="workorder_card_status_selected">Selected</string>
     <string name="time_logged">Time Logged</string>
-    <string name="confirm">Confirm</string>
     <string name="request_workorder">Request Work Order</string>
     <string name="when_does_this_request_expire">When does this request expire?</string>
     <string name="closing_notes">Closing Notes</string>
     <string name="estimated">Estimated</string>
     <string name="work_orders">Work Orders</string>
     <string name="processing">Processing</string>
-    <string name="network_not_ready">Cannot yet make request, please wait.</string>
     <string name="tap_to_undo">Tap to Undo</string>
     <string name="success">Success!</string>
     <string name="try_again">Action failed, please try again</string>
@@ -117,7 +136,6 @@
     <string name="continue_the_conversation">Continue the conversation...</string>
     <string name="start_the_conversation">Start the conversation...</string>
     <string name="pending">...pending</string>
-    <string name="add_shipment">Add Shipment</string>
     <string name="shipment">Shipment</string>
     <string name="schedule">Schedule</string>
     <string name="work_performed_colon">Work Performed: </string>
@@ -150,7 +168,6 @@
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="departure_date_and_time_colon">Departure Date and Time:</string>
     <string name="tap_to_set_a_time">Tap to set a time</string>
-    <string name="tap_to_set_name">Tap to set signer\'s name</string>
     <string name="request_payment_change">Request Payment Change</string>
     <string name="request_schedule_change">Request Schedule Change</string>
     <string name="edit_payment_counter">Edit Payment Counter</string>
@@ -180,7 +197,6 @@
     <string name="device_count">Device Count</string>
     <string name="tip_colon_space">Tip: </string>
     <string name="counter_offer_schedule">Counter Offer Schedule</string>
-    <string name="please_change_the_schedule_or_tap_cancel">Please change the schedule or tap Cancel</string>
     <string name="expenses">Expenses</string>
     <string name="devices">Devices</string>
 
@@ -194,16 +210,6 @@
     <!-- main activity strings -->
     <string name="launcher_open">I am Open</string>
     <string name="work_order_detail_title">Work Order</string>
-
-    <!-- message list activity -->
-    <string name="activity_message_list_title">Messages</string>
-
-    <!-- payments list activity -->
-    <string name="activity_payments_list_title">Payments</string>
-
-    <!-- notifications list activity -->
-    <string name="activity_notifications_list_title">Notifications</string>
-    <string name="activity_bundle_detail">Bundle Details</string>
 
     <!-- Drawer strings -->
     <string name="mywork_title">My Work Orders</string>
@@ -229,11 +235,7 @@
     <string name="in_review">In Review</string>
     <string name="approved">Approved</string>
     <string name="paid">Paid</string>
-
-
-    <!-- market categories -->
-    <string name="market_requested">Requested</string>
-    <string name="market_available">Available</string>
+    <string name="confirm">Confirm</string>
 
     <!-- Account Preferences -->
     <string name="pref_sync">Sync Frequency</string>
@@ -292,7 +294,7 @@
         <item>Approved</item>
     </string-array>
 
-    <string name="workorder_selected">Selected</string>
+
     <!-- workorder substatus list -->
     <string-array name="workorder_substatus">
         <item>Available</item>
