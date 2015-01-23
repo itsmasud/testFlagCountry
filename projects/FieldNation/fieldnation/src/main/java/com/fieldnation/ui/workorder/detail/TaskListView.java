@@ -122,19 +122,6 @@ public class TaskListView extends RelativeLayout {
             };
             post(r);
         } else {
-
-            if(_preVisistList.getChildCount() > 0){
-                _preVisistTextView.setVisibility(View.VISIBLE);
-            }
-
-            if(_preVisistList.getChildCount() > 0){
-                _onSiteLayout.setVisibility(View.VISIBLE);
-            }
-
-            if(_preVisistList.getChildCount() > 0){
-                _postVisitLayout.setVisibility(View.VISIBLE);
-            }
-
             ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
                 private int pre = 0;
                 private int ons = 0;
@@ -151,6 +138,7 @@ public class TaskListView extends RelativeLayout {
                         } else {
                             row = new TaskRowView(getContext());
                             _preVisistList.addView(row);
+                            _preVisistTextView.setVisibility(View.VISIBLE);
                         }
                         pre++;
                     } else if ("onsite".equals(task.getStage())) {
@@ -159,6 +147,7 @@ public class TaskListView extends RelativeLayout {
                         } else {
                             row = new TaskRowView(getContext());
                             _onSiteList.addView(row);
+                            _onSiteLayout.setVisibility(View.VISIBLE);
                         }
                         ons++;
                     } else if ("post".equals(task.getStage())) {
@@ -167,6 +156,7 @@ public class TaskListView extends RelativeLayout {
                         } else {
                             row = new TaskRowView(getContext());
                             _postVisitList.addView(row);
+                            _postVisitLayout.setVisibility(View.VISIBLE);
                         }
                         post++;
                     }
