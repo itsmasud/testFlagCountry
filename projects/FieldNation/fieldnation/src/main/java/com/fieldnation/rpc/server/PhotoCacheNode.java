@@ -74,12 +74,8 @@ public class PhotoCacheNode {
     }
 
     public static PhotoCacheNode get(Context context, String url) {
-//        if (_cache.containsKey(url))
-//            return _cache.get(url);
-
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
-
         try {
             Cursor cursor = db.query(PhotoCacheSqlHelper.TABLE_NAME, PhotoCacheSqlHelper.getColumnNames(),
                     Column.URL + "=?", new String[]{url}, null, null, null);
@@ -105,49 +101,45 @@ public class PhotoCacheNode {
     }
 
     public static void put(Context context, String url, Bitmap photoData, Bitmap circleData) {
-//        if (_cache.containsKey(url))
-//            _cache.remove(url);
+        PhotoCacheNode node = get(context, url);
 
+        if (node != null) {
+            node._lastViewed = System.currentTimeMillis();
+            node._photoData = photoData;
+            node._circleData = circleData;
+
+            node.save();
+            return;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(Column.LAST_READ.getName(), System.currentTimeMillis());
+        values.put(Column.URL.getName(), url);
+
+        ByteArrayOutputStream bout;
+        try {
+            bout = new ByteArrayOutputStream();
+            photoData.compress(Bitmap.CompressFormat.PNG, 100, bout);
+            bout.flush();
+            values.put(Column.PHOTO_DATA.getName(), bout.toByteArray());
+            bout.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            bout = new ByteArrayOutputStream();
+            circleData.compress(Bitmap.CompressFormat.PNG, 100, bout);
+            bout.flush();
+            values.put(Column.CIRCLE_DATA.getName(), bout.toByteArray());
+            bout.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            PhotoCacheNode node = get(context, url);
-
-            if (node != null) {
-                node._lastViewed = System.currentTimeMillis();
-                node._photoData = photoData;
-                node._circleData = circleData;
-
-                node.save();
-                return;
-            }
-
-            ContentValues values = new ContentValues();
-            values.put(Column.LAST_READ.getName(), System.currentTimeMillis());
-            values.put(Column.URL.getName(), url);
-
-            ByteArrayOutputStream bout;
-            try {
-                bout = new ByteArrayOutputStream();
-                photoData.compress(Bitmap.CompressFormat.PNG, 100, bout);
-                bout.flush();
-                values.put(Column.PHOTO_DATA.getName(), bout.toByteArray());
-                bout.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            try {
-                bout = new ByteArrayOutputStream();
-                circleData.compress(Bitmap.CompressFormat.PNG, 100, bout);
-                bout.flush();
-                values.put(Column.CIRCLE_DATA.getName(), bout.toByteArray());
-                bout.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
             db.insert(PhotoCacheSqlHelper.TABLE_NAME, null, values);
         } finally {
             helper.close();
@@ -155,34 +147,34 @@ public class PhotoCacheNode {
     }
 
     public static void save(PhotoCacheNode node) {
+        ContentValues values = new ContentValues();
+        values.put(Column.LAST_READ.getName(), node._lastViewed);
+        values.put(Column.URL.getName(), node._url);
+
+        ByteArrayOutputStream bout;
+        try {
+            bout = new ByteArrayOutputStream();
+            node._photoData.compress(Bitmap.CompressFormat.PNG, 100, bout);
+            bout.flush();
+            values.put(Column.PHOTO_DATA.getName(), bout.toByteArray());
+            bout.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            bout = new ByteArrayOutputStream();
+            node._circleData.compress(Bitmap.CompressFormat.PNG, 100, bout);
+            bout.flush();
+            values.put(Column.CIRCLE_DATA.getName(), bout.toByteArray());
+            bout.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(node._context);
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            ContentValues values = new ContentValues();
-            values.put(Column.LAST_READ.getName(), node._lastViewed);
-            values.put(Column.URL.getName(), node._url);
-
-            ByteArrayOutputStream bout;
-            try {
-                bout = new ByteArrayOutputStream();
-                node._photoData.compress(Bitmap.CompressFormat.PNG, 100, bout);
-                bout.flush();
-                values.put(Column.PHOTO_DATA.getName(), bout.toByteArray());
-                bout.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            try {
-                bout = new ByteArrayOutputStream();
-                node._circleData.compress(Bitmap.CompressFormat.PNG, 100, bout);
-                bout.flush();
-                values.put(Column.CIRCLE_DATA.getName(), bout.toByteArray());
-                bout.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
             db.update(PhotoCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + node._id, null);
         } finally {
             helper.close();

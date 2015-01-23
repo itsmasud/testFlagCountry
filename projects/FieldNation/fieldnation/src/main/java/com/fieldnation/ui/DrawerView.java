@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -118,8 +119,7 @@ public class DrawerView extends RelativeLayout {
 
         _versionTextView = (TextView) findViewById(R.id.version_textview);
         try {
-            _versionTextView.setText("v" + getContext().getPackageManager()
-                    .getPackageInfo(getContext().getPackageName(), 0).versionName);
+            _versionTextView.setText("v" + BuildConfig.VERSION_NAME);
             _versionTextView.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             _versionTextView.setVisibility(View.GONE);
@@ -135,6 +135,9 @@ public class DrawerView extends RelativeLayout {
         _piButton = (Button) findViewById(R.id.pi_button);
         _piButton.setOnClickListener(_pi_onClick);
 
+        if (BuildConfig.FLAVOR.equals("prod")) {
+            _piButton.setVisibility(View.GONE);
+        }
     }
 
     @Override
