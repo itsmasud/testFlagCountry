@@ -66,6 +66,8 @@
     <string name="notification_failed">Failed!</string>
     <string name="notification_success">Success!</string>
 
+    <string name="fieldnation_expected_fee_percentage">Expected Field Nation Fee (%1$s%%)</string>
+
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>
 
