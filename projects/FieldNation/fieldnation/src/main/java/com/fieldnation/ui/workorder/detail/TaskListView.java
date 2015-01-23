@@ -122,9 +122,18 @@ public class TaskListView extends RelativeLayout {
             };
             post(r);
         } else {
-            _preVisistTextView.setVisibility(View.VISIBLE);
-            _onSiteLayout.setVisibility(View.VISIBLE);
-            _postVisitLayout.setVisibility(View.VISIBLE);
+
+            if(_preVisistList.getChildCount() > 0){
+                _preVisistTextView.setVisibility(View.VISIBLE);
+            }
+
+            if(_preVisistList.getChildCount() > 0){
+                _onSiteLayout.setVisibility(View.VISIBLE);
+            }
+
+            if(_preVisistList.getChildCount() > 0){
+                _postVisitLayout.setVisibility(View.VISIBLE);
+            }
 
             ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
                 private int pre = 0;
