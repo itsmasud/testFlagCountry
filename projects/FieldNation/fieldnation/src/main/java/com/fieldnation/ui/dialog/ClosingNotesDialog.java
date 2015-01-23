@@ -119,8 +119,6 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     public void reset() {
         Log.v(TAG, "reset");
         super.reset();
-
-        _notes = "";
     }
 
     /*-*************************-*/
