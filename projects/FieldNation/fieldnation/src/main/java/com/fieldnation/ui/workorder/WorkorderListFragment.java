@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.GaTopic;
+import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -81,7 +83,7 @@ public class WorkorderListFragment extends Fragment {
     private Set<Long> _pendingNotInterested = new HashSet<Long>();
     private Set<Long> _requestWorking = new HashSet<Long>();
     private Set<Long> _selected = new HashSet<Long>();
-
+    private GPSLocationService _gPSLocationService;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -218,9 +220,30 @@ public class WorkorderListFragment extends Fragment {
                 _deviceCountDialog.show(workorder, pay.getMaxDevice());
             } else {
                 GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
-                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
-                intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-                getActivity().startService(intent);
+
+                Intent _intent = null;
+                _gPSLocationService = new GPSLocationService(getActivity());
+                // GPS settings dialog should only be displayed if the GPS is failing
+                if (_gPSLocationService.isGooglePlayServicesAvailable() && !_gPSLocationService.isGpsEnabled()) {
+                    _gPSLocationService.showSettingsAlert(view.getContext());
+                }
+                if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                    try {
+                        Location location = _gPSLocationService.getLocation();
+                        _intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), location);
+                    } catch (Exception e) {
+                        _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                    }
+                } else {
+                    _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                    _intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
+                }
+
+                if(_intent != null){
+                    _intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
+                    getActivity().startService(_intent);
+                }
+
                 _requestWorking.add(workorder.getWorkorderId());
                 _adapter.notifyDataSetChanged();
             }
@@ -229,10 +252,31 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void actionCheckin(WorkorderCardView view, Workorder workorder) {
+            Intent _intent = null;
             GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
-            Intent intent = _service.checkin(WEB_CHECKING_IN, workorder.getWorkorderId());
-            intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-            getActivity().startService(intent);
+
+            _gPSLocationService = new GPSLocationService(getActivity());
+            // GPS settings dialog should only be displayed if the GPS is failing
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && !_gPSLocationService.isGpsEnabled()) {
+                _gPSLocationService.showSettingsAlert(view.getContext());
+            }
+            if (_gPSLocationService.isGooglePlayServicesAvailable() && _gPSLocationService.isLocationServiceEnabled() && _gPSLocationService.isGpsEnabled()) {
+                try {
+                    Location location = _gPSLocationService.getLocation();
+                    _intent = _service.checkin(WEB_CHECKING_IN, workorder.getWorkorderId(), location);
+                } catch (Exception e) {
+                    _gPSLocationService.showSettingsOffAlert(getView().getContext());
+                }
+            } else {
+                _gPSLocationService.showCheckInOutAlert(getView().getContext());
+                _intent = _service.checkin(WEB_CHECKING_IN, workorder.getWorkorderId());
+            }
+
+            if(_intent != null){
+                _intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
+                getActivity().startService(_intent);
+            }
+
             _requestWorking.add(workorder.getWorkorderId());
             _adapter.notifyDataSetChanged();
         }
