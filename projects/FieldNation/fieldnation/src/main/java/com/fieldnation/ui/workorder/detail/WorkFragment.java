@@ -671,7 +671,9 @@ public class WorkFragment extends WorkorderFragment {
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-            if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
+            if (_gpsLocationService.isGooglePlayServicesAvailable()
+                    && _gpsLocationService.isLocationServiceEnabled()
+                    && _gpsLocationService.isGpsEnabled()) {
                 try {
                     GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
                     getActivity().startService(
