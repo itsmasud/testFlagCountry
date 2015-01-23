@@ -49,6 +49,7 @@ public abstract class WebResultReceiver extends ResultReceiver implements WebSer
     public void onError(int resultCode, Bundle resultData, String errorType) {
         Log.v(TAG, "onError[" + resultCode + "] " + errorType);
         Log.v(TAG, resultData.toString());
+        Log.v(TAG, new String(resultData.getByteArray(KEY_RESPONSE_DATA)));
     }
 
     public abstract void onSuccess(int resultCode, Bundle resultData);

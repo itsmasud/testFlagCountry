@@ -85,6 +85,7 @@ public class WSB extends WsbUi {
 			String password) {
 		URL url = null;
 		HttpURLConnection conn = null;
+		Exception ex2 = null;
 		try {
 			url = new URL(path);
 			conn = (HttpURLConnection) url.openConnection();
@@ -100,7 +101,9 @@ public class WSB extends WsbUi {
 			if (username != null && password != null) {
 				conn.setRequestProperty(
 						"Authorization",
-						"Basic " + Base64.encode((username + ":" + password).getBytes()));
+						"Basic "
+								+ Base64.encode((username + ":" + password)
+										.getBytes()));
 			}
 
 			log("*******************************************");
@@ -110,13 +113,25 @@ public class WSB extends WsbUi {
 			dumpConnectionRequest(conn);
 
 			// get the steam from the server
-			InputStream str = conn.getInputStream();
-			int size = conn.getContentLength();
-			byte[] rawData = misc.readAllFromStream(str, 1024, size, 3000);
-
+			byte[] rawData;
+			int size;
 			log("*******************************************");
 			log("                Response");
 			log("*******************************************");
+
+			try {
+				InputStream str = conn.getInputStream();
+
+				size = conn.getContentLength();
+
+				rawData = misc.readAllFromStream(str, 1024, size, 3000);
+			} catch (Exception ex) {
+				ex2 = ex;
+				rawData = misc.readAllFromStream(conn.getErrorStream(), 1024,
+						-1, 3000);
+				log(ex);
+			}
+
 			dumpConnectionResponse(conn);
 			String strData = new String(rawData);
 			log(strData);
@@ -134,8 +149,10 @@ public class WSB extends WsbUi {
 		} finally {
 			if (conn != null)
 				conn.disconnect();
-		}
 
+			if (ex2 != null)
+				log(ex2);
+		}
 		return null;
 	}
 
@@ -143,6 +160,7 @@ public class WSB extends WsbUi {
 			String contentType, String username, String password) {
 		URL url = null;
 		HttpURLConnection conn = null;
+		Exception ex2 = null;
 		try {
 			url = new URL(path);
 			conn = (HttpURLConnection) url.openConnection();
@@ -161,7 +179,9 @@ public class WSB extends WsbUi {
 			if (username != null && password != null) {
 				conn.setRequestProperty(
 						"Authorization",
-						"Basic " + Base64.encode((username + ":" + password).getBytes()));
+						"Basic "
+								+ Base64.encode((username + ":" + password)
+										.getBytes()));
 			}
 
 			log("*******************************************");
@@ -177,15 +197,25 @@ public class WSB extends WsbUi {
 			out.close();
 
 			// get the steam from the server
-			InputStream str = conn.getInputStream();
-
-			int size = conn.getContentLength();
-
-			byte[] rawData = misc.readAllFromStream(str, 1024, size, 3000);
-
+			byte[] rawData;
+			int size;
 			log("*******************************************");
 			log("                Response");
 			log("*******************************************");
+
+			try {
+				InputStream str = conn.getInputStream();
+
+				size = conn.getContentLength();
+
+				rawData = misc.readAllFromStream(str, 1024, size, 3000);
+			} catch (Exception ex) {
+				ex2 = ex;
+				rawData = misc.readAllFromStream(conn.getErrorStream(), 1024,
+						-1, 3000);
+				log(ex);
+			}
+
 			dumpConnectionResponse(conn);
 			String strData = new String(rawData);
 			log(strData);
@@ -203,6 +233,9 @@ public class WSB extends WsbUi {
 		} finally {
 			if (conn != null)
 				conn.disconnect();
+
+			if (ex2 != null)
+				log(ex2);
 		}
 
 		return null;
@@ -222,9 +255,10 @@ public class WSB extends WsbUi {
 		}
 	}
 
-	private void performJ2J(JsonObject jsonSource, String className) throws IOException, ParseException {
-		FileOutputStream fout = new FileOutputStream(
-				getJ2JOut() + "/" + className + ".java");
+	private void performJ2J(JsonObject jsonSource, String className)
+			throws IOException, ParseException {
+		FileOutputStream fout = new FileOutputStream(getJ2JOut() + "/"
+				+ className + ".java");
 
 		JavaObject obj = new JavaObject(className, getJ2JPackage());
 
@@ -276,13 +310,15 @@ public class WSB extends WsbUi {
 		String result = "";
 
 		for (int i = 0; i < splitted.length; i++) {
-			result += splitted[i].substring(0, 1).toUpperCase() + splitted[i].substring(1);
+			result += splitted[i].substring(0, 1).toUpperCase()
+					+ splitted[i].substring(1);
 		}
 
 		return result;
 	}
 
-	private void performJ2J(JsonArray jsonSource, String className) throws ParseException, IOException {
+	private void performJ2J(JsonArray jsonSource, String className)
+			throws ParseException, IOException {
 		JsonObject merged = mergeArray(jsonSource);
 		performJ2J(merged, className);
 	}
@@ -316,7 +352,8 @@ public class WSB extends WsbUi {
 		}
 	}
 
-	public void dumpConnectionResponse(HttpURLConnection conn) throws IOException {
+	public void dumpConnectionResponse(HttpURLConnection conn)
+			throws IOException {
 		Map<String, List<String>> map = conn.getHeaderFields();
 
 		Iterator<String> itr = map.keySet().iterator();
@@ -352,11 +389,13 @@ public class WSB extends WsbUi {
 			}
 
 			@Override
-			public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			public void checkClientTrusted(X509Certificate[] arg0, String arg1)
+					throws CertificateException {
 			}
 
 			@Override
-			public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			public void checkServerTrusted(X509Certificate[] arg0, String arg1)
+					throws CertificateException {
 			}
 		} };
 
@@ -364,7 +403,8 @@ public class WSB extends WsbUi {
 		try {
 			SSLContext sc = SSLContext.getInstance("TLS");
 			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			HttpsURLConnection
+					.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

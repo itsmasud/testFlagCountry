@@ -1318,7 +1318,7 @@ public class WorkFragment extends WorkorderFragment {
             _authToken = null;
             _service = null;
             AuthTopicService.requestAuthInvalid(getActivity());
-            Toast.makeText(getActivity(), R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), new String(resultData.getByteArray(KEY_RESPONSE_DATA)), Toast.LENGTH_LONG).show();
         }
     };
 
