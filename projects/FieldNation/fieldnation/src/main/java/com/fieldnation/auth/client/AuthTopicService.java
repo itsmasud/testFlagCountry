@@ -93,7 +93,7 @@ public class AuthTopicService extends Service {
     }
 
     private String getAccoutnType() {
-        return getString(R.string.accounttype);
+        return getString(R.string.auth_account_type);
     }
 
     private void setState(int state) {
@@ -118,7 +118,7 @@ public class AuthTopicService extends Service {
     /*-         Topics          -*/
     /*-*************************-*/
 
-    private TopicReceiver _topics = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _topics = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
@@ -137,7 +137,7 @@ public class AuthTopicService extends Service {
         }
     };
 
-    private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             String type = parcel.getString(BUNDLE_PARAM_TYPE);
@@ -273,7 +273,7 @@ public class AuthTopicService extends Service {
         //dispatchAuthInvalid(AuthTopicService.this);
     }
 
-    private FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
+    private final FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
         @Override
         public void onComplete(Object result) {
             if (result instanceof Bundle && ((Bundle) result).containsKey("intent")) {
@@ -301,7 +301,8 @@ public class AuthTopicService extends Service {
                         Log.v(TAG, "FutureWaitAsyncTask, auth failure");
                         // todo.. not sure
                         setState(STATE_NOT_AUTHENTICATED);
-                        if (bundle.containsKey(AccountManager.KEY_AUTH_FAILED_MESSAGE) && getString(R.string.login_error_update_app).equals(bundle.getString(AccountManager.KEY_AUTH_FAILED_MESSAGE))) {
+                        if (bundle.containsKey(AccountManager.KEY_AUTH_FAILED_MESSAGE)
+                                && getString(R.string.login_error_update_app).equals(bundle.getString(AccountManager.KEY_AUTH_FAILED_MESSAGE))) {
                             Topics.dispatchNeedUpdate(AuthTopicService.this);
                         }
                     }

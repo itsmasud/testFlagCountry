@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,11 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -307,14 +313,25 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
-        _gpsLocationService = new GPSLocationService(getActivity());
-        // GPS settings dialog should only be displayed if the GPS is failing
-        if (_gpsLocationService.isGooglePlayServicesAvailable() && !_gpsLocationService.isGpsEnabled()) {
-            _gpsLocationService.showSettingsAlert(view.getContext());
-        }
-
         populateUi(true);
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
+
+        if (getActivity().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
+        }
+    }
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -326,11 +343,18 @@ public class WorkFragment extends WorkorderFragment {
     public void onResume() {
         super.onResume();
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+
+        _gpsLocationService = new GPSLocationService(getActivity());
+        // GPS settings dialog should only be displayed if the GPS is failing
+        if (_gpsLocationService.isGooglePlayServicesAvailable() && !_gpsLocationService.isGpsEnabled()) {
+            _gpsLocationService.showSettingsAlert(getActivity());
+        }
     }
 
     @Override
     public void onPause() {
         TopicService.delete(getActivity(), TAG);
+        _gpsLocationService.stopLocationUpdates();
         super.onPause();
     }
 
@@ -495,6 +519,7 @@ public class WorkFragment extends WorkorderFragment {
                 startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
             }
         });
+        builder.setNegativeButton(R.string.btn_no_thanks, null);
         builder.create().show();
     }
 
@@ -522,6 +547,7 @@ public class WorkFragment extends WorkorderFragment {
             if (gs.shouldShowReviewDialog()) {
                 showReviewDialog();
                 gs.setShownReviewDialog();
+                requestWorkorder(false);
             }
         }
     }
@@ -645,7 +671,9 @@ public class WorkFragment extends WorkorderFragment {
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-            if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
+            if (_gpsLocationService.isGooglePlayServicesAvailable()
+                    && _gpsLocationService.isLocationServiceEnabled()
+                    && _gpsLocationService.isGpsEnabled()) {
                 try {
                     GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
                     getActivity().startService(
@@ -1125,17 +1153,34 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onPhone(Task task) {
+            if (!task.getCompleted()) {
+                getActivity().startService(
+                        _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+            }
             try {
                 if (task.getPhoneNumber() != null) {
-                    if (!task.getCompleted()) {
-                        getActivity().startService(
-                                _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-                    }
+                    // Todo, need to figure out if there is a phone number here
+                    Spannable test = new SpannableString(task.getPhoneNumber());
+                    Linkify.addLinks(test, Linkify.PHONE_NUMBERS);
+                    if (test.getSpans(0, test.length(), URLSpan.class).length == 0) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage(R.string.dialog_no_number_message);
+                        builder.setTitle(R.string.dialog_no_number_title);
+                        builder.setPositiveButton(R.string.btn_ok, null);
+                        builder.show();
 
-                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                    String phNum = "tel:" + task.getPhoneNumber();
-                    callIntent.setData(Uri.parse(phNum));
-                    startActivity(callIntent);
+                    } else {
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        String phNum = "tel:" + task.getPhoneNumber();
+                        callIntent.setData(Uri.parse(phNum));
+                        startActivity(callIntent);
+                    }
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage(R.string.dialog_no_number_message);
+                    builder.setTitle(R.string.dialog_no_number_title);
+                    builder.setPositiveButton(R.string.btn_ok, null);
+                    builder.show();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -1146,7 +1191,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onShipment(Task task) {
             ShipmentTracking[] shipments = _workorder.getShipmentTracking();
             if (shipments == null) {
-                _shipmentAddDialog.show(getText(R.string.add_shipment), task.getTaskId());
+                _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task.getTaskId());
             } else {
                 _taskShipmentAddDialog.show("Assign/Add New", _workorder, task.getTaskId());
             }

@@ -1,8 +1,5 @@
 package com.fieldnation.auth.server;
 
-import com.fieldnation.R;
-import com.fieldnation.rpc.client.AuthService;
-
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -12,6 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.fieldnation.R;
+import com.fieldnation.rpc.client.AuthService;
 
 /**
  * The OS will call this when authenticating a user. It is mostly a wrapper for
@@ -49,10 +49,10 @@ public class Authenticator extends AbstractAccountAuthenticator {
         Log.v(TAG, "getAuthToken");
         AccountManager am = AccountManager.get(_context);
         String password = am.getPassword(account);
-        String hostname = _context.getString(R.string.fn_hostname);
-        String grantType = _context.getString(R.string.fn_grant_type);
-        String clientId = _context.getString(R.string.fn_client_id);
-        String clientSecret = _context.getString(R.string.fn_client_secret);
+        String hostname = _context.getString(R.string.web_fn_hostname);
+        String grantType = _context.getString(R.string.auth_fn_grant_type);
+        String clientId = _context.getString(R.string.auth_fn_client_id);
+        String clientSecret = _context.getString(R.string.auth_fn_client_secret);
 
         AuthService authServe = new AuthService(_context);
         Intent intent = authServe.authenticateWeb(response, hostname, grantType, clientId, clientSecret, account.name,

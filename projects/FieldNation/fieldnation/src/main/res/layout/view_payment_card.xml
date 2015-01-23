@@ -101,7 +101,6 @@
                 android:id="@+id/paymenttype_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@+id/amount_textview"
                 android:gravity="right"
                 android:lines="1"
                 android:maxLines="1"

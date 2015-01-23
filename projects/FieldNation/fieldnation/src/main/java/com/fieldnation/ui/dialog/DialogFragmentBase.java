@@ -23,6 +23,7 @@ public class DialogFragmentBase extends DialogFragment {
     protected String _tag;
     protected boolean _isDismissed = true;
     protected boolean _reset = false;
+    protected boolean _isShowing = false;
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -88,10 +89,18 @@ public class DialogFragmentBase extends DialogFragment {
     public void onResume() {
         super.onResume();
 
-        if (_reset){
+        if (_reset) {
             reset();
             _reset = false;
         }
+
+        if (_isShowing) {
+            _isShowing = false;
+            init();
+        }
+    }
+
+    public void init() {
     }
 
     public void reset() {
@@ -117,8 +126,8 @@ public class DialogFragmentBase extends DialogFragment {
             return -1;
 
         _reset = true;
-
         _isDismissed = false;
+        _isShowing = true;
 
         return super.show(transaction, tag);
     }
@@ -135,6 +144,7 @@ public class DialogFragmentBase extends DialogFragment {
             return;
 
         _reset = true;
+        _isShowing = true;
 
         super.show(manager, tag);
 
@@ -146,6 +156,7 @@ public class DialogFragmentBase extends DialogFragment {
             return;
 
         _reset = true;
+        _isShowing = true;
 
         super.show(_fm, _tag);
         _isDismissed = false;

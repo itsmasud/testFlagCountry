@@ -78,8 +78,9 @@ public class WorkLogDialog extends DialogFragmentBase {
         outState.putBoolean(STATE_DEVICES_COUNT, _showDevicesCount);
         if (_title != null)
             outState.putString(STATE_TITLE, _title);
-        if (_loggedWork != null)
+        if (_loggedWork != null) {
             outState.putParcelable(STATE_LOGGEDWORK, _loggedWork);
+        }
 
         super.onSaveInstanceState(outState);
     }
@@ -120,17 +121,12 @@ public class WorkLogDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void init() {
         populateUi();
     }
 
     public void setListener(Listener listener) {
         _listener = listener;
-    }
-
-    public void show(int titleResId, LoggedWork loggedWork, boolean showDeviceCount) {
-        show(getActivity().getText(titleResId), loggedWork, showDeviceCount);
     }
 
     public void show(CharSequence title, LoggedWork loggedWork, boolean showDeviceCount) {

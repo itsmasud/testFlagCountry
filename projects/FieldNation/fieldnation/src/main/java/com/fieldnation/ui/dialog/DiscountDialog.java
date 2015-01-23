@@ -106,7 +106,7 @@ public class DiscountDialog extends DialogFragmentBase {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private TextView.OnEditorActionListener _oneditor_listener = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener _oneditor_listener = new TextView.OnEditorActionListener() {
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -119,7 +119,7 @@ public class DiscountDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             DiscountDialog.this.dismiss();
@@ -128,7 +128,7 @@ public class DiscountDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();

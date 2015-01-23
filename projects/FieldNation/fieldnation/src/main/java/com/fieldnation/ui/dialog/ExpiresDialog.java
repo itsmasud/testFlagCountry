@@ -90,11 +90,6 @@ public class ExpiresDialog extends DialogFragmentBase {
         return v;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     public void setListener(Listener listener) {
         _listener = listener;
     }
@@ -111,7 +106,7 @@ public class ExpiresDialog extends DialogFragmentBase {
     /*-			Events			-*/
     /*-*************************-*/
 
-    private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _calendar.set(year, month, day);
@@ -120,7 +115,7 @@ public class ExpiresDialog extends DialogFragmentBase {
         }
     };
 
-    private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
@@ -132,21 +127,21 @@ public class ExpiresDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _expiration_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _expiration_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _datePicker.show(_fm, null);
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {

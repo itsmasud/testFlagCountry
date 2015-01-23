@@ -87,7 +87,7 @@ public class CustomFieldRowView extends RelativeLayout {
         _checkbox.setEnabled(_workorder.canChangeCustomFields());
     }
 
-    private View.OnClickListener _check_listener = new View.OnClickListener() {
+    private final View.OnClickListener _check_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _checkbox.setChecked(!misc.isEmptyOrNull(_customField.getValue()));

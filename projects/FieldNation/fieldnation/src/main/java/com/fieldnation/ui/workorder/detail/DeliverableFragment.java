@@ -85,7 +85,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private ProfileService _profileService;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
-    private SecureRandom _rand = new SecureRandom();
+    private final SecureRandom _rand = new SecureRandom();
     private int _uploadingSlotId = -1;
     private int _uploadCount = 0;
     private int _deleteCount = 0;
@@ -256,7 +256,7 @@ public class DeliverableFragment extends WorkorderFragment {
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
             ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
-                private Document[] _docs = docs;
+                private final Document[] _docs = docs;
 
                 @Override
                 public void next(int i) throws Exception {
@@ -291,7 +291,7 @@ public class DeliverableFragment extends WorkorderFragment {
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
-                private UploadSlot[] _slots = slots;
+                private final UploadSlot[] _slots = slots;
 
                 @Override
                 public void next(int i) throws Exception {
@@ -375,7 +375,7 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
             if (_workorder != null) {
@@ -386,7 +386,7 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
-    private UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
+    private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
@@ -398,7 +398,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 
     // step 1, user taps on the add button
-    private UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
+    private final UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
         @Override
         public void onUploadClick(UploadSlotView view, UploadSlot slot) {
             if (checkMedia()) {
@@ -416,7 +416,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 
     // step 2, user selects an app to load the file with
-    private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
+    private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
         @Override
         public void onClick(AppPickerPackage pack) {
@@ -449,7 +449,7 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || _profileService == null || isNew) {
@@ -478,7 +478,7 @@ public class DeliverableFragment extends WorkorderFragment {
     };
 
 
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(
+    private final WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {

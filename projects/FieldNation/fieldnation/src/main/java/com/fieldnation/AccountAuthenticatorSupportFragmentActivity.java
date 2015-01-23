@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentActivity;
  * <p/>
  * Created by Michael Carver on 1/16/2015.
  */
-public class AccountAuthenticatorSupportFragmentActivity extends FragmentActivity {
+public abstract class AccountAuthenticatorSupportFragmentActivity extends FragmentActivity {
     private AccountAuthenticatorResponse mAccountAuthenticatorResponse = null;
     private Bundle mResultBundle = null;
 

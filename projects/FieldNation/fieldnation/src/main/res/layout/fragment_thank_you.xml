@@ -33,7 +33,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
-        android:text="DONE"
+        android:text="@string/btn_done"
         android:visibility="gone" />
 
 </RelativeLayout>
