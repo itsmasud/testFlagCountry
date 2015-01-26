@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.fieldnation.ActivityResult;
 import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -489,6 +490,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 try {
                     _profile = Profile.fromJson(
                             new JsonObject(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
+                    ((GlobalState) getContext().getApplicationContext()).setProfileId(_profile.getUserId());
                 } catch (Exception e) {
                     // TODO mulligan?
                     e.printStackTrace();

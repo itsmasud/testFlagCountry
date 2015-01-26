@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -145,6 +146,7 @@ public class MessagesActionBarView extends RelativeLayout {
                     if (profile == null) {
                         getContext().startService(_profileService.getMyUserInformation(0, false));
                     } else {
+                        ((GlobalState) getContext().getApplicationContext()).setProfileId(profile.getUserId());
                         _profile = profile;
                         refresh(isCached);
                     }

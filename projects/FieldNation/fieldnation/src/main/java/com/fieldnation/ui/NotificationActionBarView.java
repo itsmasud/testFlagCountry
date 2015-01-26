@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -131,6 +132,7 @@ public class NotificationActionBarView extends RelativeLayout {
                 //Log.v(TAG, raw);
                 JsonObject obj = new JsonObject(raw);
                 _profile = Profile.fromJson(obj);
+                ((GlobalState) getContext().getApplicationContext()).setProfileId(_profile.getUserId());
                 refresh(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
             } catch (Exception e) {
                 e.printStackTrace();

@@ -46,6 +46,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
+import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
@@ -102,6 +103,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final int WEB_GET_TASKS = 2;
     private static final int WEB_SEND_DELIVERABLE = 3;
     private static final int WEB_COMPLETE_WORKORDER = 4;
+    private static final int WEB_NOTHING = 5;
 
     // saved state keys
     private static final String STATE_WORKORDER = "ui.workorder.detail.WorkFragment:STATE_WORKORDER";
@@ -152,6 +154,7 @@ public class WorkFragment extends WorkorderFragment {
 
     // Data
     private WorkorderService _service;
+    private ProfileService _profileService;
 
     private boolean _isCached = true;
     private File _tempFile;
@@ -307,6 +310,7 @@ public class WorkFragment extends WorkorderFragment {
             }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
+                _profileService = new ProfileService(view.getContext(), _username, _authToken, _resultReceiver);
             }
         }
 
@@ -482,7 +486,7 @@ public class WorkFragment extends WorkorderFragment {
         if (_bundleWarningTextView != null) {
             if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
                 _bundleWarningTextView.setVisibility(View.VISIBLE);
-                _bundleWarningTextView.setText("This is part of a bundle of " + _workorder.getBundleCount() + " work orders.");
+                _bundleWarningTextView.setText(String.format(getString(R.string.workorder_bundle_warning), _workorder.getBundleCount()));
             } else {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
@@ -692,7 +696,9 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(boolean blockBuyer, String reason, String details) {
             getActivity().startService(_service.decline(WEB_CHANGED, _workorder.getWorkorderId()));
             if (blockBuyer) {
-                // TODO onOk(boolean blockBuyer, String reason, String details) {
+                GlobalState gs = (GlobalState) getActivity().getApplication();
+                getActivity().startService(
+                        _profileService.addBlockedCompany(WEB_NOTHING, gs.getProfileId(), _workorder.getCompanyId(), 1, details));
             }
             setLoading(true);
         }
@@ -1318,6 +1324,7 @@ public class WorkFragment extends WorkorderFragment {
                 _username = username;
                 _authToken = authToken;
                 _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+                _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
                 requestWorkorder(true);
             }
         }
@@ -1325,11 +1332,13 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onAuthenticationFailed(boolean networkDown) {
             _service = null;
+            _profileService = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
             _service = null;
+            _profileService = null;
         }
 
         @Override
@@ -1370,6 +1379,7 @@ public class WorkFragment extends WorkorderFragment {
             _username = null;
             _authToken = null;
             _service = null;
+            _profileService = null;
             AuthTopicService.requestAuthInvalid(getActivity());
             try {
                 Toast.makeText(getActivity(), new String(resultData.getByteArray(KEY_RESPONSE_DATA)), Toast.LENGTH_LONG).show();

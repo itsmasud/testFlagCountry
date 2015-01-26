@@ -97,7 +97,7 @@ public class AcceptBundleDialog extends DialogFragmentBase {
         if (_acceptWOText == null)
             return;
 
-        _acceptWOText.setText("This workorder is part of a bundle of " + _workorder.getBundleCount().toString() + " workorders. By accepting this workorder you are accepting all of them.");
+        _acceptWOText.setText(String.format(getString(R.string.workorder_bundle_warning), _workorder.getBundleCount()));
     }
 
 

@@ -91,6 +91,8 @@
 
     <string name="dialog_shipment_title">Add Shipment</string>
 
+    <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
+
     <string name="workorder_card_status_selected">Selected</string>
     <string name="time_logged">Time Logged</string>
     <string name="request_workorder">Request Work Order</string>

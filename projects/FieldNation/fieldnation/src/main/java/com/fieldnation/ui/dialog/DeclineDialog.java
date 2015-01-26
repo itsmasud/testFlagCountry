@@ -97,7 +97,7 @@ public class DeclineDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
-                    _listener.onOk(true, (String) _blockSpinner.getSelectedItem(), _blockEditText.getText().toString());
+                    _listener.onOk(true, null, _blockEditText.getText().toString());
                 } else {
                     _listener.onOk(false, null, null);
                 }
@@ -116,10 +116,11 @@ public class DeclineDialog extends DialogFragmentBase {
     private final CompoundButton.OnCheckedChangeListener _blockCheckBox_onChecked = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked)
+            if (isChecked) {
                 _blockLayout.setVisibility(View.VISIBLE);
-            else
+            } else {
                 _blockLayout.setVisibility(View.GONE);
+            }
         }
     };
 

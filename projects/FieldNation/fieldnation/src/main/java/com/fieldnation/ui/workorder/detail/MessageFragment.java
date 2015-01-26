@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -274,6 +275,7 @@ public class MessageFragment extends WorkorderFragment {
                     protected void onPostExecute(Profile profile) {
                         super.onPostExecute(profile);
                         _profile = profile;
+                        ((GlobalState) getContext().getApplicationContext()).setProfileId(profile.getUserId());
                         getAdapter();
                         getMessages();
                     }

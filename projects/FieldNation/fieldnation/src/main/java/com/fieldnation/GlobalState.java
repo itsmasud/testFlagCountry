@@ -28,6 +28,7 @@ public class GlobalState extends Application {
     public static final String PREF_NAME = "GlobalPreferences";
     public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
     public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
+    public static final String PREF_PROFILE_ID = "PREF_PROFILE_ID";
 
 //    private AuthenticationServer _authServer = null;
 
@@ -159,6 +160,18 @@ public class GlobalState extends Application {
             timing.setValue(value);
 
         t.send(timing.build());
+    }
+
+    public void setProfileId(int profileId) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putInt(PREF_PROFILE_ID, profileId);
+        edit.apply();
+    }
+
+    public int getProfileId() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getInt(PREF_PROFILE_ID, 0);
     }
 
     public boolean hasShownReviewDialog() {
