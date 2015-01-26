@@ -115,8 +115,9 @@ public class DocumentView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            FileHelper.viewOrDownloadFile(getContext(), _document.getFilePath(),
-                    _document.getFileName(), _document.getFileType());
+            if (_workorder.canChangeDeliverables())
+                FileHelper.viewOrDownloadFile(getContext(), _document.getFilePath(),
+                        _document.getFileName(), _document.getFileType());
         }
     };
 }
