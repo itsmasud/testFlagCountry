@@ -68,12 +68,7 @@ public class NotificationView extends RelativeLayout {
     }
 
     private void rePopulate() {
-
         String msg = _notification.getMessage();
-
-        if (msg.length() > 170) {
-            msg = msg.substring(0, 170) + "...";
-        }
         _messageTextView.setText(misc.linkifyHtml(msg, Linkify.ALL));
         _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
 

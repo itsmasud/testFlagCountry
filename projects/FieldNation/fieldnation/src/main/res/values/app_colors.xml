@@ -34,7 +34,7 @@
 
     <!-- payments -->
     <color name="payment_header_background">#FF3fcca9</color>
-    <color name="payment_header_bg_paid">#FF6a6a5e</color>
+    <color name="payment_header_bg_paid">#FF393f49</color>
 
     <color name="actionBarTextColor">@color/white</color>
 

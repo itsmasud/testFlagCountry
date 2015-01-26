@@ -132,7 +132,8 @@ public class NotificationActionBarView extends RelativeLayout {
                 //Log.v(TAG, raw);
                 JsonObject obj = new JsonObject(raw);
                 _profile = Profile.fromJson(obj);
-                ((GlobalState) getContext().getApplicationContext()).setProfileId(_profile.getUserId());
+                if (getContext() != null && _profile != null)
+                    ((GlobalState) getContext().getApplicationContext()).setProfileId(_profile.getUserId());
                 refresh(resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED));
             } catch (Exception e) {
                 e.printStackTrace();

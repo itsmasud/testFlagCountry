@@ -490,7 +490,8 @@ public class DeliverableFragment extends WorkorderFragment {
                 try {
                     _profile = Profile.fromJson(
                             new JsonObject(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
-                    ((GlobalState) getContext().getApplicationContext()).setProfileId(_profile.getUserId());
+                    if (getContext() != null && _profile != null)
+                        ((GlobalState) getContext().getApplicationContext()).setProfileId(_profile.getUserId());
                 } catch (Exception e) {
                     // TODO mulligan?
                     e.printStackTrace();

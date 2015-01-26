@@ -146,7 +146,8 @@ public class MessagesActionBarView extends RelativeLayout {
                     if (profile == null) {
                         getContext().startService(_profileService.getMyUserInformation(0, false));
                     } else {
-                        ((GlobalState) getContext().getApplicationContext()).setProfileId(profile.getUserId());
+                        if (getContext() != null && profile != null)
+                            ((GlobalState) getContext().getApplicationContext()).setProfileId(profile.getUserId());
                         _profile = profile;
                         refresh(isCached);
                     }

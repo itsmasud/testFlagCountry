@@ -275,7 +275,8 @@ public class MessageFragment extends WorkorderFragment {
                     protected void onPostExecute(Profile profile) {
                         super.onPostExecute(profile);
                         _profile = profile;
-                        ((GlobalState) getContext().getApplicationContext()).setProfileId(profile.getUserId());
+                        if (getContext() != null && profile != null)
+                            ((GlobalState) getContext().getApplicationContext()).setProfileId(profile.getUserId());
                         getAdapter();
                         getMessages();
                     }
