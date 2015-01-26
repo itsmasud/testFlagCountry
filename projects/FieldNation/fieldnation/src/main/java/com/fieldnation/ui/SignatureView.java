@@ -48,6 +48,8 @@ public class SignatureView extends View {
     private float _yOff = 0;
     private String _json;
     private boolean _isMeasured;
+    private Canvas _canvas;
+    private Bitmap _map;
 
 
     public SignatureView(Context context) {
@@ -356,71 +358,177 @@ public class SignatureView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         _isMeasured = true;
+
         populateUi();
+    }
+
+    private void addShape(Shape shape) {
+        Point lp = shape.get(0);
+        Point p = null;
+
+        for (int j = 1; j < shape.size(); j++) {
+            p = shape.get(j);
+            // this way we calculate the stroke for new points only
+            // makes rendering the drawing faster in the future
+            if (p.stroke == null) {
+                long dur = (p.t - lp.t);
+                float d1 = p.x - lp.x;
+                float d2 = p.y - lp.y;
+                float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
+                // inverted speed calc, we want thinner lines for faster
+                // speeds
+                float stroke = dur / dist;
+
+                // scale
+                stroke = ((stroke - _min) / _max) * 8 + 3;
+
+                // cap
+                if (stroke < 4) {
+                    stroke = 4;
+                } else if (stroke > 10) {
+                    stroke = 10;
+                }
+
+                if (lp.stroke != null) {
+                    if (stroke > lp.stroke + 1.0) {
+                        stroke = lp.stroke + 1.0F;
+                    } else if (stroke < lp.stroke - 1.0) {
+                        stroke = lp.stroke - 1.0F;
+                    }
+                }
+
+                p.stroke = stroke;
+            }
+
+            _myPaint.setStrokeWidth(p.stroke);
+            _canvas.drawLine(
+                    (lp.x - _xOff) * _scale,
+                    (lp.y - _yOff) * _scale,
+                    (p.x - _xOff) * _scale,
+                    (p.y - _yOff) * _scale,
+                    _myPaint);
+            lp = p;
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         Stopwatch stopwatch = new Stopwatch();
         // walk through the shapes list... draw those
-        try {
-            for (int i = 0; i < _shapes.size(); i++) {
-                Shape shape = _shapes.get(i);
-                if (shape.size() > 0) {
-                    Point lp = shape.get(0);
-                    Point p = null;
-
-                    for (int j = 1; j < shape.size(); j++) {
-                        p = shape.get(j);
-                        // this way we calculate the stroke for new points only
-                        // makes rendering the drawing faster in the future
-                        if (p.stroke == null) {
-                            long dur = (p.t - lp.t);
-                            float d1 = p.x - lp.x;
-                            float d2 = p.y - lp.y;
-                            float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
-                            // inverted speed calc, we want thinner lines for faster
-                            // speeds
-                            float stroke = dur / dist;
-
-                            // scale
-                            stroke = ((stroke - _min) / _max) * 8 + 3;
-
-                            // cap
-                            if (stroke < 4) {
-                                stroke = 4;
-                            } else if (stroke > 10) {
-                                stroke = 10;
-                            }
-
-                            if (lp.stroke != null) {
-                                if (stroke > lp.stroke + 1.0) {
-                                    stroke = lp.stroke + 1.0F;
-                                } else if (stroke < lp.stroke - 1.0) {
-                                    stroke = lp.stroke - 1.0F;
-                                }
-                            }
-
-                            p.stroke = stroke;
-                        }
-
-                        _myPaint.setStrokeWidth(p.stroke);
-                        canvas.drawLine(
-                                (lp.x - _xOff) * _scale,
-                                (lp.y - _yOff) * _scale,
-                                (p.x - _xOff) * _scale,
-                                (p.y - _yOff) * _scale,
-                                _myPaint);
-                        lp = p;
-                    }
-                }
-            }
-            // Log.v(TAG, "min: " + _min + "  max:" + _max);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (_map == null) {
+            _map = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+            _canvas = new Canvas(_map);
         }
+
+        canvas.drawBitmap(_map, 0, 0, _myPaint);
+
+        if (_shape.size() > 0) {
+            Point lp = _shape.get(0);
+            Point p = null;
+
+            for (int j = 1; j < _shape.size(); j++) {
+                p = _shape.get(j);
+                // this way we calculate the stroke for new points only
+                // makes rendering the drawing faster in the future
+                if (p.stroke == null) {
+                    long dur = (p.t - lp.t);
+                    float d1 = p.x - lp.x;
+                    float d2 = p.y - lp.y;
+                    float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
+                    // inverted speed calc, we want thinner lines for faster
+                    // speeds
+                    float stroke = dur / dist;
+
+                    // scale
+                    stroke = ((stroke - _min) / _max) * 8 + 3;
+
+                    // cap
+                    if (stroke < 4) {
+                        stroke = 4;
+                    } else if (stroke > 10) {
+                        stroke = 10;
+                    }
+
+                    if (lp.stroke != null) {
+                        if (stroke > lp.stroke + 1.0) {
+                            stroke = lp.stroke + 1.0F;
+                        } else if (stroke < lp.stroke - 1.0) {
+                            stroke = lp.stroke - 1.0F;
+                        }
+                    }
+
+                    p.stroke = stroke;
+                }
+
+                _myPaint.setStrokeWidth(p.stroke);
+                canvas.drawLine(
+                        (lp.x - _xOff) * _scale,
+                        (lp.y - _yOff) * _scale,
+                        (p.x - _xOff) * _scale,
+                        (p.y - _yOff) * _scale,
+                        _myPaint);
+                lp = p;
+            }
+
+        }
+//        try {
+//            for (int i = 0; i < _shapes.size(); i++) {
+//                Shape shape = _shapes.get(i);
+//                if (shape.size() > 0) {
+//                    Point lp = shape.get(0);
+//                    Point p = null;
+//
+//                    for (int j = 1; j < shape.size(); j++) {
+//                        p = shape.get(j);
+//                        // this way we calculate the stroke for new points only
+//                        // makes rendering the drawing faster in the future
+//                        if (p.stroke == null) {
+//                            long dur = (p.t - lp.t);
+//                            float d1 = p.x - lp.x;
+//                            float d2 = p.y - lp.y;
+//                            float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
+//                            // inverted speed calc, we want thinner lines for faster
+//                            // speeds
+//                            float stroke = dur / dist;
+//
+//                            // scale
+//                            stroke = ((stroke - _min) / _max) * 8 + 3;
+//
+//                            // cap
+//                            if (stroke < 4) {
+//                                stroke = 4;
+//                            } else if (stroke > 10) {
+//                                stroke = 10;
+//                            }
+//
+//                            if (lp.stroke != null) {
+//                                if (stroke > lp.stroke + 1.0) {
+//                                    stroke = lp.stroke + 1.0F;
+//                                } else if (stroke < lp.stroke - 1.0) {
+//                                    stroke = lp.stroke - 1.0F;
+//                                }
+//                            }
+//
+//                            p.stroke = stroke;
+//                        }
+//
+//                        _myPaint.setStrokeWidth(p.stroke);
+//                        canvas.drawLine(
+//                                (lp.x - _xOff) * _scale,
+//                                (lp.y - _yOff) * _scale,
+//                                (p.x - _xOff) * _scale,
+//                                (p.y - _yOff) * _scale,
+//                                _myPaint);
+//                        lp = p;
+//                    }
+//                }
+//            }
+//            // Log.v(TAG, "min: " + _min + "  max:" + _max);
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
         super.onDraw(canvas);
 
         Log.v(TAG, "onDraw time " + stopwatch.finish());
@@ -433,6 +541,12 @@ public class SignatureView extends View {
         _scale = 1;
         _xOff = 0;
         _yOff = 0;
+
+        if (_map != null){
+            _canvas = null;
+            _map.recycle();
+            _map = null;
+        }
 
         invalidate();
     }
@@ -453,6 +567,7 @@ public class SignatureView extends View {
                     invalidate();
                     return true;
                 case MotionEvent.ACTION_UP:
+                    addShape(_shape);
                     _shape = new Shape();
                     _shapes.add(_shape);
                     invalidate();
