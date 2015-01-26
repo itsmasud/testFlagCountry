@@ -279,16 +279,24 @@
                     android:textAppearance="?android:attr/textAppearanceLarge" />
             </RelativeLayout>
 
-            <View
-                style="@style/DrawerSeparator"
-                android:layout_width="fill_parent"
-                android:layout_height="2px" />
-
-            <Button
-                android:id="@+id/feedback_button"
-                style="@style/Button.Material.Flat"
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/feedback_layout"
                 android:layout_width="match_parent"
-                android:text="Feedback Form" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    style="@style/DrawerSeparator"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2px" />
+
+                <Button
+                    android:id="@+id/feedback_button"
+                    style="@style/Button.Material.Flat"
+                    android:layout_width="match_parent"
+                    android:text="Feedback Form" />
+            </LinearLayout>
 
             <LinearLayout
                 android:visibility="gone"
@@ -307,6 +315,25 @@
                     style="@style/Button.Material.Flat"
                     android:layout_width="match_parent"
                     android:text="Send Log To Mike" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/review_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    style="@style/DrawerSeparator"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2px" />
+
+                <Button
+                    android:id="@+id/review_button"
+                    style="@style/Button.Material.Flat"
+                    android:layout_width="match_parent"
+                    android:text="Review App" />
             </LinearLayout>
         </LinearLayout>
 

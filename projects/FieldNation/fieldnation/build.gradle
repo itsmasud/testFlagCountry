@@ -37,6 +37,9 @@ android {
         prod {
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
+        beta {
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
     }
 }
 

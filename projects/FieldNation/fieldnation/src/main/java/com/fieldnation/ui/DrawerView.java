@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -56,8 +57,11 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
     private TextView _versionTextView;
+    private LinearLayout _feedbackLayout;
     private Button _feedbackButton;
     private Button _piButton;
+    private LinearLayout _reviewLayout;
+    private Button _reviewButton;
 
     private LinearLayout _sendLogLayout;
     private Button _sendLogButton;
@@ -125,6 +129,7 @@ public class DrawerView extends RelativeLayout {
             _versionTextView.setVisibility(View.GONE);
         }
 
+        _feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
         _feedbackButton = (Button) findViewById(R.id.feedback_button);
         _feedbackButton.setOnClickListener(_feedback_onClick);
 
@@ -132,11 +137,25 @@ public class DrawerView extends RelativeLayout {
         _sendLogButton = (Button) findViewById(R.id.sendlog_button);
         _sendLogButton.setOnClickListener(_sendlog_onClick);
 
+        _reviewLayout = (LinearLayout) findViewById(R.id.review_layout);
+        _reviewButton = (Button) findViewById(R.id.review_button);
+        _reviewButton.setOnClickListener(_review_onClick);
+
         _piButton = (Button) findViewById(R.id.pi_button);
         _piButton.setOnClickListener(_pi_onClick);
 
         if (BuildConfig.FLAVOR.equals("prod")) {
+            _feedbackLayout.setVisibility(View.GONE);
+            if (((GlobalState) getContext().getApplicationContext()).shouldShowReviewDialog()) {
+                _reviewLayout.setVisibility(View.VISIBLE);
+            } else {
+                _reviewLayout.setVisibility(View.GONE);
+            }
             _piButton.setVisibility(View.GONE);
+        } else {
+            _feedbackLayout.setVisibility(View.VISIBLE);
+            _reviewLayout.setVisibility(View.GONE);
+            _piButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -149,6 +168,13 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final OnClickListener _review_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
+            getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
+        }
+    };
     private final OnClickListener _pi_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {

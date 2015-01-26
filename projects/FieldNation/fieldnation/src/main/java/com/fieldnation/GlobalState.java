@@ -172,7 +172,7 @@ public class GlobalState extends Application {
     }
 
     public boolean shouldShowReviewDialog() {
-        return !hasShownReviewDialog() && hasCompletedWorkorder();
+        return !hasShownReviewDialog() && hasCompletedWorkorder() && BuildConfig.FLAVOR.equals("prod");
     }
 
     public void setShownReviewDialog() {
