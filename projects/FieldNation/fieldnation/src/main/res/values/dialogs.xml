@@ -11,7 +11,7 @@
 
     <color name="dialogBg">#FFf3f3eb</color>
 
-    <style name="DurationNumberPad" parent="ButtonWhite">
+    <style name="DurationNumberPad" parent="ButtonWhiteMaterial">
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20sp</item>
         <item name="android:layout_width">64dp</item>
@@ -88,12 +88,12 @@
         <item name="android:gravity">right</item>
     </style>
 
-    <style name="DialogCancelButton" parent="ButtonWhite">
+    <style name="DialogCancelButton" parent="ButtonWhiteMaterial">
         <item name="android:layout_gravity">right|center_vertical</item>
         <item name="android:layout_marginRight">4dp</item>
     </style>
 
-    <style name="DialogOkButton" parent="ButtonWhite">
+    <style name="DialogOkButton" parent="ButtonWhiteMaterial">
         <item name="android:layout_gravity">right|center_vertical</item>
         <item name="android:layout_marginLeft">4dp</item>
     </style>

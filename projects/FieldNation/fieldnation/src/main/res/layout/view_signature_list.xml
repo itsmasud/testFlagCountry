@@ -28,7 +28,7 @@
     <Button
         android:id="@+id/add_button"
         android:layout_gravity="right"
-        style="@style/ButtonWhite"
+        style="?attr/buttonWhiteStyle"
         android:text="Add Signature" />
 
     <View
