@@ -3,8 +3,8 @@ package com.fieldnation.ui;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -46,20 +46,27 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(getLayoutResource());
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null)
+            setSupportActionBar(toolbar);
 
         ClockReceiver.registerClock(this);
 
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeButtonEnabled(true);
-        actionbar.setDisplayUseLogoEnabled(true);
-        //actionbar.setDisplayShowHomeEnabled(true);
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setDisplayShowHomeEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
+//        ActionBar actionbar = getSupportActionBar();
+//        actionbar.setDisplayHomeAsUpEnabled(true);
+//        actionbar.setHomeButtonEnabled(true);
+//        actionbar.setDisplayUseLogoEnabled(true);
+//        //actionbar.setDisplayShowHomeEnabled(true);
+//        actionbar.setDisplayHomeAsUpEnabled(true);
+//        actionbar.setDisplayShowHomeEnabled(true);
+//        actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
+    }
 
+    public int getLayoutResource() {
+        return 0;
     }
 
     @Override
@@ -104,7 +111,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
         @Override
         public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
         }
 
 

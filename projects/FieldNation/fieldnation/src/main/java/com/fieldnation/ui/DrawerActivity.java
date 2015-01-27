@@ -23,10 +23,10 @@ public abstract class DrawerActivity extends AuthActionBarActivity {
     private DrawerLayout _drawerLayout;
 
     public void addActionBarAndDrawer(int drawerId) {
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeButtonEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_drawer);
+//        ActionBar actionbar = getSupportActionBar();
+//        actionbar.setDisplayHomeAsUpEnabled(true);
+//        actionbar.setHomeButtonEnabled(true);
+//        actionbar.setHomeAsUpIndicator(R.drawable.ic_drawer);
 
         _drawerLayout = (DrawerLayout) findViewById(drawerId);
         _drawerToggle = getActionBarDrawerToggle();

@@ -1,36 +1,26 @@
 package com.fieldnation.ui.workorder;
 
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 import android.util.Log;
-import android.view.View;
 
 import com.fieldnation.R;
-import com.fieldnation.ui.DrawerActivity;
+import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 
-import java.util.List;
-
-public class MyWorkActivity extends DrawerActivity {
+public class MyWorkActivity extends AuthActionBarActivity {
     private static final String TAG = "ui.workorder.MyWorkActivity";
 
     // UI
-    private ViewPager _viewPager;
-    private WorkorderListFragment[] _fragments;
+//    private ViewPager _viewPager;
+//    private WorkorderListFragment[] _fragments;
     private CustomFieldDialog _customFieldDialog;
 
     // Data
-    private PagerAdapter _pagerAdapter;
+//    private PagerAdapter _pagerAdapter;
     private boolean _created = false;
     private int _currentFragment = 0;
 
@@ -40,20 +30,25 @@ public class MyWorkActivity extends DrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tabs);
+//        setContentView(R.layout.activity_tabs);
         setTitle(R.string.mywork_title);
 
         if (!_created) {
-            addActionBarAndDrawer(R.id.container);
-            buildTabs(savedInstanceState);
+//            addActionBarAndDrawer(R.id.container);
+//            buildTabs(savedInstanceState);
             _created = true;
         }
 
         _currentFragment = getSupportActionBar().getSelectedNavigationIndex();
-        _viewPager.setCurrentItem(_currentFragment, false);
+//        _viewPager.setCurrentItem(_currentFragment, false);
 
 //        _customFieldDialog = CustomFieldDialog.getInstance(getSupportFragmentManager(), TAG);
 //        _customFieldDialog.sho
+    }
+
+    @Override
+    public int getLayoutResource() {
+        return R.layout.activity_tabs;
     }
 
     @Override
@@ -62,6 +57,7 @@ public class MyWorkActivity extends DrawerActivity {
         Log.v(TAG, "STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()");
     }
 
+/*
     private void buildTabs(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 
@@ -122,45 +118,47 @@ public class MyWorkActivity extends DrawerActivity {
         _viewPager.setAdapter(_pagerAdapter);
         _viewPager.setOnPageChangeListener(_viewPager_onChange);
     }
+*/
 
-    @Override
-    public ActionBarDrawerToggle createActionBarDrawerToggle(DrawerLayout drawerLayout) {
-        return new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.launcher_open,
-                R.string.launcher_open) {
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                if (newState != 0) {
-                    getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-                    supportInvalidateOptionsMenu();
-                }
-                super.onDrawerStateChanged(newState);
-            }
-
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                if (slideOffset == 0.0) {
-                    getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-                    supportInvalidateOptionsMenu();
-                }
-                super.onDrawerSlide(drawerView, slideOffset);
-            }
-        };
-    }
+//    @Override
+//    public ActionBarDrawerToggle createActionBarDrawerToggle(DrawerLayout drawerLayout) {
+//        return new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.launcher_open,
+//                R.string.launcher_open) {
+//
+//            @Override
+//            public void onDrawerStateChanged(int newState) {
+//                if (newState != 0) {
+//                    getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+//                    supportInvalidateOptionsMenu();
+//                }
+//                super.onDrawerStateChanged(newState);
+//            }
+//
+//            @Override
+//            public void onDrawerSlide(View drawerView, float slideOffset) {
+//                if (slideOffset == 0.0) {
+//                    getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+//                    supportInvalidateOptionsMenu();
+//                }
+//                super.onDrawerSlide(drawerView, slideOffset);
+//            }
+//        };
+//    }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        for (int i = 0; i < _fragments.length; i++) {
-            _fragments[i].update();
-        }
+//        for (int i = 0; i < _fragments.length; i++) {
+//            _fragments[i].update();
+//        }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
     // swaps fragments on a pager transition
+/*
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -176,6 +174,7 @@ public class MyWorkActivity extends DrawerActivity {
             return _fragments.length;
         }
     }
+*/
 
     // sync set actionbar tabs on page viewer change
     private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
@@ -200,7 +199,7 @@ public class MyWorkActivity extends DrawerActivity {
             try {
                 if (_currentFragment != arg0.getPosition()) {
                     _currentFragment = arg0.getPosition();
-                    _viewPager.setCurrentItem(_currentFragment, true);
+//                    _viewPager.setCurrentItem(_currentFragment, true);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -214,7 +213,7 @@ public class MyWorkActivity extends DrawerActivity {
 
     @Override
     public void onRefresh() {
-        _fragments[_currentFragment].update();
+//        _fragments[_currentFragment].update();
     }
 
 }
