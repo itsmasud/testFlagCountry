@@ -79,12 +79,21 @@
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="dialog_block_details">Additional details</string>
     <string-array name="dialog_block_reasons">
+        <item>Other</item>
         <item>Scope not as described</item>
         <item>Scope changed w/o sufficient pay increase</item>
         <item>Difficult to work with</item>
+        <item>Scope of work difficult to follow</item>
         <item>Pay is too low</item>
-        <item>Other</item>
     </string-array>
+    <integer-array name="dialog_block_reason_ids">
+        <item>1</item>
+        <item>11</item>
+        <item>12</item>
+        <item>15</item>
+        <item>17</item>
+        <item>21</item>
+    </integer-array>
 
     <string name="dialog_update_title">Please Update</string>
     <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>

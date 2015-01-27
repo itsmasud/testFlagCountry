@@ -10,19 +10,12 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
+import com.fieldnation.topics.Topics;
 
 public class MessagesActionBarView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("ui.MessagesActionBarView");
@@ -30,7 +23,6 @@ public class MessagesActionBarView extends RelativeLayout {
     private TextView _countTextView;
 
     // Data
-    private ProfileService _profileService;
     private Profile _profile = null;
 
 	/*-*************************************-*/
@@ -60,11 +52,9 @@ public class MessagesActionBarView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        AuthTopicService.subscribeAuthState(getContext(), 0, TAG + ":AuthTopicService", _authReceiver);
-
         setOnClickListener(_this_onClickListener);
 
-        TopicService.registerListener(getContext(), 1, TAG + ":TopicService", ProfileService.TOPIC_PROFILE_INVALIDATED, _topicReceiver);
+        Topics.subscrubeProfileUpdated(getContext(), TAG + ":TopicService", _topicReceiver);
     }
 
     @Override
@@ -82,93 +72,18 @@ public class MessagesActionBarView extends RelativeLayout {
         }
     };
 
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
-        @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_profileService == null || isNew) {
-                _profileService = new ProfileService(getContext(), username, authToken, _resultReciever);
-                if (_profile == null)
-                    getContext().startService(_profileService.getMyUserInformation(0, true));
-            }
-        }
-
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _profileService = null;
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            _profileService = null;
-        }
-
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(getContext());
-        }
-    };
-
-
     private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (topicId.equals(ProfileService.TOPIC_PROFILE_INVALIDATED)) {
-                if (_profileService != null)
-                    getContext().startService(_profileService.getMyUserInformation(0, false));
+            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
+                parcel.setClassLoader(getContext().getClassLoader());
+                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
             }
+            refresh();
         }
     };
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-        private boolean isCached;
-
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            new AsyncTaskEx<Bundle, Object, Profile>() {
-
-                @Override
-                protected Profile doInBackground(Bundle... params) {
-                    Bundle resultData = params[0];
-                    try {
-                        JsonObject obj = new JsonObject(new String(
-                                resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-                        isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-                        return Profile.fromJson(obj);
-                    } catch (Exception e) {
-
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Profile profile) {
-                    super.onPostExecute(profile);
-                    if (profile == null) {
-                        getContext().startService(_profileService.getMyUserInformation(0, false));
-                    } else {
-                        if (getContext() != null && profile != null)
-                            ((GlobalState) getContext().getApplicationContext()).setProfileId(profile.getUserId());
-                        _profile = profile;
-                        refresh(isCached);
-                    }
-                }
-            }.executeEx(resultData);
-        }
-
-        @Override
-        public Context getContext() {
-            return MessagesActionBarView.this.getContext();
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            _profileService = null;
-            AuthTopicService.requestAuthInvalid(getContext());
-        }
-    };
-
-    private void refresh(boolean isCached) {
+    private void refresh() {
         if (_profile == null)
             return;
 

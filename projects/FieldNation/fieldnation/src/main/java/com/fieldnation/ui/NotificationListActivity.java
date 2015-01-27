@@ -11,7 +11,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.topics.TopicService;
+import com.fieldnation.topics.Topics;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -91,7 +91,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
             }
         }
 
-        TopicService.dispatchTopic(this, ProfileService.TOPIC_PROFILE_INVALIDATED, null);
+        Topics.dispatchProfileInvalid(this);
 
         return list;
     }

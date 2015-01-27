@@ -39,7 +39,6 @@
                 android:orientation="vertical">
 
                 <Spinner
-                    android:visibility="gone"
                     android:id="@+id/block_spinner"
                     style="?attr/dialogSpinnerButtonStyle"
                     android:layout_width="match_parent"

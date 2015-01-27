@@ -126,10 +126,10 @@ public class WorkorderCardView extends RelativeLayout {
 		 * findViewById(R.id.notinterested_button_layout);
 		 */
         /*
-		 * _notInterestedButtonLayout.setOnClickListener(
+         * _notInterestedButtonLayout.setOnClickListener(
 		 * _notInterestedButton_onClick);
 		 */
-		/* _notInterestedButtonLayout.setClickable(false); */
+        /* _notInterestedButtonLayout.setClickable(false); */
 
         _backgroundLayout = (ViewGroup) findViewById(R.id.background_layout);
         _backgroundView = findViewById(R.id.background_view);

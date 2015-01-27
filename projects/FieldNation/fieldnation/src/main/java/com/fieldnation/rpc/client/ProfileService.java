@@ -9,13 +9,12 @@ import com.fieldnation.utils.misc;
 public class ProfileService extends WebService {
     private static final String TAG = "rpc.client.ProfileService";
 
-    public static final String TOPIC_PROFILE_INVALIDATED = TAG + ":TOPIC_PROFILE_INVALIDATED";
-
     public ProfileService(Context context, String username, String authToken, ResultReceiver callback) {
         super(context, username, authToken, callback);
     }
 
     public Intent getMyUserInformation(int resultCode, boolean allowCache) {
+        misc.printStackTrace("/api/rest/v1/profile");
         return httpGet(resultCode, "/api/rest/v1/profile", allowCache);
     }
 
