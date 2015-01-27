@@ -23,11 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-/*
- * This is a very stupid signature collection class. 
- * TODO Improve speed by drawing the lines on a back buffer as we capture them. This way we only need to do all the calculations on the shapes once.
- * TODO implement short straw to filter out points we don't need
- */
 public class SignatureView extends View {
     private static final String TAG = "ui.SignatureView";
 
@@ -50,7 +45,6 @@ public class SignatureView extends View {
     private boolean _isMeasured;
     private Canvas _canvas;
     private Bitmap _map;
-
 
     public SignatureView(Context context) {
         super(context);
@@ -298,62 +292,6 @@ public class SignatureView extends View {
 
         clear();
         new SignatureParseAsyncTask().executeEx(_json);
-//        try {
-//            JsonArray signature = new JsonArray(_json);
-//
-//            Point lp = null;
-//            for (int i = 0; i < signature.size(); i++) {
-//                JsonObject seg = signature.getJsonObject(i);
-//
-//                Point l = new Point(seg.getFloat("lx"), seg.getFloat("ly"), 0);
-//                Point m = new Point(seg.getFloat("mx"), seg.getFloat("my"), 0);
-//
-//                if (lp == null) {
-//                    _shape.add(l);
-//                    _shape.add(m);
-//                    lp = m;
-//                } else if ((int) lp.x == (int) l.x && (int) lp.y == (int) l.y) {
-//                    _shape.add(m);
-//                    lp = m;
-//                } else {
-//                    _shape = new Shape();
-//                    _shapes.add(_shape);
-//                    _shape.add(l);
-//                    _shape.add(m);
-//                    lp = m;
-//                }
-//            }
-//
-//            float maxX = Float.MIN_VALUE;
-//            float maxY = Float.MIN_VALUE;
-//            float minX = Float.MAX_VALUE;
-//            float minY = Float.MAX_VALUE;
-//            for (int i = 0; i < _shapes.size(); i++) {
-//                Shape s = _shapes.get(i);
-//                maxX = Math.max(maxX, s.getMaxX());
-//                maxY = Math.max(maxY, s.getMaxY());
-//                minX = Math.min(minX, s.getMinX());
-//                minY = Math.min(minY, s.getMinY());
-//            }
-//
-//            _xOff = minX;
-//            _yOff = minY;
-//
-//            _scale = getMeasuredWidth() / (maxX - minX);
-//            if (getMeasuredHeight() / (maxY - minY) < _scale)
-//                _scale = getMeasuredHeight() / (maxY - minY);
-//
-//            float height = _scale * (maxY - minY);
-//            float width = _scale * (maxX - minX);
-//
-//            _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
-//            _xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
-//
-//
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-
     }
 
     @Override
@@ -473,62 +411,6 @@ public class SignatureView extends View {
             }
 
         }
-//        try {
-//            for (int i = 0; i < _shapes.size(); i++) {
-//                Shape shape = _shapes.get(i);
-//                if (shape.size() > 0) {
-//                    Point lp = shape.get(0);
-//                    Point p = null;
-//
-//                    for (int j = 1; j < shape.size(); j++) {
-//                        p = shape.get(j);
-//                        // this way we calculate the stroke for new points only
-//                        // makes rendering the drawing faster in the future
-//                        if (p.stroke == null) {
-//                            long dur = (p.t - lp.t);
-//                            float d1 = p.x - lp.x;
-//                            float d2 = p.y - lp.y;
-//                            float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
-//                            // inverted speed calc, we want thinner lines for faster
-//                            // speeds
-//                            float stroke = dur / dist;
-//
-//                            // scale
-//                            stroke = ((stroke - _min) / _max) * 8 + 3;
-//
-//                            // cap
-//                            if (stroke < 4) {
-//                                stroke = 4;
-//                            } else if (stroke > 10) {
-//                                stroke = 10;
-//                            }
-//
-//                            if (lp.stroke != null) {
-//                                if (stroke > lp.stroke + 1.0) {
-//                                    stroke = lp.stroke + 1.0F;
-//                                } else if (stroke < lp.stroke - 1.0) {
-//                                    stroke = lp.stroke - 1.0F;
-//                                }
-//                            }
-//
-//                            p.stroke = stroke;
-//                        }
-//
-//                        _myPaint.setStrokeWidth(p.stroke);
-//                        canvas.drawLine(
-//                                (lp.x - _xOff) * _scale,
-//                                (lp.y - _yOff) * _scale,
-//                                (p.x - _xOff) * _scale,
-//                                (p.y - _yOff) * _scale,
-//                                _myPaint);
-//                        lp = p;
-//                    }
-//                }
-//            }
-//            // Log.v(TAG, "min: " + _min + "  max:" + _max);
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
         super.onDraw(canvas);
 
         Log.v(TAG, "onDraw time " + stopwatch.finish());
@@ -542,7 +424,7 @@ public class SignatureView extends View {
         _xOff = 0;
         _yOff = 0;
 
-        if (_map != null){
+        if (_map != null) {
             _canvas = null;
             _map.recycle();
             _map = null;
