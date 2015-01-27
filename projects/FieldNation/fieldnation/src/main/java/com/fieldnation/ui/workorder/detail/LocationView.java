@@ -115,8 +115,14 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _descriptionTextView.setVisibility(GONE);
         }
 
-        setVisibility(View.VISIBLE);
-
+        if (_addressTextView.getVisibility() != VISIBLE
+                && _descriptionTextView.getVisibility() != VISIBLE
+                && _contactInfoTextView.getVisibility() != VISIBLE
+                && _distanceTextView.getVisibility() != VISIBLE) {
+            setVisibility(View.GONE);
+        } else {
+            setVisibility(View.VISIBLE);
+        }
     }
 
     public void showMap(Uri geoLocation) {

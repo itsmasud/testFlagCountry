@@ -3,6 +3,8 @@ package com.fieldnation.topics;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.data.profile.Profile;
+
 
 /**
  * Created by michael.carver on 12/18/2014.
@@ -84,4 +86,38 @@ public class Topics {
         TopicService.registerListener(context, 0, tag, TOPIC_FILE_UPLOAD, topicReceiver);
     }
 
+    public static final String TOPIC_PROFILE_INVALIDATED = "TOPIC_PROFILE_INVALIDATED";
+    public static final String TOPIC_PROFILE_UPDATE = "TOPIC_PROFILE_UPDATE";
+    public static final String TOPIC_PROFILE_PARAM_PROFILE = "TOPIC_PROFILE_PARAM_PROFILE";
+
+    public static void subscribeProfileInvalidated(Context context, String tag, TopicReceiver topicReceiver) {
+        if (context == null)
+            return;
+
+        TopicService.registerListener(context, 0, tag, TOPIC_PROFILE_INVALIDATED, topicReceiver);
+    }
+
+    public static void subscrubeProfileUpdated(Context context, String tag, TopicReceiver topicReceiver) {
+        if (context == null)
+            return;
+
+        TopicService.registerListener(context, 0, tag, TOPIC_PROFILE_UPDATE, topicReceiver);
+    }
+
+    public static void dispatchProfileInvalid(Context context) {
+        if (context == null)
+            return;
+
+        TopicService.dispatchTopic(context, TOPIC_PROFILE_INVALIDATED, null, false);
+    }
+
+    public static void dispatchProfileUpdated(Context context, Profile profile) {
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(TOPIC_PROFILE_PARAM_PROFILE, profile);
+
+        TopicService.dispatchTopic(context, TOPIC_PROFILE_UPDATE, bundle, true);
+    }
 }

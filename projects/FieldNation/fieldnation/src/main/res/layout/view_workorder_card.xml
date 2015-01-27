@@ -120,17 +120,17 @@
         <!-- center panel -->
         <RelativeLayout
             android:id="@+id/center_relativelayout"
-            android:layout_below="@+id/bundle_layout"
             android:layout_width="wrap_content"
-            android:layout_toRightOf="@+id/status_textview"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bundle_layout"
+            android:layout_toRightOf="@+id/status_textview">
 
             <LinearLayout
-                android:layout_alignParentLeft="true"
                 android:id="@+id/center_panel"
                 style="@style/WorkorderCard_CenterPanel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@+id/right_layout"
                 android:orientation="vertical">
 
@@ -230,19 +230,19 @@
                     android:id="@+id/basis_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
                     android:layout_gravity="right"
+                    android:maxLines="1"
                     android:text="@string/placeholder_word" />
             </LinearLayout>
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_alignLeft="@+id/center_relativelayout"
-            android:paddingLeft="5dp"
-            android:layout_below="@+id/center_relativelayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/center_relativelayout"
+            android:layout_below="@+id/center_relativelayout"
+            android:paddingLeft="5dp">
 
             <TextView
                 android:id="@+id/workorderid_textview"

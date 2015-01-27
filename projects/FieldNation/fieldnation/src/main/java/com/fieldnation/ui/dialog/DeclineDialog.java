@@ -35,6 +35,7 @@ public class DeclineDialog extends DialogFragmentBase {
 
     // Data
     private Listener _listener;
+    private int[] _reasonIds;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -65,6 +66,8 @@ public class DeclineDialog extends DialogFragmentBase {
                 android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         _blockSpinner.setAdapter(adapter);
+
+        _reasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);
 
         _blockEditText = (EditText) v.findViewById(R.id.blockdetails_edittext);
 
@@ -97,9 +100,9 @@ public class DeclineDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
-                    _listener.onOk(true, null, _blockEditText.getText().toString());
+                    _listener.onOk(true, _reasonIds[_blockSpinner.getSelectedItemPosition()], _blockEditText.getText().toString());
                 } else {
-                    _listener.onOk(false, null, null);
+                    _listener.onOk(false, 0, null);
                 }
             }
         }
@@ -125,7 +128,7 @@ public class DeclineDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(boolean blockBuyer, String reason, String details);
+        public void onOk(boolean blockBuyer, int reasonId, String details);
 
         public void onCancel();
     }

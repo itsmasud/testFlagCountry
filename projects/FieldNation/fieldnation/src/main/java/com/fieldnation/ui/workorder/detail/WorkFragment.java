@@ -693,14 +693,14 @@ public class WorkFragment extends WorkorderFragment {
 
     private DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
         @Override
-        public void onOk(boolean blockBuyer, String reason, String details) {
+        public void onOk(boolean blockBuyer, int reasonId, String details) {
             getActivity().startService(_service.decline(WEB_CHANGED, _workorder.getWorkorderId()));
             if (blockBuyer) {
                 GlobalState gs = (GlobalState) getActivity().getApplication();
                 getActivity().startService(
-                        _profileService.addBlockedCompany(WEB_NOTHING, gs.getProfileId(), _workorder.getCompanyId(), 1, details));
+                        _profileService.addBlockedCompany(WEB_NOTHING, gs.getProfile().getUserId(), _workorder.getCompanyId(), reasonId, details));
             }
-            setLoading(true);
+            getActivity().finish();
         }
 
         @Override

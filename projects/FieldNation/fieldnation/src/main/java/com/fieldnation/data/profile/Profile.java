@@ -1,10 +1,13 @@
 package com.fieldnation.data.profile;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Profile {
+public class Profile implements Parcelable {
     @Json(name = "city")
     private String _city;
     @Json(name = "description")
@@ -127,4 +130,35 @@ public class Profile {
         }
     }
 
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
+
+    public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
+
+        @Override
+        public Profile createFromParcel(Parcel source) {
+            try {
+                return Profile.fromJson(new JsonObject(source.readString()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public Profile[] newArray(int size) {
+            return new Profile[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(toJson().toString());
+    }
 }

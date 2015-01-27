@@ -150,7 +150,7 @@ public class MessageCardView extends RelativeLayout {
         return _message;
     }
 
-    private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
+    private final ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == _viewId) {
