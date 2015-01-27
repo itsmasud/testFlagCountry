@@ -31,12 +31,11 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
+import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -82,10 +81,9 @@ public class DeliverableFragment extends WorkorderFragment {
     private Context _context;
     private Workorder _workorder;
     private WorkorderService _service;
-    private ProfileService _profileService;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
-    private SecureRandom _rand = new SecureRandom();
+    private final SecureRandom _rand = new SecureRandom();
     private int _uploadingSlotId = -1;
     private int _uploadCount = 0;
     private int _deleteCount = 0;
@@ -174,11 +172,13 @@ public class DeliverableFragment extends WorkorderFragment {
         super.onResume();
         _context = getActivity().getApplicationContext();
         AuthTopicService.subscribeAuthState(_context, 0, TAG, _authReceiver);
+        Topics.subscrubeProfileUpdated(_context, TAG + ":ProfileService", _profile_topicService);
     }
 
     @Override
     public void onPause() {
         TopicService.delete(_context, TAG);
+        TopicService.delete(_context, TAG + ":ProfileService");
         super.onPause();
     }
 
@@ -201,7 +201,6 @@ public class DeliverableFragment extends WorkorderFragment {
     public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
         _isCached = isCached;
-        getData();
     }
 
     private PendingIntent getNotificationIntent() {
@@ -209,15 +208,6 @@ public class DeliverableFragment extends WorkorderFragment {
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
         return PendingIntent.getActivity(_context, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private void getData() {
-        if (_profileService == null)
-            return;
-
-        setLoading(true);
-        _profile = null;
-        _context.startService(_profileService.getMyUserInformation(WEB_GET_PROFILE, true));
     }
 
     @Override
@@ -256,7 +246,7 @@ public class DeliverableFragment extends WorkorderFragment {
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
             ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
-                private Document[] _docs = docs;
+                private final Document[] _docs = docs;
 
                 @Override
                 public void next(int i) throws Exception {
@@ -291,7 +281,7 @@ public class DeliverableFragment extends WorkorderFragment {
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
-                private UploadSlot[] _slots = slots;
+                private final UploadSlot[] _slots = slots;
 
                 @Override
                 public void next(int i) throws Exception {
@@ -375,18 +365,16 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
             if (_workorder != null) {
                 _workorder.dispatchOnChange();
-            } else {
-                getData();
             }
         }
     };
 
-    private UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
+    private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
@@ -398,7 +386,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 
     // step 1, user taps on the add button
-    private UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
+    private final UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
         @Override
         public void onUploadClick(UploadSlotView view, UploadSlot slot) {
             if (checkMedia()) {
@@ -416,7 +404,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 
     // step 2, user selects an app to load the file with
-    private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
+    private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
         @Override
         public void onClick(AppPickerPackage pack) {
@@ -449,26 +437,32 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final TopicReceiver _profile_topicService = new TopicReceiver(new Handler()) {
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
+                parcel.setClassLoader(getActivity().getClassLoader());
+                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
+            }
+            populateUi();
+        }
+    };
+    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || _profileService == null || isNew) {
+            if (_service == null || isNew) {
                 _service = new WorkorderService(_context, username, authToken, _resultReceiver);
-                _profileService = new ProfileService(_context, username, authToken, _resultReceiver);
-                getData();
             }
         }
 
         @Override
         public void onAuthenticationFailed(boolean networkDown) {
             _service = null;
-            _profileService = null;
         }
 
         @Override
         public void onAuthenticationInvalidated() {
             _service = null;
-            _profileService = null;
         }
 
         @Override
@@ -478,22 +472,12 @@ public class DeliverableFragment extends WorkorderFragment {
     };
 
 
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(
+    private final WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             Log.v(TAG, "Method Stub: onSuccess()");
             if (resultCode == WEB_GET_PROFILE) {
-                Log.v(TAG, "WEB_GET_PROFILE");
-                _profile = null;
-                try {
-                    _profile = Profile.fromJson(
-                            new JsonObject(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA))));
-                } catch (Exception e) {
-                    // TODO mulligan?
-                    e.printStackTrace();
-                    _profile = null;
-                }
                 populateUi();
             } else if (resultCode == WEB_DELETE_DELIVERABLE
                     || resultCode == WEB_SEND_DELIVERABLE) {
@@ -538,8 +522,7 @@ public class DeliverableFragment extends WorkorderFragment {
             if (resultCode == WEB_SEND_DELIVERABLE)
                 _uploadCount--;
             _service = null;
-            _profileService = null;
-            Toast.makeText(_context, "Could not complete request", Toast.LENGTH_LONG).show();
+            Toast.makeText(_context, R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
             setLoading(false);
         }
     };

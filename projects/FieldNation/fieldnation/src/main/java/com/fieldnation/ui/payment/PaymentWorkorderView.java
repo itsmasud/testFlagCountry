@@ -128,6 +128,12 @@ public class PaymentWorkorderView extends RelativeLayout {
             // ex.printStackTrace();
             _whenTextView.setVisibility(GONE);
         }
+        if (payment.getStatus().equals("paid")) {
+            _statusView.setBackgroundResource(R.drawable.card_status_black);
+        } else {
+            _statusView.setBackgroundResource(R.drawable.card_status_green);
+        }
+
         String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
         _basisTextView.setText(paymethod);
         _paymentTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));

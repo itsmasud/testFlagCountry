@@ -134,7 +134,7 @@ public class DeliverableView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_isLoading)
@@ -145,7 +145,7 @@ public class DeliverableView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _delete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setLoading(true, R.string.deleting);

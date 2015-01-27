@@ -1,9 +1,11 @@
 package com.fieldnation.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Environment;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -18,18 +20,22 @@ import org.w3c.dom.NodeList;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+
 
 public class misc {
     private static final String HEXES = "0123456789ABCDEF";
@@ -45,6 +51,54 @@ public class misc {
             ex.printStackTrace();
         }
     }
+
+    public static File dumpLogcat(Context context) {
+        File externalPath = Environment.getExternalStorageDirectory();
+        String packageName = context.getPackageName();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+        temppath.mkdirs();
+        File tempfile = new File(temppath + "/logcat-" + (System.currentTimeMillis() / 1000) + ".log");
+        try {
+            OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(tempfile));
+            try {
+                Process process = Runtime.getRuntime().exec("logcat -d");
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    fout.write(line);
+                    fout.write("\n");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            fout.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return tempfile;
+    }
+
+/*
+    public static String getLogcat() {
+        try {
+            Process process = Runtime.getRuntime().exec("logcat -d");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            StringBuilder log = new StringBuilder();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                log.append(line);
+                log.append("\n");
+            }
+            return log.toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+*/
 
     public static boolean isViewVisisble(ScrollView scrollView, View childView) {
         Rect scrollBounds = new Rect();

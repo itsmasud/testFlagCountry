@@ -9,6 +9,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:animateLayoutChanges="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -196,62 +197,62 @@
 
             <!-- Settings -->
 
-<!--
-                    <RelativeLayout
-                        android:id="@+id/settings_view"
-                        style="@style/DrawerItem"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+            <!--
+                                <RelativeLayout
+                                    android:id="@+id/settings_view"
+                                    style="@style/DrawerItem"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
 
-                        <ImageView
-                            android:id="@+id/settings_imageview"
-                            style="@style/DrawerItemIcon"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/ic_settings" />
+                                    <ImageView
+                                        android:id="@+id/settings_imageview"
+                                        style="@style/DrawerItemIcon"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentLeft="true"
+                                        android:layout_centerVertical="true"
+                                        android:src="@drawable/ic_settings" />
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/settings_imageview"
-                            android:orientation="vertical">
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_toRightOf="@+id/settings_imageview"
+                                        android:orientation="vertical">
 
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                        <RelativeLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content">
 
-                                <TextView
-                                    android:id="@+id/settings_title_textview"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/settings_title"
-                                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                                            <TextView
+                                                android:id="@+id/settings_title_textview"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="@string/settings_title"
+                                                android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                                <TextView
-                                    android:id="@+id/version_textview"
-                                    android:layout_centerVertical="true"
-                                    android:layout_alignParentRight="true"
-                                    style="?attr/dialogCaptionStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="garbage" />
-                            </RelativeLayout>
+                                            <TextView
+                                                android:id="@+id/version_textview"
+                                                android:layout_centerVertical="true"
+                                                android:layout_alignParentRight="true"
+                                                style="?attr/dialogCaptionStyle"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="garbage" />
+                                        </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/settings_subtext_textview"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/settings_subtitle"
-                                android:textAppearance="?android:attr/textAppearanceSmall" />
-                        </LinearLayout>
-                    </RelativeLayout>
+                                        <TextView
+                                            android:id="@+id/settings_subtext_textview"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/settings_subtitle"
+                                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                                    </LinearLayout>
+                                </RelativeLayout>
 
-                    <View
-                        style="@style/DrawerSeparator"
-                        android:layout_width="fill_parent"
-                        android:layout_height="2px" />
--->
+                                <View
+                                    style="@style/DrawerSeparator"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="2px" />
+            -->
 
             <!-- Logout -->
 
@@ -278,17 +279,62 @@
                     android:textAppearance="?android:attr/textAppearanceLarge" />
             </RelativeLayout>
 
-            <View
-                style="@style/DrawerSeparator"
-                android:layout_width="fill_parent"
-                android:layout_height="2px" />
-
-            <Button
-                android:id="@+id/feedback_button"
-                style="@style/Button.Material.Flat"
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/feedback_layout"
                 android:layout_width="match_parent"
-                android:text="Feedback Form" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
+                <View
+                    style="@style/DrawerSeparator"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2px" />
+
+                <Button
+                    android:id="@+id/feedback_button"
+                    style="@style/Button.Material.Flat"
+                    android:layout_width="match_parent"
+                    android:text="Feedback Form" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/sendlog_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    style="@style/DrawerSeparator"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2px" />
+
+                <Button
+                    android:id="@+id/sendlog_button"
+                    style="@style/Button.Material.Flat"
+                    android:layout_width="match_parent"
+                    android:text="Send Log To Mike" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/review_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    style="@style/DrawerSeparator"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2px" />
+
+                <Button
+                    android:id="@+id/review_button"
+                    style="@style/Button.Material.Flat"
+                    android:layout_width="match_parent"
+                    android:text="Review App" />
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>
@@ -303,5 +349,13 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="garbage" />
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/pi_button"
+        style="@style/Button.Material.Flat"
+        android:layout_width="wrap_content"
+        android:text="\u03C0" />
 
 </RelativeLayout>

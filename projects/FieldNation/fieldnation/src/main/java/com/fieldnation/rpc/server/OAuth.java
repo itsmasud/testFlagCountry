@@ -150,7 +150,7 @@ public class OAuth {
      */
     public void invalidate(Context context) {
         AccountManager am = AccountManager.get(context);
-        am.invalidateAuthToken(context.getString(R.string.accounttype), toString());
+        am.invalidateAuthToken(context.getString(R.string.auth_account_type), toString());
     }
 
     /**

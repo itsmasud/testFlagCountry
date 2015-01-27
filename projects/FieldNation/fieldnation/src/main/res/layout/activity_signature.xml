@@ -91,14 +91,13 @@
                 style="@style/TextViewLink"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/tap_to_set_name" />
+                android:text="@string/activity_signature_name" />
 
             <View style="?attr/dialogDividerStyle" />
 
             <LinearLayout
                 android:id="@+id/actionbar_view"
-                style="?attr/dialogActionBarStyle"
-                android:layout_alignParentBottom="true">
+                style="?attr/dialogActionBarStyle">
 
                 <Button
                     android:id="@+id/clear_button"

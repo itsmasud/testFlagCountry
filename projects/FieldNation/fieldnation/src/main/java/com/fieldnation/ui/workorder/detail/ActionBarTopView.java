@@ -106,7 +106,7 @@ public class ActionBarTopView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private View.OnClickListener _closing_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _closing_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
@@ -114,14 +114,14 @@ public class ActionBarTopView extends RelativeLayout {
             }
         }
     };
-    private View.OnClickListener _confirm_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _confirm_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
                 _listener.onConfirm();
         }
     };
-    private View.OnClickListener _checkin_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _checkin_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -129,7 +129,7 @@ public class ActionBarTopView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _checkout_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _checkout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -137,7 +137,7 @@ public class ActionBarTopView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _acknowledge_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _acknowledge_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -145,7 +145,7 @@ public class ActionBarTopView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _complete_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _complete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)

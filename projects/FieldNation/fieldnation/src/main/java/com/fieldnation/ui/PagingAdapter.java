@@ -26,9 +26,11 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     public void setPage(int page, List<T> items, boolean isCached) {
         Log.v(TAG, "setPage()");
-        _pages.put(page, items);
 
-        countItems();
+        if (items.size() > 0) {
+            _pages.put(page, items);
+            countItems();
+        }
 
         if (_loadingPages.contains(page)) {
             _loadingPages.remove(page);

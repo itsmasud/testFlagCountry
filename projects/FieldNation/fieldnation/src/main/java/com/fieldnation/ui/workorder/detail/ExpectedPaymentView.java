@@ -21,6 +21,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
     private TextView _expensesTextView;
     private TextView _discountsTextView;
     private TextView _expectedTotalTextView;
+    private TextView _fnPercentTextView;
     private TextView _feeTextView;
     private TextView _payTextView;
     private TextView _payStatusTextView;
@@ -52,6 +53,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         _expensesTextView = (TextView) findViewById(R.id.expenses_textview);
         _discountsTextView = (TextView) findViewById(R.id.discounts_textview);
         _expectedTotalTextView = (TextView) findViewById(R.id.expectedtotal_textview);
+        _fnPercentTextView = (TextView) findViewById(R.id.fieldnationpercentage_textview);
         _feeTextView = (TextView) findViewById(R.id.expectedfee_textview);
         _payTextView = (TextView) findViewById(R.id.expectedpay_textview);
         _payStatusTextView = (TextView) findViewById(R.id.paystatus_textview);
@@ -101,5 +103,10 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         _feeTextView.setText(misc.toCurrency(pay.getExpectedFee()));
         _payTextView.setText(misc.toCurrency(pay.getExpectedAmount()));
         _payStatusTextView.setText(misc.capitalize(pay.getPaymentStatus()));
+        if (!misc.isEmptyOrNull(pay.getFnFeePercentage())) {
+            _fnPercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), pay.getFnFeePercentage()));
+        } else {
+            _fnPercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), "10"));
+        }
     }
 }

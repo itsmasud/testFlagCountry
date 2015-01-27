@@ -127,6 +127,11 @@ public class WebService implements WebServiceConstants {
         return intent;
     }
 
+    public Intent httpWrite(int resultCode, String method, String path, String options, String data,
+                            String contentType, boolean allowCache) {
+        return httpWrite(resultCode, method, path, options, data.getBytes(), contentType, allowCache);
+    }
+
 //    public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, String fileName,
 //                               File file, Map<String, String> fields, PendingIntent notificationIntent) {
 //        Intent intent = new Intent(_context, DataService.class);

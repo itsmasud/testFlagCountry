@@ -66,7 +66,7 @@
                         android:layout_marginBottom="2dp"
                         android:imeOptions="actionNext"
                         android:hint="@string/activity_login_username"
-                        android:text="@string/default_username" />
+                        android:text="@string/auth_default_username" />
 
                     <View
                         android:layout_alignBottom="@+id/username_edittext"
@@ -97,7 +97,7 @@
                         android:hint="@string/activity_login_password"
                         android:imeOptions="actionDone"
                         android:inputType="textPassword"
-                        android:text="@string/default_password" />
+                        android:text="@string/auth_default_password" />
 
                     <View
                         android:layout_alignBottom="@+id/password_edittext"

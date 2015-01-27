@@ -5,90 +5,96 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ExpectedPayment {
-//	@Json(name = "bonuses")
+    //	@Json(name = "bonuses")
 //	private Bonuses[] _bonuses;
-	@Json(name="discounts")
-	private Double _discounts;
-	@Json(name = "expectedAmount")
-	private Double _expectedAmount;
-	@Json(name = "expectedFee")
-	private Double _expectedFee;
-	@Json(name="expectedTotal")
-	private Double _expectedTotal;
-	@Json(name = "expensesApproved")
-	private Double _expensesApproved;
-	@Json(name="laborEarned")
-	private Double _laborEarned;
-	@Json(name="maxPayLimit")
-	private Double _maxPayLimit;
-	@Json(name = "paymentStatus")
-	private String _paymentStatus;
+    @Json(name = "discounts")
+    private Double _discounts;
+    @Json(name = "expectedAmount")
+    private Double _expectedAmount;
+    @Json(name = "expectedFee")
+    private Double _expectedFee;
+    @Json(name = "expectedTotal")
+    private Double _expectedTotal;
+    @Json(name = "expensesApproved")
+    private Double _expensesApproved;
+    @Json(name = "laborEarned")
+    private Double _laborEarned;
+    @Json(name = "maxPayLimit")
+    private Double _maxPayLimit;
+    @Json(name = "paymentStatus")
+    private String _paymentStatus;
+    @Json(name = "fnFeePercentage")
+    private String _fnFeePercentage;
 //	@Json(name="penalties")
 //	private Penalty[] _penalties;
 
-	public ExpectedPayment() {
-	}
+    public ExpectedPayment() {
+    }
 
 //	public Bonuses[] getBonuses() {
 //		return _bonuses;
 //	}
 
-	public Double getDiscounts(){
-		return _discounts;
-	}
+    public Double getDiscounts() {
+        return _discounts;
+    }
 
-	public Double getExpectedAmount() {
-		return _expectedAmount;
-	}
+    public Double getExpectedAmount() {
+        return _expectedAmount;
+    }
 
-	public Double getExpectedFee() {
-		return _expectedFee;
-	}
+    public Double getExpectedFee() {
+        return _expectedFee;
+    }
 
-	public Double getExpectedTotal(){
-		return _expectedTotal;
-	}
+    public Double getExpectedTotal() {
+        return _expectedTotal;
+    }
 
-	public Double getExpensesApproved() {
-		return _expensesApproved;
-	}
+    public Double getExpensesApproved() {
+        return _expensesApproved;
+    }
 
-	public Double getLaborEarned(){
-		return _laborEarned;
-	}
+    public String getFnFeePercentage() {
+        return _fnFeePercentage;
+    }
 
-	public Double getMaxPayLimit(){
-		return _maxPayLimit;
-	}
+    public Double getLaborEarned() {
+        return _laborEarned;
+    }
 
-	public String getPaymentStatus() {
-		return _paymentStatus;
-	}
+    public Double getMaxPayLimit() {
+        return _maxPayLimit;
+    }
+
+    public String getPaymentStatus() {
+        return _paymentStatus;
+    }
 
 //	public Penalty[] getPenalties(){
 //		return _penalties;
 //	}
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static JsonObject toJson(ExpectedPayment expectedPayment) {
-		try {
-			return Serializer.serializeObject(expectedPayment);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(ExpectedPayment expectedPayment) {
+        try {
+            return Serializer.serializeObject(expectedPayment);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
-	public static ExpectedPayment fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(ExpectedPayment.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static ExpectedPayment fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(ExpectedPayment.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }

@@ -173,21 +173,21 @@ public class ExpenseDialog extends DialogFragmentBase {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
         }
     };
 
-    private ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
+    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
             setCategories(categories);
         }
     };
 
-    private TextView.OnEditorActionListener _oneditor_listener = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener _oneditor_listener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             boolean handled = false;
@@ -199,7 +199,7 @@ public class ExpenseDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)

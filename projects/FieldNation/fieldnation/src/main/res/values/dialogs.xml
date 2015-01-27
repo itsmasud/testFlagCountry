@@ -11,7 +11,7 @@
 
     <color name="dialogBg">#FFf3f3eb</color>
 
-    <style name="DurationNumberPad" parent="@ButtonWhite">
+    <style name="DurationNumberPad" parent="ButtonWhite">
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20sp</item>
         <item name="android:layout_width">64dp</item>
@@ -109,6 +109,6 @@
         <item name="android:layout_marginBottom">@dimen/dialogContentPadding</item>
     </style>
 
-    <style name="DialogSpinnerButton" parent="@ButtonSpinner"></style>
+    <style name="DialogSpinnerButton" parent="ButtonSpinner"></style>
 
 </resources>

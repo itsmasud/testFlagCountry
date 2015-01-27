@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="auth_account_name">Field Nation</string>
+    <string name="auth_default_username">ralphthompson</string>
+    <string name="auth_default_password">password</string>
+    <string name="auth_fn_grant_type">password</string>
+    <string name="auth_fn_client_id">demoapp</string>
+    <string name="auth_fn_client_secret">demopass</string>
+    <string name="auth_account_type">com.fieldnation</string>
+    <string name="auth_authority">com.fieldnation.service</string>
+    <string name="web_fn_hostname">green.fieldnation.com</string>
+    <string name="app_name">Field Nation[G]</string>
+    <integer name="ga_local_dispatch_period">60</integer>
+</resources>

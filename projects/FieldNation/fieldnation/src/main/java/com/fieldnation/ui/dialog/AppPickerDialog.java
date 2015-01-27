@@ -90,7 +90,7 @@ public class AppPickerDialog extends DialogFragmentBase {
         _items.setAdapter(new AppPickerAdapter(_activityList, _app_onClick));
     }
 
-    private AppPickerRowView.OnClickListener _app_onClick = new AppPickerRowView.OnClickListener() {
+    private final AppPickerRowView.OnClickListener _app_onClick = new AppPickerRowView.OnClickListener() {
         @Override
         public void onClick(AppPickerRowView row, AppPickerPackage pack) {
             dismiss();

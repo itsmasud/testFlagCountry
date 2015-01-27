@@ -158,7 +158,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private Animation.AnimationListener _fadeout_listener = new Animation.AnimationListener() {
+    private final Animation.AnimationListener _fadeout_listener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
         }
@@ -173,7 +173,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
@@ -182,16 +182,16 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
 
-            String hostname = AuthActivity.this.getString(R.string.fn_hostname);
-            String grantType = AuthActivity.this.getString(R.string.fn_grant_type);
-            String clientId = AuthActivity.this.getString(R.string.fn_client_id);
-            String clientSecret = AuthActivity.this.getString(R.string.fn_client_secret);
+            String hostname = AuthActivity.this.getString(R.string.web_fn_hostname);
+            String grantType = AuthActivity.this.getString(R.string.auth_fn_grant_type);
+            String clientId = AuthActivity.this.getString(R.string.auth_fn_client_id);
+            String clientSecret = AuthActivity.this.getString(R.string.auth_fn_client_secret);
 
             AuthService authserve = new AuthService(AuthActivity.this);
             Intent intent = authserve.authenticateWeb(_rpcReceiver, 1, hostname, grantType, clientId, clientSecret,
@@ -203,7 +203,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private ResultReceiver _rpcReceiver = new ResultReceiver(new Handler()) {
+    private final ResultReceiver _rpcReceiver = new ResultReceiver(new Handler()) {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             Log.v(TAG, "onReceiveResult");
@@ -215,14 +215,14 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     Topics.dispatchNeedUpdate(AuthActivity.this);
                 } else if (authToken != null) {
                     Log.v(TAG, "have authtoken");
-                    Account account = new Account(_username, getString(R.string.accounttype));
+                    Account account = new Account(_username, getString(R.string.auth_account_type));
                     AccountManager am = AccountManager.get(AuthActivity.this);
                     am.addAccountExplicitly(account, _password, null);
-                    am.setAuthToken(account, getString(R.string.accounttype), authToken);
+                    am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
 
                     Intent intent = new Intent();
                     intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-                    intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.accounttype));
+                    intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.auth_account_type));
                     // intent.putExtra(AccountManager.KEY_AUTHTOKEN,
                     // Constants.FIELD_NATION_ACCOUNT_TYPE);
                     intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString(AccountManager.KEY_AUTHTOKEN));

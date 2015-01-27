@@ -386,8 +386,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 ex.printStackTrace();
             }
         }
-
-        ;
     };
 
     private WorkorderTabView.Listener _tabview_onChange = new WorkorderTabView.Listener() {

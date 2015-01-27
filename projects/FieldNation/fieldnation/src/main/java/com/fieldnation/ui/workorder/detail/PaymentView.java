@@ -8,8 +8,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Discount;
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
@@ -206,16 +206,21 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         }
         setVisibility(View.VISIBLE);
 
-        WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
-
         if (!_workorder.canCounterOffer())
             _counterOfferLayout.setVisibility(View.GONE);
+        else
+            _counterOfferLayout.setVisibility(View.VISIBLE);
+
 
         if (!_workorder.canChangeExpenses())
             _addExpenseLayout.setVisibility(View.GONE);
+        else
+            _addExpenseLayout.setVisibility(View.VISIBLE);
 
         if (!_workorder.canChangeDiscounts())
             _addDiscountLayout.setVisibility(View.GONE);
+        else
+            _addDiscountLayout.setVisibility(View.VISIBLE);
     }
 
     /*-*********************************-*/

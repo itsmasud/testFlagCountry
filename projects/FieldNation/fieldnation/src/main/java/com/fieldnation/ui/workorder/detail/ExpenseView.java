@@ -63,14 +63,14 @@ public class ExpenseView extends LinearLayout {
     /*-				Event				-*/
     /*-*********************************-*/
 
-    private ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
+    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
             _categories = categories;
             refresh();
         }
     };
-    private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _delete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)

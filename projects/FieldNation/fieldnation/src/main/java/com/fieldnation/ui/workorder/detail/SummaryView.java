@@ -122,7 +122,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
 
         if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
             _bundleWarningTextView.setVisibility(View.VISIBLE);
-            _bundleWarningTextView.setText("This is part of a bundle of " + _workorder.getBundleCount() + " work orders.");
+            _bundleWarningTextView.setText(String.format(getContext().getString(R.string.workorder_bundle_warning), _workorder.getBundleCount()));
         } else {
             _bundleWarningTextView.setVisibility(View.GONE);
         }

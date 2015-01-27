@@ -55,6 +55,7 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
                         bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                         bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                         bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                        bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
 
                     } else {
 
@@ -73,10 +74,12 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
                                 bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                                 bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                                 bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                                bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
                             } catch (Exception ex1) {
                                 // sad path
                                 bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
                                 bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+                                bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
                             }
                         }
                     }

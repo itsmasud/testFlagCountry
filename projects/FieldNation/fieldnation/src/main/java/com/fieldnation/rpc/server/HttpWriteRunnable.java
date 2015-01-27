@@ -1,12 +1,12 @@
 package com.fieldnation.rpc.server;
 
-import com.fieldnation.rpc.common.WebServiceConstants;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
+
+import com.fieldnation.rpc.common.WebServiceConstants;
 
 public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstants {
     private static final String TAG = "rpc.server.HttpWriteRunnable";
@@ -57,7 +57,7 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
                         bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                         bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                         bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-
+                        bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
                     } else {
                         try {
                             // happy path
@@ -73,10 +73,12 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
                                 bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                                 bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                                 bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                                bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
                             } catch (Exception ex1) {
                                 // sad path
                                 bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
                                 bundle.putString(KEY_RESPONSE_ERROR, ex1.getMessage());
+                                bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
                             }
                         }
                     }

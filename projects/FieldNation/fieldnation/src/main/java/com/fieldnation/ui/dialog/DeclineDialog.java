@@ -35,6 +35,7 @@ public class DeclineDialog extends DialogFragmentBase {
 
     // Data
     private Listener _listener;
+    private int[] _reasonIds;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -66,6 +67,8 @@ public class DeclineDialog extends DialogFragmentBase {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         _blockSpinner.setAdapter(adapter);
 
+        _reasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);
+
         _blockEditText = (EditText) v.findViewById(R.id.blockdetails_edittext);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
@@ -91,20 +94,20 @@ public class DeclineDialog extends DialogFragmentBase {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
-                    _listener.onOk(true, (String) _blockSpinner.getSelectedItem(), _blockEditText.getText().toString());
+                    _listener.onOk(true, _reasonIds[_blockSpinner.getSelectedItemPosition()], _blockEditText.getText().toString());
                 } else {
-                    _listener.onOk(false, null, null);
+                    _listener.onOk(false, 0, null);
                 }
             }
         }
     };
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -113,18 +116,19 @@ public class DeclineDialog extends DialogFragmentBase {
             }
         }
     };
-    private CompoundButton.OnCheckedChangeListener _blockCheckBox_onChecked = new CompoundButton.OnCheckedChangeListener() {
+    private final CompoundButton.OnCheckedChangeListener _blockCheckBox_onChecked = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked)
+            if (isChecked) {
                 _blockLayout.setVisibility(View.VISIBLE);
-            else
+            } else {
                 _blockLayout.setVisibility(View.GONE);
+            }
         }
     };
 
     public interface Listener {
-        public void onOk(boolean blockBuyer, String reason, String details);
+        public void onOk(boolean blockBuyer, int reasonId, String details);
 
         public void onCancel();
     }

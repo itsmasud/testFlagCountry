@@ -83,8 +83,9 @@ public class PayDialog extends DialogFragmentBase {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (_pay != null)
+        if (_pay != null) {
             outState.putParcelable(STATE_PAY, _pay);
+        }
 
         outState.putInt(STATE_MODE, _mode);
 
@@ -136,10 +137,14 @@ public class PayDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
+    public void init() {
+        super.init();
         populateUi();
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
     }
 
     public void setListener(Listener listener) {
@@ -149,6 +154,26 @@ public class PayDialog extends DialogFragmentBase {
     public void show(Pay pay) {
         _pay = pay;
         super.show();
+    }
+
+    private Pay makePay() {
+        Pay pay = null;
+        switch (_mode) {
+            case MODE_FIXED:
+                return new Pay(Double.parseDouble(_fixedEditText.getText().toString()));
+            case MODE_HOURLY:
+                return new Pay(Double.parseDouble(_hourlyRateEditText.getText().toString()),
+                        Double.parseDouble(_maxHoursEditText.getText().toString()));
+            case MODE_PER_DEVICE:
+                return new Pay(Double.parseDouble(_deviceRateEditText.getText().toString()),
+                        Integer.parseInt(_maxDevicesEditText.getText().toString()));
+            case MODE_BLENDED:
+                return new Pay(Double.parseDouble(_blendedHourlyEditText.getText().toString()),
+                        Double.parseDouble(_blendedMaxHoursEditText.getText().toString()),
+                        Double.parseDouble(_extraHourlyEditText.getText().toString()),
+                        Double.parseDouble(_extraMaxHoursEditText.getText().toString()));
+        }
+        return pay;
     }
 
     private void clearUi() {
@@ -233,36 +258,12 @@ public class PayDialog extends DialogFragmentBase {
             if (_listener == null)
                 return;
 
-            switch (_mode) {
-                case MODE_FIXED:
-                    _listener.onFixed(Double.parseDouble(_fixedEditText.getText().toString()));
-                    break;
-                case MODE_HOURLY:
-                    _listener.onHourly(Double.parseDouble(_hourlyRateEditText.getText().toString()),
-                            Double.parseDouble(_maxHoursEditText.getText().toString()));
-                    break;
-                case MODE_PER_DEVICE:
-                    _listener.onPerDevices(Double.parseDouble(_deviceRateEditText.getText().toString()),
-                            Double.parseDouble(_maxDevicesEditText.getText().toString()));
-                    break;
-                case MODE_BLENDED:
-                    _listener.onBlended(Double.parseDouble(_blendedHourlyEditText.getText().toString()),
-                            Double.parseDouble(_blendedMaxHoursEditText.getText().toString()),
-                            Double.parseDouble(_extraHourlyEditText.getText().toString()),
-                            Double.parseDouble(_extraMaxHoursEditText.getText().toString()));
-                    break;
-            }
+            _listener.onComplete(makePay());
         }
     };
 
     public interface Listener {
-        public void onFixed(double amount);
-
-        public void onHourly(double rate, double max);
-
-        public void onPerDevices(double rate, double max);
-
-        public void onBlended(double rate, double max, double rate2, double max2);
+        public void onComplete(Pay pay);
 
         public void onNothing();
     }

@@ -97,7 +97,7 @@ public class AcceptBundleDialog extends DialogFragmentBase {
         if (_acceptWOText == null)
             return;
 
-        _acceptWOText.setText("This workorder is part of a bundle of " + _workorder.getBundleCount().toString() + " workorders. By accepting this workorder you are accepting all of them.");
+        _acceptWOText.setText(String.format(getString(R.string.workorder_bundle_warning), _workorder.getBundleCount()));
     }
 
 
@@ -108,7 +108,7 @@ public class AcceptBundleDialog extends DialogFragmentBase {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private View.OnClickListener _bundle_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -119,7 +119,7 @@ public class AcceptBundleDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -129,7 +129,7 @@ public class AcceptBundleDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();

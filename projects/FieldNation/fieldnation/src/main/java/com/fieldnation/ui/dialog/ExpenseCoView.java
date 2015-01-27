@@ -97,7 +97,7 @@ public class ExpenseCoView extends RelativeLayout {
         }
     }
 
-    private View.OnClickListener _reset_onClick = new OnClickListener() {
+    private final View.OnClickListener _reset_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -105,7 +105,7 @@ public class ExpenseCoView extends RelativeLayout {
         }
     };
 
-    private ExpenseView.Listener _expense_listener = new ExpenseView.Listener() {
+    private final ExpenseView.Listener _expense_listener = new ExpenseView.Listener() {
         @Override
         public void onDelete(ExpenseView view, Expense expense) {
             if (_listener != null)
@@ -113,7 +113,7 @@ public class ExpenseCoView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _add_onClick = new OnClickListener() {
+    private final View.OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)

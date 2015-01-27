@@ -55,7 +55,7 @@ public class DiscountView extends RelativeLayout {
 		_listener = listener;
 	}
 
-	private View.OnClickListener _onDelete_onClick = new View.OnClickListener() {
+	private final View.OnClickListener _onDelete_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			if (_listener != null)

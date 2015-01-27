@@ -50,7 +50,6 @@
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_weight="1"
         android:visibility="gone"
         android:text="Assign" />
 
