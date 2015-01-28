@@ -1,26 +1,27 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TabHost;
+import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.ui.AuthActionBarActivity;
-import com.fieldnation.ui.dialog.CustomFieldDialog;
 
 public class MyWorkActivity extends AuthActionBarActivity {
     private static final String TAG = "ui.workorder.MyWorkActivity";
 
     // UI
-//    private ViewPager _viewPager;
-//    private WorkorderListFragment[] _fragments;
-    private CustomFieldDialog _customFieldDialog;
+    private FragmentTabHost _tabHost;
 
     // Data
-//    private PagerAdapter _pagerAdapter;
     private boolean _created = false;
     private int _currentFragment = 0;
 
@@ -30,20 +31,23 @@ public class MyWorkActivity extends AuthActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_tabs);
+    }
+
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
+        super.onFinishCreate(savedInstanceState);
         setTitle(R.string.mywork_title);
 
         if (!_created) {
-//            addActionBarAndDrawer(R.id.container);
-//            buildTabs(savedInstanceState);
             _created = true;
         }
 
-        _currentFragment = getSupportActionBar().getSelectedNavigationIndex();
-//        _viewPager.setCurrentItem(_currentFragment, false);
+        _tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        _tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
-//        _customFieldDialog = CustomFieldDialog.getInstance(getSupportFragmentManager(), TAG);
-//        _customFieldDialog.sho
+        setupTab(getString(R.string.tab_assigned), WorkorderDataSelector.ASSIGNED);
+        setupTab(getString(R.string.tab_completed), WorkorderDataSelector.COMPLETED);
+        setupTab(getString(R.string.tab_canceled), WorkorderDataSelector.CANCELED);
     }
 
     @Override
@@ -51,10 +55,25 @@ public class MyWorkActivity extends AuthActionBarActivity {
         return R.layout.activity_tabs;
     }
 
+    private void setupTab(final String tag, WorkorderDataSelector selector) {
+        View tabview = createTabView(this, tag);
+        TabHost.TabSpec setContent = _tabHost.newTabSpec(tag).setIndicator(tabview);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("STATE_DISPLAY", selector.name());
+
+        _tabHost.addTab(setContent, WorkorderListFragment.class, bundle);
+    }
+
+    private static View createTabView(final Context context, final String text) {
+        View view = LayoutInflater.from(context).inflate(R.layout.view_list_tab, null);
+        TextView tv = (TextView) view.findViewById(R.id.tab_text);
+        tv.setText(text);
+        return view;
+    }
+
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
-        // TODO STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()
-        Log.v(TAG, "STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()");
     }
 
 /*

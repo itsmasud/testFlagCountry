@@ -102,6 +102,12 @@
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
 
+    <string name="tab_assigned">ASSIGNED</string>
+    <string name="tab_completed">COMPLETED</string>
+    <string name="tab_canceled">CANCELED</string>
+    <string name="tab_available">AVAILABLE</string>
+    <string name="tab_requested">REQUETSED</string>
+
     <string name="workorder_card_status_selected">Selected</string>
     <string name="time_logged">Time Logged</string>
     <string name="request_workorder">Request Work Order</string>

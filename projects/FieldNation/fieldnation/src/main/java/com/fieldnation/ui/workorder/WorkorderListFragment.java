@@ -1,10 +1,12 @@
 package com.fieldnation.ui.workorder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,22 +90,27 @@ public class WorkorderListFragment extends Fragment {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
+
+    @Override
+    public void onAttach(Activity activity) {
+        Log.v(TAG, "onAttach");
+        super.onAttach(activity);
+
+        if (getArguments() != null) {
+            Bundle bundle = getArguments();
+            _displayView = WorkorderDataSelector.fromName(bundle.getString(STATE_DISPLAY));
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_DISPLAY)) {
-                Log.v(TAG, "Restoring state");
-                _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
-            }
-        }
-
-        Log.v(TAG, "onCreate: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
+        Log.v(TAG, "onCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         return inflater.inflate(R.layout.fragment_workorder_list, container, false);
     }
 
@@ -143,22 +150,28 @@ public class WorkorderListFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_DISPLAY, _displayView.name());
-        super.onSaveInstanceState(outState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_DISPLAY)) {
+                Log.v(TAG, "Restoring state");
+                _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
+            }
+        }
+        Log.v(TAG, "onActivityCreated: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
     }
 
-    public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
-        _displayView = displayView;
-        return this;
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onViewStateRestored");
+        super.onViewStateRestored(savedInstanceState);
     }
 
-    public WorkorderDataSelector getDisplayType() {
-        return _displayView;
-    }
-
-    public String getGaLabel() {
-        return "Work" + misc.capitalize(_displayView.getCall()) + "List";
+    @Override
+    public void onStart() {
+        Log.v(TAG, "onStart");
+        super.onStart();
     }
 
     @Override
@@ -178,8 +191,49 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onPause() {
+        Log.v(TAG, "onPause");
         _gpsLocationService.stopLocationUpdates();
         super.onPause();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
+        outState.putString(STATE_DISPLAY, _displayView.name());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onStop() {
+        Log.v(TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.v(TAG, "onDestroyView");
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        Log.v(TAG, "onDetach");
+        super.onDetach();
+    }
+
+    public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
+        _displayView = displayView;
+        return this;
+    }
+
+    public String getGaLabel() {
+        return "Work" + misc.capitalize(_displayView.getCall()) + "List";
     }
 
     public void update() {

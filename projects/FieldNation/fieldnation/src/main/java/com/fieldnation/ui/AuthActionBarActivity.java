@@ -53,20 +53,17 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
         ClockReceiver.registerClock(this);
 
-//        ActionBar actionbar = getSupportActionBar();
-//        actionbar.setDisplayHomeAsUpEnabled(true);
-//        actionbar.setHomeButtonEnabled(true);
-//        actionbar.setDisplayUseLogoEnabled(true);
-//        //actionbar.setDisplayShowHomeEnabled(true);
-//        actionbar.setDisplayHomeAsUpEnabled(true);
-//        actionbar.setDisplayShowHomeEnabled(true);
-//        actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
-
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
+
+        onFinishCreate(savedInstanceState);
     }
 
     public int getLayoutResource() {
         return 0;
+    }
+
+    public void onFinishCreate(Bundle savedInstanceState) {
+
     }
 
     @Override
@@ -148,19 +145,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-/*
-            Intent gohome = new Intent(this, MyWorkActivity.class);
-			startActivity(gohome);
-*/
                 onBackPressed();
                 return true;
-//            case R.id.action_settings:
-//                Intent intent = new Intent(this, SettingsActivity.class);
-//                startActivity(intent);
-//                return true;
-//            case R.id.action_refresh:
-//                onRefresh();
-//                return true;
         }
         return super.onOptionsItemSelected(item);
     }

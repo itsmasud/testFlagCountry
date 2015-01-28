@@ -187,6 +187,9 @@ public class GlobalState extends Application {
             _tracker.enableAdvertisingIdCollection(true);
             _tracker.enableAutoActivityTracking(true);
             _tracker.enableExceptionReporting(false);
+            if (!BuildConfig.FLAVOR.equals("prod")) {
+                _tracker.setAppVersion(BuildConfig.VERSION_NAME + ":" + BuildConfig.FLAVOR);
+            }
         }
         return _tracker;
     }
