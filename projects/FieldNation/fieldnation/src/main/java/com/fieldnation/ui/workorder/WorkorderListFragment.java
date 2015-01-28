@@ -232,6 +232,10 @@ public class WorkorderListFragment extends Fragment {
         return this;
     }
 
+    public WorkorderDataSelector getDisplayType(){
+        return _displayView;
+    }
+
     public String getGaLabel() {
         return "Work" + misc.capitalize(_displayView.getCall()) + "List";
     }
