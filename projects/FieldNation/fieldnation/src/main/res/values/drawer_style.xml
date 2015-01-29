@@ -1,12 +1,5 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <color name="drawerBackground">#FFf8f9f4</color>
-    <color name="drawerHighlightBackground">#FFc0e4bc</color>
-    <color name="drawerHighlightBorder">#FF5cc087</color>
-    <color name="drawerForeground">#FFcecfc0</color>
-    <color name="drawerPaymentEstimatedAmountBackground">#FF3bc89e</color>
-    <color name="drawerPaymentPaidAmountBackground">#FF69695d</color>
-    <color name="drawerPaymentAmountForeground">#FFFFFFFF</color>
 
     <dimen name="drawer_padding">5dp</dimen>
     <dimen name="drawer_item_paddingLeft">5dp</dimen>

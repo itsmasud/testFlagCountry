@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/activityMainStyle"
     android:layout_width="match_parent"
-    android:background="@color/activity_bg"
     android:layout_height="match_parent">
 
     <FrameLayout
@@ -11,9 +11,9 @@
 
     <com.fieldnation.ui.ReconnectWarningView
         android:id="@+id/reconnect_view"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <color name="card_inside_bg">#FFFCFCFC</color>
-    <color name="card_bevel">#FFe0e0e0</color>
-
     <dimen name="card_button_dropshadow">2px</dimen>
     <dimen name="card_button_radius">4px</dimen>
     <dimen name="card_bevel_height">5px</dimen>
     <dimen name="card_corner_radius">5dp</dimen>
-
 </resources>

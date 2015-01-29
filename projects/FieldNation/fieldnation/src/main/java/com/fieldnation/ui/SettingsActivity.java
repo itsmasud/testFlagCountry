@@ -21,7 +21,7 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().getDecorView().setBackgroundColor(0xFFFFFFFF);
+        getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.white));
 
 
         addPreferencesFromResource(R.xml.pref_general);

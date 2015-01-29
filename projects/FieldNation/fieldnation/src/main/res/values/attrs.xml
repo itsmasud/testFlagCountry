@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <declare-styleable name="ActivityTheme">
+        <attr name="activityMainStyle" format="reference" />
+        <attr name="activityLoginStyle" format="reference" />
+        <attr name="activitySignatureStyle" format="reference" />
+        <attr name="activitySplashStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="Toolbar">
+        <attr name="fnToolbarStyle" format="reference" />
+        <attr name="fnToolbarTabListStyle" format="reference" />
+        <attr name="fnToolbarTabListContainerStyle" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="WorkorderDetail_ProgressLabel">
         <attr name="text" format="string"></attr>
     </declare-styleable>

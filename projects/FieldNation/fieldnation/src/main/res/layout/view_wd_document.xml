@@ -31,7 +31,7 @@
             android:maxLines="1"
             android:text="File Name.ext"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FF393a07" />
+            android:textColor="@color/document_filename" />
 
         <TextView
             android:id="@+id/date_textview"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:text="01/02/2014 @ 12:00 AM"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#FF8d8d6e" />
+            android:textColor="@color/document_detail" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -63,7 +63,7 @@
                 android:layout_marginRight="2dp"
                 android:text="@string/by"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#FF8d8d6e" />
+                android:textColor="@color/document_detail" />
 
             <TextView
                 android:id="@+id/username_textview"
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:text="username"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#FF8d8d6e" />
+                android:textColor="@color/document_detail" />
         </LinearLayout>
 
         <TextView

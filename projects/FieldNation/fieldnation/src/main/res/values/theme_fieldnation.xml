@@ -4,11 +4,11 @@
     <style name="FieldNation.Material.Theme" parent="FieldNation.ActionBar.Theme">
         <!-- Main theme colors v21+ -->
         <!--   your app branding color for the app bar -->
-        <item name="colorPrimary">#FF63c4b0</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <!--   darker variant for the status bar and contextual app bars -->
-        <item name="colorPrimaryDark">#FF63c4b0</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <!--   theme UI controls like checkboxes and text fields -->
-        <item name="colorAccent">#FFf16421</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
 
@@ -23,6 +23,17 @@
         <!--<item name="android:editTextStyle">@style/EditText</item>-->
         <!--<item name="android:buttonStyle">?attr/buttonDefaultStyle</item>-->
         <!--<item name="android:radioButtonStyle">@style/RadioButton</item>-->
+
+        <!-- toolbar -->
+        <item name="fnToolbarStyle">@style/toolbarStyle</item>
+        <item name="fnToolbarTabListStyle">@style/toolbarTabListStyle</item>
+        <item name="fnToolbarTabListContainerStyle">@style/toolbarTabListContainerStyle</item>
+
+        <!-- activities -->
+        <item name="activityMainStyle">@style/ActivityMain</item>
+        <item name="activityLoginStyle">@style/ActivityLogin</item>
+        <item name="activitySignatureStyle">@style/SignatureActivity</item>
+        <item name="activitySplashStyle">@style/SplashActivity</item>
 
         <!-- dividers -->
         <item name="dividerFullStyle">@style/DividerFull</item>

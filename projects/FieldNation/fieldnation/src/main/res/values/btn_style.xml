@@ -5,10 +5,6 @@
     <dimen name="buttonTouchTarget_Material">48dp</dimen>
 
 
-    <color name="btn_white_fg">#FF000000</color>
-    <color name="btn_orange_fg">#FFFFFFFF</color>
-    <color name="btn_green_fg">#FFFFFFFF</color>
-    <color name="btn_gray_fg">#FF000000</color>
 
     <!--<style name="ButtonWhite" parent="@android:style/Widget.Button">-->
     <!--<item name="android:textColor">@color/btn_white_fg</item>-->

@@ -24,8 +24,6 @@ import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.misc;
 
-import java.util.Objects;
-
 /**
  * Created by michael.carver on 12/9/2014.
  */
@@ -221,7 +219,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _titleTextView.setText(_workorder.getTitle());
         _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
         _descriptionTextView.setLinksClickable(false);
-        _descriptionTextView.setLinkTextColor(0xFF000000);
+        _descriptionTextView.setLinkTextColor(getResources().getColor(R.color.black));
 
         final LoggedWork[] logs = _signature.getWorklog();
         if (logs != null && logs.length > 0) {

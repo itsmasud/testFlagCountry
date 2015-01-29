@@ -9,7 +9,7 @@
     <dimen name="dialogButtonTouchTarget">@dimen/Button_Touch_Target</dimen>
     <dimen name="dialogButtonHeight">36dp</dimen>
 
-    <color name="dialogBg">#FFf3f3eb</color>
+
 
     <style name="DurationNumberPad" parent="ButtonWhiteMaterial">
         <item name="android:layout_margin">5dp</item>

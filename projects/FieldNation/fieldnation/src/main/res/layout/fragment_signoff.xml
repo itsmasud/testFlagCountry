@@ -11,14 +11,14 @@
         <RelativeLayout
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:background="#FF000000"
+            android:background="@color/black"
             android:layout_width="match_parent"
             android:layout_height="60dp">
 
             <TextView
                 android:layout_centerVertical="true"
                 style="@style/Text_Headline"
-                android:textColor="#FFFFFFFF"
+                android:textColor="@color/white"
                 android:alpha="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
                     android:layout_marginLeft="18dp"
                     android:layout_marginRight="18dp"
                     android:layout_marginTop="7dp"
-                    android:background="#FFFFFFFF"
+                    android:background="@color/white"
                     android:layout_alignLeft="@+id/circles_layout"
                     android:layout_alignRight="@+id/circles_layout"
                     android:layout_width="0dp"
@@ -63,7 +63,7 @@
                             style="@style/Text_Caption"
                             android:textSize="10dp"
                             android:alpha="1"
-                            android:textColor="#FFFFFFFF"
+                            android:textColor="@color/white"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Review" />
@@ -86,7 +86,7 @@
                             style="@style/Text_Caption"
                             android:textSize="10dp"
                             android:alpha="1"
-                            android:textColor="#FFFFFFFF"
+                            android:textColor="@color/white"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Sign" />
@@ -108,7 +108,7 @@
                             style="@style/Text_Caption"
                             android:alpha="1"
                             android:textSize="10dp"
-                            android:textColor="#FFFFFFFF"
+                            android:textColor="@color/white"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Done" />
@@ -127,7 +127,7 @@
 
             <LinearLayout
                 android:id="@+id/container"
-                android:background="#FFeeeeee"
+                android:background="@color/fn_white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

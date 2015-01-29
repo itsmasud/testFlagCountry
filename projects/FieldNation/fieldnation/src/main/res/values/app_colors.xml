@@ -5,20 +5,35 @@
     <color name="fn_white">#FFeeeeee</color>
     <color name="fn_orange">#FFFC6102</color>
 
-    <color name="activity_bg">#FFeeeeee</color>
+    <color name="activity_bg">#FFf3f3eb</color>
     <color name="transparent">#00000000</color>
+<!--
     <color name="loading_bar_color_1">#FF47D3AF</color>
     <color name="loading_bar_color_2">#FF42CFB2</color>
     <color name="loading_bar_color_3">#FF54C5C8</color>
     <color name="loading_bar_color_4">#FF68B8E1</color>
     <color name="loading_bar_color_5">#FF7EAFF5</color>
+-->
     <color name="black">#FF000000</color>
     <color name="text_link_color">#FF7cb0f4</color>
 
+    <color name="actionbar_stacked_background_start">#FF5181d2</color>
+    <color name="actionbar_stacked_background_end">#FF30A793</color>
+
+    <color name="actionbar_tab_selected_bg">#FF648fc1</color>
+    <color name="actionbar_tab_selected_fg">#FF6aa0e2</color>
+
+    <color name="toolbar_gradient_start">#FF82B0F4</color>
+    <color name="toolbar_gradient_end">#FF4CD2AF</color>
+
+    <color name="drawer_shadow">#FF111111</color>
+
+<!--
     <integer-array name="loading_bar_colors">
         <item>@color/loading_bar_color_1</item>
         <item>@color/loading_bar_color_5</item>
     </integer-array>
+-->
 
     <color name="text_normal">#FF000000</color>
     <color name="text_success">#FF48CEAD</color>
@@ -38,8 +53,60 @@
 
     <color name="actionBarTextColor">@color/white</color>
 
+    <color name="document_filename">#FF393a07</color>
+    <color name="document_detail">#FF8d8d6e</color>
 
-    <!-- tiles -->
+    <color name="edittext_color">#FF000000</color>
+    <color name="edittext_color_hint">#FFcececa</color>
 
+    <color name="btn_white_fg">#FF000000</color>
+    <color name="btn_orange_fg">#FFFFFFFF</color>
+    <color name="btn_green_fg">#FFFFFFFF</color>
+    <color name="btn_gray_fg">#FF000000</color>
+
+    <color name="card_inside_bg">#FFFCFCFC</color>
+    <color name="card_bevel">#FFe0e0e0</color>
+    <color name="dialogBg">#FFf3f3eb</color>
+
+    <color name="drawerBackground">#FFf8f9f4</color>
+    <color name="drawerHighlightBackground">#FFc0e4bc</color>
+    <color name="drawerHighlightBorder">#FF5cc087</color>
+    <color name="drawerForeground">#FFcecfc0</color>
+    <color name="drawerPaymentEstimatedAmountBackground">#FF3bc89e</color>
+    <color name="drawerPaymentPaidAmountBackground">#FF69695d</color>
+    <color name="drawerPaymentAmountForeground">#FFFFFFFF</color>
+
+    <color name="cardLabelText">#FF929367</color>
+
+    <color name="notificationBackground">#FFfe6200</color>
+    <color name="notificationForeground">#FFFFFFFF</color>
+
+    <color name="SignatureCardGrey">#FFc0bfbf</color>
+
+    <color name="colorPrimary">#FF63c4b0</color>
+    <color name="colorPrimaryDark">#FF63c4b0</color>
+    <color name="colorAccent">#FFf16421</color>
+
+    <color name="woCardOptionsBackground">#FF383f49</color>
+    <color name="woCardStatusLabel1">#FF000000</color>
+    <color name="woCardStatusLabel2">#FFFFFFFF</color>
+    <color name="woCardStatusLabel3">#FFFFFFFF</color>
+    <color name="woCardStatusLabel4">#FFFFFFFF</color>
+    <color name="woCardSelectedTextColor">#FFFFFFFF</color>
+    <color name="woCardTextColor">#FF000000</color>
+
+    <color name="shadow">#55000000</color>
+
+    <color name="workorder_detail_bg">@color/fn_gray</color>
+    <color name="workorder_detail_separator_color">#FFe6e6e6</color>
+
+    <color name="workorderDetailFieldBoldTextColor">#FF2d2e00</color>
+    <color name="workorderDetailFieldTitleTextColor">#FF97976e</color>
+    <color name="workorderDetailFieldGray">#FFc8c7c2</color>
+
+    <color name="workorder_tab_separator_color">#FFe9e9e7</color>
+    <color name="workorder_tab_text_selected">#FF424314</color>
+    <color name="workorder_tab_text">#FFbcbdb7</color>
+    <color name="workorder_tab_bg">@color/fn_gray</color>
 
 </resources>

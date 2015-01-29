@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/activityMainStyle"
     android:layout_width="match_parent"
-    android:background="@color/fn_gray"
     android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
-        android:scrollbarStyle="outsideOverlay"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:scrollbarStyle="outsideOverlay">
 
         <LinearLayout
             android:id="@+id/container"
@@ -90,14 +90,14 @@
             <TextView
                 android:id="@+id/closingnotes_textview"
                 style="@style/WorkorderDetail_Field"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <com.fieldnation.ui.SignatureView
                 android:id="@+id/signature_view"
-                android:background="@color/fn_gray"
                 android:layout_width="match_parent"
-                android:layout_height="96dp" />
+                android:layout_height="96dp"
+                android:background="@color/fn_gray" />
 
             <TextView
                 android:id="@+id/name_textview"
@@ -125,10 +125,10 @@
         android:layout_height="match_parent" />
 
     <com.fieldnation.ui.ReconnectWarningView
-        android:visibility="gone"
-        android:layout_alignParentBottom="true"
         android:id="@+id/reconnect_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

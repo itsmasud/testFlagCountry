@@ -14,31 +14,30 @@ import com.fieldnation.R;
 /**
  * Created by Michael Carver on 1/28/2015.
  */
-public class TabView extends RelativeLayout {
+public class ToolbarTabView extends RelativeLayout {
     private static final String TAG = "ui.TabView";
-
 
     // Ui
     private TextView _back;
     private SlideTextView _front;
 
-    public TabView(Context context) {
+    public ToolbarTabView(Context context) {
         super(context);
         init();
     }
 
-    public TabView(Context context, AttributeSet attrs) {
+    public ToolbarTabView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TabView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ToolbarTabView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_tab, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_toolbar_tab, this, true);
 
         _back = (TextView) findViewById(R.id.back);
         _front = (SlideTextView) findViewById(R.id.front);

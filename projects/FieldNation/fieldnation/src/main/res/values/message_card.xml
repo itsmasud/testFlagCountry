@@ -26,12 +26,12 @@
     </style>
 
     <style name="MessageCard_Time">
-        <item name="android:textColor">#FF929367</item>
+        <item name="android:textColor">@color/cardLabelText</item>
         <item name="android:textStyle">italic</item>
     </style>
 
     <style name="MessageCard_StatusLabel">
-        <item name="android:textColor">#FF929367</item>
+        <item name="android:textColor">@color/cardLabelText</item>
         <item name="android:textStyle">italic</item>
     </style>
 

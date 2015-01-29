@@ -9,8 +9,8 @@
         <item name="android:paddingTop">3dp</item>
         <item name="android:paddingBottom">3dp</item>
         <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:textColor">#FF000000</item>
-        <item name="android:textColorHint">#FFcececa</item>
+        <item name="android:textColor">@color/edittext_color</item>
+        <item name="android:textColorHint">@color/edittext_color_hint</item>
     </style>
 
 </resources>

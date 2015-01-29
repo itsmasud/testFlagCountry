@@ -21,7 +21,7 @@ public class PagerTabListView extends RelativeLayout {
     // Ui
     private LinearLayout _tabContainer;
     //    private View _tabSelector;
-    private TabView[] _tabs;
+    private ToolbarTabView[] _tabs;
 
     // Data
     private int _selectedTab = 0;
@@ -57,11 +57,11 @@ public class PagerTabListView extends RelativeLayout {
     private void populateUi() {
         int count = _pager.getAdapter().getCount();
 
-        _tabs = new TabView[count];
+        _tabs = new ToolbarTabView[count];
         // build tabs
         _tabContainer.removeAllViews();
         for (int i = 0; i < count; i++) {
-            TabView v = getTab(i, _pager.getAdapter().getPageTitle(i));
+            ToolbarTabView v = getTab(i, _pager.getAdapter().getPageTitle(i));
 
             v.setTag(i);
             v.setOnClickListener(_tab_onClick);
@@ -70,8 +70,8 @@ public class PagerTabListView extends RelativeLayout {
         }
     }
 
-    private TabView getTab(int position, CharSequence title) {
-        TabView tv = new TabView(getContext(), null, R.style.TextViewEmptyLabel);
+    private ToolbarTabView getTab(int position, CharSequence title) {
+        ToolbarTabView tv = new ToolbarTabView(getContext(), null, R.style.TextViewEmptyLabel);
         tv.setText(title);
         tv.setGravity(Gravity.CENTER);
 
