@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
@@ -21,13 +20,12 @@ public class PagerTabListView extends RelativeLayout {
 
     // Ui
     private LinearLayout _tabContainer;
-    private View _tabSelector;
-    private View[] _tabs;
+    //    private View _tabSelector;
+    private TabView[] _tabs;
 
     // Data
     private int _selectedTab = 0;
     private ViewPager _pager;
-    private TabFactory _tabFactory = null;
 
     public PagerTabListView(Context context) {
         super(context);
@@ -48,31 +46,22 @@ public class PagerTabListView extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.view_pager_tab_list, this, true);
 
         _tabContainer = (LinearLayout) findViewById(R.id.tab_container);
-        _tabSelector = findViewById(R.id.tab_selector);
-    }
-
-    public void setTabFactory(TabFactory tabFactory) {
-        _tabFactory = tabFactory;
+//        _tabSelector = findViewById(R.id.tab_selector);
     }
 
     public void setViewPager(ViewPager pager) {
         _pager = pager;
-        _pager.setOnPageChangeListener(_pageChangeListener);
         populateUi();
     }
 
     private void populateUi() {
         int count = _pager.getAdapter().getCount();
 
-        _tabs = new View[count];
+        _tabs = new TabView[count];
         // build tabs
         _tabContainer.removeAllViews();
         for (int i = 0; i < count; i++) {
-            View v = null;
-            if (_tabFactory != null)
-                v = _tabFactory.getTab(i, _pager.getAdapter().getPageTitle(i));
-            else
-                v = getTab(i, _pager.getAdapter().getPageTitle(i));
+            TabView v = getTab(i, _pager.getAdapter().getPageTitle(i));
 
             v.setTag(i);
             v.setOnClickListener(_tab_onClick);
@@ -81,8 +70,8 @@ public class PagerTabListView extends RelativeLayout {
         }
     }
 
-    private View getTab(int position, CharSequence title) {
-        TextView tv = new TextView(getContext(), null, R.style.TextViewEmptyLabel);
+    private TabView getTab(int position, CharSequence title) {
+        TabView tv = new TabView(getContext(), null, R.style.TextViewEmptyLabel);
         tv.setText(title);
         tv.setGravity(Gravity.CENTER);
 
@@ -101,31 +90,27 @@ public class PagerTabListView extends RelativeLayout {
     }
 
     public void setSelected(int position) {
+
+        if (position > _selectedTab) {
+            _tabs[_selectedTab].animateUnhighlightRight();
+            _tabs[position].animateHighlightRight();
+        } else if (position < _selectedTab) {
+            _tabs[_selectedTab].animateUnhighlightLeft();
+            _tabs[position].animateHighlightLeft();
+        } else {
+            _tabs[_selectedTab].setHighlight();
+        }
+
         _tabs[_selectedTab].setSelected(false);
 
         _selectedTab = position;
 
         View tab = _tabs[position];
-        _tabSelector.setLeft(tab.getLeft());
-        _tabSelector.setRight(tab.getRight());
+//        _tabSelector.setLeft(tab.getLeft());
+//        _tabSelector.setRight(tab.getRight());
         tab.setSelected(true);
     }
 
-    private final ViewPager.OnPageChangeListener _pageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            setSelected(position);
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-
-        }
-    };
 
     private final OnClickListener _tab_onClick = new OnClickListener() {
         @Override
@@ -135,9 +120,5 @@ public class PagerTabListView extends RelativeLayout {
             _pager.setCurrentItem(i, true);
         }
     };
-
-    public interface TabFactory {
-        public View getTab(int position, CharSequence title);
-    }
 
 }

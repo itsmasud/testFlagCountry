@@ -1,12 +1,11 @@
 package com.fieldnation.ui;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,13 +15,12 @@ import com.fieldnation.R;
  * Created by Michael Carver on 1/28/2015.
  */
 public class TabView extends RelativeLayout {
+    private static final String TAG = "ui.TabView";
 
-    private static int ANIMATION_DELAY = 1000;
 
+    // Ui
     private TextView _back;
-    private TextView _front;
-
-    private Animation _expandRight;
+    private SlideTextView _front;
 
     public TabView(Context context) {
         super(context);
@@ -43,142 +41,32 @@ public class TabView extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.view_tab, this, true);
 
         _back = (TextView) findViewById(R.id.back);
-        _front = (TextView) findViewById(R.id.front);
-        _front.setVisibility(View.GONE);
+        _front = (SlideTextView) findViewById(R.id.front);
     }
 
-    public void aniamteHighlightRight() {
-        ValueAnimator a = ValueAnimator.ofInt(0, getWidth());
-        _front.setLeft(0);
-        _front.setRight(getWidth());
-        a.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                _front.setRight((int) animation.getAnimatedValue());
-            }
-        });
-        a.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                _front.setVisibility(View.VISIBLE);
-            }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-        a.setDuration(ANIMATION_DELAY);
-        a.start();
+    public void setHighlight() {
+        _front.setHighlight();
     }
 
-    public void aniamteHighlightLeft() {
-        ValueAnimator a = ValueAnimator.ofInt(getWidth(), 0);
-        _front.setLeft(0);
-        _front.setRight(getWidth());
-        a.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                _front.setLeft((int) animation.getAnimatedValue());
-            }
-        });
-        a.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                _front.setVisibility(View.VISIBLE);
-            }
+    public void animateHighlightRight() {
+        _front.animateHighlightRight();
+    }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-        a.setDuration(ANIMATION_DELAY);
-        a.start();
+    public void animateHighlightLeft() {
+        _front.animateHighlightLeft();
     }
 
     public void animateUnhighlightLeft() {
-        ValueAnimator a = ValueAnimator.ofInt(getWidth(), 0);
-        _front.setLeft(0);
-        _front.setRight(getWidth());
-        a.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                _front.setRight((int) animation.getAnimatedValue());
-            }
-        });
-        a.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                _front.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-        a.setDuration(ANIMATION_DELAY);
-
-        a.start();
+        _front.animateUnhighlightLeft();
     }
 
 
-    public void aniamteUnhighlightRight() {
-        ValueAnimator a = ValueAnimator.ofInt(0, getWidth());
-        _front.setLeft(0);
-        _front.setRight(getWidth());
-        a.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                _front.setLeft((int) animation.getAnimatedValue());
-            }
-        });
-        a.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                _front.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-        a.setDuration(ANIMATION_DELAY);
-
-        a.start();
+    public void animateUnhighlightRight() {
+        _front.animateUnhighlightRight();
     }
 
-    public void setText(String text) {
+    public void setText(CharSequence text) {
         _front.setText(text);
         _back.setText(text);
     }
@@ -188,4 +76,14 @@ public class TabView extends RelativeLayout {
         _back.setText(resid);
     }
 
+    /**
+     * Draw the view into a bitmap.
+     */
+    private static Bitmap getViewBitmap(View v) {
+        Bitmap b = Bitmap.createBitmap(v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+        v.draw(c);
+        return b;
+    }
 }

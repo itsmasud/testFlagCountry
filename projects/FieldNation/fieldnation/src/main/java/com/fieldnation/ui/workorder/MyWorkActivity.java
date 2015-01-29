@@ -5,15 +5,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.PagerTabListView;
-import com.fieldnation.ui.TabView;
 
 import java.util.List;
 
@@ -26,7 +21,7 @@ public class MyWorkActivity extends AuthActionBarActivity {
 
     // Data
     private boolean _created = false;
-    private Fragment[] _fragments;
+    private WorkorderListFragment[] _fragments;
     private String[] _titles;
 
     /*-*************************************-*/
@@ -42,6 +37,7 @@ public class MyWorkActivity extends AuthActionBarActivity {
         }
 
         _viewPager = (ViewPager) findViewById(R.id.pager);
+        _viewPager.setOffscreenPageLimit(3);
         _tabListView = (PagerTabListView) findViewById(R.id.tablist_view);
 
         _fragments = new WorkorderListFragment[3];
@@ -49,12 +45,10 @@ public class MyWorkActivity extends AuthActionBarActivity {
         _fragments[1] = getFragment(WorkorderDataSelector.COMPLETED);
         _fragments[2] = getFragment(WorkorderDataSelector.CANCELED);
 
-        _titles = new String[]{getString(R.string.tab_assigned),
-                getString(R.string.tab_completed),
-                getString(R.string.tab_canceled)};
+        _titles = new String[]{getString(R.string.tab_assigned), getString(R.string.tab_completed), getString(R.string.tab_canceled)};
 
         _viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
-        _tabListView.setTabFactory(_tab_factory);
+        _viewPager.setOnPageChangeListener(_pageChangeListener);
         _tabListView.setViewPager(_viewPager);
     }
 
@@ -72,22 +66,7 @@ public class MyWorkActivity extends AuthActionBarActivity {
 
     }
 
-    private final PagerTabListView.TabFactory _tab_factory = new PagerTabListView.TabFactory() {
-        @Override
-        public View getTab(int position, CharSequence title) {
-            TabView tv = new TabView(MyWorkActivity.this, null, R.style.TextViewEmptyLabel);
-            tv.setText((String) title);
-
-            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(0, RelativeLayout.LayoutParams.MATCH_PARENT);
-            param.weight = 1f;
-            param.gravity = Gravity.CENTER;
-            tv.setLayoutParams(param);
-
-            return tv;
-        }
-    };
-
-    private Fragment getFragment(WorkorderDataSelector selector) {
+    private WorkorderListFragment getFragment(WorkorderDataSelector selector) {
         Fragment fragment = null;
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         if (fragments != null) {
@@ -105,7 +84,7 @@ public class MyWorkActivity extends AuthActionBarActivity {
         if (fragment == null) {
             fragment = new WorkorderListFragment().setDisplayType(selector);
         }
-        return fragment;
+        return (WorkorderListFragment) fragment;
     }
 
 
@@ -134,5 +113,23 @@ public class MyWorkActivity extends AuthActionBarActivity {
             return _titles[position];
         }
     }
+
+    private final ViewPager.OnPageChangeListener _pageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            _tabListView.setSelected(position);
+            _fragments[position].isShowing();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
+
 
 }

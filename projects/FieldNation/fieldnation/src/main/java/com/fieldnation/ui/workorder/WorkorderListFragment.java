@@ -180,7 +180,6 @@ public class WorkorderListFragment extends Fragment {
         _adapter.refreshPages();
         _loadingView.startRefreshing();
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
-        GaTopic.dispatchScreenView(getActivity(), getGaLabel());
 
         _gpsLocationService = new GPSLocationService(getActivity());
         // GPS settings dialog should only be displayed if the GPS is failing
@@ -232,7 +231,7 @@ public class WorkorderListFragment extends Fragment {
         return this;
     }
 
-    public WorkorderDataSelector getDisplayType(){
+    public WorkorderDataSelector getDisplayType() {
         return _displayView;
     }
 
@@ -240,9 +239,9 @@ public class WorkorderListFragment extends Fragment {
         return "Work" + misc.capitalize(_displayView.getCall()) + "List";
     }
 
-    public void update() {
-        //_loadingView.startRefreshing();
-        _adapter.refreshPages();
+    public void isShowing() {
+        Log.v(TAG, "isShowing");
+        GaTopic.dispatchScreenView(getActivity(), getGaLabel());
     }
 
     private void requestList(int page, boolean allowCache) {

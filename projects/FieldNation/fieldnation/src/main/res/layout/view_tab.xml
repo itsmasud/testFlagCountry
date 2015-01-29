@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_centerInParent="true"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true">
 
     <TextView
         android:id="@+id/back"
-        android:gravity="center"
-        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/placeholder_word" />
+        android:text="@string/placeholder_word"
+        android:textStyle="bold" />
 
-    <TextView
+    <com.fieldnation.ui.SlideTextView
         android:id="@+id/front"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textColor="@color/fn_orange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/placeholder_word" />
+        android:text="@string/placeholder_word"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
 </RelativeLayout>

@@ -192,6 +192,6 @@ public class MarketActivity extends DrawerActivity {
 
     @Override
     public void onRefresh() {
-        _fragments[_currentFragment].update();
+        _fragments[_currentFragment].isShowing();
     }
 }
