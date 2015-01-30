@@ -358,4 +358,8 @@
         android:layout_width="wrap_content"
         android:text="\u03C0" />
 
+    <Button
+        style="@style/ButtonRaised"
+        android:text="Raised Test" />
+
 </RelativeLayout>

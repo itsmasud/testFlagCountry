@@ -7,13 +7,13 @@
 
     <color name="activity_bg">#FFf3f3eb</color>
     <color name="transparent">#00000000</color>
-<!--
-    <color name="loading_bar_color_1">#FF47D3AF</color>
-    <color name="loading_bar_color_2">#FF42CFB2</color>
-    <color name="loading_bar_color_3">#FF54C5C8</color>
-    <color name="loading_bar_color_4">#FF68B8E1</color>
-    <color name="loading_bar_color_5">#FF7EAFF5</color>
--->
+    <!--
+        <color name="loading_bar_color_1">#FF47D3AF</color>
+        <color name="loading_bar_color_2">#FF42CFB2</color>
+        <color name="loading_bar_color_3">#FF54C5C8</color>
+        <color name="loading_bar_color_4">#FF68B8E1</color>
+        <color name="loading_bar_color_5">#FF7EAFF5</color>
+    -->
     <color name="black">#FF000000</color>
     <color name="text_link_color">#FF7cb0f4</color>
 
@@ -28,12 +28,12 @@
 
     <color name="drawer_shadow">#FF111111</color>
 
-<!--
-    <integer-array name="loading_bar_colors">
-        <item>@color/loading_bar_color_1</item>
-        <item>@color/loading_bar_color_5</item>
-    </integer-array>
--->
+    <!--
+        <integer-array name="loading_bar_colors">
+            <item>@color/loading_bar_color_1</item>
+            <item>@color/loading_bar_color_5</item>
+        </integer-array>
+    -->
 
     <color name="text_normal">#FF000000</color>
     <color name="text_success">#FF48CEAD</color>
@@ -96,6 +96,7 @@
     <color name="woCardTextColor">#FF000000</color>
 
     <color name="shadow">#55000000</color>
+    <color name="button_raised_shadow">#1E000000</color>
 
     <color name="workorder_detail_bg">@color/fn_gray</color>
     <color name="workorder_detail_separator_color">#FFe6e6e6</color>
