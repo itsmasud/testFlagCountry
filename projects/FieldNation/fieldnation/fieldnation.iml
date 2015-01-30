@@ -110,6 +110,7 @@
     <orderEntry type="library" exported="" name="gridlayout-v7-21.0.2" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
+    <orderEntry type="library" exported="" name="renderscript-v8" level="project" />
     <orderEntry type="module" module-name="libDateTimePicker" exported="" />
     <orderEntry type="module" module-name="libUtils" exported="" />
     <orderEntry type="module" module-name="libJson" exported="" />

@@ -14,6 +14,9 @@ android {
         versionCode 24
         versionName "0.24"
         applicationId "com.fieldnation.android"
+
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
