@@ -29,7 +29,7 @@
         android:id="@+id/add_button"
         android:layout_gravity="right"
         style="?attr/buttonWhiteStyle"
-        android:text="Add Signature" />
+        android:text="@string/btn_add_signature" />
 
     <View
         android:layout_width="match_parent"

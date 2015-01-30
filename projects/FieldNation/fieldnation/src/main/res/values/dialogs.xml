@@ -10,7 +10,6 @@
     <dimen name="dialogButtonHeight">36dp</dimen>
 
 
-
     <style name="DurationNumberPad" parent="ButtonWhiteMaterial">
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20sp</item>
@@ -36,7 +35,7 @@
     </style>
 
     <style name="Dialog">
-        <item name="android:background">@color/dialogBg</item>
+        <item name="android:background">@color/fn_menu_bg</item>
     </style>
 
     <style name="DialogContainer">
@@ -47,7 +46,7 @@
     </style>
 
     <style name="DialogTitle" parent="@style/Text_Headline">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">16dp</item>
         <item name="android:layout_width">wrap_content</item>
@@ -55,20 +54,20 @@
     </style>
 
     <style name="DialogLabel" parent="@style/Text_Subhead">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="DialogBody" parent="@style/Text_Body_1">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">@dimen/dialogContentPadding</item>
     </style>
 
     <style name="DialogCaption" parent="@style/Text_Caption">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>

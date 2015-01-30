@@ -10,17 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.fieldnation.ui.workorder.WorkorderTabView
-            android:id="@+id/tabview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/content_viewpager"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/tabview" />
+            android:orientation="vertical">
+
+            <include layout="@layout/view_toolbar" />
+
+            <com.fieldnation.ui.workorder.WorkorderTabView
+                android:id="@+id/tabview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/content_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
 
         <!-- loading layout -->
 

@@ -72,11 +72,13 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     // Service
     private WorkorderService _service;
 
+    @Override
+    public int getLayoutResource() {
+        return R.layout.activity_signature_display;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signature_display);
+    public void onFinishCreate(Bundle savedInstanceState) {
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
@@ -160,7 +162,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                 }
             }.executeEx(savedInstanceState);
         }
-
     }
 
     @Override
@@ -219,7 +220,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _titleTextView.setText(_workorder.getTitle());
         _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
         _descriptionTextView.setLinksClickable(false);
-        _descriptionTextView.setLinkTextColor(getResources().getColor(R.color.black));
+        _descriptionTextView.setLinkTextColor(getResources().getColor(R.color.fn_dark_text));
 
         final LoggedWork[] logs = _signature.getWorklog();
         if (logs != null && logs.length > 0) {
@@ -291,10 +292,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         }
 
         _loadingView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onRefresh() {
     }
 
     private class SignatureParseAsyncTask extends AsyncTaskEx<Bundle, Object, Signature> {

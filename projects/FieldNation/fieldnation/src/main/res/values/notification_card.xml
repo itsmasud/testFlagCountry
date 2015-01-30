@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="NotificationText">
+    <style name="NotificationText">-->
         <item name="android:background">@drawable/notification_number_background</item>
-        <item name="android:textColor">@color/notificationForeground</item>
+        <item name="android:textColor">@color/fn_white_text</item>
         <item name="android:textAppearance">@android:attr/textAppearanceSmall</item>
         <item name="android:textSize">10dp</item>
     </style>
@@ -13,9 +13,9 @@
         <item name="android:background">@drawable/card_full</item>
     </style>
 
-    <style name="NotificationCard_StatusLabel">
-        <item name="android:textColor">@color/cardLabelText</item>
-        <item name="android:textStyle">italic</item>
-    </style>
+    <!--<style name="NotificationCard_StatusLabel">-->
+    <!--<item name="android:textColor">@color/cardLabelText</item>-->
+    <!--<item name="android:textStyle">italic</item>-->
+    <!--</style>-->
 
 </resources>

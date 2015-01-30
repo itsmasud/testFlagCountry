@@ -10,23 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.fieldnation.ui.OverScrollListView
-            android:id="@+id/items_listview"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:animateLayoutChanges="true"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:smoothScrollbar="false" />
+            android:orientation="vertical">
+
+            <include layout="@layout/view_toolbar" />
+
+            <com.fieldnation.ui.OverScrollListView
+                android:id="@+id/items_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:animateLayoutChanges="true"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:smoothScrollbar="false" />
+        </LinearLayout>
 
         <com.fieldnation.ui.ReconnectWarningView
             android:id="@+id/reconnect_view"
-            android:visibility="gone"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
 
         <com.fieldnation.ui.RefreshView
             android:id="@+id/refresh_view"

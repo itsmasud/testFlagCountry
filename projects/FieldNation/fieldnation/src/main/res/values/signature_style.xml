@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="SignatureActivity">
-        <item name="android:background">@color/activity_bg</item>
+        <item name="android:background">@color/fn_primary_bg</item>
     </style>
 
     <style name="SignatureContents">
@@ -27,7 +27,7 @@
 
     <style name="SignatureName">
         <item name="android:layout_marginBottom">5dp</item>
-        <item name="android:textColor">@color/SignatureCardGrey</item>
+        <item name="android:textColor">@color/fn_light_text</item>
     </style>
 
 </resources>

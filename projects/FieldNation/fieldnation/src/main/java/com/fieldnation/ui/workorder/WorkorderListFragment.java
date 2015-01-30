@@ -31,6 +31,7 @@ import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
+import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
@@ -48,7 +49,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class WorkorderListFragment extends Fragment {
+public class WorkorderListFragment extends Fragment implements TabActionBarFragmentActivity.TabFragment {
     private final String TAG = UniqueTag.makeTag("ui.workorder.WorkorderListFragment");
 
     // State
@@ -239,6 +240,7 @@ public class WorkorderListFragment extends Fragment {
         return "Work" + misc.capitalize(_displayView.getCall()) + "List";
     }
 
+    @Override
     public void isShowing() {
         Log.v(TAG, "isShowing");
         GaTopic.dispatchScreenView(getActivity(), getGaLabel());

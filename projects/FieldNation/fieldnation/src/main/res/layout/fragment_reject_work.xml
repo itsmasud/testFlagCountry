@@ -27,7 +27,7 @@
     </LinearLayout>
 
     <Button
-        style="@style/Button.Material.Flat"
+        style="@style/Material.Button.Flat"
         android:id="@+id/done_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

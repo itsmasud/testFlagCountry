@@ -8,14 +8,12 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
@@ -23,8 +21,6 @@ import com.fieldnation.data.profile.Workorder;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
-
-import java.text.ParseException;
 
 public class NotificationView extends RelativeLayout {
     private static final String TAG = "ui.NotificationView";
@@ -68,11 +64,11 @@ public class NotificationView extends RelativeLayout {
             return;
 
         _substatus = getResources().getStringArray(R.array.workorder_substatus);
-        _colors[0] = getResources().getColor(R.color.text_normal);
-        _colors[1] = getResources().getColor(R.color.text_success);
-        _colors[2] = getResources().getColor(R.color.text_waiting);
-        _colors[3] = getResources().getColor(R.color.text_warning);
-        _colors[4] = getResources().getColor(R.color.text_normal);
+        _colors[0] = getResources().getColor(R.color.fn_dark_text);
+        _colors[1] = getResources().getColor(R.color.fn_dark_text);
+        _colors[2] = getResources().getColor(R.color.fn_dark_text);
+        _colors[3] = getResources().getColor(R.color.fn_dark_text);
+        _colors[4] = getResources().getColor(R.color.fn_dark_text);
 
         _titleLayout = (LinearLayout) findViewById(R.id.title_layout);
         _titleThumbImageView = (ImageView) findViewById(R.id.titlethumb_imageview);

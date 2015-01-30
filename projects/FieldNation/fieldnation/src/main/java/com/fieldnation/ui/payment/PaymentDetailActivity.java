@@ -46,10 +46,12 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     private PaymentDetailAdapter _adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_payments_detail);
+    public int getLayoutResource() {
+        return R.layout.activity_payments_detail;
+    }
 
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
 
         if (intent == null) {
@@ -165,10 +167,4 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             AuthTopicService.requestAuthInvalid(PaymentDetailActivity.this);
         }
     };
-
-    @Override
-    public void onRefresh() {
-        // TODO Method Stub: onRefresh()
-        Log.v(TAG, "Method Stub: onRefresh()");
-    }
 }

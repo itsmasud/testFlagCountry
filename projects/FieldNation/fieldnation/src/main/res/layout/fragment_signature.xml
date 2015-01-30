@@ -61,12 +61,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_gravity="bottom"
-                android:background="@color/SignatureCardGrey" />
+                android:background="@color/fn_divider" />
         </LinearLayout>
 
         <Button
             android:id="@+id/clear_button"
-            style="@style/Button.Material.Flat"
+            style="@style/Material.Button.Flat"
             android:layout_width="100dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
