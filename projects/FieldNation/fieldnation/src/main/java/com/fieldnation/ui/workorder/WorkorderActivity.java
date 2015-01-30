@@ -71,11 +71,14 @@ public class WorkorderActivity extends AuthActionBarActivity {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workorder);
 
+    @Override
+    public int getLayoutResource() {
+        return R.layout.activity_workorder;
+    }
+
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
@@ -324,11 +327,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
         for (int i = 0; i < _fragments.length; i++) {
             _fragments[i].setLoading(loading);
         }
-    }
-
-    @Override
-    public void onRefresh() {
-        getData(false);
     }
 
     public void getData(boolean allowCache) {

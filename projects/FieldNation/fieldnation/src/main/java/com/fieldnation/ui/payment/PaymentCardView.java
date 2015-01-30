@@ -20,8 +20,8 @@ public class PaymentCardView extends RelativeLayout {
     private static final String TAG = "ui.payment.PaymentCardView";
 
     private static final int[] _HEADER_BG = new int[]{
-            R.drawable.payment_summary_header_bg,
-            R.drawable.payment_summary_header_paid_bg};
+            R.drawable.card_status_green,
+            R.drawable.card_status_black};
 
     private TextView _titleTextView;
     private TextView _idTextView;

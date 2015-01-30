@@ -11,7 +11,7 @@
 
     <!-- not interested -->
     <style name="WorkorderCard_NotInterested">
-        <item name="android:background">@color/woCardOptionsBackground</item>
+        <item name="android:background">@color/fn_dark_text</item>
         <item name="android:layout_margin">20dp</item>
     </style>
 
@@ -30,7 +30,7 @@
     <style name="WorkorderCard_NotInterested_Text">
         <item name="android:maxLines">1</item>
         <item name="android:paddingLeft">5dp</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/fn_white_text</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     </style>
     <!-- background -->
@@ -144,7 +144,7 @@
 
     <style name="WorkorderCard_Button" parent="android:attr/buttonStyleSmall">
         <item name="android:background">@drawable/btn_white</item>
-        <item name="android:textColor">@color/btn_white_fg</item>
+        <item name="android:textColor">@color/fn_white_text</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">none</item>
         <item name="android:singleLine">true</item>
@@ -153,11 +153,11 @@
     </style>
 
     <style name="WorkorderCard_LoadingLayout">
-        <item name="android:background">@color/shadow</item>
+        <item name="android:background">@color/fn_shadow</item>
     </style>
 
     <style name="WorkorderCard_UndoLayout">
-        <item name="android:background">@color/shadow</item>
+        <item name="android:background">@color/fn_shadow</item>
     </style>
 
 </resources>

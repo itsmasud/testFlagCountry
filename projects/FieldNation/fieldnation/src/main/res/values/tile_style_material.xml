@@ -2,8 +2,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- material style -->
-    <color name="tileTextColor_Material">@color/black</color>
-    <color name="tileBackGroundColor_Material">@color/white</color>
+    <color name="tileTextColor_Material">@color/fn_dark_text</color>
+    <color name="tileBackGroundColor_Material">@color/fn_menu_bg</color>
     <dimen name="tileContentPadding_Material">16dp</dimen>
     <dimen name="tileActionBarBottom_Material">8dp</dimen>
     <dimen name="tileActionBarMargins_material">8dp</dimen>

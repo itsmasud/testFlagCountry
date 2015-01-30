@@ -58,13 +58,9 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         onFinishCreate(savedInstanceState);
     }
 
-    public int getLayoutResource() {
-        return 0;
-    }
+    public abstract int getLayoutResource();
 
-    public void onFinishCreate(Bundle savedInstanceState) {
-
-    }
+    public abstract void onFinishCreate(Bundle savedInstanceState);
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,7 +146,4 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    public abstract void onRefresh();
-
 }

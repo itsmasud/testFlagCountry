@@ -28,7 +28,7 @@
             <Button
                 android:layout_gravity="left"
                 android:id="@+id/start_date_button"
-                style="?attr/buttonTextLinkStyle"
+                style="?attr/buttonFlatStyle"
                 android:text="March 4, 2014 and March 5, 2015" />
 
             <TextView
@@ -46,7 +46,7 @@
             <Button
                 android:id="@+id/duration_button"
                 android:layout_gravity="left"
-                style="?attr/buttonTextLinkStyle"
+                style="?attr/buttonFlatStyle"
                 android:text="4 hours" />
 
 
@@ -63,7 +63,7 @@
 
                 <Button
                     android:id="@+id/tac_button"
-                    style="?attr/buttonTextLinkStyle"
+                    style="?attr/buttonFlatStyle"
                     android:maxLines="1"
                     android:gravity="left|center_vertical"
                     android:text="@string/terms_and_conditions" />

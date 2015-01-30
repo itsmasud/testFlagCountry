@@ -564,14 +564,14 @@ public class Workorder implements Parcelable {
             R.drawable.card_status_green, R.drawable.card_status_gray};
 
     private static final int[] _STATUS_TEXT_TABLE = {
-            R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
-            R.color.woCardStatusLabel3, R.color.woCardStatusLabel4};
+            R.color.fn_dark_text, R.color.fn_white_text,
+            R.color.fn_white_text, R.color.fn_white_text};
 
-    private static final int[] _STATUS_BUTTON_FG = {R.color.btn_white_fg,
-            R.color.btn_orange_fg, R.color.btn_green_fg, R.color.btn_gray_fg};
+    private static final int[] _STATUS_BUTTON_FG = {R.color.fn_dark_button_text,
+            R.color.fn_white_text, R.color.fn_white_text, R.color.fn_white_text};
 
-    private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_white,
-            R.drawable.btn_orange, R.drawable.btn_green, R.drawable.btn_white};
+    private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_white_material,
+            R.drawable.btn_orange_material, R.drawable.btn_green, R.drawable.btn_white_material};
 
     private int _buttonAction = 0;
     private int _notInterestedAction = 0;

@@ -42,7 +42,7 @@
 
             <Button
                 android:id="@+id/expires_button"
-                style="?attr/buttonTextLinkStyle"
+                style="?attr/buttonFlatStyle"
                 android:layout_width="wrap_content"
                 android:text="10/20/2014 11:11am" />
         </LinearLayout>
@@ -60,7 +60,7 @@
 
             <Button
                 android:id="@+id/tac_button"
-                style="?attr/buttonTextLinkStyle"
+                style="?attr/buttonFlatStyle"
                 android:text="@string/terms_and_conditions" />
         </LinearLayout>
 

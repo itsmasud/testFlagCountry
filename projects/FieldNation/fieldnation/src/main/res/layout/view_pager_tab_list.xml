@@ -19,6 +19,6 @@
             android:layout_width="20dp"
             android:layout_height="2dp"
             android:layout_alignBottom="@id/tab_container"
-            android:background="@color/white" />
+            android:background="@color/fn_white_text" />
     -->
 </RelativeLayout>

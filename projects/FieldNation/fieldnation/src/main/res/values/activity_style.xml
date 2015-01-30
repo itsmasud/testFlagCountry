@@ -2,7 +2,7 @@
 <resources>
 
     <style name="ActivityMain">
-        <item name="android:background">@color/activity_bg</item>
+        <item name="android:background">@color/fn_primary_bg</item>
     </style>
 
 </resources>

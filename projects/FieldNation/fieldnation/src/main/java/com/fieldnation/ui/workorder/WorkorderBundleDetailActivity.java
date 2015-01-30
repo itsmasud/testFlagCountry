@@ -48,10 +48,12 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     private com.fieldnation.data.workorder.Bundle _woBundle;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bundle_detail);
+    public int getLayoutResource() {
+        return R.layout.activity_bundle_detail;
+    }
 
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
 
         if (intent == null) {
@@ -150,13 +152,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
             AuthTopicService.requestAuthInvalid(WorkorderBundleDetailActivity.this);
         }
     };
-
-    @Override
-    public void onRefresh() {
-        if (_service != null) {
-            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
-        }
-    }
 
     private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.Listener() {
         @Override

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item>
-        <shape android:shape="rectangle" >
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
             <corners
                 android:bottomRightRadius="5px"
                 android:topRightRadius="5px" />
 
-            <solid android:color="@color/drawerHighlightBorder" >
-            </solid>
+            <solid android:color="@color/fn_accent_color" />
         </shape>
     </item>
     <item
@@ -15,12 +15,12 @@
         android:left="2px"
         android:right="2px"
         android:top="2px">
-        <shape android:shape="rectangle" >
+        <shape android:shape="rectangle">
             <corners
                 android:bottomRightRadius="5px"
                 android:topRightRadius="5px" />
 
-            <solid android:color="@color/drawerHighlightBackground" />
+            <solid android:color="@color/fn_accent_color_50" />
         </shape>
     </item>
 

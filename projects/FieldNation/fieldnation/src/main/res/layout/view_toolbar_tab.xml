@@ -5,6 +5,7 @@
     android:layout_centerInParent="true">
 
     <TextView
+        android:textColor="@color/fn_white_text_50"
         android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/placeholder_word"
-        android:textColor="@color/white"
+        android:textColor="@color/fn_white_text"
         android:textStyle="bold" />
 
 </RelativeLayout>

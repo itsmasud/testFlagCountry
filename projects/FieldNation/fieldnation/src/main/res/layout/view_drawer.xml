@@ -293,7 +293,7 @@
 
                 <Button
                     android:id="@+id/feedback_button"
-                    style="@style/Button.Material.Flat"
+                    style="?attr/buttonFlatStyle"
                     android:layout_width="match_parent"
                     android:text="Feedback Form" />
             </LinearLayout>
@@ -312,7 +312,7 @@
 
                 <Button
                     android:id="@+id/sendlog_button"
-                    style="@style/Button.Material.Flat"
+                    style="?attr/buttonFlatStyle"
                     android:layout_width="match_parent"
                     android:text="Send Log To Mike" />
             </LinearLayout>
@@ -331,7 +331,7 @@
 
                 <Button
                     android:id="@+id/review_button"
-                    style="@style/Button.Material.Flat"
+                    style="?attr/buttonFlatStyle"
                     android:layout_width="match_parent"
                     android:text="Review App" />
             </LinearLayout>
@@ -354,12 +354,12 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:id="@+id/pi_button"
-        style="@style/Button.Material.Flat"
+        style="?attr/buttonFlatStyle"
         android:layout_width="wrap_content"
         android:text="\u03C0" />
 
     <Button
-        style="@style/ButtonRaised"
-        android:text="Raised Test" />
+        style="?attr/buttonOrangeStyle"
+        android:text="RAISED TEST" />
 
 </RelativeLayout>

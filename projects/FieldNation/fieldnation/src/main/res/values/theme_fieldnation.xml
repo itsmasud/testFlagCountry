@@ -4,23 +4,24 @@
     <style name="FieldNation.Material.Theme" parent="FieldNation.ActionBar.Theme">
         <!-- Main theme colors v21+ -->
         <!--   your app branding color for the app bar -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/fn_grad_start</item>
         <!--   darker variant for the status bar and contextual app bars -->
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/fn_grad_end</item>
         <!--   theme UI controls like checkboxes and text fields -->
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/fn_brandcolor</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
 
         <!--<item name="android:windowContentOverlay">@null</item>-->
         <!--<item name="android:windowBackground">@color/black</item>-->
 
-        <item name="android:textColorLink">@color/text_link_color</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
+        <item name="android:textColorLink">@color/fn_clickable_text</item>
 
         <!--<item name="android:buttonStyle">@style/Button.Material.Flat</item>-->
 
         <!-- android widgets -->
-        <!--<item name="android:editTextStyle">@style/EditText</item>-->
+        <item name="android:editTextStyle">@style/EditText</item>
         <!--<item name="android:buttonStyle">?attr/buttonDefaultStyle</item>-->
         <!--<item name="android:radioButtonStyle">@style/RadioButton</item>-->
 
@@ -40,13 +41,13 @@
         <item name="dividerPartialStyle">@style/DividerPart</item>
 
         <!-- buttons -->
-        <item name="buttonDefaultStyle">@style/ButtonWhiteMaterial</item>
-        <item name="buttonWhiteStyle">@style/ButtonWhiteMaterial</item>
-        <item name="buttonOrangeStyle">@style/ButtonOrangeMaterial</item>
-        <item name="buttonGreenStyle">@style/ButtonGreen</item>
-        <item name="buttonGrayStyle">@style/ButtonGray</item>
+        <item name="buttonDefaultStyle">@style/Material.Button.Raised.White</item>
+        <item name="buttonWhiteStyle">@style/Material.Button.Raised.White</item>
+        <item name="buttonOrangeStyle">@style/Material.Button.Raised.Orange</item>
+        <item name="buttonGreenStyle">@style/Material.Button.Raised.Green</item>
+        <item name="buttonGrayStyle">@style/Material.Button.Raised.Gray</item>
         <item name="buttonSpinnerStyle">@style/ButtonSpinner</item>
-        <item name="buttonTextLinkStyle">@style/ButtonTextLink</item>
+        <item name="buttonFlatStyle">@style/Material.Button.Flat</item>
 
 
         <!-- tile styles -->

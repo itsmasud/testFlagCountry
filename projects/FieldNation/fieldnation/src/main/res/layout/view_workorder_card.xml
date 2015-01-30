@@ -253,7 +253,7 @@
 
             <Button
                 android:id="@+id/action_button"
-                style="@style/WorkorderCard_Button"
+                style="@style/Material.Button"
                 android:layout_alignParentRight="true"
                 android:text="@string/placeholder_word"
                 android:visibility="visible" />

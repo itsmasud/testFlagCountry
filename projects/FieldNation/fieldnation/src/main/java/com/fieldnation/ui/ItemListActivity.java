@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by michael.carver on 12/1/2014.
  */
-public abstract class ItemListActivity<O> extends DrawerActivity {
+public abstract class ItemListActivity<O> extends AuthActionBarActivity {
     private static final String TAG = "ui.ItemListActivity";
 
     // WEB
@@ -41,10 +41,12 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     /*-*************************************-*/
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_itemlist);
+    public int getLayoutResource() {
+        return R.layout.activity_itemlist;
+    }
 
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         _adapter.setListener(_adapter_lsitener);
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
@@ -53,18 +55,16 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         _listView = (OverScrollListView) findViewById(R.id.items_listview);
         _listView.setOnOverScrollListener(_refreshView);
         _listView.setAdapter(_adapter);
-
-        addActionBarAndDrawer(R.id.container);
     }
 
-    @Override
-    public void onRefresh() {
-        if (_refreshView != null) {
-            _refreshView.startRefreshing();
-        }
-
-        _adapter.refreshPages();
-    }
+//    @Override
+//    public void onRefresh() {
+//        if (_refreshView != null) {
+//            _refreshView.startRefreshing();
+//        }
+//
+//        _adapter.refreshPages();
+//    }
 
     private void getData(int page, boolean allowCache) {
         if (_listView == null)

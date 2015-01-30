@@ -46,7 +46,7 @@
         <attr name="buttonGreenStyle" format="reference" />
         <attr name="buttonGrayStyle" format="reference" />
         <attr name="buttonSpinnerStyle" format="reference" />
-        <attr name="buttonTextLinkStyle" format="reference" />
+        <attr name="buttonFlatStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="DialogThemes">

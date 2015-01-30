@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="WorkorderDetail">
-        <item name="android:background">@color/workorder_detail_bg</item>
+        <item name="android:background">@color/fn_primary_bg</item>
     </style>
 
     <style name="WorkorderDetail_Data">
@@ -11,7 +11,7 @@
     </style>
 
     <style name="WorkorderDetail_Separator">
-        <item name="android:background">@color/workorder_detail_separator_color</item>
+        <item name="android:background">@color/fn_divider</item>
         <item name="android:layout_height">2px</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginBottom">10dp</item>
@@ -29,15 +29,15 @@
     <style name="WorkorderDetail_Field_Bold">
         <item name="android:paddingBottom">15dp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/workorderDetailFieldBoldTextColor</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
     </style>
 
     <style name="WorkorderDetail_FieldTitle" parent="WorkorderDetail_Field">
-        <item name="android:textColor">@color/workorderDetailFieldTitleTextColor</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
     </style>
 
     <style name="WorkorderDetail_Field_Gray" parent="WorkorderDetail_Field">
-        <item name="android:textColor">@color/workorderDetailFieldGray</item>
+        <item name="android:textColor">@color/fn_light_text</item>
     </style>
 
     <style name="WorkorderDetail_FieldSubTitle" parent="WorkorderDetail_FieldTitle">

@@ -5,7 +5,7 @@
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\libJson\build\libs\libJson.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="4b120e3e2a56a0065f9c1a6ef6743bc85a18aa39">
+        sha1="8b9b3b77804069c95ebb0f049a489c345032898d">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libJson-ee90de1fc8453aec6f9e0b9f059701c19a58855c.jar" />
     </item>
     <item
@@ -51,17 +51,24 @@
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\support-annotations-21.0.3-1293902504e4552eba7df7db9ee7a7ab37af4563.jar" />
     </item>
     <item
+        jar="C:\Users\Michael Carver\AppData\Local\Android\sdk\build-tools\21.1.2\renderscript\lib\renderscript-v8.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="2b276904cd854be6d460f2bcec9cf2cddaf580c1">
+        <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\renderscript-v8-df73d9ca04e3735ffe90588a904607fd4c6e775e.jar" />
+    </item>
+    <item
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="fe3fbc90ad6dd7e42f8581c3b29fc0f58fb37f5d">
+        sha1="d65d0812eec80727daa212ec130a5fe946718fd0">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-be906b0d11d27ba15624dbdbb84007a83d675f70.jar" />
     </item>
     <item
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\libUtils\build\libs\libUtils.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="363cc3ddb557f8f12fdf5091eb97fb0029cc9366">
+        sha1="55fd006bc13d8ddd3d8c31c9bb802ea550ea4d20">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libUtils-9d4066e34d1d71b58066cc252a5cc9b781f8fae0.jar" />
     </item>
     <item

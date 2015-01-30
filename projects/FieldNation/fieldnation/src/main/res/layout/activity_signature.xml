@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/arrival_date_and_time_colon"
-                android:textColor="@color/SignatureCardGrey" />
+                android:textColor="@color/fn_light_text" />
 
             <TextView
                 android:id="@+id/arrival_textview"
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:text="@string/departure_date_and_time_colon"
-                android:textColor="@color/SignatureCardGrey" />
+                android:textColor="@color/fn_light_text" />
 
             <TextView
                 android:id="@+id/departure_textview"
@@ -82,7 +82,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_gravity="bottom"
-                    android:background="@color/SignatureCardGrey" />
+                    android:background="@color/fn_light_text" />
             </LinearLayout>
 
 
@@ -101,12 +101,12 @@
 
                 <Button
                     android:id="@+id/clear_button"
-                    style="@style/Button.Material.Flat"
+                    style="@style/Material.Button.Flat"
                     android:text="CLEAR" />
 
                 <Button
                     android:id="@+id/done_button"
-                    style="@style/Button.Material.Flat"
+                    style="@style/Material.Button.Flat"
                     android:text="DONE" />
             </LinearLayout>
         </LinearLayout>
