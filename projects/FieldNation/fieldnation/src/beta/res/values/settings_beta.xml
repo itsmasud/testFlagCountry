@@ -11,7 +11,7 @@
     <string name="auth_authority">com.fieldnation.service</string>
     <string name="web_fn_hostname">api.fieldnation.com</string>
     <string name="app_name">Field Nation</string>
-    <integer name="ga_local_dispatch_period">1800</integer>
+    <integer name="ga_local_dispatch_period">60</integer>
 
     <string name="placeholder_word"></string>
     <string name="placeholder_phrase"></string>
