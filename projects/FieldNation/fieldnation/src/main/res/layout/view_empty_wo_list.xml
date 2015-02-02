@@ -13,7 +13,7 @@
 
         <TextView
             android:gravity="center"
-            style="@style/WorkorderDetail_Field_Bold"
+            style="@style/WorkorderDetail_Field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="No work to show here\n Tap to find work in the marketplace" />
