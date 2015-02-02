@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:left="@dimen/card_status_left"
+        android:bottom="@dimen/card_status_bottom"
+        android:top="@dimen/card_status_top">
+        <shape>
+            <padding
+                android:top="@dimen/card_gradient_padding"
+                android:left="@dimen/card_gradient_padding"
+                android:bottom="@dimen/card_gradient_padding" />
+
+            <gradient
+                android:angle="-90"
+                android:startColor="@color/card_status_gray_top"
+                android:centerColor="@color/card_status_gray_center"
+                android:endColor="@color/card_status_gray_bottom" />
+
+            <corners
+                android:bottomLeftRadius="@dimen/card_gradient_corner_radius"
+                android:topLeftRadius="@dimen/card_gradient_corner_radius" />
+        </shape>
+    </item>
+
+
+    <item
+        android:left="@dimen/card_status_left"
+        android:bottom="@dimen/card_status_bottom"
+        android:top="@dimen/card_status_top">
+        <shape>
+            <solid android:color="@color/card_status_gray_fill" />
+            <corners
+                android:bottomLeftRadius="@dimen/card_corner_radius"
+                android:topLeftRadius="@dimen/card_corner_radius" />
+        </shape>
+    </item>
+
+</layer-list>

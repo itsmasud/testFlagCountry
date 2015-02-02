@@ -29,8 +29,6 @@ public class NotificationView extends RelativeLayout {
     private LinearLayout _titleLayout;
     private ImageView _titleThumbImageView;
     private TextView _titleTextView;
-    private LinearLayout _statusLayout;
-    private TextView _statusTextView;
     private TextView _messageTextView;
     private TextView _dateTextView;
 
@@ -73,11 +71,8 @@ public class NotificationView extends RelativeLayout {
         _titleLayout = (LinearLayout) findViewById(R.id.title_layout);
         _titleThumbImageView = (ImageView) findViewById(R.id.titlethumb_imageview);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _statusLayout = (LinearLayout) findViewById(R.id.status_layout);
-        _statusTextView = (TextView) findViewById(R.id.status_textview);
         _messageTextView = (TextView) findViewById(R.id.message_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _statusLayout.setVisibility(View.GONE);
         setOnClickListener(_this_onClick);
     }
 
@@ -93,13 +88,9 @@ public class NotificationView extends RelativeLayout {
         if (_note.getWorkorder() != null) {
             Workorder work = _note.getWorkorder();
             _titleTextView.setText(work.getTitle());
-            _statusTextView.setText(_substatus[work.getStatus().getWorkorderSubstatus().ordinal()]);
-            _statusTextView.setTextColor(_colors[work.getStatus().getStatusIntent().ordinal()]);
             _titleLayout.setVisibility(View.VISIBLE);
-//            _statusLayout.setVisibility(View.VISIBLE);
         } else {
             _titleLayout.setVisibility(View.GONE);
-//            _statusLayout.setVisibility(View.GONE);
 
         }
         if (_note.getViewed() != null && _note.getViewed() == 1) {

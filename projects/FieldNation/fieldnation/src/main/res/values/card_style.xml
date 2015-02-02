@@ -1,7 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="card_button_dropshadow">2px</dimen>
-    <dimen name="card_button_radius">4px</dimen>
-    <dimen name="card_bevel_height">5px</dimen>
-    <dimen name="card_corner_radius">5dp</dimen>
+    <dimen name="card_shadow_left">3dp</dimen>
+    <dimen name="card_shadow_right">3dp</dimen>
+    <dimen name="card_shadow_top">3dp</dimen>
+    <dimen name="card_shadow_bottom">3dp</dimen>
+    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="card_gradient_corner_radius">4dp</dimen>
+    <dimen name="card_gradient_padding">1dp</dimen>
+
+    <color name="card_fill">@color/fn_clickable_bg</color>
+    <color name="card_gradient_top">@color/fn_clickable_bg_80</color>
+    <color name="card_gradient_center">@color/fn_clickable_bg_0</color>
+    <color name="card_gradient_bottom">#05000000</color>
+
+    <dimen name="card_status_left">2dp</dimen>
+    <dimen name="card_status_bottom">2dp</dimen>
+    <dimen name="card_status_top">2dp</dimen>
+
+    <color name="card_status_orange_fill">@color/fn_brandcolor</color>
+    <color name="card_status_orange_top">@color/fn_brandcolor_80</color>
+    <color name="card_status_orange_center">@color/fn_brandcolor_0</color>
+    <color name="card_status_orange_bottom">@color/card_gradient_bottom</color>
+
+    <color name="card_status_white_fill">@color/fn_primary_bg</color>
+    <color name="card_status_white_top">@color/fn_primary_bg_80</color>
+    <color name="card_status_white_center">@color/fn_primary_bg_0</color>
+    <color name="card_status_white_bottom">@color/card_gradient_bottom</color>
+
+    <color name="card_status_green_fill">@color/fn_accent_color</color>
+    <color name="card_status_green_top">@color/fn_accent_color_80</color>
+    <color name="card_status_green_center">@color/fn_accent_color_0</color>
+    <color name="card_status_green_bottom">@color/card_gradient_bottom</color>
+
+    <color name="card_status_gray_fill">@color/fn_light_text</color>
+    <color name="card_status_gray_top">@color/fn_light_text_80</color>
+    <color name="card_status_gray_center">@color/fn_light_text_0</color>
+    <color name="card_status_gray_bottom">@color/card_gradient_bottom</color>
+
+    <color name="card_status_black_fill">@color/fn_dark_text</color>
+    <color name="card_status_black_top">@color/fn_dark_text_80</color>
+    <color name="card_status_black_center">@color/fn_dark_text_0</color>
+    <color name="card_status_black_bottom">@color/card_gradient_bottom</color>
+
 </resources>

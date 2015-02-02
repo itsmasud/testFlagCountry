@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <nine-patch android:src="@drawable/btn_shadow" />
+    </item>
+
+    <item
+        android:bottom="@dimen/btn_shadow_bottom"
+        android:left="@dimen/btn_shadow_left"
+        android:right="@dimen/btn_shadow_right"
+        android:top="@dimen/btn_shadow_top">
+        <shape>
+            <padding
+                android:bottom="@dimen/btn_gradient_padding"
+                android:left="@dimen/btn_gradient_padding"
+                android:right="@dimen/btn_gradient_padding"
+                android:top="@dimen/btn_gradient_padding" />
+
+            <gradient
+                android:angle="-90"
+                android:centerColor="@color/btn_status_green_center"
+                android:endColor="@color/btn_status_green_bottom"
+                android:startColor="@color/btn_status_green_top" />
+
+            <corners android:radius="@dimen/btn_gradient_corner_radius" />
+        </shape>
+    </item>
+
+    <item
+        android:top="@dimen/btn_shadow_top"
+        android:bottom="@dimen/btn_shadow_bottom"
+        android:left="@dimen/btn_shadow_left"
+        android:right="@dimen/btn_shadow_right">
+        <shape>
+            <solid android:color="@color/btn_status_green_fill" />
+            <corners android:radius="@dimen/btn_corner_radius" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,20 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <dimen name="btn_shadow_left">3dp</dimen>
+    <dimen name="btn_shadow_right">3dp</dimen>
+    <dimen name="btn_shadow_top">0dp</dimen>
+    <dimen name="btn_shadow_bottom">3dp</dimen>
+
+    <dimen name="btn_corner_radius">2dp</dimen>
+    <dimen name="btn_gradient_corner_radius">4dp</dimen>
+
+    <dimen name="btn_gradient_padding">1dp</dimen>
+
+    <dimen name="btn_status_left">2dp</dimen>
+    <dimen name="btn_status_bottom">2dp</dimen>
+    <dimen name="btn_status_top">2dp</dimen>
+
+    <color name="btn_status_orange_fill">@color/fn_brandcolor</color>
+    <color name="btn_status_orange_top">@color/fn_brandcolor_80</color>
+    <color name="btn_status_orange_center">@color/fn_brandcolor_0</color>
+    <color name="btn_status_orange_bottom">#05000000</color>
+
+    <color name="btn_status_white_fill">@color/fn_primary_bg</color>
+    <color name="btn_status_white_top">@color/fn_primary_bg_80</color>
+    <color name="btn_status_white_center">@color/fn_primary_bg_0</color>
+    <color name="btn_status_white_bottom">#05000000</color>
+
+    <color name="btn_status_green_fill">@color/fn_accent_color</color>
+    <color name="btn_status_green_top">@color/fn_accent_color_80</color>
+    <color name="btn_status_green_center">@color/fn_accent_color_0</color>
+    <color name="btn_status_green_bottom">#05000000</color>
+
+    <color name="btn_status_gray_fill">@color/fn_light_text</color>
+    <color name="btn_status_gray_top">@color/fn_light_text_80</color>
+    <color name="btn_status_gray_center">@color/fn_light_text_0</color>
+    <color name="btn_status_gray_bottom">#05000000</color>
+
+    <color name="btn_status_black_fill">@color/fn_dark_text</color>
+    <color name="btn_status_black_top">@color/fn_dark_text_80</color>
+    <color name="btn_status_black_center">@color/fn_dark_text_0</color>
+    <color name="btn_status_black_bottom">#05000000</color>
+
+
     <dimen name="Button_Touch_Target">48dp</dimen>
     <dimen name="buttonTouchTarget_Material">48dp</dimen>
 
     <style name="Material.Button" parent="Text_Button">
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:minWidth">@dimen/button_min_width</item>
+        <!--<item name="android:minWidth">@dimen/button_min_width</item>-->
         <item name="android:layout_marginLeft">@dimen/button_horr_margin</item>
         <item name="android:layout_marginRight">@dimen/button_horr_margin</item>
         <item name="android:layout_marginTop">@dimen/button_vert_margin</item>
         <item name="android:layout_marginBottom">@dimen/button_vert_margin</item>
         <item name="android:paddingLeft">@dimen/button_horr_padding</item>
         <item name="android:paddingRight">@dimen/button_horr_padding</item>
-        <item name="android:gravity">center</item>
     </style>
 
     <style name="Material.Button.Flat" parent="Material.Button">

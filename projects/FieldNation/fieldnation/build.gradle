@@ -11,12 +11,9 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 21
-        versionCode 25
-        versionName "1.0.25"
+        versionCode 26
+        versionName "1.0.26"
         applicationId "com.fieldnation.android"
-
-        renderscriptTargetApi 19
-        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {

@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,12 +41,12 @@ public class WorkorderCardView extends RelativeLayout {
     /*-private LinearLayout _notInterestedButtonLayout;-*/
 
     // background
-    private ViewGroup _backgroundLayout;
+//    private ViewGroup _backgroundLayout;
     private View _statusView;
-    private View _backgroundView;
+//    private View _backgroundView;
 
     // main content
-    private RelativeLayout _contentLayout;
+//    private RelativeLayout _contentLayout;
     // status
     private TextView _statusTextView;
     // bundle
@@ -69,8 +68,9 @@ public class WorkorderCardView extends RelativeLayout {
     private TextView _workorderIdTextView;
 
     // right panel
-    private LinearLayout _rightLayout;
-    private TextView _moneySymbolTextView;
+//    private LinearLayout _rightLayout;
+//    private TextView _moneySymbolTextView;
+    private LinearLayout _paymentLayout;
     private TextView _paymentTextView;
     private TextView _basisTextView;
     private Button _actionButton;
@@ -131,12 +131,12 @@ public class WorkorderCardView extends RelativeLayout {
 		 */
         /* _notInterestedButtonLayout.setClickable(false); */
 
-        _backgroundLayout = (ViewGroup) findViewById(R.id.background_layout);
-        _backgroundView = findViewById(R.id.background_view);
+//        _backgroundLayout = (ViewGroup) findViewById(R.id.background_layout);
+//        _backgroundView = findViewById(R.id.background_view);
         _statusView = findViewById(R.id.status_view);
 
         // main content
-        _contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
+//        _contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
 
         // status
         _statusTextView = (TextView) findViewById(R.id.status_textview);
@@ -160,11 +160,11 @@ public class WorkorderCardView extends RelativeLayout {
         _workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
 
         // right panel
-        _rightLayout = (LinearLayout) findViewById(R.id.right_layout);
-        // _paymentLayout = (LinearLayout) findViewById(R.id.payment_layout);
+//        _rightLayout = (LinearLayout) findViewById(R.id.right_layout);
+        _paymentLayout = (LinearLayout) findViewById(R.id.payment_layout);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _basisTextView = (TextView) findViewById(R.id.basis_textview);
-        _moneySymbolTextView = (TextView) findViewById(R.id.moneysymbol_textview);
+//        _moneySymbolTextView = (TextView) findViewById(R.id.moneysymbol_textview);
 
         _actionButton = (Button) findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_actionButton_onClick);
@@ -245,8 +245,10 @@ public class WorkorderCardView extends RelativeLayout {
             _titleTextView.setVisibility(GONE);
             _basisTextView.setVisibility(GONE);
             _paymentTextView.setVisibility(GONE);
-            _rightLayout.setVisibility(GONE);
-            _moneySymbolTextView.setVisibility(GONE);
+            _paymentLayout.setVisibility(View.GONE);
+            _actionButton.setVisibility(View.GONE);
+//            _rightLayout.setVisibility(GONE);
+//            _moneySymbolTextView.setVisibility(GONE);
             showAlertIcon(false);
             showMessageAlertIcon(false);
         } else {
@@ -254,8 +256,9 @@ public class WorkorderCardView extends RelativeLayout {
             _titleTextView.setVisibility(VISIBLE);
             _basisTextView.setVisibility(VISIBLE);
             _paymentTextView.setVisibility(VISIBLE);
-            _moneySymbolTextView.setVisibility(VISIBLE);
-            _rightLayout.setVisibility(VISIBLE);
+//            _moneySymbolTextView.setVisibility(VISIBLE);
+            _paymentLayout.setVisibility(VISIBLE);
+            _actionButton.setVisibility(View.GONE);
             showAlertIcon(true);
             showMessageAlertIcon(true);
         }
@@ -353,8 +356,8 @@ public class WorkorderCardView extends RelativeLayout {
     private void updateStatusUiColors() {
         _statusView.setBackgroundResource(_workorder.getStatusBG());
         _statusTextView.setTextColor(getContext().getResources().getColor(_workorder.getStatusTextColor()));
-        _actionButton.setBackgroundResource(_workorder.getStatusButtonBG());
-        _actionButton.setTextColor(getContext().getResources().getColor(_workorder.getStatusButtonFG()));
+//        _actionButton.setBackgroundResource(_workorder.getStatusButtonBG());
+//        _actionButton.setTextColor(getContext().getResources().getColor(_workorder.getStatusButtonFG()));
     }
 
     private void refresh() {
@@ -402,11 +405,11 @@ public class WorkorderCardView extends RelativeLayout {
         _workorderIdTextView.setTextColor(color);
         _paymentTextView.setTextColor(color);
         _statusTextView.setTextColor(color);
-        _moneySymbolTextView.setTextColor(color);
+//        _moneySymbolTextView.setTextColor(color);
         _bundleTextView.setTextColor(color);
         _bundleTitleTextView.setTextColor(color);
 
-        _backgroundView.setBackgroundResource(R.drawable.card_right_selected);
+//        _backgroundView.setBackgroundResource(R.drawable.card_right_selected);
         _statusView.setBackgroundResource(R.drawable.card_status_black);
         _statusTextView.setText(getResources().getString(R.string.workorder_card_status_selected));
         _bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg_select);
@@ -423,11 +426,11 @@ public class WorkorderCardView extends RelativeLayout {
         _workorderIdTextView.setTextColor(color);
         _paymentTextView.setTextColor(color);
         _statusTextView.setTextColor(color);
-        _moneySymbolTextView.setTextColor(color);
+//        _moneySymbolTextView.setTextColor(color);
         _bundleTextView.setTextColor(color);
         _bundleTitleTextView.setTextColor(color);
 
-        _backgroundView.setBackgroundResource(R.drawable.card_right);
+//        _backgroundView.setBackgroundResource(R.drawable.card_right);
         _statusView.setBackgroundResource(R.drawable.card_status_black);
         _bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg);
 
@@ -537,13 +540,13 @@ public class WorkorderCardView extends RelativeLayout {
             if (desc != null) {
                 _paymentTextView.setText(desc.substring(1));
             } else {
-                _rightLayout.setVisibility(GONE);
+                _paymentLayout.setVisibility(GONE);
             }
         } else {
-            _rightLayout.setVisibility(GONE);
+            _paymentLayout.setVisibility(GONE);
         }
 
-        _contentLayout.clearAnimation();
+//        _contentLayout.clearAnimation();
         /*-_backImageView.setClickable(false);
         _notInterestedButtonLayout.setClickable(false);-*/
 
@@ -562,7 +565,7 @@ public class WorkorderCardView extends RelativeLayout {
         _whenTextView.setVisibility(GONE);
         _clientNameTextView.setVisibility(GONE);
         _distanceTextView.setVisibility(GONE);
-        _rightLayout.setVisibility(GONE);
+        _paymentLayout.setVisibility(GONE);
         _actionButton.setVisibility(GONE);
         _locationTextView.setVisibility(GONE);
 
@@ -605,7 +608,7 @@ public class WorkorderCardView extends RelativeLayout {
     private void buildStatusAssigned() {
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
             case CONFIRMED:
-                _actionButton.setText("Check In");
+                _actionButton.setText(R.string.btn_check_in);
                 _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
@@ -614,7 +617,7 @@ public class WorkorderCardView extends RelativeLayout {
 
                 break;
             case ONHOLD_UNACKNOWLEDGED:
-                _actionButton.setText("Acknowledge");
+                _actionButton.setText(R.string.btn_acknowledge);
                 _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
@@ -622,7 +625,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case UNCONFIRMED:
-                _actionButton.setText("Confirm");
+                _actionButton.setText(R.string.btn_confirm);
                 //setNotInterestedEnabled(true);
                 _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
@@ -672,7 +675,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _clientNameTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case ROUTED:
@@ -681,14 +684,14 @@ public class WorkorderCardView extends RelativeLayout {
                 _clientNameTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case REQUESTED:
                 _titleTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             case COUNTEROFFERED:
                 _actionButton.setVisibility(VISIBLE);
@@ -698,7 +701,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _titleTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             default:
@@ -706,7 +709,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _clientNameTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
 
                 Log.v(TAG,
                         "Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
@@ -762,13 +765,13 @@ public class WorkorderCardView extends RelativeLayout {
                 _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             case INREVIEW:
                 _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             case APPROVED_PROCESSINGPAYMENT:
                 _actionButton.setText(R.string.btn_payments);
@@ -776,20 +779,20 @@ public class WorkorderCardView extends RelativeLayout {
                 _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case PAID:
                 _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             default:
                 _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
 
                 Log.v(TAG,
                         "Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
@@ -801,7 +804,7 @@ public class WorkorderCardView extends RelativeLayout {
         _titleTextView.setVisibility(VISIBLE);
         _clientNameTextView.setVisibility(VISIBLE);
         _whenTextView.setVisibility(VISIBLE);
-        _rightLayout.setVisibility(GONE);
+        _paymentLayout.setVisibility(GONE);
         _actionButton.setVisibility(GONE);
 
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
