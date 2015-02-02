@@ -16,7 +16,7 @@
             style="@style/WorkorderDetail_Field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No work to show here\n Tap to find work in the marketplace" />
+            android:text="No work to show\n Tap to find work in the marketplace" />
 
     </RelativeLayout>
 
