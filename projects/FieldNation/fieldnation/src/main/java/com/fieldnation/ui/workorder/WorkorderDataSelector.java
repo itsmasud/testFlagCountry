@@ -37,6 +37,10 @@ public enum WorkorderDataSelector {
         return _allowCache;
     }
 
+    public boolean shouldShowGoToMarketplace() {
+        return this == ASSIGNED || this == IN_PROGRESS || this == COMPLETED || this == CANCELED;
+    }
+
     public static WorkorderDataSelector fromName(String name) {
         WorkorderDataSelector[] vs = values();
         for (int i = 0; i < vs.length; i++) {

@@ -27,6 +27,7 @@ import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.GaTopic;
+import com.fieldnation.ui.EmptyWoListView;
 import com.fieldnation.ui.GPSLocationService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
@@ -68,6 +69,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     // UI
     private OverScrollListView _listView;
     private RefreshView _loadingView;
+    private EmptyWoListView _emptyView;
 
     // Dialogs
     private ExpiresDialog _expiresDialog;
@@ -128,6 +130,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _listView.setDivider(null);
         _listView.setOnOverScrollListener(_loadingView);
         _listView.setAdapter(_adapter);
+
+        _emptyView = (EmptyWoListView) view.findViewById(R.id.empty_view);
 
         _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _expiresDialog.setListener(_expiresDialog_listener);
@@ -258,6 +262,12 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     }
 
     private void addPage(int page, List<Workorder> list, boolean isCached) {
+        if (page == 0 && list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
+            _emptyView.setVisibility(View.VISIBLE);
+        } else if (page == 0 && list.size() > 0 || !_displayView.shouldShowGoToMarketplace()) {
+            _emptyView.setVisibility(View.GONE);
+        }
+
         if (list.size() == 0) {
             _adapter.setNoMorePages();
         }
