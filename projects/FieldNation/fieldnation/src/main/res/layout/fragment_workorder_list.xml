@@ -14,6 +14,14 @@
         android:dividerHeight="0dp"
         android:smoothScrollbar="false" />
 
+    <com.fieldnation.ui.EmptyWoListView
+        android:visibility="gone"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <!--<fr.castorflex.android.smoothprogressbar.SmoothProgressBar-->
     <!--android:id="@+id/loading_progress"-->
     <!--style="@style/spb_loading"-->
