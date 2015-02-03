@@ -418,6 +418,9 @@ public class WorkFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
+        if (getActivity() == null)
+            return;
+
         if (_sumView != null) {
             _sumView.setWorkorder(_workorder, isCached);
         }
@@ -1385,7 +1388,11 @@ public class WorkFragment extends WorkorderFragment {
                 Toast.makeText(getActivity(), new String(resultData.getByteArray(KEY_RESPONSE_DATA)), Toast.LENGTH_LONG).show();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
+                try {
+                    Toast.makeText(getActivity(), R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
+                } catch (Exception ex2) {
+                    ex2.printStackTrace();
+                }
             }
         }
     };

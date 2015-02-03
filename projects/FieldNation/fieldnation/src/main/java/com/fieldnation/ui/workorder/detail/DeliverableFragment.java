@@ -213,7 +213,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void setLoading(boolean isLoading) {
-        if (_refreshView != null) {
+        if (_refreshView != null && getActivity() != null) {
             if (isLoading) {
                 _refreshView.startRefreshing();
             } else {
@@ -523,7 +523,11 @@ public class DeliverableFragment extends WorkorderFragment {
             if (resultCode == WEB_SEND_DELIVERABLE)
                 _uploadCount--;
             _service = null;
-            Toast.makeText(_context, R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
+            try {
+                Toast.makeText(_context, R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             setLoading(false);
         }
     };
