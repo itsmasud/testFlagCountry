@@ -24,6 +24,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private TextView _distanceTextView;
     private TextView _contactInfoTextView;
     private TextView _descriptionTextView;
+    private TextView _remoteTextView;
 
     // Data
     private Workorder _workorder;
@@ -48,6 +49,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
         _distanceTextView.setOnClickListener(_openMapOnClick);
+
+        _remoteTextView = (TextView) findViewById(R.id.remotely_textview);
 
         _contactInfoTextView = (TextView) findViewById(R.id.contactinfo_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
@@ -80,7 +83,11 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _addressTextView.setVisibility(View.GONE);
         }
 
-        if (_workorder.getDistance() != null) {
+        _remoteTextView.setVisibility(View.GONE);
+        if (_workorder.getIsRemoteWork()) {
+            _remoteTextView.setVisibility(View.VISIBLE);
+            _distanceTextView.setVisibility(View.GONE);
+        } else if (_workorder.getDistance() != null) {
             _distanceTextView.setText(_workorder.getDistance() + " mi");
         } else if (location.getDistance() != null) {
             _distanceTextView.setText(location.getDistance() + " mi");
@@ -118,7 +125,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (_addressTextView.getVisibility() != VISIBLE
                 && _descriptionTextView.getVisibility() != VISIBLE
                 && _contactInfoTextView.getVisibility() != VISIBLE
-                && _distanceTextView.getVisibility() != VISIBLE) {
+                && _distanceTextView.getVisibility() != VISIBLE
+                && _remoteTextView.getVisibility() != VISIBLE) {
             setVisibility(View.GONE);
         } else {
             setVisibility(View.VISIBLE);
@@ -139,7 +147,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private View.OnClickListener _openMapOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_workorder != null) {
+            if (_workorder != null && !_workorder.getIsRemoteWork()) {
                 Location location = _workorder.getLocation();
                 if (location != null) {
                     try {

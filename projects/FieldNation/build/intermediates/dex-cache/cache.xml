@@ -5,7 +5,7 @@
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\libJson\build\libs\libJson.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="1b29e9aa77a06bcb12f36444020eb8ee78446c5a">
+        sha1="db083b94561ab102cfe7351f65a5dad0bee45b94">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libJson-ee90de1fc8453aec6f9e0b9f059701c19a58855c.jar" />
     </item>
     <item
@@ -54,14 +54,14 @@
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\exploded-aar\FieldNation\libDateTimePicker\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="3e2593479846346f6077020c199214405a0a63c8">
+        sha1="a544b55fffd858382a10a98df060139ab5e6c7de">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\classes-be906b0d11d27ba15624dbdbb84007a83d675f70.jar" />
     </item>
     <item
         jar="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\libUtils\build\libs\libUtils.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="8d679cc12eb9dadab118d05560a849d1646414ee">
+        sha1="aa6e3b72291178c22d69962b0ef350aebd3d7e5c">
         <dex dex="C:\Users\Michael Carver\Code\android_dev\projects\FieldNation\fieldnation\build\intermediates\pre-dexed\red\debug\libUtils-9d4066e34d1d71b58066cc252a5cc9b781f8fae0.jar" />
     </item>
     <item
