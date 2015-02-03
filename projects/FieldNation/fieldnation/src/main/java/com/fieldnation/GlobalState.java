@@ -55,7 +55,6 @@ public class GlobalState extends Application {
         super.onCreate();
         DataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
-
         new ExpenseCategories(this);
 
         getTracker();

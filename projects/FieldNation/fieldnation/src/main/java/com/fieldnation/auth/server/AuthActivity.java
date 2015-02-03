@@ -31,6 +31,7 @@ import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.SplashActivity;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
@@ -246,6 +247,10 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
                     AuthActivity.this.setResult(RESULT_OK, intent);
                     AuthActivity.this.finish();
+
+                    Intent splash = new Intent(AuthActivity.this, SplashActivity.class);
+                    splash.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(splash);
 
                     ClockService.enableClock(AuthActivity.this);
                 } else {

@@ -2,14 +2,18 @@ package com.fieldnation.topics;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.utils.misc;
 
 
 /**
  * Created by michael.carver on 12/18/2014.
  */
 public class Topics {
+    private static final String TAG = "topics.Topics";
+
     public static final String TOPIC_SHUTDOWN = "TOPIC_SHUTDOWN";
     public static final String TOPIC_NETWORK_DOWN = "TOPIC_NETWORK_DOWN";
     public static final String TOPIC_NETWORK_UP = "TOPIC_NETWORK_UP";
@@ -43,6 +47,8 @@ public class Topics {
 
 
     public static void dispatchFileUploadStart(Context context, String url, String filename) {
+        Log.v(TAG, "dispatchFileUploadStart");
+        misc.printStackTrace("dispatchFileUploadStart");
         if (context == null)
             return;
 
@@ -76,7 +82,7 @@ public class Topics {
         bundle.putString(TOPIC_FILE_UPLOAD_PARAM_STATE, TOPIC_FILE_UPLOAD_PARAM_STATE_ERROR);
         bundle.putString(TOPIC_FILE_UPLOAD_PARAM_ERROR_MESSAGE, errorMessage);
 
-        TopicService.dispatchTopic(context, TOPIC_FILE_UPLOAD, bundle);
+        TopicService.dispatchTopic(context, TOPIC_FILE_UPLOAD, bundle, false);
     }
 
     public static void subscribeFileUpload(Context context, String tag, TopicReceiver topicReceiver) {

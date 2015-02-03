@@ -281,6 +281,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
+            Log.v(TAG, "US count: " + slots.length);
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
 
@@ -300,6 +301,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 @Override
                 public void finish(int count) throws Exception {
+                    Log.v(TAG, "US fin: " + count + "/" + _filesLayout.getChildCount());
                     if (_filesLayout.getChildCount() > count) {
                         _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
                     }

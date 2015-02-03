@@ -3,6 +3,7 @@ package com.fieldnation.topics;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ResultReceiver;
@@ -178,6 +179,15 @@ public class TopicService extends Service {
         return null;
     }
 
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            super.onTaskRemoved(rootIntent);
+        TopicClient.reset();
+        _lastSent = new Hashtable<>();
+        stopSelf();
+    }
 
     public static void registerListener(Context context, int resultCode, String tag, String topicId, TopicReceiver topicReceiver) {
         try {
