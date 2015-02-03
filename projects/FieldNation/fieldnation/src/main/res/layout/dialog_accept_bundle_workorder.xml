@@ -5,15 +5,9 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <TextView
-            style="?attr/dialogTitleStyle"
-            android:text="Accept Bundle"
-            android:layout_marginBottom="@dimen/dialogContentPadding" />
 
         <LinearLayout
             style="?attr/dialogContainerStyle"
@@ -23,9 +17,9 @@
 
             <TextView
                 style="?attr/dialogTitleStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bundle Request" />
+                android:text="Accept Bundle"
+                android:layout_marginBottom="@dimen/dialogContentPadding" />
+
 
             <TextView
                 android:id="@+id/accept_description"
@@ -33,21 +27,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="This workorder is part of a bundle of 10 workorders. By accepting this workorder you are accepting all of them." />
-
         </LinearLayout>
+
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_weight="1"
+                android:layout_weight="1.0"
                 android:layout_width="0dp"
-                android:layout_gravity=""
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
                 <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:id="@+id/bundle_button"
                     style="?attr/buttonDefaultStyle"
                     android:text="VIEW BUNDLE" />
@@ -72,6 +66,5 @@
                     android:text="ACCEPT" />
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>

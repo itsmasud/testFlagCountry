@@ -201,6 +201,7 @@ public class DeliverableFragment extends WorkorderFragment {
     public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
         _isCached = isCached;
+        populateUi();
     }
 
     private PendingIntent getNotificationIntent() {
