@@ -59,7 +59,6 @@ public class DrawerView extends RelativeLayout {
     private TextView _versionTextView;
     private LinearLayout _feedbackLayout;
     private Button _feedbackButton;
-    private Button _piButton;
     private LinearLayout _reviewLayout;
     private Button _reviewButton;
 
@@ -141,9 +140,7 @@ public class DrawerView extends RelativeLayout {
         _reviewButton = (Button) findViewById(R.id.review_button);
         _reviewButton.setOnClickListener(_review_onClick);
 
-        _piButton = (Button) findViewById(R.id.pi_button);
-        _piButton.setOnClickListener(_pi_onClick);
-
+        _sendLogButton.setVisibility(View.VISIBLE);
         if (BuildConfig.FLAVOR.equals("prod")) {
             _feedbackLayout.setVisibility(View.GONE);
             if (((GlobalState) getContext().getApplicationContext()).shouldShowReviewDialog()) {
@@ -151,11 +148,9 @@ public class DrawerView extends RelativeLayout {
             } else {
                 _reviewLayout.setVisibility(View.GONE);
             }
-            _piButton.setVisibility(View.GONE);
         } else {
             _feedbackLayout.setVisibility(View.VISIBLE);
             _reviewLayout.setVisibility(View.GONE);
-            _piButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -175,12 +170,6 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
         }
     };
-    private final OnClickListener _pi_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            _sendLogLayout.setVisibility(View.VISIBLE);
-        }
-    };
 
     private final OnClickListener _sendlog_onClick = new OnClickListener() {
         @Override
@@ -188,9 +177,9 @@ public class DrawerView extends RelativeLayout {
             File tempfile = misc.dumpLogcat(getContext());
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("plain/text");
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"michael.carver@fieldnation.com"});
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
             intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
-            intent.putExtra(Intent.EXTRA_TEXT, "Logcat log, insert other stuff here.");
+            intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
             getContext().startActivity(intent);
         }
@@ -246,6 +235,7 @@ public class DrawerView extends RelativeLayout {
         public void onClick(View v) {
             AuthTopicService.requestAuthRemove(getContext());
 
+            Log.v(TAG, "SplashActivity");
             Intent intent = new Intent(getContext(), SplashActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
