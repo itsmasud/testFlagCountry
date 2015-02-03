@@ -88,7 +88,7 @@ public class AuthTopicService extends Service {
     @Override
     public void onDestroy() {
         TopicService.delete(this, TAG);
-        TopicService.delete(this, TAG + ":SHUTDOWN");
+        TopicService.delete(this, TAG + ":SYSTEM");
         super.onDestroy();
     }
 
@@ -132,7 +132,8 @@ public class AuthTopicService extends Service {
             } else if (Topics.TOPIC_SHUTDOWN.equals(topicId)) {
                 setState(STATE_NOT_AUTHENTICATED);
                 _account = null;
-                dispatchAuthInvalid(AuthTopicService.this);
+                _accountManager = null;
+                stopSelf();
             }
         }
     };

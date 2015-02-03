@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -47,6 +48,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private EditText _usernameEditText;
     private EditText _passwordEditText;
     private View _fader;
+    private ImageView _background;
 
     private VideoView _videoView;
 
@@ -87,6 +89,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _usernameEditText = (EditText) findViewById(R.id.username_edittext);
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
         _videoView = (VideoView) findViewById(R.id.video_view);
+
+        _background = (ImageView) findViewById(R.id.background_image);
         _fader = (View) findViewById(R.id.fader);
 
         Uri video = Uri.parse("android.resource://" + getPackageName() + "/raw/" + R.raw.login_vid);
@@ -97,6 +101,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 mp.setLooping(true);
             }
         });
+        _videoView.setOnErrorListener(_onErrorListener);
         _videoView.start();
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
@@ -150,7 +155,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         Log.v(TAG, "onDestroy");
         _shutdownService.onPause();
         if (!_authcomplete) {
-            AuthTopicService.dispatchAuthCancelled(this);
+            //AuthTopicService.dispatchAuthCancelled(this);
         }
         super.onDestroy();
     }
@@ -170,6 +175,14 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         @Override
         public void onAnimationRepeat(Animation animation) {
+        }
+    };
+
+    private final MediaPlayer.OnErrorListener _onErrorListener = new MediaPlayer.OnErrorListener() {
+        @Override
+        public boolean onError(MediaPlayer mp, int what, int extra) {
+            _background.setVisibility(View.VISIBLE);
+            return true;
         }
     };
 

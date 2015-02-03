@@ -30,6 +30,11 @@ public class TopicClient {
         this.tag = tag;
     }
 
+    public static void reset() {
+        _instances = new Hashtable<>();
+        _topics = new Hashtable<>();
+    }
+
     public static Set<TopicClient> getSet(String topic) {
         if (!_topics.containsKey(topic)) {
             _topics.put(topic, new HashSet<TopicClient>());

@@ -66,7 +66,8 @@ public class TopicService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _lastSent = null;
+        TopicClient.reset();
+        _lastSent = new Hashtable<>();
         super.onDestroy();
     }
 
@@ -162,8 +163,14 @@ public class TopicService extends Service {
             _lastSent.put(topicId, parcel);
 
         if (topicId.equals(Topics.TOPIC_SHUTDOWN)) {
-            stopSelf();
+            shutdown();
         }
+    }
+
+    private void shutdown() {
+        TopicClient.reset();
+        _lastSent = new Hashtable<>();
+        stopSelf();
     }
 
     @Override

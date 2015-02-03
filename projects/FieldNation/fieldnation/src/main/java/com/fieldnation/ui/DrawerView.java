@@ -235,6 +235,7 @@ public class DrawerView extends RelativeLayout {
         public void onClick(View v) {
             AuthTopicService.requestAuthRemove(getContext());
 
+            Log.v(TAG, "SplashActivity");
             Intent intent = new Intent(getContext(), SplashActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
