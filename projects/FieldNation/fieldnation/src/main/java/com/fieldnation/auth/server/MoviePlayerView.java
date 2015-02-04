@@ -6,8 +6,6 @@ import android.graphics.Movie;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.fieldnation.R;
-
 /**
  * Created by michael.carver on 10/31/2014.
  */
@@ -40,7 +38,7 @@ public class MoviePlayerView extends View {
 
 
     public void init() {
-        _movie = Movie.decodeStream(getResources().openRawResource(R.raw.login_vid));
+//        _movie = Movie.decodeStream(getResources().openRawResource(R.raw.login_vid));
 
         _mw = _movie.width();
         _mh = _movie.height();
