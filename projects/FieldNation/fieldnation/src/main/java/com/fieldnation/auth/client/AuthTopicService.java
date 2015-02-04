@@ -28,6 +28,7 @@ public class AuthTopicService extends Service {
     // Topics
     public static final String TOPIC_AUTH_STATE = TAG + ":TOPIC_AUTH_STATE";
     public static final String TOPIC_AUTH_COMMAND = TAG + ":TOPIC_AUTH_COMMAND";
+    public static final String TOPIC_AUTH_STARTUP = TAG + ":TOPIC_AUTH_STARTUP";
 
     // Params
     public static final String BUNDLE_PARAM_AUTH_TOKEN = "BUNDLE_PARAM_AUTH_TOKEN";
@@ -439,6 +440,10 @@ public class AuthTopicService extends Service {
         TopicService.dispatchTopic(context, TOPIC_AUTH_STATE, bundle);
     }
 
+    public static void subscribeNeedUsernameAndPassword(Context context, String tag, TopicReceiver topicReceiver) {
+        TopicService.registerListener(context, 0, tag, TOPIC_AUTH_STARTUP, topicReceiver);
+    }
+
     public static void dispatchNeedUsernameAndPassword(Context context, Parcelable parcel) {
         Log.v(TAG, "dispatchNeedUsernameAndPassword");
         if (context == null)
@@ -449,7 +454,21 @@ public class AuthTopicService extends Service {
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_NEED_PASSWORD);
         bundle.putParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, parcel);
 
-        TopicService.dispatchTopic(context, TOPIC_AUTH_COMMAND, bundle, true);
+        TopicService.dispatchTopic(context, TOPIC_AUTH_STARTUP, bundle, true);
+    }
+
+    public static void dispatchGettingUsernameAndPassword(Context context) {
+        Log.v(TAG, "dispatchGettingUsernameAndPassword");
+
+        if (context == null)
+            return;
+
+        startService(context);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_NEED_PASSWORD);
+
+        TopicService.dispatchTopic(context, TOPIC_AUTH_STARTUP, bundle, true);
     }
 
     public static void dispatchAuthComplete(Context context) {
