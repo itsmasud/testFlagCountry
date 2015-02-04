@@ -1,18 +1,20 @@
 package com.fieldnation.ui.dialog;
 
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -29,13 +31,19 @@ public class ReasonCoView extends RelativeLayout {
     private CheckBox _tacCheckBox;
     private Button _tacButton;
 
+    // Dialogs
+    private DatePickerDialog _datePicker;
+    private TimePickerDialog _timePicker;
+
     // Data
+    private FragmentManager _fm;
     private Listener _listener;
     private String _reason;
     private boolean _expires;
     private Calendar _expirationDate;
     private boolean _tacAccepted = false;
     private boolean _reset = false;
+    private Calendar _pickerCal;
 
     public ReasonCoView(Context context) {
         super(context);
@@ -61,16 +69,24 @@ public class ReasonCoView extends RelativeLayout {
         _requestReasonEditText = (EditText) findViewById(R.id.request_reason_edittext);
 
         _expiresCheckBox = (CheckBox) findViewById(R.id.expires_checkbox);
-        _expiresCheckBox.setOnCheckedChangeListener(_expires_onChange);
+        _expiresCheckBox.setOnClickListener(_expires_onClick);
 
         _expiresButton = (Button) findViewById(R.id.expires_button);
         _expiresButton.setOnClickListener(_expiresButton_onClick);
 
         _tacCheckBox = (CheckBox) findViewById(R.id.tac_checkbox);
-        _tacCheckBox.setOnCheckedChangeListener(_tac_onChange);
+        _tacCheckBox.setOnClickListener(_tacCheck_onClick);
 
         _tacButton = (Button) findViewById(R.id.tac_button);
         _tacButton.setOnClickListener(_tac_onClick);
+
+        _pickerCal = Calendar.getInstance();
+        final Calendar c = Calendar.getInstance();
+        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH));
+        _datePicker.setCloseOnSingleTapDay(true);
+        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+                false, false);
 
         populateUi();
     }
@@ -80,11 +96,16 @@ public class ReasonCoView extends RelativeLayout {
     }
 
     public String getExpiration() {
-        return ISO8601.fromCalendar(_expirationDate);
+        try {
+            return ISO8601.fromCalendar(_expirationDate);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
-    public void setListener(Listener listener) {
+    public void setListener(FragmentManager fm, Listener listener) {
         _listener = listener;
+        _fm = fm;
     }
 
     public void setCounterOffer(String reason, boolean expires, String expirationDate) {
@@ -111,7 +132,7 @@ public class ReasonCoView extends RelativeLayout {
         }
 
         // expiration stuff
-        //_expiresCheckBox.setChecked(_expires);
+        _expiresCheckBox.setChecked(_expires);
         if (_expires) {
             _expiresButton.setVisibility(View.VISIBLE);
         } else {
@@ -131,25 +152,22 @@ public class ReasonCoView extends RelativeLayout {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private CompoundButton.OnCheckedChangeListener _expires_onChange = new CompoundButton.OnCheckedChangeListener() {
+    private OnClickListener _expires_onClick = new OnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            _expires = isChecked;
+        public void onClick(View v) {
+            _expires = _expiresCheckBox.isChecked();
 
             if (_expires && _listener != null)
-                _listener.showDateTimePicker();
-
-            populateUi();
+                _datePicker.show(_fm, TAG);
         }
     };
 
-    private CompoundButton.OnCheckedChangeListener _tac_onChange = new CompoundButton.OnCheckedChangeListener() {
+    private OnClickListener _tacCheck_onClick = new OnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            _tacAccepted = isChecked;
+        public void onClick(View v) {
+            _tacAccepted = _tacCheckBox.isChecked();
             if (_listener != null)
-                _listener.onTacChange(isChecked);
-            populateUi();
+                _listener.onTacChange(_tacAccepted);
         }
     };
 
@@ -157,7 +175,7 @@ public class ReasonCoView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.showDateTimePicker();
+                _datePicker.show(_fm, TAG);
         }
     };
 
@@ -169,11 +187,36 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+            _pickerCal.set(year, month, day);
+            _timePicker.show(_fm, datePickerDialog.getTag());
+        }
+    };
+
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+
+        @Override
+        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+            String tag = view.getTag();
+            _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
+                    _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+            _expirationDate = (Calendar) _pickerCal.clone();
+            _expires = true;
+            if (_listener != null)
+                _listener.onExpirationChange(_expires, ISO8601.fromCalendar(_expirationDate));
+            populateUi();
+        }
+    };
+
+
     public interface Listener {
         public void onTacClick();
 
         public void onTacChange(boolean isChecked);
 
-        public void showDateTimePicker();
+        public void onExpirationChange(boolean expires, String date);
     }
 }

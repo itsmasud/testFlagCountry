@@ -156,6 +156,7 @@
     <string name="request_work">Request Work</string>
     <string name="accept_work">Accept Work</string>
     <string name="counter_offer">Counter Offer</string>
+    <string name="view_counter">View Counter</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>
     <string name="view_customer_policies_and_procedures">View Customer Policies and Procedures</string>
     <string name="view_confidential_information">View Confidential Information</string>

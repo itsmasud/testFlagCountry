@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +25,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,8 +59,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private PayDialog _payDialog;
     private ScheduleDialog _scheduleDialog;
     private ExpenseDialog _expenseDialog;
-    private DatePickerDialog _datePicker;
-    private TimePickerDialog _timePicker;
     private TermsDialog _termsDialog;
 
     // Data State
@@ -77,7 +73,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     // Data
     private boolean _tacAccpet;
     private Listener _listener;
-    private Calendar _pickerCal;
+
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -88,6 +84,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER))
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -123,6 +120,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
         outState.putBoolean(STATE_EXPIRES, _expires);
         outState.putBoolean(STATE_TAC, _tacAccpet);
 
@@ -145,17 +143,17 @@ public class CounterOfferDialog extends DialogFragmentBase {
         if (_counterSchedule != null)
             outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
 
-        if (_counterReason != null)
+        if (_reasonView != null) {
             outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
-
-        if (_expirationDate != null)
             outState.putString(STATE_EXPIRATION_DATE, _reasonView.getExpiration());
+        }
 
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_counter_offer, container, false);
 
         _tabHost = (TabHost) v.findViewById(R.id.tabhost);
@@ -204,7 +202,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _expenseView.setListener(_expenseView_listener);
 
         _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
-        _reasonView.setListener(_reason_listener);
+        _reasonView.setListener(getFragmentManager(), _reason_listener);
 
         _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
         _payDialog.setListener(_payDialog_listener);
@@ -219,16 +217,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
-        final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH));
-        _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                false, false);
-
-        _pickerCal = Calendar.getInstance();
-
-
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -236,6 +224,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     @Override
     public void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
 
         Dialog d = getDialog();
@@ -254,10 +243,17 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     @Override
     public void init() {
+        Log.v(TAG, "init");
         populateUi();
     }
 
+    @Override
+    public void reset() {
+        setTabPos(0);
+    }
+
     private void populateUi() {
+        Log.v(TAG, "populateUi maybe!");
         if (_workorder == null)
             return;
 
@@ -266,6 +262,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
         if (_scheduleView == null)
             return;
+
+        Log.v(TAG, "populateUi yes!");
 
         if (_counterPay != null)
             _paymentView.setPay(_counterPay, true);
@@ -289,6 +287,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     // this will only be called once.. will not be called on redraw
     public void show(Workorder workorder) {
+        Log.v(TAG, "show");
         _workorder = workorder;
 
         CounterOfferInfo info = _workorder.getCounterOfferInfo();
@@ -320,7 +319,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
             _expires = info.getExpires();
             if (_expires) {
                 try {
-                    _expirationDate = ISO8601.fromUTC(Calendar.getInstance().getTimeInMillis() + info.getExpiresAfter() * 1000);
+                    _expirationDate = info.getExpiresAfter();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -328,6 +327,32 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
 
         super.show();
+    }
+
+    private void setTabPos(int pos) {
+        Log.v(TAG, "setTabPos: " + pos);
+        if (pos == 0) {
+            _tabScrollView.post(new Runnable() {
+                @Override
+                public void run() {
+                    _tabScrollView.fullScroll(View.FOCUS_LEFT);
+                    _tabHost.setCurrentTab(0);
+
+                }
+            });
+        } else if (pos > 0 && pos < 4) {
+            _tabHost.setCurrentTab(pos);
+
+        } else {
+            _tabScrollView.post(new Runnable() {
+                @Override
+                public void run() {
+                    _tabScrollView.fullScroll(View.FOCUS_RIGHT);
+                    _tabHost.setCurrentTab(4);
+
+                }
+            });
+        }
     }
 
     /*-*********************************-*/
@@ -345,8 +370,9 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
 
         @Override
-        public void showDateTimePicker() {
-            _datePicker.show(getFragmentManager(), TAG);
+        public void onExpirationChange(boolean expires, String date) {
+            _expires = expires;
+            _expirationDate = date;
         }
     };
 
@@ -438,28 +464,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            _pickerCal.set(year, month, day);
-            _timePicker.show(_fm, datePickerDialog.getTag());
-        }
-    };
-
-    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
-
-        @Override
-        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
-            String tag = view.getTag();
-            _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
-                    _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-
-            _expirationDate = ISO8601.fromCalendar(_pickerCal);
-            _expires = true;
-            populateUi();
-        }
-    };
-
     private final TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
         @Override
         public void onTabChanged(String tabId) {
@@ -479,9 +483,9 @@ public class CounterOfferDialog extends DialogFragmentBase {
         public void onClick(View v) {
             // start?
             if (_tabHost.getCurrentTabTag().equals("start")) {
-                _tabHost.setCurrentTab(_tabHost.getCurrentTab() + 1);
+                setTabPos(_tabHost.getCurrentTab() + 1);
             } else if (_tabHost.getCurrentTabTag().startsWith("mid")) {
-                _tabHost.setCurrentTab(_tabHost.getCurrentTab() + 1);
+                setTabPos(_tabHost.getCurrentTab() + 1);
             } else if (_tabHost.getCurrentTabTag().equals("end")) {
                 if (!_tacAccpet) {
                     Toast.makeText(getActivity(), "Please accept the terms and conditions to continue", Toast.LENGTH_LONG).show();
@@ -500,7 +504,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
                     try {
                         seconds = (int) (ISO8601.toUtc(_expirationDate)
-                                - Calendar.getInstance().getTimeInMillis()) / 1000;
+                                - System.currentTimeMillis()) / 1000;
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -515,7 +519,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private final View.OnClickListener _back_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _tabHost.setCurrentTab(_tabHost.getCurrentTab() - 1);
+            setTabPos(_tabHost.getCurrentTab() - 1);
         }
     };
 

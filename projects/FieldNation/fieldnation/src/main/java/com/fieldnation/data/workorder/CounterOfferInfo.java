@@ -10,7 +10,7 @@ public class CounterOfferInfo {
 	@Json(name = "expires")
 	private Boolean _expires;
 	@Json(name = "expiresAfter")
-	private Integer _expiresAfter;
+	private String _expiresAfter;
 	@Json(name="expiresAfterInSecond")
 	private Integer _expiresAfterInSecond;
 	@Json(name = "explanation")
@@ -31,7 +31,7 @@ public class CounterOfferInfo {
 		return _expires;
 	}
 
-	public Integer getExpiresAfter() {
+	public String getExpiresAfter() {
 		return _expiresAfter;
 	}
 
