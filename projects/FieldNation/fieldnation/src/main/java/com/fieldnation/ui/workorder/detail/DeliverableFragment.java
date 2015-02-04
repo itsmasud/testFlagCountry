@@ -201,6 +201,7 @@ public class DeliverableFragment extends WorkorderFragment {
     public void setWorkorder(Workorder workorder, boolean isCached) {
         _workorder = workorder;
         _isCached = isCached;
+        populateUi();
     }
 
     private PendingIntent getNotificationIntent() {
@@ -212,7 +213,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void setLoading(boolean isLoading) {
-        if (_refreshView != null) {
+        if (_refreshView != null && getActivity() != null) {
             if (isLoading) {
                 _refreshView.startRefreshing();
             } else {
@@ -280,6 +281,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
+            Log.v(TAG, "US count: " + slots.length);
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
 
@@ -299,6 +301,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 @Override
                 public void finish(int count) throws Exception {
+                    Log.v(TAG, "US fin: " + count + "/" + _filesLayout.getChildCount());
                     if (_filesLayout.getChildCount() > count) {
                         _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
                     }
@@ -522,7 +525,11 @@ public class DeliverableFragment extends WorkorderFragment {
             if (resultCode == WEB_SEND_DELIVERABLE)
                 _uploadCount--;
             _service = null;
-            Toast.makeText(_context, R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
+            try {
+                Toast.makeText(_context, R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             setLoading(false);
         }
     };

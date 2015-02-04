@@ -229,7 +229,7 @@ public class misc {
         if (str == null)
             return true;
 
-        if (str.equals(""))
+        if (str.trim().equals(""))
             return true;
 
         return false;

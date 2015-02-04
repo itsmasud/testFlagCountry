@@ -400,13 +400,13 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
-            if (view.isBundle()) {
-                Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
-                intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
-                intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, workorder.getBundleId());
-                getActivity().startActivity(intent);
-                view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
-            } else {
+//            if (view.isBundle()) {
+//                Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
+//                intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+//                intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, workorder.getBundleId());
+//                getActivity().startActivity(intent);
+//                view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
+//            } else {
                 Intent intent = new Intent(getActivity(), WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
 /*
@@ -418,7 +418,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 //                }
                 getActivity().startActivity(intent);
                 view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
-            }
+//            }
         }
 
         @Override

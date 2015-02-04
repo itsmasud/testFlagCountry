@@ -1,21 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     style="?attr/activityLoginStyle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="${packageName}.${activityClass}">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/loginscreen" />
+    android:layout_height="match_parent">
 
     <com.fieldnation.auth.server.FnVideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_height="match_parent" />
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/background_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/loginscreen" />
 
     <View
         android:id="@+id/fader"

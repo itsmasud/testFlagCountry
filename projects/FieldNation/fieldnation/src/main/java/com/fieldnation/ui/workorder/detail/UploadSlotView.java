@@ -72,6 +72,8 @@ public class UploadSlotView extends RelativeLayout {
         _uploadTextView = (TextView) findViewById(R.id.upload_textview);
         _uploadTextView.setOnClickListener(_upload_onClick);
 
+        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
+
         populateUi();
     }
 
@@ -86,7 +88,6 @@ public class UploadSlotView extends RelativeLayout {
         _profileId = profileId;
 
         _uploadUrl = _workorder.getWorkorderId() + "/deliverables/" + _slot.getSlotId();
-        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
 
         populateUi();
     }
@@ -120,7 +121,9 @@ public class UploadSlotView extends RelativeLayout {
 
                 @Override
                 public void finish(final int count) throws Exception {
-                    Log.v(TAG, "finish " + count + "/" + _docsList.getChildCount() + ": " + (count - 1) + "/" + (_docsList.getChildCount() - count));
+                    Log.v(TAG, "finish " + count + "/"
+                            + _docsList.getChildCount() + ": "
+                            + (count - 1) + "/" + (_docsList.getChildCount() - count));
                     if (_docsList.getChildCount() > count) {
                         _docsList.removeViews(count - 1, _docsList.getChildCount() - count);
                     }
@@ -132,6 +135,7 @@ public class UploadSlotView extends RelativeLayout {
         }
 
         if (_uploadingFiles.size() > 0) {
+            Log.v(TAG, "UF: " + _uploadingFiles.size() + " " + _uploadList.getChildCount());
             _uploadList.setVisibility(View.VISIBLE);
             ForLoopRunnable r = new ForLoopRunnable(_uploadingFiles.size(), new Handler()) {
                 @Override
@@ -149,6 +153,7 @@ public class UploadSlotView extends RelativeLayout {
 
                 @Override
                 public void finish(int count) throws Exception {
+                    Log.v(TAG, "UF finish " + count + "/" + _uploadList.getChildCount() + ": " + (count - 1) + "/" + (_uploadList.getChildCount() - count));
                     if (_uploadList.getChildCount() > count) {
                         _uploadList.removeViews(count - 1, _uploadList.getChildCount() - count);
                     }
@@ -181,6 +186,7 @@ public class UploadSlotView extends RelativeLayout {
         @Override
         public void onStart(String url, String filename) {
             if (url.contains(_uploadUrl)) {
+                Log.v(TAG, "onStart");
                 _uploadingFiles.add(filename);
                 populateUi();
             }
@@ -189,6 +195,7 @@ public class UploadSlotView extends RelativeLayout {
         @Override
         public void onFinish(String url, String filename) {
             if (url.contains(_uploadUrl)) {
+                Log.v(TAG, "onFinish");
                 _uploadingFiles.remove(filename);
                 //populateUi();
             }
@@ -197,6 +204,7 @@ public class UploadSlotView extends RelativeLayout {
         @Override
         public void onError(String url, String filename, String message) {
             if (url.contains(_uploadUrl)) {
+                Log.v(TAG, "onError");
                 _uploadingFiles.remove(filename);
                 //populateUi();
             }

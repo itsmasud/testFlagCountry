@@ -25,6 +25,13 @@
         android:text="3.5 mi" />
 
     <TextView
+        android:id="@+id/remotely_textview"
+        style="@style/WorkorderDetail_Field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done Remotely" />
+
+    <TextView
         android:id="@+id/contactinfo_textview"
         style="@style/WorkorderDetail_Field"
         android:layout_width="match_parent"

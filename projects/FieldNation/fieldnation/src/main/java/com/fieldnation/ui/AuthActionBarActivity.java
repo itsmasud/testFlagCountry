@@ -89,7 +89,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     @Override
     protected void onDestroy() {
-        _shutdownListener.onPause();
+        if (_shutdownListener != null)
+            _shutdownListener.onPause();
         super.onDestroy();
     }
 

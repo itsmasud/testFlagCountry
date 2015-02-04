@@ -299,7 +299,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:visibility="gone"
+                android:visibility="visible"
                 android:id="@+id/sendlog_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -314,7 +314,7 @@
                     android:id="@+id/sendlog_button"
                     style="?attr/buttonFlatStyle"
                     android:layout_width="match_parent"
-                    android:text="Send Log To Mike" />
+                    android:text="Send Debug Log" />
             </LinearLayout>
 
             <LinearLayout
@@ -349,14 +349,6 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="garbage" />
-
-    <Button
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:id="@+id/pi_button"
-        style="?attr/buttonFlatStyle"
-        android:layout_width="wrap_content"
-        android:text="\u03C0" />
 
     <Button
         style="?attr/buttonOrangeStyle"

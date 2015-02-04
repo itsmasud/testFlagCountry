@@ -365,7 +365,10 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean getIsRemoteWork() {
-        return _isRemoteWork;
+        if (_isRemoteWork != null)
+            return _isRemoteWork;
+
+        return false;
     }
 
     public Boolean getIsRequest() {
