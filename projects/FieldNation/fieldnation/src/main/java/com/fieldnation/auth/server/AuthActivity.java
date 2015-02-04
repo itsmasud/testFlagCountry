@@ -5,7 +5,6 @@ import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.R;
@@ -50,6 +48,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private EditText _passwordEditText;
     private View _fader;
     private ImageView _background;
+    private Button _signupButton;
 
     private UpdateDialog _updateDialog;
 
@@ -87,6 +86,10 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _loginButton.setOnClickListener(_loginButton_onClick);
         _usernameEditText = (EditText) findViewById(R.id.username_edittext);
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
+        _signupButton = (Button) findViewById(R.id.signup_button);
+        _signupButton.setOnClickListener(_signup_onClick);
+        _signupButton.setVisibility(View.GONE);
+
 
         _background = (ImageView) findViewById(R.id.background_image);
         _fader = (View) findViewById(R.id.fader);
@@ -103,12 +106,12 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             @Override
             public void run() {
                 _contentLayout.setVisibility(View.VISIBLE);
+                _signupButton.setVisibility(View.VISIBLE);
                 _fader.startAnimation(_fadeout);
             }
         }, 1000);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
     }
 
     @Override
@@ -117,6 +120,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         super.onResume();
         _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
         TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topic_needUpdate);
+        AuthTopicService.dispatchGettingUsernameAndPassword(this);
     }
 
     @Override
@@ -157,6 +161,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         @Override
         public void onAnimationEnd(Animation animation) {
             _fader.setVisibility(View.GONE);
+//            _fader.setBackgroundColor(0x3F000000);
         }
 
         @Override
@@ -170,6 +175,15 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
                 _updateDialog.show();
             }
+        }
+    };
+
+    private final View.OnClickListener _signup_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.fieldnation.com/signup-provider"));
+            startActivity(intent);
         }
     };
 
@@ -191,6 +205,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             startService(intent);
 
             _contentLayout.setVisibility(View.GONE);
+            _signupButton.setVisibility(View.GONE);
         }
     };
 
@@ -232,6 +247,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     ClockService.enableClock(AuthActivity.this);
                 } else {
                     _contentLayout.setVisibility(View.VISIBLE);
+                    _signupButton.setVisibility(View.VISIBLE);
                 }
 
                 Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();

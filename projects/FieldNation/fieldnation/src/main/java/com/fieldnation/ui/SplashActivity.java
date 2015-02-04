@@ -38,7 +38,7 @@ public class SplashActivity extends AuthFragmentActivity {
         Log.v(TAG, "onResume");
         super.onResume();
         AuthTopicService.requestAuthInvalid(this);
-        TopicService.registerListener(this, 0, TAG + ":PASSWORD", AuthTopicService.TOPIC_AUTH_COMMAND, _topicReceiver);
+        AuthTopicService.subscribeNeedUsernameAndPassword(this, TAG, _topicReceiver);
         AuthTopicService.requestAuthentication(this);
     }
 
@@ -73,10 +73,12 @@ public class SplashActivity extends AuthFragmentActivity {
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            Log.v(TAG, "onTopic");
             Log.v(TAG, parcel.toString());
-            if (AuthTopicService.TOPIC_AUTH_COMMAND.equals(topicId)
+            if (AuthTopicService.TOPIC_AUTH_STARTUP.equals(topicId)
                     && parcel.getString(AuthTopicService.BUNDLE_PARAM_TYPE)
-                    .equals(AuthTopicService.BUNDLE_PARAM_TYPE_NEED_PASSWORD)) {
+                    .equals(AuthTopicService.BUNDLE_PARAM_TYPE_NEED_PASSWORD)
+                    && parcel.containsKey(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
 
                 Intent intent = new Intent(SplashActivity.this, AuthActivity.class);
 
