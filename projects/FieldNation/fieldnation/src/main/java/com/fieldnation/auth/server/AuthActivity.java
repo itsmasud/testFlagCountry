@@ -51,8 +51,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private View _fader;
     private ImageView _background;
 
-    private VideoView _videoView;
-
     private UpdateDialog _updateDialog;
 
 
@@ -89,21 +87,9 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _loginButton.setOnClickListener(_loginButton_onClick);
         _usernameEditText = (EditText) findViewById(R.id.username_edittext);
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
-        _videoView = (VideoView) findViewById(R.id.video_view);
 
         _background = (ImageView) findViewById(R.id.background_image);
         _fader = (View) findViewById(R.id.fader);
-
-        Uri video = Uri.parse("android.resource://" + getPackageName() + "/raw/" + R.raw.login_vid);
-        _videoView.setVideoURI(video);
-        _videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
-            }
-        });
-        _videoView.setOnErrorListener(_onErrorListener);
-        _videoView.start();
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
@@ -137,7 +123,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onPause() {
         Log.v(TAG, "onPause");
         super.onPause();
-        _videoView.stopPlayback();
         TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
     }
 
@@ -176,14 +161,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         @Override
         public void onAnimationRepeat(Animation animation) {
-        }
-    };
-
-    private final MediaPlayer.OnErrorListener _onErrorListener = new MediaPlayer.OnErrorListener() {
-        @Override
-        public boolean onError(MediaPlayer mp, int what, int extra) {
-            _background.setVisibility(View.VISIBLE);
-            return true;
         }
     };
 

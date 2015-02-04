@@ -3,14 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.fieldnation.auth.server.FnVideoView
-        android:id="@+id/video_view"
-        android:layout_width="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_height="match_parent" />
-
     <ImageView
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
