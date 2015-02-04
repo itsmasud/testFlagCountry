@@ -33,6 +33,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private TextView _counterOfferTextView;
     private TextView _co1TextView;
     private TextView _co2TextView;
+    private TextView _counterOfferLabelTextView;
 
     // Data
     private Workorder _workorder;
@@ -80,6 +81,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         _counterOfferTextView = (TextView) findViewById(R.id.counteroffer_textview);
         _co1TextView = (TextView) findViewById(R.id.co1_textview);
         _co2TextView = (TextView) findViewById(R.id.co2_textview);
+        _counterOfferLabelTextView = (TextView) findViewById(R.id.counterofferlabel_textview);
 
         setVisibility(View.GONE);
     }
@@ -130,7 +132,11 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
             _pay2TextView.setVisibility(GONE);
         }
 
+        _counterOfferLabelTextView.setText(R.string.counter_offer);
+
         if (_workorder.getCounterOfferInfo() != null && _workorder.getCounterOfferInfo().getPay() != null) {
+            _counterOfferLabelTextView.setText(R.string.view_counter);
+
             Pay co = _workorder.getCounterOfferInfo().getPay();
             String[] paytext = co.toDisplayStringLong();
             _counterOfferTextView.setVisibility(View.GONE);
