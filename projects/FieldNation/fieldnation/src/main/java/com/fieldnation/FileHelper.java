@@ -132,7 +132,11 @@ public class FileHelper {
 
                     DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                     dm.enqueue(r);
-                    Toast.makeText(context, context.getString(R.string.toast_downloading) + " " + filename, Toast.LENGTH_LONG).show();
+                    try {
+                        Toast.makeText(context, context.getString(R.string.toast_downloading) + " " + filename, Toast.LENGTH_LONG).show();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
 
                 return null;
