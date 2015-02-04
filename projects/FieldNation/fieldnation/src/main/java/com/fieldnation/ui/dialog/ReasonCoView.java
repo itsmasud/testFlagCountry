@@ -111,7 +111,7 @@ public class ReasonCoView extends RelativeLayout {
         }
 
         // expiration stuff
-        _expiresCheckBox.setChecked(_expires);
+        //_expiresCheckBox.setChecked(_expires);
         if (_expires) {
             _expiresButton.setVisibility(View.VISIBLE);
         } else {

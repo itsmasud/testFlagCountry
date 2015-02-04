@@ -192,6 +192,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
         _backButton = (Button) v.findViewById(R.id.back_button);
         _backButton.setOnClickListener(_back_onClick);
+        _backButton.setVisibility(View.GONE);
 
         _paymentView = (PaymentCoView) v.findViewById(R.id.payment_view);
         _paymentView.setListener(_payment_listener);
@@ -498,7 +499,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
                     _counterReason = _reasonView.getReason();
 
                     try {
-                        seconds = (int) (Calendar.getInstance().getTimeInMillis() - ISO8601.toUtc(_expirationDate)) / 1000;
+                        seconds = (int) (ISO8601.toUtc(_expirationDate)
+                                - Calendar.getInstance().getTimeInMillis()) / 1000;
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
