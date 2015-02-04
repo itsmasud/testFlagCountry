@@ -508,6 +508,8 @@ public class WorkorderCardView extends RelativeLayout {
             // distance
             if (_workorder.getIsRemoteWork()) {
                 _distanceTextView.setText("Done Remotely");
+            } else if (location.getCity() != null && location.getState() != null) {
+                _distanceTextView.setText(location.getCity() + ", " + location.getState());
             } else if (location.getDistance() != null) {
                 _distanceTextView.setText(location.getDistance() + " mi");
             } else if (_workorder.getDistance() != null) {
