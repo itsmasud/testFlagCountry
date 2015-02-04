@@ -69,6 +69,7 @@
             android:background="@drawable/ic_wo_detail_counter_offer" />
 
         <TextView
+            android:id="@+id/counterofferlabel_textview"
             style="@style/TextViewLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

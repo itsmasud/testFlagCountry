@@ -407,17 +407,17 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 //                getActivity().startActivity(intent);
 //                view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
 //            } else {
-                Intent intent = new Intent(getActivity(), WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+            Intent intent = new Intent(getActivity(), WorkorderActivity.class);
+            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
 /*
                 if (workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS || workorder.getStatus().getWorkorderStatus() == WorkorderStatus.ASSIGNED) {
                     intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_TASKS);
                 } else {
 */
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+            intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
 //                }
-                getActivity().startActivity(intent);
-                view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
+            getActivity().startActivity(intent);
+            view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
 //            }
         }
 
@@ -519,7 +519,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                             workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,
                             schedule, expenses));
             _requestWorking.add(workorder.getWorkorderId());
-            _adapter.notifyDataSetChanged();
+            _loadingView.startRefreshing();
         }
     };
 
@@ -728,14 +728,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 new WorkorderParseAsync().executeEx(resultData);
 
             } else if (resultCode == WEB_CHANGING_WORKORDER) {
-                long woId = resultData.getLong(KEY_WORKORDER_ID);
-                //_requestWorking.remove(woId);
-                //_pendingNotInterested.remove(woId);
-                // this workorder might now be gone... need to refresh the list
-//                _loadingView.startRefreshing();
                 _adapter.refreshPages();
-                _loadingView.refreshComplete();
-                //_loadingView.refreshComplete();
+
             } else if (resultCode == WEB_CHECKING_IN) {
                 long woId = resultData.getLong(KEY_WORKORDER_ID);
                 _requestWorking.remove(woId);
