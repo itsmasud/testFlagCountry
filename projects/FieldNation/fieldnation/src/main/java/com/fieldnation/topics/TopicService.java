@@ -3,6 +3,7 @@ package com.fieldnation.topics;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ResultReceiver;
@@ -66,7 +67,8 @@ public class TopicService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _lastSent = null;
+        TopicClient.reset();
+        _lastSent = new Hashtable<>();
         super.onDestroy();
     }
 
@@ -150,10 +152,10 @@ public class TopicService extends Service {
             iter = clients.iterator();
         }
         Log.v(TAG, "Topic: " + topicId);
-//        Log.v(TAG, "Clients: " + clients.size());
+        Log.v(TAG, "Clients: " + clients.size());
         while (iter.hasNext()) {
             TopicClient c = iter.next();
-//            Log.v(TAG, "Client: " + c.tag);
+            Log.v(TAG, "Client: " + c.tag);
             bundle.putBundle(TopicConstants.PARAM_TOPIC_PARCEL, parcel);
             send(c.receiver, c.resultCode, bundle, c.tag);
         }
@@ -162,8 +164,14 @@ public class TopicService extends Service {
             _lastSent.put(topicId, parcel);
 
         if (topicId.equals(Topics.TOPIC_SHUTDOWN)) {
-            stopSelf();
+            shutdown();
         }
+    }
+
+    private void shutdown() {
+        TopicClient.reset();
+        _lastSent = new Hashtable<>();
+        stopSelf();
     }
 
     @Override
@@ -172,59 +180,88 @@ public class TopicService extends Service {
     }
 
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            super.onTaskRemoved(rootIntent);
+        TopicClient.reset();
+        _lastSent = new Hashtable<>();
+        stopSelf();
+    }
+
     public static void registerListener(Context context, int resultCode, String tag, String topicId, TopicReceiver topicReceiver) {
-        if (context == null)
-            return;
-        Intent intent = new Intent(context, TopicService.class);
-        intent.setAction(TopicConstants.ACTION_REGISTER_LISTENER);
-        intent.putExtra(TopicConstants.PARAM_TOPIC_ID, topicId);
-        intent.putExtra(TopicConstants.PARAM_TOPIC_RECEIVER, topicReceiver);
-        intent.putExtra(TopicConstants.PARAM_TAG, tag);
-        intent.putExtra(TopicConstants.PARAM_RESULT_CODE, resultCode);
-        context.startService(intent);
+        try {
+            if (context == null)
+                return;
+            Intent intent = new Intent(context, TopicService.class);
+            intent.setAction(TopicConstants.ACTION_REGISTER_LISTENER);
+            intent.putExtra(TopicConstants.PARAM_TOPIC_ID, topicId);
+            intent.putExtra(TopicConstants.PARAM_TOPIC_RECEIVER, topicReceiver);
+            intent.putExtra(TopicConstants.PARAM_TAG, tag);
+            intent.putExtra(TopicConstants.PARAM_RESULT_CODE, resultCode);
+            context.startService(intent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void unRegisterListener(Context context, int resultCode, String tag, String topic) {
-        if (context == null)
-            return;
-        Intent intent = new Intent(context, TopicService.class);
+        try {
+            if (context == null)
+                return;
+            Intent intent = new Intent(context, TopicService.class);
 
-        intent.setAction(TopicConstants.ACTION_UNREGISTER_LISTENER);
-        intent.putExtra(TopicConstants.PARAM_TAG, tag);
-        intent.putExtra(TopicConstants.PARAM_TOPIC_ID, topic);
-        intent.putExtra(TopicConstants.PARAM_RESULT_CODE, resultCode);
-        context.startService(intent);
+            intent.setAction(TopicConstants.ACTION_UNREGISTER_LISTENER);
+            intent.putExtra(TopicConstants.PARAM_TAG, tag);
+            intent.putExtra(TopicConstants.PARAM_TOPIC_ID, topic);
+            intent.putExtra(TopicConstants.PARAM_RESULT_CODE, resultCode);
+            context.startService(intent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void delete(Context context, String tag) {
-        if (context == null)
-            return;
+        try {
+            if (context == null)
+                return;
 
-        Intent intent = new Intent(context, TopicService.class);
+            Intent intent = new Intent(context, TopicService.class);
 
-        intent.setAction(TopicConstants.ACTION_DELETE_CLIENT);
-        intent.putExtra(TopicConstants.PARAM_TAG, tag);
-        context.startService(intent);
+            intent.setAction(TopicConstants.ACTION_DELETE_CLIENT);
+            intent.putExtra(TopicConstants.PARAM_TAG, tag);
+            context.startService(intent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void dispatchTopic(Context context, String topicId, Bundle parcel) {
-        if (context == null)
-            return;
+        try {
+            if (context == null)
+                return;
 
-        dispatchTopic(context, topicId, parcel, true);
+            dispatchTopic(context, topicId, parcel, true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void dispatchTopic(Context context, String topicId, Bundle parcel, boolean keepLastSent) {
-        if (context == null)
-            return;
+        try {
+            if (context == null)
+                return;
 
-        Intent intent = new Intent(context, TopicService.class);
+            Intent intent = new Intent(context, TopicService.class);
 
-        intent.setAction(TopicConstants.ACTION_DISPATCH_EVENT);
-        intent.putExtra(TopicConstants.PARAM_TOPIC_ID, topicId);
-        intent.putExtra(TopicConstants.PARAM_KEEP_LAST_SENT, keepLastSent);
-        intent.putExtra(TopicConstants.PARAM_TOPIC_PARCEL, parcel == null ? new Bundle() : parcel);
-        context.startService(intent);
+            intent.setAction(TopicConstants.ACTION_DISPATCH_EVENT);
+            intent.putExtra(TopicConstants.PARAM_TOPIC_ID, topicId);
+            intent.putExtra(TopicConstants.PARAM_KEEP_LAST_SENT, keepLastSent);
+            intent.putExtra(TopicConstants.PARAM_TOPIC_PARCEL, parcel == null ? new Bundle() : parcel);
+            context.startService(intent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 

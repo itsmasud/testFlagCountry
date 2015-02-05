@@ -38,29 +38,6 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/status_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/NotificationCard_StatusLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Status: " />
-
-            <TextView
-                android:id="@+id/status_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:text="SubStatusTitle" />
-        </LinearLayout>
-
         <TextView
             android:id="@+id/message_textview"
             android:layout_width="wrap_content"

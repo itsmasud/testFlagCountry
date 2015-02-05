@@ -143,7 +143,7 @@ public class WorkorderCardView extends RelativeLayout {
 
         // bundle bar
         _bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
-		/*-_bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);-*/
+        /*-_bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);-*/
         _bundleTextView = (TextView) findViewById(R.id.bundle_textview);
         _bundleTitleTextView = (TextView) findViewById(R.id.bundle_title);
 
@@ -202,8 +202,8 @@ public class WorkorderCardView extends RelativeLayout {
     }
 
     /*-*****************************************-*/
-	/*-				Setters Getters				-*/
-	/*-*****************************************-*/
+    /*-				Setters Getters				-*/
+    /*-*****************************************-*/
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();
@@ -275,8 +275,8 @@ public class WorkorderCardView extends RelativeLayout {
     }
 
 	/*-*********************************-*/
-	/*-				Events				-*/
-	/*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
 
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
@@ -348,8 +348,8 @@ public class WorkorderCardView extends RelativeLayout {
     };
 
     /*-*********************************-*/
-	/*-				Util				-*/
-	/*-*********************************-*/
+    /*-				Util				-*/
+    /*-*********************************-*/
     private void updateStatusUiColors() {
         _statusView.setBackgroundResource(_workorder.getStatusBG());
         _statusTextView.setTextColor(getContext().getResources().getColor(_workorder.getStatusTextColor()));
@@ -458,14 +458,13 @@ public class WorkorderCardView extends RelativeLayout {
         showMessageAlertIcon(_workorder.getMessageCount() != null && _workorder.getMessageCount() > 0);
         showAlertIcon(_workorder.getAlertCount() != null && _workorder.getAlertCount() > 0);
 
-        // client name location.contact_name
         Location location = _workorder.getLocation();
         if (location != null) {
+
+            // contact name
             if (location.getContactName() != null) {
                 String t = location.getContactName();
-                if (t == null) {
-                    _clientNameTextView.setVisibility(GONE);
-                } else if (t.trim().equals("")) {
+                if (misc.isEmptyOrNull(t)) {
                     _clientNameTextView.setVisibility(GONE);
                 } else {
                     _clientNameTextView.setText(t);
@@ -473,9 +472,13 @@ public class WorkorderCardView extends RelativeLayout {
             } else {
                 _clientNameTextView.setVisibility(GONE);
             }
-            // distance/address? location.state, location.zip, location.city,
-            // location.country,
-            if (location.getAddress1() != null || location.getAddress2() != null) {
+
+            // location
+            if (_workorder.getIsRemoteWork()) {
+                _locationTextView.setVisibility(View.GONE);
+                // distance/address? location.state, location.zip, location.city,
+                // location.country,
+            } else if (location.getAddress1() != null || location.getAddress2() != null) {
                 String address1 = null;
                 String address2 = null;
 
@@ -502,7 +505,12 @@ public class WorkorderCardView extends RelativeLayout {
                 }
             }
 
-            if (location.getDistance() != null) {
+            // distance
+            if (_workorder.getIsRemoteWork()) {
+                _distanceTextView.setText("Done Remotely");
+            } else if (location.getCity() != null && location.getState() != null) {
+                _distanceTextView.setText(location.getCity() + ", " + location.getState());
+            } else if (location.getDistance() != null) {
                 _distanceTextView.setText(location.getDistance() + " mi");
             } else if (_workorder.getDistance() != null) {
                 _distanceTextView.setText(_workorder.getDistance() + " mi");
@@ -510,8 +518,15 @@ public class WorkorderCardView extends RelativeLayout {
                 _distanceTextView.setVisibility(GONE);
             }
         } else {
-            _distanceTextView.setVisibility(GONE);
-            _clientNameTextView.setVisibility(GONE);
+            // distance
+            if (_workorder.getIsRemoteWork()) {
+                _distanceTextView.setVisibility(VISIBLE);
+                _distanceTextView.setText("Done Remotely");
+                _clientNameTextView.setVisibility(GONE);
+            } else {
+                _distanceTextView.setVisibility(GONE);
+                _clientNameTextView.setVisibility(GONE);
+            }
         }
         // when scheduledTimeStart/scheduledTimeEnd
 
@@ -544,8 +559,8 @@ public class WorkorderCardView extends RelativeLayout {
         }
 
         _contentLayout.clearAnimation();
-		/*-_backImageView.setClickable(false);
-		_notInterestedButtonLayout.setClickable(false);-*/
+        /*-_backImageView.setClickable(false);
+        _notInterestedButtonLayout.setClickable(false);-*/
 
     }
 

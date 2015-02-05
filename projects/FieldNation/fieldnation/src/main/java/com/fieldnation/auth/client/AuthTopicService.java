@@ -6,9 +6,11 @@ import android.accounts.AccountManagerFuture;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.fieldnation.FutureWaitAsyncTask;
@@ -26,6 +28,7 @@ public class AuthTopicService extends Service {
     // Topics
     public static final String TOPIC_AUTH_STATE = TAG + ":TOPIC_AUTH_STATE";
     public static final String TOPIC_AUTH_COMMAND = TAG + ":TOPIC_AUTH_COMMAND";
+    public static final String TOPIC_AUTH_STARTUP = TAG + ":TOPIC_AUTH_STARTUP";
 
     // Params
     public static final String BUNDLE_PARAM_AUTH_TOKEN = "BUNDLE_PARAM_AUTH_TOKEN";
@@ -40,6 +43,8 @@ public class AuthTopicService extends Service {
     public static final String BUNDLE_PARAM_TYPE_REMOVE = "BUNDLE_PARAM_TYPE_REMOVE";
     public static final String BUNDLE_PARAM_TYPE_CANCELLED = "BUNDLE_PARAM_TYPE_CANCELLED";
     public static final String BUNDLE_PARAM_TYPE_NO_NETWORK = "BUNDLE_PARAM_TYPE_NO_NETWORK";
+    public static final String BUNDLE_PARAM_TYPE_NEED_PASSWORD = "BUNDLE_PARAM_TYPE_NEED_PASSWORD";
+
 
     private static final int STATE_NOT_AUTHENTICATED = 0;
     private static final int STATE_AUTHENTICATING = 1;
@@ -54,9 +59,14 @@ public class AuthTopicService extends Service {
 
     private boolean _isNetworkDown = false;
     private boolean _isStarted = false;
+    private boolean _isShuttingDown = false;
 
     // Services
     private AccountManager _accountManager;
+
+    static {
+        Log.v(TAG, "STATIC!");
+    }
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -64,19 +74,31 @@ public class AuthTopicService extends Service {
 
     public AuthTopicService() {
         super();
+        Log.v(TAG, "Construct");
         setState(STATE_NOT_AUTHENTICATED);
     }
 
     @Override
+    public void onCreate() {
+        Log.v(TAG, "onCreate");
+        super.onCreate();
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v(TAG, "onStartCommand");
+        if (intent == null) {
+            return START_STICKY;
+        }
         if (!_isStarted) {
             subscribeAuthCommand(this, 0, TAG, _topicReceiver);
             TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_SHUTDOWN, _topics);
             TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_NETWORK_DOWN, _topics);
             TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_NETWORK_UP, _topics);
             _isStarted = true;
-            requestAuthentication(this);
+            //requestAuthentication(this);
         }
+
         return START_STICKY;
     }
 
@@ -87,9 +109,18 @@ public class AuthTopicService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.v(TAG, "onDestroy");
         TopicService.delete(this, TAG);
-        TopicService.delete(this, TAG + ":SHUTDOWN");
+        TopicService.delete(this, TAG + ":SYSTEM");
         super.onDestroy();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            super.onTaskRemoved(rootIntent);
+
+        _isShuttingDown = true;
     }
 
     private String getAccoutnType() {
@@ -121,6 +152,7 @@ public class AuthTopicService extends Service {
     private final TopicReceiver _topics = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            Log.v(TAG, "_topics:" + topicId);
             if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
                 _isNetworkDown = true;
                 setState(STATE_NOT_AUTHENTICATED);
@@ -132,7 +164,9 @@ public class AuthTopicService extends Service {
             } else if (Topics.TOPIC_SHUTDOWN.equals(topicId)) {
                 setState(STATE_NOT_AUTHENTICATED);
                 _account = null;
-                dispatchAuthInvalid(AuthTopicService.this);
+                _accountManager = null;
+                _isShuttingDown = true;
+                stopSelf();
             }
         }
     };
@@ -140,6 +174,8 @@ public class AuthTopicService extends Service {
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            if (_isShuttingDown)
+                return;
             String type = parcel.getString(BUNDLE_PARAM_TYPE);
             Log.v(TAG, "Type: " + type);
 
@@ -276,13 +312,15 @@ public class AuthTopicService extends Service {
     private final FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
         @Override
         public void onComplete(Object result) {
-            if (result instanceof Bundle && ((Bundle) result).containsKey("intent")) {
+            if (_isShuttingDown)
+                return;
+
+            if (result instanceof Bundle && ((Bundle) result).containsKey(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
                 setState(STATE_AUTHENTICATING);
                 Log.v(TAG, "FutureWaitAsyncTask intent");
                 Bundle bundle = (Bundle) result;
-                Intent intent = bundle.getParcelable("intent");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                dispatchNeedUsernameAndPassword(AuthTopicService.this, bundle.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE));
+                //startActivity(intent);
 
             } else if (_state == STATE_AUTHENTICATED || _state == STATE_AUTHENTICATING) {
                 Log.v(TAG, "FutureWaitAsyncTask not removing");
@@ -325,6 +363,9 @@ public class AuthTopicService extends Service {
 
         @Override
         public void onFail(Exception ex) {
+            if (_isShuttingDown)
+                return;
+
             setState(STATE_NOT_AUTHENTICATED);
             dispatchAuthFailed(AuthTopicService.this);
         }
@@ -397,6 +438,37 @@ public class AuthTopicService extends Service {
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_INVALID);
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_STATE, bundle);
+    }
+
+    public static void subscribeNeedUsernameAndPassword(Context context, String tag, TopicReceiver topicReceiver) {
+        TopicService.registerListener(context, 0, tag, TOPIC_AUTH_STARTUP, topicReceiver);
+    }
+
+    public static void dispatchNeedUsernameAndPassword(Context context, Parcelable parcel) {
+        Log.v(TAG, "dispatchNeedUsernameAndPassword");
+        if (context == null)
+            return;
+
+        startService(context);
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_NEED_PASSWORD);
+        bundle.putParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, parcel);
+
+        TopicService.dispatchTopic(context, TOPIC_AUTH_STARTUP, bundle, true);
+    }
+
+    public static void dispatchGettingUsernameAndPassword(Context context) {
+        Log.v(TAG, "dispatchGettingUsernameAndPassword");
+
+        if (context == null)
+            return;
+
+        startService(context);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_NEED_PASSWORD);
+
+        TopicService.dispatchTopic(context, TOPIC_AUTH_STARTUP, bundle, true);
     }
 
     public static void dispatchAuthComplete(Context context) {

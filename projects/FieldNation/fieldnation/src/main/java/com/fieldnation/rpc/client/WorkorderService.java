@@ -394,7 +394,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
             payload += "expires=false";
 
         if (!misc.isEmptyOrNull(reason)) {
-            payload += "&providerExplanation=" + reason;
+            payload += "&providerExplanation=" + misc.escapeForURL(reason);
         }
 
         // pay counter
