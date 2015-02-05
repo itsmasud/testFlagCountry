@@ -234,9 +234,11 @@ public class TasksFragment extends WorkorderFragment {
 
         _gPSLocationService = new GPSLocationService(getActivity());
         // GPS settings dialog should only be displayed if the GPS is failing
+/*
         if (_gPSLocationService.isGooglePlayServicesAvailable() && !_gPSLocationService.isGpsEnabled()) {
             _gPSLocationService.showSettingsAlert(view.getContext());
         }
+*/
 
         configureUi();
     }

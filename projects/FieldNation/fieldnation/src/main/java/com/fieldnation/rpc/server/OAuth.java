@@ -128,7 +128,7 @@ public class OAuth {
         OutputStream out = conn.getOutputStream();
 
         String payload = "grant_type=" + grantType + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&username=" + misc.escapeForURL(username) + "&password=" + misc.escapeForURL(password);
-        Log.v(TAG, payload);
+        //Log.v(TAG, payload);
         // payload = misc.escapeForURL(payload);
         out.write(payload.getBytes());
 

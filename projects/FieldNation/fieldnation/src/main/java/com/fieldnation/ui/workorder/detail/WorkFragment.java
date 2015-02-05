@@ -71,6 +71,7 @@ import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
+import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
@@ -151,6 +152,7 @@ public class WorkFragment extends WorkorderFragment {
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsDialog _termsDialog;
     private WorkLogDialog _worklogDialog;
+    private LocationDialog _locationDialog;
 
     // Data
     private WorkorderService _service;
@@ -277,6 +279,8 @@ public class WorkFragment extends WorkorderFragment {
 
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
+        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
+
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
 
@@ -380,9 +384,11 @@ public class WorkFragment extends WorkorderFragment {
 
         _gpsLocationService = new GPSLocationService(getActivity());
         // GPS settings dialog should only be displayed if the GPS is failing
+/*
         if (_gpsLocationService.isGooglePlayServicesAvailable() && !_gpsLocationService.isGpsEnabled()) {
             _gpsLocationService.showSettingsAlert(getActivity());
         }
+*/
     }
 
     @Override
@@ -558,6 +564,36 @@ public class WorkFragment extends WorkorderFragment {
         });
         builder.setNegativeButton(R.string.btn_no_thanks, null);
         builder.create().show();
+    }
+
+    private void checkin() {
+        if (_gpsLocationService.isGooglePlayServicesAvailable() && _gpsLocationService.isLocationServiceEnabled() && _gpsLocationService.isGpsEnabled()) {
+            try {
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
+                getActivity().startService(_service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
+            } catch (Exception e) {
+                _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkInListener);
+            }
+        } else {
+            _locationDialog.show(_workorder.getIsGpsRequired(), new LocationDialog.Listener() {
+                @Override
+                public void onOk() {
+                    // show settings
+                }
+
+                @Override
+                public void onCancel() {
+                    if (!_workorder.getIsGpsRequired()) {
+                        GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
+                        getActivity().startService(
+                                _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+                    }
+                }
+            });
+
+        }
+        setLoading(true);
+
     }
 
     /*-*********************************-*/
@@ -899,6 +935,29 @@ public class WorkFragment extends WorkorderFragment {
     /*-*****************************************-*/
     /*-				View Listeners				-*/
     /*-*****************************************-*/
+    private LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
+        @Override
+        public void onOk() {
+
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
+
+    private LocationDialog.Listener get_locationDialog_checkOutListener = new LocationDialog.Listener() {
+        @Override
+        public void onOk() {
+
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
 
     private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
