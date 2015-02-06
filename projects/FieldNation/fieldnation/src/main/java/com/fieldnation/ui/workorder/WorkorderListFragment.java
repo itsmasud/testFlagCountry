@@ -55,6 +55,7 @@ public class WorkorderListFragment extends Fragment {
 
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
+    private static final String STATE_CURRENT_WORKORDER = "STATE_CURRENT_WORKORDER";
 
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
@@ -108,6 +109,9 @@ public class WorkorderListFragment extends Fragment {
                 Log.v(TAG, "Restoring state");
                 _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
             }
+
+            if (savedInstanceState.containsKey(STATE_CURRENT_WORKORDER))
+                _currentWorkorder = savedInstanceState.getParcelable(STATE_CURRENT_WORKORDER);
         }
 
         Log.v(TAG, "onCreate: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
@@ -121,6 +125,7 @@ public class WorkorderListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.v(TAG, "onViewCreated");
 
         _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
         _loadingView.setListener(_refreshViewListener);
@@ -165,11 +170,16 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
         outState.putString(STATE_DISPLAY, _displayView.name());
+        if (_currentWorkorder != null)
+            outState.putParcelable(STATE_CURRENT_WORKORDER, _currentWorkorder);
+
         super.onSaveInstanceState(outState);
     }
 
     public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
+        Log.v(TAG, "setDisplayType");
         _displayView = displayView;
         return this;
     }
@@ -185,6 +195,7 @@ public class WorkorderListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.v(TAG, "onResume");
         _adapter.refreshPages();
         setLoading(true);
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
@@ -194,7 +205,7 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onPause() {
-//        _gpsLocationService.stopLocationUpdates();
+        _gpsLocationService.stopLocationUpdates();
         super.onPause();
     }
 
@@ -209,7 +220,6 @@ public class WorkorderListFragment extends Fragment {
     }
 
     public void update() {
-        //_loadingView.startRefreshing();
         _adapter.refreshPages();
     }
 
@@ -369,6 +379,11 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void onDismiss() {
+            if (_currentWorkorder.getIsGpsRequired()) {
+                // todo pop dialog, gps required... could not complete check in
+            } else {
+                doCheckin();
+            }
             setLoading(false);
         }
     };
@@ -392,6 +407,11 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void onDismiss() {
+            if (_currentWorkorder.getIsGpsRequired()) {
+                // todo pop dialog, gps required... could not complete check in
+            } else {
+                doCheckOut();
+            }
             setLoading(false);
         }
     };
