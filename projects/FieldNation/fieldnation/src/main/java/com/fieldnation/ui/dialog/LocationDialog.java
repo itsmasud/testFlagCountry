@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -27,7 +28,9 @@ public class LocationDialog extends DialogFragmentBase {
 
     // Data
     private boolean _hard;
+    private boolean _buttonPressed = false;
     private Listener _listener;
+
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -78,6 +81,7 @@ public class LocationDialog extends DialogFragmentBase {
     private OnClickListener _ok_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            _buttonPressed = true;
             dismiss();
             if (_listener != null)
                 _listener.onOk();
@@ -87,18 +91,28 @@ public class LocationDialog extends DialogFragmentBase {
     private OnClickListener _cancel_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            _buttonPressed = true;
             dismiss();
             if (_listener != null)
                 _listener.onCancel();
-
         }
     };
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (_listener != null && !_buttonPressed)
+            _listener.onDismiss();
+
+        _buttonPressed = false;
+    }
 
     public interface Listener {
         public void onOk();
 
         public void onCancel();
+
+        public void onDismiss();
     }
 }
 
