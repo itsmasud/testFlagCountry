@@ -177,12 +177,14 @@ public class MessageFragment extends WorkorderFragment {
     private View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _refreshView.startRefreshing();
-            WEB_NEW_MESSAGE = _rand.nextInt();
-            Log.v(TAG, "_send_onClick");
-            getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
-                    _inputView.getInputText()));
-            _inputView.clearText();
+            if (getActivity() != null) {
+                _refreshView.startRefreshing();
+                WEB_NEW_MESSAGE = _rand.nextInt();
+                Log.v(TAG, "_send_onClick");
+                getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
+                        _inputView.getInputText()));
+                _inputView.clearText();
+            }
         }
     };
 
@@ -194,7 +196,7 @@ public class MessageFragment extends WorkorderFragment {
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (getActivity() == null)
                 return;
-            
+
             if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
                 parcel.setClassLoader(getActivity().getClassLoader());
                 _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
