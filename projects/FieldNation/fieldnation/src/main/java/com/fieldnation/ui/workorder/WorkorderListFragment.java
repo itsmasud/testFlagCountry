@@ -235,6 +235,7 @@ public class WorkorderListFragment extends Fragment {
     }
 
     private void addPage(int page, List<Workorder> list, boolean isCached) {
+        Log.v(TAG, "addPage: page:" + page + " list:" + list.size() + " isCached:" + isCached);
         if (page == 0 && list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
             _emptyView.setVisibility(View.VISIBLE);
         } else if (page == 0 && list.size() > 0 || !_displayView.shouldShowGoToMarketplace()) {
@@ -244,13 +245,17 @@ public class WorkorderListFragment extends Fragment {
         if (list.size() == 0) {
             _adapter.setNoMorePages();
         }
-        _adapter.setPage(page, list, isCached);
 
         if (!isCached) {
-            _pendingNotInterested.clear();
-            _requestWorking.clear();
-            _selected.clear();
+            for (int i = 0; i < list.size(); i++) {
+                Long j = list.get(i).getWorkorderId();
+                _pendingNotInterested.remove(j);
+                _requestWorking.remove(j);
+                _selected.remove(j);
+            }
         }
+
+        _adapter.setPage(page, list, isCached);
     }
 
     private void startCheckin() {
@@ -294,26 +299,37 @@ public class WorkorderListFragment extends Fragment {
 
     private void doCheckin() {
         _gpsLocationService.setListener(null);
+        _requestWorking.add(_currentWorkorder.getWorkorderId());
+        _adapter.notifyDataSetChanged();
         GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
         if (_gpsLocationService.hasLocation()) {
-            getActivity().startService(
-                    _service.checkin(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation()));
+            Intent intent = _service.checkin(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
+            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+            getActivity().startService(intent);
+
         } else {
-            getActivity().startService(
-                    _service.checkin(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId()));
+            Intent intent = _service.checkin(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
+            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+            getActivity().startService(intent);
         }
+
 
     }
 
     private void doCheckOut() {
         _gpsLocationService.setListener(null);
+        _requestWorking.add(_currentWorkorder.getWorkorderId());
+        _adapter.notifyDataSetChanged();
         GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
         if (_gpsLocationService.hasLocation()) {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation()));
+            Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
+            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+            getActivity().startService(intent);
+
         } else {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId()));
+            Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
+            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+            getActivity().startService(intent);
         }
 
     }
