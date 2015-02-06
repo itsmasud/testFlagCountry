@@ -53,6 +53,7 @@
     <string name="btn_add_shipment">Add Shipment</string>
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_no_thanks">NO THANKS</string>
+    <string name="btn_gps_settings">GPS SETTINGS</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
@@ -99,6 +100,14 @@
     <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
 
     <string name="dialog_shipment_title">Add Shipment</string>
+
+    <string name="dialog_location_title">Location Settings</string>
+    <string name="dialog_location_soft">We can\'t seem to gather your current location. Please enable your GPS.</string>
+    <string name="dialog_location_hard">GPS is required for this work order. Please enable your GPS.</string>
+
+    <string name="dialog_location_loading_title">Gathering Location</string>
+    <string name="dialog_location_loading_body">We are currently gathering your location information.\n\nThis could take up to several minutes.</string>
+    <string name="dialog_location_loading_button">@string/btn_cancel</string>
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
 
