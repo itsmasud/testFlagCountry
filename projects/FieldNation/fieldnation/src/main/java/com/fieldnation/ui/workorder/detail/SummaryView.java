@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.CustomDisplayFields;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.utils.misc;
@@ -23,6 +24,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
     private WoProgressBar _progress;
     private TextView _projectNameTextView;
     private TextView _workorderIdTextView;
+    private TextView _customDisplayFieldsTextView;
     private TextView _worktypeTextView;
     private TextView _companyTextView;
     private TextView _descriptionTextView;
@@ -60,6 +62,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         _progress = (WoProgressBar) findViewById(R.id.substatus_progressbar);
         _projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
         _workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
+        _customDisplayFieldsTextView = (TextView) findViewById(R.id.customdisplayfields_textview);
         _worktypeTextView = (TextView) findViewById(R.id.worktype_textview);
         _companyTextView = (TextView) findViewById(R.id.company_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
@@ -106,7 +109,19 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
         _progress.setSubstatus(_workorder.getStatus().getWorkorderSubstatus());
         _projectNameTextView.setText(_workorder.getTitle());
 
-        _workorderIdTextView.setText("ID " + _workorder.getWorkorderId());
+        _workorderIdTextView.setText("Work order Id: " + _workorder.getWorkorderId());
+
+        if (_workorder.getCustomDisplayFields() != null && _workorder.getCustomDisplayFields().length > 0) {
+            StringBuilder sb = new StringBuilder();
+
+            CustomDisplayFields[] cdfs = _workorder.getCustomDisplayFields();
+            for (int i = 0; i < cdfs.length; i++) {
+                CustomDisplayFields cdf = cdfs[i];
+                sb.append(cdf.getLabel()).append(": ").append(cdf.getValue()).append("\n");
+            }
+
+            _customDisplayFieldsTextView.setText(sb.toString().trim());
+        }
 
         if (misc.isEmptyOrNull(_workorder.getCompanyName()))
             _companyTextView.setVisibility(GONE);
