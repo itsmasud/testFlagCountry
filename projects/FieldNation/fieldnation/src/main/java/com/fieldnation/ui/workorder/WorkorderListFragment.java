@@ -2,8 +2,10 @@ package com.fieldnation.ui.workorder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.GaTopic;
 import com.fieldnation.ui.EmptyWoListView;
+import com.fieldnation.ui.GpsLocationService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -33,6 +36,8 @@ import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
+import com.fieldnation.ui.dialog.LocationDialog;
+import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -50,6 +55,9 @@ public class WorkorderListFragment extends Fragment {
 
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
+
+    private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
+    private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
 
     // WEB
     private static final int WEB_GET_LIST = 0;
@@ -73,6 +81,8 @@ public class WorkorderListFragment extends Fragment {
     private CounterOfferDialog _counterOfferDialog;
     private TermsDialog _termsDialog;
     private AcceptBundleDialog _acceptBundleDialog;
+    private LocationDialog _locationDialog;
+    private OneButtonDialog _locationLoadingDialog;
 
     // Data
     private String _username;
@@ -83,7 +93,8 @@ public class WorkorderListFragment extends Fragment {
     private Set<Long> _pendingNotInterested = new HashSet<Long>();
     private Set<Long> _requestWorking = new HashSet<Long>();
     private Set<Long> _selected = new HashSet<Long>();
-//    private GPSLocationService _gpsLocationService;
+    private GpsLocationService _gpsLocationService;
+    private Workorder _currentWorkorder;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -140,6 +151,14 @@ public class WorkorderListFragment extends Fragment {
 
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
+        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
+
+        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
+        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
+                getString(R.string.dialog_location_loading_body),
+                getString(R.string.dialog_location_loading_button),
+                _locationLoadingDialog_listener);
+
         Log.v(TAG, "Display Type: " + _displayView.getCall());
 
     }
@@ -167,23 +186,26 @@ public class WorkorderListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         _adapter.refreshPages();
-        _loadingView.startRefreshing();
+        setLoading(true);
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
         GaTopic.dispatchScreenView(getActivity(), getGaLabel());
-
-//TODO         _gpsLocationService = new GPSLocationService(getActivity());
-        // GPS settings dialog should only be displayed if the GPS is failing
-/*
-        if (_gpsLocationService.isGooglePlayServicesAvailable() && !_gpsLocationService.isGpsEnabled()) {
-            _gpsLocationService.showSettingsAlert(getActivity());
-        }
-*/
+        _gpsLocationService = new GpsLocationService(getActivity());
     }
 
     @Override
     public void onPause() {
 //        _gpsLocationService.stopLocationUpdates();
         super.onPause();
+    }
+
+    private void setLoading(boolean loading) {
+        if (_loadingView != null) {
+            if (loading) {
+                _loadingView.startRefreshing();
+            } else {
+                _loadingView.refreshComplete();
+            }
+        }
     }
 
     public void update() {
@@ -195,7 +217,7 @@ public class WorkorderListFragment extends Fragment {
         if (_service == null)
             return;
 
-        _loadingView.startRefreshing();
+        setLoading(true);
         Intent intent = _service.getList(WEB_GET_LIST, page, _displayView, allowCache);
         intent.putExtra(KEY_PAGE_NUM, page);
         if (getActivity() != null)
@@ -221,10 +243,159 @@ public class WorkorderListFragment extends Fragment {
         }
     }
 
+    private void startCheckin() {
+        Log.v(TAG, "startCheckin");
+        // everything is awsome. checkin
+        _gpsLocationService.setListener(_gps_checkInListener);
+        if (!_gpsLocationService.isLocationServicesEnabled()) {
+            _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkInListener);
+        } else if (_gpsLocationService.hasLocation()) {
+            doCheckin();
+        } else if (_gpsLocationService.isRunning()) {
+            _locationLoadingDialog.show();
+        } else if (_gpsLocationService.isLocationServicesEnabled()) {
+            _locationLoadingDialog.show();
+            _gpsLocationService.startLocation();
+        } else {
+            // location is disabled, or failed. ask for them to be enabled
+            Log.v(TAG, "Should not be here");
+        }
+        setLoading(true);
+    }
+
+    private void startCheckOut() {
+        Log.v(TAG, "startCheckOut");
+        _gpsLocationService.setListener(_gps_checkOutListener);
+        if (!_gpsLocationService.isLocationServicesEnabled()) {
+            _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkOutListener);
+        } else if (_gpsLocationService.hasLocation()) {
+            doCheckOut();
+        } else if (_gpsLocationService.isRunning()) {
+            _locationLoadingDialog.show();
+        } else if (_gpsLocationService.isLocationServicesEnabled()) {
+            _locationLoadingDialog.show();
+            _gpsLocationService.startLocation();
+        } else {
+            // location is disabled, or failed. ask for them to be enabled
+            Log.v(TAG, "Should not be here");
+        }
+        setLoading(true);
+    }
+
+    private void doCheckin() {
+        _gpsLocationService.setListener(null);
+        GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
+        if (_gpsLocationService.hasLocation()) {
+            getActivity().startService(
+                    _service.checkin(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation()));
+        } else {
+            getActivity().startService(
+                    _service.checkin(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId()));
+        }
+
+    }
+
+    private void doCheckOut() {
+        _gpsLocationService.setListener(null);
+        GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
+        if (_gpsLocationService.hasLocation()) {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation()));
+        } else {
+            getActivity().startService(
+                    _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId()));
+        }
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+            startCheckin();
+        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+            startCheckOut();
+        }
+    }
 
     /*-*************************************************-*/
     /*-				Events Workorder Card				-*/
     /*-*************************************************-*/
+    private OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
+        @Override
+        public void onButtonClick() {
+            _gpsLocationService.stopLocationUpdates();
+            setLoading(false);
+        }
+
+        @Override
+        public void onDismiss() {
+            setLoading(false);
+        }
+    };
+    private final GpsLocationService.Listener _gps_checkInListener = new GpsLocationService.Listener() {
+        @Override
+        public void onLocation(Location location) {
+            Log.v(TAG, "_gps_checkInListener.onLocation");
+            startCheckin();
+            _locationLoadingDialog.dismiss();
+        }
+    };
+    private final GpsLocationService.Listener _gps_checkOutListener = new GpsLocationService.Listener() {
+        @Override
+        public void onLocation(Location location) {
+            Log.v(TAG, "_gps_checkOutListener.onLocation");
+            startCheckOut();
+            _locationLoadingDialog.dismiss();
+        }
+    };
+    private LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
+        @Override
+        public void onOk() {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKIN);
+        }
+
+        @Override
+        public void onCancel() {
+            if (_currentWorkorder.getIsGpsRequired()) {
+                // todo pop dialog, gps required... could not complete check in
+            } else {
+                doCheckin();
+            }
+            setLoading(false);
+        }
+
+        @Override
+        public void onDismiss() {
+            setLoading(false);
+        }
+    };
+
+    private LocationDialog.Listener _locationDialog_checkOutListener = new LocationDialog.Listener() {
+        @Override
+        public void onOk() {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKOUT);
+        }
+
+        @Override
+        public void onCancel() {
+            if (_currentWorkorder.getIsGpsRequired()) {
+                // todo pop dialog, gps required... could not complete check out
+            } else {
+                doCheckOut();
+            }
+            setLoading(false);
+        }
+
+        @Override
+        public void onDismiss() {
+            setLoading(false);
+        }
+    };
+
     private WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
@@ -237,66 +408,22 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void actionCheckout(WorkorderCardView view, Workorder workorder) {
+            _currentWorkorder = workorder;
             Pay pay = workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
                 _deviceCountDialog.show(workorder, pay.getMaxDevice());
             } else {
-                // TODO  ACTION_CHECKOUT
-//                GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
-//
-//                Intent _intent = null;
-//                if (_gpsLocationService.isGooglePlayServicesAvailable()
-//                        && _gpsLocationService.isLocationServiceEnabled()
-//                        && _gpsLocationService.isGpsEnabled()) {
-//                    try {
-//                        Location location = _gpsLocationService.getLocation();
-//                        _intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), location);
-//                    } catch (Exception e) {
-//                        _gpsLocationService.showSettingsOffAlert(getView().getContext());
-//                    }
-//                } else {
-//                    _gpsLocationService.showCheckInOutAlert(getView().getContext());
-//                    _intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
-//                }
-//
-//                if (_intent != null) {
-//                    _intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-//                    getActivity().startService(_intent);
-//                }
-//
-//                _requestWorking.add(workorder.getWorkorderId());
-//                _adapter.notifyDataSetChanged();
+                startCheckOut();
+                _requestWorking.add(workorder.getWorkorderId());
+                _adapter.notifyDataSetChanged();
             }
         }
 
 
         @Override
         public void actionCheckin(WorkorderCardView view, Workorder workorder) {
-            // TODO ACTION_CHECKIN
-//            Intent _intent = null;
-//            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
-//
-//            if (_gpsLocationService.isGooglePlayServicesAvailable()
-//                    && _gpsLocationService.isLocationServiceEnabled()
-//                    && _gpsLocationService.isGpsEnabled()) {
-//                try {
-//                    Location location = _gpsLocationService.getLocation();
-//                    _intent = _service.checkin(WEB_CHECKING_IN, workorder.getWorkorderId(), location);
-//                } catch (Exception e) {
-//                    _gpsLocationService.showSettingsOffAlert(getView().getContext());
-//                }
-//            } else {
-//                _gpsLocationService.showCheckInOutAlert(getView().getContext());
-//                _intent = _service.checkin(WEB_CHECKING_IN, workorder.getWorkorderId());
-//            }
-//
-//            if (_intent != null) {
-//                _intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-//                getActivity().startService(_intent);
-//            }
-//
-//            _requestWorking.add(workorder.getWorkorderId());
-//            _adapter.notifyDataSetChanged();
+            _currentWorkorder = workorder;
+            startCheckin();
         }
 
         @Override
@@ -391,10 +518,7 @@ public class WorkorderListFragment extends Fragment {
     private DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
-            Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), count);
-            intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-            getActivity().startService(intent);
+            startCheckOut();
             _requestWorking.add(workorder.getWorkorderId());
             _adapter.notifyDataSetChanged();
         }
@@ -462,7 +586,7 @@ public class WorkorderListFragment extends Fragment {
                             workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,
                             schedule, expenses));
             _requestWorking.add(workorder.getWorkorderId());
-            _loadingView.startRefreshing();
+            setLoading(true);
         }
     };
 
@@ -581,7 +705,7 @@ public class WorkorderListFragment extends Fragment {
     private PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
         @Override
         public void onLoadingComplete() {
-            _loadingView.refreshComplete();
+            setLoading(false);
             _requestWorking.clear();
             _pendingNotInterested.clear();
         }
@@ -660,7 +784,7 @@ public class WorkorderListFragment extends Fragment {
             super.onPostExecute(workorders);
             if (workorders != null)
                 addPage(page, workorders, cached);
-            _loadingView.refreshComplete();
+            setLoading(false);
         }
     }
 
@@ -682,9 +806,9 @@ public class WorkorderListFragment extends Fragment {
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                 getActivity().startActivity(intent);
                 _adapter.refreshPages();
-                _loadingView.refreshComplete();
+                setLoading(false);
             } else {
-                _loadingView.refreshComplete();
+                setLoading(false);
             }
 
         }
@@ -699,7 +823,7 @@ public class WorkorderListFragment extends Fragment {
             super.onError(resultCode, resultData, errorType);
             _service = null;
             AuthTopicService.requestAuthInvalid(getActivity());
-            _loadingView.refreshFailed();
+            setLoading(false);
             //Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
         }
     };
