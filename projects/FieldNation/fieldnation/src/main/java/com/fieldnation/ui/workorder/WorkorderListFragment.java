@@ -56,6 +56,9 @@ public class WorkorderListFragment extends Fragment {
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
     private static final String STATE_CURRENT_WORKORDER = "STATE_CURRENT_WORKORDER";
+    private static final String STATE_AUTHTOKEN = "ui.workorder.detail.WorkFragment:STATE_AUTHTOKEN";
+    private static final String STATE_USERNAME = "ui.workorder.detail.WorkFragment:STATE_USERNAME";
+
 
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
@@ -166,6 +169,19 @@ public class WorkorderListFragment extends Fragment {
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
+                _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
+            }
+            if (savedInstanceState.containsKey(STATE_USERNAME)) {
+                _username = savedInstanceState.getString(STATE_USERNAME);
+            }
+
+            if (_authToken != null && _username != null) {
+                _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReciever);
+            }
+        }
+
     }
 
     @Override
@@ -174,6 +190,14 @@ public class WorkorderListFragment extends Fragment {
         outState.putString(STATE_DISPLAY, _displayView.name());
         if (_currentWorkorder != null)
             outState.putParcelable(STATE_CURRENT_WORKORDER, _currentWorkorder);
+
+        if (_authToken != null) {
+            outState.putString(STATE_AUTHTOKEN, _authToken);
+        }
+
+        if (_username != null) {
+            outState.putString(STATE_AUTHTOKEN, _username);
+        }
 
         super.onSaveInstanceState(outState);
     }
