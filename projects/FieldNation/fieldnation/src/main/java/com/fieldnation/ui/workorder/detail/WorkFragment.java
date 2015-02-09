@@ -895,6 +895,15 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onContinueClick() {
             GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "WorkFragment", 1);
+            try {
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity",
+                        GaTopic.ACTION_COMPLETE_FN_EARNED, "WorkFragment",
+                        (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
+            } catch (Exception ex) {
+                // I don't expect this to ever fail, but it could. just a safe guard.
+                ex.printStackTrace();
+            }
+
             getActivity().startService(
                     _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
             setLoading(true);

@@ -21,6 +21,7 @@ public class GaTopic {
     public static final String ACTION_CHECKOUT = "Checkout";
     public static final String ACTION_COMPLETE_WORK = "CompleteWork";
     public static final String ACTION_START_MAP = "ViewLocation";
+    public static final String ACTION_COMPLETE_FN_EARNED = "CompleteWorkFnEarned";
 
 
 /*
