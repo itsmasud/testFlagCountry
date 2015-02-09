@@ -12,6 +12,7 @@
     <string name="web_fn_hostname">api.fieldnation.com</string>
     <string name="app_name">Field Nation</string>
     <integer name="ga_local_dispatch_period">60</integer>
+    <bool name="ga_dry_run">false</bool>
 
     <string name="placeholder_word"></string>
     <string name="placeholder_phrase"></string>

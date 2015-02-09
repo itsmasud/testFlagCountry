@@ -12,4 +12,5 @@
     <string name="web_fn_hostname">green.fieldnation.com</string>
     <string name="app_name">Field Nation[G]</string>
     <integer name="ga_local_dispatch_period">60</integer>
+    <bool name="ga_dry_run">true</bool>
 </resources>
