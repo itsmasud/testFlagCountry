@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -83,6 +84,7 @@ public class ReconnectWarningView extends RelativeLayout {
     private TopicReceiver _networkTopic = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            Log.v(TAG, "_networkTopic: " + topicId)
             ReconnectWarningView.this.setVisibility(View.VISIBLE);
         }
     };
