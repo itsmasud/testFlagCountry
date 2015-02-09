@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -164,13 +165,13 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
 
-		_locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
+        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-		Log.v(TAG, "Display Type: " + _displayView.getCall());
+        Log.v(TAG, "Display Type: " + _displayView.getCall());
     }
 
     @Override
@@ -183,15 +184,15 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
             }
 
-			if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
+            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
                 _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
-			}
+            }
             if (savedInstanceState.containsKey(STATE_USERNAME)) {
                 _username = savedInstanceState.getString(STATE_USERNAME);
             }
 
             if (_authToken != null && _username != null) {
-                _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReciever);
+                _service = new WorkorderService(getActivity(), _username, _authToken, _resultReciever);
             }
         }
         Log.v(TAG, "onActivityCreated: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
@@ -208,8 +209,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "onStart");
         super.onStart();
     }
-
-
 
 
     @Override
@@ -314,7 +313,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             getActivity().startService(intent);
     }
 
-        private void addPage(int page, List<Workorder> list, boolean isCached) {
+    private void addPage(int page, List<Workorder> list, boolean isCached) {
         Log.v(TAG, "addPage: page:" + page + " list:" + list.size() + " isCached:" + isCached);
         if (page == 0 && list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
             _emptyView.setVisibility(View.VISIBLE);

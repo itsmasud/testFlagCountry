@@ -8,12 +8,12 @@
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:scaleType="centerCrop" />
 
     <View
         android:id="@+id/fader"
         android:layout_width="match_parent"
-		android:background="@color/fn_dark_text"
+        android:background="@color/fn_dark_text" />
 
     <LinearLayout
         android:layout_width="400dp"
@@ -23,7 +23,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="128dp"
-            android:scaleType="fitCenter"
+            android:scaleType="fitCenter" />
 
 
         <LinearLayout
@@ -90,7 +90,7 @@
 
                     <View
                         android:layout_alignBottom="@+id/password_edittext"
-                        android:background="@color/fn_white_text"
+                        android:background="@color/fn_white_text" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -113,7 +113,7 @@
 
     <Button
         android:id="@+id/signup_button"
-        style="@style/Button.Material.Flat"
+        style="?attr/buttonFlatStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
