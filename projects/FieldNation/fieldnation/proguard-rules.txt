@@ -15,3 +15,20 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# this should fix the CNF error caused bu samsung 4.2 devices.
+# see https://code.google.com/p/android/issues/detail?can=2&start=0&num=100&q=&colspec=ID%20Type%20Status%20Owner%20Summary%20Stars&groupby=&sort=&id=78377
+# and http://stackoverflow.com/questions/24809580/noclassdeffounderror-android-support-v7-internal-view-menu-menubuilder
+-keep class !android.support.v7.internal.view.menu.MenuBuilder, !android.support.v7.internal.view.menu.SubMenuBuilder, android.support.v7.** { *; }
+-keep interface android.support.v7.** { *; }
+
+# this makes sure that our classes and interfaces aren't optimized away since we do use
+# some reflection
+-keep class com.fieldnation.** {*;}
+-keep interface com.fieldnation.** {*;}
+
+-keepattributes **
+-dontpreverify
+-dontoptimize
+-dontshrink
+-dontwarn **
