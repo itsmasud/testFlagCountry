@@ -288,10 +288,6 @@ public class WorkFragment extends WorkorderFragment {
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
-                getString(R.string.dialog_location_loading_body),
-                getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
 
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
@@ -395,6 +391,11 @@ public class WorkFragment extends WorkorderFragment {
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
 
         _gpsLocationService = new GpsLocationService(getActivity());
+
+        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
+                getString(R.string.dialog_location_loading_body),
+                getString(R.string.dialog_location_loading_button),
+                _locationLoadingDialog_listener);
     }
 
     @Override

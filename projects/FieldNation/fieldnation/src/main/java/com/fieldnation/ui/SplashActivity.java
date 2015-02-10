@@ -123,7 +123,7 @@ public class SplashActivity extends AuthFragmentActivity {
 
         Log.v(TAG, "doNextStep");
 
-        if (!_profile.isProvider()) {
+        if (_profile.isProvider()) {
             MyWorkActivity.startNew(this);
             finish();
         } else {
