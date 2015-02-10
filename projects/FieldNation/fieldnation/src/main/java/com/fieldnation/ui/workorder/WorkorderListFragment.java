@@ -166,10 +166,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
-                getString(R.string.dialog_location_loading_body),
-                getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
     }
@@ -277,6 +273,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
         GaTopic.dispatchScreenView(getActivity(), getGaLabel());
         _gpsLocationService = new GpsLocationService(getActivity());
+
+        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
+                getString(R.string.dialog_location_loading_body),
+                getString(R.string.dialog_location_loading_button),
+                _locationLoadingDialog_listener);
     }
 
     @Override
