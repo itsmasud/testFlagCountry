@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,12 +45,14 @@ public class OneButtonDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_one_button, container, false);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -65,6 +68,7 @@ public class OneButtonDialog extends DialogFragmentBase {
 
     @Override
     public void reset() {
+        Log.v(TAG, "reset");
         super.reset();
 
         _titleTextView.setText(_title);
@@ -74,6 +78,7 @@ public class OneButtonDialog extends DialogFragmentBase {
     }
 
     public void setData(String title, String body, String buttonText, Listener listener) {
+        Log.v(TAG, "setData");
         _body = body;
         _title = title;
         _buttonText = buttonText;
@@ -81,10 +86,6 @@ public class OneButtonDialog extends DialogFragmentBase {
 
         if (_titleTextView != null)
             reset();
-    }
-
-    public void show() {
-        super.show();
     }
 
     private View.OnClickListener _button_onClick = new View.OnClickListener() {

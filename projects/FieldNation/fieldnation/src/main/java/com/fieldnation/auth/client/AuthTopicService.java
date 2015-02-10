@@ -297,6 +297,14 @@ public class AuthTopicService extends Service {
             _account = null;
         } else if (_state == STATE_NOT_AUTHENTICATED) {
             dispatchAuthInvalid(this);
+        } else {
+            //TODO probably need a workaround for this
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    handleRemove();
+                }
+            }, 1000);
         }
     }
 
