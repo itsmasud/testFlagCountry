@@ -84,7 +84,7 @@ public class ReconnectWarningView extends RelativeLayout {
     private TopicReceiver _networkTopic = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            Log.v(TAG, "_networkTopic: " + topicId)
+            Log.v(TAG, "_networkTopic: " + topicId);
             ReconnectWarningView.this.setVisibility(View.VISIBLE);
         }
     };
