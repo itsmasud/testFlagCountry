@@ -140,7 +140,7 @@ public class SplashActivity extends AuthFragmentActivity {
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             AuthTopicService.requestAuthRemove(SplashActivity.this);
         }
     };

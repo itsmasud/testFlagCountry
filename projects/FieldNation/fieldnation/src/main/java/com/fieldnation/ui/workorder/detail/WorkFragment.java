@@ -118,6 +118,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_TASKS = "ui.workorder.detail.WorkFragment:STATE_TASKS";
     private static final String STATE_CURRENT_TASK = "ui.workorder.detail.WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_SIGNATURES = "ui.workorder.detail.WorkFragment:STATE_SIGNATURES";
+    private static final String STATE_DEVICE_COUNT = "ui.workorder.detail.WorkFragment:STATE_DEVICE_COUNT";
 
 
     // UI
@@ -174,6 +175,7 @@ public class WorkFragment extends WorkorderFragment {
     private String _username;
     private Task _currentTask;
     private Workorder _workorder;
+    private int _deviceCount = -1;
 
 
 	/*-*************************************-*/
@@ -320,6 +322,9 @@ public class WorkFragment extends WorkorderFragment {
                     _signatures.add((Signature) sigs[i]);
                 }
             }
+            if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
+                _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
+            }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
                 _profileService = new ProfileService(view.getContext(), _username, _authToken, _resultReceiver);
@@ -353,6 +358,9 @@ public class WorkFragment extends WorkorderFragment {
                 sigs[i] = _signatures.get(i);
             }
             outState.putParcelableArray(STATE_SIGNATURES, sigs);
+        }
+        if (_deviceCount > -1) {
+            outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
         }
 
         if (_currentTask != null) {
@@ -629,11 +637,21 @@ public class WorkFragment extends WorkorderFragment {
         _gpsLocationService.setListener(null);
         GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
+            if (_deviceCount > -1) {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _deviceCount, _gpsLocationService.getLocation()));
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
+            }
         } else {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+            if (_deviceCount > -1) {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _deviceCount));
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+            }
         }
 
     }
@@ -649,7 +667,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -825,7 +843,13 @@ public class WorkFragment extends WorkorderFragment {
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
+            _deviceCount = count;
             startCheckOut();
+        }
+
+        @Override
+        public void onCancel() {
+            setLoading(false);
         }
     };
 
@@ -1010,17 +1034,13 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onCancel() {
-            if (_workorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check in
-            } else {
-                doCheckin();
-            }
+        public void onNotNow() {
+            doCheckin();
             setLoading(false);
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -1033,17 +1053,13 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onCancel() {
-            if (_workorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check out
-            } else {
-                doCheckOut();
-            }
+        public void onNotNow() {
+            doCheckOut();
             setLoading(false);
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             setLoading(false);
         }
     };

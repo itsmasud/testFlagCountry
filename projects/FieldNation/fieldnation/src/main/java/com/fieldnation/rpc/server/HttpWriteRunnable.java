@@ -50,7 +50,7 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
                     if (result.getResponseCode() / 100 != 2) {
                         Log.v(TAG, "Error response: " + result.getResponseCode());
                         try {
-                            Log.v(TAG, result.getResponseMessage());
+                            Log.v(TAG, result.getResultsAsString());
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -70,6 +70,11 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
                         } catch (Exception ex) {
                             try {
                                 // unhappy, but http error
+                                try {
+                                    Log.v(TAG, result.getResultsAsString());
+                                } catch (Exception ex1) {
+                                    ex.printStackTrace();
+                                }
                                 bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                                 bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                                 bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());

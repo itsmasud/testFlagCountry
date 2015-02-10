@@ -122,7 +122,7 @@ public class DetailFragment extends WorkorderFragment {
         _closingDialog.setListener(_closingNotes_onOk);
 
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog.setListener(_deviceCountListener);
+//        _deviceCountDialog.setListener(_deviceCountListener);
 
         _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
         _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
@@ -474,6 +474,7 @@ public class DetailFragment extends WorkorderFragment {
     };
 
 
+/*
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
@@ -482,6 +483,7 @@ public class DetailFragment extends WorkorderFragment {
 
         }
     };
+*/
 
     private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
         @Override

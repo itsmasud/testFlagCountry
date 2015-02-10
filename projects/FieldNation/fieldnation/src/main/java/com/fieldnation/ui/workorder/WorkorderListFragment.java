@@ -58,7 +58,7 @@ public class WorkorderListFragment extends Fragment {
     private static final String STATE_CURRENT_WORKORDER = "STATE_CURRENT_WORKORDER";
     private static final String STATE_AUTHTOKEN = "ui.workorder.detail.WorkFragment:STATE_AUTHTOKEN";
     private static final String STATE_USERNAME = "ui.workorder.detail.WorkFragment:STATE_USERNAME";
-
+    private static final String STATE_DEVICE_COUNT = "ui.workorder.WorkorderListFragment:STATE_DEVICE_COUNT";
 
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
@@ -99,6 +99,7 @@ public class WorkorderListFragment extends Fragment {
     private Set<Long> _selected = new HashSet<Long>();
     private GpsLocationService _gpsLocationService;
     private Workorder _currentWorkorder;
+    private int _deviceCount = -1;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -173,6 +174,10 @@ public class WorkorderListFragment extends Fragment {
                 _username = savedInstanceState.getString(STATE_USERNAME);
             }
 
+            if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
+                _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
+            }
+
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReciever);
             }
@@ -192,7 +197,11 @@ public class WorkorderListFragment extends Fragment {
         }
 
         if (_username != null) {
-            outState.putString(STATE_AUTHTOKEN, _username);
+            outState.putString(STATE_USERNAME, _username);
+        }
+
+        if (_deviceCount > -1) {
+            outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
         }
 
         super.onSaveInstanceState(outState);
@@ -347,14 +356,26 @@ public class WorkorderListFragment extends Fragment {
         _adapter.notifyDataSetChanged();
         GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
         if (_gpsLocationService.hasLocation()) {
-            Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
-            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-            getActivity().startService(intent);
+            if (_deviceCount > -1) {
+                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount, _gpsLocationService.getLocation());
+                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+                getActivity().startService(intent);
+            } else {
+                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
+                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+                getActivity().startService(intent);
+            }
 
         } else {
-            Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
-            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-            getActivity().startService(intent);
+            if (_deviceCount > -1) {
+                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount);
+                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+                getActivity().startService(intent);
+            } else {
+                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
+                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+                getActivity().startService(intent);
+            }
         }
 
     }
@@ -381,7 +402,7 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -409,22 +430,13 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public void onCancel() {
-            if (_currentWorkorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check in
-            } else {
-                doCheckin();
-            }
+        public void onNotNow() {
+            doCheckin();
             setLoading(false);
         }
 
         @Override
-        public void onDismiss() {
-            if (_currentWorkorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check in
-            } else {
-                doCheckin();
-            }
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -437,22 +449,13 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public void onCancel() {
-            if (_currentWorkorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check out
-            } else {
-                doCheckOut();
-            }
+        public void onNotNow() {
+            doCheckOut();
             setLoading(false);
         }
 
         @Override
-        public void onDismiss() {
-            if (_currentWorkorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check in
-            } else {
-                doCheckOut();
-            }
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -579,9 +582,15 @@ public class WorkorderListFragment extends Fragment {
     private DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
+            _deviceCount = count;
             startCheckOut();
             _requestWorking.add(workorder.getWorkorderId());
             _adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancel() {
+            setLoading(false);
         }
     };
 

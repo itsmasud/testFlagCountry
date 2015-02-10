@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +22,7 @@ public class DeviceCountDialog extends DialogFragmentBase {
 
     // State
     private static final String MAX_COUNT = "STATE_MAX_COUNT";
+    private static final String STATE_WORKORDER = "STATE_WORKORDER";
 
     // UI
     private NumberPicker _devicePicker;
@@ -45,6 +47,9 @@ public class DeviceCountDialog extends DialogFragmentBase {
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             _maxCount = savedInstanceState.getInt(MAX_COUNT, 0);
+
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
         }
         super.onCreate(savedInstanceState);
 
@@ -54,6 +59,10 @@ public class DeviceCountDialog extends DialogFragmentBase {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(MAX_COUNT, _maxCount);
+
+        if (_workorder != null)
+            outState.putParcelable(STATE_WORKORDER, _workorder);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -111,10 +120,21 @@ public class DeviceCountDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             dismiss();
+            if (_listener != null)
+                _listener.onCancel();
         }
     };
 
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (_listener != null)
+            _listener.onCancel();
+    }
+
     public interface Listener {
         public void onOk(Workorder workorder, int count);
+
+        public void onCancel();
     }
 }
