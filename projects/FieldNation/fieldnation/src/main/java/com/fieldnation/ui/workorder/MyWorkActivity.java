@@ -73,4 +73,9 @@ public class MyWorkActivity extends TabActionBarFragmentActivity {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
     }
+ public static void startNew(Context context) {
+        Intent intent = new Intent(context, MyWorkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
 }

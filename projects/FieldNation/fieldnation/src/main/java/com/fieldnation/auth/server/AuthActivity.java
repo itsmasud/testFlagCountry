@@ -43,15 +43,13 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private static final String TAG = "auth.server.AuthActivity";
     // UI
     private LinearLayout _contentLayout;
-    private Button _loginButton;
     private EditText _usernameEditText;
     private EditText _passwordEditText;
     private View _fader;
     private ImageView _background;
     private Button _signupButton;
-
+    private Button _loginButton;
     private UpdateDialog _updateDialog;
-
 
     // data
     private String _username;
@@ -90,9 +88,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _signupButton.setOnClickListener(_signup_onClick);
         _signupButton.setVisibility(View.GONE);
 
-
         _background = (ImageView) findViewById(R.id.background_image);
-        _fader = (View) findViewById(R.id.fader);
+        _fader = findViewById(R.id.fader);
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
@@ -119,7 +116,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         Log.v(TAG, "onResume");
         super.onResume();
         _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
-        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topic_needUpdate);
+        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
         AuthTopicService.dispatchGettingUsernameAndPassword(this);
     }
 
@@ -161,7 +158,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         @Override
         public void onAnimationEnd(Animation animation) {
             _fader.setVisibility(View.GONE);
-//            _fader.setBackgroundColor(0x3F000000);
         }
 
         @Override
@@ -169,7 +165,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private final TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
@@ -240,9 +236,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     AuthActivity.this.setResult(RESULT_OK, intent);
                     AuthActivity.this.finish();
 
-                    Intent splash = new Intent(AuthActivity.this, SplashActivity.class);
-                    splash.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(splash);
+                    SplashActivity.startNew(AuthActivity.this);
 
                     ClockService.enableClock(AuthActivity.this);
                 } else {
@@ -250,7 +244,9 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     _signupButton.setVisibility(View.VISIBLE);
                 }
 
-                Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
+                if (!error.equals(getString(R.string.login_error_no_error))) {
+                    Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
+                }
 
             } catch (Exception e) {
                 Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect,

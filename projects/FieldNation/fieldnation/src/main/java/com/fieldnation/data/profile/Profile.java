@@ -16,6 +16,8 @@ public class Profile implements Parcelable {
     private String _email;
     @Json(name = "firstname")
     private String _firstname;
+    @Json(name = "isProvider")
+    private Boolean _isProvider;
     @Json(name = "lastname")
     private String _lastname;
     @Json(name = "marketplaceStatusOn")
@@ -58,6 +60,10 @@ public class Profile implements Parcelable {
 
     public String getFirstname() {
         return _firstname;
+    }
+
+    public Boolean isProvider() {
+        return _isProvider;
     }
 
     public String getLastname() {
