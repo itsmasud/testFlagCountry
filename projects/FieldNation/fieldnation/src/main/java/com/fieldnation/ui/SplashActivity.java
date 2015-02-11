@@ -31,6 +31,7 @@ public class SplashActivity extends AuthFragmentActivity {
     private Profile _profile = null;
     private boolean _isAuth = false;
     private boolean _showingDialog = false;
+    private boolean _calledMyWork = false;
 
     private OneButtonDialog _notProviderDialog;
 
@@ -124,8 +125,11 @@ public class SplashActivity extends AuthFragmentActivity {
         Log.v(TAG, "doNextStep");
 
         if (_profile.isProvider()) {
-            MyWorkActivity.startNew(this);
-            finish();
+            if (!_calledMyWork) {
+                _calledMyWork = true;
+                MyWorkActivity.startNew(this);
+                finish();
+            }
         } else {
             _showingDialog = true;
             _notProviderDialog.show();
@@ -149,6 +153,9 @@ public class SplashActivity extends AuthFragmentActivity {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             Log.v(TAG, "onTopic");
+            if (SplashActivity.this == null)
+                return;
+
             if (AuthTopicService.TOPIC_AUTH_STARTUP.equals(topicId)) {
                 if (parcel.getString(AuthTopicService.BUNDLE_PARAM_TYPE)
                         .equals(AuthTopicService.BUNDLE_PARAM_TYPE_NEED_PASSWORD)
