@@ -193,7 +193,7 @@ public class GlobalState extends Application {
             analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             analytics.enableAutoActivityReports(this);
             analytics.setLocalDispatchPeriod(getResources().getInteger(R.integer.ga_local_dispatch_period));
-            analytics.setDryRun(getResources().getBoolean(R.bool.ga_dry_run));
+            analytics.setDryRun(getResources().getBoolean(R.bool.ga_dry_run) || BuildConfig.DEBUG);
             _tracker = analytics.newTracker(R.xml.ga_config);
             _tracker.enableAdvertisingIdCollection(true);
             _tracker.enableAutoActivityTracking(true);
