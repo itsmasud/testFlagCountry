@@ -601,6 +601,7 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void doCheckin() {
+        setLoading(true);
         _gpsLocationService.setListener(null);
         GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
@@ -614,6 +615,7 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void doCheckOut() {
+        setLoading(true);
         _gpsLocationService.setListener(null);
         GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {

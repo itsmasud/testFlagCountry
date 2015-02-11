@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
@@ -46,6 +47,7 @@ import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -56,10 +58,11 @@ public class WorkorderListFragment extends Fragment {
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
     private static final String STATE_CURRENT_WORKORDER = "STATE_CURRENT_WORKORDER";
-    private static final String STATE_AUTHTOKEN = "ui.workorder.detail.WorkFragment:STATE_AUTHTOKEN";
-    private static final String STATE_USERNAME = "ui.workorder.detail.WorkFragment:STATE_USERNAME";
-    private static final String STATE_DEVICE_COUNT = "ui.workorder.WorkorderListFragment:STATE_DEVICE_COUNT";
-    private static final String STATE_TAG = "ui.workorder.WorkorderListFragment:STATE_TAG";
+    private static final String STATE_AUTHTOKEN = "STATE_AUTHTOKEN";
+    private static final String STATE_USERNAME = "STATE_USERNAME";
+    private static final String STATE_DEVICE_COUNT = "STATE_DEVICE_COUNT";
+    private static final String STATE_TAG = "STATE_TAG";
+    private static final String STATE_WORKING_LIST = "STATE_WORKING_LIST";
 
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
@@ -90,15 +93,16 @@ public class WorkorderListFragment extends Fragment {
     private OneButtonDialog _locationLoadingDialog;
 
     // Data
-    private String _username;
-    private String _authToken;
     private WorkorderService _service;
-    private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
-    //private ActionMode _actionMode = null;
     private Set<Long> _pendingNotInterested = new HashSet<Long>();
-    private Set<Long> _requestWorking = new HashSet<Long>();
     private Set<Long> _selected = new HashSet<Long>();
     private GpsLocationService _gpsLocationService;
+
+    // state data
+    private String _username;
+    private String _authToken;
+    private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
+    private Set<Long> _requestWorking = new HashSet<Long>();
     private Workorder _currentWorkorder;
     private int _deviceCount = -1;
 
@@ -114,6 +118,13 @@ public class WorkorderListFragment extends Fragment {
                 TAG = savedInstanceState.getString(STATE_TAG);
             } else {
                 TAG = UniqueTag.makeTag(TAG);
+            }
+
+            if (savedInstanceState.containsKey(STATE_WORKING_LIST)) {
+                long[] a = savedInstanceState.getLongArray(STATE_WORKING_LIST);
+                for (int i = 0; i < a.length; i++) {
+                    _requestWorking.add(a[i]);
+                }
             }
 
             if (savedInstanceState.containsKey(STATE_DISPLAY)) {
@@ -204,6 +215,17 @@ public class WorkorderListFragment extends Fragment {
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
         }
 
+        if (_requestWorking.size() > 0) {
+            Iterator<Long> iter = _requestWorking.iterator();
+            long[] a = new long[_requestWorking.size()];
+            int i = 0;
+            while (iter.hasNext()) {
+                a[i] = iter.next();
+                i++;
+            }
+            outState.putLongArray(STATE_WORKING_LIST, a);
+        }
+
         super.onSaveInstanceState(outState);
     }
 
@@ -246,6 +268,10 @@ public class WorkorderListFragment extends Fragment {
     @Override
     public void onPause() {
         _gpsLocationService.stopLocationUpdates();
+        if (_locationLoadingDialog.isVisible()) {
+            Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
+            _locationLoadingDialog.dismiss();
+        }
         super.onPause();
     }
 
@@ -339,6 +365,7 @@ public class WorkorderListFragment extends Fragment {
 
     private void doCheckin() {
         _gpsLocationService.setListener(null);
+        setLoading(true);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
         GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
@@ -357,6 +384,7 @@ public class WorkorderListFragment extends Fragment {
     }
 
     private void doCheckOut() {
+        setLoading(true);
         _gpsLocationService.setListener(null);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
@@ -366,12 +394,10 @@ public class WorkorderListFragment extends Fragment {
                 Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount, _gpsLocationService.getLocation());
                 intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
                 getActivity().startService(intent);
-                setLoading(true);
             } else {
                 Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
                 intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
                 getActivity().startService(intent);
-                setLoading(true);
             }
 
         } else {
@@ -379,12 +405,10 @@ public class WorkorderListFragment extends Fragment {
                 Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount);
                 intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
                 getActivity().startService(intent);
-                setLoading(true);
             } else {
                 Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
                 intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
                 getActivity().startService(intent);
-                setLoading(true);
             }
         }
     }
@@ -788,8 +812,6 @@ public class WorkorderListFragment extends Fragment {
         @Override
         public void onLoadingComplete() {
             setLoading(false);
-            _requestWorking.clear();
-            _pendingNotInterested.clear();
         }
     };
 
@@ -881,8 +903,6 @@ public class WorkorderListFragment extends Fragment {
 
             } else if (resultCode == WEB_CHECKING_IN) {
                 long woId = resultData.getLong(KEY_WORKORDER_ID);
-                _requestWorking.remove(woId);
-                _pendingNotInterested.remove(woId);
                 Intent intent = new Intent(getActivity(), WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, woId);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
