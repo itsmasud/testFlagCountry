@@ -362,7 +362,7 @@ public class Workorder implements Parcelable {
 
     public Boolean getIsGpsRequired() {
         if (_isGpsRequired != null)
-        return _isGpsRequired;
+            return _isGpsRequired;
 
         return false;
     }

@@ -60,6 +60,7 @@
     <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_payments">PAYMENTS</string>
+	<string name="btn_not_now">NOT NOW</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
     <string name="toast_downloading">Downloading</string>

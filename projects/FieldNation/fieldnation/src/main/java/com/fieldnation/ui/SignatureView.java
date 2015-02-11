@@ -303,6 +303,9 @@ public class SignatureView extends View {
     }
 
     private void addShape(Shape shape) {
+        if (shape.size() == 0)
+            return;
+
         Point lp = shape.get(0);
         Point p = null;
 
