@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
@@ -46,16 +47,22 @@ import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 public class WorkorderListFragment extends Fragment {
-    private final String TAG = UniqueTag.makeTag("ui.workorder.WorkorderListFragment");
+    private String TAG = "ui.workorder.WorkorderListFragment";
 
     // State
     private static final String STATE_DISPLAY = "STATE_DISPLAY";
     private static final String STATE_CURRENT_WORKORDER = "STATE_CURRENT_WORKORDER";
+    private static final String STATE_AUTHTOKEN = "STATE_AUTHTOKEN";
+    private static final String STATE_USERNAME = "STATE_USERNAME";
+    private static final String STATE_DEVICE_COUNT = "STATE_DEVICE_COUNT";
+    private static final String STATE_TAG = "STATE_TAG";
+    private static final String STATE_WORKING_LIST = "STATE_WORKING_LIST";
 
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
@@ -86,16 +93,18 @@ public class WorkorderListFragment extends Fragment {
     private OneButtonDialog _locationLoadingDialog;
 
     // Data
-    private String _username;
-    private String _authToken;
     private WorkorderService _service;
-    private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
-    //private ActionMode _actionMode = null;
     private Set<Long> _pendingNotInterested = new HashSet<Long>();
-    private Set<Long> _requestWorking = new HashSet<Long>();
     private Set<Long> _selected = new HashSet<Long>();
     private GpsLocationService _gpsLocationService;
+
+    // state data
+    private String _username;
+    private String _authToken;
+    private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
+    private Set<Long> _requestWorking = new HashSet<Long>();
     private Workorder _currentWorkorder;
+    private int _deviceCount = -1;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -105,6 +114,19 @@ public class WorkorderListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TAG)) {
+                TAG = savedInstanceState.getString(STATE_TAG);
+            } else {
+                TAG = UniqueTag.makeTag(TAG);
+            }
+
+            if (savedInstanceState.containsKey(STATE_WORKING_LIST)) {
+                long[] a = savedInstanceState.getLongArray(STATE_WORKING_LIST);
+                for (int i = 0; i < a.length; i++) {
+                    _requestWorking.add(a[i]);
+                }
+            }
+
             if (savedInstanceState.containsKey(STATE_DISPLAY)) {
                 Log.v(TAG, "Restoring state");
                 _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
@@ -112,6 +134,10 @@ public class WorkorderListFragment extends Fragment {
 
             if (savedInstanceState.containsKey(STATE_CURRENT_WORKORDER))
                 _currentWorkorder = savedInstanceState.getParcelable(STATE_CURRENT_WORKORDER);
+        }
+
+        if ("ui.workorder.WorkorderListFragment".equals(TAG)) {
+            TAG = UniqueTag.makeTag("ui.workorder.WorkorderListFragment");
         }
 
         Log.v(TAG, "onCreate: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
@@ -139,41 +165,66 @@ public class WorkorderListFragment extends Fragment {
 
         _emptyView = (EmptyWoListView) view.findViewById(R.id.empty_view);
 
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog.setListener(_expiresDialog_listener);
-
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog.setListener(_confirmDialog_listener);
-
-        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog.setListener(_deviceCountDialog_listener);
-
-        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
-        _counterOfferDialog.setListener(_counterOfferDialog_listener);
-
         _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
-        _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
-
-        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
-
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
-                getString(R.string.dialog_location_loading_body),
-                getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
+                _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
+            }
+            if (savedInstanceState.containsKey(STATE_USERNAME)) {
+                _username = savedInstanceState.getString(STATE_USERNAME);
+            }
+
+            if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
+                _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
+            }
+
+            if (_authToken != null && _username != null) {
+                _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReciever);
+            }
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState");
         outState.putString(STATE_DISPLAY, _displayView.name());
+        outState.putString(STATE_TAG, TAG);
+
         if (_currentWorkorder != null)
             outState.putParcelable(STATE_CURRENT_WORKORDER, _currentWorkorder);
+
+        if (_authToken != null) {
+            outState.putString(STATE_AUTHTOKEN, _authToken);
+        }
+
+        if (_username != null) {
+            outState.putString(STATE_USERNAME, _username);
+        }
+
+        if (_deviceCount > -1) {
+            outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
+        }
+
+        if (_requestWorking.size() > 0) {
+            Iterator<Long> iter = _requestWorking.iterator();
+            long[] a = new long[_requestWorking.size()];
+            int i = 0;
+            while (iter.hasNext()) {
+                a[i] = iter.next();
+                i++;
+            }
+            outState.putLongArray(STATE_WORKING_LIST, a);
+        }
 
         super.onSaveInstanceState(outState);
     }
@@ -201,11 +252,26 @@ public class WorkorderListFragment extends Fragment {
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _topicReceiver);
         GaTopic.dispatchScreenView(getActivity(), getGaLabel());
         _gpsLocationService = new GpsLocationService(getActivity());
+
+        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
+                getString(R.string.dialog_location_loading_body),
+                getString(R.string.dialog_location_loading_button),
+                _locationLoadingDialog_listener);
+
+        _expiresDialog.setListener(_expiresDialog_listener);
+        _confirmDialog.setListener(_confirmDialog_listener);
+        _deviceCountDialog.setListener(_deviceCountDialog_listener);
+        _counterOfferDialog.setListener(_counterOfferDialog_listener);
+        _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
     }
 
     @Override
     public void onPause() {
         _gpsLocationService.stopLocationUpdates();
+        if (_locationLoadingDialog.isVisible()) {
+            Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
+            _locationLoadingDialog.dismiss();
+        }
         super.onPause();
     }
 
@@ -299,6 +365,7 @@ public class WorkorderListFragment extends Fragment {
 
     private void doCheckin() {
         _gpsLocationService.setListener(null);
+        setLoading(true);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
         GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
@@ -317,21 +384,33 @@ public class WorkorderListFragment extends Fragment {
     }
 
     private void doCheckOut() {
+        setLoading(true);
         _gpsLocationService.setListener(null);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
         GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
         if (_gpsLocationService.hasLocation()) {
-            Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
-            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-            getActivity().startService(intent);
+            if (_deviceCount > -1) {
+                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount, _gpsLocationService.getLocation());
+                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+                getActivity().startService(intent);
+            } else {
+                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
+                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+                getActivity().startService(intent);
+            }
 
         } else {
-            Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
-            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-            getActivity().startService(intent);
+            if (_deviceCount > -1) {
+                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount);
+                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+                getActivity().startService(intent);
+            } else {
+                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
+                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
+                getActivity().startService(intent);
+            }
         }
-
     }
 
     @Override
@@ -356,7 +435,7 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -384,22 +463,13 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public void onCancel() {
-            if (_currentWorkorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check in
-            } else {
-                doCheckin();
-            }
+        public void onNotNow() {
+            doCheckin();
             setLoading(false);
         }
 
         @Override
-        public void onDismiss() {
-            if (_currentWorkorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check in
-            } else {
-                doCheckin();
-            }
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -412,22 +482,13 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
-        public void onCancel() {
-            if (_currentWorkorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check out
-            } else {
-                doCheckOut();
-            }
+        public void onNotNow() {
+            doCheckOut();
             setLoading(false);
         }
 
         @Override
-        public void onDismiss() {
-            if (_currentWorkorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check in
-            } else {
-                doCheckOut();
-            }
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -544,23 +605,32 @@ public class WorkorderListFragment extends Fragment {
     /*-*****************************************-*/
     /*-				Events Dialogs				-*/
     /*-*****************************************-*/
-    private AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
+    private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
             _expiresDialog.show(workorder);
         }
     };
 
-    private DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
+    private final DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
-            startCheckOut();
+            Log.v(TAG, "_deviceCountDialog_listener");
+            _currentWorkorder = workorder;
+            _deviceCount = count;
             _requestWorking.add(workorder.getWorkorderId());
             _adapter.notifyDataSetChanged();
+            setLoading(true);
+            startCheckOut();
+        }
+
+        @Override
+        public void onCancel() {
+            setLoading(false);
         }
     };
 
-    private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
+    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
 
         @Override
         public void onOk(Workorder workorder, String dateTime) {
@@ -585,7 +655,7 @@ public class WorkorderListFragment extends Fragment {
         }
     };
 
-    private ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
+    private final ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             //set  loading mode
             try {
@@ -613,7 +683,7 @@ public class WorkorderListFragment extends Fragment {
 
     };
 
-    private CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {
+    private final CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
             GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_COUNTER, "WorkorderCardView", 1);
@@ -694,14 +764,14 @@ public class WorkorderListFragment extends Fragment {
 //        }
 //    };
 
-    private RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
+    private final RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
             _adapter.refreshPages();
         }
     };
 
-    private PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
+    private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
 //            Log.v(TAG, "getView()");
@@ -738,12 +808,10 @@ public class WorkorderListFragment extends Fragment {
         }
     };
 
-    private PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
+    private final PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
         @Override
         public void onLoadingComplete() {
             setLoading(false);
-            _requestWorking.clear();
-            _pendingNotInterested.clear();
         }
     };
 
@@ -751,7 +819,7 @@ public class WorkorderListFragment extends Fragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-    private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
 
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -824,7 +892,7 @@ public class WorkorderListFragment extends Fragment {
         }
     }
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             if (resultCode == WEB_GET_LIST) {
@@ -835,8 +903,6 @@ public class WorkorderListFragment extends Fragment {
 
             } else if (resultCode == WEB_CHECKING_IN) {
                 long woId = resultData.getLong(KEY_WORKORDER_ID);
-                _requestWorking.remove(woId);
-                _pendingNotInterested.remove(woId);
                 Intent intent = new Intent(getActivity(), WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, woId);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);

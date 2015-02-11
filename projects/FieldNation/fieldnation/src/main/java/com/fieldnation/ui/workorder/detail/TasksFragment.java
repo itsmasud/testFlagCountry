@@ -173,7 +173,7 @@ public class TasksFragment extends WorkorderFragment {
         _closingDialog.setListener(_closingNotes_onOk);
 
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog.setListener(_deviceCountListener);
+//        _deviceCountDialog.setListener(_deviceCountListener);
 
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog.setListener(_customFieldDialog_listener);
@@ -1004,6 +1004,7 @@ public class TasksFragment extends WorkorderFragment {
         }
     };
 
+/*
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
@@ -1024,6 +1025,7 @@ public class TasksFragment extends WorkorderFragment {
 //            }
         }
     };
+*/
 
     /*-*************************************-*/
     /*-				WEB Events				-*/

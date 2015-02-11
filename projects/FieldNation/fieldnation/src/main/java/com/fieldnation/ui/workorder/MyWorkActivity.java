@@ -1,5 +1,7 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import android.view.View;
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
+import com.fieldnation.utils.misc;
 
 import java.util.List;
 
@@ -215,6 +218,14 @@ public class MyWorkActivity extends DrawerActivity {
     @Override
     public void onRefresh() {
         _fragments[_currentFragment].update();
+    }
+
+    public static void startNew(Context context) {
+        Log.v(TAG, "startNew");
+        misc.printStackTrace("startNew");
+        Intent intent = new Intent(context, MyWorkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
 }

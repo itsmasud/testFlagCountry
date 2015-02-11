@@ -6,6 +6,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+
+import com.fieldnation.UniqueTag;
+import com.fieldnation.utils.misc;
 
 import java.util.List;
 
@@ -13,7 +17,7 @@ import java.util.List;
  * Created by michael.carver on 11/13/2014.
  */
 public class DialogFragmentBase extends DialogFragment {
-    private static final String TAG = "ui.dialog.DialogFragmentBase";
+    private static final String TAG = UniqueTag.makeTag("ui.dialog.DialogFragmentBase");
 
     // State
     private static final String STATE_TAG = "STATE_TAG";
@@ -74,6 +78,7 @@ public class DialogFragmentBase extends DialogFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG))
                 _tag = savedInstanceState.getString(STATE_TAG);
@@ -87,6 +92,7 @@ public class DialogFragmentBase extends DialogFragment {
 
     @Override
     public void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
 
         if (_reset) {
@@ -101,13 +107,16 @@ public class DialogFragmentBase extends DialogFragment {
     }
 
     public void init() {
+        Log.v(TAG, "init");
     }
 
     public void reset() {
+        Log.v(TAG, "reset");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
         if (_tag != null)
             outState.putString(STATE_TAG, _tag);
         super.onSaveInstanceState(outState);
@@ -122,6 +131,7 @@ public class DialogFragmentBase extends DialogFragment {
      */
     @Override
     public int show(FragmentTransaction transaction, String tag) {
+        Log.v(TAG, "show");
         if (!_isDismissed)
             return -1;
 
@@ -140,6 +150,7 @@ public class DialogFragmentBase extends DialogFragment {
      */
     @Override
     public void show(FragmentManager manager, String tag) {
+        Log.v(TAG, "show");
         if (!_isDismissed)
             return;
 
@@ -152,6 +163,7 @@ public class DialogFragmentBase extends DialogFragment {
     }
 
     public void show() {
+        Log.v(TAG, "show");
         if (!_isDismissed)
             return;
 
@@ -164,6 +176,7 @@ public class DialogFragmentBase extends DialogFragment {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        Log.v(TAG, "onDismiss");
         super.onDismiss(dialog);
         _isDismissed = true;
     }

@@ -23,12 +23,11 @@ public class LocationDialog extends DialogFragmentBase {
 
     //Ui
     private Button _okButton;
-    private Button _cancelButton;
+    private Button _notNowButton;
     private TextView _bodyTextView;
 
     // Data
     private boolean _hard;
-    private boolean _buttonPressed = false;
     private Listener _listener;
 
 
@@ -54,8 +53,8 @@ public class LocationDialog extends DialogFragmentBase {
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
 
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancel_onClick);
+        _notNowButton = (Button) v.findViewById(R.id.notnow_button);
+        _notNowButton.setOnClickListener(_notNow_onClick);
 
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
 
@@ -66,10 +65,21 @@ public class LocationDialog extends DialogFragmentBase {
     public void onResume() {
         super.onResume();
 
-        if (_hard)
+        if (_hard) {
             _bodyTextView.setText(R.string.dialog_location_hard);
-        else
+            _notNowButton.setText(R.string.btn_cancel);
+        } else {
             _bodyTextView.setText(R.string.dialog_location_soft);
+            _notNowButton.setText(R.string.btn_not_now);
+        }
+    }
+
+    public void setData(boolean hard, Listener listener) {
+        _hard = hard;
+        _listener = listener;
+
+        if (_bodyTextView != null)
+            onResume();
     }
 
     public void show(boolean hard, Listener listener) {
@@ -78,41 +88,47 @@ public class LocationDialog extends DialogFragmentBase {
         super.show();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        dismiss();
+    }
+
     private OnClickListener _ok_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            _buttonPressed = true;
             dismiss();
             if (_listener != null)
                 _listener.onOk();
         }
     };
 
-    private OnClickListener _cancel_onClick = new OnClickListener() {
+    private OnClickListener _notNow_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            _buttonPressed = true;
             dismiss();
-            if (_listener != null)
-                _listener.onCancel();
+            if (_listener != null) {
+                if (_hard)
+                    _listener.onCancel();
+                else
+                    _listener.onNotNow();
+            }
         }
     };
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        if (_listener != null && !_buttonPressed)
-            _listener.onDismiss();
-
-        _buttonPressed = false;
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (_listener != null)
+            _listener.onCancel();
     }
 
     public interface Listener {
         public void onOk();
 
-        public void onCancel();
+        public void onNotNow();
 
-        public void onDismiss();
+        public void onCancel();
     }
 }
 

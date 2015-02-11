@@ -196,9 +196,7 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), MyWorkActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
+            MyWorkActivity.startNew(getContext());
             attachAnimations();
         }
     };
@@ -236,9 +234,7 @@ public class DrawerView extends RelativeLayout {
             AuthTopicService.requestAuthRemove(getContext());
 
             Log.v(TAG, "SplashActivity");
-            Intent intent = new Intent(getContext(), SplashActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
+            SplashActivity.startNew(getContext());
             attachAnimations();
         }
     };

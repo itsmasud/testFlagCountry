@@ -129,20 +129,21 @@ public class AuthTopicService extends Service {
 
     private void setState(int state) {
         _state = state;
+        Log.v(TAG, getStateString());
+    }
+
+    private String getStateString() {
         switch (_state) {
             case STATE_AUTHENTICATED:
-                Log.v(TAG, "STATE_AUTHENTICATED");
-                break;
+                return "STATE_AUTHENTICATED";
             case STATE_AUTHENTICATING:
-                Log.v(TAG, "STATE_AUTHENTICATING");
-                break;
+                return "STATE_AUTHENTICATING";
             case STATE_NOT_AUTHENTICATED:
-                Log.v(TAG, "STATE_NOT_AUTHENTICATED");
-                break;
+                return "STATE_NOT_AUTHENTICATED";
             case STATE_REMOVING:
-                Log.v(TAG, "STATE_REMOVING");
-                break;
+                return "STATE_REMOVING";
         }
+        return "";
     }
 
     /*-*************************-*/
@@ -152,6 +153,7 @@ public class AuthTopicService extends Service {
     private final TopicReceiver _topics = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            Log.v(TAG, "STATE: " + getStateString());
             Log.v(TAG, "_topics:" + topicId);
             if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
                 _isNetworkDown = true;
@@ -174,12 +176,15 @@ public class AuthTopicService extends Service {
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (_isShuttingDown)
+            Log.v(TAG, "STATE: " + getStateString());
+            if (_isShuttingDown) {
                 return;
+            }
             String type = parcel.getString(BUNDLE_PARAM_TYPE);
             Log.v(TAG, "Type: " + type);
 
             if (_isNetworkDown) {
+                Log.v(TAG, "Network Down");
 //                dispatchNoNetwork(AuthTopicService.this);
                 return;
             }
@@ -292,6 +297,14 @@ public class AuthTopicService extends Service {
             _account = null;
         } else if (_state == STATE_NOT_AUTHENTICATED) {
             dispatchAuthInvalid(this);
+        } else {
+            //TODO probably need a workaround for this
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    handleRemove();
+                }
+            }, 1000);
         }
     }
 

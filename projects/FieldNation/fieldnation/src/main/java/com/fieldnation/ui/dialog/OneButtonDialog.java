@@ -1,12 +1,12 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +15,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael on 2/6/2015.
  */
 public class OneButtonDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.OneButtonDialog";
+    private static final String TAG = UniqueTag.makeTag("ui.dialog.OneButtonDialog");
 
     //Ui
     private TextView _titleTextView;
@@ -33,7 +34,6 @@ public class OneButtonDialog extends DialogFragmentBase {
     private String _body;
     private String _buttonText;
     private Listener _listener;
-    private boolean _buttonPressed;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -44,12 +44,14 @@ public class OneButtonDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_one_button, container, false);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -65,6 +67,7 @@ public class OneButtonDialog extends DialogFragmentBase {
 
     @Override
     public void reset() {
+        Log.v(TAG, "reset");
         super.reset();
 
         _titleTextView.setText(_title);
@@ -74,6 +77,7 @@ public class OneButtonDialog extends DialogFragmentBase {
     }
 
     public void setData(String title, String body, String buttonText, Listener listener) {
+        Log.v(TAG, "setData");
         _body = body;
         _title = title;
         _buttonText = buttonText;
@@ -83,14 +87,9 @@ public class OneButtonDialog extends DialogFragmentBase {
             reset();
     }
 
-    public void show() {
-        super.show();
-    }
-
     private View.OnClickListener _button_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _buttonPressed = true;
             dismiss();
             if (_listener != null)
                 _listener.onButtonClick();
@@ -98,22 +97,15 @@ public class OneButtonDialog extends DialogFragmentBase {
     };
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        if (_listener != null && !_buttonPressed)
-            _listener.onDismiss();
-        _buttonPressed = false;
-    }
-
-    @Override
-    public void dismiss() {
-        _buttonPressed = true;
-        super.dismiss();
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (_listener != null)
+            _listener.onCancel();
     }
 
     public interface Listener {
         public void onButtonClick();
 
-        public void onDismiss();
+        public void onCancel();
     }
 }

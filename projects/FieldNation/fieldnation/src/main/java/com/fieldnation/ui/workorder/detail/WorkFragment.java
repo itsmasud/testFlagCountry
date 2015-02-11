@@ -118,6 +118,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_TASKS = "ui.workorder.detail.WorkFragment:STATE_TASKS";
     private static final String STATE_CURRENT_TASK = "ui.workorder.detail.WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_SIGNATURES = "ui.workorder.detail.WorkFragment:STATE_SIGNATURES";
+    private static final String STATE_DEVICE_COUNT = "ui.workorder.detail.WorkFragment:STATE_DEVICE_COUNT";
 
 
     // UI
@@ -174,6 +175,7 @@ public class WorkFragment extends WorkorderFragment {
     private String _username;
     private Task _currentTask;
     private Workorder _workorder;
+    private int _deviceCount = -1;
 
 
 	/*-*************************************-*/
@@ -217,15 +219,6 @@ public class WorkFragment extends WorkorderFragment {
         _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog.setListener(_deviceCountListener);
-
-        _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
-        _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
-
-        _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
-        _acceptBundleWOExpiresDialog.setListener(_acceptBundleDialogExpiresListener);
-
         _shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
         _shipments.setListener(_shipments_listener);
 
@@ -244,57 +237,25 @@ public class WorkFragment extends WorkorderFragment {
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signaturelist_listener);
 
-        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
-        _closingDialog.setListener(_closingNotes_onOk);
-
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog.setListener(_confirmListener);
-
-        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
-        _counterOfferDialog.setListener(_counterOffer_listener);
-
-        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
-        _declineDialog.setListener(_declineDialog_listener);
-
-        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
-        _discountDialog.setListener(_discountDialog_listener);
-
-        _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
-        _expenseDialog.setListener(_expenseDialog_listener);
-
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog.setListener(_expiresDialog_listener);
-
-        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog.setListener(_deviceCountListener);
-
-        _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
-        _customFieldDialog.setListener(_customFieldDialog_listener);
-
+        _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
+        _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
-        _appDialog.setListener(_appdialog_listener);
-
-        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
-
-        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
-
-        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
-        _worklogDialog.setListener(_worklogDialog_listener);
-
-        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
+        _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
+        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
+        _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
+        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
-
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
-                getString(R.string.dialog_location_loading_body),
-                getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
-
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
-        _markCompleteDialog.setListener(_markCompleteDialog_listener);
+        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
+        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
@@ -323,6 +284,9 @@ public class WorkFragment extends WorkorderFragment {
                 for (int i = 0; i < sigs.length; i++) {
                     _signatures.add((Signature) sigs[i]);
                 }
+            }
+            if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
+                _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
             }
             if (_authToken != null && _username != null) {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
@@ -357,6 +321,9 @@ public class WorkFragment extends WorkorderFragment {
                 sigs[i] = _signatures.get(i);
             }
             outState.putParcelableArray(STATE_SIGNATURES, sigs);
+        }
+        if (_deviceCount > -1) {
+            outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
         }
 
         if (_currentTask != null) {
@@ -395,6 +362,28 @@ public class WorkFragment extends WorkorderFragment {
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
 
         _gpsLocationService = new GpsLocationService(getActivity());
+
+        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
+                getString(R.string.dialog_location_loading_body),
+                getString(R.string.dialog_location_loading_button),
+                _locationLoadingDialog_listener);
+
+        _deviceCountDialog.setListener(_deviceCountListener);
+        _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
+        _acceptBundleWOExpiresDialog.setListener(_acceptBundleDialogExpiresListener);
+        _closingDialog.setListener(_closingNotes_onOk);
+        _confirmDialog.setListener(_confirmListener);
+        _counterOfferDialog.setListener(_counterOffer_listener);
+        _declineDialog.setListener(_declineDialog_listener);
+        _discountDialog.setListener(_discountDialog_listener);
+        _expenseDialog.setListener(_expenseDialog_listener);
+        _expiresDialog.setListener(_expiresDialog_listener);
+        _customFieldDialog.setListener(_customFieldDialog_listener);
+        _appDialog.setListener(_appdialog_listener);
+        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
+        _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
+        _worklogDialog.setListener(_worklogDialog_listener);
+        _markCompleteDialog.setListener(_markCompleteDialog_listener);
     }
 
     @Override
@@ -612,6 +601,7 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void doCheckin() {
+        setLoading(true);
         _gpsLocationService.setListener(null);
         GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
@@ -625,14 +615,25 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void doCheckOut() {
+        setLoading(true);
         _gpsLocationService.setListener(null);
         GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
+            if (_deviceCount > -1) {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _deviceCount, _gpsLocationService.getLocation()));
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
+            }
         } else {
-            getActivity().startService(
-                    _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+            if (_deviceCount > -1) {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _deviceCount));
+            } else {
+                getActivity().startService(
+                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+            }
         }
 
     }
@@ -648,7 +649,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -824,7 +825,13 @@ public class WorkFragment extends WorkorderFragment {
     private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
+            _deviceCount = count;
             startCheckOut();
+        }
+
+        @Override
+        public void onCancel() {
+            setLoading(false);
         }
     };
 
@@ -895,6 +902,15 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onContinueClick() {
             GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "WorkFragment", 1);
+            try {
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity",
+                        GaTopic.ACTION_COMPLETE_FN_EARNED, "WorkFragment",
+                        (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
+            } catch (Exception ex) {
+                // I don't expect this to ever fail, but it could. just a safe guard.
+                ex.printStackTrace();
+            }
+
             getActivity().startService(
                     _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
             setLoading(true);
@@ -944,7 +960,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            getActivity().startService(
+            GlobalState.getContext().startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description,
                             shipToSite, carrier, carrierName, trackingId));
             setLoading(true);
@@ -952,7 +968,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-            getActivity().startService(
+            GlobalState.getContext().startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description,
                             shipToSite, carrier, carrierName, trackingId, taskId));
             setLoading(true);
@@ -964,19 +980,21 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
             if (loggedWork == null) {
                 if (deviceCount <= 0) {
-                    getActivity().startService(_service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
-                            end.getTimeInMillis()));
+                    GlobalState.getContext().startService(
+                            _service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
+                                    end.getTimeInMillis()));
                 } else {
-                    getActivity().startService(_service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
-                            end.getTimeInMillis(), deviceCount));
+                    GlobalState.getContext().startService(
+                            _service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
+                                    end.getTimeInMillis(), deviceCount));
                 }
             } else {
                 if (deviceCount <= 0) {
-                    getActivity().startService(
+                    GlobalState.getContext().startService(
                             _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
                                     loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis()));
                 } else {
-                    getActivity().startService(
+                    GlobalState.getContext().startService(
                             _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
                                     loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount));
                 }
@@ -1000,17 +1018,13 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onCancel() {
-            if (_workorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check in
-            } else {
-                doCheckin();
-            }
+        public void onNotNow() {
+            doCheckin();
             setLoading(false);
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -1023,17 +1037,13 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onCancel() {
-            if (_workorder.getIsGpsRequired()) {
-                // todo pop dialog, gps required... could not complete check out
-            } else {
-                doCheckOut();
-            }
+        public void onNotNow() {
+            doCheckOut();
             setLoading(false);
         }
 
         @Override
-        public void onDismiss() {
+        public void onCancel() {
             setLoading(false);
         }
     };
