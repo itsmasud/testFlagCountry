@@ -1,6 +1,5 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,13 +15,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael on 2/6/2015.
  */
 public class OneButtonDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.OneButtonDialog";
+    private static final String TAG = UniqueTag.makeTag("ui.dialog.OneButtonDialog");
 
     //Ui
     private TextView _titleTextView;
@@ -34,7 +34,6 @@ public class OneButtonDialog extends DialogFragmentBase {
     private String _body;
     private String _buttonText;
     private Listener _listener;
-    private boolean _buttonPressed;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -91,7 +90,6 @@ public class OneButtonDialog extends DialogFragmentBase {
     private View.OnClickListener _button_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _buttonPressed = true;
             dismiss();
             if (_listener != null)
                 _listener.onButtonClick();
@@ -99,22 +97,15 @@ public class OneButtonDialog extends DialogFragmentBase {
     };
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        if (_listener != null && !_buttonPressed)
-            _listener.onDismiss();
-        _buttonPressed = false;
-    }
-
-    @Override
-    public void dismiss() {
-        _buttonPressed = true;
-        super.dismiss();
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (_listener != null)
+            _listener.onCancel();
     }
 
     public interface Listener {
         public void onButtonClick();
 
-        public void onDismiss();
+        public void onCancel();
     }
 }

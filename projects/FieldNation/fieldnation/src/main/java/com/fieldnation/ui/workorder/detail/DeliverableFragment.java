@@ -443,6 +443,8 @@ public class DeliverableFragment extends WorkorderFragment {
     private final TopicReceiver _profile_topicService = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            if (getActivity() == null)
+                return;
             if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
                 parcel.setClassLoader(getActivity().getClassLoader());
                 _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);

@@ -107,6 +107,7 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 
             if (result.getResponseCode() / 100 != 2) {
                 Log.v(TAG, "Error response: " + result.getResponseCode());
+                Log.v(TAG, "Error result: " + result.getResultsAsString());
                 _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                 _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                 _bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
@@ -132,6 +133,11 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                     _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
                     try {
                         // unhappy, but http error
+                        try {
+                            Log.v(TAG, "Error result: " + result.getResultsAsString());
+                        } catch (Exception ex1) {
+                            ex.printStackTrace();
+                        }
                         _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                         _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                         _bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());

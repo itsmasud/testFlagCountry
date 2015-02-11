@@ -33,9 +33,9 @@
         <LinearLayout style="?attr/dialogActionBarStyle">
 
             <Button
-                android:id="@+id/cancel_button"
+                android:id="@+id/notnow_button"
                 style="?attr/dialogCancelButtonStyle"
-                android:text="@string/btn_cancel" />
+                android:text="@string/btn_not_now" />
 
             <Button
                 android:id="@+id/ok_button"

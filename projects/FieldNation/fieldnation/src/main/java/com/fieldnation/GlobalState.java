@@ -43,6 +43,7 @@ public class GlobalState extends Application {
     private Tracker _tracker;
     private ProfileService _service;
     private Profile _profile;
+    private static GlobalState _context;
 
     public GlobalState() {
         super();
@@ -53,6 +54,7 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        _context = this;
         DataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
         new ExpenseCategories(this);
@@ -69,6 +71,16 @@ public class GlobalState extends Application {
 
         AuthTopicService.subscribeAuthState(this, 0, TAG + ":AuthTopicService", _authReceiver);
         Topics.subscribeProfileInvalidated(this, TAG + ":ProfileService", _profile_topicReceiver);
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        _context = null;
+    }
+
+    public static GlobalState getContext() {
+        return _context;
     }
 
     /*-**********************-*/
