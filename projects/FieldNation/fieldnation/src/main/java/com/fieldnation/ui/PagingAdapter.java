@@ -1,10 +1,12 @@
 package com.fieldnation.ui;
 
 import android.database.DataSetObserver;
-import android.util.Log;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.fieldnation.Log;
 
 import java.util.Enumeration;
 import java.util.HashSet;

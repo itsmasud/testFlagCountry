@@ -6,8 +6,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.utils.misc;
 

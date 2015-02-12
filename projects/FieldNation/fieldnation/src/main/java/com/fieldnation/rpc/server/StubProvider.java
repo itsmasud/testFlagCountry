@@ -4,7 +4,9 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
+
+import com.fieldnation.Log;
+
 
 public class StubProvider extends ContentProvider {
 	private static final String TAG = "rpc.server.StubProvider";

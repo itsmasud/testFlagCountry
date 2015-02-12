@@ -17,6 +17,7 @@ import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
@@ -26,15 +27,19 @@ import com.fieldnation.ui.dialog.UpdateDialog;
  * @author michael.carver
  */
 public abstract class AuthActionBarActivity extends ActionBarActivity {
-    private final String TAG = UniqueTag.makeTag("ui.AuthActionBarActivity");
+    private static final String TAG_BASE = "ui.AuthActionBarActivity";
+    private String TAG = TAG_BASE;
 
     private final static int AUTH_SERVICE = 1;
+
+    private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // UI
     NotificationActionBarView _notificationsView;
     MessagesActionBarView _messagesView;
 
     private UpdateDialog _updateDialog;
+    private TwoButtonDialog _acceptTermsDialog;
 
     // Services
     private TopicShutdownReciever _shutdownListener;
@@ -46,6 +51,18 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TAG)) {
+                TAG = savedInstanceState.getString(STATE_TAG);
+            } else {
+                TAG = UniqueTag.makeTag(TAG_BASE);
+            }
+        }
+
+        if (TAG.equals(TAG_BASE)) {
+            TAG = UniqueTag.makeTag(TAG_BASE);
+        }
 
         ClockReceiver.registerClock(this);
 
@@ -59,7 +76,17 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
-
+        _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG);
+        try {
+            _acceptTermsDialog.setData(
+                    getString(R.string.dialog_accept_terms_title),
+                    String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$s%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You have <b>%2$s days</b> until new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> are in effect.", "1.3", "14"),
+//                    getString(R.string.dialog_accept_terms_body, "1.3", "14"),
+                    getString(R.string.btn_accept),
+                    getString(R.string.btn_later), _acceptTerms_listener);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -78,6 +105,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
         TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topic_needUpdate);
+        //_acceptTermsDialog.setCancelable(false);
+        //_acceptTermsDialog.show();
     }
 
     @Override
@@ -97,6 +126,23 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
+        @Override
+        public void onPositive() {
+
+        }
+
+        @Override
+        public void onNegative() {
+
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
+
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {

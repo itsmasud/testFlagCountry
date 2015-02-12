@@ -1,6 +1,8 @@
 package com.fieldnation.rpc.server;
 
-import android.util.Log;
+
+
+import com.fieldnation.Log;
 
 import java.io.IOException;
 import java.io.InputStream;

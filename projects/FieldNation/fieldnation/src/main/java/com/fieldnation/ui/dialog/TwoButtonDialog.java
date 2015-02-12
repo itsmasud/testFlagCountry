@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,25 +21,27 @@ import com.fieldnation.utils.misc;
 /**
  * Created by Michael on 2/6/2015.
  */
-public class OneButtonDialog extends DialogFragmentBase {
+public class TwoButtonDialog extends DialogFragmentBase {
     private static final String TAG = UniqueTag.makeTag("ui.dialog.OneButtonDialog");
 
     //Ui
     private TextView _titleTextView;
     private TextView _bodyTextView;
-    private Button _button;
+    private Button _positiveButton;
+    private Button _negativeButton;
 
     // Data
     private String _title;
     private String _body;
-    private String _buttonText;
+    private String _positiveText;
+    private String _negativeText;
     private Listener _listener;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
     /*-*************************************-*/
-    public static OneButtonDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, OneButtonDialog.class);
+    public static TwoButtonDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, TwoButtonDialog.class);
     }
 
     @Override
@@ -53,12 +54,15 @@ public class OneButtonDialog extends DialogFragmentBase {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_one_button, container, false);
+        View v = inflater.inflate(R.layout.dialog_two_button, container, false);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        _button = (Button) v.findViewById(R.id.button);
-        _button.setOnClickListener(_button_onClick);
+        _positiveButton = (Button) v.findViewById(R.id.positive_button);
+        _positiveButton.setOnClickListener(_positive_onClick);
+
+        _negativeButton = (Button) v.findViewById(R.id.negative_button);
+        _negativeButton.setOnClickListener(_negative_onClick);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
@@ -74,26 +78,37 @@ public class OneButtonDialog extends DialogFragmentBase {
         _titleTextView.setText(_title);
         _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
         _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        _button.setText(_buttonText);
+        _positiveButton.setText(_positiveText);
+        _negativeButton.setText(_negativeText);
     }
 
-    public void setData(String title, String body, String buttonText, Listener listener) {
+    public void setData(String title, String body, String positiveText, String negativeText, Listener listener) {
         Log.v(TAG, "setData");
         _body = body;
         _title = title;
-        _buttonText = buttonText;
+        _positiveText = positiveText;
+        _negativeText = negativeText;
         _listener = listener;
 
         if (_titleTextView != null)
             reset();
     }
 
-    private View.OnClickListener _button_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _positive_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
             if (_listener != null)
-                _listener.onButtonClick();
+                _listener.onPositive();
+        }
+    };
+
+    private final View.OnClickListener _negative_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            if (_listener != null)
+                _listener.onNegative();
         }
     };
 
@@ -105,7 +120,9 @@ public class OneButtonDialog extends DialogFragmentBase {
     }
 
     public interface Listener {
-        public void onButtonClick();
+        public void onPositive();
+
+        public void onNegative();
 
         public void onCancel();
     }

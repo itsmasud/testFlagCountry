@@ -11,9 +11,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.util.Log;
+
 
 import com.fieldnation.FutureWaitAsyncTask;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;

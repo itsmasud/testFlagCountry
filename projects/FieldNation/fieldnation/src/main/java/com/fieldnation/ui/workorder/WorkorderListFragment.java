@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -53,16 +53,17 @@ import java.util.List;
 import java.util.Set;
 
 public class WorkorderListFragment extends Fragment {
-    private String TAG = "ui.workorder.WorkorderListFragment";
+    private static final String TAG_BASE = "ui.workorder.WorkorderListFragment";
+    private String TAG = TAG_BASE;
 
     // State
-    private static final String STATE_DISPLAY = "STATE_DISPLAY";
-    private static final String STATE_CURRENT_WORKORDER = "STATE_CURRENT_WORKORDER";
-    private static final String STATE_AUTHTOKEN = "STATE_AUTHTOKEN";
-    private static final String STATE_USERNAME = "STATE_USERNAME";
-    private static final String STATE_DEVICE_COUNT = "STATE_DEVICE_COUNT";
-    private static final String STATE_TAG = "STATE_TAG";
-    private static final String STATE_WORKING_LIST = "STATE_WORKING_LIST";
+    private static final String STATE_DISPLAY = TAG_BASE + ".STATE_DISPLAY";
+    private static final String STATE_CURRENT_WORKORDER = TAG_BASE + ".STATE_CURRENT_WORKORDER";
+    private static final String STATE_AUTHTOKEN = TAG_BASE + ".STATE_AUTHTOKEN";
+    private static final String STATE_USERNAME = TAG_BASE + ".STATE_USERNAME";
+    private static final String STATE_DEVICE_COUNT = TAG_BASE + ".STATE_DEVICE_COUNT";
+    private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
+    private static final String STATE_WORKING_LIST = TAG_BASE + ".STATE_WORKING_LIST";
 
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
@@ -74,8 +75,8 @@ public class WorkorderListFragment extends Fragment {
     private static final int WEB_CHECKING_IN = 3;
 
     // Request Key
-    private static final String KEY_PAGE_NUM = "WorkorderListFragment.PAGE_NUM";
-    private static final String KEY_WORKORDER_ID = "WorkorderListFragment.WORKORDER_ID";
+    private static final String KEY_PAGE_NUM = TAG_BASE + ".PAGE_NUM";
+    private static final String KEY_WORKORDER_ID = TAG_BASE + ".WORKORDER_ID";
 
     // UI
     private OverScrollListView _listView;
@@ -117,7 +118,7 @@ public class WorkorderListFragment extends Fragment {
             if (savedInstanceState.containsKey(STATE_TAG)) {
                 TAG = savedInstanceState.getString(STATE_TAG);
             } else {
-                TAG = UniqueTag.makeTag(TAG);
+                TAG = UniqueTag.makeTag(TAG_BASE);
             }
 
             if (savedInstanceState.containsKey(STATE_WORKING_LIST)) {
@@ -136,8 +137,8 @@ public class WorkorderListFragment extends Fragment {
                 _currentWorkorder = savedInstanceState.getParcelable(STATE_CURRENT_WORKORDER);
         }
 
-        if ("ui.workorder.WorkorderListFragment".equals(TAG)) {
-            TAG = UniqueTag.makeTag("ui.workorder.WorkorderListFragment");
+        if (TAG_BASE.equals(TAG)) {
+            TAG = UniqueTag.makeTag(TAG_BASE);
         }
 
         Log.v(TAG, "onCreate: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());

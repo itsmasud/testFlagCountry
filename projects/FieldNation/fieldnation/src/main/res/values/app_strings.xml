@@ -55,6 +55,8 @@
     <string name="btn_no_thanks">NO THANKS</string>
     <string name="btn_gps_settings">GPS SETTINGS</string>
     <string name="btn_not_now">NOT NOW</string>
+    <string name="btn_accept">Accept</string>
+    <string name="btn_later">Remind me later</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
@@ -109,6 +111,9 @@
     <string name="dialog_location_loading_title">Gathering Location</string>
     <string name="dialog_location_loading_body">We are currently gathering your location information.\n\nThis could take up to several minutes.</string>
     <string name="dialog_location_loading_button">@string/btn_cancel</string>
+
+    <string name="dialog_accept_terms_title">Terms of Service</string>
+    <string name="dialog_accept_terms_body">By accepting you agree to the new <a href="https://app.fieldnation.com/legal/?a=provider">Terms of Service</a> and acknowledge the additional %1$s%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You have <b>%2$s days</b> until new <a href="https://app.fieldnation.com/legal/?a=provider">Terms of Service</a> are in effect.</string>
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
 

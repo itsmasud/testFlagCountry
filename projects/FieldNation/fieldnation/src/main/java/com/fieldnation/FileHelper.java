@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.util.Log;
+
 import android.widget.Toast;
 
 import com.fieldnation.utils.ISO8601;

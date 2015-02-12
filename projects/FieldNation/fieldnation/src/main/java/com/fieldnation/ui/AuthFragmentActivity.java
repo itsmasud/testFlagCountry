@@ -16,21 +16,26 @@ import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
  * Created by michael.carver on 12/5/2014.
  */
 public abstract class AuthFragmentActivity extends FragmentActivity {
-    private final String TAG = UniqueTag.makeTag("ui.AuthFragmentActivity");
+    private static final String TAG_BASE = "ui.AuthFragmentActivity";
+    private String TAG = TAG_BASE;
 
     private static final int AUTH_SERVICE = 1;
+
+    private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // UI
     NotificationActionBarView _notificationsView;
     MessagesActionBarView _messagesView;
 
     private UpdateDialog _updateDialog;
+    private TwoButtonDialog _acceptTermsDialog;
 
     // Services
     private TopicShutdownReciever _shutdownListener;
@@ -42,9 +47,32 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TAG)) {
+                TAG = savedInstanceState.getString(STATE_TAG);
+            } else {
+                TAG = UniqueTag.makeTag(TAG_BASE);
+            }
+        }
+
+        if (TAG.equals(TAG_BASE)) {
+            TAG = UniqueTag.makeTag(TAG_BASE);
+        }
+
         ClockReceiver.registerClock(this);
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
+        _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG);
+        try {
+            _acceptTermsDialog.setData(
+                    getString(R.string.dialog_accept_terms_title),
+                    String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$s%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You have <b>%2$s days</b> until new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> are in effect.", "1.3", "14"),
+//                    getString(R.string.dialog_accept_terms_body, "1.3", "14"),
+                    getString(R.string.btn_accept),
+                    getString(R.string.btn_later), _acceptTerms_listener);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -73,6 +101,12 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_TAG, TAG);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onDestroy() {
         _shutdownListener.onPause();
         super.onDestroy();
@@ -81,6 +115,23 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+
+    private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
+        @Override
+        public void onPositive() {
+
+        }
+
+        @Override
+        public void onNegative() {
+
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
 
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override

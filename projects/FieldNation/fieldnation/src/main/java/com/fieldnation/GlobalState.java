@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -38,6 +37,7 @@ public class GlobalState extends Application {
     public static final String PREF_NAME = "GlobalPreferences";
     public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
     public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
+    public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_PROFILE_ID = "PREF_PROFILE_ID";
 
     private Tracker _tracker;
@@ -279,6 +279,19 @@ public class GlobalState extends Application {
             timing.setValue(value);
 
         t.send(timing.build());
+    }
+
+    public boolean canRemindTos() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return System.currentTimeMillis() > settings.getLong(PREF_TOS_TIMEOUT, 0);
+    }
+
+    public void setTosLater() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_TOS_TIMEOUT, System.currentTimeMillis() + 172800000);
+        edit.putBoolean(PREF_SHOWN_REVIEW_DIALOG, true);
+        edit.apply();
     }
 
     public boolean hasShownReviewDialog() {

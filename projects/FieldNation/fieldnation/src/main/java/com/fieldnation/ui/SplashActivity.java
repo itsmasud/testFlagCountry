@@ -5,9 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Window;
 
+import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.auth.server.AuthActivity;
@@ -16,6 +17,7 @@ import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.dialog.OneButtonDialog;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 
 /**
@@ -34,6 +36,7 @@ public class SplashActivity extends AuthFragmentActivity {
     private boolean _calledMyWork = false;
 
     private OneButtonDialog _notProviderDialog;
+    private TwoButtonDialog _acceptTermsDialog;
 
     public SplashActivity() {
         super();
@@ -45,10 +48,6 @@ public class SplashActivity extends AuthFragmentActivity {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        Log.v(TAG, "onCreate");
-
-        _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG);
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_IS_AUTH)) {
                 _isAuth = savedInstanceState.getBoolean(STATE_IS_AUTH);
@@ -60,6 +59,12 @@ public class SplashActivity extends AuthFragmentActivity {
                 _showingDialog = savedInstanceState.getBoolean(STATE_SHOWING_DIALOG);
             }
         }
+
+        Log.v(TAG, "onCreate");
+
+        _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG);
+
+        _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG);
     }
 
     @Override
@@ -125,6 +130,24 @@ public class SplashActivity extends AuthFragmentActivity {
         Log.v(TAG, "doNextStep");
 
         if (_profile.isProvider()) {
+
+            try {
+                _acceptTermsDialog.setData(
+                        getString(R.string.dialog_accept_terms_title),
+                        String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$s%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You have <b>%2$s days</b> until new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> are in effect.", "1.3", "14"),
+                        getString(R.string.btn_accept),
+                        getString(R.string.btn_later),
+                        _acceptTerms_listener);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            // todo test ToS checked
+            // if ToS Not checked, then
+            if (GlobalState.getContext().canRemindTos()) {
+//                _acceptTermsDialog.show();
+            }
+
             if (!_calledMyWork) {
                 _calledMyWork = true;
                 MyWorkActivity.startNew(this);
@@ -136,6 +159,24 @@ public class SplashActivity extends AuthFragmentActivity {
         }
 
     }
+
+    private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
+        @Override
+        public void onPositive() {
+            // TODO do something
+        }
+
+        @Override
+        public void onNegative() {
+            // later
+            GlobalState.getContext().setTosLater();
+        }
+
+        @Override
+        public void onCancel() {
+            GlobalState.getContext().setTosLater();
+        }
+    };
 
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
