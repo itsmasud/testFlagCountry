@@ -50,6 +50,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     // Data
     private Profile _profile;
+    private boolean _profileBounceProtect = false;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -84,7 +85,9 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
         _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":TOS");
+        _acceptTermsDialog.setCancelable(false);
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
+        _coiWarningDialog.setCancelable(false);
     }
 
     @Override
@@ -124,39 +127,42 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     }
 
     private void gotProfile(Profile profile) {
-        GlobalState gs = GlobalState.getContext();
-        if (!profile.hasTos() && gs.canRemindTos()) {
-            gs.setTosReminded();
+        if (_profileBounceProtect)
+            return;
 
+        _profileBounceProtect = true;
+        GlobalState gs = GlobalState.getContext();
+        if (!profile.hasTos() && (gs.canRemindTos() || profile.isTosRequired())) {
+            Log.v(TAG, "Asking Tos");
             if (profile.isTosRequired()) {
-                _acceptTermsDialog.setCancelable(false);
+                Log.v(TAG, "Asking Tos, hard");
                 _acceptTermsDialog.setData(getString(R.string.dialog_accept_terms_title),
-                        String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$.2f%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You <b>MUST</b> accept to continue.", profile.insurancePercent()),
+                        getString(R.string.dialog_accept_terms_body_hard, profile.insurancePercent()),
                         getString(R.string.btn_accept),
                         _acceptTerms_listener);
             } else {
-                _acceptTermsDialog.setCancelable(true);
+                Log.v(TAG, "Asking Tos, soft");
                 _acceptTermsDialog.setData(
                         getString(R.string.dialog_accept_terms_title),
-                        String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$.2f%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You have <b>%2$d days</b> until new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> are in effect.", profile.insurancePercent(), 14),
+                        getString(R.string.dialog_accept_terms_body_soft, profile.insurancePercent(), 14),
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
             _acceptTermsDialog.show();
-
         } else if (!profile.hasValidCoi() && gs.canRemindCoi()) {
-            gs.setCoiReminded();
-
+            Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),
                     getString(R.string.dialog_coi_body, profile.insurancePercent()),
-                    getString(R.string.btn_accept),
                     getString(R.string.btn_later),
+                    getString(R.string.btn_no_later),
                     _coi_listener);
 
             _coiWarningDialog.show();
         } else {
+            Log.v(TAG, "tos/coi check done");
             onProfile(profile);
+            _profileBounceProtect = false;
         }
     }
 
@@ -170,35 +176,60 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         @Override
         public void onPositive() {
             // TODO call TOS web service, then update the profile
-            gotProfile(_profile);
+            _profileBounceProtect = false;
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
         }
 
         @Override
         public void onNegative() {
             // hide, continue
-            gotProfile(_profile);
+            _profileBounceProtect = false;
+            GlobalState.getContext().setTosReminded();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
         }
 
         @Override
         public void onCancel() {
-            gotProfile(_profile);
         }
     };
 
     private final TwoButtonDialog.Listener _coi_listener = new TwoButtonDialog.Listener() {
         @Override
         public void onPositive() {
-
+            _profileBounceProtect = false;
+            GlobalState.getContext().setCoiReminded();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
         }
 
         @Override
         public void onNegative() {
-
+            _profileBounceProtect = false;
+            GlobalState.getContext().setNeverRemindCoi();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
         }
 
         @Override
         public void onCancel() {
-
         }
     };
 

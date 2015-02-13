@@ -57,6 +57,7 @@
     <string name="btn_not_now">NOT NOW</string>
     <string name="btn_accept">Accept</string>
     <string name="btn_later">Remind me later</string>
+    <string name="btn_no_later">Never show again</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
@@ -118,8 +119,7 @@
         &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
         and acknowledge the additional %1$.1f%% fee per work order if you do not upload a certificate
         of insurance.&lt;br/&gt;&lt;br/&gt;You have &lt;b&gt;%2$d days&lt;/b&gt; until new
-        &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
-        are in effect.</string>
+        Terms of Service are in effect.</string>
     <string name="dialog_accept_terms_body_hard">By accepting you agree to the new
         &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
         and acknowledge the additional %1$.1f%% fee per work order if you do not upload a
@@ -128,7 +128,8 @@
     <string name="dialog_coi_title">Proof of Insurance</string>
     <string name="dialog_coi_body">At this time, you have no certificate of insurance on file.
         By not uploading proof of insurance, you will be opted into the Field Nation insurance
-        program and you will incur an additional %1$.1f%% fee per work order Starting March 1, 2015.</string>
+        program and you will incur an additional %1$.1f%% fee per work order starting March 1, 2015.
+        &lt;br/&gt;&lt;br/&gt;To upload a proof of insurance log into the website from a computer.</string>
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
 

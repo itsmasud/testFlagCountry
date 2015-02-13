@@ -19,7 +19,6 @@ import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
-import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
@@ -40,7 +39,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     private UpdateDialog _updateDialog;
     private TwoButtonDialog _acceptTermsDialog;
-    private OneButtonDialog _coiWarningDialog;
+    private TwoButtonDialog _coiWarningDialog;
 
     // Services
     private TopicShutdownReciever _shutdownListener;
@@ -73,7 +72,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
         _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":TOS");
         _acceptTermsDialog.setCancelable(false);
-        _coiWarningDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
+        _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
     }
 
@@ -124,8 +123,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         GlobalState gs = GlobalState.getContext();
         if (!profile.hasTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
-            gs.setTosReminded();
-
             if (profile.isTosRequired()) {
                 Log.v(TAG, "Asking Tos, hard");
                 _acceptTermsDialog.setData(getString(R.string.dialog_accept_terms_title),
@@ -143,12 +140,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             _acceptTermsDialog.show();
         } else if (!profile.hasValidCoi() && gs.canRemindCoi()) {
             Log.v(TAG, "Asking coi");
-            gs.setCoiReminded();
-
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),
                     getString(R.string.dialog_coi_body, profile.insurancePercent()),
                     getString(R.string.btn_later),
+                    getString(R.string.btn_no_later),
                     _coi_listener);
 
             _coiWarningDialog.show();
@@ -183,6 +179,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         public void onNegative() {
             // hide, continue
             _profileBounceProtect = false;
+            GlobalState.getContext().setTosReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -193,20 +190,26 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         @Override
         public void onCancel() {
-            _profileBounceProtect = false;
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    gotProfile(_profile);
-                }
-            });
         }
     };
 
-    private final OneButtonDialog.Listener _coi_listener = new OneButtonDialog.Listener() {
+    private final TwoButtonDialog.Listener _coi_listener = new TwoButtonDialog.Listener() {
         @Override
-        public void onButtonClick() {
+        public void onPositive() {
             _profileBounceProtect = false;
+            GlobalState.getContext().setCoiReminded();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
+        }
+
+        @Override
+        public void onNegative() {
+            _profileBounceProtect = false;
+            GlobalState.getContext().setNeverRemindCoi();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -217,13 +220,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         @Override
         public void onCancel() {
-            _profileBounceProtect = false;
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    gotProfile(_profile);
-                }
-            });
         }
     };
 

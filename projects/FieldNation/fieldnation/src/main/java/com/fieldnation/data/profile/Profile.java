@@ -85,8 +85,8 @@ public class Profile implements Parcelable {
     }
 
     public Float insurancePercent() {
-//        if (_insurancePercent != null)
-//            return _insurancePercent;
+        if (_insurancePercent != null)
+            return _insurancePercent;
 
         return 1.3F;
     }

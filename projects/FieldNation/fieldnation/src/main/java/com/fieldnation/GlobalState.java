@@ -40,6 +40,7 @@ public class GlobalState extends Application {
     public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
     public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
+    public static final String PREF_COI_NEVER = "PREF_COI_NEVER";
     public static final String PREF_PROFILE_ID = "PREF_PROFILE_ID";
 
     private Tracker _tracker;
@@ -285,6 +286,9 @@ public class GlobalState extends Application {
 
     public boolean canRemindCoi() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        if (settings.contains(PREF_COI_NEVER))
+            return false;
+
         return System.currentTimeMillis() > settings.getLong(PREF_COI_TIMEOUT, 0);
     }
 
@@ -297,10 +301,18 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
+    public void setNeverRemindCoi() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_COI_NEVER, true);
+        edit.apply();
+    }
+
     public boolean canRemindTos() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         return System.currentTimeMillis() > settings.getLong(PREF_TOS_TIMEOUT, 0);
     }
+
 
     public void setTosReminded() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);

@@ -131,7 +131,7 @@ public class DialogFragmentBase extends DialogFragment {
     @Override
     public int show(FragmentTransaction transaction, String tag) {
         Log.v(TAG, "show");
-        if (!_isDismissed)
+        if (!_isDismissed || isVisible())
             return -1;
 
         _reset = true;
@@ -150,7 +150,7 @@ public class DialogFragmentBase extends DialogFragment {
     @Override
     public void show(FragmentManager manager, String tag) {
         Log.v(TAG, "show");
-        if (!_isDismissed)
+        if (!_isDismissed || isVisible())
             return;
 
         _reset = true;
@@ -163,7 +163,7 @@ public class DialogFragmentBase extends DialogFragment {
 
     public void show() {
         Log.v(TAG, "show");
-        if (!_isDismissed)
+        if (!_isDismissed || isVisible())
             return;
 
         _reset = true;
