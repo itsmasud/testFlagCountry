@@ -76,7 +76,7 @@
     <string name="dialog_no_number_title">No number found</string>
     <string name="dialog_no_number_message">There is no number associated with this task. Please check the work order details for a phone number.\r\n\r\nThis task will now be marked as complete.</string>
 
-    <string name="dialog_decline_title">Not interetsed</string>
+    <string name="dialog_decline_title">Not interested</string>
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="dialog_block_details">Additional details</string>
