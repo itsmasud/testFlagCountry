@@ -126,10 +126,12 @@
         certificate of insurance.&lt;br/&gt;&lt;br/&gt;You &lt;b&gt;MUST&lt;/b&gt; accept to continue.</string>
 
     <string name="dialog_coi_title">Proof of Insurance</string>
-    <string name="dialog_coi_body">At this time, you have no certificate of insurance on file.
-        By not uploading proof of insurance, you will be opted into the Field Nation insurance
-        program and you will incur an additional %1$.1f%% fee per work order starting March 1, 2015.
-        &lt;br/&gt;&lt;br/&gt;To upload a proof of insurance log into the website from a computer.</string>
+    <string name="dialog_coi_body">You do not have a certificate of insurance uploaded in your
+        Field Nation profile.  As a result, you will be charged an additional %1$.1f%% fee per work
+        order effective March 1, 2015.&lt;br/&gt;&lt;br/&gt;
+        To upload a certificate of insurance and avoid the additional fee, log into the website
+        from a computer and follow the instructions.</string>
+
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
 
