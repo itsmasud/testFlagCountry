@@ -8,10 +8,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
@@ -40,9 +43,13 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     private UpdateDialog _updateDialog;
     private TwoButtonDialog _acceptTermsDialog;
+    private TwoButtonDialog _coiWarningDialog;
 
     // Services
     private TopicShutdownReciever _shutdownListener;
+
+    // Data
+    private Profile _profile;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -76,17 +83,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         actionbar.setHomeAsUpIndicator(R.drawable.ic_action_previous_item);
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
-        _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG);
-        try {
-            _acceptTermsDialog.setData(
-                    getString(R.string.dialog_accept_terms_title),
-                    String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$s%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You have <b>%2$s days</b> until new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> are in effect.", "1.3", "14"),
-//                    getString(R.string.dialog_accept_terms_body, "1.3", "14"),
-                    getString(R.string.btn_accept),
-                    getString(R.string.btn_later), _acceptTerms_listener);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":TOS");
+        _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
     }
 
     @Override
@@ -104,7 +102,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
-        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topic_needUpdate);
+        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
+        Topics.subscrubeProfileUpdated(this, TAG + ":PROFILE", _topicReceiver);
         //_acceptTermsDialog.setCancelable(false);
         //_acceptTermsDialog.show();
     }
@@ -120,13 +119,73 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     protected void onDestroy() {
         if (_shutdownListener != null)
             _shutdownListener.onPause();
+        TopicService.unRegisterListener(this, 0, TAG + ":PROFILE", Topics.TOPIC_PROFILE_UPDATE);
         super.onDestroy();
+    }
+
+    private void gotProfile(Profile profile) {
+        GlobalState gs = GlobalState.getContext();
+        if (!profile.hasTos() && gs.canRemindTos()) {
+            gs.setTosReminded();
+
+            if (profile.isTosRequired()) {
+                _acceptTermsDialog.setCancelable(false);
+                _acceptTermsDialog.setData(getString(R.string.dialog_accept_terms_title),
+                        String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$.2f%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You <b>MUST</b> accept to continue.", profile.insurancePercent()),
+                        getString(R.string.btn_accept),
+                        _acceptTerms_listener);
+            } else {
+                _acceptTermsDialog.setCancelable(true);
+                _acceptTermsDialog.setData(
+                        getString(R.string.dialog_accept_terms_title),
+                        String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$.2f%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You have <b>%2$d days</b> until new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> are in effect.", profile.insurancePercent(), 14),
+                        getString(R.string.btn_accept),
+                        getString(R.string.btn_later), _acceptTerms_listener);
+            }
+            _acceptTermsDialog.show();
+
+        } else if (!profile.hasValidCoi() && gs.canRemindCoi()) {
+            gs.setCoiReminded();
+
+            _coiWarningDialog.setData(
+                    getString(R.string.dialog_coi_title),
+                    getString(R.string.dialog_coi_body, profile.insurancePercent()),
+                    getString(R.string.btn_accept),
+                    getString(R.string.btn_later),
+                    _coi_listener);
+
+            _coiWarningDialog.show();
+        } else {
+            onProfile(profile);
+        }
+    }
+
+    public void onProfile(Profile profile) {
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
     private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
+        @Override
+        public void onPositive() {
+            // TODO call TOS web service, then update the profile
+            gotProfile(_profile);
+        }
+
+        @Override
+        public void onNegative() {
+            // hide, continue
+            gotProfile(_profile);
+        }
+
+        @Override
+        public void onCancel() {
+            gotProfile(_profile);
+        }
+    };
+
+    private final TwoButtonDialog.Listener _coi_listener = new TwoButtonDialog.Listener() {
         @Override
         public void onPositive() {
 
@@ -167,12 +226,20 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     };
 
-    private final TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
                 _updateDialog.show();
             }
+
+            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
+                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
+                parcel.setClassLoader(getClassLoader());
+                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
+                gotProfile(_profile);
+            }
+
         }
     };
 

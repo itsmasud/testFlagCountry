@@ -79,7 +79,13 @@ public class TwoButtonDialog extends DialogFragmentBase {
         _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
         _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         _positiveButton.setText(_positiveText);
-        _negativeButton.setText(_negativeText);
+        if (_negativeText == null) {
+            _negativeButton.setVisibility(View.GONE);
+        } else {
+            _negativeButton.setVisibility(View.VISIBLE);
+            _negativeButton.setText(_negativeText);
+        }
+
     }
 
     public void setData(String title, String body, String positiveText, String negativeText, Listener listener) {
@@ -88,6 +94,18 @@ public class TwoButtonDialog extends DialogFragmentBase {
         _title = title;
         _positiveText = positiveText;
         _negativeText = negativeText;
+        _listener = listener;
+
+        if (_titleTextView != null)
+            reset();
+    }
+
+    public void setData(String title, String body, String positiveText, Listener listener) {
+        Log.v(TAG, "setData");
+        _body = body;
+        _title = title;
+        _positiveText = positiveText;
+        _negativeText = null;
         _listener = listener;
 
         if (_titleTextView != null)

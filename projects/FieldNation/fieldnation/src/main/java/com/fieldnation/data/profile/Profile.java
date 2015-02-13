@@ -16,6 +16,12 @@ public class Profile implements Parcelable {
     private String _email;
     @Json(name = "firstname")
     private String _firstname;
+    @Json(name = "hasTOS")
+    private Boolean _hasTos;
+    @Json(name = "hasValidCOI")
+    private Boolean _hasValidCoi;
+    @Json(name = "insurancePercent")
+    private Float _insurancePercent;
     @Json(name = "isProvider")
     private Boolean _isProvider;
     @Json(name = "lastname")
@@ -36,6 +42,8 @@ public class Profile implements Parcelable {
     private String _state;
     @Json(name = "tagline")
     private String _tagline;
+    @Json(name = "tosRequired")
+    private Boolean _tosRequired;
     @Json(name = "unreadMessageCount")
     private Integer _unreadMessageCount;
     @Json(name = "userId")
@@ -60,6 +68,27 @@ public class Profile implements Parcelable {
 
     public String getFirstname() {
         return _firstname;
+    }
+
+    public Boolean hasTos() {
+//        if (_hasTos != null)
+//            return _hasTos;
+
+        return false;
+    }
+
+    public Boolean hasValidCoi() {
+//        if (_hasValidCoi != null)
+//            return _hasValidCoi;
+
+        return false;
+    }
+
+    public Float insurancePercent() {
+//        if (_insurancePercent != null)
+//            return _insurancePercent;
+
+        return 1.3F;
     }
 
     public Boolean isProvider() {
@@ -100,6 +129,13 @@ public class Profile implements Parcelable {
 
     public String getTagline() {
         return _tagline;
+    }
+
+    public Boolean isTosRequired() {
+//        if (_tosRequired != null)
+//            return _tosRequired;
+
+        return false;
     }
 
     public Integer getUnreadMessageCount() {

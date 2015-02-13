@@ -7,15 +7,19 @@ import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
@@ -36,9 +40,14 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     private UpdateDialog _updateDialog;
     private TwoButtonDialog _acceptTermsDialog;
+    private OneButtonDialog _coiWarningDialog;
 
     // Services
     private TopicShutdownReciever _shutdownListener;
+
+    // Data
+    private Profile _profile;
+    private boolean _profileBounceProtect = false;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -62,17 +71,10 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         ClockReceiver.registerClock(this);
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
-        _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG);
-        try {
-            _acceptTermsDialog.setData(
-                    getString(R.string.dialog_accept_terms_title),
-                    String.format("By accepting you agree to the new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> and acknowledge the additional %1$s%% fee per work order if you do not upload a certificate of insurance.<br/><br/>You have <b>%2$s days</b> until new <a href=\"https://app.fieldnation.com/legal/?a=provider\">Terms of Service</a> are in effect.", "1.3", "14"),
-//                    getString(R.string.dialog_accept_terms_body, "1.3", "14"),
-                    getString(R.string.btn_accept),
-                    getString(R.string.btn_later), _acceptTerms_listener);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":TOS");
+        _acceptTermsDialog.setCancelable(false);
+        _coiWarningDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
+        _coiWarningDialog.setCancelable(false);
     }
 
     @Override
@@ -90,7 +92,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
-        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topic_needUpdate);
+        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
+        Topics.subscrubeProfileUpdated(this, TAG + ":PROFILE", _topicReceiver);
     }
 
     @Override
@@ -109,7 +112,54 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         _shutdownListener.onPause();
+        TopicService.unRegisterListener(this, 0, TAG + ":PROFILE", Topics.TOPIC_PROFILE_UPDATE);
         super.onDestroy();
+    }
+
+    private void gotProfile(Profile profile) {
+        if (_profileBounceProtect)
+            return;
+
+        _profileBounceProtect = true;
+        GlobalState gs = GlobalState.getContext();
+        if (!profile.hasTos() && (gs.canRemindTos() || profile.isTosRequired())) {
+            Log.v(TAG, "Asking Tos");
+            gs.setTosReminded();
+
+            if (profile.isTosRequired()) {
+                Log.v(TAG, "Asking Tos, hard");
+                _acceptTermsDialog.setData(getString(R.string.dialog_accept_terms_title),
+                        getString(R.string.dialog_accept_terms_body_hard, profile.insurancePercent()),
+                        getString(R.string.btn_accept),
+                        _acceptTerms_listener);
+            } else {
+                Log.v(TAG, "Asking Tos, soft");
+                _acceptTermsDialog.setData(
+                        getString(R.string.dialog_accept_terms_title),
+                        getString(R.string.dialog_accept_terms_body_soft, profile.insurancePercent(), 14),
+                        getString(R.string.btn_accept),
+                        getString(R.string.btn_later), _acceptTerms_listener);
+            }
+            _acceptTermsDialog.show();
+        } else if (!profile.hasValidCoi() && gs.canRemindCoi()) {
+            Log.v(TAG, "Asking coi");
+            gs.setCoiReminded();
+
+            _coiWarningDialog.setData(
+                    getString(R.string.dialog_coi_title),
+                    getString(R.string.dialog_coi_body, profile.insurancePercent()),
+                    getString(R.string.btn_later),
+                    _coi_listener);
+
+            _coiWarningDialog.show();
+        } else {
+            Log.v(TAG, "tos/coi check done");
+            onProfile(profile);
+            _profileBounceProtect = false;
+        }
+    }
+
+    public void onProfile(Profile profile) {
     }
 
     /*-*********************************-*/
@@ -119,17 +169,61 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
         @Override
         public void onPositive() {
-
+            // TODO call TOS web service, then update the profile
+            _profileBounceProtect = false;
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
         }
 
         @Override
         public void onNegative() {
-
+            // hide, continue
+            _profileBounceProtect = false;
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
         }
 
         @Override
         public void onCancel() {
+            _profileBounceProtect = false;
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
+        }
+    };
 
+    private final OneButtonDialog.Listener _coi_listener = new OneButtonDialog.Listener() {
+        @Override
+        public void onButtonClick() {
+            _profileBounceProtect = false;
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
+        }
+
+        @Override
+        public void onCancel() {
+            _profileBounceProtect = false;
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
         }
     };
 
@@ -156,11 +250,18 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     };
 
-    private final TopicReceiver _topic_needUpdate = new TopicReceiver(new Handler()) {
+    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
             if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
                 _updateDialog.show();
+            }
+
+            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
+                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
+                parcel.setClassLoader(getClassLoader());
+                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
+                gotProfile(_profile);
             }
         }
     };
@@ -178,19 +279,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-/*
-            Intent gohome = new Intent(this, MyWorkActivity.class);
-			startActivity(gohome);
-*/
                 onBackPressed();
                 return true;
-//            case R.id.action_settings:
-//                Intent intent = new Intent(this, SettingsActivity.class);
-//                startActivity(intent);
-//                return true;
-//            case R.id.action_refresh:
-//                onRefresh();
-//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
