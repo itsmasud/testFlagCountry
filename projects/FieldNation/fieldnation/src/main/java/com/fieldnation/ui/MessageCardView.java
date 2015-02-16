@@ -129,7 +129,8 @@ public class MessageCardView extends RelativeLayout {
             // _profileImageView.setBackgroundDrawable(null);
             _profileImageView.setImageDrawable(null);
             String url = _message.getPhotoThumbUrl();
-            getContext().startService(_photoService.getPhoto(_viewId, url, true));
+            if (url != null)
+                getContext().startService(_photoService.getPhoto(_viewId, url, true));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
