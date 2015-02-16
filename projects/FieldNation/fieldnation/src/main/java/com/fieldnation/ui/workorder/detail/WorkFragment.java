@@ -866,18 +866,19 @@ public class WorkFragment extends WorkorderFragment {
     private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String dateTime) {
-            try {
-                long seconds;
-                seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_REQUEST_WORK, "WorkFragment", 1);
-                getActivity().startService(
-                        _service.request(WEB_CHANGED,
-                                _workorder.getWorkorderId(), seconds));
-                setLoading(true);
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            long seconds = -1;
+            if (dateTime != null) {
+                try {
+                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
+            GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_REQUEST_WORK, "WorkFragment", 1);
+            getActivity().startService(
+                    _service.request(WEB_CHANGED,
+                            _workorder.getWorkorderId(), seconds));
+            setLoading(true);
         }
     };
 
