@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
@@ -88,7 +86,7 @@ public class GpsLocationService {
 
     public void stopLocationUpdates() {
         Log.v(TAG, "stopLocationUpdates");
-        if (_googleApiClient.isConnected())
+        if (_googleApiClient != null && _fusedLocationProviderApi != null && _googleApiClient.isConnected())
             _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
         _isRunning = false;
     }
