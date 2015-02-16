@@ -20,6 +20,7 @@ import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
@@ -42,6 +43,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     MessagesActionBarView _messagesView;
 
     private UpdateDialog _updateDialog;
+    private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
 
@@ -88,6 +90,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         _acceptTermsDialog.setCancelable(false);
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
+        _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
     }
 
     @Override
@@ -109,6 +112,9 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         Topics.subscrubeProfileUpdated(this, TAG + ":PROFILE", _topicReceiver);
         //_acceptTermsDialog.setCancelable(false);
         //_acceptTermsDialog.show();
+        _notProviderDialog.setData("User Not Supported",
+                "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
+                "OK", _notProvider_listener);
     }
 
     @Override
@@ -131,6 +137,12 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             return;
 
         _profileBounceProtect = true;
+
+        if (!_profile.isProvider()) {
+            _notProviderDialog.show();
+            return;
+        }
+
         GlobalState gs = GlobalState.getContext();
         if (!profile.hasTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
@@ -172,6 +184,18 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
+        @Override
+        public void onButtonClick() {
+            AuthTopicService.requestAuthRemove(AuthActionBarActivity.this);
+        }
+
+        @Override
+        public void onCancel() {
+            AuthTopicService.requestAuthRemove(AuthActionBarActivity.this);
+        }
+    };
+
     private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
         @Override
         public void onPositive() {

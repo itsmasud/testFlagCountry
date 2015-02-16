@@ -14,7 +14,6 @@ import com.fieldnation.auth.server.AuthActivity;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
-import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 
 /**
@@ -29,10 +28,7 @@ public class SplashActivity extends AuthFragmentActivity {
 
     private Profile _profile = null;
     private boolean _isAuth = false;
-    private boolean _showingDialog = false;
     private boolean _calledMyWork = false;
-
-    private OneButtonDialog _notProviderDialog;
 
     public SplashActivity() {
         super();
@@ -51,20 +47,14 @@ public class SplashActivity extends AuthFragmentActivity {
             if (savedInstanceState.containsKey(STATE_PROFILE)) {
                 _profile = savedInstanceState.getParcelable(STATE_PROFILE);
             }
-            if (savedInstanceState.containsKey(STATE_SHOWING_DIALOG)) {
-                _showingDialog = savedInstanceState.getBoolean(STATE_SHOWING_DIALOG);
-            }
         }
 
         Log.v(TAG, "onCreate");
-
-        _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(STATE_IS_AUTH, _isAuth);
-        outState.putBoolean(STATE_SHOWING_DIALOG, _showingDialog);
         if (_profile != null) {
             outState.putParcelable(STATE_PROFILE, _profile);
         }
@@ -78,9 +68,6 @@ public class SplashActivity extends AuthFragmentActivity {
         AuthTopicService.requestAuthInvalid(this);
         AuthTopicService.subscribeNeedUsernameAndPassword(this, TAG, _topicReceiver);
         AuthTopicService.requestAuthentication(this);
-        _notProviderDialog.setData("User Not Supported",
-                "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
-                "OK", _notProvider_listener);
     }
 
     @Override
@@ -116,9 +103,6 @@ public class SplashActivity extends AuthFragmentActivity {
         if (_profile == null)
             return;
 
-        if (_showingDialog)
-            return;
-
         Log.v(TAG, "doNextStep");
 
         if (_profile.isProvider()) {
@@ -128,9 +112,6 @@ public class SplashActivity extends AuthFragmentActivity {
                 MyWorkActivity.startNew(this);
                 finish();
             }
-        } else {
-            _showingDialog = true;
-            _notProviderDialog.show();
         }
 
     }
@@ -141,17 +122,6 @@ public class SplashActivity extends AuthFragmentActivity {
         doNextStep();
     }
 
-    private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
-        @Override
-        public void onButtonClick() {
-            AuthTopicService.requestAuthRemove(SplashActivity.this);
-        }
-
-        @Override
-        public void onCancel() {
-            AuthTopicService.requestAuthRemove(SplashActivity.this);
-        }
-    };
 
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
