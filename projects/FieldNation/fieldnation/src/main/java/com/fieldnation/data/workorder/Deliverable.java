@@ -16,7 +16,7 @@ public class Deliverable {
 	@Json(name = "fileType")
 	private String _fileType;
 	@Json(name="reviewComment")
-	private Integer _reviewComment;
+	private String _reviewComment;
 	@Json(name = "reviewTime")
 	private Integer _reviewTime;
 	@Json(name = "reviewUserId")
@@ -72,7 +72,7 @@ public class Deliverable {
 		return _fileType;
 	}
 
-	public Integer getReviewComment(){
+	public String getReviewComment(){
 		return _reviewComment;
 	}
 

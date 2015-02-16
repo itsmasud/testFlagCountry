@@ -32,7 +32,7 @@ public class CustomField implements Parcelable {
     @Json(name = "predefinedValues")
     private String[] _predefinedValues;
     @Json(name = "required")
-    private int _required;
+	private Integer _required;
     @Json(name = "tip")
     private String _tip;
     @Json(name = "value")
@@ -40,7 +40,6 @@ public class CustomField implements Parcelable {
 
     public CustomField() {
     }
-
     public String getCustomFieldFormat() {
         return _customFieldFormat;
     }

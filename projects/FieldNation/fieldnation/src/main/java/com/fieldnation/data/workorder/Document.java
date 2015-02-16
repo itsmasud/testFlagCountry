@@ -24,7 +24,6 @@ public class Document {
 
 	public Document() {
 	}
-
 	public Integer getDocumentId() {
 		return _documentId;
 	}
