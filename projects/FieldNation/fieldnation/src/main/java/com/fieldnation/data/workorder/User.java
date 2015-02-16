@@ -6,10 +6,14 @@ import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class User {
+	@Json(name="city")
+	private String _city;
 	@Json(name = "companyId")
 	private Integer _companyId;
 	@Json(name = "companyName")
 	private String _companyName;
+	@Json(name="email")
+	private String _email;
 	@Json(name = "firstName")
 	private String _firstName;
 	@Json(name = "firstname")
@@ -18,10 +22,14 @@ public class User {
 	private String _lastName;
 	@Json(name = "lastname")
 	private String _lastname;
+	@Json(name="phone")
+	private String _phone;
 	@Json(name = "photoThumbUrl")
 	private String _photoThumbUrl;
 	@Json(name = "photoUrl")
 	private String _photoUrl;
+	@Json(name="state")
+	private String _state;
 	@Json(name = "userId")
 	private Integer _userId;
 	@Json(name = "userType")
@@ -31,6 +39,9 @@ public class User {
 
 	public User() {
 	}
+	public String getCity(){
+		return _city;
+	}
 
 	public Integer getCompanyId() {
 		return _companyId;
@@ -38,6 +49,10 @@ public class User {
 
 	public String getCompanyName() {
 		return _companyName;
+	}
+
+	public String getEmail(){
+		return _email;
 	}
 
 	public String getFirstName() {
@@ -56,12 +71,20 @@ public class User {
 		return _lastname;
 	}
 
+	public String getPhone(){
+		return _phone;
+	}
+
 	public String getPhotoThumbUrl() {
 		return _photoThumbUrl;
 	}
 
 	public String getPhotoUrl() {
 		return _photoUrl;
+	}
+
+	public String getState(){
+		return _state;
 	}
 
 	public Integer getUserId() {
