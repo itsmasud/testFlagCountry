@@ -194,7 +194,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
         @Override
         public void onPositive() {
-            // TODO call TOS web service, then update the profile
             _profileBounceProtect = false;
             _service.acceptTos(0, _profile.getUserId());
         }
