@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -14,6 +15,8 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
@@ -44,6 +47,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private TwoButtonDialog _coiWarningDialog;
 
     // Services
+    private ProfileService _service;
     private TopicShutdownReciever _shutdownListener;
 
     // Data
@@ -192,12 +196,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         public void onPositive() {
             // TODO call TOS web service, then update the profile
             _profileBounceProtect = false;
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    gotProfile(_profile);
-                }
-            });
+            _service.acceptTos(0, _profile.getUserId());
         }
 
         @Override
@@ -256,6 +255,9 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_service == null || isNew) {
+                _service = new ProfileService(AuthFragmentActivity.this, username, authToken, _webReceiver);
+            }
             AuthFragmentActivity.this.onAuthentication(username, authToken, isNew);
         }
 
@@ -268,7 +270,19 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         public void onAuthenticationInvalidated() {
             AuthFragmentActivity.this.onAuthenticationInvalidated();
         }
+    };
 
+    private final WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            _profileBounceProtect = false;
+            Topics.dispatchProfileInvalid(AuthFragmentActivity.this);
+        }
+
+        @Override
+        public Context getContext() {
+            return AuthFragmentActivity.this;
+        }
     };
 
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
