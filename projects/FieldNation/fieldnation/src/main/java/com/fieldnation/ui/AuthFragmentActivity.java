@@ -133,7 +133,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             return;
         }
         GlobalState gs = GlobalState.getContext();
-        if (!profile.hasTos() && (gs.canRemindTos() || profile.isTosRequired())) {
+        if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
             if (profile.isTosRequired()) {
                 Log.v(TAG, "Asking Tos, hard");
@@ -145,7 +145,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                 Log.v(TAG, "Asking Tos, soft");
                 _acceptTermsDialog.setData(
                         getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_soft, profile.insurancePercent(), 14),
+                        getString(R.string.dialog_accept_terms_body_soft, profile.insurancePercent(), profile.daysUntilRequired()),
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }

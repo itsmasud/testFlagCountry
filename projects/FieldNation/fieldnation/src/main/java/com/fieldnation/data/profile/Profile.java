@@ -6,8 +6,11 @@ import android.os.Parcelable;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.ISO8601;
 
 public class Profile implements Parcelable {
+    @Json(name = "acceptedTos")
+    private Boolean _acceptedTos;
     @Json(name = "city")
     private String _city;
     @Json(name = "description")
@@ -16,8 +19,6 @@ public class Profile implements Parcelable {
     private String _email;
     @Json(name = "firstname")
     private String _firstname;
-    @Json(name = "hasTOS")
-    private Boolean _hasTos;
     @Json(name = "hasValidCOI")
     private Boolean _hasValidCoi;
     @Json(name = "insurancePercent")
@@ -42,8 +43,8 @@ public class Profile implements Parcelable {
     private String _state;
     @Json(name = "tagline")
     private String _tagline;
-    @Json(name = "tosRequired")
-    private Boolean _tosRequired;
+    @Json(name = "tosRequiredBy")
+    private String _tosRequiredBy;
     @Json(name = "unreadMessageCount")
     private Integer _unreadMessageCount;
     @Json(name = "userId")
@@ -52,6 +53,10 @@ public class Profile implements Parcelable {
     private Integer _workordersTotal;
 
     public Profile() {
+    }
+
+    public Boolean getAcceptedTos() {
+        return _acceptedTos;
     }
 
     public String getCity() {
@@ -70,16 +75,9 @@ public class Profile implements Parcelable {
         return _firstname;
     }
 
-    public Boolean hasTos() {
-//        if (_hasTos != null)
-//            return _hasTos;
-
-        return false;
-    }
-
     public Boolean hasValidCoi() {
-//        if (_hasValidCoi != null)
-//            return _hasValidCoi;
+        if (_hasValidCoi != null)
+            return _hasValidCoi;
 
         return false;
     }
@@ -131,11 +129,8 @@ public class Profile implements Parcelable {
         return _tagline;
     }
 
-    public Boolean isTosRequired() {
-//        if (_tosRequired != null)
-//            return _tosRequired;
-
-        return false;
+    public String getTosRequiredBy() {
+        return _tosRequiredBy;
     }
 
     public Integer getUnreadMessageCount() {
@@ -172,6 +167,44 @@ public class Profile implements Parcelable {
         }
     }
 
+    /*-*****************************-*/
+    /*-			Human Code			-*/
+    /*-*****************************-*/
+    public boolean isTosRequired() {
+        if (_acceptedTos) {
+            return false;
+        }
+
+        if (_tosRequiredBy == null) {
+            return false;
+        }
+
+        try {
+            return System.currentTimeMillis() >= ISO8601.toUtc(_tosRequiredBy);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    public int daysUntilRequired() {
+        if (_acceptedTos) {
+            return 0;
+        }
+
+        if (_tosRequiredBy == null) {
+            return 0;
+        }
+
+        try {
+            return (int) ((System.currentTimeMillis() - ISO8601.toUtc(_tosRequiredBy)) / 86400000);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return 0;
+    }
+
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
@@ -204,3 +237,4 @@ public class Profile implements Parcelable {
         dest.writeString(toJson().toString());
     }
 }
+
