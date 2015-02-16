@@ -448,6 +448,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
             if (workorder != null) {
                 _workorder = workorder;
                 populateUi(cached);
+            } else if (cached) {
+                getData(false);
             }
         }
     }
