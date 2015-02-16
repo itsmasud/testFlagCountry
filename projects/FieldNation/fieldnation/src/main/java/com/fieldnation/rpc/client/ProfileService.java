@@ -14,7 +14,6 @@ public class ProfileService extends WebService {
     }
 
     public Intent getMyUserInformation(int resultCode, boolean allowCache) {
-        misc.printStackTrace("/api/rest/v1/profile");
         return httpGet(resultCode, "/api/rest/v1/profile", allowCache);
     }
 
