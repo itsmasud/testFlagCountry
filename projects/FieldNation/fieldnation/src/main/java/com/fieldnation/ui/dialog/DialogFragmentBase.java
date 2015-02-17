@@ -6,10 +6,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
+import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.utils.misc;
 
 import java.util.List;
 
@@ -132,7 +131,7 @@ public class DialogFragmentBase extends DialogFragment {
     @Override
     public int show(FragmentTransaction transaction, String tag) {
         Log.v(TAG, "show");
-        if (!_isDismissed)
+        if (!_isDismissed || isVisible())
             return -1;
 
         _reset = true;
@@ -151,7 +150,7 @@ public class DialogFragmentBase extends DialogFragment {
     @Override
     public void show(FragmentManager manager, String tag) {
         Log.v(TAG, "show");
-        if (!_isDismissed)
+        if (!_isDismissed || isVisible())
             return;
 
         _reset = true;
@@ -164,7 +163,7 @@ public class DialogFragmentBase extends DialogFragment {
 
     public void show() {
         Log.v(TAG, "show");
-        if (!_isDismissed)
+        if (!_isDismissed || isVisible())
             return;
 
         _reset = true;

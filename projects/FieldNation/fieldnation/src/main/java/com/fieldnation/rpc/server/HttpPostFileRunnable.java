@@ -7,9 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+
 
 import com.fieldnation.FileHelper;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebServiceConstants;

@@ -2,8 +2,9 @@ package com.fieldnation.rpc.server;
 
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;

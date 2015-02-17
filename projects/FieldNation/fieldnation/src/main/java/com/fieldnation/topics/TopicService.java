@@ -7,7 +7,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ResultReceiver;
-import android.util.Log;
+
+
+import com.fieldnation.Log;
 
 import java.util.Hashtable;
 import java.util.Iterator;

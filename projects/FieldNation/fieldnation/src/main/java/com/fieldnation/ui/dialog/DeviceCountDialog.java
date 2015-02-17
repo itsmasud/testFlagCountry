@@ -4,7 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.NumberPicker;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Workorder;

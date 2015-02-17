@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.fieldnation.ActivityResult;
 import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;

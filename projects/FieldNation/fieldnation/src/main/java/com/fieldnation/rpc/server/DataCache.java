@@ -2,7 +2,9 @@ package com.fieldnation.rpc.server;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+
+import com.fieldnation.Log;
+
 
 /**
  * A really simple and dumb cache

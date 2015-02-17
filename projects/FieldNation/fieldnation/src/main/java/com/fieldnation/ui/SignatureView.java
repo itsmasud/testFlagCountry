@@ -8,11 +8,12 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
+
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.shortstraw.Point;

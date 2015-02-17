@@ -6,8 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.rpc.server.PhotoCacheSqlHelper.Column;
 
 import java.io.ByteArrayOutputStream;

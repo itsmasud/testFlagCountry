@@ -2,8 +2,9 @@ package com.fieldnation.topics;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.utils.misc;
 

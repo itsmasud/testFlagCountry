@@ -1,6 +1,8 @@
 package com.fieldnation.shortstraw;
 
-import android.util.Log;
+
+
+import com.fieldnation.Log;
 
 import java.util.LinkedList;
 import java.util.List;
