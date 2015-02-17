@@ -13,8 +13,12 @@ public class ProfileService extends WebService {
         super(context, username, authToken, callback);
     }
 
+    public Intent acceptTos(int resultCode, long userId) {
+        return httpPost(resultCode, "/api/rest/v1/profile/" + userId + "/accept-tos", null, "",
+                "application/x-www-form-urlencoded", false);
+    }
+
     public Intent getMyUserInformation(int resultCode, boolean allowCache) {
-        misc.printStackTrace("/api/rest/v1/profile");
         return httpGet(resultCode, "/api/rest/v1/profile", allowCache);
     }
 

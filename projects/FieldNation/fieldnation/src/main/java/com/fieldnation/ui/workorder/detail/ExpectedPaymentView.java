@@ -103,10 +103,10 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         _feeTextView.setText(misc.toCurrency(pay.getExpectedFee()));
         _payTextView.setText(misc.toCurrency(pay.getExpectedAmount()));
         _payStatusTextView.setText(misc.capitalize(pay.getPaymentStatus()));
-        if (!misc.isEmptyOrNull(pay.getFnFeePercentage())) {
+        if (pay.getFnFeePercentage() != null) {
             _fnPercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), pay.getFnFeePercentage()));
         } else {
-            _fnPercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), "10"));
+            _fnPercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), 10.0));
         }
     }
 }

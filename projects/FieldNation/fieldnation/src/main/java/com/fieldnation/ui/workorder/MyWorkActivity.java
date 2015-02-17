@@ -14,9 +14,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
-import android.util.Log;
+
 import android.view.View;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
@@ -222,7 +223,6 @@ public class MyWorkActivity extends DrawerActivity {
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
-        misc.printStackTrace("startNew");
         Intent intent = new Intent(context, MyWorkActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);

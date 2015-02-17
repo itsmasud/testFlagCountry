@@ -10,7 +10,7 @@ public class BuyerRating {
     @Json(name = "companyLogo")
     private String _companyLogo;
     @Json(name = "dayLeftToGivingBuyerRating")
-    private Boolean _dayLeftToGivingBuyerRating;
+	private Integer _dayLeftToGivingBuyerRating;
     @Json(name = "ratingId")
     private Integer _ratingId;
     @Json(name = "respectful")
@@ -35,7 +35,7 @@ public class BuyerRating {
         return _companyLogo;
     }
 
-    public Boolean getDayLeftToGivingBuyerRating() {
+	public Integer getDayLeftToGivingBuyerRating(){
         return _dayLeftToGivingBuyerRating;
     }
 

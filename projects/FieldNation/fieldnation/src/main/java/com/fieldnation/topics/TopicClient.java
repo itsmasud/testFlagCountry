@@ -1,7 +1,9 @@
 package com.fieldnation.topics;
 
 import android.os.ResultReceiver;
-import android.util.Log;
+
+
+import com.fieldnation.Log;
 
 import java.util.Enumeration;
 import java.util.HashSet;

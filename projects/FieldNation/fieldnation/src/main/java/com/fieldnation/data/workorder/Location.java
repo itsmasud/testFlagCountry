@@ -28,6 +28,8 @@ public class Location {
     private Double _distance;
     @Json(name = "distanceMapUrl")
     private String _distanceMapUrl;
+	@Json(name="geo")
+	private Geo _geo;
     @Json(name = "mapUrl")
     private String _mapUrl;
     @Json(name = "name")
@@ -87,6 +89,10 @@ public class Location {
     public String getDistanceMapUrl() {
         return _distanceMapUrl;
     }
+
+	public Geo getGeo(){
+		return _geo;
+	}
 
     public String getMapUrl() {
         return _mapUrl;

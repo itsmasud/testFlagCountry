@@ -55,6 +55,9 @@
     <string name="btn_no_thanks">NO THANKS</string>
     <string name="btn_gps_settings">GPS SETTINGS</string>
     <string name="btn_not_now">NOT NOW</string>
+    <string name="btn_accept">Accept</string>
+    <string name="btn_later">Remind me later</string>
+    <string name="btn_no_later">Never show again</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
@@ -68,7 +71,7 @@
     <string name="notification_failed">Failed!</string>
     <string name="notification_success">Success!</string>
 
-    <string name="fieldnation_expected_fee_percentage">Expected Field Nation Fee (%1$s%%)</string>
+    <string name="fieldnation_expected_fee_percentage">Expected Field Nation Fee (%1$.1f%%)</string>
 
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>
@@ -76,7 +79,7 @@
     <string name="dialog_no_number_title">No number found</string>
     <string name="dialog_no_number_message">There is no number associated with this task. Please check the work order details for a phone number.\r\n\r\nThis task will now be marked as complete.</string>
 
-    <string name="dialog_decline_title">Not interetsed</string>
+    <string name="dialog_decline_title">Not interested</string>
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="dialog_block_details">Additional details</string>
@@ -109,6 +112,26 @@
     <string name="dialog_location_loading_title">Gathering Location</string>
     <string name="dialog_location_loading_body">We are currently gathering your location information.\n\nThis could take up to several minutes.</string>
     <string name="dialog_location_loading_button">@string/btn_cancel</string>
+
+    <string name="dialog_accept_terms_title">Terms of Service</string>
+    <string name="dialog_accept_terms_body_soft">
+        By accepting you agree to the new
+        &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
+        and acknowledge the additional %1$.1f%% fee per work order if you do not upload a certificate
+        of insurance.&lt;br/&gt;&lt;br/&gt;You have &lt;b&gt;%2$d days&lt;/b&gt; until new
+        Terms of Service are in effect.</string>
+    <string name="dialog_accept_terms_body_hard">By accepting you agree to the new
+        &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
+        and acknowledge the additional %1$.1f%% fee per work order if you do not upload a
+        certificate of insurance.&lt;br/&gt;&lt;br/&gt;You &lt;b&gt;MUST&lt;/b&gt; accept to continue.</string>
+
+    <string name="dialog_coi_title">Proof of Insurance</string>
+    <string name="dialog_coi_body">You do not have a certificate of insurance uploaded in your
+        Field Nation profile.  As a result, you will be charged an additional %1$.1f%% fee per work
+        order effective March 1, 2015.&lt;br/&gt;&lt;br/&gt;
+        To upload a certificate of insurance and avoid the additional fee, log into the website
+        from a computer and follow the instructions.</string>
+
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
 

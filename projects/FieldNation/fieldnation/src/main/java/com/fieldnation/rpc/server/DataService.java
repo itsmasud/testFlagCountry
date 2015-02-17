@@ -2,8 +2,9 @@ package com.fieldnation.rpc.server;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.rpc.common.DataServiceConstants;
 
 import java.util.HashMap;

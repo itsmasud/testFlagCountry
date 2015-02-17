@@ -9,9 +9,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
@@ -448,6 +449,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
             if (workorder != null) {
                 _workorder = workorder;
                 populateUi(cached);
+            } else if (cached) {
+                getData(false);
             }
         }
     }

@@ -2,8 +2,9 @@ package com.fieldnation.data.workorder;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -32,7 +33,7 @@ public class CustomField implements Parcelable {
     @Json(name = "predefinedValues")
     private String[] _predefinedValues;
     @Json(name = "required")
-    private int _required;
+	private Integer _required;
     @Json(name = "tip")
     private String _tip;
     @Json(name = "value")
@@ -40,7 +41,6 @@ public class CustomField implements Parcelable {
 
     public CustomField() {
     }
-
     public String getCustomFieldFormat() {
         return _customFieldFormat;
     }

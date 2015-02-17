@@ -40,12 +40,22 @@ public class Result {
 	}
 
 	private void cacheResults(HttpURLConnection conn) throws IOException {
-		InputStream in = conn.getInputStream();
-		int contentlength = conn.getContentLength();
-
-		_baResults = misc.readAllFromStream(in, 1024, contentlength, 3000);
-
-		in.close();
+		try {
+			if (conn.getDoInput()) {
+				InputStream in = conn.getInputStream();
+				_baResults = misc.readAllFromStream(in, 1024, -1, 3000);
+				in.close();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			_baResults = null;
+			try {
+				_baResults = misc.readAllFromStream(conn.getErrorStream(),
+						1024, -1, 1000);
+			} catch (Exception ex1) {
+				ex1.printStackTrace();
+			}
+		}
 	}
 
 	public byte[] getResultsAsByteArray() {

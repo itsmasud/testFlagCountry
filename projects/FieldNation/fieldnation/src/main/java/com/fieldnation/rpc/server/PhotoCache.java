@@ -2,7 +2,9 @@ package com.fieldnation.rpc.server;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
+
+import com.fieldnation.Log;
+
 
 public class PhotoCache {
     private static final String TAG = "rpc.server.PhotoCache";

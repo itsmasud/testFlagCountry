@@ -6,7 +6,9 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
-import android.util.Log;
+
+import com.fieldnation.Log;
+
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	private static final String TAG = "rpc.server.SyncAdapter";

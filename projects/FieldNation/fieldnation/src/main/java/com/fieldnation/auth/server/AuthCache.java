@@ -4,8 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.auth.server.AuthCacheSqlHelper.Column;
 import com.fieldnation.utils.misc;
 

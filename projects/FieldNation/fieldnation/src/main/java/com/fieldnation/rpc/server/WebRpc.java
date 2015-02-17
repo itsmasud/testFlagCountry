@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.misc;

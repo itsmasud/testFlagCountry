@@ -11,32 +11,28 @@ import com.fieldnation.json.annotations.Json;
  * Created by michael.carver on 12/9/2014.
  */
 public class Signature implements Parcelable {
-    @Json(name = "worklog")
-    private LoggedWork[] _worklog;
-    @Json(name = "signature")
-    private String _signature;
     @Json(name = "closingNotes")
     private String _closingNotes;
     @Json(name = "dateSaved")
     private String _dateSaved;
+    @Json(name = "formattedTime")
+    private String _formattedTime;
+    @Json(name = "printName")
+    private String _printName;
+    @Json(name = "signature")
+    private String _signature;
     @Json(name = "signatureFormat")
     private String _signatureFormat;
     @Json(name = "signatureId")
     private long _signatureId;
+    @Json(name = "worklog")
+    private LoggedWork[] _worklog;
     @Json(name = "workorderId")
     private int _workorderId;
-    @Json(name = "printName")
-    private String _printName;
+    @Json(name = "workorderTaskId")
+    private Integer _workorderTaskId;
 
     public Signature() {
-    }
-
-    public LoggedWork[] getWorklog() {
-        return _worklog;
-    }
-
-    public String getSignature() {
-        return _signature;
     }
 
     public String getClosingNotes() {
@@ -47,6 +43,18 @@ public class Signature implements Parcelable {
         return _dateSaved;
     }
 
+    public String getFormattedTime() {
+        return _formattedTime;
+    }
+
+    public String getPrintName() {
+        return _printName;
+    }
+
+    public String getSignature() {
+        return _signature;
+    }
+
     public String getSignatureFormat() {
         return _signatureFormat;
     }
@@ -55,13 +63,18 @@ public class Signature implements Parcelable {
         return _signatureId;
     }
 
+    public LoggedWork[] getWorklog() {
+        return _worklog;
+    }
+
     public int getWorkorderId() {
         return _workorderId;
     }
 
-    public String getPrintName() {
-        return _printName;
+    public Integer getWorkorderTaskId() {
+        return _workorderTaskId;
     }
+
 
     public JsonObject toJson() {
         return toJson(this);

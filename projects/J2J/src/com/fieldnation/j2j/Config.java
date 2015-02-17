@@ -32,8 +32,10 @@ public class Config {
 		ClassNameMap.put("OnlyNewAdditionalExpenses", "Expense");
 		ClassNameMap.put("CompletionSteps", "CompletionStep");
 		ClassNameMap.put("BuyerRatingInfo", "BuyerRating");
-		//ClassNameMap.put("CounterOfferInfo", "CounterOffer");
+		// ClassNameMap.put("CounterOfferInfo", "CounterOffer");
 		ClassNameMap.put("Penalties", "Penalty");
+		ClassNameMap.put("WorkorderManagerInfo", "User");
+		ClassNameMap.put("EstimatedSchedule", "Schedule");
 	}
 
 }
