@@ -92,6 +92,7 @@ public class Profile implements Parcelable {
     public Boolean isProvider() {
         return _isProvider;
     }
+
     public String getLastname() {
         return _lastname;
     }
@@ -178,6 +179,9 @@ public class Profile implements Parcelable {
             return false;
         }
 
+        if (daysUntilRequired() <= 0)
+            return true;
+
         try {
             return System.currentTimeMillis() >= ISO8601.toUtc(_tosRequiredBy);
         } catch (Exception ex) {
@@ -196,7 +200,7 @@ public class Profile implements Parcelable {
         }
 
         try {
-            return (int) ((System.currentTimeMillis() - ISO8601.toUtc(_tosRequiredBy)) / 86400000);
+            return (int) ((ISO8601.toUtc(_tosRequiredBy) - System.currentTimeMillis()) / 86400000);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

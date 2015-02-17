@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -15,6 +16,8 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
@@ -48,6 +51,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private TwoButtonDialog _coiWarningDialog;
 
     // Services
+    private ProfileService _service;
     private TopicShutdownReciever _shutdownListener;
 
     // Data
@@ -110,8 +114,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
         TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
         Topics.subscrubeProfileUpdated(this, TAG + ":PROFILE", _topicReceiver);
-        //_acceptTermsDialog.setCancelable(false);
-        //_acceptTermsDialog.show();
+
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
@@ -122,6 +125,12 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         TopicService.delete(this, TAG);
         TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
         super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_TAG, TAG);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -142,7 +151,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             _notProviderDialog.show();
             return;
         }
-
         GlobalState gs = GlobalState.getContext();
         if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
@@ -184,6 +192,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
@@ -196,17 +205,12 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         }
     };
 
+
     private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
         @Override
         public void onPositive() {
-            // TODO call TOS web service, then update the profile
             _profileBounceProtect = false;
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    gotProfile(_profile);
-                }
-            });
+            startService(_service.acceptTos(0, _profile.getUserId()));
         }
 
         @Override
@@ -259,15 +263,17 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            AuthActionBarActivity.this.onAuthentication(username, authToken, isNew);
+        public void onRegister(int resultCode, String topicId) {
+			AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
         }
 
         @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
+        public void onAuthentication(String username, String authToken, boolean isNew) {
+            if (_service == null || isNew) {
+                _service = new ProfileService(AuthActionBarActivity.this, username, authToken, _webReceiver);
+            }
+            AuthActionBarActivity.this.onAuthentication(username, authToken, isNew);
         }
-
 
         @Override
         public void onAuthenticationFailed(boolean networkDown) {
@@ -278,7 +284,20 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         public void onAuthenticationInvalidated() {
             AuthActionBarActivity.this.onAuthenticationInvalidated();
         }
+    };
 
+    private final WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
+        @Override
+        public void onSuccess(int resultCode, Bundle resultData) {
+            Log.v(TAG, "WebResultReceiver");
+            _profileBounceProtect = false;
+            Topics.dispatchProfileInvalid(AuthActionBarActivity.this);
+        }
+
+        @Override
+        public Context getContext() {
+            return AuthActionBarActivity.this;
+        }
     };
 
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
@@ -294,7 +313,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
                 _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
                 gotProfile(_profile);
             }
-
         }
     };
 
@@ -311,23 +329,11 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-/*
-            Intent gohome = new Intent(this, MyWorkActivity.class);
-			startActivity(gohome);
-*/
                 onBackPressed();
                 return true;
-//            case R.id.action_settings:
-//                Intent intent = new Intent(this, SettingsActivity.class);
-//                startActivity(intent);
-//                return true;
-//            case R.id.action_refresh:
-//                onRefresh();
-//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     public abstract void onRefresh();
-
 }

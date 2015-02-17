@@ -121,7 +121,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
-        _shutdownListener.onPause();
+        if (_shutdownListener != null)
+        	_shutdownListener.onPause();
         TopicService.unRegisterListener(this, 0, TAG + ":PROFILE", Topics.TOPIC_PROFILE_UPDATE);
         super.onDestroy();
     }
@@ -195,7 +196,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            _service.acceptTos(0, _profile.getUserId());
+            startService(_service.acceptTos(0, _profile.getUserId()));
         }
 
         @Override
@@ -274,6 +275,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
+            Log.v(TAG, "WebResultReceiver");
             _profileBounceProtect = false;
             Topics.dispatchProfileInvalid(AuthFragmentActivity.this);
         }
