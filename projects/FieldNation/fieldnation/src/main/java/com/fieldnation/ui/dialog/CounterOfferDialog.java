@@ -26,6 +26,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -493,6 +494,12 @@ public class CounterOfferDialog extends DialogFragmentBase {
                     return;
                 }
 
+                _counterReason = _reasonView.getReason();
+                if (misc.isEmptyOrNull(_counterReason)){
+                    Toast.makeText(getActivity(), "Must enter a reason to continue", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 // Todo need to do some data validation
                 if (_listener != null) {
                     Expense[] exp = new Expense[_expenses.size()];
@@ -501,7 +508,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
                     }
                     int seconds = 0;
 
-                    _counterReason = _reasonView.getReason();
 
                     try {
                         seconds = (int) (ISO8601.toUtc(_expirationDate)

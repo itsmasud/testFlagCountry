@@ -18,6 +18,8 @@ import java.util.Set;
 
 public class Workorder implements Parcelable {
 
+	@Json(name="acl")
+	private String[] _acl;
     @Json(name = "additionalExpenses")
     private Expense[] _additionalExpenses;
     @Json(name = "alertCount ")
@@ -120,6 +122,8 @@ public class Workorder implements Parcelable {
 //	private Label[] _label;
     @Json(name = "location")
     private Location _location;
+//	@Json(name="locationContacts")
+//	private LocationContacts[] _locationContacts;
     @Json(name = "loggedWork")
     private LoggedWork[] _loggedWork;
     @Json(name = "messageCount")
@@ -160,6 +164,8 @@ public class Workorder implements Parcelable {
     private Status _status;
     @Json(name = "statusId")
     private Integer _statusId;
+	@Json(name="taskEnabled")
+	private Integer _taskEnabled;
     @Json(name = "tasks")
     private Task[] _tasks;
     @Json(name = "techCanPrint")
@@ -168,6 +174,8 @@ public class Workorder implements Parcelable {
     private Integer _timeSincePublished;
     @Json(name = "timezone")
     private String _timezone;
+	@Json(name="timezoneIdentifier")
+	private String _timezoneIdentifier;
     @Json(name = "title")
     private String _title;
     @Json(name = "typeOfWork")
@@ -178,10 +186,14 @@ public class Workorder implements Parcelable {
     private Integer _w2;
     @Json(name = "workorderBonusInfo")
     private WorkorderBonusInfo[] _workorderBonusInfo;
+	//@Json(name="workorderContacts")
+	//private Object[] _workorderContacts;
     @Json(name = "workorderId")
     private Long _workorderId;
-    @Json(name = "workorderPenaltyInfo")
-    private JsonObject[] _workorderPenaltyInfo;
+	@Json(name="workorderManagerInfo")
+	private User _workorderManagerInfo;
+//    @Json(name = "workorderPenaltyInfo")
+//    private JsonObject[] _workorderPenaltyInfo;
 
     public Workorder() {
     }
@@ -399,6 +411,10 @@ public class Workorder implements Parcelable {
         return _location;
     }
 
+//	public LocationContacts[] getLocationContacts(){
+//		return _locationContacts;
+//	}
+
     public LoggedWork[] getLoggedWork() {
         return _loggedWork;
     }
@@ -479,6 +495,10 @@ public class Workorder implements Parcelable {
         return _statusId;
     }
 
+	public Integer getTaskEnabled(){
+		return _taskEnabled;
+	}
+
     public Task[] getTasks() {
         return _tasks;
     }
@@ -494,6 +514,10 @@ public class Workorder implements Parcelable {
     public String getTimezone() {
         return _timezone;
     }
+
+	public String getTimezoneIdentifier(){
+		return _timezoneIdentifier;
+	}
 
     public String getTitle() {
         return _title;
@@ -519,9 +543,13 @@ public class Workorder implements Parcelable {
         return _workorderId;
     }
 
-    public JsonObject[] getWorkorderPenaltyInfo() {
-        return _workorderPenaltyInfo;
-    }
+	public User getWorkorderManagerInfo(){
+		return _workorderManagerInfo;
+	}
+
+//	public WorkorderPenaltyInfo[] getWorkorderPenaltyInfo(){
+//        return _workorderPenaltyInfo;
+//    }
 
     public JsonObject toJson() {
         return toJson(this);

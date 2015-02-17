@@ -103,8 +103,6 @@ public class DeviceCountDialog extends DialogFragmentBase {
 
     public void setListener(Listener listener) {
         Log.v(TAG, "setListener");
-        misc.printStackTrace("setListener");
-
         _listener = listener;
     }
 

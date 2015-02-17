@@ -17,6 +17,8 @@ import java.util.TimeZone;
 
 public class Schedule implements Parcelable {
 
+    @Json(name = "duration")
+    private Double _duration;
     @Json(name = "endTime")
     private String _endTime;
     @Json(name = "endTimeHours")
@@ -25,8 +27,14 @@ public class Schedule implements Parcelable {
     private String _startTime;
     @Json(name = "startTimeHours")
     private String _startTimeHours;
+    @Json(name = "workorderScheduleId")
+    private Integer _workorderScheduleId;
 
     public Schedule() {
+    }
+
+    public Double getDuration() {
+        return _duration;
     }
 
     public String getEndTime() {
@@ -43,6 +51,10 @@ public class Schedule implements Parcelable {
 
     public String getStartTimeHours() {
         return _startTimeHours;
+    }
+
+    public Integer getWorkorderScheduleId() {
+        return _workorderScheduleId;
     }
 
     public JsonObject toJson() {

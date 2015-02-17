@@ -49,7 +49,6 @@ public class Topics {
 
     public static void dispatchFileUploadStart(Context context, String url, String filename) {
         Log.v(TAG, "dispatchFileUploadStart");
-        misc.printStackTrace("dispatchFileUploadStart");
         if (context == null)
             return;
 

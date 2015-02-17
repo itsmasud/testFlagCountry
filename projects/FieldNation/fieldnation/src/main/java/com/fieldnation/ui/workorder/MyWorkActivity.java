@@ -223,7 +223,6 @@ public class MyWorkActivity extends DrawerActivity {
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
-        misc.printStackTrace("startNew");
         Intent intent = new Intent(context, MyWorkActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);

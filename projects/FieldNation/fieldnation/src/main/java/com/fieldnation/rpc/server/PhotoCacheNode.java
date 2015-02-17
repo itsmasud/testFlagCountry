@@ -75,6 +75,9 @@ public class PhotoCacheNode {
     }
 
     public static PhotoCacheNode get(Context context, String url) {
+        if (url == null)
+            return null;
+
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         try {

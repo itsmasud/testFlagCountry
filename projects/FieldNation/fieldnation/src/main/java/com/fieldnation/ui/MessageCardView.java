@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ public class MessageCardView extends RelativeLayout {
     private static final String TAG = "ui.MessageView";
     private View _statusView;
     private TextView _titleTextView;
+    private LinearLayout _substatusLayout;
     private TextView _substatusTextView;
     private TextView _messageBodyTextView;
     private TextView _timeTextView;
@@ -69,6 +71,7 @@ public class MessageCardView extends RelativeLayout {
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
+        _substatusLayout = (LinearLayout) findViewById(R.id.substatus_layout);
         _substatusTextView = (TextView) findViewById(R.id.substatus_textview);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
@@ -90,7 +93,12 @@ public class MessageCardView extends RelativeLayout {
         if (_message == null)
             return;
 
-        _substatusTextView.setText(_substatus[_message.getStatus().getWorkorderSubstatus().ordinal()]);
+        try {
+            _substatusTextView.setText(_substatus[_message.getStatus().getWorkorderSubstatus().ordinal()]);
+            _substatusLayout.setVisibility(View.VISIBLE);
+        } catch (Exception ex) {
+            _substatusLayout.setVisibility(View.GONE);
+        }
 
         _viewId = _message.getMessageId() % Integer.MAX_VALUE;
         try {
@@ -99,7 +107,6 @@ public class MessageCardView extends RelativeLayout {
             e.printStackTrace();
         }
         try {
-            // compress the data a bit
             _messageBodyTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
             _messageBodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         } catch (Exception e) {
@@ -121,28 +128,33 @@ public class MessageCardView extends RelativeLayout {
         try {
             // _profileImageView.setBackgroundDrawable(null);
             _profileImageView.setImageDrawable(null);
-            String url = _message.getPhotoThumbUrl();
-            getContext().startService(_photoService.getPhoto(_viewId, url, true));
+            String url = _message.getFromUser().getPhotoThumbUrl();
+            if (url != null)
+                getContext().startService(_photoService.getPhoto(_viewId, url, true));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        switch (_message.getStatus().getStatusIntent()) {
-            case NORMAL:
-                _statusView.setBackgroundResource(R.drawable.card_status_white);
-                break;
-            case SUCCESS:
-                _statusView.setBackgroundResource(R.drawable.card_status_green);
-                break;
-            case UNKNOWN:
-                _statusView.setBackgroundResource(R.drawable.card_status_white);
-                break;
-            case WAITING:
-                _statusView.setBackgroundResource(R.drawable.card_status_gray);
-                break;
-            case WARNING:
-                _statusView.setBackgroundResource(R.drawable.card_status_orange);
-                break;
+        try {
+            switch (_message.getStatus().getStatusIntent()) {
+                case NORMAL:
+                    _statusView.setBackgroundResource(R.drawable.card_status_white);
+                    break;
+                case SUCCESS:
+                    _statusView.setBackgroundResource(R.drawable.card_status_green);
+                    break;
+                case UNKNOWN:
+                    _statusView.setBackgroundResource(R.drawable.card_status_white);
+                    break;
+                case WAITING:
+                    _statusView.setBackgroundResource(R.drawable.card_status_gray);
+                    break;
+                case WARNING:
+                    _statusView.setBackgroundResource(R.drawable.card_status_orange);
+                    break;
+            }
+        } catch (Exception ex) {
+            _statusView.setBackgroundResource(R.drawable.card_status_white);
         }
     }
 

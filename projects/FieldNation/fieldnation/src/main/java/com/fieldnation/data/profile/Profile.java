@@ -92,7 +92,6 @@ public class Profile implements Parcelable {
     public Boolean isProvider() {
         return _isProvider;
     }
-
     public String getLastname() {
         return _lastname;
     }
