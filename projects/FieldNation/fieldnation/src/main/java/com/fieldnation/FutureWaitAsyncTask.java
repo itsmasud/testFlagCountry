@@ -4,7 +4,7 @@ import android.accounts.AccountManagerFuture;
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
+
 
 /**
  * Waits for an {@link AccountManagerFuture} to resolve.

@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.util.Log;
+
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.client.AuthService;

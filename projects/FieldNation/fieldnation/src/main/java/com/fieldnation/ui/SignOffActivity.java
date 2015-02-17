@@ -7,12 +7,13 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+
 import android.view.Window;
 import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;

@@ -56,16 +56,17 @@ import java.util.List;
 import java.util.Set;
 
 public class WorkorderListFragment extends Fragment implements TabActionBarFragmentActivity.TabFragment {
-    private String TAG = "ui.workorder.WorkorderListFragment";
+    private static final String TAG_BASE = "ui.workorder.WorkorderListFragment";
+    private String TAG = TAG_BASE;
 
     // State
-    private static final String STATE_DISPLAY = "STATE_DISPLAY";
-    private static final String STATE_CURRENT_WORKORDER = "STATE_CURRENT_WORKORDER";
-    private static final String STATE_AUTHTOKEN = "STATE_AUTHTOKEN";
-    private static final String STATE_USERNAME = "STATE_USERNAME";
-    private static final String STATE_DEVICE_COUNT = "STATE_DEVICE_COUNT";
-    private static final String STATE_TAG = "STATE_TAG";
-    private static final String STATE_WORKING_LIST = "STATE_WORKING_LIST";
+    private static final String STATE_DISPLAY = TAG_BASE + ".STATE_DISPLAY";
+    private static final String STATE_CURRENT_WORKORDER = TAG_BASE + ".STATE_CURRENT_WORKORDER";
+    private static final String STATE_AUTHTOKEN = TAG_BASE + ".STATE_AUTHTOKEN";
+    private static final String STATE_USERNAME = TAG_BASE + ".STATE_USERNAME";
+    private static final String STATE_DEVICE_COUNT = TAG_BASE + ".STATE_DEVICE_COUNT";
+    private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
+    private static final String STATE_WORKING_LIST = TAG_BASE + ".STATE_WORKING_LIST";
 
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
@@ -77,8 +78,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private static final int WEB_CHECKING_IN = 3;
 
     // Request Key
-    private static final String KEY_PAGE_NUM = "WorkorderListFragment.PAGE_NUM";
-    private static final String KEY_WORKORDER_ID = "WorkorderListFragment.WORKORDER_ID";
+    private static final String KEY_PAGE_NUM = TAG_BASE + ".PAGE_NUM";
+    private static final String KEY_WORKORDER_ID = TAG_BASE + ".WORKORDER_ID";
 
     // UI
     private OverScrollListView _listView;
@@ -127,28 +128,46 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG)) {
                 TAG = savedInstanceState.getString(STATE_TAG);
             } else {
-                TAG = UniqueTag.makeTag(TAG);
+                TAG = UniqueTag.makeTag(TAG_BASE);
             }
+
+            if (savedInstanceState.containsKey(STATE_WORKING_LIST)) {
+                long[] a = savedInstanceState.getLongArray(STATE_WORKING_LIST);
+                for (int i = 0; i < a.length; i++) {
+                    _requestWorking.add(a[i]);
+                }
+            }
+
+            if (savedInstanceState.containsKey(STATE_DISPLAY)) {
+                Log.v(TAG, "Restoring state");
+                _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
+            }
+
+            if (savedInstanceState.containsKey(STATE_CURRENT_WORKORDER))
+                _currentWorkorder = savedInstanceState.getParcelable(STATE_CURRENT_WORKORDER);
         }
-        if ("ui.workorder.WorkorderListFragment".equals(TAG)) {
-            TAG = UniqueTag.makeTag("ui.workorder.WorkorderListFragment");
+
+        if (TAG_BASE.equals(TAG)) {
+            TAG = UniqueTag.makeTag(TAG_BASE);
         }
-        Log.v(TAG, "onCreate");
+
+        Log.v(TAG, "onCreate: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
         return inflater.inflate(R.layout.fragment_workorder_list, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.v(TAG, "onViewCreated");
 
         _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
         _loadingView.setListener(_refreshViewListener);
@@ -320,8 +339,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     @Override
     public void onPause() {
-        Log.v(TAG, "onPause");
+        if (_gpsLocationService != null)
         _gpsLocationService.stopLocationUpdates();
+
         if (_locationLoadingDialog.isVisible()) {
             Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
             _locationLoadingDialog.dismiss();
@@ -339,10 +359,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     }
 
-    @Override
-    public void isShowing() {
-        Log.v(TAG, "isShowing");
-        GaTopic.dispatchScreenView(getActivity(), getGaLabel());
+    public void update() {
+        _adapter.refreshPages();
     }
 
     private void requestList(int page, boolean allowCache) {
@@ -420,8 +438,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     }
 
     private void doCheckin() {
-        setLoading(true);
         _gpsLocationService.setListener(null);
+        setLoading(true);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
         GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKIN, "WorkorderCardView", 1);
@@ -685,6 +703,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             setLoading(false);
         }
     };
+
     private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
 
         @Override

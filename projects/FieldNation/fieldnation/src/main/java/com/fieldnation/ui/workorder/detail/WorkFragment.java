@@ -22,7 +22,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,7 @@ import android.widget.Toast;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -866,18 +866,19 @@ public class WorkFragment extends WorkorderFragment {
     private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String dateTime) {
-            try {
-                long seconds;
-                seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_REQUEST_WORK, "WorkFragment", 1);
-                getActivity().startService(
-                        _service.request(WEB_CHANGED,
-                                _workorder.getWorkorderId(), seconds));
-                setLoading(true);
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            long seconds = -1;
+            if (dateTime != null) {
+                try {
+                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
+            GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_REQUEST_WORK, "WorkFragment", 1);
+            getActivity().startService(
+                    _service.request(WEB_CHANGED,
+                            _workorder.getWorkorderId(), seconds));
+            setLoading(true);
         }
     };
 
@@ -906,6 +907,14 @@ public class WorkFragment extends WorkorderFragment {
                 GaTopic.dispatchEvent(getActivity(), "WorkorderActivity",
                         GaTopic.ACTION_COMPLETE_FN_EARNED, "WorkFragment",
                         (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
+            } catch (Exception ex) {
+                // I don't expect this to ever fail, but it could. just a safe guard.
+                ex.printStackTrace();
+            }
+            try {
+                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity",
+                        GaTopic.ACTION_COMPLETE_FN_EARNED_GROSS, "WorkFragment",
+                        (long) (_workorder.getExpectedPayment().getExpectedTotal() * 100));
             } catch (Exception ex) {
                 // I don't expect this to ever fail, but it could. just a safe guard.
                 ex.printStackTrace();

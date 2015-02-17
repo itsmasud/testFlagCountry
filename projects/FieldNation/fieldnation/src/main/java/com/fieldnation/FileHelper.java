@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.fieldnation.utils.ISO8601;
@@ -121,9 +120,17 @@ public class FileHelper {
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    context.startActivity(intent);
-                } else {
+                boolean doDownload = true;
+                try {
+                    if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                        context.startActivity(intent);
+                        doDownload = false;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                if (doDownload) {
                     // http://stackoverflow.com/questions/525204/android-download-intent
                     DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
                     r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
@@ -143,7 +150,6 @@ public class FileHelper {
             }
         }.executeEx(context, url, filename, mimetype);
     }
-
 
     public interface Listener {
         public void fileReady(String filename, File file);

@@ -85,7 +85,8 @@ public class MessageSentView extends RelativeLayout {
             return;
 
         WEB_GET_PHOTO = _rand.nextInt();
-        _gs.startService(_service.getPhoto(WEB_GET_PHOTO, _message.getFromUser().getPhotoThumbUrl(), true));
+        if (_message.getFromUser().getPhotoThumbUrl() != null)
+            _gs.startService(_service.getPhoto(WEB_GET_PHOTO, _message.getFromUser().getPhotoThumbUrl(), true));
     }
 
     private void populateUi() {

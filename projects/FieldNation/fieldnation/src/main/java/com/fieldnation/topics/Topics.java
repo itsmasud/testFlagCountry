@@ -2,8 +2,9 @@ package com.fieldnation.topics;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.utils.misc;
 
@@ -48,7 +49,6 @@ public class Topics {
 
     public static void dispatchFileUploadStart(Context context, String url, String filename) {
         Log.v(TAG, "dispatchFileUploadStart");
-        misc.printStackTrace("dispatchFileUploadStart");
         if (context == null)
             return;
 

@@ -4,8 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.util.Log;
 
+
+import com.fieldnation.Log;
 import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.Stopwatch;
 

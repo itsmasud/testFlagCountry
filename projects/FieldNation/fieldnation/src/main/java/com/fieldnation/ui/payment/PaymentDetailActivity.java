@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;

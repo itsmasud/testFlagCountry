@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -22,6 +21,7 @@ import com.fieldnation.rpc.server.Ws;
 import com.fieldnation.topics.GaTopic;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Logger;
@@ -38,6 +38,9 @@ public class GlobalState extends Application {
     public static final String PREF_NAME = "GlobalPreferences";
     public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
     public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
+    public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
+    public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
+    public static final String PREF_COI_NEVER = "PREF_COI_NEVER";
     public static final String PREF_PROFILE_ID = "PREF_PROFILE_ID";
 
     private Tracker _tracker;
@@ -282,6 +285,43 @@ public class GlobalState extends Application {
             timing.setValue(value);
 
         t.send(timing.build());
+    }
+
+    public boolean canRemindCoi() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        if (settings.contains(PREF_COI_NEVER))
+            return false;
+
+        return System.currentTimeMillis() > settings.getLong(PREF_COI_TIMEOUT, 0);
+    }
+
+    public void setCoiReminded() {
+        Log.v(TAG, "setCoiReminded");
+        misc.printStackTrace("setCoiReminded");
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_COI_TIMEOUT, System.currentTimeMillis() + 604800000); // two weeks
+        edit.apply();
+    }
+
+    public void setNeverRemindCoi() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_COI_NEVER, true);
+        edit.apply();
+    }
+
+    public boolean canRemindTos() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return System.currentTimeMillis() > settings.getLong(PREF_TOS_TIMEOUT, 0);
+    }
+
+
+    public void setTosReminded() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_TOS_TIMEOUT, System.currentTimeMillis() + 172800000); // two days
+        edit.apply();
     }
 
     public boolean hasShownReviewDialog() {
