@@ -126,7 +126,6 @@ public class MessageCardView extends RelativeLayout {
         }
         if (_profilePic == null) {
             try {
-//                _profileImageView.setVisibility(View.GONE);
                 _profileImageView.setBackgroundResource(R.drawable.missing_circle);
                 String url = _message.getFromUser().getPhotoThumbUrl();
                 if (url != null)
