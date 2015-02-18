@@ -1,11 +1,5 @@
 <resources>
-
     <style name="AppBaseTheme" parent="@style/FieldNation.Material.Theme"></style>
 
     <style name="AppTheme" parent="AppBaseTheme"></style>
-
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
-    <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
-
 </resources>

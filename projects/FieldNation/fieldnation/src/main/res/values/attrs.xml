@@ -3,9 +3,18 @@
 
     <declare-styleable name="ActivityTheme">
         <attr name="activityMainStyle" format="reference" />
-        <attr name="activityLoginStyle" format="reference" />
         <attr name="activitySignatureStyle" format="reference" />
         <attr name="activitySplashStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="LoginTheme">
+        <attr name="activityLoginStyle" format="reference" />
+        <attr name="loginFaderStyle" format="reference" />
+        <attr name="loginPageStyle" format="reference" />
+        <attr name="loginStiltStyle" format="reference" />
+        <attr name="loginLogoStyle" format="reference" />
+        <attr name="loginContentStyle" format="reference" />
+        <attr name="loginEditTextStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="Toolbar">

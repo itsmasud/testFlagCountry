@@ -25,6 +25,15 @@
         <!--<item name="android:buttonStyle">?attr/buttonDefaultStyle</item>-->
         <!--<item name="android:radioButtonStyle">@style/RadioButton</item>-->
 
+        <!-- login styles -->
+        <item name="activityLoginStyle">@style/Login.Activity</item>
+        <item name="loginFaderStyle">@style/Login.Fader</item>
+        <item name="loginPageStyle">@style/Login.Page</item>
+        <item name="loginStiltStyle">@style/Login.Stilt</item>
+        <item name="loginLogoStyle">@style/Login.Logo</item>
+        <item name="loginContentStyle">@style/Login.Content</item>
+        <item name="loginEditTextStyle">@style/Login.EditText</item>
+
         <!-- toolbar -->
         <item name="fnToolbarStyle">@style/toolbarStyle</item>
         <item name="fnToolbarTabListStyle">@style/toolbarTabListStyle</item>
@@ -32,9 +41,9 @@
 
         <!-- activities -->
         <item name="activityMainStyle">@style/ActivityMain</item>
-        <item name="activityLoginStyle">@style/ActivityLogin</item>
         <item name="activitySignatureStyle">@style/SignatureActivity</item>
         <item name="activitySplashStyle">@style/SplashActivity</item>
+
 
         <!-- dividers -->
         <item name="dividerFullStyle">@style/DividerFull</item>
@@ -142,7 +151,7 @@
         </style>
     -->
 
-    <style name="FieldNation.ActionBar.Theme" parent="@style/Theme.AppCompat.NoActionBar">
+    <style name="FieldNation.ActionBar.Theme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <!--<item name="actionBarStyle">@style/FieldNation.ActionBar.Solid</item>-->
         <!--<item name="actionBarTabTextStyle">@style/FieldNation.ActionBar.TabTextStyle</item>-->
         <!--<item name="actionBarTabStyle">@style/FieldNation.ActionBar.TabViewStyle</item>-->
@@ -150,6 +159,9 @@
 
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
+
+        <item name="android:colorBackground">@color/fn_primary_bg</item>
+        <item name="android:windowBackground">@color/fn_primary_bg</item>
     </style>
 
     <!--<style name="FieldNation.ActionBar.Solid" parent="@style/Widget.AppCompat.ActionBar.Solid">-->

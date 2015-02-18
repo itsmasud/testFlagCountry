@@ -47,7 +47,7 @@
     <style name="Material.Button" parent="Text_Button">
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:layout_width">wrap_content</item>
-        <!--<item name="android:minWidth">@dimen/button_min_width</item>-->
+        <item name="android:minWidth">@dimen/button_min_width</item>
         <item name="android:layout_marginLeft">@dimen/button_horr_margin</item>
         <item name="android:layout_marginRight">@dimen/button_horr_margin</item>
         <item name="android:layout_marginTop">@dimen/button_vert_margin</item>

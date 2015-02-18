@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -8,15 +9,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.data.profile.Profile;
+import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
+import com.fieldnation.ui.dialog.OneButtonDialog;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**

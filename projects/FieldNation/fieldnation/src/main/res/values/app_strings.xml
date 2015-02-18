@@ -61,7 +61,6 @@
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_payments">PAYMENTS</string>
 	<string name="btn_not_now">NOT NOW</string>
-    <string name="btn_accept">ACCEPT</string>
     <string name="btn_later">LATER</string>
     <string name="btn_no_later">NEVER SHOW AGAIN</string>
 

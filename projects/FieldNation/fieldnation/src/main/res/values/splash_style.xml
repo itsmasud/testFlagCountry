@@ -2,6 +2,6 @@
 <resources>
 
     <style name="SplashActivity">
-        <item name="android:background">@color/fn_dark_text</item>
+        <item name="android:background">@color/fn_primary_bg</item>
     </style>
 </resources>

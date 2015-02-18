@@ -9,14 +9,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -47,10 +45,11 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private EditText _usernameEditText;
     private EditText _passwordEditText;
     private View _fader;
-    private ImageView _background;
     private Button _signupButton;
     private Button _loginButton;
+    private Button _forgotButton;
     private UpdateDialog _updateDialog;
+    private View _stiltView;
 
     // data
     private String _username;
@@ -73,23 +72,31 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         getWindow().setFormat(PixelFormat.UNKNOWN);
+        setContentView(R.layout.activity_login);
 
         if (getActionBar() != null) {
             getActionBar().hide();
         }
-        setContentView(R.layout.activity_login);
 
         _contentLayout = (LinearLayout) findViewById(R.id.content_layout);
         _contentLayout.setVisibility(View.GONE);
-        _loginButton = (Button) findViewById(R.id.login_button);
-        _loginButton.setOnClickListener(_loginButton_onClick);
+
         _usernameEditText = (EditText) findViewById(R.id.username_edittext);
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
+
+        _loginButton = (Button) findViewById(R.id.login_button);
+        _loginButton.setOnClickListener(_loginButton_onClick);
+
+        _forgotButton = (Button) findViewById(R.id.forgot_button);
+        _forgotButton.setOnClickListener(_forgot_onClick);
+
         _signupButton = (Button) findViewById(R.id.signup_button);
         _signupButton.setOnClickListener(_signup_onClick);
         _signupButton.setVisibility(View.GONE);
 
-        _background = (ImageView) findViewById(R.id.background_image);
+        _stiltView = findViewById(R.id.stilt_view);
+        _stiltView.setVisibility(View.GONE);
+
         _fader = findViewById(R.id.fader);
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
@@ -103,6 +110,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                _stiltView.setVisibility(View.VISIBLE);
                 _contentLayout.setVisibility(View.VISIBLE);
                 _signupButton.setVisibility(View.VISIBLE);
                 _fader.startAnimation(_fadeout);
@@ -175,14 +183,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private final View.OnClickListener _signup_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://www.fieldnation.com/signup-provider"));
-            startActivity(intent);
-        }
-    };
 
     private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
@@ -203,6 +203,23 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
             _contentLayout.setVisibility(View.GONE);
             _signupButton.setVisibility(View.GONE);
+            _stiltView.setVisibility(View.GONE);
+        }
+    };
+
+    private final View.OnClickListener _forgot_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    private final View.OnClickListener _signup_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.fieldnation.com/signup-provider"));
+            startActivity(intent);
         }
     };
 
@@ -243,6 +260,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 } else {
                     _contentLayout.setVisibility(View.VISIBLE);
                     _signupButton.setVisibility(View.VISIBLE);
+                    _stiltView.setVisibility(View.VISIBLE);
                 }
 
                 if (!error.equals(getString(R.string.login_error_no_error))) {

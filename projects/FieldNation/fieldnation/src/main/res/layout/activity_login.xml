@@ -1,99 +1,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/activityLoginStyle"
-    android:layout_width="match_parent"
-    android:animateLayoutChanges="true"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/background_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+    style="?attr/activityLoginStyle">
 
     <View
         android:id="@+id/fader"
-        android:layout_width="match_parent"
-        android:background="@color/fn_dark_text" />
+        style="?attr/loginFaderStyle" />
 
     <LinearLayout
-        android:layout_width="400dp"
-        android:layout_height="wrap_content"
+        style="?attr/loginPageStyle"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="128dp"
-            android:scaleType="fitCenter" />
+        <View
+            android:id="@+id/stilt_view"
+            style="?attr/loginStiltStyle" />
 
+        <ImageView style="?attr/loginLogoStyle" />
 
         <LinearLayout
             android:id="@+id/content_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="128dp"
-            android:orientation="vertical"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp">
+            style="?attr/loginContentStyle"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <EditText
+                android:id="@+id/username_edittext"
+                style="?attr/loginEditTextStyle"
+                android:layout_marginBottom="16dp"
+                android:hint="@string/activity_login_username"
+                android:imeOptions="actionNext"
+                android:text="@string/auth_default_username" />
 
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_user" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/username_edittext"
-                        style="@style/LoginEditText"
-                        android:layout_marginBottom="2dp"
-                        android:hint="@string/activity_login_username"
-                        android:imeOptions="actionNext"
-                        android:text="@string/auth_default_username" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_alignBottom="@+id/username_edittext"
-                        android:background="@color/fn_white_text"
-                        android:layout_height="1px" />
-                </RelativeLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_lock" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/password_edittext"
-                        style="@style/LoginEditText"
-                        android:layout_marginBottom="5dp"
-                        android:hint="@string/activity_login_password"
-                        android:imeOptions="actionDone"
-                        android:inputType="textPassword"
-                        android:text="@string/auth_default_password" />
-
-                    <View
-                        android:layout_alignBottom="@+id/password_edittext"
-                        android:background="@color/fn_white_text" />
-                </RelativeLayout>
-
-            </LinearLayout>
+            <EditText
+                android:id="@+id/password_edittext"
+                style="?attr/loginEditTextStyle"
+                android:hint="@string/activity_login_password"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
+                android:text="@string/auth_default_password" />
 
             <RelativeLayout
                 android:layout_width="fill_parent"
@@ -108,20 +49,31 @@
                     android:layout_centerHorizontal="true"
                     android:text="@string/btn_login" />
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/forgot_button"
+                    style="?attr/buttonFlatStyle"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="sans-serif-light"
+                    android:text="Forgot your password?" />
+            </RelativeLayout>
+
         </LinearLayout>
     </LinearLayout>
 
     <Button
         android:id="@+id/signup_button"
         style="?attr/buttonFlatStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
         android:layout_marginBottom="32dp"
-        android:textColor="#FFFFFFFF"
-        android:text="Not a member? Sign Up" />
+        android:fontFamily="sans-serif-light"
+        android:text="Don't have an account? Sign Up"
+        android:visibility="visible" />
 
     <com.fieldnation.ui.ReconnectWarningView
         android:layout_width="match_parent"

@@ -39,7 +39,7 @@
     <color name="fn_dark_text_80">#CC1e1e1e</color>
     <color name="fn_dark_text_0">#001e1e1e</color>
 
-    <color name="fn_clickable_text">#FF2095F2</color>
+    <color name="fn_clickable_text">#FF2196F3</color>
     <color name="fn_dark_button_text">#FF444444</color>
 
     <color name="fn_drawer_shadow">#FF111111</color>

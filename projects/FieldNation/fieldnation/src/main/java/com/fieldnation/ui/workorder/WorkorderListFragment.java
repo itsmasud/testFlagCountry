@@ -349,6 +349,12 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         super.onPause();
     }
 
+    @Override
+    public void isShowing() {
+        Log.v(TAG, "isShowing");
+        GaTopic.dispatchScreenView(getActivity(), getGaLabel());
+    }
+
     private void setLoading(boolean loading) {
         if (_loadingView != null) {
             if (loading) {
