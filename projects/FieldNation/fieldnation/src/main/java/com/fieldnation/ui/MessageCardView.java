@@ -35,6 +35,7 @@ public class MessageCardView extends RelativeLayout {
     private TextView _messageBodyTextView;
     private TextView _timeTextView;
     private ImageView _profileImageView;
+    private ImageView _unreadImageView;
     private int _viewId;
 
     private PhotoService _photoService;
@@ -76,6 +77,7 @@ public class MessageCardView extends RelativeLayout {
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _statusView = findViewById(R.id.status_view);
+        _unreadImageView = (ImageView) findViewById(R.id.unread_imageview);
 
         populateUi();
     }
@@ -98,6 +100,15 @@ public class MessageCardView extends RelativeLayout {
             _substatusLayout.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             _substatusLayout.setVisibility(View.GONE);
+        }
+
+        try {
+            if (_message.isRead())
+                _unreadImageView.setVisibility(View.GONE);
+            else
+                _unreadImageView.setVisibility(View.VISIBLE);
+        } catch (Exception ex) {
+            _unreadImageView.setVisibility(View.GONE);
         }
 
         _viewId = _message.getMessageId() % Integer.MAX_VALUE;
