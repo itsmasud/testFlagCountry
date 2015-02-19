@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-
+import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
@@ -424,6 +424,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     /*-*****************************-*/
     private class WorkorderParseAsyncTask extends AsyncTaskEx<Bundle, Object, Workorder> {
         private boolean cached;
+        private boolean _isAllowed = true;
 
         @Override
         protected Workorder doInBackground(Bundle... params) {
@@ -432,6 +433,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
             try {
                 String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
                 Log.v(TAG, data);
+
+                if ("false".equals(data)) {
+                    _isAllowed = false;
+                }
+
                 workorder = Workorder.fromJson(new JsonObject(data));
 
                 workorder.addListener(_workorder_listener);
@@ -449,6 +455,13 @@ public class WorkorderActivity extends AuthActionBarActivity {
             if (workorder != null) {
                 _workorder = workorder;
                 populateUi(cached);
+            } else if (!_isAllowed) {
+                try {
+                    Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
+                    finish();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             } else if (cached) {
                 getData(false);
             }
