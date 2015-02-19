@@ -20,6 +20,8 @@
     <color name="fn_accent_color">#FF3FD4AD</color>
     <color name="fn_accent_color_80">#CC3FD4AD</color>
     <color name="fn_accent_color_50">#803FD4AD</color>
+    <color name="fn_accent_color_25">#3F3FD4AD</color>
+    <color name="fn_accent_color_10">#193FD4AD</color>
     <color name="fn_accent_color_0">#003FD4AD</color>
     <color name="fn_accent_color_dark">#FF1e988a</color>
 

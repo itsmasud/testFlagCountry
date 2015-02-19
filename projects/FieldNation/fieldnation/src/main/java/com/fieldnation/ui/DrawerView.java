@@ -60,14 +60,14 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
     private TextView _versionTextView;
-//    private LinearLayout _feedbackLayout;
+    //    private LinearLayout _feedbackLayout;
     private Button _feedbackButton;
-//    private LinearLayout _reviewLayout;
+    //    private LinearLayout _reviewLayout;
 //    private Button _reviewButton;
 //    private Button _callButton;
     private TextView _providerIdTextView;
 
-//    private LinearLayout _sendLogLayout;
+    //    private LinearLayout _sendLogLayout;
     private Button _sendLogButton;
 
     // Data
@@ -377,8 +377,9 @@ public class DrawerView extends RelativeLayout {
             _estimatedLayout.setVisibility(View.VISIBLE);
             _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
             try {
-                Calendar cal = ISO8601.toCalendar(_estPayment.getDatePaid());
-                _estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
+//                Calendar cal = ISO8601.toCalendar(_estPayment.getDatePaid());
+//                _estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
+                _estimatedDateTextView.setText("Pending");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 _estimatedDateTextView.setText("");
@@ -392,7 +393,7 @@ public class DrawerView extends RelativeLayout {
             _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
             try {
                 Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
-                _paidDateTextView.setText("Estimated " + misc.formatDate(cal));
+                _paidDateTextView.setText("Paid " + misc.formatDate(cal));
             } catch (Exception ex) {
                 ex.printStackTrace();
                 _paidDateTextView.setText("");

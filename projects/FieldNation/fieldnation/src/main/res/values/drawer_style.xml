@@ -1,18 +1,40 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <dimen name="drawer_padding">5dp</dimen>
-    <dimen name="drawer_item_paddingLeft">4dp</dimen>
+    <dimen name="drawer_padding">4dp</dimen>
+    <dimen name="drawer_item_paddingLeft">16dp</dimen>
     <dimen name="drawer_item_paddingTop">16dp</dimen>
-    <dimen name="drawer_item_paddingRight">4dp</dimen>
+    <dimen name="drawer_item_paddingRight">8dp</dimen>
     <dimen name="drawer_item_paddingBottom">16dp</dimen>
-    <dimen name="drawer_item_icon_paddingRight">8dp</dimen>
+    <dimen name="drawer_item_icon_paddingRight">16dp</dimen>
     <dimen name="drawer_icon_width">40dp</dimen>
     <dimen name="drawer_icon_height">40dp</dimen>
 
     <style name="Drawer">
         <item name="android:background">@color/fn_menu_bg</item>
         <item name="android:padding">@dimen/drawer_padding</item>
+    </style>
+
+    <style name="DrawerProfileContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">32dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingTop">32dp</item>
+    </style>
+
+    <style name="DrawerProfileImage">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:src">@drawable/missing_circle</item>
+    </style>
+
+    <style name="DrawerProfileDataContainer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginLeft">16dp</item>
     </style>
 
     <style name="DrawerItem">
@@ -25,7 +47,7 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="DrawerItemTitle" parent="Text_Headline">
+    <style name="DrawerItemTitle" parent="Text_Title">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -33,6 +55,7 @@
     <style name="DrawerItemSubtitle" parent="Text_Subhead">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/fn_light_text</item>
     </style>
 
     <style name="DrawerEsitmatedAmount">
@@ -54,7 +77,7 @@
     </style>
 
     <style name="DrawerItemIcon">
-        <item name="android:paddingRight">@dimen/drawer_item_icon_paddingRight</item>
+        <item name="android:layout_marginRight">@dimen/drawer_item_icon_paddingRight</item>
         <item name="android:layout_width">@dimen/drawer_icon_width</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:scaleType">fitCenter</item>
@@ -74,6 +97,7 @@
         <item name="android:layout_marginBottom">16dp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@color/drawer_item_background</item>
     </style>
 
     <style name="DrawerSubitemTitle" parent="Text_Subhead">

@@ -21,29 +21,19 @@
 
                 <LinearLayout
                     android:id="@+id/profile_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    style="@style/DrawerProfileContainer"
                     android:layout_toLeftOf="@+id/profileexpand_button"
-                    android:orientation="horizontal"
-                    android:paddingBottom="32dp"
-                    android:paddingLeft="16dp"
-                    android:paddingTop="32dp">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/profile_imageview"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
+                        style="@style/DrawerProfileImage"
                         android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/missing_circle" />
+                        android:layout_centerVertical="true" />
 
                     <LinearLayout
                         android:id="@+id/profile_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="16dp"
+                        style="@style/DrawerProfileDataContainer"
                         android:layout_toRightOf="@+id/profile_imageview"
                         android:orientation="vertical">
 
@@ -168,8 +158,8 @@
                         android:text="@string/payment_title" />
 
                     <TextView
-                        style="@style/DrawerItemSubtitle"
                         android:id="@+id/payment_subtext_textview"
+                        style="@style/DrawerItemSubtitle"
                         android:text="@string/payment_subtitle" />
 
                     <RelativeLayout
@@ -181,11 +171,11 @@
 
                         <TextView
                             android:id="@+id/estimateddate_textview"
+                            style="@style/Text_Body_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
-                            android:text="Pending"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                            android:text="Pending" />
 
                         <TextView
                             android:id="@+id/estimatedamount_textview"
@@ -207,11 +197,11 @@
 
                         <TextView
                             android:id="@+id/paiddate_textview"
+                            style="@style/Text_Body_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
-                            android:text="Paid 5/20/14"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                            android:text="Paid 5/20/14" />
 
                         <TextView
                             android:id="@+id/paidamount_textview"
