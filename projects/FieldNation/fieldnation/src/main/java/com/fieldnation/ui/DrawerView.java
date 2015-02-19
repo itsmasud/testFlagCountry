@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -23,11 +22,14 @@ import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
+import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -62,6 +64,8 @@ public class DrawerView extends RelativeLayout {
     private Button _feedbackButton;
     private LinearLayout _reviewLayout;
     private Button _reviewButton;
+    private Button _callButton;
+    private TextView _providerIdTextView;
 
     private LinearLayout _sendLogLayout;
     private Button _sendLogButton;
@@ -71,6 +75,7 @@ public class DrawerView extends RelativeLayout {
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
     private int _nextPage = 0;
+    private Profile _profile = null;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -97,6 +102,9 @@ public class DrawerView extends RelativeLayout {
             return;
 
         AuthTopicService.subscribeAuthState(getContext(), 0, TAG, _authReceiver);
+
+        _providerIdTextView = (TextView) findViewById(R.id.providerid_textview);
+        _providerIdTextView.setVisibility(View.GONE);
 
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
         _myworkView.setOnClickListener(_myworkView_onClick);
@@ -141,6 +149,9 @@ public class DrawerView extends RelativeLayout {
         _reviewButton = (Button) findViewById(R.id.review_button);
         _reviewButton.setOnClickListener(_review_onClick);
 
+        _callButton = (Button) findViewById(R.id.call_button);
+        _callButton.setOnClickListener(_call_onClick);
+
         _sendLogButton.setVisibility(View.VISIBLE);
         if (BuildConfig.FLAVOR.equals("prod")) {
             _feedbackLayout.setVisibility(View.GONE);
@@ -153,17 +164,40 @@ public class DrawerView extends RelativeLayout {
             _feedbackLayout.setVisibility(View.VISIBLE);
             _reviewLayout.setVisibility(View.GONE);
         }
+
+        Topics.subscrubeProfileUpdated(getContext(), TAG + ":PROFILE", _topicReceiver);
     }
 
     @Override
     protected void finalize() throws Throwable {
         TopicService.delete(getContext(), TAG);
+        TopicService.delete(getContext(), TAG + ":PROFILE");
         super.finalize();
+    }
+
+    private void gotProfile() {
+        if (_profile == null)
+            return;
+
+        _providerIdTextView.setVisibility(View.VISIBLE);
+        _providerIdTextView.setText("Provider Id: " + _profile.getUserId());
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+        @Override
+        public void onTopic(int resultCode, String topicId, Bundle parcel) {
+            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
+                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
+                parcel.setClassLoader(getContext().getClassLoader());
+                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
+                gotProfile();
+            }
+        }
+    };
+
     private final OnClickListener _review_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -237,6 +271,14 @@ public class DrawerView extends RelativeLayout {
             Log.v(TAG, "SplashActivity");
             SplashActivity.startNew(getContext());
             attachAnimations();
+        }
+    };
+
+    private final OnClickListener _call_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:18775734353"));
+            getContext().startActivity(intent);
         }
     };
 

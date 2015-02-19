@@ -40,6 +40,7 @@ public class MessageCardView extends RelativeLayout {
     private PhotoService _photoService;
     private Message _message;
     private String[] _substatus;
+    private Drawable _profilePic = null;
 
     /*-*****************************-*/
     /*-			LifeCycle			-*/
@@ -107,8 +108,7 @@ public class MessageCardView extends RelativeLayout {
             e.printStackTrace();
         }
         try {
-            _messageBodyTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
-            _messageBodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            _messageBodyTextView.setText(_message.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,15 +124,17 @@ public class MessageCardView extends RelativeLayout {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-        try {
-            // _profileImageView.setBackgroundDrawable(null);
-            _profileImageView.setImageDrawable(null);
-            String url = _message.getFromUser().getPhotoThumbUrl();
-            if (url != null)
-                getContext().startService(_photoService.getPhoto(_viewId, url, true));
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (_profilePic == null) {
+            try {
+                _profileImageView.setBackgroundResource(R.drawable.missing_circle);
+                String url = _message.getFromUser().getPhotoThumbUrl();
+                if (url != null)
+                    getContext().startService(_photoService.getPhoto(_viewId, url, true));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            _profileImageView.setImageDrawable(_profilePic);
         }
 
         try {
@@ -167,8 +169,8 @@ public class MessageCardView extends RelativeLayout {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == _viewId) {
                 Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
-                Drawable draw = new BitmapDrawable(getContext().getResources(), photo);
-                _profileImageView.setImageDrawable(draw);
+                _profilePic = new BitmapDrawable(getContext().getResources(), photo);
+                _profileImageView.setImageDrawable(_profilePic);
             }
             super.onReceiveResult(resultCode, resultData);
         }
