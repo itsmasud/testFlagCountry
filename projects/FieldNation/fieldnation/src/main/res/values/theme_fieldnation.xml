@@ -34,6 +34,8 @@
         <item name="loginContentStyle">@style/Login.Content</item>
         <item name="loginEditTextStyle">@style/Login.EditText</item>
 
+        <!-- drawer styles -->
+        <item name="drawerStyle">@style/Drawer</item>
         <!-- toolbar -->
         <item name="fnToolbarStyle">@style/toolbarStyle</item>
         <item name="fnToolbarTabListStyle">@style/toolbarTabListStyle</item>
@@ -43,7 +45,6 @@
         <item name="activityMainStyle">@style/ActivityMain</item>
         <item name="activitySignatureStyle">@style/SignatureActivity</item>
         <item name="activitySplashStyle">@style/SplashActivity</item>
-
 
         <!-- dividers -->
         <item name="dividerFullStyle">@style/DividerFull</item>
@@ -57,7 +58,6 @@
         <item name="buttonGrayStyle">@style/Material.Button.Raised.Gray</item>
         <item name="buttonSpinnerStyle">@style/ButtonSpinner</item>
         <item name="buttonFlatStyle">@style/Material.Button.Flat</item>
-
 
         <!-- tile styles -->
         <item name="tileStyle">@style/Tile.Material</item>

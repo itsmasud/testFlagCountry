@@ -52,7 +52,7 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _marketView;
     private RelativeLayout _paymentView;
     //    private RelativeLayout _settingsView;
-    private RelativeLayout _logoutView;
+    private LinearLayout _logoutView;
     private TextView _paidAmountTextView;
     private TextView _paidDateTextView;
     private TextView _estimatedAmountTextView;
@@ -60,14 +60,14 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
     private TextView _versionTextView;
-    private LinearLayout _feedbackLayout;
+//    private LinearLayout _feedbackLayout;
     private Button _feedbackButton;
-    private LinearLayout _reviewLayout;
-    private Button _reviewButton;
-    private Button _callButton;
+//    private LinearLayout _reviewLayout;
+//    private Button _reviewButton;
+//    private Button _callButton;
     private TextView _providerIdTextView;
 
-    private LinearLayout _sendLogLayout;
+//    private LinearLayout _sendLogLayout;
     private Button _sendLogButton;
 
     // Data
@@ -118,7 +118,7 @@ public class DrawerView extends RelativeLayout {
 //        _settingsView = (RelativeLayout) findViewById(R.id.settings_view);
 //        _settingsView.setOnClickListener(_settingsView_onClick);
 
-        _logoutView = (RelativeLayout) findViewById(R.id.logout_view);
+        _logoutView = (LinearLayout) findViewById(R.id.logout_view);
         _logoutView.setOnClickListener(_logoutView_onClick);
 
         _paidLayout = (RelativeLayout) findViewById(R.id.paid_layout);
@@ -137,32 +137,32 @@ public class DrawerView extends RelativeLayout {
             _versionTextView.setVisibility(View.GONE);
         }
 
-        _feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
-        _feedbackButton = (Button) findViewById(R.id.feedback_button);
-        _feedbackButton.setOnClickListener(_feedback_onClick);
+//        _feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
+//        _feedbackButton = (Button) findViewById(R.id.feedback_button);
+//        _feedbackButton.setOnClickListener(_feedback_onClick);
 
-        _sendLogLayout = (LinearLayout) findViewById(R.id.sendlog_layout);
-        _sendLogButton = (Button) findViewById(R.id.sendlog_button);
-        _sendLogButton.setOnClickListener(_sendlog_onClick);
+//        _sendLogLayout = (LinearLayout) findViewById(R.id.sendlog_layout);
+//        _sendLogButton = (Button) findViewById(R.id.sendlog_button);
+//        _sendLogButton.setOnClickListener(_sendlog_onClick);
 
-        _reviewLayout = (LinearLayout) findViewById(R.id.review_layout);
-        _reviewButton = (Button) findViewById(R.id.review_button);
-        _reviewButton.setOnClickListener(_review_onClick);
+//        _reviewLayout = (LinearLayout) findViewById(R.id.review_layout);
+//        _reviewButton = (Button) findViewById(R.id.review_button);
+//        _reviewButton.setOnClickListener(_review_onClick);
 
-        _callButton = (Button) findViewById(R.id.call_button);
-        _callButton.setOnClickListener(_call_onClick);
+//        _callButton = (Button) findViewById(R.id.call_button);
+//        _callButton.setOnClickListener(_call_onClick);
 
-        _sendLogButton.setVisibility(View.VISIBLE);
+//        _sendLogButton.setVisibility(View.VISIBLE);
         if (BuildConfig.FLAVOR.equals("prod")) {
-            _feedbackLayout.setVisibility(View.GONE);
+//            _feedbackLayout.setVisibility(View.GONE);
             if (((GlobalState) getContext().getApplicationContext()).shouldShowReviewDialog()) {
-                _reviewLayout.setVisibility(View.VISIBLE);
+//                _reviewLayout.setVisibility(View.VISIBLE);
             } else {
-                _reviewLayout.setVisibility(View.GONE);
+//                _reviewLayout.setVisibility(View.GONE);
             }
         } else {
-            _feedbackLayout.setVisibility(View.VISIBLE);
-            _reviewLayout.setVisibility(View.GONE);
+//            _feedbackLayout.setVisibility(View.VISIBLE);
+//            _reviewLayout.setVisibility(View.GONE);
         }
 
         Topics.subscrubeProfileUpdated(getContext(), TAG + ":PROFILE", _topicReceiver);

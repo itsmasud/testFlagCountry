@@ -7,8 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,7 +132,7 @@ public class MessageCardView extends RelativeLayout {
                 ex.printStackTrace();
             }
         } else {
-            _profileImageView.setImageDrawable(_profilePic);
+            _profileImageView.setBackgroundDrawable(_profilePic);
         }
 
         try {
@@ -170,7 +168,7 @@ public class MessageCardView extends RelativeLayout {
             if (resultCode == _viewId) {
                 Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
                 _profilePic = new BitmapDrawable(getContext().getResources(), photo);
-                _profileImageView.setImageDrawable(_profilePic);
+                _profileImageView.setBackgroundDrawable(_profilePic);
             }
             super.onReceiveResult(resultCode, resultData);
         }

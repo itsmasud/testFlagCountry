@@ -17,6 +17,10 @@
         <attr name="loginEditTextStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="DrawerTheme">
+        <attr name="drawerStyle" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="Toolbar">
         <attr name="fnToolbarStyle" format="reference" />
         <attr name="fnToolbarTabListStyle" format="reference" />
