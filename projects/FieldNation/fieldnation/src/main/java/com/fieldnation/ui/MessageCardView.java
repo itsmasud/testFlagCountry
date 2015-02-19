@@ -134,7 +134,7 @@ public class MessageCardView extends RelativeLayout {
                 ex.printStackTrace();
             }
         } else {
-            _profileImageView.setImageDrawable(_profilePic);
+            _profileImageView.setBackgroundDrawable(_profilePic);
         }
 
         try {
@@ -170,7 +170,7 @@ public class MessageCardView extends RelativeLayout {
             if (resultCode == _viewId) {
                 Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
                 _profilePic = new BitmapDrawable(getContext().getResources(), photo);
-                _profileImageView.setImageDrawable(_profilePic);
+                _profileImageView.setBackgroundDrawable(_profilePic);
             }
             super.onReceiveResult(resultCode, resultData);
         }
