@@ -86,7 +86,7 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         public void run() {
             if (getActivity() != null && _workorderService != null && _workorder != null) {
-                getActivity().startService(_workorderService.listMessages(WEB_MARK_READ, _workorder.getWorkorderId(), true, false));
+                getActivity().startService(_workorderService.markMessagesRead(WEB_MARK_READ, _workorder.getWorkorderId()));
             } else {
                 new Handler().postDelayed(_markReadRunnable, 1000);
             }
