@@ -167,7 +167,7 @@ public class WorkorderService extends WebService implements WebServiceConstants 
     // messages
     public Intent markMessagesRead(int resultCode, long workorderId) {
         return httpGet(resultCode, "/api/rest/v1/workorder/" + workorderId + "/messages",
-                "mark_read=1", false);
+                "?mark_read=1", false);
     }
 
     public Intent listMessages(int resultCode, long workorderId, boolean allowCache) {
