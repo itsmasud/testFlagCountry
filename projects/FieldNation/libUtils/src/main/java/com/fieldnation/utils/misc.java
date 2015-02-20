@@ -194,8 +194,13 @@ public class misc {
         int dist2 = Math.min(cx, cy);
         dist2 = dist2 * dist2;
 
+        int l1 = (dist2 * 94) / 100;
+        int l2 = (dist2 * 96) / 100;
+        int l3 = (dist2 * 98) / 100;
+
         int dx = 0;
         int dy = 0;
+
 
         for (int x = xoff; x < source.getWidth() - xoff; x++) {
             for (int y = yoff; y < source.getHeight() - yoff; y++) {
@@ -203,20 +208,20 @@ public class misc {
                 dy = cy - y;
                 int dist = dx * dx + dy * dy;
 
-                if (dist <= dist2 - 255) {
+                if (dist <= l1) {
                     destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
-                } else if (dist <= dist2 - 127) {
+                } else if (dist <= l2) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 115) / 128) << 56 & 0xFF000000);
-                } else if (dist <= dist2 - 63) {
+                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 192) / 256) << 56 & 0xFF000000);
+                } else if (dist <= l3) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 51) / 64) << 56 & 0xFF000000);
+                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 128) / 256) << 56 & 0xFF000000);
                 } else if (dist <= dist2) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 179) / 256) << 56 & 0xFF000000);
+                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 64) / 256) << 56 & 0xFF000000);
                 }
 
             }
