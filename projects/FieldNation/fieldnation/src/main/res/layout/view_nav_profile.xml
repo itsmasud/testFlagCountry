@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/DrawerItem"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/profile_imageview"
+        style="@style/DrawerItemIcon"
+        android:src="@drawable/missing_circle" />
+
+    <LinearLayout
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/profile_name_textview"
+            style="@style/DrawerProfileName"
+            android:text="@string/placeholder_phrase" />
+
+        <TextView
+            android:id="@+id/profile_company_textview"
+            style="@style/DrawerProfileDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder_phrase" />
+    </LinearLayout>
+</LinearLayout>

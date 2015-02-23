@@ -68,6 +68,15 @@
                 android:layout_width="fill_parent"
                 android:layout_height="2px" />
 
+            <com.fieldnation.ui.NavProfileDetailListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                style="@style/DrawerSeparator"
+                android:layout_width="fill_parent"
+                android:layout_height="2px" />
+
 
             <!-- Work orders -->
 
