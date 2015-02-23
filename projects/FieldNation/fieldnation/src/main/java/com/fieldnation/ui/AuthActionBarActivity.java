@@ -57,6 +57,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     // Data
     private Profile _profile;
     private boolean _profileBounceProtect = false;
+    protected boolean isPaused = true;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -109,6 +110,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     @Override
     protected void onResume() {
+        isPaused = false;
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
@@ -122,6 +124,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
+        isPaused = true;
         TopicService.delete(this, TAG);
         TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
         super.onPause();
@@ -143,6 +146,9 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     private void gotProfile(Profile profile) {
         if (_profileBounceProtect)
+            return;
+
+        if (isPaused)
             return;
 
         _profileBounceProtect = true;
@@ -264,7 +270,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
-			AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
+            AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
         }
 
         @Override
