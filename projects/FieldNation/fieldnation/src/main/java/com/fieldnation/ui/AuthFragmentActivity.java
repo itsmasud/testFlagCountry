@@ -53,6 +53,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     // Data
     private Profile _profile;
     private boolean _profileBounceProtect = false;
+    protected boolean isPaused = true;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -95,6 +96,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     @Override
     protected void onResume() {
+        isPaused = false;
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
@@ -108,6 +110,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     @Override
     protected void onPause() {
+        isPaused = true;
         TopicService.delete(this, TAG);
         TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
         super.onPause();
@@ -122,7 +125,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         if (_shutdownListener != null)
-        	_shutdownListener.onPause();
+            _shutdownListener.onPause();
         TopicService.unRegisterListener(this, 0, TAG + ":PROFILE", Topics.TOPIC_PROFILE_UPDATE);
         super.onDestroy();
     }
@@ -131,6 +134,9 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         if (_profileBounceProtect)
             return;
 
+        if (isPaused)
+            return;
+        
         _profileBounceProtect = true;
 
         if (!_profile.isProvider()) {
