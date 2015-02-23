@@ -271,7 +271,7 @@ public class WorkorderListFragment extends Fragment {
         if (_gpsLocationService != null)
             _gpsLocationService.stopLocationUpdates();
 
-        if (_locationLoadingDialog.isVisible()) {
+        if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
             Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
             _locationLoadingDialog.dismiss();
         }
