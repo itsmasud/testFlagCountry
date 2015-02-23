@@ -106,6 +106,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
+
+        gotProfile();
     }
 
     @Override
@@ -130,13 +132,16 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         super.onDestroy();
     }
 
-    private void gotProfile(Profile profile) {
+    private void gotProfile() {
         if (_profileBounceProtect)
             return;
 
         if (isPaused)
             return;
-        
+
+        if (_profile == null)
+            return;
+
         _profileBounceProtect = true;
 
         if (!_profile.isProvider()) {
@@ -144,28 +149,28 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             return;
         }
         GlobalState gs = GlobalState.getContext();
-        if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
+        if (!_profile.getAcceptedTos() && (gs.canRemindTos() || _profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
-            if (profile.isTosRequired()) {
+            if (_profile.isTosRequired()) {
                 Log.v(TAG, "Asking Tos, hard");
                 _acceptTermsDialog.setData(getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_hard, profile.insurancePercent()),
+                        getString(R.string.dialog_accept_terms_body_hard, _profile.insurancePercent()),
                         getString(R.string.btn_accept),
                         _acceptTerms_listener);
             } else {
                 Log.v(TAG, "Asking Tos, soft");
                 _acceptTermsDialog.setData(
                         getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_soft, profile.insurancePercent(), profile.daysUntilRequired()),
+                        getString(R.string.dialog_accept_terms_body_soft, _profile.insurancePercent(), _profile.daysUntilRequired()),
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
             _acceptTermsDialog.show();
-        } else if (!profile.hasValidCoi() && gs.canRemindCoi()) {
+        } else if (!_profile.hasValidCoi() && gs.canRemindCoi()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),
-                    getString(R.string.dialog_coi_body, profile.insurancePercent()),
+                    getString(R.string.dialog_coi_body, _profile.insurancePercent()),
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
@@ -173,7 +178,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             _coiWarningDialog.show();
         } else {
             Log.v(TAG, "tos/coi check done");
-            onProfile(profile);
+            onProfile(_profile);
             _profileBounceProtect = false;
         }
     }
@@ -213,7 +218,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -231,7 +236,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -243,7 +248,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -303,7 +308,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                 Log.v(TAG, "TOPIC_PROFILE_UPDATE");
                 parcel.setClassLoader(getClassLoader());
                 _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                gotProfile(_profile);
+                gotProfile();
             }
         }
     };
