@@ -14,6 +14,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/providerid_textview"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Provider Id: 12354654" />
+
             <!-- Work orders -->
 
             <RelativeLayout
@@ -279,6 +286,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge" />
             </RelativeLayout>
 
+
             <LinearLayout
                 android:visibility="gone"
                 android:id="@+id/feedback_layout"
@@ -335,6 +343,25 @@
                     android:layout_width="match_parent"
                     android:text="Review App" />
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/call_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    style="@style/DrawerSeparator"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2px" />
+
+                <Button
+                    android:id="@+id/call_button"
+                    style="@style/Button.Material.Flat"
+                    android:layout_width="match_parent"
+                    android:text="Call Support 877-573-4353 ext 1" />
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

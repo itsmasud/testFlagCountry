@@ -15,6 +15,8 @@ public class Message {
     private User _fromUser;
     @Json(name = "groupId")
     private Integer _groupId;
+    @Json(name = "isRead")
+    private Boolean _isRead;
     @Json(name = "message")
     private String _message;
     @Json(name = "messageFrom")
@@ -47,6 +49,13 @@ public class Message {
 
     public Integer getGroupId() {
         return _groupId;
+    }
+
+    public Boolean isRead() {
+        if (_isRead != null)
+            return _isRead;
+
+        return true;
     }
 
     public String getMessage() {

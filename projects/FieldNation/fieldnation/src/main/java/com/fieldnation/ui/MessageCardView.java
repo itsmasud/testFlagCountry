@@ -35,11 +35,13 @@ public class MessageCardView extends RelativeLayout {
     private TextView _messageBodyTextView;
     private TextView _timeTextView;
     private ImageView _profileImageView;
+    private ImageView _unreadImageView;
     private int _viewId;
 
     private PhotoService _photoService;
     private Message _message;
     private String[] _substatus;
+    private Drawable _profilePic = null;
 
     /*-*****************************-*/
     /*-			LifeCycle			-*/
@@ -76,6 +78,7 @@ public class MessageCardView extends RelativeLayout {
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _statusView = findViewById(R.id.status_view);
+        _unreadImageView = (ImageView) findViewById(R.id.unread_imageview);
 
         populateUi();
     }
@@ -100,6 +103,15 @@ public class MessageCardView extends RelativeLayout {
             _substatusLayout.setVisibility(View.GONE);
         }
 
+        try {
+            if (_message.isRead())
+                _unreadImageView.setVisibility(View.GONE);
+            else
+                _unreadImageView.setVisibility(View.VISIBLE);
+        } catch (Exception ex) {
+            _unreadImageView.setVisibility(View.GONE);
+        }
+
         _viewId = _message.getMessageId() % Integer.MAX_VALUE;
         try {
             _titleTextView.setText(_message.getWorkorderTitle() + "");
@@ -107,8 +119,7 @@ public class MessageCardView extends RelativeLayout {
             e.printStackTrace();
         }
         try {
-            _messageBodyTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
-            _messageBodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            _messageBodyTextView.setText(_message.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,15 +135,17 @@ public class MessageCardView extends RelativeLayout {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-        try {
-            // _profileImageView.setBackgroundDrawable(null);
-            _profileImageView.setImageDrawable(null);
-            String url = _message.getFromUser().getPhotoThumbUrl();
-            if (url != null)
-                getContext().startService(_photoService.getPhoto(_viewId, url, true));
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (_profilePic == null) {
+            try {
+                _profileImageView.setBackgroundResource(R.drawable.missing_circle);
+                String url = _message.getFromUser().getPhotoUrl();
+                if (url != null)
+                    getContext().startService(_photoService.getPhoto(_viewId, url, true));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            _profileImageView.setBackgroundDrawable(_profilePic);
         }
 
         try {
@@ -167,8 +180,8 @@ public class MessageCardView extends RelativeLayout {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == _viewId) {
                 Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
-                Drawable draw = new BitmapDrawable(getContext().getResources(), photo);
-                _profileImageView.setImageDrawable(draw);
+                _profilePic = new BitmapDrawable(getContext().getResources(), photo);
+                _profileImageView.setBackgroundDrawable(_profilePic);
             }
             super.onReceiveResult(resultCode, resultData);
         }

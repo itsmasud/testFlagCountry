@@ -3,7 +3,7 @@
 <resources>
     <string name="auth_account_name">Field Nation</string>
     <string name="auth_default_username">hexixtech</string>
-    <string name="auth_default_password">hexixtech</string>
+    <string name="auth_default_password">red17</string>
     <string name="auth_fn_grant_type">password</string>
     <string name="auth_fn_client_id">demoapp</string>
     <string name="auth_fn_client_secret">demopass</string>

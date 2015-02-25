@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,6 +136,13 @@ public class NotificationFragment extends WorkorderFragment {
 
         if (_workorder == null)
             return;
+
+        if (_emptyTextView == null)
+            return;
+
+        if (getActivity() == null)
+            return;
+
         Log.v(TAG, "getNotifications");
 
         _refreshView.startRefreshing();

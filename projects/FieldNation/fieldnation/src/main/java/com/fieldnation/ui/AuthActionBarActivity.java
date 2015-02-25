@@ -57,6 +57,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     // Data
     private Profile _profile;
     private boolean _profileBounceProtect = false;
+    protected boolean isPaused = true;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -109,6 +110,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     @Override
     protected void onResume() {
+        isPaused = false;
         super.onResume();
         AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
         _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
@@ -118,10 +120,13 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
+
+        gotProfile();
     }
 
     @Override
     protected void onPause() {
+        isPaused = true;
         TopicService.delete(this, TAG);
         TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
         super.onPause();
@@ -141,8 +146,14 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         super.onDestroy();
     }
 
-    private void gotProfile(Profile profile) {
+    private void gotProfile() {
         if (_profileBounceProtect)
+            return;
+
+        if (isPaused)
+            return;
+
+        if (_profile == null)
             return;
 
         _profileBounceProtect = true;
@@ -152,28 +163,28 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             return;
         }
         GlobalState gs = GlobalState.getContext();
-        if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
+        if (!_profile.getAcceptedTos() && (gs.canRemindTos() || _profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
-            if (profile.isTosRequired()) {
+            if (_profile.isTosRequired()) {
                 Log.v(TAG, "Asking Tos, hard");
                 _acceptTermsDialog.setData(getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_hard, profile.insurancePercent()),
+                        getString(R.string.dialog_accept_terms_body_hard, _profile.insurancePercent()),
                         getString(R.string.btn_accept),
                         _acceptTerms_listener);
             } else {
                 Log.v(TAG, "Asking Tos, soft");
                 _acceptTermsDialog.setData(
                         getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_soft, profile.insurancePercent(), profile.daysUntilRequired()),
+                        getString(R.string.dialog_accept_terms_body_soft, _profile.insurancePercent(), _profile.daysUntilRequired()),
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
             _acceptTermsDialog.show();
-        } else if (!profile.hasValidCoi() && gs.canRemindCoi()) {
+        } else if (!_profile.hasValidCoi() && gs.canRemindCoi()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),
-                    getString(R.string.dialog_coi_body, profile.insurancePercent()),
+                    getString(R.string.dialog_coi_body, _profile.insurancePercent()),
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
@@ -181,7 +192,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             _coiWarningDialog.show();
         } else {
             Log.v(TAG, "tos/coi check done");
-            onProfile(profile);
+            onProfile(_profile);
             _profileBounceProtect = false;
         }
     }
@@ -221,7 +232,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -239,7 +250,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -251,7 +262,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -264,7 +275,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onRegister(int resultCode, String topicId) {
-			AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
+            AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
         }
 
         @Override
@@ -311,7 +322,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
                 Log.v(TAG, "TOPIC_PROFILE_UPDATE");
                 parcel.setClassLoader(getClassLoader());
                 _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                gotProfile(_profile);
+                gotProfile();
             }
         }
     };

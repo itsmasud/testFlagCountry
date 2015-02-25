@@ -42,6 +42,7 @@ public class MessageRcvdView extends RelativeLayout {
     private Message _message = null;
     private PhotoService _service;
     private Random _rand = new Random();
+    private Drawable _profilePic = null;
 
     public MessageRcvdView(Context context) {
         super(context);
@@ -105,17 +106,20 @@ public class MessageRcvdView extends RelativeLayout {
             e.printStackTrace();
         }
 
-        _profileImageView.setBackgroundResource(R.drawable.missing);
-
-        if (_message.getMsgRead() == 0) {
-            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
-        } else {
+ 		if (_message.isRead()) {
             _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
+        } else {
+            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
         }
 
         _usernameTextView.setText(_message.getFromUser().getFirstname());
 
-        getPhoto();
+        if (_profilePic == null) {
+            _profileImageView.setBackgroundResource(R.drawable.missing);
+            getPhoto();
+        } else {
+            _profileImageView.setBackgroundDrawable(_profilePic);
+        }
     }
 
     private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
@@ -123,8 +127,8 @@ public class MessageRcvdView extends RelativeLayout {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == WEB_GET_PHOTO) {
                 Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
-                Drawable draw = new BitmapDrawable(getContext().getResources(), photo);
-                _profileImageView.setBackgroundDrawable(draw);
+                _profilePic = new BitmapDrawable(getContext().getResources(), photo);
+                _profileImageView.setBackgroundDrawable(_profilePic);
             }
             super.onReceiveResult(resultCode, resultData);
         }
