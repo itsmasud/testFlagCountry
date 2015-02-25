@@ -173,7 +173,7 @@ ADDED from AndroidManifest.xml:59:9
 		ADDED from AndroidManifest.xml:61:13
 	android:name
 		ADDED from AndroidManifest.xml:60:13
-activity#com.fieldnation.auth.server.AuthActivity
+activity#com.fieldnation.ui.AuthActivity
 ADDED from AndroidManifest.xml:64:9
 	android:noHistory
 		ADDED from AndroidManifest.xml:67:13
@@ -285,7 +285,7 @@ ADDED from AndroidManifest.xml:150:9
 		ADDED from AndroidManifest.xml:152:13
 	android:name
 		ADDED from AndroidManifest.xml:151:13
-service#com.fieldnation.auth.server.AuthService
+service#com.fieldnation.rpc.server.AuthService
 ADDED from AndroidManifest.xml:154:9
 	android:process
 		ADDED from AndroidManifest.xml:157:13

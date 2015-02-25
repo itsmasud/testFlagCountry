@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.Log;
-import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.misc;
 
@@ -37,7 +35,7 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
         }
 
 
-        OAuth auth = null;
+        AuthToken auth = null;
 
         // look up user in the cache
         AuthCache authCache = AuthCache.get(context, username);
@@ -55,7 +53,7 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
             }
             if (authCache.validateSessionHash(authToken)) {
                 try {
-                    auth = OAuth.fromCache(authCache.getOAuthBlob());
+                    auth = AuthToken.fromCache(authCache.getOAuthBlob());
                 } catch (ParseException e) {
                     // this is handled below when we check for auth != null
                     e.printStackTrace();
@@ -93,7 +91,7 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
         }
     }
 
-    private void doHttpRead(Context context, Intent intent, OAuth at) {
+    private void doHttpRead(Context context, Intent intent, AuthToken at) {
         Bundle bundle = intent.getExtras();
         String method = bundle.getString(KEY_PARAM_METHOD);
         String path = bundle.getString(KEY_PARAM_PATH);
@@ -105,9 +103,9 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
         if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
             ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-            DataCacheNode cachedData = null;
+            WebDataCacheNode cachedData = null;
 
-            cachedData = DataCache.query(context, at, bundle);
+            cachedData = WebDataCache.query(context, at, bundle);
 
             if (allowCache && cachedData != null) {
                 Log.v(TAG, "Cached Response");
@@ -117,9 +115,8 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
                 bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
             } else {
                 Log.v(TAG, "Atempting web request");
-                Ws ws = new Ws(at);
                 try {
-                    Result result = ws.httpRead(method, path, options, contentType);
+                    HttpResult result = Http.read(method, at.getHostname(), path, at.applyToUrlOptions(options), contentType);
 
                     try {
                         // happy path
@@ -127,7 +124,7 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
                         bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                         bundle.putBoolean(KEY_RESPONSE_CACHED, false);
                         bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-                        DataCache.store(context, at, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+                        WebDataCache.store(context, at, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
                                 bundle.getInt(KEY_RESPONSE_CODE));
                         Log.v(TAG, "web request success");
                     } catch (Exception ex) {
@@ -155,7 +152,7 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
 
     }
 
-    private void doHttpWrite(Context context, Intent intent, OAuth at) {
+    private void doHttpWrite(Context context, Intent intent, AuthToken at) {
         Bundle bundle = intent.getExtras();
         String method = bundle.getString(KEY_PARAM_METHOD);
         String path = bundle.getString(KEY_PARAM_PATH);
@@ -167,20 +164,19 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
         if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
             ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-            DataCacheNode cachedData = null;
+            WebDataCacheNode cachedData = null;
 
             if (allowCache)
-                cachedData = DataCache.query(context, at, bundle);
+                cachedData = WebDataCache.query(context, at, bundle);
 
             if (cachedData != null) {
                 bundle.putByteArray(KEY_RESPONSE_DATA, cachedData.getResponseData());
                 bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
                 bundle.putBoolean(KEY_RESPONSE_CACHED, true);
             } else {
-                Ws ws = new Ws(at);
-                Result result = null;
+                HttpResult result = null;
                 try {
-                    result = ws.httpReadWrite(method, path, options, data, contentType);
+                    result = Http.readWrite(method, at.getHostname(), path, at.applyToUrlOptions(options), data, contentType);
 
                     try {
                         // happy path
@@ -188,7 +184,7 @@ public class WebRpc extends RpcInterface implements WebServiceConstants {
                         bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                         bundle.putBoolean(KEY_RESPONSE_CACHED, false);
                         bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-                        DataCache.store(context, at, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+                        WebDataCache.store(context, at, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
                                 bundle.getInt(KEY_RESPONSE_CODE));
                         Log.v(TAG, "web request success");
                     } catch (Exception ex) {

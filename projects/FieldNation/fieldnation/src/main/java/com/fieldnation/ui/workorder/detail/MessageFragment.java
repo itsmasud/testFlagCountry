@@ -311,7 +311,6 @@ public class MessageFragment extends WorkorderFragment {
 
             _workorderService = null;
 
-            AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };

@@ -1,4 +1,4 @@
-package com.fieldnation.auth.server;
+package com.fieldnation.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;

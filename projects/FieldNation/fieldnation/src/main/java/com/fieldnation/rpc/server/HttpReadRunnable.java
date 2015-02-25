@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.rpc.common.WebServiceConstants;
 
 public class HttpReadRunnable extends HttpRunnable implements WebServiceConstants {
     private static final String TAG = "rpc.server.HttpReadRunnable";
 
-    public HttpReadRunnable(Context context, Intent intent, OAuth at) {
+    public HttpReadRunnable(Context context, Intent intent, AuthToken at) {
         super(context, intent, at);
     }
 
@@ -34,10 +33,10 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
         if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
             ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-            DataCacheNode cachedData = null;
+            WebDataCacheNode cachedData = null;
 
             if (allowCache)
-                cachedData = DataCache.query(_context, _auth, bundle);
+                cachedData = WebDataCache.query(_context, _auth, bundle);
 
             if (allowCache && cachedData != null) {
                 Log.v(TAG, "Cached Response");
@@ -47,9 +46,8 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
                 bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
             } else {
                 Log.v(TAG, "Atempting web request");
-                Ws ws = new Ws(_auth);
                 try {
-                    Result result = ws.httpRead(method, path, options, contentType);
+                    HttpResult result = Http.read(method, _auth.getHostname(), path, _auth.applyToUrlOptions(options), contentType);
 
                     if (result.getResponseCode() / 100 != 2) {
                         Log.v(TAG, "Error response: " + result.getResponseCode());
@@ -66,7 +64,7 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
                             bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                             bundle.putBoolean(KEY_RESPONSE_CACHED, false);
                             bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-                            DataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
+                            WebDataCache.store(_context, _auth, bundle, bundle.getByteArray(KEY_RESPONSE_DATA),
                                     bundle.getInt(KEY_RESPONSE_CODE));
                             Log.v(TAG, "web request success");
                         } catch (Exception ex) {

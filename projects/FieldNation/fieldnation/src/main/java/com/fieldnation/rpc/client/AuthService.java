@@ -6,11 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
-import com.fieldnation.auth.server.Authenticator;
+import com.fieldnation.rpc.server.Authenticator;
 import com.fieldnation.rpc.common.AuthServiceConstants;
-import com.fieldnation.rpc.common.DataServiceConstants;
+import com.fieldnation.rpc.common.RpcServiceConstants;
 import com.fieldnation.rpc.server.AuthRpc;
-import com.fieldnation.rpc.server.DataService;
+import com.fieldnation.rpc.server.RpcService;
 
 /**
  * Provides intents that will call the authentication services.
@@ -31,7 +31,7 @@ public class AuthService implements AuthServiceConstants {
 	 * 
 	 * @see Authenticator
 	 * @see AccountManager
-	 * @see com.fieldnation.auth.server.AuthService
+	 * @see com.fieldnation.rpc.server.AuthService
 	 * @see AuthRpc
 	 * 
 	 * @param response
@@ -46,9 +46,9 @@ public class AuthService implements AuthServiceConstants {
 	public Intent authenticateWeb(AccountAuthenticatorResponse response, String hostname, String grantType,
 			String clientId, String clientSecret, String username, String password) {
 
-		Intent intent = new Intent(_context, DataService.class);
-		intent.setAction(DataServiceConstants.ACTION_RPC);
-		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+		Intent intent = new Intent(_context, RpcService.class);
+		intent.setAction(RpcServiceConstants.ACTION_RPC);
+		intent.putExtra(RpcServiceConstants.KEY_SERVICE, ACTION_NAME);
 		intent.putExtra(KEY_METHOD, METHOD_GET_OAUTH_TOKEN);
 		intent.putExtra(KEY_PARAM_HOSTNAME, hostname);
 		intent.putExtra(KEY_PARAM_PATH, "/authentication/api/oauth/token");
@@ -79,9 +79,9 @@ public class AuthService implements AuthServiceConstants {
 	public Intent authenticateWeb(ResultReceiver callback, int resultCode, String hostname, String grantType,
 			String clientId, String clientSecret, String username, String password) {
 
-		Intent intent = new Intent(_context, DataService.class);
-		intent.setAction(DataServiceConstants.ACTION_RPC);
-		intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+		Intent intent = new Intent(_context, RpcService.class);
+		intent.setAction(RpcServiceConstants.ACTION_RPC);
+		intent.putExtra(RpcServiceConstants.KEY_SERVICE, ACTION_NAME);
 		intent.putExtra(KEY_METHOD, METHOD_GET_OAUTH_TOKEN);
 		intent.putExtra(KEY_PARAM_HOSTNAME, hostname);
 		intent.putExtra(KEY_PARAM_PATH, "/authentication/api/oauth/token");

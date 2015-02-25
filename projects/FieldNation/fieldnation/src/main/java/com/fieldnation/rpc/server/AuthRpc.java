@@ -7,11 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.AuthServiceConstants;
 
@@ -39,49 +37,6 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
         }
 
     }
-
-    // private void refreshToken(Context context, Intent intent) {
-    // String accessToken = intent.getStringExtra(KEY_PARAM_ACCESS_TOKEN);
-    // String username = intent.getStringExtra(KEY_PARAM_USERNAME);
-    //
-    // AuthCache ac = AuthCache.get(context, username);
-    // if (ac == null)
-    // return;
-    //
-    // if (!ac.validateSessionHash(accessToken)) {
-    // return;
-    // }
-    //
-    // AccountManager am = AccountManager.get(context);
-    //
-    // Account[] accounts = am.getAccountsByType(_gs.accountType);
-    //
-    // Account account = null;
-    //
-    // for (int i = 0; i < accounts.length; i++) {
-    // if (accounts[i].name.equals(username)) {
-    // account = accounts[i];
-    // break;
-    // }
-    // }
-    // String password = am.getPassword(account);
-    //
-    // Log.d(TAG, password);
-    //
-    // try {
-    // JsonObject reqBlob = new JsonObject(ac.getRequestBlob());
-    //
-    // OAuth auth = OAuth.authServer(reqBlob.getString("hostname"),
-    // reqBlob.getString("grantType"),
-    // reqBlob.getString("clientId"),
-    // reqBlob.getString("clientSecret"), username, password);
-    //
-    // ac.setOAuthBlob(auth.toString());
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // return;
-    // }
-    // }
 
     private void getOauthToken(Context context, Intent intent) {
         String errorMessage = null;
@@ -111,10 +66,10 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
             ex.printStackTrace();
         }
 
-        OAuth at = null;
+        AuthToken at = null;
         String accessToken = null;
         try {
-            at = OAuth.authServer(hostname, path, grantType, clientId, clientSecret, username, password);
+            at = AuthToken.authServer(hostname, path, grantType, clientId, clientSecret, username, password);
 
             Log.v(TAG, at.toString());
 

@@ -14,7 +14,7 @@ import java.text.ParseException;
  *
  * @author michael.carver
  */
-public class Result {
+public class HttpResult {
 
     private byte[] _baResults = null;
     private String _sResults = null;
@@ -24,7 +24,7 @@ public class Result {
     private int _responseCode;
     private String _responseMessage;
 
-    public Result(HttpURLConnection conn) throws IOException {
+    public HttpResult(HttpURLConnection conn) throws IOException {
         _responseCode = conn.getResponseCode();
         _responseMessage = conn.getResponseMessage();
         cacheResults(conn);

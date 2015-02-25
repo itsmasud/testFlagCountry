@@ -1,4 +1,4 @@
-package com.fieldnation.auth.server;
+package com.fieldnation.rpc.server;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

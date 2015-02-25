@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.rpc.common.WebServiceConstants;
 
 public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstants {
     private static final String TAG = "rpc.server.HttpWriteRunnable";
 
-    public HttpWriteRunnable(Context context, Intent intent, OAuth at) {
+    public HttpWriteRunnable(Context context, Intent intent, AuthToken at) {
         super(context, intent, at);
     }
 
@@ -33,20 +32,19 @@ public class HttpWriteRunnable extends HttpRunnable implements WebServiceConstan
         if (bundle.containsKey(KEY_PARAM_CALLBACK)) {
             ResultReceiver rr = bundle.getParcelable(KEY_PARAM_CALLBACK);
 
-            DataCacheNode cachedData = null;
+            WebDataCacheNode cachedData = null;
 
             if (allowCache)
-                cachedData = DataCache.query(_context, _auth, bundle);
+                cachedData = WebDataCache.query(_context, _auth, bundle);
 
             if (cachedData != null) {
                 bundle.putByteArray(KEY_RESPONSE_DATA, cachedData.getResponseData());
                 bundle.putInt(KEY_RESPONSE_CODE, cachedData.getResponseCode());
                 bundle.putBoolean(KEY_RESPONSE_CACHED, true);
             } else {
-                Ws ws = new Ws(_auth);
-                Result result = null;
+                HttpResult result = null;
                 try {
-                    result = ws.httpWrite(method, path, options, data, contentType);
+                    result = Http.write(method, _auth.getHostname(), path, _auth.applyToUrlOptions(options), data, contentType);
 
                     if (result.getResponseCode() / 100 != 2) {
                         Log.v(TAG, "Error response: " + result.getResponseCode());

@@ -1,4 +1,4 @@
-package com.fieldnation.auth.server;
+package com.fieldnation.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -24,17 +24,15 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.client.AuthService;
-import com.fieldnation.rpc.server.ClockService;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
 import com.fieldnation.topics.Topics;
-import com.fieldnation.ui.SplashActivity;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
- * by {@link Authenticator} via requets made to the {@link AccountManager}. It
+ * by {@link com.fieldnation.rpc.server.Authenticator} via requets made to the {@link AccountManager}. It
  * does not need to be called explicitly by the application.
  *
  * @author michael.carver
@@ -237,8 +235,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     AuthActivity.this.finish();
 
                     SplashActivity.startNew(AuthActivity.this);
-
-                    ClockService.enableClock(AuthActivity.this);
                 } else {
                     _contentLayout.setVisibility(View.VISIBLE);
                     _signupButton.setVisibility(View.VISIBLE);

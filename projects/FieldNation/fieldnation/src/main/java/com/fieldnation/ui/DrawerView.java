@@ -416,9 +416,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-
             _dataService = null;
-            AuthTopicService.requestAuthInvalid(getContext());
         }
     };
 

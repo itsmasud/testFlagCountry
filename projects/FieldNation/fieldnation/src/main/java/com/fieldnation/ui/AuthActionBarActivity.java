@@ -18,7 +18,6 @@ import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.server.ClockReceiver;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
@@ -78,8 +77,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         if (TAG.equals(TAG_BASE)) {
             TAG = UniqueTag.makeTag(TAG_BASE);
         }
-
-        ClockReceiver.registerClock(this);
 
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);

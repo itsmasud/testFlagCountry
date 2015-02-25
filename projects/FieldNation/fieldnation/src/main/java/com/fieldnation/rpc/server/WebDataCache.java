@@ -12,12 +12,12 @@ import com.fieldnation.Log;
  * @author michael.carver
  * 
  */
-public class DataCache {
-	private static final String TAG = "rpc.server.DataCache";
+public class WebDataCache {
+	private static final String TAG = "rpc.server.WebDataCache";
 
-	public static DataCacheNode query(Context context, OAuth at, Bundle bundle) {
+	public static WebDataCacheNode query(Context context, AuthToken at, Bundle bundle) {
 		String hashdata = hashBundle(at, bundle);
-		DataCacheNode node = DataCacheNode.get(context, hashdata);
+		WebDataCacheNode node = WebDataCacheNode.get(context, hashdata);
 		if (node != null) {
 			Log.v(TAG, "hit!");
 			return node;
@@ -26,13 +26,13 @@ public class DataCache {
 		return null;
 	}
 
-	public static void store(Context context, OAuth at, Bundle source, byte[] responseData, int responseCode) {
+	public static void store(Context context, AuthToken at, Bundle source, byte[] responseData, int responseCode) {
 		String hashdata = hashBundle(at, source);
 
-		DataCacheNode.put(context, hashdata, responseData, responseCode);
+		WebDataCacheNode.put(context, hashdata, responseData, responseCode);
 	}
 
-	private static String hashBundle(OAuth at, Bundle bundle) {
+	private static String hashBundle(AuthToken at, Bundle bundle) {
 		String hashdata = "";
 
 		hashdata = bundle.getString("METHOD");

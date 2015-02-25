@@ -5,16 +5,16 @@ import android.content.Intent;
 
 
 import com.fieldnation.Log;
-import com.fieldnation.rpc.common.DataServiceConstants;
+import com.fieldnation.rpc.common.RpcServiceConstants;
 
 import java.util.HashMap;
 
-public class DataService extends IntentService implements DataServiceConstants {
-    private static final String TAG = "rpc.server.DataService";
+public class RpcService extends IntentService implements RpcServiceConstants {
+    private static final String TAG = "rpc.server.RpcService";
 
     private HashMap<String, RpcInterface> _rpcs = new HashMap<String, RpcInterface>();
 
-    public DataService() {
+    public RpcService() {
         super(TAG);
 
         // fill in the hashmap

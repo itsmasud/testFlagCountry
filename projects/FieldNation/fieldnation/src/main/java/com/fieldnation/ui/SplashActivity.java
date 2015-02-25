@@ -10,7 +10,6 @@ import android.view.Window;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
-import com.fieldnation.auth.server.AuthActivity;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
@@ -65,7 +64,6 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        AuthTopicService.requestAuthInvalid(this);
         AuthTopicService.subscribeNeedUsernameAndPassword(this, TAG, _topicReceiver);
         AuthTopicService.requestAuthentication(this);
     }

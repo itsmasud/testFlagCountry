@@ -3,28 +3,21 @@ package com.fieldnation.rpc.server;
 import android.accounts.AccountManager;
 import android.content.Context;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Represents an oauth token. This class should be an immutable class.
  *
  * @author michael.carver
  */
-public class OAuth {
+public class AuthToken {
     private static final String TAG = "rpc.server.OAuth";
 
     /* creates a default string to use for all tokens */
@@ -55,7 +48,7 @@ public class OAuth {
     /*-*********************************-*/
     /*-			Constructors			-*/
     /*-*********************************-*/
-    private OAuth(JsonObject json) throws ParseException {
+    private AuthToken(JsonObject json) throws ParseException {
         _oauth.merge(json, true, true);
 
         if (_oauth.getLong("expires_in") == -1 && _oauth.getLong("expires_on") != -1) {
@@ -65,7 +58,7 @@ public class OAuth {
         }
     }
 
-    private OAuth(String jsonString) throws ParseException {
+    private AuthToken(String jsonString) throws ParseException {
         this(new JsonObject(jsonString));
     }
 
@@ -81,8 +74,8 @@ public class OAuth {
      * @throws ParseException
      * @see AuthCache
      */
-    public static OAuth fromCache(String oauthBlob) throws ParseException {
-        return new OAuth(oauthBlob);
+    public static AuthToken fromCache(String oauthBlob) throws ParseException {
+        return new AuthToken(oauthBlob);
     }
 
     /**
@@ -100,48 +93,21 @@ public class OAuth {
      * @throws IOException
      * @throws ParseException
      */
-    public static OAuth authServer(String hostname, String path, String grantType, String clientId,
-                                   String clientSecret, String username, String password) throws MalformedURLException, IOException, ParseException {
-
-        if (!path.startsWith("/"))
-            path = "/" + path;
-
-        HttpURLConnection conn = null;
-        if (Ws.USE_HTTPS) {
-            // only allow if debugging
-            if (Ws.DEBUG)
-                Ws.trustAllHosts();
-            conn = (HttpURLConnection) new URL("https://" + hostname + path).openConnection();
-
-            // only allow if debugging
-            if (Ws.DEBUG)
-                ((HttpsURLConnection) conn).setHostnameVerifier(Ws.DO_NOT_VERIFY);
-        } else {
-            conn = (HttpURLConnection) new URL("http://" + hostname + path).openConnection();
-        }
-
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("ContentType", "application/x-www-form-urlencoded");
-
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-
-        OutputStream out = conn.getOutputStream();
-
-        String payload = "grant_type=" + grantType + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&username=" + misc.escapeForURL(username) + "&password=" + misc.escapeForURL(password);
-        //Log.v(TAG, payload);
-        // payload = misc.escapeForURL(payload);
-        out.write(payload.getBytes());
-
-        Result result = new Result(conn);
-
-        conn.disconnect();
+    public static AuthToken authServer(String hostname, String path, String grantType, String clientId,
+                                       String clientSecret, String username, String password) throws MalformedURLException, IOException, ParseException {
+        HttpResult result = Http.post(hostname, path, null,
+                "grant_type=" + grantType +
+                        "&client_id=" + clientId +
+                        "&client_secret=" + clientSecret +
+                        "&username=" + misc.escapeForURL(username) +
+                        "&password=" + misc.escapeForURL(password),
+                "application/x-www-form-urlencoded");
         Log.v(TAG, result.getResponseCode() + "");
-        JsonObject token = result.getResultsAsJsonObject();
-        // TODO, add some timing, learn how to use the refresh token
-        token.put("hostname", hostname);
 
-        return new OAuth(token);
+        // TODO, add some timing, learn how to use the refresh token
+        JsonObject token = result.getResultsAsJsonObject();
+        token.put("hostname", hostname);
+        return new AuthToken(token);
     }
 
     /**
@@ -240,7 +206,6 @@ public class OAuth {
         try {
             return _oauth.getString("error") != null;
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
         return false;
     }

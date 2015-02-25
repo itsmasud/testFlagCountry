@@ -342,7 +342,6 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(SignOffActivity.this);
             Toast.makeText(SignOffActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
             _thankYouFrag.setUploadComplete();
         }

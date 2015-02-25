@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -56,7 +55,7 @@
             android:label="@string/signature_title"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".auth.server.AuthActivity"
+            android:name=".ui.AuthActivity"
             android:exported="true"
             android:label="@string/activity_login_title" />
         <activity
@@ -77,15 +76,15 @@
                     android:pathPrefix="/wo/"
                     android:scheme="https" />
                 <data
-                    android:host="dev.fieldnation.com"
+                    android:host="red.fieldnation.com"
                     android:pathPrefix="/workorder/"
                     android:scheme="https" />
                 <data
-                    android:host="dev.fieldnation.com"
+                    android:host="red.fieldnation.com"
                     android:pathPrefix="/marketplace/"
                     android:scheme="https" />
                 <data
-                    android:host="dev.fieldnation.com"
+                    android:host="red.fieldnation.com"
                     android:pathPrefix="/wo/"
                     android:scheme="https" />
                 <data
@@ -157,7 +156,7 @@
             android:exported="false"
             android:process=":topic" />
         <service
-            android:name=".auth.server.AuthService"
+            android:name=".rpc.server.AuthService"
             android:exported="true"
             android:process="">
             <intent-filter>
@@ -169,7 +168,7 @@
                 android:resource="@xml/authenticator" />
         </service>
         <service
-            android:name=".rpc.server.DataService"
+            android:name=".rpc.server.RpcService"
             android:exported="false"
             android:process=":data" />
         <service
@@ -194,13 +193,6 @@
             android:authorities="com.fieldnation.service"
             android:exported="false"
             android:syncable="true" />
-
-        <receiver android:name=".rpc.server.BootReciever">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".rpc.server.ClockReceiver" />
     </application>
 
 </manifest>

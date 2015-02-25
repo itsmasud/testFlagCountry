@@ -15,9 +15,9 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.client.ProfileService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.server.DataCacheNode;
+import com.fieldnation.rpc.server.Http;
 import com.fieldnation.rpc.server.PhotoCacheNode;
-import com.fieldnation.rpc.server.Ws;
+import com.fieldnation.rpc.server.WebDataCacheNode;
 import com.fieldnation.topics.GaTopic;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.Topics;
@@ -51,14 +51,14 @@ public class GlobalState extends Application {
     public GlobalState() {
         super();
 
-        Ws.USE_HTTPS = BuildConfig.USE_HTTPS;
+        Http.USE_HTTPS = BuildConfig.USE_HTTPS;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         _context = this;
-        DataCacheNode.flush(this);
+        WebDataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
         new ExpenseCategories(this);
 
@@ -161,7 +161,6 @@ public class GlobalState extends Application {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             _service = null;
-            AuthTopicService.requestAuthInvalid(GlobalState.this);
         }
     };
 

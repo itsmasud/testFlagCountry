@@ -179,7 +179,6 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             invalidateService();
-            AuthTopicService.requestAuthInvalid(getApplicationContext());
             Toast.makeText(ItemListActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshFailed();
         }

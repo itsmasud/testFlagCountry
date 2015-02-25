@@ -6,9 +6,9 @@ import android.content.Intent;
 abstract class HttpRunnable implements Runnable {
 	protected Context _context;
 	protected Intent _intent;
-	protected OAuth _auth;
+	protected AuthToken _auth;
 
-	public HttpRunnable(Context context, Intent intent, OAuth at) {
+	public HttpRunnable(Context context, Intent intent, AuthToken at) {
 		_context = context.getApplicationContext();
 		_intent = intent;
 		_auth = at;

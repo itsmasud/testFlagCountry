@@ -927,9 +927,7 @@ public class WorkorderListFragment extends Fragment {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             _service = null;
-            AuthTopicService.requestAuthInvalid(getActivity());
             setLoading(false);
-            //Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
         }
     };
 

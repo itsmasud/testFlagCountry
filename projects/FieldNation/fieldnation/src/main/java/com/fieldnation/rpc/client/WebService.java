@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.os.ResultReceiver;
 
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.DataServiceConstants;
+import com.fieldnation.rpc.common.RpcServiceConstants;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.server.DataService;
+import com.fieldnation.rpc.server.RpcService;
 
 import java.text.ParseException;
 import java.util.Iterator;
@@ -73,9 +73,9 @@ public class WebService implements WebServiceConstants {
      * @return
      */
     public Intent httpRead(int resultCode, String method, String path, String options, boolean allowCache) {
-        Intent intent = new Intent(_context, DataService.class);
-        intent.setAction(DataServiceConstants.ACTION_RPC);
-        intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+        Intent intent = new Intent(_context, RpcService.class);
+        intent.setAction(RpcServiceConstants.ACTION_RPC);
+        intent.putExtra(RpcServiceConstants.KEY_SERVICE, ACTION_NAME);
         intent.putExtra(KEY_PARAM_AUTH_TOKEN, _authToken);
         intent.putExtra(KEY_PARAM_USERNAME, _username);
         intent.putExtra(KEY_METHOD, METHOD_HTTP_READ);
@@ -106,9 +106,9 @@ public class WebService implements WebServiceConstants {
      */
     public Intent httpWrite(int resultCode, String method, String path, String options, byte[] data,
                             String contentType, boolean allowCache) {
-        Intent intent = new Intent(_context, DataService.class);
-        intent.setAction(DataServiceConstants.ACTION_RPC);
-        intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+        Intent intent = new Intent(_context, RpcService.class);
+        intent.setAction(RpcServiceConstants.ACTION_RPC);
+        intent.putExtra(RpcServiceConstants.KEY_SERVICE, ACTION_NAME);
         intent.putExtra(KEY_PARAM_AUTH_TOKEN, _authToken);
         intent.putExtra(KEY_PARAM_USERNAME, _username);
         intent.putExtra(KEY_METHOD, METHOD_HTTP_WRITE);
@@ -174,9 +174,9 @@ public class WebService implements WebServiceConstants {
 
     public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, Intent data,
                                Map<String, String> fields, PendingIntent notificationIntent) {
-        Intent intent = new Intent(_context, DataService.class);
-        intent.setAction(DataServiceConstants.ACTION_RPC);
-        intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+        Intent intent = new Intent(_context, RpcService.class);
+        intent.setAction(RpcServiceConstants.ACTION_RPC);
+        intent.putExtra(RpcServiceConstants.KEY_SERVICE, ACTION_NAME);
         intent.putExtra(KEY_PARAM_AUTH_TOKEN, _authToken);
         intent.putExtra(KEY_PARAM_USERNAME, _username);
         intent.putExtra(KEY_METHOD, METHOD_HTTP_POST_FILE);
@@ -213,9 +213,9 @@ public class WebService implements WebServiceConstants {
 
     public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, String localFilename,
                                Map<String, String> fields, String contentType, PendingIntent notificationIntent) {
-        Intent intent = new Intent(_context, DataService.class);
-        intent.setAction(DataServiceConstants.ACTION_RPC);
-        intent.putExtra(DataServiceConstants.KEY_SERVICE, ACTION_NAME);
+        Intent intent = new Intent(_context, RpcService.class);
+        intent.setAction(RpcServiceConstants.ACTION_RPC);
+        intent.putExtra(RpcServiceConstants.KEY_SERVICE, ACTION_NAME);
         intent.putExtra(KEY_PARAM_AUTH_TOKEN, _authToken);
         intent.putExtra(KEY_PARAM_USERNAME, _username);
         intent.putExtra(KEY_METHOD, METHOD_HTTP_POST_FILE);

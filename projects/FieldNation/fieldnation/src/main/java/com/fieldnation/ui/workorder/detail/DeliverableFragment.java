@@ -522,7 +522,6 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(_context);
             if (resultCode == WEB_DELETE_DELIVERABLE)
                 _deleteCount--;
             if (resultCode == WEB_SEND_DELIVERABLE)

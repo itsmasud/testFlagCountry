@@ -159,12 +159,6 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         public Context getContext() {
             return PaymentDetailActivity.this;
         }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(PaymentDetailActivity.this);
-        }
     };
 
     @Override

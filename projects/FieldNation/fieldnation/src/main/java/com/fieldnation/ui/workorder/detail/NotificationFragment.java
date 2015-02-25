@@ -272,7 +272,6 @@ public class NotificationFragment extends WorkorderFragment {
             if (getActivity() == null)
                 return;
 
-            AuthTopicService.requestAuthInvalid(getActivity());
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshComplete();
         }

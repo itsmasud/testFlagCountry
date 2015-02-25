@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 
 import com.fieldnation.Log;
-import com.fieldnation.rpc.server.DataCacheSqlHelper.Column;
+import com.fieldnation.rpc.server.WebDataCacheSqlHelper.Column;
 
-public class DataCacheNode {
-    private static final String TAG = "rpc.server.DataCacheNode";
+public class WebDataCacheNode {
+    private static final String TAG = "rpc.server.WebDataCacheNode";
     private static final long EXPIRATION_TIMEOUT = 60 * 60 * 1000; // 1 hour
     private Context _context;
     private long _id;
@@ -19,7 +19,7 @@ public class DataCacheNode {
     private byte[] _responseData;
     private int _responseCode;
 
-    private DataCacheNode(Context context, Cursor cursor) {
+    private WebDataCacheNode(Context context, Cursor cursor) {
         _context = context.getApplicationContext();
         _id = cursor.getLong(Column.ID.getIndex());
         _expiresOn = cursor.getLong(Column.EXIPES_ON.getIndex());
@@ -48,17 +48,17 @@ public class DataCacheNode {
         save(this);
     }
 
-    public static DataCacheNode get(Context context, String key) {
-        DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
+    public static WebDataCacheNode get(Context context, String key) {
+        WebDataCacheSqlHelper helper = new WebDataCacheSqlHelper(context);
         SQLiteDatabase db = helper.getReadableDatabase();
-        DataCacheNode node = null;
+        WebDataCacheNode node = null;
         try {
-            Cursor cursor = db.query(DataCacheSqlHelper.TABLE_NAME, DataCacheSqlHelper.getColumnNames(),
-                    DataCacheSqlHelper.Column.KEY + "=?", new String[]{key}, null, null, null);
+            Cursor cursor = db.query(WebDataCacheSqlHelper.TABLE_NAME, WebDataCacheSqlHelper.getColumnNames(),
+                    WebDataCacheSqlHelper.Column.KEY + "=?", new String[]{key}, null, null, null);
             try {
                 if (cursor.moveToFirst()) {
                     // hit
-                    node = new DataCacheNode(context, cursor);
+                    node = new WebDataCacheNode(context, cursor);
                 }
             } finally {
                 cursor.close();
@@ -79,7 +79,7 @@ public class DataCacheNode {
     }
 
     public static void put(Context context, String key, byte[] responseData, int responseCode) {
-        DataCacheNode node = get(context, key);
+        WebDataCacheNode node = get(context, key);
         if (node != null) {
             node._expiresOn = System.currentTimeMillis() + EXPIRATION_TIMEOUT;
             node._responseData = responseData;
@@ -94,36 +94,36 @@ public class DataCacheNode {
         values.put(Column.RESPONSE_DATA.getName(), responseData);
         values.put(Column.RESPONSE_CODE.getName(), responseCode);
 
-        DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
+        WebDataCacheSqlHelper helper = new WebDataCacheSqlHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.insert(DataCacheSqlHelper.TABLE_NAME, null, values);
+            db.insert(WebDataCacheSqlHelper.TABLE_NAME, null, values);
         } finally {
             helper.close();
         }
     }
 
-    public static void save(DataCacheNode node) {
+    public static void save(WebDataCacheNode node) {
         ContentValues values = new ContentValues();
         values.put(Column.EXIPES_ON.getName(), node._expiresOn);
         values.put(Column.KEY.getName(), node._key);
         values.put(Column.RESPONSE_DATA.getName(), node._responseData);
         values.put(Column.RESPONSE_CODE.getName(), node._responseCode);
 
-        DataCacheSqlHelper helper = new DataCacheSqlHelper(node._context);
+        WebDataCacheSqlHelper helper = new WebDataCacheSqlHelper(node._context);
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.update(DataCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + node._id, null);
+            db.update(WebDataCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + node._id, null);
         } finally {
             helper.close();
         }
     }
 
     public static void delete(Context context, long id) {
-        DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
+        WebDataCacheSqlHelper helper = new WebDataCacheSqlHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.delete(DataCacheSqlHelper.TABLE_NAME, Column.ID + "=" + id, null);
+            db.delete(WebDataCacheSqlHelper.TABLE_NAME, Column.ID + "=" + id, null);
         } finally {
             helper.close();
         }
@@ -131,11 +131,11 @@ public class DataCacheNode {
     }
 
     public static void flush(Context context) {
-        DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
+        WebDataCacheSqlHelper helper = new WebDataCacheSqlHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
             Log.v(TAG,
-                    "Flushed " + db.delete(DataCacheSqlHelper.TABLE_NAME,
+                    "Flushed " + db.delete(WebDataCacheSqlHelper.TABLE_NAME,
                             Column.EXIPES_ON + "<" + System.currentTimeMillis(), null) + " cached data");
         } finally {
             helper.close();

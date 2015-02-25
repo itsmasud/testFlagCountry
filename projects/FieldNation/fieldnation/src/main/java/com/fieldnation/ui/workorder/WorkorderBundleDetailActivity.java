@@ -144,12 +144,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         public Context getContext() {
             return WorkorderBundleDetailActivity.this;
         }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(WorkorderBundleDetailActivity.this);
-        }
     };
 
     @Override

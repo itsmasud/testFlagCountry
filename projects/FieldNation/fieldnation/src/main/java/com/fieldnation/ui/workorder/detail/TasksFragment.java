@@ -1114,7 +1114,6 @@ public class TasksFragment extends WorkorderFragment {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(_context);
             _username = null;
             _authToken = null;
             _service = null;

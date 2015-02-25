@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.app.NotificationCompat;
 
-
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -36,7 +35,7 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
     private PendingIntent _responseIntent;
 
 
-    public HttpPostFileRunnable(Context context, Intent intent, OAuth at) {
+    public HttpPostFileRunnable(Context context, Intent intent, AuthToken at) {
         super(context, intent, at);
     }
 
@@ -99,11 +98,10 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                 .setContentText(_context.getString(R.string.notification_uploading_dot));
         _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
 
-        Ws ws = new Ws(_auth);
-        Result result = null;
+        HttpResult result = null;
         try {
 
-            result = ws.httpPostFile(path, options, fieldName, filename, new FileInputStream(file),
+            result = Http.postFile(_auth.getHostname(), path, _auth.applyToUrlOptions(options), fieldName, filename, new FileInputStream(file),
                     (int) file.length(), fields);
 
             if (result.getResponseCode() / 100 != 2) {
@@ -122,7 +120,7 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                     _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                     _bundle.putBoolean(KEY_RESPONSE_CACHED, false);
                     _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_NONE);
-                    DataCache.store(_context, _auth, _bundle, _bundle.getByteArray(KEY_RESPONSE_DATA),
+                    WebDataCache.store(_context, _auth, _bundle, _bundle.getByteArray(KEY_RESPONSE_DATA),
                             _bundle.getInt(KEY_RESPONSE_CODE));
                     Log.v(TAG, "web request success");
                     Topics.dispatchFileUploadFinish(_context, path, filename);
