@@ -12,7 +12,7 @@ import android.os.Bundle;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.rpc.client.AuthService;
+import com.fieldnation.rpc.webclient.AuthWebService;
 
 /**
  * The OS will call this when authenticating a user. It is mostly a wrapper for
@@ -51,7 +51,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
         String clientId = _context.getString(R.string.auth_fn_client_id);
         String clientSecret = _context.getString(R.string.auth_fn_client_secret);
 
-        AuthService authServe = new AuthService(_context);
+        AuthWebService authServe = new AuthWebService(_context);
         Intent intent = authServe.authenticateWeb(response, hostname, grantType, clientId, clientSecret, account.name,
                 password);
 

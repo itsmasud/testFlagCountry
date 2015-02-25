@@ -19,7 +19,7 @@ import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicReceiver;
@@ -49,7 +49,7 @@ public class MessageFragment extends WorkorderFragment {
     private Random _rand = new Random(System.currentTimeMillis());
     private Profile _profile;
     private Workorder _workorder;
-    private WorkorderService _workorderService;
+    private WorkorderWebService _workorderService;
     private List<Message> _messages = new LinkedList<Message>();
     private MessagesAdapter _adapter;
 
@@ -227,7 +227,7 @@ public class MessageFragment extends WorkorderFragment {
                 return;
 
             if (_workorderService == null || isNew) {
-                _workorderService = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+                _workorderService = new WorkorderWebService(getActivity(), username, authToken, _resultReceiver);
                 Log.v(TAG, "_authReceiver");
                 getMessages();
             }

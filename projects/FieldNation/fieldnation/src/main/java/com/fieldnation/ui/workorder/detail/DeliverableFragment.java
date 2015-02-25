@@ -32,7 +32,7 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
@@ -81,7 +81,7 @@ public class DeliverableFragment extends WorkorderFragment {
     // Data
     private Context _context;
     private Workorder _workorder;
-    private WorkorderService _service;
+    private WorkorderWebService _service;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
     private final SecureRandom _rand = new SecureRandom();
@@ -457,7 +457,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {
-                _service = new WorkorderService(_context, username, authToken, _resultReceiver);
+                _service = new WorkorderWebService(_context, username, authToken, _resultReceiver);
             }
         }
 

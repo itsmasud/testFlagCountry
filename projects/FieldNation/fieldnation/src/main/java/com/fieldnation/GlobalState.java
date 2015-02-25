@@ -12,7 +12,7 @@ import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.webclient.ProfileWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.server.Http;
@@ -44,7 +44,7 @@ public class GlobalState extends Application {
     public static final String PREF_PROFILE_ID = "PREF_PROFILE_ID";
 
     private Tracker _tracker;
-    private ProfileService _service;
+    private ProfileWebService _service;
     private Profile _profile;
     private static GlobalState _context;
 
@@ -93,7 +93,7 @@ public class GlobalState extends Application {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {
-                _service = new ProfileService(GlobalState.this, username, authToken, _resultReciever);
+                _service = new ProfileWebService(GlobalState.this, username, authToken, _resultReciever);
                 if (_profile == null)
                     startService(_service.getMyUserInformation(0, true));
             }

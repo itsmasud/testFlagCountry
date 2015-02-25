@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
-import com.fieldnation.rpc.client.PhotoService;
+import com.fieldnation.rpc.webclient.PhotoWebService;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -40,7 +40,7 @@ public class MessageRcvdView extends RelativeLayout {
     // Data
     private GlobalState _gs;
     private Message _message = null;
-    private PhotoService _service;
+    private PhotoWebService _service;
     private Random _rand = new Random();
     private Drawable _profilePic = null;
 
@@ -70,7 +70,7 @@ public class MessageRcvdView extends RelativeLayout {
         _checkImageView = (ImageView) findViewById(R.id.check_imageview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
-        _service = new PhotoService(_gs, _resultReceiver);
+        _service = new PhotoWebService(_gs, _resultReceiver);
     }
 
     public void setMessage(Message message) {

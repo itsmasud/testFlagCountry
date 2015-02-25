@@ -14,10 +14,9 @@ import android.widget.Toast;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicService;
@@ -67,7 +66,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
     // Services
     private PagerAdapter _pagerAdapter;
-    private WorkorderService _service;
+    private WorkorderWebService _service;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -128,7 +127,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
             if (_authToken != null && _username != null) {
-                _service = new WorkorderService(this, _username, _authToken, _rpcReceiver);
+                _service = new WorkorderWebService(this, _username, _authToken, _rpcReceiver);
             }
         }
 
@@ -177,7 +176,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
-            _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
+            _service = new WorkorderWebService(WorkorderActivity.this, username, authToken, _rpcReceiver);
             getData(true);
         }
     }

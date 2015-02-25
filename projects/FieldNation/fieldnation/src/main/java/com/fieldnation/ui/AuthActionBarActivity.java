@@ -16,7 +16,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.webclient.ProfileWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
@@ -50,7 +50,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private TwoButtonDialog _coiWarningDialog;
 
     // Services
-    private ProfileService _service;
+    private ProfileWebService _service;
     private TopicShutdownReciever _shutdownListener;
 
     // Data
@@ -278,7 +278,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {
-                _service = new ProfileService(AuthActionBarActivity.this, username, authToken, _webReceiver);
+                _service = new ProfileWebService(AuthActionBarActivity.this, username, authToken, _webReceiver);
             }
             AuthActionBarActivity.this.onAuthentication(username, authToken, isNew);
         }

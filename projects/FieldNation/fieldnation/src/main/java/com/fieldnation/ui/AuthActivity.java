@@ -23,7 +23,7 @@ import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.client.AuthTopicService;
-import com.fieldnation.rpc.client.AuthService;
+import com.fieldnation.rpc.webclient.AuthWebService;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
@@ -192,7 +192,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             String clientId = AuthActivity.this.getString(R.string.auth_fn_client_id);
             String clientSecret = AuthActivity.this.getString(R.string.auth_fn_client_secret);
 
-            AuthService authserve = new AuthService(AuthActivity.this);
+            AuthWebService authserve = new AuthWebService(AuthActivity.this);
             Intent intent = authserve.authenticateWeb(_rpcReceiver, 1, hostname, grantType, clientId, clientSecret,
                     _username, _password);
 

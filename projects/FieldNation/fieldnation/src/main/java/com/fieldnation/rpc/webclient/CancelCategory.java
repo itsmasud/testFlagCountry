@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.client;
+package com.fieldnation.rpc.webclient;
 
 public enum CancelCategory {
     // TODO, make localizable

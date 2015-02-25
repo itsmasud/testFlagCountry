@@ -11,10 +11,9 @@ import android.widget.TextView;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.webclient.PaymentWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.ui.AuthActionBarActivity;
@@ -42,7 +41,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
     // Data
     private long _paymentId = -1;
-    private PaymentService _service;
+    private PaymentWebService _service;
     private Payment _paid;
     private PaymentDetailAdapter _adapter;
 
@@ -128,7 +127,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
-            _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
+            _service = new PaymentWebService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
             requestData();
         }
     }

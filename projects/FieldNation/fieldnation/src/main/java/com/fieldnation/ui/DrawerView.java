@@ -24,7 +24,7 @@ import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.webclient.PaymentWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicReceiver;
@@ -71,7 +71,7 @@ public class DrawerView extends RelativeLayout {
     private Button _sendLogButton;
 
     // Data
-    private PaymentService _dataService;
+    private PaymentWebService _dataService;
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
     private int _nextPage = 0;
@@ -286,7 +286,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_dataService == null || isNew) {
-                _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
+                _dataService = new PaymentWebService(getContext(), username, authToken, _resultReciever);
 
                 getContext().startService(_dataService.getAll(1, 0, true));
                 _nextPage = 1;

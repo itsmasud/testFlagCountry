@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.webclient.ProfileWebService;
 import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
@@ -21,7 +21,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
     private static final String TAG = "ui.MessageListActivity";
 
     // Data
-    private ProfileService _service;
+    private ProfileWebService _service;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -82,7 +82,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
         if (_service == null || isNew) {
-            _service = new ProfileService(this, username, authToken, resultReceiver);
+            _service = new ProfileWebService(this, username, authToken, resultReceiver);
         }
     }
 

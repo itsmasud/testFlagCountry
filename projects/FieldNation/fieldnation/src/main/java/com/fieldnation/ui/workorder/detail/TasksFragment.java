@@ -36,7 +36,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicService;
@@ -117,7 +117,7 @@ public class TasksFragment extends WorkorderFragment {
 
     // Data
     private Context _context;
-    private WorkorderService _service;
+    private WorkorderWebService _service;
 
     private String _authToken;
     private String _username;
@@ -228,7 +228,7 @@ public class TasksFragment extends WorkorderFragment {
                 }
             }
             if (_authToken != null && _username != null) {
-                _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
+                _service = new WorkorderWebService(view.getContext(), _username, _authToken, _resultReceiver);
             }
         }
 
@@ -1039,7 +1039,7 @@ public class TasksFragment extends WorkorderFragment {
                 _username = username;
                 _authToken = authToken;
                 if (_context != null)
-                    _service = new WorkorderService(_context, username, authToken, _resultReceiver);
+                    _service = new WorkorderWebService(_context, username, authToken, _resultReceiver);
                 requestData(true);
             }
         }

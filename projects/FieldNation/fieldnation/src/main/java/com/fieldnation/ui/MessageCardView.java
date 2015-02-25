@@ -7,8 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +17,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
-import com.fieldnation.rpc.client.PhotoService;
+import com.fieldnation.rpc.webclient.PhotoWebService;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -38,7 +36,7 @@ public class MessageCardView extends RelativeLayout {
     private ImageView _unreadImageView;
     private int _viewId;
 
-    private PhotoService _photoService;
+    private PhotoWebService _photoService;
     private Message _message;
     private String[] _substatus;
     private Drawable _profilePic = null;
@@ -69,7 +67,7 @@ public class MessageCardView extends RelativeLayout {
 
         _substatus = getResources().getStringArray(R.array.workorder_substatus);
 
-        _photoService = new PhotoService(getContext(), _resultReceiver);
+        _photoService = new PhotoWebService(getContext(), _resultReceiver);
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);

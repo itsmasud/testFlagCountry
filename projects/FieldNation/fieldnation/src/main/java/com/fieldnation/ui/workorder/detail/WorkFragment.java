@@ -48,8 +48,8 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.webclient.ProfileWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.GaTopic;
@@ -162,8 +162,8 @@ public class WorkFragment extends WorkorderFragment {
     private OneButtonDialog _locationLoadingDialog;
 
     // Data
-    private WorkorderService _service;
-    private ProfileService _profileService;
+    private WorkorderWebService _service;
+    private ProfileWebService _profileService;
 
     private boolean _isCached = true;
     private File _tempFile;
@@ -289,8 +289,8 @@ public class WorkFragment extends WorkorderFragment {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
             }
             if (_authToken != null && _username != null) {
-                _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
-                _profileService = new ProfileService(view.getContext(), _username, _authToken, _resultReceiver);
+                _service = new WorkorderWebService(view.getContext(), _username, _authToken, _resultReceiver);
+                _profileService = new ProfileWebService(view.getContext(), _username, _authToken, _resultReceiver);
             }
         }
 
@@ -1434,8 +1434,8 @@ public class WorkFragment extends WorkorderFragment {
             if ((_service == null || isNew) && getActivity() != null) {
                 _username = username;
                 _authToken = authToken;
-                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
-                _profileService = new ProfileService(getActivity(), username, authToken, _resultReceiver);
+                _service = new WorkorderWebService(getActivity(), username, authToken, _resultReceiver);
+                _profileService = new ProfileWebService(getActivity(), username, authToken, _resultReceiver);
                 requestWorkorder(true);
             }
         }

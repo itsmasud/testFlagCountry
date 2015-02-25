@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.webclient.PaymentWebService;
 import com.fieldnation.ui.ItemListActivity;
 
 import java.util.LinkedList;
@@ -17,7 +17,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     private static final String TAG = "ui.payment.PaymentListActivity";
 
     // Data
-    private PaymentService _service;
+    private PaymentWebService _service;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -56,7 +56,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
         if (_service == null || isNew) {
-            _service = new PaymentService(this, username, authToken, resultReceiver);
+            _service = new PaymentWebService(this, username, authToken, resultReceiver);
         }
     }
 

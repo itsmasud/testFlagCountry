@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.ProfileService;
+import com.fieldnation.rpc.webclient.ProfileWebService;
 import com.fieldnation.topics.Topics;
 
 import java.util.LinkedList;
@@ -20,7 +20,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     private static final String TAG = "ui.NotificationListActivity";
 
     // Data
-    private ProfileService _service;
+    private ProfileWebService _service;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -69,7 +69,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
         if (_service == null || isNew)
-            _service = new ProfileService(this, username, authToken, resultReceiver);
+            _service = new ProfileWebService(this, username, authToken, resultReceiver);
     }
 
     @Override

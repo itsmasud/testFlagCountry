@@ -13,10 +13,9 @@ import android.widget.TextView;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.WorkorderService;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.GaTopic;
@@ -44,7 +43,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     // Data
     private long _workorderId = 0;
     private long _bundleId = 0;
-    private WorkorderService _service;
+    private WorkorderWebService _service;
     private BundleAdapter _adapter;
     private com.fieldnation.data.workorder.Bundle _woBundle;
 
@@ -87,7 +86,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
-            _service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
+            _service = new WorkorderWebService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
             startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
         }
     }

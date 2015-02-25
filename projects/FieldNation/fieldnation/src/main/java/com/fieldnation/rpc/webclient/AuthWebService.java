@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.client;
+package com.fieldnation.rpc.webclient;
 
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
@@ -18,10 +18,10 @@ import com.fieldnation.rpc.server.RpcService;
  * @author michael.carver
  * 
  */
-public class AuthService implements AuthServiceConstants {
+public class AuthWebService implements AuthServiceConstants {
 	private Context _context;
 
-	public AuthService(Context conetxt) {
+	public AuthWebService(Context conetxt) {
 		_context = conetxt.getApplicationContext();
 	}
 

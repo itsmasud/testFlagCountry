@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.client;
+package com.fieldnation.rpc.webclient;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,11 +8,11 @@ import com.fieldnation.rpc.common.RpcServiceConstants;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.rpc.server.RpcService;
 
-public class PhotoService implements PhotoServiceConstants {
+public class PhotoWebService implements PhotoServiceConstants {
     private Context _context;
     private ResultReceiver _resultReceiver;
 
-    public PhotoService(Context context, ResultReceiver resultReceiver) {
+    public PhotoWebService(Context context, ResultReceiver resultReceiver) {
         _context = context.getApplicationContext();
         _resultReceiver = resultReceiver;
     }
