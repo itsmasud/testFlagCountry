@@ -106,10 +106,10 @@ public class MessageRcvdView extends RelativeLayout {
             e.printStackTrace();
         }
 
-        if (_message.getMsgRead() == 0) {
-            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
-        } else {
+ 		if (_message.isRead()) {
             _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
+        } else {
+            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
         }
 
         _usernameTextView.setText(_message.getFromUser().getFirstname());

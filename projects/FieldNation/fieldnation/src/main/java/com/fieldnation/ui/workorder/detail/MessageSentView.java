@@ -106,10 +106,10 @@ public class MessageSentView extends RelativeLayout {
         }
 
 
-        if (_message.getMsgRead() == 0) {
-            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
-        } else {
+        if (_message.isRead()) {
             _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
+        } else {
+            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
         }
         if (_profilePic == null) {
             _profileImageView.setBackgroundResource(R.drawable.missing);

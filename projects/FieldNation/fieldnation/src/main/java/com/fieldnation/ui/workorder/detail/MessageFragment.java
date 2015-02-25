@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +78,21 @@ public class MessageFragment extends WorkorderFragment {
         super.onResume();
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
         Topics.subscrubeProfileUpdated(getActivity(), TAG + ":ProfileService", _profile_topicReceiver);
+
+        _markReadRunnable.run();
     }
+
+    private final Runnable _markReadRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (getActivity() != null && _workorderService != null && _workorder != null) {
+                getActivity().startService(_workorderService.markMessagesRead(WEB_MARK_READ, _workorder.getWorkorderId()));
+            } else {
+                new Handler().postDelayed(_markReadRunnable, 1000);
+            }
+
+        }
+    };
 
     @Override
     public void onPause() {
