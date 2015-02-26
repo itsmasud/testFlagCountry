@@ -15,8 +15,8 @@ public class WorkorderDbService extends DbService {
         super(context, username, authToken, callback);
     }
 
-    public Intent getList(int resultCode, int page, WorkorderDataSelector selector){
-        return
+    public Intent getList(int resultCode, int page, WorkorderDataSelector selector) {
+        Intent intent = new Intent(    )
     }
 
 }
