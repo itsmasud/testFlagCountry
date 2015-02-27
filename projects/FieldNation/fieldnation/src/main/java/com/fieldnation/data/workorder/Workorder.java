@@ -9,6 +9,7 @@ import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;

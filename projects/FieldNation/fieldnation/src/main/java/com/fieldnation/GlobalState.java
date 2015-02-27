@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 
 import com.fieldnation.auth.client.AuthTopicReceiver;
@@ -12,12 +13,12 @@ import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.ProfileWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.server.Http;
 import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.WebDataCacheNode;
+import com.fieldnation.rpc.webclient.ProfileWebService;
 import com.fieldnation.topics.GaTopic;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.Topics;
@@ -26,6 +27,8 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+
+import java.io.File;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -346,5 +349,13 @@ public class GlobalState extends Application {
         SharedPreferences.Editor edit = settings.edit();
         edit.putBoolean(PREF_COMPLETED_WORKORDER, true);
         edit.apply();
+    }
+
+    public String getStoragePath() {
+        File externalPath = Environment.getExternalStorageDirectory();
+        String packageName = getPackageName();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName);
+        temppath.mkdirs();
+        return temppath.getAbsolutePath();
     }
 }

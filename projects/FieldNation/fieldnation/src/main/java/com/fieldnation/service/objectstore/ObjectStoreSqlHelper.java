@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 2/26/2015.
  */
-public class ObjectStoreSqlHelper extends SQLiteOpenHelper {
+class ObjectStoreSqlHelper extends SQLiteOpenHelper {
     // Note: increment this value every time the structure of the database is
     // changed.
     private static final int TABLE_VER = 1;
@@ -18,10 +18,11 @@ public class ObjectStoreSqlHelper extends SQLiteOpenHelper {
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        OBJ_ID(1, "obj_id", "integer not null", true),
+        OBJ_KEY(1, "obj_key", "text not null", true),
         OBJ_NAME(2, "obj_name", "text not null", true),
         IS_FILE(3, "is_file", "integer not null"),
-        DATA(4, "data", "blob not null");
+        DATA(4, "data", "blob not null"),
+        META_DATA(5, "meta_data", "blob not null");
 
         private int _index;
         private String _name;

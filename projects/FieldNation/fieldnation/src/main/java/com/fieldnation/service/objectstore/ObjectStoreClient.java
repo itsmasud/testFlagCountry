@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -42,22 +41,23 @@ public class ObjectStoreClient implements ObjectStoreConstants {
         return _isConnected;
     }
 
-    public boolean put(int resultCode, String objectTypeName, long id, String data) {
-        return put(resultCode, objectTypeName, id, data.getBytes());
+    public boolean put(String objectTypeName, String key, String metaData, String data) {
+        return put(objectTypeName, key, metaData.getBytes(), data.getBytes());
     }
 
-    public boolean put(int resultCode, String objectTypeName, long id, byte[] data) {
+    public boolean put(String objectTypeName, String key, byte[] metaData, byte[] data) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_OBJECT_TYPE, objectTypeName);
-            bundle.putLong(PARAM_OBJECT_ID, id);
+            bundle.putString(PARAM_OBJECT_KEY, key);
             bundle.putBoolean(PARAM_IS_FILE, false);
             bundle.putByteArray(PARAM_DATA, data);
-            bundle.putInt(PARAM_RESULT_CODE, resultCode);
+            bundle.putByteArray(PARAM_META_DATA, metaData);
 
             Message msg = Message.obtain();
             msg.what = WHAT_PUT_OBJECT;
             msg.setData(bundle);
+            msg.replyTo = _rcvService;
             _sndService.send(msg);
             return true;
         } catch (Exception ex) {
@@ -66,18 +66,19 @@ public class ObjectStoreClient implements ObjectStoreConstants {
         }
     }
 
-    public boolean put(int resultCode, String objectTypeName, long id, File file) {
+    public boolean put(String objectTypeName, String key, byte[] metaData, File file) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_OBJECT_TYPE, objectTypeName);
-            bundle.putLong(PARAM_OBJECT_ID, id);
+            bundle.putString(PARAM_OBJECT_KEY, key);
             bundle.putBoolean(PARAM_IS_FILE, true);
             bundle.putSerializable(PARAM_FILE, file);
-            bundle.putInt(PARAM_RESULT_CODE, resultCode);
+            bundle.putByteArray(PARAM_META_DATA, metaData);
 
             Message msg = Message.obtain();
             msg.what = WHAT_PUT_OBJECT;
             msg.setData(bundle);
+            msg.replyTo = _rcvService;
             _sndService.send(msg);
             return true;
         } catch (Exception ex) {
@@ -86,16 +87,32 @@ public class ObjectStoreClient implements ObjectStoreConstants {
         }
     }
 
-    public boolean get(int resultCode, String objectTypeName, long id) {
+    public boolean put(StoredObject obj) {
+        try {
+            Bundle bundle = obj.toBundle();
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_PUT_OBJECT;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean get(String objectTypeName, String objectKey) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_OBJECT_TYPE, objectTypeName);
-            bundle.putLong(PARAM_OBJECT_ID, id);
-            bundle.putInt(PARAM_RESULT_CODE, resultCode);
+            bundle.putString(PARAM_OBJECT_KEY, objectKey);
 
             Message msg = Message.obtain();
             msg.what = WHAT_GET_OBJECT;
             msg.setData(bundle);
+            msg.replyTo = _rcvService;
             _sndService.send(msg);
             return true;
         } catch (Exception ex) {
@@ -104,15 +121,32 @@ public class ObjectStoreClient implements ObjectStoreConstants {
         }
     }
 
-    public boolean list(int resultCode, String objectTypeName) {
+    public boolean get(long id) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putLong(PARAM_ID, id);
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_GET_OBJECT;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean list(String objectTypeName) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_OBJECT_TYPE, objectTypeName);
-            bundle.putInt(PARAM_RESULT_CODE, resultCode);
 
             Message msg = Message.obtain();
             msg.what = WHAT_LIST_OBJECTS;
             msg.setData(bundle);
+            msg.replyTo = _rcvService;
             _sndService.send(msg);
             return true;
         } catch (Exception ex) {
@@ -121,45 +155,103 @@ public class ObjectStoreClient implements ObjectStoreConstants {
         }
     }
 
-    public boolean delete(int resultCode, String objectTypeName, long id) {
+    public boolean list(String objectTypeName, String[] keys) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_OBJECT_TYPE, objectTypeName);
-            bundle.putLong(PARAM_OBJECT_ID, id);
-            bundle.putInt(PARAM_RESULT_CODE, resultCode);
+            bundle.putStringArray(PARAM_OBJECT_KEY, keys);
 
             Message msg = Message.obtain();
-            msg.what = WHAT_DELETE_OBJECT;
+            msg.what = WHAT_LIST_OBJECTS;
             msg.setData(bundle);
+            msg.replyTo = _rcvService;
             _sndService.send(msg);
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
         }
+    }
+
+    public boolean delete(String objectTypeName, String objectKey) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_OBJECT_TYPE, objectTypeName);
+            bundle.putString(PARAM_OBJECT_KEY, objectKey);
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_DELETE_OBJECT;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean delete(long id) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putLong(PARAM_ID, id);
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_DELETE_OBJECT;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    // call backs
+    private void handleDelete(Message msg) {
+        Bundle bundle = msg.getData();
+        _listener.onDelete(
+                msg.arg1 == 1,
+                bundle.getString(PARAM_OBJECT_TYPE),
+                bundle.getString(PARAM_OBJECT_KEY));
+    }
+
+    private void handlePut(Message msg) {
+        Bundle bundle = msg.getData();
+        StoredObject obj = null;
+        if (bundle != null)
+            obj = new StoredObject(bundle);
+        _listener.onPut(obj);
+    }
+
+    private void handleGet(Message msg) {
+        Bundle bundle = msg.getData();
+        StoredObject obj = null;
+        if (bundle != null)
+            obj = new StoredObject(bundle);
+
+        _listener.onGet(obj);
+    }
+
+    private void handleList(Message msg) {
+        Bundle bundle = msg.getData();
+        StoredObject[] objects = null;
+        if (bundle != null) {
+            objects = (StoredObject[]) bundle.get(PARAM_OBJECT_LIST);
+        }
+
+        _listener.onList(objects);
     }
 
     /*-**********************************-*/
     /*-              Plumbing            -*/
     /*-**********************************-*/
-
-    private void connectReceiver() {
-        try {
-            Message msg = Message.obtain();
-            msg.what = WHAT_REPLY_SERVICE;
-            msg.replyTo = _rcvService;
-            _sndService.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
     private final ServiceConnection _serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             _sndService = new Messenger(service);
             _isConnected = true;
-            connectReceiver();
             if (_listener != null)
                 _listener.onConnected();
         }
@@ -195,13 +287,16 @@ public class ObjectStoreClient implements ObjectStoreConstants {
 
             switch (msg.what) {
                 case WHAT_DELETE_OBJECT:
-                    client._listener.onDelete();
+                    client.handleDelete(msg);
                     break;
                 case WHAT_PUT_OBJECT:
-                    client._listener.onPut();
+                    client.handlePut(msg);
                     break;
                 case WHAT_GET_OBJECT:
-                    client._listener.onGet();
+                    client.handleGet(msg);
+                    break;
+                case WHAT_LIST_OBJECTS:
+                    client.handleList(msg);
                     break;
             }
             super.handleMessage(msg);
@@ -214,12 +309,12 @@ public class ObjectStoreClient implements ObjectStoreConstants {
 
         public void onDisconnected();
 
-        public void onDelete();
+        public void onDelete(boolean success, String objectName, String objectKey);
 
-        public void onPut();
+        public void onPut(StoredObject obj);
 
-        public void onGet();
+        public void onGet(StoredObject obj);
 
-        public void onList();
+        public void onList(StoredObject[] objects);
     }
 }

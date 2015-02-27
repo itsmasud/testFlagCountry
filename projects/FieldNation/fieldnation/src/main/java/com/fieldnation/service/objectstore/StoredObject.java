@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -17,20 +19,22 @@ import java.util.List;
 /**
  * Created by Michael Carver on 2/26/2015.
  */
-public class StoredObject implements Parcelable {
+public class StoredObject implements Parcelable, ObjectStoreConstants {
 
     private long _id;
-    private long _objId;
+    private String _objKey;
     private String _objName;
     private boolean _isFile;
+    private byte[] _metaData;
     private byte[] _data;
     private File _file;
 
-    public StoredObject(Cursor cursor) {
+    StoredObject(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
-        _objId = cursor.getLong(Column.OBJ_ID.getIndex());
+        _objKey = cursor.getString(Column.OBJ_KEY.getIndex());
         _objName = cursor.getString(Column.OBJ_NAME.getIndex());
         _isFile = cursor.getInt(Column.IS_FILE.getIndex()) == 1;
+        _metaData = cursor.getBlob(Column.META_DATA.getIndex());
         if (_isFile) {
             _file = new File(new String(cursor.getBlob(Column.DATA.getIndex())));
         } else {
@@ -39,20 +43,28 @@ public class StoredObject implements Parcelable {
     }
 
     public StoredObject(Bundle bundle) {
-
+        _id = bundle.getLong(PARAM_ID);
+        _objKey = bundle.getString(PARAM_OBJECT_KEY);
+        _objName = bundle.getString(PARAM_OBJECT_TYPE);
+        _isFile = bundle.getBoolean(PARAM_IS_FILE);
+        _metaData = bundle.getByteArray(PARAM_META_DATA);
+        if (_isFile)
+            _file = (File) bundle.getSerializable(PARAM_FILE);
+        else
+            _data = bundle.getByteArray(PARAM_DATA);
     }
 
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
-
-        bundle.putLong("ID", _id);
-        bundle.putLong("OBJ_ID", _objId);
-        bundle.putString("OBJ_NAME", _objName);
-        bundle.putBoolean("IS_FILE", _isFile);
+        bundle.putLong(PARAM_ID, _id);
+        bundle.putString(PARAM_OBJECT_KEY, _objKey);
+        bundle.putString(PARAM_OBJECT_TYPE, _objName);
+        bundle.putBoolean(PARAM_IS_FILE, _isFile);
+        bundle.putByteArray(PARAM_META_DATA, _metaData);
         if (_isFile)
-            bundle.putByteArray("DATA", _file.getAbsolutePath().getBytes());
+            bundle.putSerializable(PARAM_FILE, _file);
         else
-            bundle.putByteArray("DATA", _data);
+            bundle.putByteArray(PARAM_DATA, _data);
 
         return bundle;
     }
@@ -61,8 +73,8 @@ public class StoredObject implements Parcelable {
         return _id;
     }
 
-    public long getObjId() {
-        return _objId;
+    public String getObjKey() {
+        return _objKey;
     }
 
     public String getObjName() {
@@ -91,14 +103,30 @@ public class StoredObject implements Parcelable {
         _data = data;
     }
 
-    public StoredObject save(Context context) {
+    public byte[] getMetaData() {
+        return _metaData;
+    }
+
+    public void setMetaData(byte[] metaData) {
+        _metaData = metaData;
+    }
+
+    StoredObject save(Context context) {
         return put(context, this);
     }
 
     /*-*****************************************-*/
     /*-             Database interface          -*/
     /*-*****************************************-*/
-    public static StoredObject get(Context context, long id) {
+
+    /**
+     * Gets an object based on the global id
+     *
+     * @param context android context object
+     * @param id      the global id of the object
+     * @return the object. Null if there was an error.
+     */
+    static StoredObject get(Context context, long id) {
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         StoredObject obj = null;
         try {
@@ -107,7 +135,7 @@ public class StoredObject implements Parcelable {
                 Cursor cursor = db.query(
                         ObjectStoreSqlHelper.TABLE_NAME,
                         ObjectStoreSqlHelper.getColumnNames(),
-                        Column.OBJ_ID + "=?",
+                        Column.ID + "=?",
                         new String[]{id + ""},
                         null, null, null, "LIMIT 1");
 
@@ -129,7 +157,15 @@ public class StoredObject implements Parcelable {
     }
 
 
-    public static StoredObject get(Context context, String objectTypeName, long objectId) {
+    /**
+     * Finds the objectType with the matching key and returns it.
+     *
+     * @param context        Android application context
+     * @param objectTypeName name of the object type
+     * @param objectKey      the object key
+     * @return the object, null if there was an error.
+     */
+    static StoredObject get(Context context, String objectTypeName, String objectKey) {
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         StoredObject obj = null;
         try {
@@ -138,8 +174,8 @@ public class StoredObject implements Parcelable {
                 Cursor cursor = db.query(
                         ObjectStoreSqlHelper.TABLE_NAME,
                         ObjectStoreSqlHelper.getColumnNames(),
-                        Column.OBJ_NAME + "=? AND " + Column.OBJ_ID + "=?",
-                        new String[]{objectTypeName, objectId + ""},
+                        Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + "=?",
+                        new String[]{objectTypeName, objectKey},
                         null, null, null, "LIMIT 1");
 
                 try {
@@ -159,16 +195,58 @@ public class StoredObject implements Parcelable {
         return obj;
     }
 
-    public static StoredObject put(Context context, StoredObject obj) {
+    /**
+     * updates the object's data in the database
+     * If the object is a file object, it will copy the file data into the file store
+     *
+     * @param context Android application context
+     * @param obj     the object to save
+     * @return the updated object
+     */
+    static StoredObject put(Context context, StoredObject obj) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), obj._objName);
-        v.put(Column.OBJ_ID.getName(), obj._objId);
+        v.put(Column.OBJ_KEY.getName(), obj._objKey);
         v.put(Column.IS_FILE.getName(), obj._isFile);
         if (obj._isFile) {
-            v.put(Column.DATA.getName(), obj._file.getAbsolutePath());
+            // this is a file object. check that it's in the file store, if not, then copy it in.
+            String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
+            String filepath = appFileStore + "/os" + obj._id + ".dat";
+
+            // file isn't in the store
+            if (!filepath.equals(obj._file.getAbsolutePath())) {
+                new File(appFileStore).mkdirs();
+                File dest = new File(filepath);
+
+                // clear the way.
+                if (dest.exists())
+                    dest.delete();
+
+                // try to copy
+                boolean copySuccess = false;
+                try {
+                    copySuccess = misc.copyFile(obj._file, dest);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                if (copySuccess) {
+                    // success, update entry to point to the file store
+                    v.put(Column.DATA.getName(), dest.getAbsolutePath());
+                } else {
+                    // failed, delete atempt, return error
+                    dest.delete();
+                    return null;
+                }
+            } else {
+                // already in store, do nothing.
+                v.put(Column.DATA.getName(), obj._file.getAbsolutePath());
+            }
+
         } else {
             v.put(Column.DATA.getName(), obj._data);
         }
+        v.put(Column.META_DATA.getName(), obj._metaData);
 
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         boolean success = false;
@@ -190,12 +268,12 @@ public class StoredObject implements Parcelable {
         }
     }
 
-    public static StoredObject put(Context context, String objectTypeName, long objectId, File file) {
+    static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] metaData, File file) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
-        v.put(Column.OBJ_ID.getName(), objectId);
+        v.put(Column.OBJ_KEY.getName(), objectKey);
         v.put(Column.IS_FILE.getName(), true);
-        v.put(Column.DATA.getName(), file.getAbsolutePath());
+        v.put(Column.META_DATA.getName(), metaData);
 
         long id = -1;
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
@@ -209,18 +287,43 @@ public class StoredObject implements Parcelable {
         } finally {
             helper.close();
         }
-        if (id != -1)
-            return get(context, id);
+        if (id != -1) {
+            // copy the file to the file store
+            String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
+            new File(appFileStore).mkdirs();
+            File dest = new File(appFileStore + "/os" + id + ".dat");
+
+            if (dest.exists())
+                dest.delete();
+
+            boolean copySuccess = false;
+            try {
+                copySuccess = misc.copyFile(file, dest);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (!copySuccess) {
+                delete(context, id);
+                dest.delete();
+            } else {
+                StoredObject result = get(context, id);
+                result.setFile(dest);
+                result.save(context);
+                return result;
+            }
+        }
 
         return null;
     }
 
-    public static StoredObject put(Context context, String objectTypeName, long objectId, byte[] data) {
+    static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] metaData, byte[] data) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
-        v.put(Column.OBJ_ID.getName(), objectId);
+        v.put(Column.OBJ_KEY.getName(), objectKey);
         v.put(Column.IS_FILE.getName(), false);
         v.put(Column.DATA.getName(), data);
+        v.put(Column.META_DATA.getName(), metaData);
 
         long id = -1;
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
@@ -240,7 +343,7 @@ public class StoredObject implements Parcelable {
         return null;
     }
 
-    public static List<StoredObject> list(Context context, String objectTypeName) {
+    static List<StoredObject> list(Context context, String objectTypeName) {
         List<StoredObject> list = new LinkedList<>();
 
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
@@ -270,27 +373,27 @@ public class StoredObject implements Parcelable {
         return list;
     }
 
-    public static List<StoredObject> list(Context context, String objectTypeName, long[] ids) {
+    static List<StoredObject> list(Context context, String objectTypeName, String[] keys) {
         List<StoredObject> list = new LinkedList<>();
 
-        if (ids == null || ids.length == 0)
+        if (keys == null || keys.length == 0)
             return list;
 
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         try {
             SQLiteDatabase db = helper.getReadableDatabase();
             try {
-                String[] param = new String[ids.length + 1];
+                String[] param = new String[keys.length + 1];
                 param[0] = objectTypeName;
 
-                for (int i = 0; i < ids.length; i++) {
-                    param[i + 1] = ids[i] + "";
+                for (int i = 0; i < keys.length; i++) {
+                    param[i + 1] = keys[i];
                 }
 
                 Cursor cursor = db.query(
                         ObjectStoreSqlHelper.TABLE_NAME,
                         ObjectStoreSqlHelper.getColumnNames(),
-                        Column.OBJ_NAME + "=? AND " + Column.OBJ_ID + " IN (" + makePlaceholders(ids.length) + ")",
+                        Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + " IN (" + makePlaceholders(keys.length) + ")",
                         param,
                         null, null, null);
                 try {
@@ -309,15 +412,15 @@ public class StoredObject implements Parcelable {
         return list;
     }
 
-    public static boolean delete(Context context, String objectTypeName, long objId) {
+    static boolean delete(Context context, String objectTypeName, String objkey) {
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         try {
             SQLiteDatabase db = helper.getWritableDatabase();
             try {
                 return db.delete(
                         ObjectStoreSqlHelper.TABLE_NAME,
-                        Column.OBJ_NAME + "=? AND " + Column.OBJ_ID + "=?",
-                        new String[]{objectTypeName, objId + ""}) > 0;
+                        Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + "=?",
+                        new String[]{objectTypeName, objkey}) > 0;
             } finally {
                 db.close();
             }
@@ -326,7 +429,7 @@ public class StoredObject implements Parcelable {
         }
     }
 
-    public static boolean delete(Context context, long id) {
+    static boolean delete(Context context, long id) {
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         try {
             SQLiteDatabase db = helper.getWritableDatabase();
