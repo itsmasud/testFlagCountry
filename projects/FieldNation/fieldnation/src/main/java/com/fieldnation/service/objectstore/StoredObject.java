@@ -413,6 +413,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     static boolean delete(Context context, String objectTypeName, String objkey) {
+        StoredObject obj = get(context, objectTypeName, objkey);
+        if (obj != null && obj._isFile) {
+            obj._file.delete();
+        }
+
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         try {
             SQLiteDatabase db = helper.getWritableDatabase();
@@ -430,6 +435,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     static boolean delete(Context context, long id) {
+        StoredObject obj = get(context, id);
+        if (obj != null && obj._isFile) {
+            obj._file.delete();
+        }
+
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         try {
             SQLiteDatabase db = helper.getWritableDatabase();
