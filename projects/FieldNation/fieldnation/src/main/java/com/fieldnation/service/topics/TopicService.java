@@ -26,7 +26,7 @@ class TopicService extends Service implements TopicConstants {
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String tag = bundle.getString(PARAM_TOPIC_TAG);
 
-        replyTo.hashCode()
+//        replyTo.hashCode()
     }
 
 

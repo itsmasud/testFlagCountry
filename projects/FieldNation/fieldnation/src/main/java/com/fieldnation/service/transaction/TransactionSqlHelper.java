@@ -19,6 +19,7 @@ public class TransactionSqlHelper extends SQLiteOpenHelper {
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
         HANDLER(1, "handler", "text not null"),
+        PRIORITY(2, "priority", "number not null", true),
         REQUEST(2, "request", "text not null"),
         KEY(3, "key", "text", true);
 
