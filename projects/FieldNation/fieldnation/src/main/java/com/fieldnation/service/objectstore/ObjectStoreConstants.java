@@ -15,6 +15,7 @@ interface ObjectStoreConstants {
     public static final String PARAM_IS_FILE = "PARAM_IS_FILE";
     public static final String PARAM_FILE = "PARAM_FILE";
     public static final String PARAM_DATA = "PARAM_DATA";
+    public static final String PARAM_LAST_UPDATED = "PARAM_LAST_UPDATED";
     public static final String PARAM_META_DATA = "PARAM_META_DATA";
     public static final String PARAM_ID = "PARAM_ID";
 

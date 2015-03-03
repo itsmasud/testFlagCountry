@@ -9,6 +9,9 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
+import com.fieldnation.topics.TopicService;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -19,14 +22,59 @@ import java.util.List;
  * This service provides an interface to the database to other processes
  */
 class ObjectStoreService extends Service implements ObjectStoreConstants {
+    private static final String TAG = "ObjectStoreService";
+
+    public static final String TOPIC_ID_OBJECT_UPDATE = "com.fieldnation.service.objectstore.ObjectStoreService:OBJECT_UPDATE";
 
     private Messenger _me = new Messenger(new IncomeHandler(this));
+    private int _bindCount = 0;
+    private int _lastStartId = -1;
+
+    /*-*****************************-*/
+    /*-         Life Cycle          -*/
+    /*-*****************************-*/
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        _lastStartId = startId;
+
+        // do something
+        if (intent != null && intent.getExtras() != null) {
+            // do something
+        }
+
+        if (_bindCount == 0) {
+            stopSelf(startId);
+        }
+
+        return START_NOT_STICKY;
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
+        _bindCount++;
+        Log.v(TAG, "onBind:" + _bindCount);
         return _me.getBinder();
     }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        _bindCount--;
+        Log.v(TAG, "onUnbind:" + _bindCount);
+        if (_bindCount == 0 && _lastStartId != -1) {
+            stopSelf(_lastStartId);
+            _lastStartId = -1;
+        }
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    /*-*************************************-*/
+    /*-         Command Handlers            -*/
+    /*-*************************************-*/
     private void deleteObject(Bundle bundle, Messenger replyTo) {
         boolean success = false;
         if (bundle.containsKey(PARAM_ID)) {
@@ -95,6 +143,11 @@ class ObjectStoreService extends Service implements ObjectStoreConstants {
                     bundle.getByteArray(PARAM_META_DATA),
                     bundle.getByteArray(PARAM_DATA));
         }
+
+        // Not sure this is a good idea because it doesn't include the merged transforms
+        if (obj != null)
+            TopicService.dispatchTopic(this, TOPIC_ID_OBJECT_UPDATE, obj.toBundle(), false);
+
         try {
             if (replyTo != null) {
                 Message msg = Message.obtain();
@@ -138,22 +191,21 @@ class ObjectStoreService extends Service implements ObjectStoreConstants {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     /*-**********************************-*/
     /*-              Plumbing            -*/
     /*-**********************************-*/
     private static class IncomeHandler extends Handler {
-        private WeakReference<ObjectStoreService> _oss;
+        private WeakReference<ObjectStoreService> _wr;
 
         public IncomeHandler(ObjectStoreService oss) {
-            _oss = new WeakReference<>(oss);
+            _wr = new WeakReference<>(oss);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            ObjectStoreService svc = _oss.get();
+            ObjectStoreService svc = _wr.get();
             if (svc == null) {
                 super.handleMessage(msg);
                 return;

@@ -22,7 +22,7 @@ public class WebDataCacheNode {
     private WebDataCacheNode(Context context, Cursor cursor) {
         _context = context.getApplicationContext();
         _id = cursor.getLong(Column.ID.getIndex());
-        _expiresOn = cursor.getLong(Column.EXIPES_ON.getIndex());
+        _expiresOn = cursor.getLong(Column.EXPIRES_ON.getIndex());
         _key = cursor.getString(Column.KEY.getIndex());
         _responseData = cursor.getBlob(Column.RESPONSE_DATA.getIndex());
         _responseCode = cursor.getInt(Column.RESPONSE_CODE.getIndex());
@@ -89,7 +89,7 @@ public class WebDataCacheNode {
             return;
         }
         ContentValues values = new ContentValues();
-        values.put(Column.EXIPES_ON.getName(), System.currentTimeMillis() + EXPIRATION_TIMEOUT);
+        values.put(Column.EXPIRES_ON.getName(), System.currentTimeMillis() + EXPIRATION_TIMEOUT);
         values.put(Column.KEY.getName(), key);
         values.put(Column.RESPONSE_DATA.getName(), responseData);
         values.put(Column.RESPONSE_CODE.getName(), responseCode);
@@ -105,7 +105,7 @@ public class WebDataCacheNode {
 
     public static void save(WebDataCacheNode node) {
         ContentValues values = new ContentValues();
-        values.put(Column.EXIPES_ON.getName(), node._expiresOn);
+        values.put(Column.EXPIRES_ON.getName(), node._expiresOn);
         values.put(Column.KEY.getName(), node._key);
         values.put(Column.RESPONSE_DATA.getName(), node._responseData);
         values.put(Column.RESPONSE_CODE.getName(), node._responseCode);
@@ -136,7 +136,7 @@ public class WebDataCacheNode {
         try {
             Log.v(TAG,
                     "Flushed " + db.delete(WebDataCacheSqlHelper.TABLE_NAME,
-                            Column.EXIPES_ON + "<" + System.currentTimeMillis(), null) + " cached data");
+                            Column.EXPIRES_ON + "<" + System.currentTimeMillis(), null) + " cached data");
         } finally {
             helper.close();
         }

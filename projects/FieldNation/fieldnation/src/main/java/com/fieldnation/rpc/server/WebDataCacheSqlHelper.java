@@ -9,12 +9,12 @@ import java.util.List;
 
 public class WebDataCacheSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "rpc.server.WebDataCacheSqlHelper";
-    private static final int TABLE_VER = 3;
+    private static final int TABLE_VER = 4;
     public static final String TABLE_NAME = "data_cache";
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        EXIPES_ON(1, "exipres_on", "integer not null", true),
+        EXPIRES_ON(1, "expires_on", "integer not null", true),
         KEY(2, "key", "text not null", true),
         RESPONSE_DATA(3, "response_data", "text not null"),
         RESPONSE_CODE(4, "response_code", "integer not null");

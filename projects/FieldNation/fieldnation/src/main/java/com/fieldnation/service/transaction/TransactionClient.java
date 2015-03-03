@@ -1,10 +1,10 @@
 package com.fieldnation.service.transaction;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -24,20 +24,47 @@ public class TransactionClient implements TransactionConstants {
     private Messenger _sndService = null;
     private Listener _listener;
 
+    /*-*****************************-*/
+    /*-         Life Cycle          -*/
+    /*-*****************************-*/
     public TransactionClient(Listener listener) {
         _listener = listener;
     }
 
-    public void connect(Activity activity) {
-        activity.bindService(new Intent(activity, TransactionService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
+    public void connect(Context context) {
+        context.bindService(new Intent(context, TransactionService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public void disconnect(Activity activity) {
-        activity.unbindService(_serviceConnection);
+    public void disconnect(Context context) {
+        context.unbindService(_serviceConnection);
     }
 
     public boolean isConnected() {
         return _isConnected;
+    }
+
+    /*-*****************************-*/
+    /*-         Commands            -*/
+    /*-*****************************-*/
+
+    public boolean add(String key, String request, String handlerName, Transaction.Priority priority) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_KEY, key);
+            bundle.putString(PARAM_REQUEST, request);
+            bundle.putString(PARAM_HANDLER_NAME, handlerName);
+            bundle.putInt(PARAM_PRIORITY, priority.ordinal());
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_ADD;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
 

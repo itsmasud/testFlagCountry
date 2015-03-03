@@ -1,6 +1,5 @@
 package com.fieldnation.service.objectstore;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,21 +24,28 @@ public class ObjectStoreClient implements ObjectStoreConstants {
     private Messenger _sndService = null;
     private Listener _listener;
 
+    /*-*****************************-*/
+    /*-         Life Cycle          -*/
+    /*-*****************************-*/
     public ObjectStoreClient(Listener listener) {
         _listener = listener;
     }
 
-    public void connect(Activity activity) {
-        activity.bindService(new Intent(activity, ObjectStoreService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
+    public void connect(Context context) {
+        context.bindService(new Intent(context, ObjectStoreService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public void disconnect(Activity activity) {
-        activity.unbindService(_serviceConnection);
+    public void disconnect(Context context) {
+        context.unbindService(_serviceConnection);
     }
 
     public boolean isConnected() {
         return _isConnected;
     }
+
+    /*-*****************************-*/
+    /*-         Commands            -*/
+    /*-*****************************-*/
 
     public boolean put(String objectTypeName, String key, String metaData, String data) {
         return put(objectTypeName, key, metaData.getBytes(), data.getBytes());

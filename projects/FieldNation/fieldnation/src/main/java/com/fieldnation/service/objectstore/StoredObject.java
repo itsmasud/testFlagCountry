@@ -24,6 +24,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     private long _id;
     private String _objKey;
     private String _objName;
+    private long _lastupdated;
     private boolean _isFile;
     private byte[] _metaData;
     private byte[] _data;
@@ -33,6 +34,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _id = cursor.getLong(Column.ID.getIndex());
         _objKey = cursor.getString(Column.OBJ_KEY.getIndex());
         _objName = cursor.getString(Column.OBJ_NAME.getIndex());
+        _lastupdated = cursor.getLong(Column.LAST_UPDATED.getIndex());
         _isFile = cursor.getInt(Column.IS_FILE.getIndex()) == 1;
         _metaData = cursor.getBlob(Column.META_DATA.getIndex());
         if (_isFile) {
@@ -46,6 +48,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _id = bundle.getLong(PARAM_ID);
         _objKey = bundle.getString(PARAM_OBJECT_KEY);
         _objName = bundle.getString(PARAM_OBJECT_TYPE);
+        _lastupdated = bundle.getLong(PARAM_LAST_UPDATED);
         _isFile = bundle.getBoolean(PARAM_IS_FILE);
         _metaData = bundle.getByteArray(PARAM_META_DATA);
         if (_isFile)
@@ -59,6 +62,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         bundle.putLong(PARAM_ID, _id);
         bundle.putString(PARAM_OBJECT_KEY, _objKey);
         bundle.putString(PARAM_OBJECT_TYPE, _objName);
+        bundle.putLong(PARAM_LAST_UPDATED, _lastupdated);
         bundle.putBoolean(PARAM_IS_FILE, _isFile);
         bundle.putByteArray(PARAM_META_DATA, _metaData);
         if (_isFile)
@@ -79,6 +83,10 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
     public String getObjName() {
         return _objName;
+    }
+
+    public long getLastUpdated() {
+        return _lastupdated;
     }
 
     public boolean isFile() {
@@ -207,6 +215,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), obj._objName);
         v.put(Column.OBJ_KEY.getName(), obj._objKey);
+        v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), obj._isFile);
         if (obj._isFile) {
             // this is a file object. check that it's in the file store, if not, then copy it in.
@@ -272,6 +281,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
         v.put(Column.OBJ_KEY.getName(), objectKey);
+        v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), true);
         v.put(Column.META_DATA.getName(), metaData);
 
@@ -321,6 +331,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
         v.put(Column.OBJ_KEY.getName(), objectKey);
+        v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), false);
         v.put(Column.DATA.getName(), data);
         v.put(Column.META_DATA.getName(), metaData);
@@ -393,7 +404,8 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 Cursor cursor = db.query(
                         ObjectStoreSqlHelper.TABLE_NAME,
                         ObjectStoreSqlHelper.getColumnNames(),
-                        Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + " IN (" + makePlaceholders(keys.length) + ")",
+                        Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY
+                                + " IN (" + makePlaceholders(keys.length) + ")",
                         param,
                         null, null, null);
                 try {

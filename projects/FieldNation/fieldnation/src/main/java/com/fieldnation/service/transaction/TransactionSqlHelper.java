@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-public class TransactionSqlHelper extends SQLiteOpenHelper {
+class TransactionSqlHelper extends SQLiteOpenHelper {
     // Note: increment this value every time the structure of the database is
     // changed.
     private static final int TABLE_VER = 1;
@@ -19,7 +19,7 @@ public class TransactionSqlHelper extends SQLiteOpenHelper {
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
         HANDLER(1, "handler", "text not null"),
-        PRIORITY(2, "priority", "number not null", true),
+        PRIORITY(2, "priority", "integer not null", true),
         REQUEST(2, "request", "text not null"),
         KEY(3, "key", "text", true);
 

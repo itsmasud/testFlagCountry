@@ -1,6 +1,5 @@
 package com.fieldnation.service.topics;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -24,34 +23,39 @@ public class TopicClient implements TopicConstants {
     private Messenger _sndService = null;
     private Listener _listener;
 
+    /*-*****************************-*/
+    /*-         Life Cycle          -*/
+    /*-*****************************-*/
     public TopicClient(Listener listener) {
         _listener = listener;
     }
 
-    public void connect(Activity activity) {
-        activity.bindService(new Intent(activity, TopicService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
+    public void connect(Context context) {
+        context.bindService(new Intent(context, TopicService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public void disconnect(Activity activity) {
-        activity.unbindService(_serviceConnection);
+    public void disconnect(Context context) {
+        context.unbindService(_serviceConnection);
     }
 
     public boolean isConnected() {
         return _isConnected;
     }
 
-    public boolean registerListener(String topicId, String tag) {
+    /*-*****************************-*/
+    /*-         Commands            -*/
+    /*-*****************************-*/
+    public boolean register(String topicId, String userTag) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
-            bundle.putString(PARAM_TOPIC_TAG, tag);
+            bundle.putString(PARAM_USER_TAG, userTag);
 
             Message msg = Message.obtain();
-            msg.what = WHAT_ADD_LISTENER;
+            msg.what = WHAT_REGISTER_LISTENER;
             msg.setData(bundle);
             msg.replyTo = _rcvService;
             _sndService.send(msg);
-
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -59,6 +63,76 @@ public class TopicClient implements TopicConstants {
         return false;
     }
 
+    public boolean unregister(String topicId, String userTag) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_TOPIC_ID, topicId);
+            bundle.putString(PARAM_USER_TAG, userTag);
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_UNREGISTER_LISTENER;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean delete(String userTag) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_USER_TAG, userTag);
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_DELETE_CLIENT;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Fires off an event. only works when connected to the service.
+     *
+     * @param topicId
+     * @param payload
+     * @param keepLast
+     * @return
+     */
+    public boolean dispatchEvent(String topicId, Bundle payload, boolean keepLast) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_TOPIC_ID, topicId);
+            bundle.putBundle(PARAM_TOPIC_BUNDLE, payload);
+            bundle.putBoolean(PARAM_KEEP_LAST, keepLast);
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_DISPATCH_EVENT;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Fires off an event, fire and forget. Can be called at any time as long as the context is valid.
+     *
+     * @param context
+     * @param topicId
+     * @param payload
+     * @param keepLast
+     */
+    public static void dispatchEvent(Context context, String topicId, Bundle payload, boolean keepLast) {
+        TopicService.dispatchEvent(context, topicId, payload, keepLast);
+    }
 
     /*-**********************************-*/
     /*-              Plumbing            -*/
@@ -101,20 +175,19 @@ public class TopicClient implements TopicConstants {
                 return;
             }
 
-//            switch (msg.what) {
-//                case WHAT_DELETE_OBJECT:
-//                    client.handleDelete(msg);
-//                    break;
-//                case WHAT_PUT_OBJECT:
-//                    client.handlePut(msg);
-//                    break;
-//                case WHAT_GET_OBJECT:
-//                    client.handleGet(msg);
-//                    break;
-//                case WHAT_LIST_OBJECTS:
-//                    client.handleList(msg);
-//                    break;
-//            }
+            switch (msg.what) {
+                case WHAT_REGISTER_LISTENER:
+                    client._listener.onRegistered(
+                            msg.getData()
+                                    .getString(PARAM_TOPIC_ID));
+                    break;
+                case WHAT_DISPATCH_EVENT: {
+                    Bundle payload = msg.getData();
+                    client._listener.onEvent(payload.getString(PARAM_TOPIC_ID),
+                            payload.getBundle(PARAM_TOPIC_BUNDLE));
+                    break;
+                }
+            }
             super.handleMessage(msg);
         }
     }
@@ -124,5 +197,9 @@ public class TopicClient implements TopicConstants {
         public void onConnected();
 
         public void onDisconnected();
+
+        public void onRegistered(String topicId);
+
+        public void onEvent(String topicId, Bundle payload);
     }
 }
