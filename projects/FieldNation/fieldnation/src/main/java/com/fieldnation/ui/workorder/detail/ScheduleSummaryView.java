@@ -68,9 +68,9 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         {
             String display = null;
             if (_workorder.getEstimatedSchedule() != null)
-                display = _workorder.getEstimatedSchedule().getDisplayString();
+                display = _workorder.getEstimatedSchedule().getDisplayString(true);
             else
-                display = _workorder.getSchedule().getDisplayString();
+                display = _workorder.getSchedule().getDisplayString(false);
 
             if (display != null)
                 _arriveTimeTextView.setText(display);
@@ -83,9 +83,9 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
                 && _workorder.getCounterOfferInfo().getSchedule() != null) {
             Schedule schedule = _workorder.getCounterOfferInfo().getSchedule();
 
-            String display = schedule.getDisplayString();
+            String display = schedule.getDisplayString(false);
             if (display != null) {
-                _coTextView.setText(schedule.getDisplayString());
+                _coTextView.setText(schedule.getDisplayString(false));
                 _coTextView.setVisibility(View.VISIBLE);
                 _coLabelTextView.setVisibility(View.VISIBLE);
             } else {

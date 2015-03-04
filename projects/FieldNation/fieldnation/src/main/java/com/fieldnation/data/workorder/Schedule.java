@@ -134,7 +134,7 @@ public class Schedule implements Parcelable {
         }
     }
 
-    public String getDisplayString() {
+    public String getDisplayString(boolean asStartAndDuration) {
         if (isExact()) {
             try {
                 String dayDate;
@@ -151,33 +151,55 @@ public class Schedule implements Parcelable {
                 e.printStackTrace();
             }
         } else {
-            try {
-                Calendar cal = ISO8601.toCalendar(getStartTime());
-                String dayDate;
-                String time = "";
+            if (asStartAndDuration) {
+                try {
+                    Calendar cal = ISO8601.toCalendar(getStartTime());
+                    String dayDate;
+                    String time = "";
 
-                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
-                time = misc.formatTime(cal, false);
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
+                    time = misc.formatTime(cal, false);
 
-                String msg = "You will need to arrive between \n\t" + dayDate + " at " + time + " and\n\t";
+                    String msg = "You will need to arrive at\n\t" + dayDate + " at " + time + ".\n\t And work for ";
 
-                Calendar cal2 = ISO8601.toCalendar(getEndTime());
+                    long length = ISO8601.toUtc(getEndTime()) - ISO8601.toUtc(getStartTime());
 
-                // same day
-                if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
-                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += time + ".";
+                    msg += misc.convertMsToHuman(length);
 
-                } else {
-                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
-                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += dayDate + " at " + time + ".";
+                    return msg;
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
+            } else {
+                try {
+                    Calendar cal = ISO8601.toCalendar(getStartTime());
+                    String dayDate;
+                    String time = "";
 
-                return msg;
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
+                    time = misc.formatTime(cal, false);
 
-            } catch (ParseException e) {
-                e.printStackTrace();
+                    String msg = "You will need to arrive between \n\t" + dayDate + " at " + time + " and\n\t";
+
+                    Calendar cal2 = ISO8601.toCalendar(getEndTime());
+
+                    // same day
+                    if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+                        time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                        msg += time + ".";
+
+                    } else {
+                        dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
+                        time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                        msg += dayDate + " at " + time + ".";
+                    }
+
+                    return msg;
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return null;

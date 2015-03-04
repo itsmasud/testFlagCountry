@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -530,8 +529,15 @@ public class WorkorderCardView extends RelativeLayout {
             }
         }
         // when scheduledTimeStart/scheduledTimeEnd
+        if (_workorder.getEstimatedSchedule() != null) {
+            String when = _workorder.getEstimatedSchedule().getFormatedTime();
 
-        if (_workorder.getSchedule() != null) {
+            if (when == null) {
+                _whenTextView.setVisibility(GONE);
+            } else {
+                _whenTextView.setText(when);
+            }
+        } else if (_workorder.getSchedule() != null) {
             String when = _workorder.getSchedule().getFormatedTime();
 
             if (when == null) {

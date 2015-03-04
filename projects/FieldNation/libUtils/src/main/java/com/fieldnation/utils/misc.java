@@ -1046,12 +1046,18 @@ public class misc {
 
         result = "";
 
-        if (days > 0) {
+        if (days == 1) {
+            result += days + " day";
+        } else if (days > 0) {
             result += days + " days ";
         }
-        if (hours > 0) {
+
+        if (hours == 1) {
+            result += hours + " hour ";
+        } else if (hours > 0) {
             result += hours + " hours ";
         }
+
         if (min > 0) {
             result += min + " min ";
         }
