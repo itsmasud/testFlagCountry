@@ -478,6 +478,7 @@ public class JsonObject {
         return toStringBuilder().toString();
     }
 
+
     @Override
     protected Object clone() throws CloneNotSupportedException {
         try {

@@ -8,22 +8,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by Michael Carver on 2/27/2015.
+ * Created by Michael Carver on 3/4/2015.
  */
-class TransactionSqlHelper extends SQLiteOpenHelper {
+public class TransformSqlHelper extends SQLiteOpenHelper {
     // Note: increment this value every time the structure of the database is
     // changed.
     private static final int TABLE_VER = 1;
-    public static final String TABLE_NAME = "transactions";
+    public static final String TABLE_NAME = "transforms";
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        HANDLER(1, "handler", "text not null"),
-        STATE(2, "state", "integer not null", true),
-        META(3, "meta", "text"),
-        PRIORITY(4, "priority", "integer not null", true),
-        REQUEST(5, "request", "text not null"),
-        KEY(6, "key", "text", true);
+        TRANSACTION_ID(1, "transaction_id", "integer not null", true),
+        OBJECT_NAME(2, "object_name", "text not null", true),
+        OBJECT_KEY(3, "object_key", "text not null", true),
+        ACTION(4, "action", "integer not null"),
+        DATA(5, "data", "blob not null");
 
         private int _index;
         private String _name;
@@ -76,7 +75,7 @@ class TransactionSqlHelper extends SQLiteOpenHelper {
         }
     }
 
-    public TransactionSqlHelper(Context context) {
+    public TransformSqlHelper(Context context) {
         super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
     }
 

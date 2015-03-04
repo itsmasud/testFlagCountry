@@ -134,7 +134,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @param id      the global id of the object
      * @return the object. Null if there was an error.
      */
-    static StoredObject get(Context context, long id) {
+    public static StoredObject get(Context context, long id) {
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         StoredObject obj = null;
         try {
@@ -173,7 +173,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @param objectKey      the object key
      * @return the object, null if there was an error.
      */
-    static StoredObject get(Context context, String objectTypeName, String objectKey) {
+    public static StoredObject get(Context context, String objectTypeName, String objectKey) {
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         StoredObject obj = null;
         try {
@@ -211,7 +211,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @param obj     the object to save
      * @return the updated object
      */
-    static StoredObject put(Context context, StoredObject obj) {
+    public static StoredObject put(Context context, StoredObject obj) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), obj._objName);
         v.put(Column.OBJ_KEY.getName(), obj._objKey);
@@ -277,7 +277,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
     }
 
-    static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] metaData, File file) {
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] metaData, File file) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
         v.put(Column.OBJ_KEY.getName(), objectKey);
@@ -327,7 +327,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return null;
     }
 
-    static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] metaData, byte[] data) {
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] metaData, byte[] data) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
         v.put(Column.OBJ_KEY.getName(), objectKey);
@@ -354,7 +354,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return null;
     }
 
-    static List<StoredObject> list(Context context, String objectTypeName) {
+    public static List<StoredObject> list(Context context, String objectTypeName) {
         List<StoredObject> list = new LinkedList<>();
 
         ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
@@ -384,7 +384,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return list;
     }
 
-    static List<StoredObject> list(Context context, String objectTypeName, String[] keys) {
+    public static List<StoredObject> list(Context context, String objectTypeName, String[] keys) {
         List<StoredObject> list = new LinkedList<>();
 
         if (keys == null || keys.length == 0)
@@ -424,7 +424,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return list;
     }
 
-    static boolean delete(Context context, String objectTypeName, String objkey) {
+    public static boolean delete(Context context, String objectTypeName, String objkey) {
         StoredObject obj = get(context, objectTypeName, objkey);
         if (obj != null && obj._isFile) {
             obj._file.delete();
@@ -446,7 +446,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
     }
 
-    static boolean delete(Context context, long id) {
+    public static boolean delete(Context context, long id) {
         StoredObject obj = get(context, id);
         if (obj != null && obj._isFile) {
             obj._file.delete();
