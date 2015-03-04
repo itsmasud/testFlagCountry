@@ -329,6 +329,16 @@ public class WorkorderListFragment extends Fragment {
 
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
+        if (_gpsLocationService == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startCheckin();
+                }
+            }, 1000);
+            return;
+        }
+
         // everything is awsome. checkin
         _gpsLocationService.setListener(_gps_checkInListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
@@ -349,6 +359,16 @@ public class WorkorderListFragment extends Fragment {
 
     private void startCheckOut() {
         Log.v(TAG, "startCheckOut");
+        if (_gpsLocationService == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startCheckOut();
+                }
+            }, 1000);
+            return;
+        }
+
         _gpsLocationService.setListener(_gps_checkOutListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkOutListener);
