@@ -20,6 +20,9 @@ import java.util.List;
  * Created by Michael Carver on 2/26/2015.
  */
 public class StoredObject implements Parcelable, ObjectStoreConstants {
+    private static final String TAG = "StoredObject";
+    private static final Object LOCK = new Object();
+
 
     private long _id;
     private String _objKey;
@@ -119,7 +122,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _metaData = metaData;
     }
 
-    StoredObject save(Context context) {
+    public StoredObject save(Context context) {
         return put(context, this);
     }
 
@@ -135,32 +138,33 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @return the object. Null if there was an error.
      */
     public static StoredObject get(Context context, long id) {
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         StoredObject obj = null;
-        try {
-            SQLiteDatabase db = helper.getReadableDatabase();
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                Cursor cursor = db.query(
-                        ObjectStoreSqlHelper.TABLE_NAME,
-                        ObjectStoreSqlHelper.getColumnNames(),
-                        Column.ID + "=?",
-                        new String[]{id + ""},
-                        null, null, null, "LIMIT 1");
-
+                SQLiteDatabase db = helper.getReadableDatabase();
                 try {
-                    if (cursor.moveToFirst()) {
-                        obj = new StoredObject(cursor);
+                    Cursor cursor = db.query(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            ObjectStoreSqlHelper.getColumnNames(),
+                            Column.ID + "=?",
+                            new String[]{id + ""},
+                            null, null, null, "LIMIT 1");
+
+                    try {
+                        if (cursor.moveToFirst()) {
+                            obj = new StoredObject(cursor);
+                        }
+                    } finally {
+                        cursor.close();
                     }
                 } finally {
-                    cursor.close();
+                    db.close();
                 }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
-
         return obj;
     }
 
@@ -174,32 +178,33 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @return the object, null if there was an error.
      */
     public static StoredObject get(Context context, String objectTypeName, String objectKey) {
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         StoredObject obj = null;
-        try {
-            SQLiteDatabase db = helper.getReadableDatabase();
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                Cursor cursor = db.query(
-                        ObjectStoreSqlHelper.TABLE_NAME,
-                        ObjectStoreSqlHelper.getColumnNames(),
-                        Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + "=?",
-                        new String[]{objectTypeName, objectKey},
-                        null, null, null, "LIMIT 1");
-
+                SQLiteDatabase db = helper.getReadableDatabase();
                 try {
-                    if (cursor.moveToFirst()) {
-                        obj = new StoredObject(cursor);
+                    Cursor cursor = db.query(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            ObjectStoreSqlHelper.getColumnNames(),
+                            Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + "=?",
+                            new String[]{objectTypeName, objectKey},
+                            null, null, null, "LIMIT 1");
+
+                    try {
+                        if (cursor.moveToFirst()) {
+                            obj = new StoredObject(cursor);
+                        }
+                    } finally {
+                        cursor.close();
                     }
                 } finally {
-                    cursor.close();
+                    db.close();
                 }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
-
         return obj;
     }
 
@@ -257,19 +262,20 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
         v.put(Column.META_DATA.getName(), obj._metaData);
 
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
         boolean success = false;
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                success = db.update(ObjectStoreSqlHelper.TABLE_NAME, v, Column.ID + "=" + obj._id, null) > 0;
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    success = db.update(ObjectStoreSqlHelper.TABLE_NAME, v, Column.ID + "=" + obj._id, null) > 0;
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
-
         if (success)
             return get(context, obj._id);
         else {
@@ -286,16 +292,18 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.META_DATA.getName(), metaData);
 
         long id = -1;
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         if (id != -1) {
             // copy the file to the file store
@@ -337,16 +345,18 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.META_DATA.getName(), metaData);
 
         long id = -1;
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         if (id != -1)
             return get(context, id);
@@ -357,29 +367,31 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     public static List<StoredObject> list(Context context, String objectTypeName) {
         List<StoredObject> list = new LinkedList<>();
 
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getReadableDatabase();
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                Cursor cursor = db.query(
-                        ObjectStoreSqlHelper.TABLE_NAME,
-                        ObjectStoreSqlHelper.getColumnNames(),
-                        Column.OBJ_NAME + "=?",
-                        new String[]{objectTypeName},
-                        null, null, null);
-
+                SQLiteDatabase db = helper.getReadableDatabase();
                 try {
-                    while (cursor.moveToNext()) {
-                        list.add(new StoredObject(cursor));
+                    Cursor cursor = db.query(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            ObjectStoreSqlHelper.getColumnNames(),
+                            Column.OBJ_NAME + "=?",
+                            new String[]{objectTypeName},
+                            null, null, null);
+
+                    try {
+                        while (cursor.moveToNext()) {
+                            list.add(new StoredObject(cursor));
+                        }
+                    } finally {
+                        cursor.close();
                     }
                 } finally {
-                    cursor.close();
+                    db.close();
                 }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         return list;
     }
@@ -390,36 +402,38 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         if (keys == null || keys.length == 0)
             return list;
 
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getReadableDatabase();
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                String[] param = new String[keys.length + 1];
-                param[0] = objectTypeName;
-
-                for (int i = 0; i < keys.length; i++) {
-                    param[i + 1] = keys[i];
-                }
-
-                Cursor cursor = db.query(
-                        ObjectStoreSqlHelper.TABLE_NAME,
-                        ObjectStoreSqlHelper.getColumnNames(),
-                        Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY
-                                + " IN (" + makePlaceholders(keys.length) + ")",
-                        param,
-                        null, null, null);
+                SQLiteDatabase db = helper.getReadableDatabase();
                 try {
-                    while (cursor.moveToNext()) {
-                        list.add(new StoredObject(cursor));
+                    String[] param = new String[keys.length + 1];
+                    param[0] = objectTypeName;
+
+                    for (int i = 0; i < keys.length; i++) {
+                        param[i + 1] = keys[i];
+                    }
+
+                    Cursor cursor = db.query(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            ObjectStoreSqlHelper.getColumnNames(),
+                            Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY
+                                    + " IN (" + makePlaceholders(keys.length) + ")",
+                            param,
+                            null, null, null);
+                    try {
+                        while (cursor.moveToNext()) {
+                            list.add(new StoredObject(cursor));
+                        }
+                    } finally {
+                        cursor.close();
                     }
                 } finally {
-                    cursor.close();
+                    db.close();
                 }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         return list;
     }
@@ -430,20 +444,24 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             obj._file.delete();
         }
 
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        boolean success = false;
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                return db.delete(
-                        ObjectStoreSqlHelper.TABLE_NAME,
-                        Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + "=?",
-                        new String[]{objectTypeName, objkey}) > 0;
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    success = db.delete(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + "=?",
+                            new String[]{objectTypeName, objkey}) > 0;
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
+        return success;
     }
 
     public static boolean delete(Context context, long id) {
@@ -452,20 +470,24 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             obj._file.delete();
         }
 
-        ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        boolean success = false;
+        synchronized (LOCK) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
-                return db.delete(
-                        ObjectStoreSqlHelper.TABLE_NAME,
-                        Column.ID + "=",
-                        new String[]{id + ""}) > 0;
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    success = db.delete(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            Column.ID + "=",
+                            new String[]{id + ""}) > 0;
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
+        return success;
     }
 
     private static String makePlaceholders(int count) {

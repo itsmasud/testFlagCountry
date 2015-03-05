@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class Transform implements Parcelable, TransformConstants {
     private static final String TAG = "Transform";
+    private static final Object LOCK = new Object();
 
     private long _id;
     private long _transactionId;
@@ -102,59 +103,63 @@ public class Transform implements Parcelable, TransformConstants {
     /*-         Database            -*/
     /*-*****************************-*/
     static Transform get(Context context, long id) {
-        TransformSqlHelper helper = new TransformSqlHelper(context);
         Transform obj = null;
-        try {
-            SQLiteDatabase db = helper.getReadableDatabase();
+        synchronized (LOCK) {
+            TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
-                Cursor cursor = db.query(
-                        TransformSqlHelper.TABLE_NAME,
-                        TransactionSqlHelper.getColumnNames(),
-                        Column.ID + "=?",
-                        new String[]{id + ""},
-                        null, null, null, "LIMIT 1");
+                SQLiteDatabase db = helper.getReadableDatabase();
                 try {
-                    if (cursor.moveToFirst()) {
-                        obj = new Transform(cursor);
+                    Cursor cursor = db.query(
+                            TransformSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.ID + "=?",
+                            new String[]{id + ""},
+                            null, null, null, "LIMIT 1");
+                    try {
+                        if (cursor.moveToFirst()) {
+                            obj = new Transform(cursor);
+                        }
+                    } finally {
+                        cursor.close();
                     }
                 } finally {
-                    cursor.close();
+                    db.close();
                 }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         return obj;
     }
 
     static List<Transform> getObjectTransforms(Context context, String objectName, String objectKey) {
-        TransformSqlHelper helper = new TransformSqlHelper(context);
         List<Transform> list = new LinkedList<>();
-        try {
-            SQLiteDatabase db = helper.getReadableDatabase();
+        synchronized (LOCK) {
+            TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
-                Cursor cursor = db.query(
-                        TransformSqlHelper.TABLE_NAME,
-                        TransactionSqlHelper.getColumnNames(),
-                        Column.OBJECT_NAME + "=? AND " + Column.OBJECT_KEY + "=?",
-                        new String[]{objectName, objectKey},
-                        null, null, Column.ID + " ASC");
-
+                SQLiteDatabase db = helper.getReadableDatabase();
                 try {
-                    while (cursor.moveToNext()) {
-                        list.add(new Transform(cursor));
-                    }
-                } finally {
-                    cursor.close();
-                }
+                    Cursor cursor = db.query(
+                            TransformSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.OBJECT_NAME + "=? AND " + Column.OBJECT_KEY + "=?",
+                            new String[]{objectName, objectKey},
+                            null, null, Column.ID + " ASC");
 
+                    try {
+                        while (cursor.moveToNext()) {
+                            list.add(new Transform(cursor));
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         return list;
     }
@@ -168,19 +173,20 @@ public class Transform implements Parcelable, TransformConstants {
         v.put(Column.DATA.getName(), data);
 
         long id = -1;
-        TransformSqlHelper helper = new TransformSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        synchronized (LOCK) {
+            TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
-                id = db.insert(
-                        TransformSqlHelper.TABLE_NAME, null, v);
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    id = db.insert(
+                            TransformSqlHelper.TABLE_NAME, null, v);
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
-
         if (id != -1)
             return get(context, id);
         else
@@ -188,37 +194,45 @@ public class Transform implements Parcelable, TransformConstants {
     }
 
     static boolean deleteTransaction(Context context, long transactionId) {
-        TransformSqlHelper helper = new TransformSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        boolean success = false;
+        synchronized (LOCK) {
+            TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
-                return db.delete(
-                        TransformSqlHelper.TABLE_NAME,
-                        Column.TRANSACTION_ID + "=?",
-                        new String[]{transactionId + ""}) > 0;
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    success = db.delete(
+                            TransformSqlHelper.TABLE_NAME,
+                            Column.TRANSACTION_ID + "=?",
+                            new String[]{transactionId + ""}) > 0;
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
+        return success;
     }
 
     static boolean delete(Context context, long id) {
-        TransformSqlHelper helper = new TransformSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        boolean success = false;
+        synchronized (LOCK) {
+            TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
-                return db.delete(
-                        TransformSqlHelper.TABLE_NAME,
-                        Column.ID + "=?",
-                        new String[]{id + ""}) > 0;
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    success = db.delete(
+                            TransformSqlHelper.TABLE_NAME,
+                            Column.ID + "=?",
+                            new String[]{id + ""}) > 0;
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
+        return success;
     }
 
     /*-*********************************************-*/

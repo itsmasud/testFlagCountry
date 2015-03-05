@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-class TransactionSqlHelper extends SQLiteOpenHelper {
+class WebTransactionSqlHelper extends SQLiteOpenHelper {
     // Note: increment this value every time the structure of the database is
     // changed.
     private static final int TABLE_VER = 1;
@@ -22,7 +22,7 @@ class TransactionSqlHelper extends SQLiteOpenHelper {
         STATE(2, "state", "integer not null", true),
         META(3, "meta", "text"),
         PRIORITY(4, "priority", "integer not null", true),
-        REQUEST(5, "request", "text not null"),
+        PAYLOAD(5, "payload", "blob not null"),
         KEY(6, "key", "text", true);
 
         private int _index;
@@ -76,7 +76,7 @@ class TransactionSqlHelper extends SQLiteOpenHelper {
         }
     }
 
-    public TransactionSqlHelper(Context context) {
+    public WebTransactionSqlHelper(Context context) {
         super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
     }
 

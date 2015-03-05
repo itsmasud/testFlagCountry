@@ -20,12 +20,16 @@ public class JsonObject {
         _isNullObject = isNullObject;
     }
 
+    public JsonObject(byte[] data) throws ParseException {
+        this(new String(data));
+    }
+
     public JsonObject(String string) throws ParseException {
         _isNullObject = false;
         JsonTokenizer tokenizer = new JsonTokenizer(string);
         fromTokenizer(tokenizer);
-
     }
+
 
     public JsonObject(String key, Object value) throws ParseException {
         _isNullObject = false;
@@ -478,6 +482,9 @@ public class JsonObject {
         return toStringBuilder().toString();
     }
 
+    public byte[] toByteArray() {
+        return toString().getBytes();
+    }
 
     @Override
     protected Object clone() throws CloneNotSupportedException {

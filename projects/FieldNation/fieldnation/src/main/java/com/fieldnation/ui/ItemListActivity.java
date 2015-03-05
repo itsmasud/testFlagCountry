@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 

@@ -16,7 +16,7 @@ import java.lang.ref.WeakReference;
 /**
  * Created by Michael Carver on 2/26/2015.
  */
-public class ObjectStoreClient implements ObjectStoreConstants {
+class ObjectStoreClient implements ObjectStoreConstants {
     public static final String TAG = "ObjectStoreClient";
 
     private boolean _isConnected = false;
