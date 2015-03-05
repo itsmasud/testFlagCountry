@@ -9,8 +9,10 @@ import android.os.IBinder;
 
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.webclient.WebService;
+import com.fieldnation.service.objectstore.StoredObject;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -43,6 +45,19 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
         // get transaction and transforms from intent, push into the database
         // kick off the next transaction if not running
+        if (intent != null && intent.getExtras() != null) {
+            try {
+                Bundle extras = intent.getExtras();
+                WebTransaction.put(this,
+                        WebTransaction.Priority.values()[extras.getInt(PARAM_PRIORITY)],
+                        extras.getString(PARAM_KEY),
+                        new JsonObject(extras.getByteArray(PARAM_META)),
+                        extras.getLong(PARAM_STORED_OBJECT_ID, -1),
+                        extras.getString(PARAM_HANDLER_NAME));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
         if (_currentTransaction == null) {
             startTransaction();
@@ -88,6 +103,45 @@ public class WebTransactionService extends Service implements WebTransactionCons
         }
 
         // at some point call the web service
+        StoredObject so = null;
+        if (_currentTransaction.getStoedObjectId() != -1) {
+            so = StoredObject.get(this, _currentTransaction.getStoedObjectId());
+        }
+
+        JsonObject meta = _currentTransaction.getMeta();
+        if (so == null) {
+            try {
+                _webService.httpRead(0,
+                        meta.getString(PARAM_WEB_METHOD),
+                        meta.getString(PARAM_WEB_PATH),
+                        meta.getString(PARAM_WEB_OPTIONS), false);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else if (so.isFile()) {
+            try {
+                _webService.httpPostFile(0,
+                        meta.getString(PARAM_WEB_PATH),
+                        meta.getString(PARAM_WEB_OPTIONS),
+                        so.getFile().getName(),
+                        so.getFile().getAbsolutePath(),
+                        null,
+                        meta.getString(PARAM_WEB_CONTENT_TYPE));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            try {
+                _webService.httpWrite(0,
+                        meta.getString(PARAM_WEB_METHOD),
+                        meta.getString(PARAM_WEB_PATH),
+                        meta.getString(PARAM_WEB_OPTIONS),
+                        so.getData(),
+                        meta.getString(PARAM_WEB_CONTENT_TYPE), false);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     private WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {

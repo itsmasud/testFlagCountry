@@ -29,7 +29,7 @@ public class Transform implements Parcelable, TransformConstants {
     private byte[] _data;
 
     public enum Action {
-        ADD, MERGE, DELETE;
+        ADD, MERGE, DELETE
     }
 
     Transform(Cursor cursor) {
@@ -102,7 +102,7 @@ public class Transform implements Parcelable, TransformConstants {
     /*-*****************************-*/
     /*-         Database            -*/
     /*-*****************************-*/
-    static Transform get(Context context, long id) {
+    public static Transform get(Context context, long id) {
         Transform obj = null;
         synchronized (LOCK) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
@@ -132,7 +132,7 @@ public class Transform implements Parcelable, TransformConstants {
         return obj;
     }
 
-    static List<Transform> getObjectTransforms(Context context, String objectName, String objectKey) {
+    public static List<Transform> getObjectTransforms(Context context, String objectName, String objectKey) {
         List<Transform> list = new LinkedList<>();
         synchronized (LOCK) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
@@ -164,7 +164,7 @@ public class Transform implements Parcelable, TransformConstants {
         return list;
     }
 
-    static Transform put(Context context, long transactionId, String objectName, String objectKey, Action action, byte[] data) {
+    public static Transform put(Context context, long transactionId, String objectName, String objectKey, Action action, byte[] data) {
         ContentValues v = new ContentValues();
         v.put(Column.TRANSACTION_ID.getName(), transactionId);
         v.put(Column.OBJECT_NAME.getName(), objectName);
@@ -193,7 +193,7 @@ public class Transform implements Parcelable, TransformConstants {
             return null;
     }
 
-    static boolean deleteTransaction(Context context, long transactionId) {
+    public static boolean deleteTransaction(Context context, long transactionId) {
         boolean success = false;
         synchronized (LOCK) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
@@ -214,7 +214,7 @@ public class Transform implements Parcelable, TransformConstants {
         return success;
     }
 
-    static boolean delete(Context context, long id) {
+    public static boolean delete(Context context, long id) {
         boolean success = false;
         synchronized (LOCK) {
             TransformSqlHelper helper = new TransformSqlHelper(context);

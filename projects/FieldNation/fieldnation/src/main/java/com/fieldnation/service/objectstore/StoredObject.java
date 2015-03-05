@@ -15,6 +15,7 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Michael Carver on 2/26/2015.
@@ -23,6 +24,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     private static final String TAG = "StoredObject";
     private static final Object LOCK = new Object();
 
+    private static final Random RAND = new Random(System.currentTimeMillis());
 
     private long _id;
     private String _objKey;
@@ -129,6 +131,9 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     /*-*****************************************-*/
     /*-             Database interface          -*/
     /*-*****************************************-*/
+    public static String randomKey() {
+        return RAND.nextLong() + "";
+    }
 
     /**
      * Gets an object based on the global id

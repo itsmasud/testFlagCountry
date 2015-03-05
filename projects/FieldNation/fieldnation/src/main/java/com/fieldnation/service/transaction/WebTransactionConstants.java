@@ -10,8 +10,15 @@ public interface WebTransactionConstants {
     public static final String PARAM_HANDLER_NAME = "PARAM_HANDLER_NAME";
     public static final String PARAM_STATE = "PARAM_STATE";
     public static final String PARAM_PRIORITY = "PARAM_PRIORITY";
-    public static final String PARAM_PAYLOAD = "PARAM_PAYLOAD";
+    public static final String PARAM_STORED_OBJECT_ID = "PARAM_STORED_OBJECT_ID";
     public static final String PARAM_KEY = "PARAM_KEY";
     public static final String PARAM_TRANSFORM_LIST = "PARAM_TRANSFORM_LIST";
     public static final String PARAM_META = "PARAM_META";
+
+
+    public static final String PARAM_WEB_METHOD = "PARAM_WEB_METHOD";
+    public static final String PARAM_WEB_PATH = "PARAM_WEB_PATH";
+    public static final String PARAM_WEB_OPTIONS = "PARAM_WEB_OPTIONS";
+    public static final String PARAM_WEB_CONTENT_TYPE = "PARAM_WEB_CONTENT_TYPE";
+    public static final String PARAM_WEB_NOTIFICATION_PENDING = "PARAM_WEB_NOTIFICATION_PENDING";
 }

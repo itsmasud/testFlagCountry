@@ -345,7 +345,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 Log.v(TAG, "local path");
                 getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                         _workorder.getWorkorderId(), _uploadingSlotId,
-                        _tempFile.getAbsolutePath(), getNotificationIntent()));
+                        _tempFile.getAbsolutePath()));
 
                 return true;
             } else {

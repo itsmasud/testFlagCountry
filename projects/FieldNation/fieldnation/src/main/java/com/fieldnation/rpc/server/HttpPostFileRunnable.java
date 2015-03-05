@@ -1,7 +1,6 @@
 package com.fieldnation.rpc.server;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +31,6 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
     private NotificationManager _noteManager;
     private NotificationCompat.Builder _noteBuilder;
     private SecureRandom _rand = new SecureRandom();
-    private PendingIntent _responseIntent;
 
 
     public HttpPostFileRunnable(Context context, Intent intent, AuthToken at) {
@@ -45,13 +43,12 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 
         _bundle = _intent.getExtras();
         _rr = _bundle.getParcelable(KEY_PARAM_CALLBACK);
-        _responseIntent = _bundle.getParcelable(KEY_PARAM_NOTIFICATION_INTENT);
 
         _noteBuilder = new NotificationCompat.Builder(_context)
                 .setSmallIcon(R.drawable.ic_action_upload)
                 .setContentTitle(_context.getString(R.string.notification_title_start_upload))
-                .setContentText(_context.getString(R.string.notification_context_getting_file))
-                .setContentIntent(_responseIntent);
+                .setContentText(_context.getString(R.string.notification_context_getting_file));
+//                .setContentIntent(_responseIntent);
 
         _noteManager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
         _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());

@@ -24,7 +24,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private JsonObject _meta;
     private Object _handler;
     private Priority _priority;
-    private byte[] _payload;
+    private Long _storedObjectId = null;
     private String _key;
 
     public enum Priority {
@@ -47,7 +47,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         } catch (Exception ex) {
         }
         _priority = Priority.values()[cursor.getInt(Column.PRIORITY.getIndex())];
-        _payload = cursor.getBlob(Column.PAYLOAD.getIndex());
+        if (!cursor.isNull(Column.STORED_OBJECT_ID.getIndex())) {
+            _storedObjectId = cursor.getLong(Column.STORED_OBJECT_ID.getIndex());
+        }
         _key = cursor.getString(Column.KEY.getIndex());
     }
 
@@ -60,7 +62,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         } catch (Exception ex) {
         }
         _priority = Priority.values()[bundle.getInt(PARAM_PRIORITY)];
-        _payload = bundle.getByteArray(PARAM_PAYLOAD);
+        if (bundle.containsKey(PARAM_STORED_OBJECT_ID))
+            _storedObjectId = bundle.getLong(PARAM_STORED_OBJECT_ID);
         _key = bundle.getString(PARAM_KEY);
     }
 
@@ -71,7 +74,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putInt(PARAM_STATE, _state.ordinal());
         bundle.putByteArray(PARAM_META, _meta.toByteArray());
         bundle.putInt(PARAM_PRIORITY, _priority.ordinal());
-        bundle.putByteArray(PARAM_PAYLOAD, _payload);
+        if (_storedObjectId != null)
+            bundle.putLong(PARAM_STORED_OBJECT_ID, _storedObjectId);
         bundle.putString(PARAM_KEY, _key);
         return bundle;
     }
@@ -115,12 +119,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _priority = priority;
     }
 
-    public byte[] getPayload() {
-        return _payload;
-    }
-
-    public void setPayload(byte[] payload) {
-        _payload = payload;
+    public long getStoedObjectId() {
+        if (_storedObjectId == null)
+            return -1;
+        return _storedObjectId;
     }
 
     public String getKey() {
@@ -131,14 +133,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _key = key;
     }
 
-    WebTransaction save(Context context) {
+    public WebTransaction save(Context context) {
         return put(context, this);
     }
 
     /*-*****************************************-*/
     /*-             Database interface          -*/
     /*-*****************************************-*/
-    static WebTransaction get(Context context, long id) {
+    public static WebTransaction get(Context context, long id) {
         WebTransaction obj = null;
         synchronized (LOCK) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
@@ -169,7 +171,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
-    static WebTransaction getNext(Context context) {
+    public static WebTransaction getNext(Context context) {
         WebTransaction obj = null;
         synchronized (LOCK) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
@@ -201,14 +203,15 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
-    static WebTransaction put(Context context, WebTransaction obj) {
+    public static WebTransaction put(Context context, WebTransaction obj) {
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), obj._handlerName);
         v.put(Column.STATE.getName(), obj._state.ordinal());
         v.put(Column.META.getName(), obj._meta.toByteArray());
         v.put(Column.KEY.getName(), obj._key);
         v.put(Column.PRIORITY.getName(), obj._priority.ordinal());
-        v.put(Column.PAYLOAD.getName(), obj._payload);
+        if (obj._storedObjectId != null)
+            v.put(Column.STORED_OBJECT_ID.getName(), obj._storedObjectId);
 
         boolean success = false;
         synchronized (LOCK) {
@@ -234,14 +237,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
     }
 
-    static WebTransaction put(Context context, Priority priority, String key, JsonObject meta, byte[] payload, String handlerName) {
+    public static WebTransaction put(Context context, Priority priority, String key, JsonObject meta, long storedObjectId, String handlerName) {
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
         v.put(Column.KEY.getName(), key);
         v.put(Column.STATE.getName(), State.BUILDING.ordinal());
         v.put(Column.META.getName(), meta.toByteArray());
         v.put(Column.PRIORITY.getName(), priority.ordinal());
-        v.put(Column.PAYLOAD.getName(), payload);
+        v.put(Column.STORED_OBJECT_ID.getName(), storedObjectId);
 
         long id = -1;
         synchronized (LOCK) {
@@ -265,7 +268,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
     }
 
-    static boolean delete(Context context, long id) {
+    public static boolean delete(Context context, long id) {
         Transform.deleteTransaction(context, id);
         boolean success = false;
         synchronized (LOCK) {

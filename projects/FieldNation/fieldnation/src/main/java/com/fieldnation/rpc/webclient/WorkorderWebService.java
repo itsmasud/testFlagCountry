@@ -455,14 +455,13 @@ public class WorkorderWebService extends WebService implements WebServiceConstan
                 false);
     }
 
-    public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String localFilename,
-                                    PendingIntent notificationIntent) {
+    public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String localFilename) {
         if (deliverableSlotId <= 0) {
             return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables",
-                    null, "file", localFilename, null, null, notificationIntent);
+                    null, "file", localFilename, null, null);
         }
         return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
-                null, "file", localFilename, null, null, notificationIntent);
+                null, "file", localFilename, null, null);
     }
 
     public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, Intent data, PendingIntent notificationIntent) {

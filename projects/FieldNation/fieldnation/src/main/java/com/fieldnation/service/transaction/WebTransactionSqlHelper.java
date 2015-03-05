@@ -22,7 +22,7 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         STATE(2, "state", "integer not null", true),
         META(3, "meta", "text"),
         PRIORITY(4, "priority", "integer not null", true),
-        PAYLOAD(5, "payload", "blob not null"),
+        STORED_OBJECT_ID(5, "stored_object_id", "integer"),
         KEY(6, "key", "text", true);
 
         private int _index;

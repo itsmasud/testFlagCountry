@@ -145,7 +145,7 @@ public class WebService implements WebServiceConstants {
         intent.putExtra(KEY_RESULT_CODE, resultCode);
         intent.putExtra(KEY_PARAM_FILE_DATA_INTENT, data);
         intent.putExtra(KEY_PARAM_FILE_FIELD_NAME, fileFieldName);
-        intent.putExtra(KEY_PARAM_NOTIFICATION_INTENT, notificationIntent);
+//        intent.putExtra(KEY_PARAM_NOTIFICATION_INTENT, notificationIntent);
 
         if (fields != null && fields.size() > 0) {
             JsonObject obj = new JsonObject();
@@ -172,7 +172,7 @@ public class WebService implements WebServiceConstants {
     }
 
     public Intent httpPostFile(int resultCode, String path, String options, String fileFieldName, String localFilename,
-                               Map<String, String> fields, String contentType, PendingIntent notificationIntent) {
+                               Map<String, String> fields, String contentType) {
         Intent intent = new Intent(_context, RpcService.class);
         intent.setAction(RpcServiceConstants.ACTION_RPC);
         intent.putExtra(RpcServiceConstants.KEY_SERVICE, ACTION_NAME);
@@ -184,7 +184,7 @@ public class WebService implements WebServiceConstants {
         intent.putExtra(KEY_RESULT_CODE, resultCode);
         intent.putExtra(KEY_PARAM_FILE_FIELD_NAME, fileFieldName);
         intent.putExtra(KEY_PARAM_FILE_NAME, localFilename);
-        intent.putExtra(KEY_PARAM_NOTIFICATION_INTENT, notificationIntent);
+//        intent.putExtra(KEY_PARAM_NOTIFICATION_INTENT, notificationIntent);
         intent.putExtra(KEY_PARAM_CONTENT_TYPE, contentType);
 
         if (fields != null && fields.size() > 0) {

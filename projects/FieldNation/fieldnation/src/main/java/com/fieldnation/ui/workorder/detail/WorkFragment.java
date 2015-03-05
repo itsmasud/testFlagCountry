@@ -680,7 +680,7 @@ public class WorkFragment extends WorkorderFragment {
             if (data == null) {
                 getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                         _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        _tempFile.getAbsolutePath(), getNotificationIntent()));
+                        _tempFile.getAbsolutePath()));
             } else {
                 getActivity().startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),

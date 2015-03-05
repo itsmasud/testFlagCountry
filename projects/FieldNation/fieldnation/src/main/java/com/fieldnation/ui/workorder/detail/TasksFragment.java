@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +35,9 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GpsLocationService;
@@ -419,7 +418,7 @@ public class TasksFragment extends WorkorderFragment {
             if (data == null) {
                 getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                         _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        _tempFile.getAbsolutePath(), getNotificationIntent()));
+                        _tempFile.getAbsolutePath()));
             } else {
                 getActivity().startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
