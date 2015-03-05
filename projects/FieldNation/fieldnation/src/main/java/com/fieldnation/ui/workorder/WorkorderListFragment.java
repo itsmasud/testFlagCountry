@@ -465,17 +465,21 @@ public class WorkorderListFragment extends Fragment {
     private final GpsLocationService.Listener _gps_checkInListener = new GpsLocationService.Listener() {
         @Override
         public void onLocation(Location location) {
-            Log.v(TAG, "_gps_checkInListener.onLocation");
-            startCheckin();
-            _locationLoadingDialog.dismiss();
+            if (isAdded()) {
+                Log.v(TAG, "_gps_checkInListener.onLocation");
+                startCheckin();
+                _locationLoadingDialog.dismiss();
+            }
         }
     };
     private final GpsLocationService.Listener _gps_checkOutListener = new GpsLocationService.Listener() {
         @Override
         public void onLocation(Location location) {
-            Log.v(TAG, "_gps_checkOutListener.onLocation");
-            startCheckOut();
-            _locationLoadingDialog.dismiss();
+            if (isAdded()) {
+                Log.v(TAG, "_gps_checkOutListener.onLocation");
+                startCheckOut();
+                _locationLoadingDialog.dismiss();
+            }
         }
     };
     private LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
