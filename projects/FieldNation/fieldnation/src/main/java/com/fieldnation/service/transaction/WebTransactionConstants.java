@@ -18,7 +18,8 @@ public interface WebTransactionConstants {
 
     public static final String PARAM_WEB_METHOD = "PARAM_WEB_METHOD";
     public static final String PARAM_WEB_PATH = "PARAM_WEB_PATH";
-    public static final String PARAM_WEB_OPTIONS = "PARAM_WEB_OPTIONS";
+    public static final String PARAM_WEB_URL_PARAMS = "PARAM_WEB_URL_PARAMS";
     public static final String PARAM_WEB_CONTENT_TYPE = "PARAM_WEB_CONTENT_TYPE";
-    public static final String PARAM_WEB_NOTIFICATION_PENDING = "PARAM_WEB_NOTIFICATION_PENDING";
+    public static final String PARAM_WEB_EXTRAS = "PARAM_WEB_EXTRAS";
+    public static final String PARAM_WEB_HEADERS = "PARAM_WEB_HEADERS";
 }

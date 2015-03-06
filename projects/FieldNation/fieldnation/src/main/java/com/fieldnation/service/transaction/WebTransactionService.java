@@ -48,12 +48,21 @@ public class WebTransactionService extends Service implements WebTransactionCons
         if (intent != null && intent.getExtras() != null) {
             try {
                 Bundle extras = intent.getExtras();
-                WebTransaction.put(this,
+                WebTransaction transaction = WebTransaction.put(this,
                         WebTransaction.Priority.values()[extras.getInt(PARAM_PRIORITY)],
                         extras.getString(PARAM_KEY),
                         new JsonObject(extras.getByteArray(PARAM_META)),
                         extras.getLong(PARAM_STORED_OBJECT_ID, -1),
                         extras.getString(PARAM_HANDLER_NAME));
+                if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
+                    Bundle[] transforms = (Bundle[]) extras.getParcelableArray(PARAM_TRANSFORM_LIST);
+
+                    for (int i = 0; i < transforms.length; i++) {
+                        Bundle transform = transforms[i];
+                        Transform.put(this, transaction.getId(), transform);
+                    }
+
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -104,8 +113,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
         // at some point call the web service
         StoredObject so = null;
-        if (_currentTransaction.getStoedObjectId() != -1) {
-            so = StoredObject.get(this, _currentTransaction.getStoedObjectId());
+        if (_currentTransaction.getStoredObjectId() != -1) {
+            so = StoredObject.get(this, _currentTransaction.getStoredObjectId());
         }
 
         JsonObject meta = _currentTransaction.getMeta();
@@ -114,7 +123,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 _webService.httpRead(0,
                         meta.getString(PARAM_WEB_METHOD),
                         meta.getString(PARAM_WEB_PATH),
-                        meta.getString(PARAM_WEB_OPTIONS), false);
+                        meta.getString(PARAM_WEB_URL_PARAMS), false);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -122,7 +131,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
             try {
                 _webService.httpPostFile(0,
                         meta.getString(PARAM_WEB_PATH),
-                        meta.getString(PARAM_WEB_OPTIONS),
+                        meta.getString(PARAM_WEB_URL_PARAMS),
                         so.getFile().getName(),
                         so.getFile().getAbsolutePath(),
                         null,
@@ -135,7 +144,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 _webService.httpWrite(0,
                         meta.getString(PARAM_WEB_METHOD),
                         meta.getString(PARAM_WEB_PATH),
-                        meta.getString(PARAM_WEB_OPTIONS),
+                        meta.getString(PARAM_WEB_URL_PARAMS),
                         so.getData(),
                         meta.getString(PARAM_WEB_CONTENT_TYPE), false);
             } catch (Exception ex) {

@@ -193,6 +193,35 @@ public class Transform implements Parcelable, TransformConstants {
             return null;
     }
 
+    public static Transform put(Context context, long transactionId, Bundle query) {
+        ContentValues v = new ContentValues();
+        v.put(Column.TRANSACTION_ID.getName(), transactionId);
+        v.put(Column.OBJECT_NAME.getName(), query.getString(PARAM_OBJECT_NAME));
+        v.put(Column.OBJECT_KEY.getName(), query.getString(PARAM_OBJECT_KEY));
+        v.put(Column.ACTION.getName(), query.getInt(PARAM_ACTION));
+        v.put(Column.DATA.getName(), query.getByteArray(PARAM_DATA));
+
+        long id = -1;
+        synchronized (LOCK) {
+            TransformSqlHelper helper = new TransformSqlHelper(context);
+            try {
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    id = db.insert(
+                            TransformSqlHelper.TABLE_NAME, null, v);
+                } finally {
+                    db.close();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+        if (id != -1)
+            return get(context, id);
+        else
+            return null;
+    }
+
     public static boolean deleteTransaction(Context context, long transactionId) {
         boolean success = false;
         synchronized (LOCK) {

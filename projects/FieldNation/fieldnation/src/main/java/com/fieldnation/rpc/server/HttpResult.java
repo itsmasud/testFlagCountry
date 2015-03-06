@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.text.ParseException;
+import java.util.Map;
 
 /**
  * Represents an HTTP response with some extra parsing.
@@ -20,6 +21,7 @@ public class HttpResult {
     private String _sResults = null;
     private JsonObject _jsonResults = null;
     private JsonArray _jaResults = null;
+    private Map<String, String> _headers;
 
     private int _responseCode;
     private String _responseMessage;

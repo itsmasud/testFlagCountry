@@ -1,15 +1,12 @@
 package com.fieldnation.rpc.server;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
-import android.support.v4.app.NotificationCompat;
 
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
-import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.Topics;
@@ -28,8 +25,6 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 
     private Bundle _bundle;
     private ResultReceiver _rr;
-    private NotificationManager _noteManager;
-    private NotificationCompat.Builder _noteBuilder;
     private SecureRandom _rand = new SecureRandom();
 
 
@@ -43,15 +38,6 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 
         _bundle = _intent.getExtras();
         _rr = _bundle.getParcelable(KEY_PARAM_CALLBACK);
-
-        _noteBuilder = new NotificationCompat.Builder(_context)
-                .setSmallIcon(R.drawable.ic_action_upload)
-                .setContentTitle(_context.getString(R.string.notification_title_start_upload))
-                .setContentText(_context.getString(R.string.notification_context_getting_file));
-//                .setContentIntent(_responseIntent);
-
-        _noteManager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
-        _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
 
         if (_bundle.containsKey(KEY_PARAM_FILE_DATA_INTENT)) {
             Log.v(TAG, "intent");
@@ -91,10 +77,6 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
             }
         }
 
-        _noteBuilder.setContentTitle(_context.getString(R.string.notification_uploading) + " " + filename)
-                .setContentText(_context.getString(R.string.notification_uploading_dot));
-        _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
-
         HttpResult result = null;
         try {
 
@@ -107,9 +89,7 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                 _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                 _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                 _bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
-                _noteBuilder.setContentText(_context.getString(R.string.notification_failed));
                 Topics.dispatchFileUploadError(_context, path, filename, result.getResponseMessage());
-                _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
             } else {
                 try {
                     // happy path
@@ -121,12 +101,8 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                             _bundle.getInt(KEY_RESPONSE_CODE));
                     Log.v(TAG, "web request success");
                     Topics.dispatchFileUploadFinish(_context, path, filename);
-                    _noteBuilder.setContentText(_context.getString(R.string.notification_success));
-                    _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    _noteBuilder.setContentText(_context.getString(R.string.notification_failed));
-                    _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
                     try {
                         // unhappy, but http error
                         try {
@@ -150,8 +126,6 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            _noteBuilder.setContentText(_context.getString(R.string.notification_failed));
-            _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
             Log.v(TAG, "web request fail");
             _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
             _bundle.putString(KEY_RESPONSE_ERROR, ex.getMessage());
@@ -165,8 +139,6 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
 
     @Override
     public void fail(String reason) {
-        _noteBuilder.setContentText(_context.getString(R.string.notification_failed));
-        _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
         Log.v(TAG, "get file failed");
         _bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_UNKNOWN);
         _bundle.putString(KEY_RESPONSE_ERROR, reason);

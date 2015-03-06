@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-
 import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.Log;
 import com.fieldnation.R;

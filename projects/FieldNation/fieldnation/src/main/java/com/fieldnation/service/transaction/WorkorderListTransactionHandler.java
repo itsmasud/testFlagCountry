@@ -15,13 +15,13 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/4/2015.
  */
-public class WorkorderListTransactionHandler extends WebTransactionHandler implements WebServiceConstants {
+public class WorkorderListTransactionHandler extends WebTransactionHandler implements WebServiceConstants, WebTransactionConstants {
     @Override
     public void handleResult(Context context, Listener listener, WebTransaction transaction, Bundle resultData) {
         int page = 0;
         String listName = "";
         try {
-            JsonObject meta = transaction.getMeta();
+            JsonObject meta = transaction.getMeta().getJsonObject(PARAM_WEB_EXTRAS);
             page = meta.getInt("page");
             listName = meta.getString("listName");
         } catch (Exception ex) {
@@ -35,7 +35,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
             objects = new JsonArray(data);
         } catch (Exception ex) {
             ex.printStackTrace();
-            // Todo do something about this. Set up a transaction to re-request this page?
+            // TODO do something about this. Set up a transaction to re-request this page?
         }
 
         List<Workorder> workorders = new LinkedList<>();

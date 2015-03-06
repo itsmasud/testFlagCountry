@@ -119,7 +119,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _priority = priority;
     }
 
-    public long getStoedObjectId() {
+    public long getStoredObjectId() {
         if (_storedObjectId == null)
             return -1;
         return _storedObjectId;
