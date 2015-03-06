@@ -56,12 +56,10 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         extras.getString(PARAM_HANDLER_NAME));
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Bundle[] transforms = (Bundle[]) extras.getParcelableArray(PARAM_TRANSFORM_LIST);
-
                     for (int i = 0; i < transforms.length; i++) {
                         Bundle transform = transforms[i];
                         Transform.put(this, transaction.getId(), transform);
                     }
-
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
