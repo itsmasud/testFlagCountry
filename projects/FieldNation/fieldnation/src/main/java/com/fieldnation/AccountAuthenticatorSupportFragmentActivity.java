@@ -16,7 +16,7 @@ public abstract class AccountAuthenticatorSupportFragmentActivity extends Fragme
 
     /**
      * Set the result that is to be sent as the result of the request that caused this
-     * Activity to be launched. If result is null or this method is never called then
+     * Activity to be launched. If result is null or this method is never called thende
      * the request will be canceled.
      *
      * @param result this is returned as the result of the AbstractAccountAuthenticator request
