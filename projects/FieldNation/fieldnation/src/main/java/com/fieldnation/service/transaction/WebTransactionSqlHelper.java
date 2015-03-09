@@ -20,10 +20,9 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         ID(0, "_id", "integer primary key autoincrement"),
         HANDLER(1, "handler", "text not null"),
         STATE(2, "state", "integer not null", true),
-        META(3, "meta", "text"),
+        REQUEST(3, "request", "text"),
         PRIORITY(4, "priority", "integer not null", true),
-        STORED_OBJECT_ID(5, "stored_object_id", "integer"),
-        KEY(6, "key", "text", true);
+        KEY(5, "key", "text", true);
 
         private int _index;
         private String _name;

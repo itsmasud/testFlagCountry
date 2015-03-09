@@ -19,10 +19,13 @@ public class WebTransactionBuilder implements WebTransactionConstants {
 
     private Context context;
     private Intent intent;
-    private JsonObject meta;
+    private List<Bundle> transforms;
+
+    private JsonObject request;
     private JsonObject headers;
     private JsonObject extras;
-    private List<Bundle> transforms;
+    private JsonObject multiPartFields;
+    private JsonObject multiPartFiles;
 
     public WebTransactionBuilder(Context context) {
         this.context = context;
@@ -32,45 +35,6 @@ public class WebTransactionBuilder implements WebTransactionConstants {
 
     public static WebTransactionBuilder builder(Context context) {
         return new WebTransactionBuilder(context);
-    }
-
-    // Meta
-    private void getMeta() {
-        if (meta == null)
-            meta = new JsonObject();
-    }
-
-    public WebTransactionBuilder method(String method) throws ParseException {
-        getMeta();
-        meta.put(PARAM_WEB_METHOD, method);
-        return this;
-    }
-
-    public WebTransactionBuilder path(String path) throws ParseException {
-        getMeta();
-        meta.put(PARAM_WEB_PATH, path);
-        return this;
-    }
-
-    public WebTransactionBuilder urlParams(String urlParams) throws ParseException {
-        getMeta();
-        meta.put(PARAM_WEB_URL_PARAMS, urlParams);
-        return this;
-    }
-
-    // Extras
-    private void getExtras() throws ParseException {
-        if (extras == null) {
-            extras = new JsonObject();
-            getMeta();
-            meta.put(PARAM_WEB_EXTRAS, extras);
-        }
-    }
-
-    public WebTransactionBuilder extra(String key, Object value) throws ParseException {
-        getExtras();
-        extras.put(key, value);
-        return this;
     }
 
     // Intent
@@ -89,11 +53,6 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         return this;
     }
 
-    public WebTransactionBuilder body(StoredObject obj) {
-        intent.putExtra(PARAM_STORED_OBJECT_ID, obj.getId());
-        return this;
-    }
-
     // transforms
     private void getTransforms() {
         if (transforms == null) {
@@ -107,12 +66,64 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         return this;
     }
 
+    // Request
+    private void getRequest() {
+        if (request == null)
+            request = new JsonObject();
+    }
+
+    public WebTransactionBuilder method(String method) throws ParseException {
+        getRequest();
+        request.put(PARAM_WEB_METHOD, method);
+        return this;
+    }
+
+    public WebTransactionBuilder path(String path) throws ParseException {
+        getRequest();
+        request.put(PARAM_WEB_PATH, path);
+        return this;
+    }
+
+    public WebTransactionBuilder host(String host) throws ParseException {
+        getRequest();
+        request.put(PARAM_WEB_HOST, host);
+        return this;
+    }
+
+    public WebTransactionBuilder urlParams(String urlParams) throws ParseException {
+        getRequest();
+        request.put(PARAM_WEB_URL_PARAMS, urlParams);
+        return this;
+    }
+
+    public WebTransactionBuilder body(StoredObject obj) throws ParseException {
+        getRequest();
+        request.put(PARAM_WEB_BODY_SOID, obj.getId());
+        return this;
+    }
+
+    // Extras
+    private void getExtras() throws ParseException {
+        if (extras == null) {
+            extras = new JsonObject();
+            getRequest();
+            request.put(PARAM_WEB_EXTRAS, extras);
+        }
+    }
+
+    public WebTransactionBuilder extra(String key, Object value) throws ParseException {
+        getExtras();
+        extras.put(key, value);
+        return this;
+    }
+
+
     // Headers
     private void getHeaders() throws ParseException {
         if (headers == null) {
             headers = new JsonObject();
-            getMeta();
-            meta.put(PARAM_WEB_HEADERS, headers);
+            getRequest();
+            request.put(PARAM_WEB_HEADERS, headers);
         }
     }
 
@@ -122,9 +133,43 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         return this;
     }
 
+    // Multipart
+    private void getMultiPartField() throws ParseException {
+        if (multiPartFields == null) {
+            multiPartFields = new JsonObject();
+            getRequest();
+            request.put("multipart/fields", multiPartFields);
+        }
+    }
+
+    public WebTransactionBuilder multipartField(String key, Object value) throws ParseException {
+        getMultiPartField();
+        multiPartFields.put(key, value);
+        return this;
+    }
+
+    private void getMultiPartFile() throws ParseException {
+        if (multiPartFiles == null) {
+            multiPartFiles = new JsonObject();
+            getRequest();
+            request.put("multipart/files", multiPartFiles);
+        }
+    }
+
+    public WebTransactionBuilder multipartFile(String fieldName, String filename, StoredObject obj, String contentType) throws ParseException {
+        getMultiPartFile();
+        JsonObject f = new JsonObject();
+        f.put("filename", filename);
+        f.put("soid", obj.getId());
+        f.put("contentType", contentType);
+        multiPartFiles.put(fieldName, f);
+        return this;
+    }
+
     public void send() {
-        if (meta != null)
-            intent.putExtra(PARAM_META, meta.toByteArray());
+        if (request != null) {
+            intent.putExtra(PARAM_REQUEST, request.toByteArray());
+        }
 
         if (transforms != null) {
             intent.putExtra(PARAM_TRANSFORM_LIST, (Parcelable[]) transforms.toArray());

@@ -12,7 +12,7 @@ import java.text.ParseException;
 public class WorkorderListClient {
 
     public void requestList(Context context, WorkorderDataSelector selector, int page) throws ParseException {
-        new WebTransactionBuilder(context)
+        WebTransactionBuilder.builder(context)
                 .method("GET")
                 .path("/api/rest/v1/workorder/" + selector.getCall())
                 .urlParams("?page=" + page)
@@ -24,7 +24,7 @@ public class WorkorderListClient {
     }
 
     public void details(Context context, long workorderId) throws ParseException {
-        new WebTransactionBuilder(context)
+        WebTransactionBuilder.builder(context)
                 .method("GET")
                 .path("/api/rest/v1/workorder/" + workorderId + "/details")
                 .key("Workorder:" + workorderId)
@@ -32,10 +32,13 @@ public class WorkorderListClient {
                 .send();
     }
 
-    public void uploadDeliverable(Context context, long workorderId, long deliverableSlotId, String localFilename){
+    public void uploadDeliverable(Context context, long workorderId, long deliverableSlotId, String localFilename) throws ParseException {
         WebTransactionBuilder
                 .builder(context)
                 .method("POST")
-                .
+                .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId)
+                .multipartFile("file", localFilename, null, "app/jpeg")
+                .handler(WorkorderListTransactionHandler.class)
+                .send();
     }
 }
