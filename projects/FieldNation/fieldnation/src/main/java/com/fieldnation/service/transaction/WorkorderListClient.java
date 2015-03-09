@@ -31,4 +31,11 @@ public class WorkorderListClient {
                 .handler(WorkorderDetailsTransactionHandler.class)
                 .send();
     }
+
+    public void uploadDeliverable(Context context, long workorderId, long deliverableSlotId, String localFilename){
+        WebTransactionBuilder
+                .builder(context)
+                .method("POST")
+                .
+    }
 }

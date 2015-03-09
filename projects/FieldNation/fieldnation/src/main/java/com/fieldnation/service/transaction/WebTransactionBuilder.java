@@ -30,6 +30,10 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         intent.putExtra(PARAM_PRIORITY, WebTransaction.Priority.NORMAL);
     }
 
+    public static WebTransactionBuilder builder(Context context) {
+        return new WebTransactionBuilder(context);
+    }
+
     // Meta
     private void getMeta() {
         if (meta == null)
