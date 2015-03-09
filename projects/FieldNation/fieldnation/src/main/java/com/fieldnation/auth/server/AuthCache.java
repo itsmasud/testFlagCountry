@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.auth.server.AuthCacheSqlHelper.Column;
 import com.fieldnation.utils.misc;
@@ -161,38 +160,54 @@ public class AuthCache {
 
     public static AuthCache get(Context context, String username) {
         AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
+        AuthCache obj = null;
         try {
-            Cursor cursor = db.query(AuthCacheSqlHelper.TABLE_NAME, AuthCacheSqlHelper.getColumnNames(),
-                    Column.USERNAME + "=?", new String[]{username}, null, null, null);
-
+            SQLiteDatabase db = helper.getReadableDatabase();
             try {
-                if (cursor.moveToFirst()) {
-                    return new AuthCache(context, cursor);
-                }
+                Cursor cursor = db.query(
+                        AuthCacheSqlHelper.TABLE_NAME,
+                        AuthCacheSqlHelper.getColumnNames(),
+                        Column.USERNAME + "=?",
+                        new String[]{username}, null, null, null);
 
-                return null;
+                try {
+                    if (cursor.moveToFirst()) {
+                        obj = new AuthCache(context, cursor);
+                    }
+                } finally {
+                    cursor.close();
+                }
             } finally {
-                cursor.close();
+                db.close();
             }
         } finally {
             helper.close();
         }
+        return obj;
     }
 
-    private static AuthCache get(Context context, SQLiteDatabase db, long id) {
-        Cursor cursor = db.query(AuthCacheSqlHelper.TABLE_NAME, AuthCacheSqlHelper.getColumnNames(),
-                Column.ID + "=" + id, null, null, null, null);
-
+    private static AuthCache get(Context context, long id) {
+        AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
+        AuthCache obj = null;
         try {
-            if (cursor.moveToFirst()) {
-                return new AuthCache(context, cursor);
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = db.query(AuthCacheSqlHelper.TABLE_NAME, AuthCacheSqlHelper.getColumnNames(),
+                        Column.ID + "=" + id, null, null, null, null);
+                try {
+                    if (cursor.moveToFirst()) {
+                        obj = new AuthCache(context, cursor);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            } finally {
+                db.close();
             }
-
-            return null;
         } finally {
-            cursor.close();
+            helper.close();
         }
+        return obj;
     }
 
     public static AuthCache create(Context context, String username, String password) {
@@ -215,11 +230,21 @@ public class AuthCache {
         values.put(Column.SESSION_EXPIRY.getName(), authCache._sessionExpiry);
 
         AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
+        long id = -1;
         try {
-            return get(context, db, db.insert(AuthCacheSqlHelper.TABLE_NAME, null, values));
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                id = db.insert(AuthCacheSqlHelper.TABLE_NAME, null, values);
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
+        }
+        if (id != -1) {
+            return get(context, id);
+        } else {
+            return null;
         }
     }
 
@@ -233,9 +258,13 @@ public class AuthCache {
         values.put(Column.SESSION_EXPIRY.getName(), authCache._sessionExpiry);
 
         AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.update(AuthCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + authCache._id, null);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                db.update(AuthCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + authCache._id, null);
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }

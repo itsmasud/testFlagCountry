@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.rpc.server.DataCacheSqlHelper.Column;
 
@@ -50,18 +49,24 @@ public class DataCacheNode {
 
     public static DataCacheNode get(Context context, String key) {
         DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getReadableDatabase();
         DataCacheNode node = null;
         try {
-            Cursor cursor = db.query(DataCacheSqlHelper.TABLE_NAME, DataCacheSqlHelper.getColumnNames(),
-                    DataCacheSqlHelper.Column.KEY + "=?", new String[]{key}, null, null, null);
+            SQLiteDatabase db = helper.getReadableDatabase();
             try {
-                if (cursor.moveToFirst()) {
-                    // hit
-                    node = new DataCacheNode(context, cursor);
+                Cursor cursor = db.query(
+                        DataCacheSqlHelper.TABLE_NAME,
+                        DataCacheSqlHelper.getColumnNames(),
+                        Column.KEY + "=?",
+                        new String[]{key}, null, null, null);
+                try {
+                    if (cursor.moveToFirst()) {
+                        node = new DataCacheNode(context, cursor);
+                    }
+                } finally {
+                    cursor.close();
                 }
             } finally {
-                cursor.close();
+                db.close();
             }
         } finally {
             helper.close();
@@ -95,9 +100,13 @@ public class DataCacheNode {
         values.put(Column.RESPONSE_CODE.getName(), responseCode);
 
         DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.insert(DataCacheSqlHelper.TABLE_NAME, null, values);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                db.insert(DataCacheSqlHelper.TABLE_NAME, null, values);
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }
@@ -111,9 +120,13 @@ public class DataCacheNode {
         values.put(Column.RESPONSE_CODE.getName(), node._responseCode);
 
         DataCacheSqlHelper helper = new DataCacheSqlHelper(node._context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.update(DataCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + node._id, null);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                db.update(DataCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + node._id, null);
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }
@@ -121,22 +134,29 @@ public class DataCacheNode {
 
     public static void delete(Context context, long id) {
         DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.delete(DataCacheSqlHelper.TABLE_NAME, Column.ID + "=" + id, null);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                db.delete(DataCacheSqlHelper.TABLE_NAME, Column.ID + "=" + id, null);
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }
-
     }
 
     public static void flush(Context context) {
         DataCacheSqlHelper helper = new DataCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            Log.v(TAG,
-                    "Flushed " + db.delete(DataCacheSqlHelper.TABLE_NAME,
-                            Column.EXIPES_ON + "<" + System.currentTimeMillis(), null) + " cached data");
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                Log.v(TAG,
+                        "Flushed " + db.delete(DataCacheSqlHelper.TABLE_NAME,
+                                Column.EXIPES_ON + "<" + System.currentTimeMillis(), null) + " cached data");
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }

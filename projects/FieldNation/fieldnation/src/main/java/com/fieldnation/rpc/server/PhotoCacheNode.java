@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.rpc.server.PhotoCacheSqlHelper.Column;
 
@@ -54,8 +53,7 @@ public class PhotoCacheNode {
 
     public void setLastViewed(long utcMilliseconds) {
         _lastViewed = utcMilliseconds;
-
-        // save
+        save();
     }
 
     public Bitmap getPhotoData() {
@@ -79,29 +77,29 @@ public class PhotoCacheNode {
             return null;
 
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
+        PhotoCacheNode node = null;
         try {
-            Cursor cursor = db.query(PhotoCacheSqlHelper.TABLE_NAME, PhotoCacheSqlHelper.getColumnNames(),
-                    Column.URL + "=?", new String[]{url}, null, null, null);
+            SQLiteDatabase db = helper.getReadableDatabase();
             try {
-                if (cursor.moveToFirst()) {
-                    PhotoCacheNode node = new PhotoCacheNode(context, cursor);
-
-                    node.setLastViewed(System.currentTimeMillis());
-
-//                    _cache.put(url, node);
-
-                    return node;
+                Cursor cursor = db.query(PhotoCacheSqlHelper.TABLE_NAME, PhotoCacheSqlHelper.getColumnNames(),
+                        Column.URL + "=?", new String[]{url}, null, null, null);
+                try {
+                    if (cursor.moveToFirst()) {
+                        node = new PhotoCacheNode(context, cursor);
+                    }
+                } finally {
+                    cursor.close();
                 }
-
-                return null;
             } finally {
-                cursor.close();
+                db.close();
             }
-
         } finally {
             helper.close();
         }
+        if (node != null) {
+            node.setLastViewed(System.currentTimeMillis());
+        }
+        return node;
     }
 
     public static void put(Context context, String url, Bitmap photoData, Bitmap circleData) {
@@ -142,9 +140,13 @@ public class PhotoCacheNode {
         }
 
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.insert(PhotoCacheSqlHelper.TABLE_NAME, null, values);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                db.insert(PhotoCacheSqlHelper.TABLE_NAME, null, values);
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }
@@ -177,9 +179,13 @@ public class PhotoCacheNode {
         }
 
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(node._context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.update(PhotoCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + node._id, null);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                db.update(PhotoCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + node._id, null);
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }
@@ -187,11 +193,14 @@ public class PhotoCacheNode {
 
     public static void delete(Context context, long id) {
 //        _cache.clear();
-
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            db.delete(PhotoCacheSqlHelper.TABLE_NAME, Column.ID + "=" + id, null);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                db.delete(PhotoCacheSqlHelper.TABLE_NAME, Column.ID + "=" + id, null);
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }
@@ -200,14 +209,17 @@ public class PhotoCacheNode {
     public static void flush(Context context) {
 //        _cache.clear();
         PhotoCacheSqlHelper helper = new PhotoCacheSqlHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
         try {
-            Log.v(TAG,
-                    "Flushed " + db.delete(PhotoCacheSqlHelper.TABLE_NAME,
-                            Column.LAST_READ + "<" + (System.currentTimeMillis() - ONE_WEEK), null));
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                Log.v(TAG,
+                        "Flushed " + db.delete(PhotoCacheSqlHelper.TABLE_NAME,
+                                Column.LAST_READ + "<" + (System.currentTimeMillis() - ONE_WEEK), null));
+            } finally {
+                db.close();
+            }
         } finally {
             helper.close();
         }
-
     }
 }
