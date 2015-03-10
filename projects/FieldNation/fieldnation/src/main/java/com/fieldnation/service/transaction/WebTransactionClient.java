@@ -7,6 +7,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.transaction.handlers.WebTransactionHandler;
 
 import java.io.File;
 import java.util.List;

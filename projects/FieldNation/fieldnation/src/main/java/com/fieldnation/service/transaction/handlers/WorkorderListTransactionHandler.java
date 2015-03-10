@@ -1,4 +1,4 @@
-package com.fieldnation.service.transaction;
+package com.fieldnation.service.transaction.handlers;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionConstants;
 
 import java.util.LinkedList;
 import java.util.List;

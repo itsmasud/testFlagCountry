@@ -822,7 +822,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+    private final DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
             _deviceCount = count;

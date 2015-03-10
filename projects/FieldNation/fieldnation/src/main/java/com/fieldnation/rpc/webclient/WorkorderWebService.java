@@ -137,12 +137,19 @@ public class WorkorderWebService extends WebService implements WebServiceConstan
 
     public Intent checkout(int resultCode, long workorderId, int deviceCount, Location location) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-                "device_count=" + deviceCount + "&checkout_time=" + ISO8601.now() + "&gps_lat=" + location.getLatitude() + "&gps_lon=" + location.getLongitude(), "application/x-www-form-urlencoded", false);
+                "device_count=" + deviceCount
+                        + "&checkout_time=" + ISO8601.now()
+                        + "&gps_lat=" + location.getLatitude()
+                        + "&gps_lon=" + location.getLongitude(),
+                "application/x-www-form-urlencoded", false);
     }
 
     public Intent checkout(int resultCode, long workorderId, int deviceCount) {
-        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout", null,
-                "checkout_time=" + ISO8601.now() + "&device_count=" + deviceCount, "application/x-www-form-urlencoded", false);
+        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkout",
+                null,
+                "checkout_time=" + ISO8601.now()
+                        + "&device_count=" + deviceCount,
+                "application/x-www-form-urlencoded", false);
     }
 
     public Intent closingNotes(int resultCode, long workorderId, String notes) {

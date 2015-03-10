@@ -1,17 +1,19 @@
 package com.fieldnation.rpc.server;
 
+import android.content.Context;
+
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.utils.misc;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  * Created by Michael Carver on 3/6/2015.
@@ -19,47 +21,38 @@ import java.util.Iterator;
 public class HttpJson {
     private static final String TAG = "rpc.server.HttpJson";
 
-    public static final String PARAM_METHOD = "method";
-    public static final String PARAM_HOSTNAME = "hostname";
-    public static final String PARAM_PATH = "path";
-    public static final String PARAM_URL_PARAMS = "urlParams";
-    public static final String PARAM_HEADERS = "headers";
-
-    public static final String PARAM_RESPONSE_CODE = "responseCode";
-    public static final String PARAM_RESPONSE_MESSAGE = "responseMessage";
-
     /**
      * Set to true to enable HTTPS, set to false to disable HTTPS. Default =
      * True
      */
     public static boolean USE_HTTPS = true;
 
-    public static HttpResult run(JsonObject query) throws ParseException, IOException {
-        String path = query.getString(PARAM_PATH);
-        String options = query.getString(PARAM_URL_PARAMS);
-        String hostname = query.getString(PARAM_HOSTNAME);
-        String method = query.getString(PARAM_METHOD);
+    public static HttpResult run(Context context, JsonObject request) throws ParseException, IOException {
+        String path = request.getString(HttpJsonBuilder.PARAM_WEB_PATH);
+        String params = request.getString(HttpJsonBuilder.PARAM_WEB_URL_PARAMS);
+        String hostname = request.getString(HttpJsonBuilder.PARAM_WEB_HOST);
+        String method = request.getString(HttpJsonBuilder.PARAM_WEB_METHOD);
         JsonObject headers = null;
-        if (query.has(PARAM_HEADERS)) {
-            headers = query.getJsonObject(PARAM_HEADERS);
+        if (request.has(HttpJsonBuilder.PARAM_WEB_HEADERS)) {
+            headers = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_HEADERS);
         }
 
         if (!path.startsWith("/"))
             path = "/" + path;
 
-        if (options == null)
-            options = "";
+        if (params == null)
+            params = "";
 
-        checkUrlOptions(options);
+        checkUrlOptions(params);
 
         HttpURLConnection conn = null;
         if (USE_HTTPS) {
-            conn = (HttpURLConnection) new URL("https://" + hostname + path + options).openConnection();
-            Log.v(TAG, "https://" + hostname + path + options);
+            conn = (HttpURLConnection) new URL("https://" + hostname + path + params).openConnection();
+            Log.v(TAG, "https://" + hostname + path + params);
 
         } else {
-            conn = (HttpURLConnection) new URL("http://" + hostname + path + options).openConnection();
-            Log.v(TAG, "http://" + hostname + path + options);
+            conn = (HttpURLConnection) new URL("http://" + hostname + path + params).openConnection();
+            Log.v(TAG, "http://" + hostname + path + params);
         }
 
         conn.setRequestMethod(method);
@@ -74,69 +67,56 @@ public class HttpJson {
 
         conn.setDoInput(true);
 
+        if (request.has("multipart")) {
+            MultipartUtility util = new MultipartUtility(conn, "UTF-8");
+            if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS)) {
+                JsonObject fields = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS);
+                Enumeration<String> e = fields.keys();
+                while (e.hasMoreElements()) {
+                    String key = e.nextElement();
+                    util.addFormField(key, fields.getString(key));
+                }
+            }
+
+            if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES)) {
+                JsonObject files = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES);
+                Enumeration<String> e = files.keys();
+                while (e.hasMoreElements()) {
+                    String key = e.nextElement();
+                    JsonObject fo = files.getJsonObject(key);
+                    String filename = fo.getString("filename");
+                    long soId = fo.getLong("soid");
+                    String contentType = fo.getString("contentType");
+                    StoredObject so = StoredObject.get(context, soId);
+
+                    if (so.isFile()) {
+                        util.addFilePart(key, filename, new FileInputStream(so.getFile()), (int) so.getFile().length());
+                    } else {
+                        util.addFilePart(key, filename, so.getData(), contentType);
+                    }
+                }
+            }
+
+        } else if (request.has(HttpJsonBuilder.PARAM_WEB_BODY_SOID)) {
+            long soid = request.getLong(HttpJsonBuilder.PARAM_WEB_BODY_SOID);
+            StoredObject so = StoredObject.get(context, soid);
+            conn.setDoOutput(true);
+            OutputStream out = conn.getOutputStream();
+            if (so.isFile()) {
+                misc.copyStream(new FileInputStream(so.getFile()), out, 1024, (int) so.getFile().length(), 100);
+            } else {
+                out.write(so.getData());
+            }
+            out.flush();
+            out.close();
+        }
+
         try {
             return new HttpResult(conn);
         } finally {
             conn.disconnect();
         }
 
-    }
-
-    public static HttpResult run(JsonObject query, StoredObject body) {
-        if (body.isFile())
-            return run(query, body.getFile());
-        else
-            return run(query, body.getData());
-    }
-
-    public static HttpResult run(JsonObject query, File file) throws ParseException, IOException {
-        String path = query.getString(PARAM_PATH);
-        String options = query.getString(PARAM_URL_PARAMS);
-        String hostname = query.getString(PARAM_HOSTNAME);
-        String method = query.getString(PARAM_METHOD);
-        JsonObject headers = null;
-        if (query.has(PARAM_HEADERS)) {
-            headers = query.getJsonObject(PARAM_HEADERS);
-        }
-
-        if (!path.startsWith("/"))
-            path = "/" + path;
-
-        if (options == null)
-            options = "";
-
-        checkUrlOptions(options);
-
-        HttpURLConnection conn = null;
-        if (USE_HTTPS) {
-            conn = (HttpURLConnection) new URL("https://" + hostname + path + options).openConnection();
-            Log.v(TAG, "https://" + hostname + path + options);
-        } else {
-            conn = (HttpURLConnection) new URL("http://" + hostname + path + options).openConnection();
-            Log.v(TAG, "http://" + hostname + path + options);
-        }
-        conn.setRequestMethod(method);
-        conn.setReadTimeout(10000);
-
-        MultipartUtility util = new MultipartUtility(conn, "UTF-8");
-        if (map != null) {
-            Iterator<String> iter = map.keySet().iterator();
-            while (iter.hasNext()) {
-                String key = iter.next();
-                util.addFormField(key, map.get(key));
-            }
-        }
-
-        util.addFilePart(fieldName, file.getAbsolutePath(), new FileInputStream(file), file.length());
-
-        try {
-            return new HttpResult(util.finish());
-        } finally {
-            conn.disconnect();
-        }
-    }
-
-    public static HttpResult run(JsonObject query, byte[] body) {
     }
 
     private static void checkUrlOptions(String options) throws ParseException {

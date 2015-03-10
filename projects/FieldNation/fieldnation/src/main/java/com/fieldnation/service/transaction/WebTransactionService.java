@@ -12,7 +12,7 @@ import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.webclient.WebService;
-import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.transaction.handlers.WebTransactionHandler;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -51,8 +51,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 WebTransaction transaction = WebTransaction.put(this,
                         WebTransaction.Priority.values()[extras.getInt(PARAM_PRIORITY)],
                         extras.getString(PARAM_KEY),
-                        new JsonObject(extras.getByteArray(PARAM_META)),
-                        extras.getLong(PARAM_STORED_OBJECT_ID, -1),
+                        new JsonObject(extras.getByteArray(PARAM_REQUEST)),
                         extras.getString(PARAM_HANDLER_NAME));
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Bundle[] transforms = (Bundle[]) extras.getParcelableArray(PARAM_TRANSFORM_LIST);
@@ -110,12 +109,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
         }
 
         // at some point call the web service
-        StoredObject so = null;
-        if (_currentTransaction.getStoredObjectId() != -1) {
-            so = StoredObject.get(this, _currentTransaction.getStoredObjectId());
-        }
+        JsonObject request = _currentTransaction.getRequest();
 
-        JsonObject meta = _currentTransaction.getMeta();
         if (so == null) {
             try {
                 _webService.httpRead(0,

@@ -13,14 +13,6 @@ public interface WebTransactionConstants {
     public static final String PARAM_REQUEST = "PARAM_REQUEST";
     public static final String PARAM_KEY = "PARAM_KEY";
     public static final String PARAM_TRANSFORM_LIST = "PARAM_TRANSFORM_LIST";
+    public static final String PARAM_META = "PARAM_META";
 
-
-    public static final String PARAM_WEB_METHOD = "PARAM_WEB_METHOD";
-    public static final String PARAM_WEB_HOST = "PARAM_WEB_HOST";
-    public static final String PARAM_WEB_PATH = "PARAM_WEB_PATH";
-    public static final String PARAM_WEB_URL_PARAMS = "PARAM_WEB_URL_PARAMS";
-    public static final String PARAM_WEB_HEADERS = "PARAM_WEB_HEADERS";
-    public static final String PARAM_WEB_MULTIPART = "PARAM_WEB_MULTIPART";
-    public static final String PARAM_WEB_BODY_SOID = "PARAM_BODY";
-    public static final String PARAM_WEB_EXTRAS = "PARAM_WEB_EXTRAS";
 }

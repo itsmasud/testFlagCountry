@@ -29,7 +29,7 @@ public class Transform implements Parcelable, TransformConstants {
     private byte[] _data;
 
     public enum Action {
-        ADD, MERGE, DELETE
+        ADD, MERGE, CULL, DELETE
     }
 
     Transform(Cursor cursor) {
@@ -39,7 +39,6 @@ public class Transform implements Parcelable, TransformConstants {
         _objectKey = cursor.getString(Column.OBJECT_KEY.getIndex());
         _action = Action.values()[cursor.getInt(Column.ACTION.getIndex())];
         _data = cursor.getBlob(Column.DATA.getIndex());
-
     }
 
     public Transform(Bundle bundle) {
@@ -90,7 +89,7 @@ public class Transform implements Parcelable, TransformConstants {
         return _data;
     }
 
-    public Bundle makeTransformQuery(String objectName, String objectKey, Action action, byte[] data) {
+    public static Bundle makeTransformQuery(String objectName, String objectKey, Action action, byte[] data) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_OBJECT_NAME, objectName);
         bundle.putString(PARAM_OBJECT_KEY, objectKey);
