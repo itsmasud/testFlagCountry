@@ -17,7 +17,6 @@ public class RpcService extends IntentService implements RpcServiceConstants {
 
         // fill in the hashmap
         new AuthRpc(_rpcs);
-        new WebRpc(_rpcs);
         new PhotoRpc(_rpcs);
     }
 

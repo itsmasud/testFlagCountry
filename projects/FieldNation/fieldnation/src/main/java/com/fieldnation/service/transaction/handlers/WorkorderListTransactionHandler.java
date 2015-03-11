@@ -18,14 +18,27 @@ import java.util.List;
  * Created by Michael Carver on 3/4/2015.
  */
 public class WorkorderListTransactionHandler extends WebTransactionHandler implements WebServiceConstants, WebTransactionConstants {
+
+    public static byte[] generateParams(int page, String listName) {
+        JsonObject obj = new JsonObject();
+        try {
+            obj.put("page", page);
+            obj.put("listName", listName);
+        } catch (Exception ex) {
+        }
+
+        return obj.toByteArray();
+    }
+
     @Override
     public void handleResult(Context context, Listener listener, WebTransaction transaction, Bundle resultData) {
         int page = 0;
+
         String listName = "";
         try {
-            JsonObject meta = transaction.getMeta().getJsonObject(PARAM_WEB_EXTRAS);
-            page = meta.getInt("page");
-            listName = meta.getString("listName");
+            JsonObject obj = new JsonObject(transaction.getHandlerParams());
+            page = obj.getInt("page");
+            listName = obj.getString("listName");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

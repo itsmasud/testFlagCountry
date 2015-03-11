@@ -19,10 +19,11 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
         HANDLER(1, "handler", "text not null"),
-        STATE(2, "state", "integer not null", true),
-        REQUEST(3, "request", "text"),
-        PRIORITY(4, "priority", "integer not null", true),
-        KEY(5, "key", "text", true);
+        HANDLER_PARAMS(2, "handler_params", "blob"),
+        STATE(3, "state", "integer not null", true),
+        REQUEST(4, "request", "text"),
+        PRIORITY(5, "priority", "integer not null", true),
+        KEY(6, "key", "text", true);
 
         private int _index;
         private String _name;

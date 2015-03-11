@@ -6,7 +6,7 @@ import android.os.ResultReceiver;
 
 import com.fieldnation.utils.misc;
 
-public class ProfileWebService extends WebService {
+public class ProfileWebService extends WebClient {
     private static final String TAG = "rpc.client.ProfileService";
 
     public ProfileWebService(Context context, String username, String authToken, ResultReceiver callback) {

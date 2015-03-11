@@ -48,10 +48,10 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.webclient.ProfileWebService;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.webclient.ProfileWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.topics.GaTopic;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.AppPickerPackage;
@@ -678,13 +678,13 @@ public class WorkFragment extends WorkorderFragment {
                 && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
-                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        _tempFile.getAbsolutePath()));
+//                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+//                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
+//                        _tempFile.getAbsolutePath()));
             } else {
-                getActivity().startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _currentTask.getSlotId(), data, getNotificationIntent()));
+//                getActivity().startService(_service.uploadDeliverable(
+//                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+//                        _currentTask.getSlotId(), data, getNotificationIntent()));
             }
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
             GlobalState gs = (GlobalState) getActivity().getApplication();

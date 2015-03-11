@@ -29,7 +29,7 @@ public class Transform implements Parcelable, TransformConstants {
     private byte[] _data;
 
     public enum Action {
-        ADD, MERGE, CULL, DELETE
+        ADD, MERGE, SUBTRACT, DELETE
     }
 
     Transform(Cursor cursor) {

@@ -109,6 +109,12 @@ public class HttpJson {
             }
             out.flush();
             out.close();
+        } else if (request.has(HttpJsonBuilder.PARAM_WEB_BODY)) {
+            conn.setDoOutput(true);
+            OutputStream out = conn.getOutputStream();
+            out.write(request.getString(HttpJsonBuilder.PARAM_WEB_BODY).getBytes());
+            out.flush();
+            out.close();
         }
 
         try {

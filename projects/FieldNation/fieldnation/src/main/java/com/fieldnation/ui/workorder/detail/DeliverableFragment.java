@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +31,8 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.rpc.webclient.WorkorderWebService;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.Topics;
@@ -343,16 +342,16 @@ public class DeliverableFragment extends WorkorderFragment {
                     return false;
 
                 Log.v(TAG, "local path");
-                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-                        _workorder.getWorkorderId(), _uploadingSlotId,
-                        _tempFile.getAbsolutePath()));
+//                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+//                        _workorder.getWorkorderId(), _uploadingSlotId,
+//                        _tempFile.getAbsolutePath()));
 
                 return true;
             } else {
                 Log.v(TAG, "from intent");
-                getActivity().startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _uploadingSlotId, data, getNotificationIntent()));
+//                getActivity().startService(_service.uploadDeliverable(
+//                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+//                        _uploadingSlotId, data, getNotificationIntent()));
                 return true;
             }
         }

@@ -2,6 +2,7 @@ package com.fieldnation.rpc.server;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
 
@@ -16,7 +17,8 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_HEADERS = "headers";
     public static final String PARAM_WEB_MULTIPART_FILES = "multipart/files";
     public static final String PARAM_WEB_MULTIPART_FIELDS = "multipart/fields";
-    public static final String PARAM_WEB_BODY_SOID = "PARAM_BODY";
+    public static final String PARAM_WEB_BODY_SOID = "PARAM_BODY_SOID";
+    public static final String PARAM_WEB_BODY = "PARAM_BODY";
 
     private JsonObject request;
     private JsonObject headers;
@@ -34,36 +36,45 @@ public class HttpJsonBuilder {
 
     public HttpJsonBuilder method(String method) throws ParseException {
         getRequest();
-        request.put(PARAM_WEB_METHOD, method);
+        if (!misc.isEmptyOrNull(method))
+            request.put(PARAM_WEB_METHOD, method);
         return this;
     }
 
     public HttpJsonBuilder path(String path) throws ParseException {
         getRequest();
-        request.put(PARAM_WEB_PATH, path);
+        if (!misc.isEmptyOrNull(path))
+            request.put(PARAM_WEB_PATH, path);
         return this;
     }
 
     public HttpJsonBuilder host(String host) throws ParseException {
         getRequest();
-        request.put(PARAM_WEB_HOST, host);
+        if (!misc.isEmptyOrNull(host))
+            request.put(PARAM_WEB_HOST, host);
         return this;
     }
 
     public HttpJsonBuilder urlParams(String urlParams) throws ParseException {
         getRequest();
-        request.put(PARAM_WEB_URL_PARAMS, urlParams);
+        if (!misc.isEmptyOrNull(urlParams))
+            request.put(PARAM_WEB_URL_PARAMS, urlParams);
         return this;
     }
 
     public HttpJsonBuilder body(StoredObject obj) throws ParseException {
         getRequest();
-        request.put(PARAM_WEB_BODY_SOID, obj.getId());
+        if (obj != null)
+            request.put(PARAM_WEB_BODY_SOID, obj.getId());
         return this;
     }
 
-
-
+    public HttpJsonBuilder body(String body) throws ParseException {
+        getRequest();
+        if (!misc.isEmptyOrNull(body))
+            request.put(PARAM_WEB_BODY, body);
+        return this;
+    }
 
     // Headers
     private void getHeaders() throws ParseException {
@@ -76,7 +87,8 @@ public class HttpJsonBuilder {
 
     public HttpJsonBuilder header(String key, String value) throws ParseException {
         getHeaders();
-        headers.put(key, value);
+        if (!misc.isEmptyOrNull(key) && !misc.isEmptyOrNull(value))
+            headers.put(key, value);
         return this;
     }
 
@@ -91,7 +103,8 @@ public class HttpJsonBuilder {
 
     public HttpJsonBuilder multipartField(String key, Object value) throws ParseException {
         getMultiPartField();
-        multiPartFields.put(key, value);
+        if (!misc.isEmptyOrNull(key) && value != null)
+            multiPartFields.put(key, value);
         return this;
     }
 

@@ -416,13 +416,13 @@ public class TasksFragment extends WorkorderFragment {
                 && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
-                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        _tempFile.getAbsolutePath()));
+//                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+//                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
+//                        _tempFile.getAbsolutePath()));
             } else {
-                getActivity().startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _currentTask.getSlotId(), data, getNotificationIntent()));
+//                getActivity().startService(_service.uploadDeliverable(
+//                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+//                        _currentTask.getSlotId(), data, getNotificationIntent()));
             }
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
             _context.startService(

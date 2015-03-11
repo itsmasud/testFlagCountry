@@ -20,6 +20,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     private long _id;
     private String _handlerName;
+    private byte[] _handlerParams;
     private State _state;
     private Priority _priority;
     private JsonObject _request;
@@ -118,6 +119,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _key = key;
     }
 
+    public byte[] getHandlerParams() {
+        return _handlerParams;
+    }
+
+    public void setHandlerParams(byte[] params) {
+        _handlerParams = params;
+    }
+
     public WebTransaction save(Context context) {
         return put(context, this);
     }
@@ -191,6 +200,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public static WebTransaction put(Context context, WebTransaction obj) {
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), obj._handlerName);
+        v.put(Column.HANDLER_PARAMS.getName(), obj._handlerParams);
         v.put(Column.STATE.getName(), obj._state.ordinal());
         v.put(Column.REQUEST.getName(), obj._request.toByteArray());
         v.put(Column.KEY.getName(), obj._key);
@@ -220,9 +230,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
     }
 
-    public static WebTransaction put(Context context, Priority priority, String key, JsonObject request, String handlerName) {
+    public static WebTransaction put(Context context, Priority priority, String key, JsonObject request, String handlerName, byte[] handlerParams) {
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
+        v.put(Column.HANDLER_PARAMS.getName(), handlerParams);
         v.put(Column.KEY.getName(), key);
         v.put(Column.STATE.getName(), State.BUILDING.ordinal());
         v.put(Column.REQUEST.getName(), request.toByteArray());

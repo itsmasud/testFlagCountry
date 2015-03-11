@@ -11,8 +11,10 @@ import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.webclient.WebService;
+import com.fieldnation.rpc.webclient.WebClient;
 import com.fieldnation.service.transaction.handlers.WebTransactionHandler;
+
+import java.text.ParseException;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -25,7 +27,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private static final String TAG = "service.transaction.TransactionService";
 
     private WebTransaction _currentTransaction = null;
-    private WebService _webService = null;
+    private WebClient _webService = null;
 
     @Override
     public void onCreate() {
@@ -52,7 +54,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         WebTransaction.Priority.values()[extras.getInt(PARAM_PRIORITY)],
                         extras.getString(PARAM_KEY),
                         new JsonObject(extras.getByteArray(PARAM_REQUEST)),
-                        extras.getString(PARAM_HANDLER_NAME));
+                        extras.getString(PARAM_HANDLER_NAME),
+                        extras.getByteArray(PARAM_HANDLER_PARAMS));
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Bundle[] transforms = (Bundle[]) extras.getParcelableArray(PARAM_TRANSFORM_LIST);
                     for (int i = 0; i < transforms.length; i++) {
@@ -76,7 +79,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_webService == null || isNew) {
-                _webService = new WebService(WebTransactionService.this, username, authToken, _webReceiver);
+                _webService = new WebClient(WebTransactionService.this, username, authToken, _webReceiver);
                 if (_currentTransaction == null) {
                     startTransaction();
                 }
@@ -110,40 +113,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
         // at some point call the web service
         JsonObject request = _currentTransaction.getRequest();
-
-        if (so == null) {
-            try {
-                _webService.httpRead(0,
-                        meta.getString(PARAM_WEB_METHOD),
-                        meta.getString(PARAM_WEB_PATH),
-                        meta.getString(PARAM_WEB_URL_PARAMS), false);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else if (so.isFile()) {
-            try {
-                _webService.httpPostFile(0,
-                        meta.getString(PARAM_WEB_PATH),
-                        meta.getString(PARAM_WEB_URL_PARAMS),
-                        so.getFile().getName(),
-                        so.getFile().getAbsolutePath(),
-                        null,
-                        meta.getString(PARAM_WEB_CONTENT_TYPE));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            try {
-                _webService.httpWrite(0,
-                        meta.getString(PARAM_WEB_METHOD),
-                        meta.getString(PARAM_WEB_PATH),
-                        meta.getString(PARAM_WEB_URL_PARAMS),
-                        so.getData(),
-                        meta.getString(PARAM_WEB_CONTENT_TYPE), false);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+        startService(
+                _webService.http(0, request, false));
     }
 
     private WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
@@ -182,4 +153,22 @@ public class WebTransactionService extends Service implements WebTransactionCons
             startTransaction();
         }
     };
+
+    /**
+     * Parses a URL option string and adds the access_token to it.
+     *
+     * @param authToken
+     * @param params
+     * @return
+     * @throws java.text.ParseException
+     */
+    public String applyAuthTokenToUrlParams(String authToken, String params) throws ParseException {
+        if (params == null || params.equals("")) {
+            return "?access_token=" + authToken;
+        } else if (params.startsWith("?")) { // if options already specified
+            return "?access_token=" + authToken + "&" + params.substring(1);
+        }
+        throw new ParseException("Options must be nothing, or start with '?'. Got: " + params, 0);
+    }
+
 }

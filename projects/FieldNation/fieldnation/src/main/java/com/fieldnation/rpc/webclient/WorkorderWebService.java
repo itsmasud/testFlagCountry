@@ -1,6 +1,5 @@
 package com.fieldnation.rpc.webclient;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -15,7 +14,7 @@ import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-public class WorkorderWebService extends WebService implements WebServiceConstants {
+public class WorkorderWebService extends WebClient implements WebServiceConstants {
 
     public WorkorderWebService(Context context, String username, String authToken, ResultReceiver callback) {
         super(context, username, authToken, callback);
@@ -109,6 +108,8 @@ public class WorkorderWebService extends WebService implements WebServiceConstan
 //        return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
 //                "checkin_time=" + ISO8601.now() + "&gps_lat=" + gps_lat + "&gps_lon=" + gps_lon, "application/x-www-form-urlencoded", false);
 //    }
+
+    // todo here down
 
     public Intent checkin(int resultCode, long workorderId, Location location) {
         return httpPost(resultCode, "/api/rest/v1/workorder/" + workorderId + "/checkin", null,
@@ -313,7 +314,6 @@ public class WorkorderWebService extends WebService implements WebServiceConstan
     }
 
     // counter offers
-/*
     public Intent setFixedCounterOffer(int resultCode, long workorderId, double fixedTotalAmount, String explanation,
                                        boolean expire, int expireAfterMinutes) {
         if (expire) {
@@ -390,7 +390,8 @@ public class WorkorderWebService extends WebService implements WebServiceConstan
                     "application/x-www-form-urlencoded", false);
         }
     }
-*/
+
+
 
     public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
         String payload = "";
@@ -462,6 +463,7 @@ public class WorkorderWebService extends WebService implements WebServiceConstan
                 false);
     }
 
+/*
     public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String localFilename) {
         if (deliverableSlotId <= 0) {
             return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables",
@@ -479,6 +481,7 @@ public class WorkorderWebService extends WebService implements WebServiceConstan
         return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
                 null, "file", data, null, notificationIntent);
     }
+*/
 
 
 //    public Intent getDeliverableDetails(int resultCode, long workorderId, long deliverableId, boolean allowCache) {

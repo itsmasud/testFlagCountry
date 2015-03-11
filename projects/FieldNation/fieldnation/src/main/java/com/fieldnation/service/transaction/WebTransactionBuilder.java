@@ -9,7 +9,6 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.handlers.WebTransactionHandler;
 
-import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +22,6 @@ public class WebTransactionBuilder implements WebTransactionConstants {
     private List<Bundle> transforms;
 
     private JsonObject request;
-    private JsonObject meta;
 
     public WebTransactionBuilder(Context context) {
         this.context = context;
@@ -41,29 +39,20 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         return this;
     }
 
-    public WebTransactionBuilder handler(Class<? extends WebTransactionHandler> clazz) {
-        intent.putExtra(PARAM_HANDLER_NAME, clazz.getName());
-        return this;
-    }
-
     public WebTransactionBuilder key(String key) {
         intent.putExtra(PARAM_KEY, key);
         return this;
     }
 
-    // Extras
-    private void getMetas() throws ParseException {
-        if (meta == null) {
-            meta = new JsonObject();
-        }
-    }
-
-    public WebTransactionBuilder meta(String key, Object value) throws ParseException {
-        getMetas();
-        meta.put(key, value);
+    public WebTransactionBuilder handler(Class<? extends WebTransactionHandler> clazz) {
+        intent.putExtra(PARAM_HANDLER_NAME, clazz.getName());
         return this;
     }
 
+    public WebTransactionBuilder handlerParams(byte[] params) {
+        intent.putExtra(PARAM_HANDLER_PARAMS, params);
+        return this;
+    }
 
     // transforms
     private void getTransforms() {
@@ -87,10 +76,6 @@ public class WebTransactionBuilder implements WebTransactionConstants {
     public void send() {
         if (request != null) {
             intent.putExtra(PARAM_REQUEST, request.toByteArray());
-        }
-
-        if (meta != null) {
-            intent.putExtra(PARAM_META, meta.toByteArray());
         }
 
         if (transforms != null) {
