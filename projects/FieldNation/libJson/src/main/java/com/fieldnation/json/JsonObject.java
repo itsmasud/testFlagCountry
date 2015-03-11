@@ -250,7 +250,9 @@ public class JsonObject {
 
         Object obj = get(item);
 
-        if (obj instanceof JsonObject) {
+        if (obj == null) {
+            return false;
+        } else if (obj instanceof JsonObject) {
             JsonObject jo = (JsonObject) obj;
 
             return jo.has(directions);
