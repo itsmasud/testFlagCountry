@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.rpc.server.auth.depricated;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,17 +7,25 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WebDataCacheSqlHelper extends SQLiteOpenHelper {
-    private static final String TAG = "rpc.server.WebDataCacheSqlHelper";
-    private static final int TABLE_VER = 4;
-    public static final String TABLE_NAME = "data_cache";
+/**
+ * Handles database maintenance and updating.
+ *
+ * @author michael.carver
+ */
+class AuthCacheSqlHelper extends SQLiteOpenHelper {
+    // Note: increment this value every time the structure of the database is
+    // changed.
+    private static final int TABLE_VER = 8;
+    public static final String TABLE_NAME = "auth_cache";
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        EXPIRES_ON(1, "expires_on", "integer not null", true),
-        KEY(2, "key", "text not null", true),
-        RESPONSE_DATA(3, "response_data", "text not null"),
-        RESPONSE_CODE(4, "response_code", "integer not null");
+        USERNAME(1, "username", "text not null", true),
+        PASSWORD_HASH(2, "passwordHash", "text not null"),
+        SESSION_HASH(3, "sessionHash", "text not null"),
+        SESSION_EXPIRY(4, "sessionExpiry", "number not null"),
+        OAUTH_BLOB(5, "oAuthBlob", "text not null"),
+        REQUEST_BLOB(6, "requestBlob", "text not null");
 
         private int _index;
         private String _name;
@@ -61,7 +69,6 @@ public class WebDataCacheSqlHelper extends SQLiteOpenHelper {
                     _names[i] = vs[i]._name;
                 }
             }
-
             return _names;
         }
 
@@ -71,8 +78,8 @@ public class WebDataCacheSqlHelper extends SQLiteOpenHelper {
         }
     }
 
-    public WebDataCacheSqlHelper(Context context) {
-        super(context, TABLE_NAME + ".db", null, TABLE_VER);
+    public AuthCacheSqlHelper(Context context) {
+        super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
     }
 
     @Override
@@ -84,7 +91,7 @@ public class WebDataCacheSqlHelper extends SQLiteOpenHelper {
         Column[] vs = Column.values();
         for (int i = 0; i < vs.length; i++) {
             Column c = vs[i];
-            sb.append(c.getName() + " " + c.getDeclaration());
+            sb.append(c.getName()).append(" ").append(c.getDeclaration());
             if (i < vs.length - 1) {
                 sb.append(",");
             }

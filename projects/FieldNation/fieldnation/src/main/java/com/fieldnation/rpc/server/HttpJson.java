@@ -21,39 +21,64 @@ import java.util.Enumeration;
 public class HttpJson {
     private static final String TAG = "rpc.server.HttpJson";
 
-    /**
-     * Set to true to enable HTTPS, set to false to disable HTTPS. Default =
-     * True
-     */
-    public static boolean USE_HTTPS = true;
-
     public static HttpResult run(Context context, JsonObject request) throws ParseException, IOException {
-        String path = request.getString(HttpJsonBuilder.PARAM_WEB_PATH);
-        String params = request.getString(HttpJsonBuilder.PARAM_WEB_URL_PARAMS);
-        String hostname = request.getString(HttpJsonBuilder.PARAM_WEB_HOST);
-        String method = request.getString(HttpJsonBuilder.PARAM_WEB_METHOD);
+        String protocol = "";
+        String path = "";
+        String params = "";
+        String hostname = "";
+        String method = "";
+
+        if (request.has(HttpJsonBuilder.PARAM_WEB_PROTOCOL)) {
+            protocol = request.getString(HttpJsonBuilder.PARAM_WEB_PROTOCOL);
+        }
+        if (request.has(HttpJsonBuilder.PARAM_WEB_PATH)) {
+            path = request.getString(HttpJsonBuilder.PARAM_WEB_PATH);
+        }
+        if (request.has(HttpJsonBuilder.PARAM_WEB_URL_PARAMS)) {
+            params = request.getString(HttpJsonBuilder.PARAM_WEB_URL_PARAMS);
+        }
+        if (request.has(HttpJsonBuilder.PARAM_WEB_HOST)) {
+            hostname = request.getString(HttpJsonBuilder.PARAM_WEB_HOST);
+        }
+        if (request.has(HttpJsonBuilder.PARAM_WEB_METHOD)) {
+            method = request.getString(HttpJsonBuilder.PARAM_WEB_METHOD);
+        }
+
         JsonObject headers = null;
         if (request.has(HttpJsonBuilder.PARAM_WEB_HEADERS)) {
             headers = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_HEADERS);
         }
 
+        if (method == null)
+            method = "GET";
+
+        if (protocol == null)
+            protocol = "";
+
+        if (protocol.length() > 0 && !protocol.endsWith("://"))
+            protocol += "://";
+
+        if (path == null)
+            path = "";
+
         if (!path.startsWith("/"))
             path = "/" + path;
+
+        if (hostname == null)
+            hostname = "";
+
 
         if (params == null)
             params = "";
 
         checkUrlOptions(params);
 
-        HttpURLConnection conn = null;
-        if (USE_HTTPS) {
-            conn = (HttpURLConnection) new URL("https://" + hostname + path + params).openConnection();
-            Log.v(TAG, "https://" + hostname + path + params);
+        String url = protocol + hostname + path + params;
 
-        } else {
-            conn = (HttpURLConnection) new URL("http://" + hostname + path + params).openConnection();
-            Log.v(TAG, "http://" + hostname + path + params);
-        }
+        HttpURLConnection conn = null;
+        conn = (HttpURLConnection) new URL(url).openConnection();
+        Log.v(TAG, url);
+
 
         conn.setRequestMethod(method);
 

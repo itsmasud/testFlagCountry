@@ -1,49 +1,44 @@
-package com.fieldnation.rpc.webclient;
+package com.fieldnation.rpc.server.auth.depricated;
 
-import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.Intent;
-import android.os.ResultReceiver;
 
-import com.fieldnation.rpc.server.Authenticator;
-import com.fieldnation.rpc.common.AuthServiceConstants;
-import com.fieldnation.rpc.common.RpcServiceConstants;
-import com.fieldnation.rpc.server.AuthRpc;
-import com.fieldnation.rpc.server.RpcService;
+import com.fieldnation.rpc.server.auth.AuthRpc;
+import com.fieldnation.rpc.server.auth.AuthServiceConstants;
+import com.fieldnation.rpc.server.auth.Authenticator;
 
 /**
  * Provides intents that will call the authentication services.
- * 
+ *
  * @author michael.carver
- * 
  */
 public class AuthWebService implements AuthServiceConstants {
-	private Context _context;
+    private Context _context;
 
-	public AuthWebService(Context conetxt) {
-		_context = conetxt.getApplicationContext();
-	}
+    public AuthWebService(Context conetxt) {
+        _context = conetxt.getApplicationContext();
+    }
 
-	/**
-	 * This is usually called by the {@link AccountManager} via the
-	 * {@link Authenticator}
-	 * 
-	 * @see Authenticator
-	 * @see AccountManager
-	 * @see com.fieldnation.rpc.server.AuthService
-	 * @see AuthRpc
-	 * 
-	 * @param response
-	 * @param hostname
-	 * @param grantType
-	 * @param clientId
-	 * @param clientSecret
-	 * @param username
-	 * @param password
-	 * @return
-	 */
-	public Intent authenticateWeb(AccountAuthenticatorResponse response, String hostname, String grantType,
+    /**
+     * This is usually called by the {@link AccountManager} via the
+     * {@link Authenticator}
+     *
+     * @see Authenticator
+     * @see AccountManager
+     * @see com.fieldnation.rpc.server.auth.AuthService
+     * @see AuthRpc
+     *
+     * @param response
+     * @param hostname
+     * @param grantType
+     * @param clientId
+     * @param clientSecret
+     * @param username
+     * @param password
+     * @return
+     */
+/*
+    public Intent authenticateWeb(AccountAuthenticatorResponse response, String hostname, String grantType,
 			String clientId, String clientSecret, String username, String password) {
 
 		Intent intent = new Intent(_context, RpcService.class);
@@ -62,20 +57,22 @@ public class AuthWebService implements AuthServiceConstants {
 
 		return intent;
 	}
+*/
 
-	/**
-	 * This should be called by a normal application to authenticate.
-	 * 
-	 * @param callback
-	 * @param resultCode
-	 * @param hostname
-	 * @param grantType
-	 * @param clientId
-	 * @param clientSecret
-	 * @param username
-	 * @param password
-	 * @return
-	 */
+    /**
+     * This should be called by a normal application to authenticate.
+     *
+     * @param callback
+     * @param resultCode
+     * @param hostname
+     * @param grantType
+     * @param clientId
+     * @param clientSecret
+     * @param username
+     * @param password
+     * @return
+     */
+/*
 	public Intent authenticateWeb(ResultReceiver callback, int resultCode, String hostname, String grantType,
 			String clientId, String clientSecret, String username, String password) {
 
@@ -96,5 +93,6 @@ public class AuthWebService implements AuthServiceConstants {
 
 		return intent;
 	}
+*/
 
 }

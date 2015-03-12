@@ -8,16 +8,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.server.Http;
 import com.fieldnation.rpc.server.PhotoCacheNode;
-import com.fieldnation.rpc.server.WebDataCacheNode;
+import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
+import com.fieldnation.rpc.server.auth.OAuth;
 import com.fieldnation.rpc.webclient.ProfileWebService;
 import com.fieldnation.topics.GaTopic;
 import com.fieldnation.topics.TopicReceiver;
@@ -53,15 +52,12 @@ public class GlobalState extends Application {
 
     public GlobalState() {
         super();
-
-        Http.USE_HTTPS = BuildConfig.USE_HTTPS;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         _context = this;
-        WebDataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
         new ExpenseCategories(this);
 
@@ -94,28 +90,20 @@ public class GlobalState extends Application {
     /*-**********************-*/
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
+        public void onAuthentication(OAuth auth, boolean isNew) {
             if (_service == null || isNew) {
-                _service = new ProfileWebService(GlobalState.this, username, authToken, _resultReciever);
+                _service = new ProfileWebService(GlobalState.this, auth, _resultReciever);
                 if (_profile == null)
                     startService(_service.getMyUserInformation(0, true));
             }
         }
 
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _service = null;
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            _service = null;
-        }
 
         @Override
         public void onRegister(int resultCode, String topicId) {
             AuthTopicService.requestAuthentication(GlobalState.this);
         }
+
     };
 
     private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {

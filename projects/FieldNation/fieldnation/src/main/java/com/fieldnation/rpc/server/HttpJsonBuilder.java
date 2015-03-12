@@ -10,6 +10,10 @@ import java.text.ParseException;
  * Created by Michael Carver on 3/10/2015.
  */
 public class HttpJsonBuilder {
+    public static final String HEADER_CONTENT_TYPE = "Content-Type";
+    public static final String HEADER_CONTENT_TYPE_FORM_ENCODED = "application/x-www-form-urlencoded";
+
+    public static final String PARAM_WEB_PROTOCOL = "protocol";
     public static final String PARAM_WEB_METHOD = "method";
     public static final String PARAM_WEB_HOST = "host";
     public static final String PARAM_WEB_PATH = "path";
@@ -38,6 +42,13 @@ public class HttpJsonBuilder {
         getRequest();
         if (!misc.isEmptyOrNull(method))
             request.put(PARAM_WEB_METHOD, method);
+        return this;
+    }
+
+    public HttpJsonBuilder protocol(String protocol) throws ParseException {
+        getRequest();
+        if (!misc.isEmptyOrNull(protocol))
+            request.put(PARAM_WEB_PROTOCOL, protocol);
         return this;
     }
 

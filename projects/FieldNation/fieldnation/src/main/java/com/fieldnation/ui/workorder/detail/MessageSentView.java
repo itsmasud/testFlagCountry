@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
-import com.fieldnation.rpc.webclient.PhotoWebService;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;

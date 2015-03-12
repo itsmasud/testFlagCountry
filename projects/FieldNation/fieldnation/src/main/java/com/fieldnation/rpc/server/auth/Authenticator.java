@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.rpc.server.auth;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -6,13 +6,10 @@ import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.rpc.webclient.AuthWebService;
 
 /**
  * The OS will call this when authenticating a user. It is mostly a wrapper for
@@ -51,12 +48,26 @@ public class Authenticator extends AbstractAccountAuthenticator {
         String clientId = _context.getString(R.string.auth_fn_client_id);
         String clientSecret = _context.getString(R.string.auth_fn_client_secret);
 
-        AuthWebService authServe = new AuthWebService(_context);
-        Intent intent = authServe.authenticateWeb(response, hostname, grantType, clientId, clientSecret, account.name,
-                password);
+        OAuth auth = OAuth.lookup(_context, account.name);
 
-        _context.startService(intent);
-        return null;
+        try {
+            if (auth == null) {
+                auth = OAuth.authenticate(_context, hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, account.name, password);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        Bundle result = new Bundle();
+        if (auth != null) {
+            result.putString(AccountManager.KEY_AUTHTOKEN, auth.getAccessToken());
+            result.putString(AccountManager.KEY_ACCOUNT_NAME, auth.getUsername());
+            result.putString(AccountManager.KEY_ACCOUNT_TYPE, _context.getString(R.string.auth_account_type));
+            result.putParcelable(OAuth.KEY_OAUTH, auth);
+        } else {
+            result.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE, "Could not get Auth token");
+        }
+        return result;
     }
 
     @Override

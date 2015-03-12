@@ -12,13 +12,13 @@ import android.widget.Toast;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicService;
@@ -43,7 +43,7 @@ public class NotificationFragment extends WorkorderFragment {
     // Data
     private Workorder _workorder;
     private Random _rand = new Random();
-    private WorkorderWebService _service;
+    private WorkorderWebClient _service;
     private List<Notification> _notes;
     private NotificationListAdapter _adapter;
 
@@ -195,7 +195,7 @@ public class NotificationFragment extends WorkorderFragment {
                 return;
 
             if (_service == null || isNew) {
-                _service = new WorkorderWebService(getActivity(), username, authToken, _resultReceiver);
+                _service = new WorkorderWebClient(getActivity(), username, authToken, _resultReceiver);
                 getNotifications();
             }
         }

@@ -1,11 +1,6 @@
 package com.fieldnation.rpc.common;
 
 public interface WebServiceConstants {
-    public static final String HEADER_CONTENT_TYPE = "Content-Type";
-    public static final String HEADER_CONTENT_TYPE_FORM_ENCODED = "application/x-www-form-urlencoded";
-
-    public static final String KEY_PARAM_AUTH_TOKEN = "PARAM_AUTH_TOKEN";
-    public static final String KEY_PARAM_USERNAME = "PARAM_USERNAME";
     public static final String KEY_PARAM_REQUEST = "KEY_PARAM_REQUEST";
     public static final String KEY_PARAM_RESULT_CODE = "RESULT_CODE";
     public static final String KEY_PARAM_CALLBACK = "PARAM_CALLBACK";
@@ -29,8 +24,6 @@ public interface WebServiceConstants {
     public static final String ERROR_UNKNOWN = "UNKNOWN";
     public static final String ERROR_HTTP_ERROR = "HTTP_ERROR";
     public static final String ERROR_SESSION_INVALID = "SESSION_INVALID";
-    public static final String ERROR_USER_NOT_FOUND = "USER_NOT_FOUND";
-    public static final String ERROR_NO_USERNAME = "NO_USERNAME";
 
     public static final String KEY_PARAM_FILE_URI = "PARAM_FILE_URI";
     //public static final String KEY_PARAM_FILE_DATA = "PARAM_FILE_DATA";

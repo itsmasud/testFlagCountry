@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.common;
+package com.fieldnation.rpc.server.auth;
 
 public interface AuthServiceConstants {
 	public static final String ACTION_NAME = "auth";

@@ -1,12 +1,6 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.rpc.server.auth.depricated;
 
 import android.accounts.AccountManager;
-import android.content.Context;
-
-import com.fieldnation.Log;
-import com.fieldnation.R;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.utils.misc;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -17,10 +11,13 @@ import java.text.ParseException;
  *
  * @author michael.carver
  */
-public class AuthToken {
+class AuthToken {
+/*
     private static final String TAG = "rpc.server.OAuth";
 
-    /* creates a default string to use for all tokens */
+    */
+/* creates a default string to use for all tokens *//*
+
     private static String _defaults;
 
     static {
@@ -34,7 +31,6 @@ public class AuthToken {
             o.put("expires_on", -1);
             o.put("hostname", null);
             o.put("is_local", false);
-            o.put("refresh_token", null);
             o.put("error", null);
             o.put("error_description", null);
             _defaults = o.toString();
@@ -45,9 +41,15 @@ public class AuthToken {
 
     private JsonObject _oauth = new JsonObject(_defaults);
 
-    /*-*********************************-*/
-    /*-			Constructors			-*/
-    /*-*********************************-*/
+    */
+/*-*********************************-*//*
+
+    */
+/*-			Constructors			-*//*
+
+    */
+/*-*********************************-*//*
+
     private AuthToken(JsonObject json) throws ParseException {
         _oauth.merge(json, true, true);
 
@@ -62,23 +64,32 @@ public class AuthToken {
         this(new JsonObject(jsonString));
     }
 
-	/*-*********************************-*/
-    /*-			Instantiators			-*/
-    /*-*********************************-*/
+	*/
+/*-*********************************-*//*
 
-    /**
+    */
+/*-			Instantiators			-*//*
+
+    */
+/*-*********************************-*//*
+
+
+    */
+/**
      * Create an oauth from a cached oAuthBlob.
      *
      * @param oauthBlob
      * @return
      * @throws ParseException
      * @see AuthCache
-     */
+     *//*
+
     public static AuthToken fromCache(String oauthBlob) throws ParseException {
         return new AuthToken(oauthBlob);
     }
 
-    /**
+    */
+/**
      * Authenticates the user against the Field Nation servers
      *
      * @param hostname
@@ -92,16 +103,23 @@ public class AuthToken {
      * @throws MalformedURLException
      * @throws IOException
      * @throws ParseException
-     */
+     *//*
+
     public static AuthToken authServer(String hostname, String path, String grantType, String clientId,
                                        String clientSecret, String username, String password) throws MalformedURLException, IOException, ParseException {
-        HttpResult result = Http.post(hostname, path, null,
-                "grant_type=" + grantType +
+        HttpJsonBuilder builder = new HttpJsonBuilder()
+                .method("POST")
+                .host(hostname)
+                .path(path)
+                .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                .body("grant_type=" + grantType +
                         "&client_id=" + clientId +
                         "&client_secret=" + clientSecret +
                         "&username=" + misc.escapeForURL(username) +
-                        "&password=" + misc.escapeForURL(password),
-                "application/x-www-form-urlencoded");
+                        "&password=" + misc.escapeForURL(password));
+
+        HttpResult result = HttpJson.run(GlobalState.getContext(), builder.build());
+
         Log.v(TAG, result.getResponseCode() + "");
 
         // TODO, add some timing, learn how to use the refresh token
@@ -110,19 +128,23 @@ public class AuthToken {
         return new AuthToken(token);
     }
 
-    /**
+    */
+/**
      * Invalidates the authtoken for this oauth with the {@link AccountManager}
      *
      * @param context
-     */
+     *//*
+
     public void invalidate(Context context) {
         AccountManager am = AccountManager.get(context);
         am.invalidateAuthToken(context.getString(R.string.auth_account_type), toString());
     }
 
-    /**
+    */
+/**
      * @return The TTL on this oauth token in seconds
-     */
+     *//*
+
     public long getExpiresIn() {
         try {
             return _oauth.getLong("expires_in");
@@ -132,9 +154,11 @@ public class AuthToken {
         return -1;
     }
 
-    /**
+    */
+/**
      * @return The UTC time in milliseconds that this expires on
-     */
+     *//*
+
     public long getExpiresOn() {
         try {
             return _oauth.getLong("expires_on");
@@ -144,9 +168,11 @@ public class AuthToken {
         return -1;
     }
 
-    /**
+    */
+/**
      * @return the access token for web requests
-     */
+     *//*
+
     public String getAccessToken() {
         try {
             return _oauth.getString("access_token");
@@ -156,9 +182,11 @@ public class AuthToken {
         return null;
     }
 
-    /**
+    */
+/**
      * @return true if the token is expired, false otherwise
-     */
+     *//*
+
     public boolean isExpired() {
         return System.currentTimeMillis() > getExpiresOn();
     }
@@ -186,13 +214,15 @@ public class AuthToken {
         return null;
     }
 
-    /**
+    */
+/**
      * Parses a URL option string and adds the access_token to it.
      *
      * @param options
      * @return
      * @throws ParseException
-     */
+     *//*
+
     public String applyToUrlOptions(String options) throws ParseException {
         if (options == null || options.equals("")) {
             return "?access_token=" + getAccessToken();
@@ -228,4 +258,5 @@ public class AuthToken {
         return null;
     }
 
+*/
 }

@@ -13,14 +13,14 @@ import android.widget.Toast;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.OverScrollView;
@@ -72,7 +72,7 @@ public class DetailFragment extends WorkorderFragment {
 
     // Data
     private Workorder _workorder;
-    private WorkorderWebService _service;
+    private WorkorderWebClient _service;
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -546,7 +546,7 @@ public class DetailFragment extends WorkorderFragment {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if ((_service == null || isNew) && getActivity() != null)
-                _service = new WorkorderWebService(getActivity(), username, authToken, _resultReceiver);
+                _service = new WorkorderWebClient(getActivity(), username, authToken, _resultReceiver);
         }
 
         @Override

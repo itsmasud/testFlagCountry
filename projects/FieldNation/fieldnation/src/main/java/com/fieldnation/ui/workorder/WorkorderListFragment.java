@@ -16,14 +16,14 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.GaTopic;
@@ -94,7 +94,7 @@ public class WorkorderListFragment extends Fragment {
     private OneButtonDialog _locationLoadingDialog;
 
     // Data
-    private WorkorderWebService _service;
+    private WorkorderWebClient _service;
     private Set<Long> _pendingNotInterested = new HashSet<Long>();
     private Set<Long> _selected = new HashSet<Long>();
     private GpsLocationService _gpsLocationService;
@@ -190,7 +190,7 @@ public class WorkorderListFragment extends Fragment {
             }
 
             if (_authToken != null && _username != null) {
-                _service = new WorkorderWebService(view.getContext(), _username, _authToken, _resultReciever);
+                _service = new WorkorderWebClient(view.getContext(), _username, _authToken, _resultReciever);
             }
         }
     }
@@ -831,7 +831,7 @@ public class WorkorderListFragment extends Fragment {
                 _username = username;
                 _authToken = authToken;
                 if (getActivity() != null) {
-                    _service = new WorkorderWebService(getActivity(), username, authToken, _resultReciever);
+                    _service = new WorkorderWebClient(getActivity(), username, authToken, _resultReciever);
                     requestList(0, true);
                 }
             }

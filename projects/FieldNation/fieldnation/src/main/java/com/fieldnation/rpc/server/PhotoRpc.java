@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.misc;
@@ -15,16 +14,10 @@ import com.fieldnation.utils.misc;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 
-public class PhotoRpc extends RpcInterface implements PhotoServiceConstants {
+public class PhotoRpc implements PhotoServiceConstants {
     private static final String TAG = "rpc.server.PhotoRpc";
 
-    PhotoRpc(HashMap<String, RpcInterface> map) {
-        super(map, ACTION_NAME);
-    }
-
-    @Override
     public void execute(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
         try {

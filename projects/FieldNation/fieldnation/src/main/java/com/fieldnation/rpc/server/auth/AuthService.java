@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.rpc.server.auth;
 
 import android.app.Service;
 import android.content.Intent;

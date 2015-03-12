@@ -152,11 +152,11 @@
             android:label="@string/activity_signature_info_title" />
 
         <service
-            android:name=".auth.client.AuthTopicService"
+            android:name=".rpc.server.auth.AuthTopicService"
             android:exported="false"
             android:process=":topic" />
         <service
-            android:name=".rpc.server.AuthService"
+            android:name=".rpc.server.auth.AuthService"
             android:exported="true"
             android:process="">
             <intent-filter>

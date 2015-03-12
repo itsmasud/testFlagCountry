@@ -1,4 +1,4 @@
-package com.fieldnation.auth.client;
+package com.fieldnation.rpc.server.auth;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -32,7 +32,6 @@ public class AuthTopicService extends Service {
 
     // Params
     public static final String BUNDLE_PARAM_AUTH_TOKEN = "BUNDLE_PARAM_AUTH_TOKEN";
-    public static final String BUNDLE_PARAM_USERNAME = "BUNDLE_PARAM_USERNAME";
 
     // Types
     public static final String BUNDLE_PARAM_TYPE = "BUNDLE_PARAM_TYPE";
@@ -53,7 +52,7 @@ public class AuthTopicService extends Service {
 
     // Data
     private Account _account = null;
-    private String _authToken;
+    private OAuth _authToken;
     private String _username;
     private int _state;
 
@@ -212,7 +211,8 @@ public class AuthTopicService extends Service {
     private void handleInvalid() {
         if (_state == STATE_AUTHENTICATED) {
             setState(STATE_NOT_AUTHENTICATED);
-            _accountManager.invalidateAuthToken(getAccoutnType(), _authToken);
+            _accountManager.invalidateAuthToken(getAccoutnType(), _authToken.getAccessToken());
+            _authToken.delete(this);
             _username = null;
             _authToken = null;
             dispatchAuthInvalid(AuthTopicService.this);
@@ -234,7 +234,7 @@ public class AuthTopicService extends Service {
                 requestAuthTokenFromAccountManager();
             } else {
                 Log.v(TAG, "handleRequest dispatchAuthComplete");
-                dispatchAuthComplete(AuthTopicService.this, _username, _authToken);
+                dispatchAuthComplete(AuthTopicService.this, _authToken);
             }
         } else if (_state == STATE_NOT_AUTHENTICATED) {
             Log.v(TAG, "handleRequest STATE_NOT_AUTHENTICATED");
@@ -339,12 +339,12 @@ public class AuthTopicService extends Service {
                 Log.v(TAG, "FutureWaitAsyncTask not removing");
                 Bundle bundle = (Bundle) result;
                 Log.v(TAG, "_futureWaitAsyncTaskListener.onComplete()");
-                String tokenString = bundle.getString("authtoken");
+                String tokenString = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 
                 // auth is complete
                 // if however, data invalid, need to ask again.
                 if (tokenString == null) {
-                    if (bundle.containsKey("accountType") && bundle.containsKey("authAccount")) {
+                    if (bundle.containsKey(AccountManager.KEY_ACCOUNT_TYPE) && bundle.containsKey(AccountManager.KEY_ACCOUNT_NAME)) {
                         Log.v(TAG, "FutureWaitAsyncTask, getAccount");
                         setState(STATE_AUTHENTICATING);
                         getAccount();
@@ -359,10 +359,10 @@ public class AuthTopicService extends Service {
                     }
                 } else {
                     Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
-                    _authToken = tokenString;
-                    _username = bundle.getString("authAccount");
+                    _authToken = bundle.getParcelable(OAuth.KEY_OAUTH);
+                    _username = bundle.getString(AccountManager.KEY_ACCOUNT_NAME);
                     setState(STATE_AUTHENTICATED);
-                    dispatchAuthComplete(AuthTopicService.this, _username, tokenString);
+                    dispatchAuthComplete(AuthTopicService.this, _authToken);
                 }
             } else if (_state == STATE_REMOVING) {
                 Log.v(TAG, "FutureWaitAsyncTask removing");
@@ -507,14 +507,13 @@ public class AuthTopicService extends Service {
     }
 
     // internal
-    private static void dispatchAuthComplete(Context context, String username, String authToken) {
+    private static void dispatchAuthComplete(Context context, OAuth authToken) {
         if (context == null)
             return;
 
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_COMPLETE);
-        bundle.putString(BUNDLE_PARAM_AUTH_TOKEN, authToken);
-        bundle.putString(BUNDLE_PARAM_USERNAME, username);
+        bundle.putParcelable(BUNDLE_PARAM_AUTH_TOKEN, authToken);
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_STATE, bundle);
     }

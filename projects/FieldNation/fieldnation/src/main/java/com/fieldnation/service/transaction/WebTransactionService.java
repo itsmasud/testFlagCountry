@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
+import com.fieldnation.rpc.server.auth.OAuth;
 import com.fieldnation.rpc.webclient.WebClient;
+import com.fieldnation.rpc.webclient.WebClientAuth;
 import com.fieldnation.service.transaction.handlers.WebTransactionHandler;
 
 import java.text.ParseException;
@@ -77,21 +79,13 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
     private final AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
+        public void onAuthentication(OAuth auth, boolean isNew) {
             if (_webService == null || isNew) {
-                _webService = new WebClient(WebTransactionService.this, username, authToken, _webReceiver);
+                _webService = new WebClientAuth(WebTransactionService.this, auth, _webReceiver);
                 if (_currentTransaction == null) {
                     startTransaction();
                 }
             }
-        }
-
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
         }
     };
 

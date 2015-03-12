@@ -19,7 +19,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.utils.misc;
@@ -70,7 +70,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private long _signatureId = -1;
 
     // Service
-    private WorkorderWebService _service;
+    private WorkorderWebClient _service;
 
 
     @Override
@@ -179,7 +179,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
-            _service = new WorkorderWebService(this, username, authToken, _resultReceiver);
+            _service = new WorkorderWebClient(this, username, authToken, _resultReceiver);
             getData();
         }
     }

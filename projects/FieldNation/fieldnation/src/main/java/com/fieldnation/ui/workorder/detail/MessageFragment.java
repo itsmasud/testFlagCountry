@@ -12,14 +12,14 @@ import android.widget.Toast;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.TopicReceiver;
@@ -49,7 +49,7 @@ public class MessageFragment extends WorkorderFragment {
     private Random _rand = new Random(System.currentTimeMillis());
     private Profile _profile;
     private Workorder _workorder;
-    private WorkorderWebService _workorderService;
+    private WorkorderWebClient _workorderService;
     private List<Message> _messages = new LinkedList<Message>();
     private MessagesAdapter _adapter;
 
@@ -227,7 +227,7 @@ public class MessageFragment extends WorkorderFragment {
                 return;
 
             if (_workorderService == null || isNew) {
-                _workorderService = new WorkorderWebService(getActivity(), username, authToken, _resultReceiver);
+                _workorderService = new WorkorderWebClient(getActivity(), username, authToken, _resultReceiver);
                 Log.v(TAG, "_authReceiver");
                 getMessages();
             }

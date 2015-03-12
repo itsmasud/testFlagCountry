@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.rpc.server.auth.depricated;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,7 +17,7 @@ import java.security.MessageDigest;
  *
  * @author michael.carver
  */
-public class AuthCache {
+class AuthCache {
     private static final String TAG = "auth.server.AuthCache";
 
     private Context _context;

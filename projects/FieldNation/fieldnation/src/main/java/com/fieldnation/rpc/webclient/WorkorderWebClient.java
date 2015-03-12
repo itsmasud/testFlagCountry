@@ -9,19 +9,20 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.server.auth.OAuth;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-public class WorkorderWebService extends WebClient implements WebServiceConstants {
+public class WorkorderWebClient extends WebClientAuth {
 
-    public WorkorderWebService(Context context, String username, String authToken, ResultReceiver callback) {
-        super(context, username, authToken, callback);
+    public WorkorderWebClient(Context context, OAuth auth, ResultReceiver callback) {
+        super(context, auth, callback);
     }
 
     // workorders
 
+/*
     public Intent getList(int resultCode, int page, WorkorderDataSelector selector, boolean allowCache) {
         return httpGet(resultCode, "/api/rest/v1/workorder/" + selector.getCall(), "?page=" + page, allowCache);
     }
@@ -392,7 +393,6 @@ public class WorkorderWebService extends WebClient implements WebServiceConstant
     }
 
 
-
     public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
         String payload = "";
         // reason/expire
@@ -463,6 +463,7 @@ public class WorkorderWebService extends WebClient implements WebServiceConstant
                 false);
     }
 
+*/
 /*
     public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String localFilename) {
         if (deliverableSlotId <= 0) {
@@ -481,7 +482,8 @@ public class WorkorderWebService extends WebClient implements WebServiceConstant
         return httpPostFile(resultCode, "api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableSlotId,
                 null, "file", data, null, notificationIntent);
     }
-*/
+*//*
+
 
 
 //    public Intent getDeliverableDetails(int resultCode, long workorderId, long deliverableId, boolean allowCache) {
@@ -558,4 +560,5 @@ public class WorkorderWebService extends WebClient implements WebServiceConstant
         return httpGet(resultCode, "api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId, null, allowCache);
     }
 
+*/
 }

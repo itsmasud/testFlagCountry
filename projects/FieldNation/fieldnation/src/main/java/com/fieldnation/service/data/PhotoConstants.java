@@ -1,0 +1,11 @@
+package com.fieldnation.service.data;
+
+/**
+ * Created by Michael Carver on 3/12/2015.
+ */
+public interface PhotoConstants {
+    public static final String PARAM_URL = "URL";
+    public static final String PARAM_CIRCLE = "CIRCLE";
+
+    public static final String RESULT_IMAGE_FILE = "IMAGE_FILE";
+}

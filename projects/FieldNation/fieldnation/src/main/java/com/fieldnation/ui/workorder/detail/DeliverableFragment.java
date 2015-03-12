@@ -24,15 +24,15 @@ import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.Topics;
@@ -80,7 +80,7 @@ public class DeliverableFragment extends WorkorderFragment {
     // Data
     private Context _context;
     private Workorder _workorder;
-    private WorkorderWebService _service;
+    private WorkorderWebClient _service;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
     private final SecureRandom _rand = new SecureRandom();
@@ -456,7 +456,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {
-                _service = new WorkorderWebService(_context, username, authToken, _resultReceiver);
+                _service = new WorkorderWebClient(_context, username, authToken, _resultReceiver);
             }
         }
 

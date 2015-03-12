@@ -1,22 +1,7 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.rpc.server.auth;
 
-import android.accounts.AccountAuthenticatorResponse;
-import android.accounts.AccountManager;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.ResultReceiver;
-
-import com.fieldnation.GlobalState;
-import com.fieldnation.Log;
-import com.fieldnation.R;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.AuthServiceConstants;
-
-import java.net.UnknownHostException;
-import java.util.HashMap;
-
-public class AuthRpc extends RpcInterface implements AuthServiceConstants {
+public class AuthRpc implements AuthServiceConstants {
+/*
     private final static String TAG = "rpc.server.AuthRpc";
 
     private GlobalState _gs;
@@ -132,7 +117,7 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
             errorMessage = context.getString(R.string.login_error_no_error);
 
         if (bundle.containsKey(KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
-            AccountAuthenticatorResponse aar = (AccountAuthenticatorResponse) bundle.getParcelable(KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE);
+            AccountAuthenticatorResponse aar = bundle.getParcelable(KEY_PARAM_ACCOUNT_AUTHENTICATOR_RESPONSE);
 
             Bundle resultBundle = new Bundle();
 
@@ -160,4 +145,5 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
         }
     }
 
+*/
 }

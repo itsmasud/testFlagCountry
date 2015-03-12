@@ -23,8 +23,8 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.LoggedWork;
@@ -37,7 +37,7 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GpsLocationService;
@@ -116,7 +116,7 @@ public class TasksFragment extends WorkorderFragment {
 
     // Data
     private Context _context;
-    private WorkorderWebService _service;
+    private WorkorderWebClient _service;
 
     private String _authToken;
     private String _username;
@@ -227,7 +227,7 @@ public class TasksFragment extends WorkorderFragment {
                 }
             }
             if (_authToken != null && _username != null) {
-                _service = new WorkorderWebService(view.getContext(), _username, _authToken, _resultReceiver);
+                _service = new WorkorderWebClient(view.getContext(), _username, _authToken, _resultReceiver);
             }
         }
 
@@ -1038,7 +1038,7 @@ public class TasksFragment extends WorkorderFragment {
                 _username = username;
                 _authToken = authToken;
                 if (_context != null)
-                    _service = new WorkorderWebService(_context, username, authToken, _resultReceiver);
+                    _service = new WorkorderWebClient(_context, username, authToken, _resultReceiver);
                 requestData(true);
             }
         }

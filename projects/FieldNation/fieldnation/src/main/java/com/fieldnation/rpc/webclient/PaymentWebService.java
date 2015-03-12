@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
-public class PaymentWebService extends WebClient {
+import com.fieldnation.rpc.server.auth.OAuth;
 
-    public PaymentWebService(Context context, String username, String authToken, ResultReceiver callback) {
-        super(context, username, authToken, callback);
+public class PaymentWebService extends WebClientAuth {
+
+    public PaymentWebService(Context context, OAuth auth, ResultReceiver callback) {
+        super(context, auth, callback);
     }
 
 //	public Intent getPending(int resultCode, int page, boolean allowCache) {
@@ -18,6 +20,7 @@ public class PaymentWebService extends WebClient {
 //		return httpGet(resultCode, "/api/rest/v1/accounting/payment-queue/paid", "?page=" + page, allowCache);
 //	}
 
+/*
     public Intent getAll(int resultCode, int page, boolean allowCache) {
         return httpGet(resultCode, "/api/rest/v1/accounting/payment-queue/all", "?page=" + page, allowCache);
     }
@@ -25,4 +28,5 @@ public class PaymentWebService extends WebClient {
     public Intent getPayment(int resultCode, long paymentId, boolean allowCache) {
         return httpGet(resultCode, "/api/rest/v1/accounting/payment-queue/" + paymentId, allowCache);
     }
+*/
 }

@@ -74,7 +74,9 @@ public class JsonArray {
 
         Object obj = _objects.get(item);
 
-        if (obj instanceof JsonObject) {
+        if (obj == null && directions.size() == 0) {
+            return null;
+        } else if (obj instanceof JsonObject) {
             return ((JsonObject) obj).get(directions);
         } else if (obj instanceof JsonArray) {
             return ((JsonArray) obj).get(directions);

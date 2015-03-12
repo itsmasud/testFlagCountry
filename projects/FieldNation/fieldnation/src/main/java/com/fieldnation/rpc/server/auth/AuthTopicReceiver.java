@@ -1,4 +1,4 @@
-package com.fieldnation.auth.client;
+package com.fieldnation.rpc.server.auth;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +10,6 @@ import com.fieldnation.topics.TopicReceiver;
  */
 public abstract class AuthTopicReceiver extends TopicReceiver {
 
-    private String lastusername = null;
     private String lastauthtoken = null;
 
     public AuthTopicReceiver(Handler handler) {
@@ -21,23 +20,14 @@ public abstract class AuthTopicReceiver extends TopicReceiver {
     public void onTopic(int resultCode, String topicId, Bundle parcel) {
         String type = parcel.getString(AuthTopicService.BUNDLE_PARAM_TYPE);
         if (AuthTopicService.BUNDLE_PARAM_TYPE_COMPLETE.equals(type)) {
-            String username = parcel.getString(AuthTopicService.BUNDLE_PARAM_USERNAME);
-            String authtoken = parcel.getString(AuthTopicService.BUNDLE_PARAM_AUTH_TOKEN);
-            onAuthentication(username, authtoken, !username.equals(lastusername) || !authtoken.equals(lastauthtoken));
-            lastusername = username;
-            lastauthtoken = authtoken;
+            OAuth auth = parcel.getParcelable(AuthTopicService.BUNDLE_PARAM_AUTH_TOKEN);
+            onAuthentication(auth, !auth.getAccessToken().equals(lastauthtoken));
+            lastauthtoken = auth.getAccessToken();
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
-            onAuthenticationInvalidated();
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_FAILED.equals(type)) {
-            onAuthenticationFailed(false);
         } else if (AuthTopicService.BUNDLE_PARAM_TYPE_NO_NETWORK.equals(type)) {
-            onAuthenticationFailed(true);
         }
     }
 
-    public abstract void onAuthentication(String username, String authToken, boolean isNew);
-
-    public abstract void onAuthenticationFailed(boolean networkDown);
-
-    public abstract void onAuthenticationInvalidated();
+    public abstract void onAuthentication(OAuth auth, boolean isNew);
 }

@@ -16,7 +16,7 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.webclient.WorkorderWebService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.topics.GaTopic;
 import com.fieldnation.utils.Stopwatch;
@@ -59,7 +59,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     private SorryFragment _sorryFrag;
 
     // Data
-    private WorkorderWebService _service;
+    private WorkorderWebClient _service;
 
     private int _displayMode = DISPLAY_SUMMARY;
     private String _name;
@@ -175,7 +175,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
             try {
-                _service = new WorkorderWebService(SignOffActivity.this, username, authToken, _resultReceiver);
+                _service = new WorkorderWebClient(SignOffActivity.this, username, authToken, _resultReceiver);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

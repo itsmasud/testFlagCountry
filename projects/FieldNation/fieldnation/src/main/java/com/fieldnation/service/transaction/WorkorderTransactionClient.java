@@ -19,12 +19,12 @@ import java.text.ParseException;
 /**
  * Created by Michael Carver on 3/6/2015.
  */
-public class WorkorderWebClient {
+public class WorkorderTransactionClient {
 
     private static final String API_REV = "/api/rest/v1";
 
-    private static final String HEADER_CONTENT_TYPE = "Content-Type";
-    private static final String HEADER_CONTENT_TYPE_FORM_ENCODED = "application/x-www-form-urlencoded";
+//    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+//    private static final String HEADER_CONTENT_TYPE_FORM_ENCODED = "application/x-www-form-urlencoded";
 
     public void requestList(Context context, WorkorderDataSelector selector, int page) throws ParseException {
         WebTransactionBuilder.builder(context)
@@ -61,7 +61,7 @@ public class WorkorderWebClient {
                 .request(
                         new HttpJsonBuilder()
                                 .method("POST")
-                                .header(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                                 .path(API_REV + "/workorder/" + workorderId + "/decline")
                 )
                 .send();
@@ -85,7 +85,7 @@ public class WorkorderWebClient {
         HttpJsonBuilder hb = new HttpJsonBuilder();
         hb.method("POST")
                 .path("/api/rest/v1/workorder/" + workorderId + "/request")
-                .header(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_FORM_ENCODED);
+                .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
 
         if (expireInSeconds != -1) {
             hb.body("expiration=" + expireInSeconds);
@@ -104,7 +104,7 @@ public class WorkorderWebClient {
                         new HttpJsonBuilder()
                                 .method("POST")
                                 .path(API_REV + "/workorder/" + workorderId + "/assignment")
-                                .header(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                                 .body("start_time=" + startStringIso8601 + "&end_time=" + endTimeIso8601)
                 )
                 .send();
@@ -121,7 +121,7 @@ public class WorkorderWebClient {
                         new HttpJsonBuilder()
                                 .method("POST")
                                 .path(API_REV + "/workorder/" + workorderId + "/checkin")
-                                .header(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                                 .body("checkin_time=" + ISO8601.now())
                 )
                 .transform(Transform.makeTransformQuery(

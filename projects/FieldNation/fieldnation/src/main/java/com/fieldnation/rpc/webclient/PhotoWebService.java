@@ -4,11 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
-import com.fieldnation.rpc.common.RpcServiceConstants;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
-import com.fieldnation.rpc.server.RpcService;
+import com.fieldnation.rpc.common.RpcServiceConstants;
 
-public class PhotoWebService implements PhotoServiceConstants {
+class PhotoWebService implements PhotoServiceConstants {
     private Context _context;
     private ResultReceiver _resultReceiver;
 
@@ -17,8 +16,9 @@ public class PhotoWebService implements PhotoServiceConstants {
         _resultReceiver = resultReceiver;
     }
 
+/*
     public Intent getPhoto(int resultCode, String url, boolean getCircle) {
-        Intent intent = new Intent(_context, RpcService.class);
+        Intent intent = null; //new Intent(_context, RpcService.class);
 
         intent.setAction(RpcServiceConstants.ACTION_RPC);
         intent.putExtra(RpcServiceConstants.KEY_SERVICE, ACTION_NAME);
@@ -30,4 +30,5 @@ public class PhotoWebService implements PhotoServiceConstants {
 
         return intent;
     }
+*/
 }

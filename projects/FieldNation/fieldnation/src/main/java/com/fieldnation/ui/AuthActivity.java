@@ -22,8 +22,8 @@ import android.widget.Toast;
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
-import com.fieldnation.rpc.webclient.AuthWebService;
+import com.fieldnation.rpc.server.auth.AuthTopicService;
+import com.fieldnation.rpc.server.auth.depricated.AuthWebService;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
@@ -32,7 +32,7 @@ import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
- * by {@link com.fieldnation.rpc.server.Authenticator} via requets made to the {@link AccountManager}. It
+ * by {@link com.fieldnation.rpc.server.auth.Authenticator} via requets made to the {@link AccountManager}. It
  * does not need to be called explicitly by the application.
  *
  * @author michael.carver

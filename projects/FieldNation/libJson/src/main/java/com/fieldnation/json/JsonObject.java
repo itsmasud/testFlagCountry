@@ -177,7 +177,9 @@ public class JsonObject {
 
         Object obj = _fields.get(item);
 
-        if (obj instanceof JsonObject) {
+        if (obj == null && directions.size() == 0) {
+            return null;
+        } else if (obj instanceof JsonObject) {
             return ((JsonObject) obj).get(directions);
         } else if (obj instanceof JsonArray) {
             return ((JsonArray) obj).get(directions);
@@ -188,7 +190,7 @@ public class JsonObject {
     }
 
     public String getString(String path) throws ParseException {
-        return get(path).toString();
+        return (String) get(path);
     }
 
     public int getInt(String path) throws ParseException {
