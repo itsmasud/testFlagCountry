@@ -1,4 +1,4 @@
-package com.fieldnation.service.data;
+package com.fieldnation.service.data.photo;
 
 import android.app.Service;
 import android.content.Context;
@@ -33,7 +33,7 @@ public class PhotoDataService extends Service implements PhotoConstants {
 
         new Thread(new PhotoProcessingRunnable(this, intent)).start();
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     private class PhotoProcessingRunnable implements Runnable {
@@ -84,7 +84,9 @@ public class PhotoDataService extends Service implements PhotoConstants {
                         .key(objectName + ":" + url)
                         .priority(WebTransaction.Priority.LOW)
                         .handler(PhotoTransactionHandler.class)
-                        .handlerParams(PhotoTransactionHandler.generateParams(url, getCircle))
+                        .handlerParams(
+                                PhotoTransactionHandler.generateParams(url, getCircle)
+                        )
                         .request(
                                 new HttpJsonBuilder()
                                         .method("GET")

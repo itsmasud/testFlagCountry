@@ -1,16 +1,15 @@
-package com.fieldnation.service.transaction.handlers;
+package com.fieldnation.service.transaction;
 
 import android.content.Context;
-import android.os.Bundle;
 
-import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.rpc.server.HttpResult;
 
 /**
  * Created by Michael Carver on 3/4/2015.
  */
 public abstract class WebTransactionHandler {
 
-    public static void completeTransaction(Context context, Listener listener, String handlerName, WebTransaction transaction, Bundle resultData) {
+    public static void completeTransaction(Context context, Listener listener, String handlerName, WebTransaction transaction, HttpResult resultData) {
         try {
             Class<?> clazz = context.getClassLoader().loadClass(handlerName);
 
@@ -24,9 +23,11 @@ public abstract class WebTransactionHandler {
         }
     }
 
-    public abstract void handleResult(Context context, Listener listener, WebTransaction transaction, Bundle resultData);
+    public abstract void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData);
 
     public interface Listener {
         public void onComplete();
+
+        public void onError();
     }
 }

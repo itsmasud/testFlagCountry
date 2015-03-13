@@ -2,11 +2,9 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -18,10 +16,11 @@ import android.widget.TextView;
 import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
-import com.fieldnation.rpc.common.PhotoServiceConstants;
+import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.Random;
 
@@ -38,7 +37,7 @@ public class MessageSentView extends RelativeLayout {
     // Data
     private GlobalState _gs;
     private Message _message = null;
-    private PhotoWebService _service;
+    private PhotoDataClient _photos;
     private Random _rand = new Random();
     private Drawable _profilePic = null;
 
@@ -68,7 +67,7 @@ public class MessageSentView extends RelativeLayout {
         // _pendingTextView = (TextView) findViewById(R.id.pending_textview);
         _checkImageView = (ImageView) findViewById(R.id.check_imageview);
 
-        _service = new PhotoWebService(_gs, _resultReceiver);
+        _photos = new PhotoDataClient(getContext(), _photoListener);
     }
 
     public void setMessage(Message message) {
@@ -78,7 +77,7 @@ public class MessageSentView extends RelativeLayout {
     }
 
     private void getPhoto() {
-        if (_service == null)
+        if (_photos == null)
             return;
 
         if (_message == null)
@@ -86,11 +85,11 @@ public class MessageSentView extends RelativeLayout {
 
         WEB_GET_PHOTO = _rand.nextInt();
         if (_message.getFromUser().getPhotoThumbUrl() != null)
-            _gs.startService(_service.getPhoto(WEB_GET_PHOTO, _message.getFromUser().getPhotoThumbUrl(), true));
+            _photos.getPhoto(getContext(), _message.getFromUser().getPhotoUrl(), false);
     }
 
     private void populateUi() {
-        if (_service == null)
+        if (_photos == null)
             return;
 
         if (_message == null)
@@ -120,16 +119,12 @@ public class MessageSentView extends RelativeLayout {
 
     }
 
-    private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
+    private final PhotoDataClient.Listener _photoListener = new PhotoDataClient.Listener() {
         @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_PHOTO) {
-                Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
-                _profilePic = new BitmapDrawable(getContext().getResources(), photo);
-                _profileImageView.setBackgroundDrawable(_profilePic);
-            }
-            super.onReceiveResult(resultCode, resultData);
+        public void onPhoto(String url, File file, boolean isCircle) {
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            _profilePic = new BitmapDrawable(getContext().getResources(), bitmap);
+            _profileImageView.setBackgroundDrawable(_profilePic);
         }
     };
-
 }

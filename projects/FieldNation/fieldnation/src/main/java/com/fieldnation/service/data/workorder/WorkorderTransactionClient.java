@@ -1,4 +1,4 @@
-package com.fieldnation.service.transaction;
+package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 
@@ -7,10 +7,9 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.service.transaction.handlers.WorkorderDeclineTransactionHandler;
-import com.fieldnation.service.transaction.handlers.WorkorderDetailsTransactionHandler;
-import com.fieldnation.service.transaction.handlers.WorkorderListTransactionHandler;
-import com.fieldnation.service.transaction.handlers.WorkorderRequestHandler;
+import com.fieldnation.service.transaction.Transform;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 

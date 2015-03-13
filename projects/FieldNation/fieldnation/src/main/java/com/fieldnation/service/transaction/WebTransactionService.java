@@ -1,22 +1,18 @@
 package com.fieldnation.service.transaction;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.rpc.server.HttpJson;
+import com.fieldnation.rpc.server.HttpJsonBuilder;
+import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
 import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.rpc.server.auth.OAuth;
-import com.fieldnation.rpc.webclient.WebClient;
-import com.fieldnation.rpc.webclient.WebClientAuth;
-import com.fieldnation.service.transaction.handlers.WebTransactionHandler;
-
-import java.text.ParseException;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -29,7 +25,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private static final String TAG = "service.transaction.TransactionService";
 
     private WebTransaction _currentTransaction = null;
-    private WebClient _webService = null;
+    private OAuth _auth;
 
     @Override
     public void onCreate() {
@@ -55,6 +51,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 WebTransaction transaction = WebTransaction.put(this,
                         WebTransaction.Priority.values()[extras.getInt(PARAM_PRIORITY)],
                         extras.getString(PARAM_KEY),
+                        extras.getBoolean(PARAM_USE_AUTH),
                         new JsonObject(extras.getByteArray(PARAM_REQUEST)),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
@@ -80,11 +77,9 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private final AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(OAuth auth, boolean isNew) {
-            if (_webService == null || isNew) {
-                _webService = new WebClientAuth(WebTransactionService.this, auth, _webReceiver);
-                if (_currentTransaction == null) {
-                    startTransaction();
-                }
+            _auth = auth;
+            if (_currentTransaction == null) {
+                startTransaction();
             }
         }
     };
@@ -96,9 +91,6 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
 
     private void startTransaction() {
-        if (_webService == null)
-            return;
-
         _currentTransaction = WebTransaction.getNext(this);
         if (_currentTransaction == null) {
             stopSelf();
@@ -107,62 +99,46 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
         // at some point call the web service
         JsonObject request = _currentTransaction.getRequest();
-        startService(
-                _webService.http(0, request, false));
-    }
+        try {
+            if (_currentTransaction.useAuth()) {
+                if (!request.has(HttpJsonBuilder.PARAM_WEB_HOST)) {
+                    request.put(HttpJsonBuilder.PARAM_WEB_HOST, _auth.getHost());
+                }
+                _auth.applyToRequest(request);
+            }
+            HttpResult result = HttpJson.run(this, request);
 
-    private WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            // yay!
+
             String handler = _currentTransaction.getHandlerName();
             WebTransactionHandler.completeTransaction(
                     WebTransactionService.this,
                     _transactionListener,
                     handler,
                     _currentTransaction,
-                    resultData);
+                    result);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-
-            // something bad happened. should either retry, or set up an alert to try again later.
-        }
-
-        @Override
-        public Context getContext() {
-            return WebTransactionService.this;
-        }
-
-    };
+    }
 
     private final WebTransactionHandler.Listener _transactionListener = new WebTransactionHandler.Listener() {
         @Override
         public void onComplete() {
             // finish up transaction
             WebTransaction.delete(WebTransactionService.this, _currentTransaction.getId());
+            _currentTransaction = null;
+            // fire off the next one
+            startTransaction();
+        }
+
+        @Override
+        public void onError() {
+            // finish up transaction
+            WebTransaction.delete(WebTransactionService.this, _currentTransaction.getId());
+            _currentTransaction = null;
             // fire off the next one
             startTransaction();
         }
     };
-
-    /**
-     * Parses a URL option string and adds the access_token to it.
-     *
-     * @param authToken
-     * @param params
-     * @return
-     * @throws java.text.ParseException
-     */
-    public String applyAuthTokenToUrlParams(String authToken, String params) throws ParseException {
-        if (params == null || params.equals("")) {
-            return "?access_token=" + authToken;
-        } else if (params.startsWith("?")) { // if options already specified
-            return "?access_token=" + authToken + "&" + params.substring(1);
-        }
-        throw new ParseException("Options must be nothing, or start with '?'. Got: " + params, 0);
-    }
-
 }

@@ -1,4 +1,4 @@
-package com.fieldnation.service.data;
+package com.fieldnation.service.data.photo;
 
 /**
  * Created by Michael Carver on 3/12/2015.

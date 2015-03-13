@@ -7,14 +7,13 @@ import android.os.ResultReceiver;
 import com.fieldnation.rpc.server.auth.OAuth;
 import com.fieldnation.utils.misc;
 
-public class ProfileWebService extends WebClientAuth {
+class ProfileWebService extends WebClientAuth {
     private static final String TAG = "rpc.client.ProfileService";
 
     public ProfileWebService(Context context, OAuth auth, ResultReceiver callback) {
         super(context, auth, callback);
     }
 
-/*
     public Intent acceptTos(int resultCode, long userId) {
         return httpPost(resultCode, "/api/rest/v1/profile/" + userId + "/accept-tos", null, "",
                 "application/x-www-form-urlencoded", false);
@@ -59,5 +58,4 @@ public class ProfileWebService extends WebClientAuth {
                 "application/x-www-form-urlencoded",
                 false);
     }
-*/
 }

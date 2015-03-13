@@ -7,7 +7,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.service.transaction.handlers.WebTransactionHandler;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +40,11 @@ public class WebTransactionBuilder implements WebTransactionConstants {
 
     public WebTransactionBuilder key(String key) {
         intent.putExtra(PARAM_KEY, key);
+        return this;
+    }
+
+    public WebTransactionBuilder useAuth() {
+        intent.putExtra(PARAM_USE_AUTH, true);
         return this;
     }
 

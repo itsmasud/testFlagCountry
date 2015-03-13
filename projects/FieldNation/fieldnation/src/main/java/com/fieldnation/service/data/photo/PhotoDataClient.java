@@ -1,4 +1,4 @@
-package com.fieldnation.service.data;
+package com.fieldnation.service.data.photo;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,32 +15,36 @@ import java.io.File;
 public class PhotoDataClient implements PhotoConstants {
     private String TAG = UniqueTag.makeTag("service.data.PhotoDataClient");
 
-
     private TopicClient _client = null;
     private Listener _listener;
 
     public PhotoDataClient(Context context, Listener listener) {
+        _listener = listener;
         _client = new TopicClient(_clientListener);
         _client.connect(context);
-        _listener = listener;
     }
 
+    /**
+     * Disconnects from the service. Call this in your activities onPause, or similar.
+     *
+     * @param context
+     */
     public void stop(Context context) {
         _client.disconnect(context);
     }
 
-    public Intent getPhoto(Context context, String url, boolean getCircle) {
+    public void getPhoto(Context context, String url, boolean getCircle) {
         Intent intent = new Intent(context, PhotoDataService.class);
         intent.putExtra(PARAM_CIRCLE, getCircle);
         intent.putExtra(PARAM_URL, url);
 
-        return intent;
+        context.startService(intent);
     }
 
     private final TopicClient.Listener _clientListener = new TopicClient.Listener() {
         @Override
         public void onConnected() {
-            _client.register(PhotoDataService.TOPIC_ID_PHOTO_READY, TAG);
+            _client.register(TOPIC_ID_PHOTO_READY, TAG);
         }
 
         @Override
@@ -53,7 +57,7 @@ public class PhotoDataClient implements PhotoConstants {
 
         @Override
         public void onEvent(String topicId, Bundle payload) {
-            if (topicId.equals(PhotoDataService.TOPIC_ID_PHOTO_READY)) {
+            if (topicId.equals(TOPIC_ID_PHOTO_READY)) {
                 _listener.onPhoto(payload.getString(PARAM_URL), (File) payload.getSerializable(RESULT_IMAGE_FILE), payload.getBoolean(PARAM_CIRCLE));
             }
         }

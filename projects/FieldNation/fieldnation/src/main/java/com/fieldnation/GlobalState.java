@@ -13,7 +13,6 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.server.PhotoCacheNode;
 import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
 import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.rpc.server.auth.OAuth;
@@ -58,7 +57,6 @@ public class GlobalState extends Application {
     public void onCreate() {
         super.onCreate();
         _context = this;
-        PhotoCacheNode.flush(this);
         new ExpenseCategories(this);
 
         getTracker();

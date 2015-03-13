@@ -16,11 +16,13 @@ import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
  */
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "service.transaction.Transaction";
+
     private static final Object LOCK = new Object();
 
     private long _id;
     private String _handlerName;
     private byte[] _handlerParams;
+    private boolean _useAuth;
     private State _state;
     private Priority _priority;
     private JsonObject _request;
@@ -40,6 +42,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     WebTransaction(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
         _handlerName = cursor.getString(Column.HANDLER.getIndex());
+        _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
         try {
             _request = new JsonObject(cursor.getBlob(Column.REQUEST.getIndex()));
@@ -52,6 +55,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public WebTransaction(Bundle bundle) {
         _id = bundle.getLong(PARAM_ID);
         _handlerName = bundle.getString(PARAM_HANDLER_NAME);
+        _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
         _state = State.values()[bundle.getInt(PARAM_STATE)];
         try {
             _request = new JsonObject(bundle.getByteArray(PARAM_REQUEST));
@@ -69,6 +73,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putByteArray(PARAM_REQUEST, _request.toByteArray());
         bundle.putInt(PARAM_PRIORITY, _priority.ordinal());
         bundle.putString(PARAM_KEY, _key);
+        bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
         return bundle;
     }
 
@@ -85,6 +90,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public void setHandlerName(String handlerName) {
         _handlerName = handlerName;
+    }
+
+    public boolean useAuth() {
+        return _useAuth;
     }
 
     public State getState() {
@@ -178,7 +187,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             Column.STATE + "=?",
                             new String[]{State.IDLE.ordinal() + ""},
                             null, null,
-                            "PRIORITY DESC, ID ASC ",
+                            "ID ASC ",//"PRIORITY DESC, ID ASC ",
                             "LIMIT 1");
                     try {
                         if (cursor.moveToFirst()) {
@@ -205,6 +214,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.REQUEST.getName(), obj._request.toByteArray());
         v.put(Column.KEY.getName(), obj._key);
         v.put(Column.PRIORITY.getName(), obj._priority.ordinal());
+        v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
 
         boolean success = false;
         synchronized (LOCK) {
@@ -230,7 +240,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
     }
 
-    public static WebTransaction put(Context context, Priority priority, String key, JsonObject request, String handlerName, byte[] handlerParams) {
+    public static WebTransaction put(Context context, Priority priority, String key, boolean useAuth,
+                                     JsonObject request, String handlerName, byte[] handlerParams) {
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), handlerParams);
@@ -238,6 +249,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.STATE.getName(), State.BUILDING.ordinal());
         v.put(Column.REQUEST.getName(), request.toByteArray());
         v.put(Column.PRIORITY.getName(), priority.ordinal());
+        v.put(Column.USE_AUTH.getName(), useAuth ? 1 : 0);
 
         long id = -1;
         synchronized (LOCK) {
