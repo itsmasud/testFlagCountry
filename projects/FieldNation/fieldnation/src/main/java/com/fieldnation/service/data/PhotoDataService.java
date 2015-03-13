@@ -8,6 +8,7 @@ import android.os.IBinder;
 
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
@@ -17,6 +18,7 @@ import java.lang.ref.WeakReference;
  * Created by Michael Carver on 3/12/2015.
  */
 public class PhotoDataService extends Service implements PhotoConstants {
+    public static final String TAG = "service.data.PhotoDataService";
 
     private static final Object LOCK = new Object();
     private static int COUNT = 0;
@@ -73,7 +75,7 @@ public class PhotoDataService extends Service implements PhotoConstants {
             if (obj != null) {
                 Bundle bundle = _intent.getExtras();
                 bundle.putSerializable(RESULT_IMAGE_FILE, obj.getFile());
-                rr.send(resultCode, bundle);
+                TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY, bundle, true);
                 return;
             }
             // doesn't exist, try to grab it.
@@ -82,6 +84,7 @@ public class PhotoDataService extends Service implements PhotoConstants {
                         .key(objectName + ":" + url)
                         .priority(WebTransaction.Priority.LOW)
                         .handler(PhotoTransactionHandler.class)
+                        .handlerParams(PhotoTransactionHandler.generateParams(url, getCircle))
                         .request(
                                 new HttpJsonBuilder()
                                         .method("GET")

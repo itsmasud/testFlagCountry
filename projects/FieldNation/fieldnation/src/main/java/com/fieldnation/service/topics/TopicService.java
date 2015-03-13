@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-class TopicService extends Service implements TopicConstants {
+public class TopicService extends Service implements TopicConstants {
     private static final String TAG = "TopicService";
 
     private Messenger _me = new Messenger(new IncomeHandler(this));
