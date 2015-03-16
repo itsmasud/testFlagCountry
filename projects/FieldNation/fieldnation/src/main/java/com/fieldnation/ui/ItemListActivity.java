@@ -1,18 +1,11 @@
 package com.fieldnation.ui;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.ResultReceiver;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.R;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
 
 import java.util.List;
 
@@ -21,12 +14,6 @@ import java.util.List;
  */
 public abstract class ItemListActivity<O> extends DrawerActivity {
     private static final String TAG = "ui.ItemListActivity";
-
-    // WEB
-    private final static int WEB_LIST = 1;
-
-    // WEB param
-    private final static String PARAM_PAGE_NUM = "ItemListActivity.PARAM_PAGE_NUM";
 
     // UI
     private OverScrollListView _listView;
@@ -65,24 +52,18 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         _adapter.refreshPages();
     }
 
-    private void getData(int page, boolean allowCache) {
+    private void getData(int page) {
         if (_listView == null)
             return;
 
         _refreshView.startRefreshing();
-        Intent intent = requestData(WEB_LIST, page, allowCache);
-
-        if (intent == null)
-            return;
-
-        intent.putExtra(PARAM_PAGE_NUM, page);
-        startService(intent);
+        requestData(page);
     }
 
-    public abstract Intent requestData(int resultCode, int page, boolean allowCache);
+    public abstract void requestData(int page);
 
 
-    public void addPage(int page, List<O> list, boolean isCached) {
+    public void addPage(int page, List<O> list) {
         if (list == null) {
             _adapter.setNoMorePages();
             return;
@@ -91,7 +72,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         if (list.size() == 0) {
             _adapter.setNoMorePages();
         }
-        _adapter.setPage(page, list, isCached);
+        _adapter.setPage(page, list);
     }
 
     private PagingAdapter<O> _adapter = new PagingAdapter<O>() {
@@ -102,7 +83,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-            getData(page, allowCache);
+            getData(page);
         }
     };
 
@@ -133,58 +114,6 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         _authToken = authToken;
-        onAuthentication(username, authToken, isNew, _resultReceiver);
-        getData(0, true);
+        getData(0);
     }
-
-    public abstract void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver);
-
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
-
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_LIST) {
-                new AsyncTaskEx<Bundle, Object, List<O>>() {
-                    private boolean isCached;
-                    private int page;
-
-                    @Override
-                    protected List<O> doInBackground(Bundle... params) {
-                        Bundle resultData = params[0];
-                        page = resultData.getInt(PARAM_PAGE_NUM);
-
-//                        String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                        isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-
-                        return onParseData(page, isCached, resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                    }
-
-                    @Override
-                    protected void onPostExecute(List<O> os) {
-                        super.onPostExecute(os);
-                        addPage(page, os, isCached);
-                        _refreshView.refreshComplete();
-                    }
-                }.executeEx(resultData);
-            }
-        }
-
-        @Override
-        public Context getContext() {
-            return ItemListActivity.this;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            invalidateService();
-            Toast.makeText(ItemListActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
-            _refreshView.refreshFailed();
-        }
-
-    };
-
-    public abstract List<O> onParseData(int page, boolean isCached, byte[] data);
-
-    public abstract void invalidateService();
 }

@@ -1,25 +1,19 @@
 package com.fieldnation;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 
+import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
-import com.fieldnation.rpc.server.auth.AuthTopicService;
-import com.fieldnation.rpc.server.auth.OAuth;
-import com.fieldnation.rpc.webclient.ProfileWebService;
-import com.fieldnation.topics.GaTopic;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.auth.AuthTopicReceiver;
+import com.fieldnation.service.auth.AuthTopicService;
+import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -27,6 +21,7 @@ import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -45,7 +40,6 @@ public class GlobalState extends Application {
     public static final String PREF_PROFILE_ID = "PREF_PROFILE_ID";
 
     private Tracker _tracker;
-    private ProfileWebService _service;
     private Profile _profile;
     private static GlobalState _context;
 
@@ -89,13 +83,8 @@ public class GlobalState extends Application {
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(OAuth auth, boolean isNew) {
-            if (_service == null || isNew) {
-                _service = new ProfileWebService(GlobalState.this, auth, _resultReciever);
-                if (_profile == null)
-                    startService(_service.getMyUserInformation(0, true));
-            }
+            ProfileDataClient.getMyUserInformation(GlobalState.this);
         }
-
 
         @Override
         public void onRegister(int resultCode, String topicId) {
@@ -104,52 +93,14 @@ public class GlobalState extends Application {
 
     };
 
-    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-        private boolean isCached;
-
+    private final ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            new AsyncTaskEx<Bundle, Object, Profile>() {
-                @Override
-                protected Profile doInBackground(Bundle... params) {
-                    Bundle resultData = params[0];
-                    try {
-                        JsonObject obj = new JsonObject(new String(
-                                resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-                        isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-                        return Profile.fromJson(obj);
-                    } catch (Exception e) {
-
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Profile profile) {
-                    super.onPostExecute(profile);
-                    if (profile == null) {
-                        if (_service != null)
-                            startService(_service.getMyUserInformation(0, false));
-                    } else {
-                        _profile = profile;
-                        Topics.dispatchProfileUpdated(GlobalState.this, _profile);
-
-                        if (isCached && _service != null)
-                            startService(_service.getMyUserInformation(0, false));
-                    }
-                }
-            }.executeEx(resultData);
+        public void onProfile(Profile profile) {
         }
 
         @Override
-        public Context getContext() {
-            return GlobalState.this;
-        }
+        public void onAllNotificationPage(List<Notification> list, int page) {
 
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            _service = null;
         }
     };
 

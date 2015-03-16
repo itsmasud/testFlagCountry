@@ -1,12 +1,11 @@
 package com.fieldnation.rpc.webclient;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.ResultReceiver;
 
-import com.fieldnation.rpc.server.auth.OAuth;
+import com.fieldnation.service.data.oauth.OAuth;
 
-public class PaymentWebService extends WebClientAuth {
+class PaymentWebService extends WebClientAuth {
 
     public PaymentWebService(Context context, OAuth auth, ResultReceiver callback) {
         super(context, auth, callback);

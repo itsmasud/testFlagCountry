@@ -7,7 +7,7 @@ import android.os.Handler;
 /**
  * Created by michael.carver on 12/18/2014.
  */
-public class TopicShutdownReciever extends TopicReceiver {
+class TopicShutdownReciever extends TopicReceiver {
     private Activity activity;
     private String tag;
 

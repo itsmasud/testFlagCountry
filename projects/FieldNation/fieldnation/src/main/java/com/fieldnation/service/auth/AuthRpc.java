@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server.auth;
+package com.fieldnation.service.auth;
 
 public class AuthRpc implements AuthServiceConstants {
 /*

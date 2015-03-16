@@ -9,7 +9,7 @@ import android.view.Window;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.rpc.server.auth.AuthTopicService;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;

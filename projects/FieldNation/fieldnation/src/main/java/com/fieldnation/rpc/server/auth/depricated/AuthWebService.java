@@ -3,9 +3,9 @@ package com.fieldnation.rpc.server.auth.depricated;
 import android.accounts.AccountManager;
 import android.content.Context;
 
-import com.fieldnation.rpc.server.auth.AuthRpc;
-import com.fieldnation.rpc.server.auth.AuthServiceConstants;
-import com.fieldnation.rpc.server.auth.Authenticator;
+import com.fieldnation.service.auth.AuthRpc;
+import com.fieldnation.service.auth.AuthServiceConstants;
+import com.fieldnation.service.auth.Authenticator;
 
 /**
  * Provides intents that will call the authentication services.
@@ -25,7 +25,7 @@ public class AuthWebService implements AuthServiceConstants {
      *
      * @see Authenticator
      * @see AccountManager
-     * @see com.fieldnation.rpc.server.auth.AuthService
+     * @see com.fieldnation.service.auth.AuthService
      * @see AuthRpc
      *
      * @param response

@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server.auth;
+package com.fieldnation.service.auth;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -15,6 +15,7 @@ import android.os.Parcelable;
 import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.Topics;
@@ -22,28 +23,8 @@ import com.fieldnation.topics.Topics;
 /**
  * Created by Michael on 12/15/2014.
  */
-public class AuthTopicService extends Service {
+public class AuthTopicService extends Service implements AuthTopicConstants {
     private static final String TAG = "auth.client.AuthTopicService";
-
-    // Topics
-    public static final String TOPIC_AUTH_STATE = TAG + ":TOPIC_AUTH_STATE";
-    public static final String TOPIC_AUTH_COMMAND = TAG + ":TOPIC_AUTH_COMMAND";
-    public static final String TOPIC_AUTH_STARTUP = TAG + ":TOPIC_AUTH_STARTUP";
-
-    // Params
-    public static final String BUNDLE_PARAM_AUTH_TOKEN = "BUNDLE_PARAM_AUTH_TOKEN";
-
-    // Types
-    public static final String BUNDLE_PARAM_TYPE = "BUNDLE_PARAM_TYPE";
-    public static final String BUNDLE_PARAM_TYPE_REQUEST = "BUNDLE_PARAM_TYPE_REQUEST";
-    public static final String BUNDLE_PARAM_TYPE_INVALID = "BUNDLE_PARAM_TYPE_INVALID";
-    public static final String BUNDLE_PARAM_TYPE_FAILED = "BUNDLE_PARAM_TYPE_FAILED";
-    public static final String BUNDLE_PARAM_TYPE_COMPLETE = "BUNDLE_PARAM_TYPE_COMPLETE";
-    public static final String BUNDLE_PARAM_TYPE_REMOVE = "BUNDLE_PARAM_TYPE_REMOVE";
-    public static final String BUNDLE_PARAM_TYPE_CANCELLED = "BUNDLE_PARAM_TYPE_CANCELLED";
-    public static final String BUNDLE_PARAM_TYPE_NO_NETWORK = "BUNDLE_PARAM_TYPE_NO_NETWORK";
-    public static final String BUNDLE_PARAM_TYPE_NEED_PASSWORD = "BUNDLE_PARAM_TYPE_NEED_PASSWORD";
-
 
     private static final int STATE_NOT_AUTHENTICATED = 0;
     private static final int STATE_AUTHENTICATING = 1;
@@ -90,10 +71,12 @@ public class AuthTopicService extends Service {
             return START_STICKY;
         }
         if (!_isStarted) {
-            subscribeAuthCommand(this, 0, TAG, _topicReceiver);
+//            subscribeAuthCommand(this, 0, TAG, _topicReceiver);
+/*
             TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_SHUTDOWN, _topics);
             TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_NETWORK_DOWN, _topics);
             TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_NETWORK_UP, _topics);
+*/
             _isStarted = true;
             //requestAuthentication(this);
         }
@@ -109,17 +92,11 @@ public class AuthTopicService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
+/*
         TopicService.delete(this, TAG);
         TopicService.delete(this, TAG + ":SYSTEM");
+*/
         super.onDestroy();
-    }
-
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            super.onTaskRemoved(rootIntent);
-
-        _isShuttingDown = true;
     }
 
     private String getAccoutnType() {
@@ -149,6 +126,7 @@ public class AuthTopicService extends Service {
     /*-         Topics          -*/
     /*-*************************-*/
 
+/*
     private final TopicReceiver _topics = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -171,7 +149,9 @@ public class AuthTopicService extends Service {
             }
         }
     };
+*/
 
+/*
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -201,6 +181,7 @@ public class AuthTopicService extends Service {
             }
         }
     };
+*/
 
 
     /*-*****************************-*/

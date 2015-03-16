@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
-import com.fieldnation.rpc.server.auth.AuthTopicService;
+import com.fieldnation.service.auth.AuthTopicReceiver;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;

@@ -34,42 +34,70 @@ public class ProfileDataService extends Service implements ProfileConstants {
     }
 
     private void getMyUserInformation(Context context, Intent intent) {
-        StoredObject obj = StoredObject.get(context, "Profile", "Me");
-
+        // send request (we always ask for an update)
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(ProfileWebTransactionHandler.class)
-                    .handlerParams(ProfileWebTransactionHandler.generateParams(PARAM_ACTION_GET_MY_PROFILE))
+                    .handlerParams(ProfileWebTransactionHandler.generateGetProfileParams())
                     .key("ProfileGet")
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
-                                    .method("POST")
+                                    .method("GET")
                                     .path("/api/rest/v1/profile")
                     ).send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
+        // get stored object
+        StoredObject obj = StoredObject.get(context, "Profile", "Me");
+        // if exists, then pass it back
         if (obj != null) {
             Bundle bundle = new Bundle();
-            bundle.putByteArray(PARAM_PROFILE, obj.getData());
+            bundle.putByteArray(PARAM_DATA, obj.getData());
             TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE, bundle, true);
             return;
         }
     }
 
     private void getAllNotifications(Context context, Intent intent) {
+        int page = intent.getIntExtra(PARAM_PAGE, 0);
+
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.LOW)
+                    .handler(ProfileWebTransactionHandler.class)
+                    .handlerParams(ProfileWebTransactionHandler.getnerateGetAllNotificationsParams(page))
+                    .key("NotificationPage" + page)
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .method("GET")
+                                    .path("/api/rest/v1/profile/notifications/")
+                                    .urlParams("?page=" + page)
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        StoredObject obj = StoredObject.get(context, "NotificationPage", page + "");
+        if (obj != null) {
+            Bundle bundle = new Bundle();
+            bundle.putByteArray(PARAM_DATA, obj.getData());
+            bundle.putInt(PARAM_PAGE, page);
+            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
+            TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST, bundle, false);
+            return;
+        }
 
     }
 
     private void getAllMessages(Context context, Intent intent) {
-
     }
 
     private void addBlockedCompany(Context context, Intent intent) {
-
     }
 
 
@@ -89,8 +117,11 @@ public class ProfileDataService extends Service implements ProfileConstants {
             }
             Context context = _context.get();
             if (context != null) {
-                if (_intent.getStringExtra(PARAM_ACTION).equals(PARAM_ACTION_GET_MY_PROFILE)) {
+                String action = _intent.getStringExtra(PARAM_ACTION);
+                if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
                     getMyUserInformation(context, _intent);
+                } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
+                    getAllNotifications(context, _intent);
                 }
             }
             synchronized (LOCK) {

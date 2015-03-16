@@ -1,20 +1,11 @@
 package com.fieldnation.rpc.webclient;
 
 import android.content.Context;
-import android.content.Intent;
-import android.location.Location;
 import android.os.ResultReceiver;
 
-import com.fieldnation.data.workorder.Expense;
-import com.fieldnation.data.workorder.ExpenseCategory;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.rpc.server.auth.OAuth;
-import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.service.data.oauth.OAuth;
 
-public class WorkorderWebClient extends WebClientAuth {
+class WorkorderWebClient extends WebClientAuth {
 
     public WorkorderWebClient(Context context, OAuth auth, ResultReceiver callback) {
         super(context, auth, callback);

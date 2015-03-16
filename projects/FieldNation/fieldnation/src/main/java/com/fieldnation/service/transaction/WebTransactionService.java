@@ -10,9 +10,9 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
-import com.fieldnation.rpc.server.auth.AuthTopicService;
-import com.fieldnation.rpc.server.auth.OAuth;
+import com.fieldnation.service.auth.AuthTopicReceiver;
+import com.fieldnation.service.auth.AuthTopicService;
+import com.fieldnation.service.data.oauth.OAuth;
 
 /**
  * Created by Michael Carver on 2/27/2015.

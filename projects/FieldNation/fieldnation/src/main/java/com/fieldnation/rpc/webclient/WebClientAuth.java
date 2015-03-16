@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.ResultReceiver;
 
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.server.auth.OAuth;
+import com.fieldnation.service.data.oauth.OAuth;
 
 /**
  * <p>
@@ -19,7 +19,7 @@ import com.fieldnation.rpc.server.auth.OAuth;
  *
  * @author michael.carver
  */
-public class WebClientAuth extends WebClient {
+class WebClientAuth extends WebClient {
     private OAuth _token;
 
     /**

@@ -1,8 +1,9 @@
-package com.fieldnation.rpc.server.auth;
+package com.fieldnation.service.auth;
 
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.topics.TopicReceiver;
 
 /**

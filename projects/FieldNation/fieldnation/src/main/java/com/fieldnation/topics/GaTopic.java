@@ -6,7 +6,7 @@ import android.os.Bundle;
 /**
  * Created by Michael Carver on 1/15/2015.
  */
-public class GaTopic {
+class GaTopic {
     public static final String EVENT = "TOPIC_GA_EVENT";
     public static final String EVENT_PARAM_CATEGORY = "TOPIC_GA_EVENT_PARAM_CATEGORY";
     public static final String EVENT_PARAM_ACTION = "TOPIC_GA_EVENT_PARAM_ACTION";

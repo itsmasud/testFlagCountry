@@ -10,6 +10,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
+import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
@@ -281,9 +282,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 helper.close();
             }
         }
-        if (success)
-            return get(context, obj._id);
-        else {
+        if (success) {
+            StoredObject result = get(context, obj._id);
+            TopicService.dispatchEvent(context, TOPIC_ID_OBJECT_STORE_WRITE, obj.toBundle(), true);
+            return result;
+        } else {
             return null;
         }
     }
@@ -333,6 +336,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 StoredObject result = get(context, id);
                 result.setFile(dest);
                 result.save(context);
+                TopicService.dispatchEvent(context, TOPIC_ID_OBJECT_STORE_WRITE, result.toBundle(), true);
                 return result;
             }
         }
@@ -363,8 +367,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 helper.close();
             }
         }
-        if (id != -1)
-            return get(context, id);
+        if (id != -1) {
+            StoredObject result = get(context, id);
+            TopicService.dispatchEvent(context, TOPIC_ID_OBJECT_STORE_WRITE, result.toBundle(), true);
+            return result;
+        }
 
         return null;
     }

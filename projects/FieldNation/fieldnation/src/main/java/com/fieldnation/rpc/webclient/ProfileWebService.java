@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
-import com.fieldnation.rpc.server.auth.OAuth;
+import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.utils.misc;
 
 class ProfileWebService extends WebClientAuth {

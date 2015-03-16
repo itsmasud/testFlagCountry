@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -13,11 +12,11 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.rpc.server.auth.AuthTopicReceiver;
-import com.fieldnation.rpc.server.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.rpc.webclient.ProfileWebService;
-import com.fieldnation.rpc.common.WebResultReceiver;
+import com.fieldnation.service.auth.AuthTopicReceiver;
+import com.fieldnation.service.auth.AuthTopicService;
+import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.topics.TopicReceiver;
 import com.fieldnation.topics.TopicService;
 import com.fieldnation.topics.TopicShutdownReciever;
@@ -50,7 +49,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private TwoButtonDialog _coiWarningDialog;
 
     // Services
-    private ProfileWebService _service;
     private TopicShutdownReciever _shutdownListener;
 
     // Data
@@ -218,7 +216,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            startService(_service.acceptTos(0, _profile.getUserId()));
+            ProfileDataClient.acceptTos(AuthActionBarActivity.this, _profile.getUserId());
         }
 
         @Override
@@ -276,37 +274,11 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         }
 
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || isNew) {
-                _service = new ProfileWebService(AuthActionBarActivity.this, username, authToken, _webReceiver);
-            }
-            AuthActionBarActivity.this.onAuthentication(username, authToken, isNew);
-        }
-
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            AuthActionBarActivity.this.onAuthenticationFailed(networkDown);
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            AuthActionBarActivity.this.onAuthenticationInvalidated();
+        public void onAuthentication(OAuth auth, boolean isNew) {
+            AuthActionBarActivity.this.onAuthentication(auth, isNew);
         }
     };
 
-    private final WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "WebResultReceiver");
-            _profileBounceProtect = false;
-            Topics.dispatchProfileInvalid(AuthActionBarActivity.this);
-        }
-
-        @Override
-        public Context getContext() {
-            return AuthActionBarActivity.this;
-        }
-    };
 
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
@@ -324,13 +296,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         }
     };
 
-    public abstract void onAuthentication(String username, String authToken, boolean isNew);
-
-    public void onAuthenticationFailed(boolean networkDown) {
-    }
-
-    public void onAuthenticationInvalidated() {
-    }
+    public abstract void onAuthentication(OAuth auth, boolean isNew);
 
     // Menu
     @Override

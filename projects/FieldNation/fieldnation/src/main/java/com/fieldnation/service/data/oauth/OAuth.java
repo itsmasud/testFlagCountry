@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server.auth;
+package com.fieldnation.service.data.oauth;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -159,7 +159,9 @@ public class OAuth implements Parcelable {
         JsonObject token = result.getResultsAsJsonObject();
         token.put("username", username);
         token.put("host", host);
-        return OAuth.fromJson(token);
+        OAuth auth = OAuth.fromJson(token);
+        auth.save(context);
+        return auth;
     }
 
 

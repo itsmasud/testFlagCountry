@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 
 import com.fieldnation.Log;
-import com.fieldnation.rpc.server.auth.AuthTopicService;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.Stopwatch;
 

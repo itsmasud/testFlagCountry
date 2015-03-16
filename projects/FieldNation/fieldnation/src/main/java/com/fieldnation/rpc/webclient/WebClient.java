@@ -22,7 +22,7 @@ import com.fieldnation.service.objectstore.StoredObject;
  *
  * @author michael.carver
  */
-public class WebClient implements WebServiceConstants {
+class WebClient implements WebServiceConstants {
     protected Context _context;
     protected ResultReceiver _callback;
 

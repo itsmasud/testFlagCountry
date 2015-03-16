@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 import android.database.DataSetObserver;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -26,7 +25,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private int _size;
     private Listener _listener;
 
-    public void setPage(int page, List<T> items, boolean isCached) {
+    public void setPage(int page, List<T> items) {
         Log.v(TAG, "setPage()");
 
         if (items.size() > 0) {
@@ -37,10 +36,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         if (_loadingPages.contains(page)) {
             _loadingPages.remove(page);
         }
-
-        // request an update if results are cached
-        if (isCached)
-            preRequestPage(page, false);
 
         if (_loadingPages.size() == 0 && _listener != null) {
             _listener.onLoadingComplete();
