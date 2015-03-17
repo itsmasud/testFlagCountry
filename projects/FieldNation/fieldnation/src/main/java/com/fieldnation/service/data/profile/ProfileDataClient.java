@@ -3,6 +3,7 @@ package com.fieldnation.service.data.profile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Notification;
@@ -20,20 +21,11 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileDataClient implements ProfileConstants {
-    private String TAG = UniqueTag.makeTag("service.data.profile.ProfileDataClient");
+public class ProfileDataClient extends TopicClient implements ProfileConstants {
+    private String TAG = UniqueTag.makeTag("ProfileDataClient");
 
-    private TopicClient _client = null;
-    private Listener _listener;
-
-    public ProfileDataClient(Context context, Listener listener) {
-        _listener = listener;
-        _client = new TopicClient(_client_listener);
-        _client.connect(context);
-    }
-
-    public void stop(Context context) {
-        _client.disconnect(context);
+    public ProfileDataClient(Listener listener) {
+        super(listener);
     }
 
     public static void acceptTos(Context context, long userId) {
@@ -55,10 +47,17 @@ public class ProfileDataClient implements ProfileConstants {
         }
     }
 
-    public static void getMyUserInformation(Context context) {
+    public static void getProfile(Context context) {
         Intent intent = new Intent(context, ProfileDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_MY_PROFILE);
         context.startService(intent);
+    }
+
+    public boolean registerProfile() {
+        if (!isConnected())
+            return false;
+
+        return register(TOPIC_ID_HAVE_PROFILE, TAG);
     }
 
     public static void getAllNotifications(Context context, int page) {
@@ -66,6 +65,13 @@ public class ProfileDataClient implements ProfileConstants {
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
         intent.putExtra(PARAM_PAGE, page);
         context.startService(intent);
+    }
+
+    public boolean registerAllNotifications() {
+        if (!isConnected())
+            return false;
+
+        return register(TOPIC_ID_ALL_NOTIFICATION_LIST, TAG);
     }
 
     public void getAllMessages(Context context, int page) {
@@ -76,57 +82,52 @@ public class ProfileDataClient implements ProfileConstants {
 
     }
 
-    private final TopicClient.Listener _client_listener = new TopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _client.register(TOPIC_ID_HAVE_PROFILE, TAG);
-            _client.register(TOPIC_ID_ALL_NOTIFICATION_LIST, TAG);
-        }
+    public static abstract class Listener extends TopicClient.Listener {
 
         @Override
-        public void onDisconnected() {
-
-        }
-
-        @Override
-        public void onRegistered(String topicId) {
-
-        }
-
-        @Override
-        public void onEvent(String topicId, Bundle payload) {
+        public void onEvent(String topicId, Parcelable payload) {
+            if (!(payload instanceof Bundle)) {
+                return;
+            }
+            Bundle bundle = (Bundle) payload;
             if (topicId.equals(TOPIC_ID_HAVE_PROFILE)) {
-                try {
-                    Profile profile = Profile.fromJson(new JsonObject(payload.getByteArray(PARAM_DATA)));
-                    if (_listener != null)
-                        _listener.onProfile(profile);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                preProfile(bundle);
             } else if (topicId.equals(TOPIC_ID_ALL_NOTIFICATION_LIST)) {
-                try {
-                    List<Notification> list = new LinkedList<>();
-                    int page = payload.getInt(PARAM_PAGE);
-                    JsonArray jalerts = new JsonArray(payload.getByteArray(PARAM_DATA));
-                    for (int i = 0; i < jalerts.size(); i++) {
-                        list.add(Notification.fromJson(jalerts.getJsonObject(i)));
-                    }
+                preAllNotificationPage(bundle);
+            }
 
-                    if (_listener != null)
-                        _listener.onAllNotificationPage(list, page);
+        }
 
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+        protected void preProfile(Bundle payload) {
+            try {
+                Profile profile = Profile.fromJson(new JsonObject(payload.getByteArray(PARAM_DATA)));
+                onProfile(profile);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
+
+        public void onProfile(Profile profile) {
+        }
+
+        protected void preAllNotificationPage(Bundle payload) {
+            try {
+                List<Notification> list = new LinkedList<>();
+                int page = payload.getInt(PARAM_PAGE);
+                JsonArray jalerts = new JsonArray(payload.getByteArray(PARAM_DATA));
+                for (int i = 0; i < jalerts.size(); i++) {
+                    list.add(Notification.fromJson(jalerts.getJsonObject(i)));
                 }
+
+                onAllNotificationPage(list, page);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
-    };
 
-    public interface Listener {
-        public void onProfile(Profile profile);
-
-        public void onAllNotificationPage(List<Notification> list, int page);
+        public void onAllNotificationPage(List<Notification> list, int page) {
+        }
     }
-
-
 }

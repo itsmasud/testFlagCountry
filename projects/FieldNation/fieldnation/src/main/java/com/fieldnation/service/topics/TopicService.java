@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Parcelable;
 
 import com.fieldnation.Log;
 
@@ -23,7 +24,7 @@ public class TopicService extends Service implements TopicConstants {
     private static final String TAG = "TopicService";
 
     private Messenger _me = new Messenger(new IncomeHandler(this));
-    private Hashtable<String, Bundle> _lastSent;
+    private Hashtable<String, Parcelable> _lastSent;
     private int _bindCount = 0;
     private int _lastStartId = -1;
 
@@ -117,7 +118,7 @@ public class TopicService extends Service implements TopicConstants {
         if (_lastSent.containsKey(topicId)) {
             bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
-            bundle.putBundle(PARAM_TOPIC_BUNDLE, _lastSent.get(topicId));
+            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, _lastSent.get(topicId));
             sendEvent(replyTo, WHAT_DISPATCH_EVENT, bundle, c.userTag);
         }
     }
@@ -147,7 +148,7 @@ public class TopicService extends Service implements TopicConstants {
         Log.v(TAG, "dispatch");
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         boolean keepLast = bundle.getBoolean(PARAM_KEEP_LAST);
-        Bundle payload = bundle.getBundle(PARAM_TOPIC_BUNDLE);
+        Parcelable payload = bundle.getParcelable(PARAM_TOPIC_PARCELABLE);
 
         Bundle response = new Bundle();
         //response.putString(TopicConstants.ACTION, TopicConstants.ACTION_DISPATCH_EVENT);
@@ -164,7 +165,7 @@ public class TopicService extends Service implements TopicConstants {
         while (iter.hasNext()) {
             TopicUser c = iter.next();
             //Log.v(TAG, "Client: " + c.tag);
-            bundle.putBundle(PARAM_TOPIC_BUNDLE, payload);
+            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, payload);
             sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
         }
 
@@ -177,13 +178,13 @@ public class TopicService extends Service implements TopicConstants {
 //        }
     }
 
-    public static void dispatchEvent(Context context, String topicId, Bundle payload, boolean keepLast) {
+    public static void dispatchEvent(Context context, String topicId, Parcelable payload, boolean keepLast) {
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
         if (payload != null)
-            intent.putExtra(PARAM_TOPIC_BUNDLE, payload);
+            intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) payload);
         else
-            intent.putExtra(PARAM_TOPIC_BUNDLE, new Bundle());
+            intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) new Bundle());
         intent.putExtra(PARAM_KEEP_LAST, keepLast);
 
         context.startService(intent);

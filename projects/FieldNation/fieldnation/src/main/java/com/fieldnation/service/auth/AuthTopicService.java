@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +14,7 @@ import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.ui.AuthActivity;
 
 /**
  * Created by Michael on 12/15/2014.
@@ -128,8 +128,8 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         } else {
             Log.v(TAG, "handleRequest STATE_AUTHENTICATED");
             if (_authToken != null) {
-                Log.v(TAG, "handleRequest dispatchAuthComplete");
-                dispatchAuthComplete(AuthTopicService.this, _authToken);
+                Log.v(TAG, "handleRequest onAuthComplete");
+                onAuthComplete(_authToken);
             } else if (_account != null) {
                 Log.v(TAG, "handleRequest requestAuthTokenFromAccountManager");
                 // don't have an auth token, but we are authenticated, so ask AOS for the token
@@ -148,7 +148,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
             _account = null;
         } else if (_state == STATE_NOT_AUTHENTICATED) {
-            dispatchAuthInvalid(this);
+            onAuthInvalid();
         } else {
             //TODO probably need a workaround for this
             new Handler().postDelayed(new Runnable() {
@@ -171,12 +171,36 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     private void cancelAuth() {
         setState(STATE_NOT_AUTHENTICATED);
         _account = null;
-        //dispatchAuthInvalid(AuthTopicService.this);
+        //onAuthInvalid(AuthTopicService.this);
     }
 
     /*-*********************************-*/
     /*-         Internal Stuff          -*/
     /*-*********************************-*/
+    private void onAuthComplete(OAuth oauth) {
+    }
+
+    private void onAppIsOld() {
+    }
+
+    private void onAuthInvalid() {
+
+    }
+
+    private void onAuthFailed() {
+
+    }
+
+    private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {
+        Intent intent = new Intent(this, AuthActivity.class);
+
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
     /**
      * Requests auth from account manager
@@ -226,9 +250,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     private final FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
         @Override
         public void onComplete(Object result) {
-            if (_isShuttingDown)
-                return;
-
             boolean isAuthenticatorResponse = false;
 
             if (result instanceof Bundle) {
@@ -240,7 +261,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                 Log.v(TAG, "FutureWaitAsyncTask intent");
                 Bundle bundle = (Bundle) result;
                 // need to get username and password
-                dispatchNeedUsernameAndPassword(AuthTopicService.this, bundle.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE));
+                onNeedUserNameAndPassword(bundle.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE));
                 //startActivity(intent);
 
             } else if (_state == STATE_AUTHENTICATED || _state == STATE_AUTHENTICATING) {
@@ -264,7 +285,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                         if (bundle.containsKey(AccountManager.KEY_AUTH_FAILED_MESSAGE)
                                 && getString(R.string.login_error_update_app).equals(bundle.getString(AccountManager.KEY_AUTH_FAILED_MESSAGE))) {
                             // account fail, check if app is too old
-                            Topics.dispatchNeedUpdate(AuthTopicService.this);
+                            onAppIsOld();
                         }
                     }
                 } else {
@@ -272,14 +293,14 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                     Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
                     _authToken = bundle.getParcelable(OAuth.KEY_OAUTH);
                     setState(STATE_AUTHENTICATED);
-                    dispatchAuthComplete(AuthTopicService.this, _authToken);
+                    onAuthComplete(_authToken);
                 }
             } else if (_state == STATE_REMOVING) {
                 // removing complete
                 Log.v(TAG, "FutureWaitAsyncTask removing");
                 setState(STATE_NOT_AUTHENTICATED);
-                dispatchAuthInvalid(AuthTopicService.this);
-                requestAuthentication(AuthTopicService.this);
+                onAuthInvalid();
+                requestToken();
             } else {
                 Log.v(TAG, "FutureWaitAsyncTask unknown " + _state);
                 setState(STATE_NOT_AUTHENTICATED);
@@ -289,24 +310,16 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         @Override
         public void onFail(Exception ex) {
             setState(STATE_NOT_AUTHENTICATED);
-            dispatchAuthFailed(AuthTopicService.this);
+            onAuthFailed();
         }
     };
-
-
 
     /*-*****************************-*/
     /*-         Old Stuff           -*/
     /*-*****************************-*/
-
-
-
-
-
     /*-*************************-*/
     /*-         Topics          -*/
     /*-*************************-*/
-
 /*
     private final TopicReceiver _topics = new TopicReceiver(new Handler()) {
         @Override
@@ -373,6 +386,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     /*-********************************-*/
     /*-             Topic API          -*/
     /*-********************************-*/
+/*
     private static void startService(Context context) {
         if (context == null)
             return;
@@ -405,6 +419,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         TopicService.registerListener(context, resultCode, tag, TOPIC_AUTH_COMMAND, topicReceiver);
     }
 
+*/
 /*
     private static void dispatchNoNetwork(Context context) {
         if (context == null)
@@ -415,7 +430,8 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_STATE, bundle);
     }
-*/
+*//*
+
 
     // internal
     private static void dispatchAuthFailed(Context context) {
@@ -429,7 +445,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     }
 
     // internal
-    private static void dispatchAuthInvalid(Context context) {
+    private static void onAuthInvalid(Context context) {
         if (context == null)
             return;
 
@@ -438,11 +454,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_STATE, bundle);
     }
-
     public static void subscribeNeedUsernameAndPassword(Context context, String tag, TopicReceiver topicReceiver) {
         TopicService.registerListener(context, 0, tag, TOPIC_AUTH_STARTUP, topicReceiver);
     }
-
     public static void dispatchNeedUsernameAndPassword(Context context, Parcelable parcel) {
         Log.v(TAG, "dispatchNeedUsernameAndPassword");
         if (context == null)
@@ -470,7 +484,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         TopicService.dispatchTopic(context, TOPIC_AUTH_STARTUP, bundle, true);
     }
 
-    public static void dispatchAuthComplete(Context context) {
+    public static void onAuthComplete(Context context) {
         if (context == null)
             return;
 
@@ -493,7 +507,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     }
 
     // internal
-    private static void dispatchAuthComplete(Context context, OAuth authToken) {
+    private static void onAuthComplete(Context context, OAuth authToken) {
         if (context == null)
             return;
 
@@ -538,5 +552,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_COMMAND, bundle);
     }
+*/
 
 }

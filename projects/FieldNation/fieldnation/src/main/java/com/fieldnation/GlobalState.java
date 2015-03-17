@@ -3,14 +3,11 @@ package com.fieldnation;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 
-import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.service.auth.AuthTopicReceiver;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.service.data.profile.ProfileDataClient;
@@ -21,7 +18,6 @@ import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -37,11 +33,14 @@ public class GlobalState extends Application {
     public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
     public static final String PREF_COI_NEVER = "PREF_COI_NEVER";
-    public static final String PREF_PROFILE_ID = "PREF_PROFILE_ID";
+
+    private static GlobalState _context;
 
     private Tracker _tracker;
     private Profile _profile;
-    private static GlobalState _context;
+    private GoogleAnalyticsTopicClient _gaTopicClient;
+    private GlobalTopicClient _globalTopicClient;
+    private ProfileDataClient _profileClient;
 
     public GlobalState() {
         super();
@@ -59,9 +58,14 @@ public class GlobalState extends Application {
             System.setProperty("http.keepalive", "false");
         }
 
-        GaTopic.subscribeEvent(this, TAG, _gaevent_receiver);
-        GaTopic.subscribeScreenView(this, TAG, _gaevent_receiver);
-        GaTopic.subscribeTiming(this, TAG, _gaevent_receiver);
+        _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
+        _gaTopicClient.connect(this);
+
+        _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
+        _globalTopicClient.connect(this);
+
+        _profileClient = new ProfileDataClient(_profile_listener);
+        _profileClient.connect(this);
 
         AuthTopicService.subscribeAuthState(this, 0, TAG + ":AuthTopicService", _authReceiver);
         Topics.subscribeProfileInvalidated(this, TAG + ":ProfileService", _profile_topicReceiver);
@@ -69,6 +73,9 @@ public class GlobalState extends Application {
 
     @Override
     public void onTerminate() {
+        _gaTopicClient.disconnect(this);
+        _profileClient.disconnect(this);
+        _globalTopicClient.disconnect(this);
         super.onTerminate();
         _context = null;
     }
@@ -93,38 +100,37 @@ public class GlobalState extends Application {
 
     };
 
-    private final ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
-        @Override
-        public void onProfile(Profile profile) {
-        }
-
-        @Override
-        public void onAllNotificationPage(List<Notification> list, int page) {
-
-        }
-    };
-
     /*-*************************-*/
     /*-         Profile         -*/
     /*-*************************-*/
+    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalTopicClient.registerProfileInvalid(GlobalState.this);
+        }
+
+        @Override
+        public void onProfileInvalid() {
+            ProfileDataClient.getProfile(GlobalState.this);
+        }
+    };
+
+    private final ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
+        @Override
+        public void onConnected() {
+            _profileClient.registerProfile();
+        }
+
+        @Override
+        public void onProfile(Profile profile) {
+            _profile = profile;
+            GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
+        }
+    };
+
     public Profile getProfile() {
         return _profile;
     }
-
-    private final TopicReceiver _profile_topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_PROFILE_INVALIDATED.equals(topicId)) {
-                if (_service != null) {
-                    startService(
-                            _service.getMyUserInformation(0, false));
-                } else {
-                    // TODO Profile invalid, but no service... what to do?
-                    Log.v(TAG, "Profile invalid, but no service... what to do?");
-                }
-            }
-        }
-    };
 
     /*-*********************-*/
     /*-         GA          -*/
@@ -144,84 +150,57 @@ public class GlobalState extends Application {
         return _tracker;
     }
 
-    private final TopicReceiver _gaevent_receiver = new TopicReceiver(new Handler()) {
+    private final GoogleAnalyticsTopicClient.Listener _gaTopicClient_listener = new GoogleAnalyticsTopicClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (GaTopic.EVENT.equals(topicId)) {
-                String category = parcel.getString(GaTopic.EVENT_PARAM_CATEGORY);
-                String action = parcel.getString(GaTopic.EVENT_PARAM_ACTION);
-                String label = parcel.getString(GaTopic.EVENT_PARAM_LABEL);
+        public void onConnected() {
+            _gaTopicClient.registerEvents();
+            _gaTopicClient.registerScreenView();
+            _gaTopicClient.registerTiming();
+        }
 
-                Long value = null;
-                if (parcel.containsKey(GaTopic.EVENT_PARAM_VALUE)) {
-                    value = parcel.getLong(GaTopic.EVENT_PARAM_VALUE);
-                }
+        @Override
+        public void onGaEvent(String category, String action, String label, Long value) {
+            Tracker t = getTracker();
 
-                sendGaEvent(category, action, label, value);
-            } else if (GaTopic.SCREENVIEW.equals(topicId)) {
-                String screenName = parcel.getString(GaTopic.SCREENVIEW_PARAM_NAME);
+            HitBuilders.EventBuilder event = new HitBuilders.EventBuilder();
 
-                sendGaScreen(screenName);
-            } else if (GaTopic.TIMING.equals(topicId)) {
-                String category = null;
-                String variable = null;
-                String label = null;
-                Long value = null;
+            event.setCategory(category).setAction(action).setLabel(label);
 
-                if (parcel.containsKey(GaTopic.TIMING_PARAM_CATEGORY))
-                    category = parcel.getString(GaTopic.TIMING_PARAM_CATEGORY);
-
-                if (parcel.containsKey(GaTopic.TIMING_PARAM_LABEL))
-                    label = parcel.getString(GaTopic.EVENT_PARAM_LABEL);
-
-                if (parcel.containsKey(GaTopic.TIMING_PARAM_VARIABLE))
-                    variable = parcel.getString(GaTopic.TIMING_PARAM_VARIABLE);
-
-                if (parcel.containsKey(GaTopic.TIMING_PARAM_VALUE))
-                    value = parcel.getLong(GaTopic.TIMING_PARAM_VALUE);
-
-                sendGaTiming(category, variable, label, value);
+            if (value != null) {
+                event.setValue(value);
             }
+
+            t.send(event.build());
+        }
+
+        @Override
+        public void onGaScreen(String screenName) {
+            Tracker t = getTracker();
+            t.setScreenName(screenName);
+            t.send(new HitBuilders.AppViewBuilder().build());
+        }
+
+        @Override
+        public void onGaTiming(String category, String variable, String label, Long value) {
+            HitBuilders.TimingBuilder timing = new HitBuilders.TimingBuilder();
+            Tracker t = getTracker();
+
+            if (category != null)
+                timing.setCategory(category);
+
+            if (variable != null)
+                timing.setVariable(variable);
+
+            if (label != null)
+                timing.setLabel(label);
+
+            if (value != null)
+                timing.setValue(value);
+
+            t.send(timing.build());
         }
     };
 
-    public void sendGaEvent(String category, String action, String label, Long value) {
-        Tracker t = getTracker();
-        HitBuilders.EventBuilder event = new HitBuilders.EventBuilder();
-
-        event.setCategory(category).setAction(action).setLabel(label);
-
-        if (value != null) {
-            event.setValue(value);
-        }
-
-        t.send(event.build());
-    }
-
-    public void sendGaScreen(String screenName) {
-        Tracker t = getTracker();
-        t.setScreenName(screenName);
-        t.send(new HitBuilders.AppViewBuilder().build());
-    }
-
-    public void sendGaTiming(String category, String variable, String label, Long value) {
-        HitBuilders.TimingBuilder timing = new HitBuilders.TimingBuilder();
-        Tracker t = getTracker();
-
-        if (category != null)
-            timing.setCategory(category);
-
-        if (variable != null)
-            timing.setVariable(variable);
-
-        if (label != null)
-            timing.setLabel(label);
-
-        if (value != null)
-            timing.setValue(value);
-
-        t.send(timing.build());
-    }
 
     public boolean canRemindCoi() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);

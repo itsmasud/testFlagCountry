@@ -13,14 +13,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.service.auth.AuthTopicReceiver;
 import com.fieldnation.service.auth.AuthTopicService;
-import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.service.data.profile.ProfileDataClient;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.TopicShutdownReciever;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -267,19 +261,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         }
     };
 
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
-        }
-
-        @Override
-        public void onAuthentication(OAuth auth, boolean isNew) {
-            AuthActionBarActivity.this.onAuthentication(auth, isNew);
-        }
-    };
-
-
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -295,8 +276,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             }
         }
     };
-
-    public abstract void onAuthentication(OAuth auth, boolean isNew);
 
     // Menu
     @Override

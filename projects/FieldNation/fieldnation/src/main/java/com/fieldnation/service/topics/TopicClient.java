@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Parcelable;
 
 import java.lang.ref.WeakReference;
 
@@ -104,11 +105,14 @@ public class TopicClient implements TopicConstants {
      * @param keepLast
      * @return
      */
-    public boolean dispatchEvent(String topicId, Bundle payload, boolean keepLast) {
+    public boolean dispatchEvent(String topicId, Parcelable payload, boolean keepLast) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
-            bundle.putBundle(PARAM_TOPIC_BUNDLE, payload);
+            if (payload == null)
+                bundle.putParcelable(PARAM_TOPIC_PARCELABLE, new Bundle());
+            else
+                bundle.putParcelable(PARAM_TOPIC_PARCELABLE, payload);
             bundle.putBoolean(PARAM_KEEP_LAST, keepLast);
 
             Message msg = Message.obtain();
@@ -130,7 +134,7 @@ public class TopicClient implements TopicConstants {
      * @param payload
      * @param keepLast
      */
-    public static void dispatchEvent(Context context, String topicId, Bundle payload, boolean keepLast) {
+    public static void dispatchEvent(Context context, String topicId, Parcelable payload, boolean keepLast) {
         TopicService.dispatchEvent(context, topicId, payload, keepLast);
     }
 
@@ -184,7 +188,7 @@ public class TopicClient implements TopicConstants {
                 case WHAT_DISPATCH_EVENT: {
                     Bundle payload = msg.getData();
                     client._listener.onEvent(payload.getString(PARAM_TOPIC_ID),
-                            payload.getBundle(PARAM_TOPIC_BUNDLE));
+                            payload.getParcelable(PARAM_TOPIC_PARCELABLE));
                     break;
                 }
             }
@@ -192,14 +196,16 @@ public class TopicClient implements TopicConstants {
         }
     }
 
-    public interface Listener {
+    public static abstract class Listener {
 
-        public void onConnected();
+        public abstract void onConnected();
 
-        public void onDisconnected();
+        public void onDisconnected() {
+        }
 
-        public void onRegistered(String topicId);
+        public void onRegistered(String topicId) {
+        }
 
-        public void onEvent(String topicId, Bundle payload);
+        public abstract void onEvent(String topicId, Parcelable payload);
     }
 }
