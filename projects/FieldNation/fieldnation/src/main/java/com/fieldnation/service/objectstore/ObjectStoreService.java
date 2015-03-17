@@ -10,7 +10,7 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.Log;
-import com.fieldnation.topics.TopicService;
+import com.fieldnation.service.topics.TopicService;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -145,8 +145,9 @@ class ObjectStoreService extends Service implements ObjectStoreConstants {
         }
 
         // Not sure this is a good idea because it doesn't include the merged transforms
-        if (obj != null)
-            TopicService.dispatchTopic(this, TOPIC_ID_OBJECT_UPDATE, obj.toBundle(), false);
+        if (obj != null) {
+            TopicService.dispatchEvent(this, TOPIC_ID_OBJECT_UPDATE, obj.toBundle(), false);
+        }
 
         try {
             if (replyTo != null) {

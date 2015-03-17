@@ -3,15 +3,13 @@ package com.fieldnation.service.transaction;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.service.auth.AuthTopicReceiver;
-import com.fieldnation.service.auth.AuthTopicService;
+import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.oauth.OAuth;
 
 /**
@@ -26,17 +24,19 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
     private WebTransaction _currentTransaction = null;
     private OAuth _auth;
+    private AuthTopicClient _authTopicClient;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        AuthTopicService.subscribeAuthState(this, 0, TAG, _topicReceiver);
+        _authTopicClient = new AuthTopicClient(_authTopic_listener);
+        _authTopicClient.connect(this);
     }
 
     @Override
     public void onDestroy() {
-        AuthTopicService.unsubscribeAuthState(this, TAG);
+        _authTopicClient.disconnect(this);
         super.onDestroy();
     }
 
@@ -74,13 +74,17 @@ public class WebTransactionService extends Service implements WebTransactionCons
         return START_STICKY;
     }
 
-    private final AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
-        public void onAuthentication(OAuth auth, boolean isNew) {
-            _auth = auth;
-            if (_currentTransaction == null) {
+        public void onConnected() {
+            _authTopicClient.registerHaveAuth();
+        }
+
+        @Override
+        public void onHaveAuth(OAuth oauth) {
+            _auth = oauth;
+            if (_currentTransaction == null)
                 startTransaction();
-            }
         }
     };
 

@@ -20,14 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.rpc.server.auth.depricated.AuthWebService;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.TopicShutdownReciever;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
@@ -58,7 +55,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private Animation _fadeout;
 
     // Services
-    private TopicShutdownReciever _shutdownService;
+    private GlobalTopicClient _globalClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -113,24 +110,28 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
-        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
-        AuthTopicService.dispatchGettingUsernameAndPassword(this);
+        _globalClient = new GlobalTopicClient(_globalClient_listener);
+        _globalClient.connect(this);
+//        _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
+//        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
+//        AuthTopicService.dispatchGettingUsernameAndPassword(this);
     }
 
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
+        _globalClient.disconnect(this);
         super.onPause();
-        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
+//        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
     }
 
     @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
-        Topics.dispatchShutdown(this);
+        GlobalTopicClient.dispatchAppShutdown(this);
+//        Topics.dispatchShutdown(this);
         if (!_authcomplete) {
-            AuthTopicService.dispatchAuthCancelled(this);
+//            AuthTopicService.dispatchAuthCancelled(this);
         }
         super.onBackPressed();
     }
@@ -138,7 +139,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     @Override
     protected void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _shutdownService.onPause();
         if (!_authcomplete) {
             //AuthTopicService.dispatchAuthCancelled(this);
         }
@@ -148,6 +148,18 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalClient.registerUpdateApp();
+            _globalClient.registerGotProfile();
+        }
+
+        @Override
+        public void onNeedAppUpdate() {
+            _updateDialog.show();
+        }
+    };
     private final Animation.AnimationListener _fadeout_listener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
@@ -160,15 +172,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         @Override
         public void onAnimationRepeat(Animation animation) {
-        }
-    };
-
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
-                _updateDialog.show();
-            }
         }
     };
 

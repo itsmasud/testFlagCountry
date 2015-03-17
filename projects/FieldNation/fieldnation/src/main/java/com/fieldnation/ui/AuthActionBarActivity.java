@@ -9,10 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
@@ -43,7 +45,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private TwoButtonDialog _coiWarningDialog;
 
     // Services
-    private TopicShutdownReciever _shutdownListener;
+    private GlobalTopicClient _globalClient;
 
     // Data
     private Profile _profile;
@@ -85,6 +87,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
+        _globalClient = new GlobalTopicClient();
+        _globalClient.connect(this);
     }
 
     @Override
@@ -196,12 +200,12 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicService.requestAuthRemove(AuthActionBarActivity.this);
+            AuthTopicClient.dispatchRemoveAuth(AuthActionBarActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicService.requestAuthRemove(AuthActionBarActivity.this);
+            AuthTopicClient.dispatchRemoveAuth(AuthActionBarActivity.this);
         }
     };
 
@@ -261,19 +265,22 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         }
     };
 
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalListener = new GlobalTopicClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
-                _updateDialog.show();
-            }
+        public void onConnected() {
+            _globalClient.registerGotProfile();
+            _globalClient.registerUpdateApp();
+        }
 
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
-                parcel.setClassLoader(getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                gotProfile();
-            }
+        @Override
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
+            gotProfile();
+        }
+
+        @Override
+        public void onNeedAppUpdate() {
+            _updateDialog.show();
         }
     };
 

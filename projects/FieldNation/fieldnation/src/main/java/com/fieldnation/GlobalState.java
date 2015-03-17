@@ -4,11 +4,10 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.service.auth.AuthTopicService;
+import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.utils.misc;
@@ -41,6 +40,7 @@ public class GlobalState extends Application {
     private GoogleAnalyticsTopicClient _gaTopicClient;
     private GlobalTopicClient _globalTopicClient;
     private ProfileDataClient _profileClient;
+    private AuthTopicClient _authTopicClient;
 
     public GlobalState() {
         super();
@@ -67,8 +67,8 @@ public class GlobalState extends Application {
         _profileClient = new ProfileDataClient(_profile_listener);
         _profileClient.connect(this);
 
-        AuthTopicService.subscribeAuthState(this, 0, TAG + ":AuthTopicService", _authReceiver);
-        Topics.subscribeProfileInvalidated(this, TAG + ":ProfileService", _profile_topicReceiver);
+        _authTopicClient = new AuthTopicClient(_authTopic_listener);
+        _authTopicClient.connect(this);
     }
 
     @Override
@@ -76,6 +76,7 @@ public class GlobalState extends Application {
         _gaTopicClient.disconnect(this);
         _profileClient.disconnect(this);
         _globalTopicClient.disconnect(this);
+        _authTopicClient.disconnect(this);
         super.onTerminate();
         _context = null;
     }
@@ -87,17 +88,17 @@ public class GlobalState extends Application {
     /*-**********************-*/
     /*-         Auth         -*/
     /*-**********************-*/
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
-        public void onAuthentication(OAuth auth, boolean isNew) {
-            ProfileDataClient.getMyUserInformation(GlobalState.this);
+        public void onConnected() {
+            AuthTopicClient.dispatchRequestAuth(GlobalState.this);
+            _authTopicClient.registerHaveAuth();
         }
 
         @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(GlobalState.this);
+        public void onHaveAuth(OAuth oauth) {
+            ProfileDataClient.getProfile(GlobalState.this);
         }
-
     };
 
     /*-*************************-*/

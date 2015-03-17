@@ -16,6 +16,7 @@ public class GlobalTopicClient extends TopicClient {
     private static final String TOPIC_APP_UPDATE = "GlobalTopicClient:TOPIC_APP_UPDATE";
     private static final String TOPIC_GOT_PROFILE = "GlobalTopicClient:TOPIC_GOT_PROFILE";
     private static final String TOPIC_PROFILE_INVALID = "GlobalTopicClient:TOPIC_PROFILE_INVALID";
+    private static final String TOPIC_SHUTDOWN = "GlobalTopicClient:TOPIC_SHUTDOWN";
 
     public GlobalTopicClient(Listener listener) {
         super(listener);
@@ -61,6 +62,20 @@ public class GlobalTopicClient extends TopicClient {
             return false;
 
         return register(TOPIC_PROFILE_INVALID, TAG);
+    }
+
+    public static void dispatchAppShutdown(Context context) {
+        if (context == null)
+            return;
+
+        TopicService.dispatchEvent(context, TOPIC_APP_UPDATE, null, false);
+    }
+
+    public boolean registerAppShutdown() {
+        if (!isConnected())
+            return false;
+
+        return register(TOPIC_APP_UPDATE, TAG);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

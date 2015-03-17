@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 
 import com.fieldnation.FutureWaitAsyncTask;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.oauth.OAuth;
@@ -32,6 +33,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     private Account _account = null;
     private OAuth _authToken = null;
     private int _state;
+    private AuthTopicClient _authTopicClient;
 
     // Services
     private AccountManager _accountManager;
@@ -59,18 +61,10 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
-        if (intent == null) {
-            return START_STICKY;
-        }
         if (!_isStarted) {
-//            subscribeAuthCommand(this, 0, TAG, _topicReceiver);
-/*
-            TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_SHUTDOWN, _topics);
-            TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_NETWORK_DOWN, _topics);
-            TopicService.registerListener(this, 0, TAG + ":SYSTEM", Topics.TOPIC_NETWORK_UP, _topics);
-*/
+            _authTopicClient = new AuthTopicClient(_authClientListener);
+            _authTopicClient.connect(this);
             _isStarted = true;
-            //requestAuthentication(this);
         }
 
         return START_STICKY;
@@ -84,6 +78,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
+        _authTopicClient.disconnect(this);
         super.onDestroy();
     }
 
@@ -105,6 +100,29 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
         return "";
     }
+
+    private final AuthTopicClient.Listener _authClientListener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authTopicClient.registerRequestAuth();
+            _authTopicClient.registerInvalidAuth();
+            _authTopicClient.registerFailedAuth();
+        }
+
+        @Override
+        public void onAuthRequested() {
+            requestToken();
+        }
+
+        @Override
+        public void onAuthFailed() {
+        }
+
+        @Override
+        public void onAuthInvalid() {
+            invalidateToken();
+        }
+    };
 
     /*-*****************************-*/
     /*-         Commands            -*/
@@ -145,7 +163,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         if (_state == STATE_AUTHENTICATED) {
             setState(STATE_REMOVING);
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
-            new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+            new FutureWaitAsyncTask(_futureWaitAsync_remove).execute(future);
             _account = null;
         } else if (_state == STATE_NOT_AUTHENTICATED) {
             onAuthInvalid();
@@ -178,17 +196,19 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     /*-         Internal Stuff          -*/
     /*-*********************************-*/
     private void onAuthComplete(OAuth oauth) {
+        AuthTopicClient.dispatchHaveAuth(this, oauth);
     }
 
     private void onAppIsOld() {
+        GlobalTopicClient.dispatchUpdateApp(this);
     }
 
     private void onAuthInvalid() {
-
+        AuthTopicClient.dispatchInvalidAuth(this);
     }
 
     private void onAuthFailed() {
-
+        AuthTopicClient.dispatchFailedAuth(this);
     }
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {
@@ -209,7 +229,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         setState(STATE_AUTHENTICATING);
         AccountManagerFuture<Bundle> future = _accountManager.getAuthToken(
                 _account, getAccountType(), null, null, null, null);
-        new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+        new FutureWaitAsyncTask(_futureWaitAsync_token).execute(future);
     }
 
     /**
@@ -236,7 +256,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         if (accounts.length == 0) {
             future = _accountManager.addAccount(
                     getAccountType(), null, null, null, null, null, new Handler());
-            new FutureWaitAsyncTask(_futureWaitAsyncTaskListener).execute(future);
+            new FutureWaitAsyncTask(_futureWaitAsync_account).execute(future);
 
         } else if (accounts.length >= 1) {
             //TODO  always gets the first account, should probbaly present a picker of some kind
@@ -246,8 +266,91 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
     }
 
+    private final FutureWaitAsyncTask.Listener _futureWaitAsync_remove = new FutureWaitAsyncTask.Listener() {
+        @Override
+        public void onComplete(Object result) {
+            Log.v(TAG, "FutureWaitAsyncTask unknown " + _state);
+            setState(STATE_NOT_AUTHENTICATED);
+        }
 
-    private final FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener = new FutureWaitAsyncTask.Listener() {
+        @Override
+        public void onFail(Exception ex) {
+
+        }
+    };
+
+    private final FutureWaitAsyncTask.Listener _futureWaitAsync_account = new FutureWaitAsyncTask.Listener() {
+        @Override
+        public void onComplete(Object result) {
+            boolean isAuthenticatorResponse = false;
+
+            if (result instanceof Bundle) {
+                isAuthenticatorResponse = ((Bundle) result).containsKey(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
+            }
+
+            if (isAuthenticatorResponse) {
+                setState(STATE_AUTHENTICATING);
+                Log.v(TAG, "FutureWaitAsyncTask intent");
+                Bundle bundle = (Bundle) result;
+                // need to get username and password
+                onNeedUserNameAndPassword(bundle.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE));
+                //startActivity(intent);
+            } else {
+                // TODO oh shit!
+            }
+        }
+
+        @Override
+        public void onFail(Exception ex) {
+
+        }
+    };
+
+    private final FutureWaitAsyncTask.Listener _futureWaitAsync_token = new FutureWaitAsyncTask.Listener() {
+        @Override
+        public void onComplete(Object result) {
+            Log.v(TAG, "FutureWaitAsyncTask not removing");
+            Bundle bundle = (Bundle) result;
+            Log.v(TAG, "_futureWaitAsyncTaskListener.onComplete()");
+            String tokenString = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+
+            // auth is complete
+            // if however, data invalid, need to ask again.
+            if (tokenString == null) {
+                if (bundle.containsKey(AccountManager.KEY_ACCOUNT_TYPE) && bundle.containsKey(AccountManager.KEY_ACCOUNT_NAME)) {
+                    // account has been added, but no key yet
+                    Log.v(TAG, "FutureWaitAsyncTask, getAccount");
+                    setState(STATE_AUTHENTICATING);
+                    getAccount();
+                } else {
+                    Log.v(TAG, "FutureWaitAsyncTask, auth failure");
+                    // todo.. not sure
+                    setState(STATE_NOT_AUTHENTICATED);
+                    if (bundle.containsKey(AccountManager.KEY_AUTH_FAILED_MESSAGE)
+                            && getString(R.string.login_error_update_app).equals(bundle.getString(AccountManager.KEY_AUTH_FAILED_MESSAGE))) {
+                        // account fail, check if app is too old
+                        onAppIsOld();
+                    } else {
+                        onAuthInvalid();
+                    }
+                }
+            } else {
+                // have token string, get the full token
+                Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
+                _authToken = bundle.getParcelable(OAuth.KEY_OAUTH);
+                setState(STATE_AUTHENTICATED);
+                onAuthComplete(_authToken);
+            }
+        }
+
+        @Override
+        public void onFail(Exception ex) {
+
+        }
+    };
+
+
+    private final FutureWaitAsyncTask.Listener _futureWaitAsyncTaskListener2 = new FutureWaitAsyncTask.Listener() {
         @Override
         public void onComplete(Object result) {
             boolean isAuthenticatorResponse = false;
@@ -265,45 +368,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                 //startActivity(intent);
 
             } else if (_state == STATE_AUTHENTICATED || _state == STATE_AUTHENTICATING) {
-                Log.v(TAG, "FutureWaitAsyncTask not removing");
-                Bundle bundle = (Bundle) result;
-                Log.v(TAG, "_futureWaitAsyncTaskListener.onComplete()");
-                String tokenString = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-
-                // auth is complete
-                // if however, data invalid, need to ask again.
-                if (tokenString == null) {
-                    if (bundle.containsKey(AccountManager.KEY_ACCOUNT_TYPE) && bundle.containsKey(AccountManager.KEY_ACCOUNT_NAME)) {
-                        // account has been added, but no key yet
-                        Log.v(TAG, "FutureWaitAsyncTask, getAccount");
-                        setState(STATE_AUTHENTICATING);
-                        getAccount();
-                    } else {
-                        Log.v(TAG, "FutureWaitAsyncTask, auth failure");
-                        // todo.. not sure
-                        setState(STATE_NOT_AUTHENTICATED);
-                        if (bundle.containsKey(AccountManager.KEY_AUTH_FAILED_MESSAGE)
-                                && getString(R.string.login_error_update_app).equals(bundle.getString(AccountManager.KEY_AUTH_FAILED_MESSAGE))) {
-                            // account fail, check if app is too old
-                            onAppIsOld();
-                        }
-                    }
-                } else {
-                    // have token string, get the full token
-                    Log.v(TAG, "FutureWaitAsyncTask, dispatch account");
-                    _authToken = bundle.getParcelable(OAuth.KEY_OAUTH);
-                    setState(STATE_AUTHENTICATED);
-                    onAuthComplete(_authToken);
-                }
-            } else if (_state == STATE_REMOVING) {
-                // removing complete
-                Log.v(TAG, "FutureWaitAsyncTask removing");
-                setState(STATE_NOT_AUTHENTICATED);
-                onAuthInvalid();
-                requestToken();
             } else {
-                Log.v(TAG, "FutureWaitAsyncTask unknown " + _state);
-                setState(STATE_NOT_AUTHENTICATED);
             }
         }
 

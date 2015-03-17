@@ -2,20 +2,16 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
 
 public class NotificationActionBarView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("ui.NotificationActionBarView");
@@ -25,6 +21,7 @@ public class NotificationActionBarView extends RelativeLayout {
 
     // data
     private Profile _profile = null;
+    private GlobalTopicClient _client;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -55,13 +52,13 @@ public class NotificationActionBarView extends RelativeLayout {
 
         setOnClickListener(_this_onClick);
 
-        Topics.subscrubeProfileUpdated(getContext(), TAG + ":TopicService", _topicReceiver);
+        _client = new GlobalTopicClient(_topicClient_listener);
+        _client.connect(getContext());
     }
 
     @Override
     protected void finalize() throws Throwable {
-        TopicService.delete(getContext(), TAG + ":AuthTopicService");
-        TopicService.delete(getContext(), TAG + ":TopicService");
+        _client.disconnect(getContext());
         super.finalize();
     }
 
@@ -73,17 +70,15 @@ public class NotificationActionBarView extends RelativeLayout {
         }
     };
 
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+    private GlobalTopicClient.Listener _topicClient_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onRegister(int resultCode, String topicId) {
+        public void onConnected() {
+            _client.registerGotProfile();
         }
 
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                parcel.setClassLoader(getContext().getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-            }
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
             refresh();
         }
     };
