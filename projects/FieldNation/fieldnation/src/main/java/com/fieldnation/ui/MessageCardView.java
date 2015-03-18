@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
-import com.fieldnation.rpc.webclient.PhotoWebService;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -36,7 +35,6 @@ public class MessageCardView extends RelativeLayout {
     private ImageView _unreadImageView;
     private int _viewId;
 
-    private PhotoWebService _photoService;
     private Message _message;
     private String[] _substatus;
     private Drawable _profilePic = null;
@@ -67,7 +65,7 @@ public class MessageCardView extends RelativeLayout {
 
         _substatus = getResources().getStringArray(R.array.workorder_substatus);
 
-        _photoService = new PhotoWebService(getContext(), _resultReceiver);
+//        _photoService = new PhotoWebService(getContext(), _resultReceiver);
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
@@ -137,8 +135,8 @@ public class MessageCardView extends RelativeLayout {
             try {
                 _profileImageView.setBackgroundResource(R.drawable.missing_circle);
                 String url = _message.getFromUser().getPhotoUrl();
-                if (url != null)
-                    getContext().startService(_photoService.getPhoto(_viewId, url, true));
+//                if (url != null)
+//                    getContext().startService(_photoService.getPhoto(_viewId, url, true));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

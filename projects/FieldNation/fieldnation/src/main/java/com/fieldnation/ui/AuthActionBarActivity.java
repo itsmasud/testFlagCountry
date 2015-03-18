@@ -15,7 +15,6 @@ import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
@@ -87,8 +86,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
-        _globalClient = new GlobalTopicClient();
-        _globalClient.connect(this);
     }
 
     @Override
@@ -105,10 +102,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     protected void onResume() {
         isPaused = false;
         super.onResume();
-        AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
-        _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
-        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
-        Topics.subscrubeProfileUpdated(this, TAG + ":PROFILE", _topicReceiver);
+        _globalClient = new GlobalTopicClient(_globalListener);
+        _globalClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
@@ -120,8 +115,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         isPaused = true;
-        TopicService.delete(this, TAG);
-        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
+        _globalClient.disconnect(this);
         super.onPause();
     }
 
@@ -129,14 +123,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_TAG, TAG);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (_shutdownListener != null)
-            _shutdownListener.onPause();
-        TopicService.unRegisterListener(this, 0, TAG + ":PROFILE", Topics.TOPIC_PROFILE_UPDATE);
-        super.onDestroy();
     }
 
     private void gotProfile() {

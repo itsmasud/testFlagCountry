@@ -41,6 +41,10 @@ public class OAuth implements Parcelable {
     private String _username;
     @Json(name = "host")
     private String _host;
+    @Json(name = "error")
+    private String _error;
+    @Json(name = "error_description")
+    private String _errorDescription;
 
     public OAuth() {
     }
@@ -71,6 +75,33 @@ public class OAuth implements Parcelable {
 
     public String getHost() {
         return _host;
+    }
+
+    public boolean hasError() {
+        try {
+            return _error != null;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    public String getErrorType() {
+        try {
+            return _error;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getErrorDescription() {
+        try {
+            return _errorDescription;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public JsonObject toJson() {
@@ -163,7 +194,6 @@ public class OAuth implements Parcelable {
         auth.save(context);
         return auth;
     }
-
 
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/

@@ -87,6 +87,8 @@ public class GlobalTopicClient extends TopicClient {
                 onGotProfile((Profile) payload);
             } else if (TOPIC_PROFILE_INVALID.equals(topicId)) {
                 onProfileInvalid();
+            } else if (TOPIC_SHUTDOWN.equals(topicId)) {
+                onShutdown();
             }
         }
 
@@ -97,6 +99,9 @@ public class GlobalTopicClient extends TopicClient {
         }
 
         public void onProfileInvalid() {
+        }
+
+        public void onShutdown() {
         }
     }
 

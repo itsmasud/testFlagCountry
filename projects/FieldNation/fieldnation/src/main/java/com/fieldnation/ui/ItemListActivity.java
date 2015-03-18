@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 import android.os.Bundle;
-import android.os.ResultReceiver;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,9 +17,6 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     // UI
     private OverScrollListView _listView;
     private RefreshView _refreshView;
-
-    // Data
-    private String _authToken;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -105,15 +101,4 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
             _refreshView.refreshComplete();
         }
     };
-
-
-    /*-*****************************-*/
-    /*-				Web				-*/
-    /*-*****************************-*/
-
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        _authToken = authToken;
-        getData(0);
-    }
 }

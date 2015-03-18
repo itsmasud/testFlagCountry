@@ -2,13 +2,13 @@ package com.fieldnation.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ResultReceiver;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -20,11 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.rpc.server.auth.depricated.AuthWebService;
-import com.fieldnation.service.auth.AuthTopicService;
+import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
@@ -190,69 +190,73 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
 
-            String hostname = AuthActivity.this.getString(R.string.web_fn_hostname);
-            String grantType = AuthActivity.this.getString(R.string.auth_fn_grant_type);
-            String clientId = AuthActivity.this.getString(R.string.auth_fn_client_id);
-            String clientSecret = AuthActivity.this.getString(R.string.auth_fn_client_secret);
+            new AsyncTaskEx<Object, Object, OAuth>() {
 
-            AuthWebService authserve = new AuthWebService(AuthActivity.this);
-            Intent intent = authserve.authenticateWeb(_rpcReceiver, 1, hostname, grantType, clientId, clientSecret,
-                    _username, _password);
+                @Override
+                protected OAuth doInBackground(Object... params) {
+                    Context context = (Context) params[0];
+                    String hostname = AuthActivity.this.getString(R.string.web_fn_hostname);
+                    String grantType = AuthActivity.this.getString(R.string.auth_fn_grant_type);
+                    String clientId = AuthActivity.this.getString(R.string.auth_fn_client_id);
+                    String clientSecret = AuthActivity.this.getString(R.string.auth_fn_client_secret);
+                    String username = (String) params[1];
+                    String password = (String) params[2];
 
-            startService(intent);
+                    try {
+                        OAuth auth = OAuth.authenticate(context, hostname,
+                                "/authentication/api/oauth/token", grantType, clientId, clientSecret,
+                                username, password);
+
+                        return auth;
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(OAuth auth) {
+                    if (auth == null) {
+                        Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect,
+                                Toast.LENGTH_LONG).show();
+                    }
+                    String authToken = auth.getAccessToken();
+                    String error = auth.getErrorType();
+
+                    if ("invalid_client".equals(error)) {
+                        GlobalTopicClient.dispatchUpdateApp(AuthActivity.this);
+                    } else if (authToken != null) {
+                        Log.v(TAG, "have authtoken");
+                        Account account = new Account(_username, getString(R.string.auth_account_type));
+                        AccountManager am = AccountManager.get(AuthActivity.this);
+                        am.addAccountExplicitly(account, _password, null);
+                        am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
+
+                        Intent intent = new Intent();
+                        intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
+                        intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.auth_account_type));
+                        intent.putExtra(AccountManager.KEY_AUTHTOKEN, auth.getAccessToken());
+                        intent.putExtra(OAuth.KEY_OAUTH, auth);
+
+                        _authcomplete = true;
+
+                        AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
+                        AuthActivity.this.setResult(RESULT_OK, intent);
+                        AuthActivity.this.finish();
+
+                        SplashActivity.startNew(AuthActivity.this);
+                    } else {
+                        _contentLayout.setVisibility(View.VISIBLE);
+                        _signupButton.setVisibility(View.VISIBLE);
+                    }
+                    if (!error.equals(getString(R.string.login_error_no_error))) {
+                        Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }.executeEx(AuthActivity.this, _username, _password);
 
             _contentLayout.setVisibility(View.GONE);
             _signupButton.setVisibility(View.GONE);
         }
     };
-
-    private final ResultReceiver _rpcReceiver = new ResultReceiver(new Handler()) {
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            Log.v(TAG, "onReceiveResult");
-            try {
-                String authToken = resultData.getString(AccountManager.KEY_AUTHTOKEN);
-                String error = resultData.getString("error");
-
-                if (getString(R.string.login_error_update_app).equals(error)) {
-                    Topics.dispatchNeedUpdate(AuthActivity.this);
-                } else if (authToken != null) {
-                    Log.v(TAG, "have authtoken");
-                    Account account = new Account(_username, getString(R.string.auth_account_type));
-                    AccountManager am = AccountManager.get(AuthActivity.this);
-                    am.addAccountExplicitly(account, _password, null);
-                    am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
-
-                    Intent intent = new Intent();
-                    intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-                    intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.auth_account_type));
-                    // intent.putExtra(AccountManager.KEY_AUTHTOKEN,
-                    // Constants.FIELD_NATION_ACCOUNT_TYPE);
-                    intent.putExtra(AccountManager.KEY_AUTHTOKEN, resultData.getString(AccountManager.KEY_AUTHTOKEN));
-
-                    AuthTopicService.dispatchAuthComplete(AuthActivity.this);
-                    _authcomplete = true;
-
-                    AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
-                    AuthActivity.this.setResult(RESULT_OK, intent);
-                    AuthActivity.this.finish();
-
-                    SplashActivity.startNew(AuthActivity.this);
-                } else {
-                    _contentLayout.setVisibility(View.VISIBLE);
-                    _signupButton.setVisibility(View.VISIBLE);
-                }
-
-                if (!error.equals(getString(R.string.login_error_no_error))) {
-                    Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
-                }
-
-            } catch (Exception e) {
-                Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect,
-                        Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
-        }
-    };
-
 }

@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 import android.content.Intent;
-import android.os.ResultReceiver;
 import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.View;
@@ -10,8 +9,6 @@ import android.view.ViewGroup;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.webclient.ProfileWebService;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.util.LinkedList;
@@ -21,7 +18,6 @@ public class MessageListActivity extends ItemListActivity<Message> {
     private static final String TAG = "ui.MessageListActivity";
 
     // Data
-    private ProfileWebService _service;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -29,17 +25,15 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
 
     @Override
-    public Intent requestData(int resultCode, int page, boolean allowCache) {
-        if (_service == null)
-            return null;
+    public void requestData(int page) {
 
-        return _service.getAllMessages(resultCode, page, allowCache);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
     }
+
 
     @Override
     public View getView(Message object, View convertView, ViewGroup parent) {
@@ -80,18 +74,6 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
 
     @Override
-    public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
-        if (_service == null || isNew) {
-            _service = new ProfileWebService(this, username, authToken, resultReceiver);
-        }
-    }
-
-    @Override
-    public void invalidateService() {
-        _service = null;
-    }
-
-    @Override
     public List<Message> onParseData(int page, boolean isCached, byte[] data) {
         JsonArray objects = null;
         try {
@@ -110,7 +92,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
             }
         }
         // tell the system that the profile info is now invalid
-        Topics.dispatchProfileInvalid(this);
+//        Topics.dispatchProfileInvalid(this);
 
         return list;
     }

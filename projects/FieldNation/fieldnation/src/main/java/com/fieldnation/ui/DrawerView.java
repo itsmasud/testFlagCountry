@@ -17,19 +17,16 @@ import android.widget.TextView;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalState;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.auth.AuthTopicReceiver;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.webclient.PaymentWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -71,11 +68,12 @@ public class DrawerView extends RelativeLayout {
     private Button _sendLogButton;
 
     // Data
-    private PaymentWebService _dataService;
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
     private int _nextPage = 0;
     private Profile _profile = null;
+
+    private GlobalTopicClient _globalTopicClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -100,8 +98,6 @@ public class DrawerView extends RelativeLayout {
 
         if (isInEditMode())
             return;
-
-        AuthTopicService.subscribeAuthState(getContext(), 0, TAG, _authReceiver);
 
         _providerIdTextView = (TextView) findViewById(R.id.providerid_textview);
         _providerIdTextView.setVisibility(View.GONE);
@@ -165,13 +161,13 @@ public class DrawerView extends RelativeLayout {
             _reviewLayout.setVisibility(View.GONE);
         }
 
-        Topics.subscrubeProfileUpdated(getContext(), TAG + ":PROFILE", _topicReceiver);
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(getContext());
     }
 
     @Override
     protected void finalize() throws Throwable {
-        TopicService.delete(getContext(), TAG);
-        TopicService.delete(getContext(), TAG + ":PROFILE");
+        _globalTopicClient.disconnect(getContext());
         super.finalize();
     }
 
@@ -186,15 +182,16 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
-                parcel.setClassLoader(getContext().getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                gotProfile();
-            }
+        public void onConnected() {
+            _globalTopicClient.registerGotProfile();
+        }
+
+        @Override
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
+            gotProfile();
         }
     };
 
@@ -260,13 +257,13 @@ public class DrawerView extends RelativeLayout {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getContext().startActivity(intent);
 //            attachAnimations();
-            AuthTopicService.requestAuthInvalid(getContext());
+            AuthTopicClient.dispatchInvalidAuth(getContext());
         }
     };
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AuthTopicService.requestAuthRemove(getContext());
+            AuthTopicClient.dispatchRemoveAuth(getContext());
 
             Log.v(TAG, "SplashActivity");
             SplashActivity.startNew(getContext());
@@ -282,6 +279,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
+/*
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -308,6 +306,7 @@ public class DrawerView extends RelativeLayout {
             AuthTopicService.requestAuthentication(getContext());
         }
     };
+*/
 
     private class PaymentParseAsyncTask extends AsyncTaskEx<Bundle, Object, Payment[]> {
 
@@ -351,7 +350,7 @@ public class DrawerView extends RelativeLayout {
                 if (ja.size() == 0) {
                     return new Payment[]{selPaid, selEst};
                 } else {
-                    getContext().startService(_dataService.getAll(1, _nextPage, true));
+//                    getContext().startService(_dataService.getAll(1, _nextPage, true));
                     _nextPage++;
                     return new Payment[]{selPaid, selEst};
                 }
@@ -416,7 +415,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            _dataService = null;
+//            _dataService = null;
         }
     };
 

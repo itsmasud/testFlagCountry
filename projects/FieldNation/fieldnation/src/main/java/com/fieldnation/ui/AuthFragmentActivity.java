@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -9,18 +8,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.service.auth.AuthTopicReceiver;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.rpc.webclient.ProfileWebService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.TopicShutdownReciever;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -46,8 +40,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private TwoButtonDialog _coiWarningDialog;
 
     // Services
-    private ProfileWebService _service;
-    private TopicShutdownReciever _shutdownListener;
+    private GlobalTopicClient _globalTopicClient;
 
     // Data
     private Profile _profile;
@@ -94,24 +87,21 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         isPaused = false;
-        super.onResume();
-        AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
-        _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
-        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
-        Topics.subscrubeProfileUpdated(this, TAG + ":PROFILE", _topicReceiver);
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
 
         gotProfile();
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
         isPaused = true;
-        TopicService.delete(this, TAG);
-        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
+        _globalTopicClient.disconnect(this);
         super.onPause();
     }
 
@@ -119,14 +109,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_TAG, TAG);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (_shutdownListener != null)
-            _shutdownListener.onPause();
-        TopicService.unRegisterListener(this, 0, TAG + ":PROFILE", Topics.TOPIC_PROFILE_UPDATE);
-        super.onDestroy();
     }
 
     private void gotProfile() {
@@ -190,12 +172,12 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicService.requestAuthRemove(AuthFragmentActivity.this);
+            AuthTopicClient.dispatchRemoveAuth(AuthFragmentActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicService.requestAuthRemove(AuthFragmentActivity.this);
+            AuthTopicClient.dispatchRemoveAuth(AuthFragmentActivity.this);
         }
     };
 
@@ -204,7 +186,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            startService(_service.acceptTos(0, _profile.getUserId()));
+            ProfileDataClient.acceptTos(AuthFragmentActivity.this, _profile.getUserId());
         }
 
         @Override
@@ -255,68 +237,30 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
     };
 
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(AuthFragmentActivity.this);
+        public void onConnected() {
+            _globalTopicClient.registerGotProfile();
+            _globalTopicClient.registerUpdateApp();
+            _globalTopicClient.registerAppShutdown();
         }
 
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || isNew) {
-                _service = new ProfileWebService(AuthFragmentActivity.this, username, authToken, _webReceiver);
-            }
-            AuthFragmentActivity.this.onAuthentication(username, authToken, isNew);
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
+            gotProfile();
+
         }
 
         @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            AuthFragmentActivity.this.onAuthenticationFailed(networkDown);
+        public void onNeedAppUpdate() {
+            _updateDialog.show();
         }
 
         @Override
-        public void onAuthenticationInvalidated() {
-            AuthFragmentActivity.this.onAuthenticationInvalidated();
-        }
-    };
-
-    private final WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "WebResultReceiver");
-            _profileBounceProtect = false;
-            Topics.dispatchProfileInvalid(AuthFragmentActivity.this);
-        }
-
-        @Override
-        public Context getContext() {
-            return AuthFragmentActivity.this;
+        public void onShutdown() {
         }
     };
-
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
-                _updateDialog.show();
-            }
-
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
-                parcel.setClassLoader(getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                gotProfile();
-            }
-        }
-    };
-
-    public abstract void onAuthentication(String username, String authToken, boolean isNew);
-
-    public void onAuthenticationFailed(boolean networkDown) {
-    }
-
-    public void onAuthenticationInvalidated() {
-    }
 
     // Menu
     @Override
