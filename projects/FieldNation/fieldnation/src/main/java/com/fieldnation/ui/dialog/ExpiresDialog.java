@@ -146,9 +146,9 @@ public class ExpiresDialog extends DialogFragmentBase {
         public void onClick(View v) {
             if (_listener != null) {
                 if (_isDateSet) {
-                    _listener.onOk(_workorder, null);
-                } else {
                     _listener.onOk(_workorder, ISO8601.fromCalendar(_calendar));
+                } else {
+                    _listener.onOk(_workorder, null);
                 }
             }
             dismiss();
