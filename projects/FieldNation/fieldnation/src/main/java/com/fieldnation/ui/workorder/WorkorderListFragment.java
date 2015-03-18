@@ -329,13 +329,13 @@ public class WorkorderListFragment extends Fragment {
 
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
-        if (_gpsLocationService == null) {
+        if (_gpsLocationService == null || _service == null || getActivity() == null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     startCheckin();
                 }
-            }, 1000);
+            }, 500);
             return;
         }
 
@@ -359,13 +359,13 @@ public class WorkorderListFragment extends Fragment {
 
     private void startCheckOut() {
         Log.v(TAG, "startCheckOut");
-        if (_gpsLocationService == null) {
+        if (_gpsLocationService == null || _service == null || getActivity() == null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     startCheckOut();
                 }
-            }, 1000);
+            }, 500);
             return;
         }
 
