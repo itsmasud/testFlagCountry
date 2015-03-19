@@ -160,7 +160,7 @@ public class Schedule implements Parcelable {
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                     time = misc.formatTime(cal, false);
 
-                    String msg = "You will need to arrive at\n\t" + dayDate + " at " + time + ".\n\t And work for ";
+                    String msg = "You will need to arrive at\n\t" + dayDate + " at " + time + ".\n\tAnd work for ";
 
                     long length = ISO8601.toUtc(getEndTime()) - ISO8601.toUtc(getStartTime());
 
