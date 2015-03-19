@@ -1440,7 +1440,7 @@ public class WorkFragment extends WorkorderFragment {
             Intent intent = new Intent(GlobalState.getContext(), WorkorderBundleDetailActivity.class);
             intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
             intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
-            GlobalState.getContext().startActivity(intent);
+            getActivity().startActivity(intent);
             setLoading(true);
         }
     };

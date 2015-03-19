@@ -89,6 +89,18 @@
                     android:pathPrefix="/wo/"
                     android:scheme="https" />
                 <data
+                    android:host="red.fieldnation.com"
+                    android:pathPrefix="/workorder/"
+                    android:scheme="https" />
+                <data
+                    android:host="red.fieldnation.com"
+                    android:pathPrefix="/marketplace/"
+                    android:scheme="https" />
+                <data
+                    android:host="red.fieldnation.com"
+                    android:pathPrefix="/wo/"
+                    android:scheme="https" />
+                <data
                     android:host="fieldnation.com"
                     android:pathPrefix="/workorder/"
                     android:scheme="https" />
