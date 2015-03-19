@@ -47,18 +47,17 @@ class ObjectStoreClient implements ObjectStoreConstants {
     /*-         Commands            -*/
     /*-*****************************-*/
 
-    public boolean put(String objectTypeName, String key, String metaData, String data) {
-        return put(objectTypeName, key, metaData.getBytes(), data.getBytes());
+    public boolean put(String objectTypeName, String key, String data) {
+        return put(objectTypeName, key, data.getBytes());
     }
 
-    public boolean put(String objectTypeName, String key, byte[] metaData, byte[] data) {
+    public boolean put(String objectTypeName, String key, byte[] data) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_OBJECT_TYPE, objectTypeName);
             bundle.putString(PARAM_OBJECT_KEY, key);
             bundle.putBoolean(PARAM_IS_FILE, false);
             bundle.putByteArray(PARAM_DATA, data);
-            bundle.putByteArray(PARAM_META_DATA, metaData);
 
             Message msg = Message.obtain();
             msg.what = WHAT_PUT_OBJECT;
@@ -72,14 +71,13 @@ class ObjectStoreClient implements ObjectStoreConstants {
         }
     }
 
-    public boolean put(String objectTypeName, String key, byte[] metaData, File file) {
+    public boolean put(String objectTypeName, String key, File file) {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_OBJECT_TYPE, objectTypeName);
             bundle.putString(PARAM_OBJECT_KEY, key);
             bundle.putBoolean(PARAM_IS_FILE, true);
             bundle.putSerializable(PARAM_FILE, file);
-            bundle.putByteArray(PARAM_META_DATA, metaData);
 
             Message msg = Message.obtain();
             msg.what = WHAT_PUT_OBJECT;

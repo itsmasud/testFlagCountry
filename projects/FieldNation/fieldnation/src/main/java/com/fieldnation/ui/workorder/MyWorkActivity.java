@@ -60,12 +60,6 @@ public class MyWorkActivity extends DrawerActivity {
 //        _customFieldDialog.sho
     }
 
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        // TODO STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()
-        Log.v(TAG, "STUB com.fieldnation.ui.workorder.MyWorkActivity.onAuthentication()");
-    }
-
     private void buildTabs(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
 

@@ -176,13 +176,13 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            _service = new WorkorderWebClient(this, username, authToken, _resultReceiver);
-            getData();
-        }
-    }
+//    @Override
+//    public void onAuthentication(String username, String authToken, boolean isNew) {
+//        if (_service == null || isNew) {
+//            _service = new WorkorderWebClient(this, authToken, _resultReceiver);
+//            getData();
+//        }
+//    }
 
     private void getData() {
         if (_service == null)
@@ -193,8 +193,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         _loadingView.setVisibility(View.VISIBLE);
 
-        startService(
-                _service.getSignature(WEB_GET_SIGNATURE, _workorder.getWorkorderId(), _signatureId, true));
+//        startService(
+//                _service.getSignature(WEB_GET_SIGNATURE, _workorder.getWorkorderId(), _signatureId, true));
     }
 
     @Override

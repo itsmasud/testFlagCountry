@@ -5,7 +5,7 @@ import android.os.ResultReceiver;
 
 import com.fieldnation.service.data.oauth.OAuth;
 
-class WorkorderWebClient extends WebClientAuth {
+public class WorkorderWebClient extends WebClientAuth {
 
     public WorkorderWebClient(Context context, OAuth auth, ResultReceiver callback) {
         super(context, auth, callback);

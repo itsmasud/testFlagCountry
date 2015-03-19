@@ -54,7 +54,7 @@ class WebClient implements WebServiceConstants {
     public Intent httpWrite(int resultCode, String host, String method, String path, String options, byte[] data,
                             String contentType, boolean allowCache) {
         try {
-            StoredObject obj = StoredObject.put(_context, "HttpBody", StoredObject.randomKey(), null, data);
+            StoredObject obj = StoredObject.put(_context, "HttpBody", StoredObject.randomKey(), data);
 
             HttpJsonBuilder builder = new HttpJsonBuilder();
             builder.method(method)

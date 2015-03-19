@@ -53,13 +53,14 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
 
+/*
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_profiles == null || isNew) {
             _profiles = new ProfileDataClient(this, _profile_listener);
         }
-        super.onAuthentication(username, authToken, isNew);
     }
+*/
 
     private ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
         @Override
@@ -69,6 +70,11 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
         @Override
         public void onAllNotificationPage(List<Notification> list, int page) {
             addPage(page, list);
+        }
+
+        @Override
+        public void onConnected() {
+
         }
     };
 }

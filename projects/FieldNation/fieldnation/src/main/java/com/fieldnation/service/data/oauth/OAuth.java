@@ -135,7 +135,7 @@ public class OAuth implements Parcelable {
     }
 
     public void save(Context context) {
-        StoredObject obj = StoredObject.put(context, "OAuthToken", _username, null, (byte[]) null);
+        StoredObject obj = StoredObject.put(context, "OAuthToken", _username, (byte[]) null);
         _id = obj.getId();
         obj.setData(toJson().toByteArray());
         obj.save(context);
@@ -174,6 +174,7 @@ public class OAuth implements Parcelable {
 
         HttpJsonBuilder builder = new HttpJsonBuilder()
                 .method("POST")
+                .protocol("https")
                 .host(host)
                 .path(path)
                 .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)

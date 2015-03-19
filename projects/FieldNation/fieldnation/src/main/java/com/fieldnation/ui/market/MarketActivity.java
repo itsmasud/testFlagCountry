@@ -58,11 +58,13 @@ public class MarketActivity extends DrawerActivity {
         _viewPager.setCurrentItem(_currentFragment, false);
     }
 
+/*
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         // TODO STUB com.fieldnation.ui.market.MarketActivity.onAuthentication()
         Log.v(TAG, "STUB com.fieldnation.ui.market.MarketActivity.onAuthentication()");
     }
+*/
 
     private void buildTabs(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);

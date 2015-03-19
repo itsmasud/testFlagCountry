@@ -249,7 +249,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
                     }
-                    if (!error.equals(getString(R.string.login_error_no_error))) {
+                    if (!getString(R.string.login_error_no_error).equals(error)) {
                         Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
                     }
                 }

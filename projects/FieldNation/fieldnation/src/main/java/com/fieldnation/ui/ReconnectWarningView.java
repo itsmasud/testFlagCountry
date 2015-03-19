@@ -1,23 +1,15 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.Log;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.service.auth.AuthTopicReceiver;
-import com.fieldnation.service.auth.AuthTopicService;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
 
 /**
  * Created by michael.carver on 12/22/2014.
@@ -28,6 +20,9 @@ public class ReconnectWarningView extends RelativeLayout {
 
     // Ui
     private Button _retryButton;
+
+    // Data
+    private GlobalTopicClient _globalClient;
 
 
     public ReconnectWarningView(Context context) {
@@ -54,46 +49,37 @@ public class ReconnectWarningView extends RelativeLayout {
         _retryButton = (Button) findViewById(R.id.retry_button);
         _retryButton.setOnClickListener(_retry_onClick);
 
-        TopicService.registerListener(getContext(), 0, TAG, Topics.TOPIC_NETWORK_DOWN, _networkTopic);
-        AuthTopicService.subscribeAuthState(getContext(), 0, TAG + ":AUTH", _authReceiver);
+        _globalClient = new GlobalTopicClient(_globalTopic_listener);
+        _globalClient.connect(getContext());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        TopicService.delete(getContext(), TAG);
-        TopicService.delete(getContext(), TAG + ":AUTH");
+        _globalClient.disconnect(getContext());
         super.onDetachedFromWindow();
     }
 
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            ReconnectWarningView.this.setVisibility(View.GONE);
+        public void onConnected() {
+            _globalClient.registerOffline();
         }
 
         @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            if (networkDown)
-                ReconnectWarningView.this.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-        }
-    };
-
-    private TopicReceiver _networkTopic = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            Log.v(TAG, "_networkTopic: " + topicId);
+        public void onOffline() {
             ReconnectWarningView.this.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onOnline() {
+            ReconnectWarningView.this.setVisibility(View.GONE);
         }
     };
 
     private OnClickListener _retry_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Topics.dispatchNetworkUp(getContext());
+            GlobalTopicClient.dispathOnline(getContext());
             ReconnectWarningView.this.setVisibility(View.GONE);
         }
     };

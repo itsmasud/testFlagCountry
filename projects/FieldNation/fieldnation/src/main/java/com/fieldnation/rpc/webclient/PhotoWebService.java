@@ -7,7 +7,7 @@ import android.os.ResultReceiver;
 import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.rpc.common.RpcServiceConstants;
 
-class PhotoWebService implements PhotoServiceConstants {
+public class PhotoWebService implements PhotoServiceConstants {
     private Context _context;
     private ResultReceiver _resultReceiver;
 

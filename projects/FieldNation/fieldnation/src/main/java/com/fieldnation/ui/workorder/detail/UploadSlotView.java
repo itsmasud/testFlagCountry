@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,8 +16,6 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.topics.FileUploadTopicReceiver;
-import com.fieldnation.topics.Topics;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +70,7 @@ public class UploadSlotView extends RelativeLayout {
         _uploadTextView = (TextView) findViewById(R.id.upload_textview);
         _uploadTextView.setOnClickListener(_upload_onClick);
 
-        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
+//        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
 
         populateUi();
     }
@@ -183,6 +180,7 @@ public class UploadSlotView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
+/*
     private FileUploadTopicReceiver _uploadReceiver = new FileUploadTopicReceiver(new Handler()) {
         @Override
         public void onStart(String url, String filename) {
@@ -211,6 +209,7 @@ public class UploadSlotView extends RelativeLayout {
             }
         }
     };
+*/
 
     private View.OnClickListener _upload_onClick = new View.OnClickListener() {
         @Override

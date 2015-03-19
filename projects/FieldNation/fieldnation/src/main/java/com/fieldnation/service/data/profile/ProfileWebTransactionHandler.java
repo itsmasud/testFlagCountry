@@ -49,7 +49,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 // store object
                 byte[] profiledata = resultData.getResultsAsByteArray();
 
-                StoredObject.put(context, "Profile", "Me", null, profiledata);
+                StoredObject.put(context, "Profile", "Me", profiledata);
 
                 // todo parse json and put Profile/id ?
 
@@ -61,7 +61,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 // store object
                 byte[] pagedata = resultData.getResultsAsByteArray();
 
-                StoredObject.put(context, "NotificationPage", page + "", null, pagedata);
+                StoredObject.put(context, "NotificationPage", page + "", pagedata);
 
                 Bundle bundle = new Bundle();
                 bundle.putByteArray(PARAM_DATA, pagedata);

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -13,9 +12,9 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.PaymentWebService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.webclient.PaymentWebService;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -81,7 +80,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         if (_service == null)
             return;
 
-        startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
+//        startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
     }
 
     private void populateUi() {
@@ -124,13 +123,15 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
     }
 
+/*
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
-            _service = new PaymentWebService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
+//            _service = new PaymentWebService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
             requestData();
         }
     }
+*/
 
     /*-*********************************-*/
     /*-				Events				-*/

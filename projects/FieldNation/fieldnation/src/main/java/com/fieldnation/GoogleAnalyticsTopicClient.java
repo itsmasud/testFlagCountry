@@ -40,7 +40,8 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         COMPLETE_WORK("CompleteWork"),
         START_MAP("ViewLocation"),
         COMPLETE_FN_EARNED("CompleteWorkFnEarned"),
-        COMPLETE_FN_EARNED_GROSS("CompleteWorkFnEarnedGross");
+        COMPLETE_FN_EARNED_GROSS("CompleteWorkFnEarnedGross"),
+        CLICK("ActionClick");
 
         private String _actionName;
 

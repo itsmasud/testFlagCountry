@@ -17,8 +17,6 @@ import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "service.transaction.Transaction";
 
-    private static final Object LOCK = new Object();
-
     private long _id;
     private String _handlerName;
     private byte[] _handlerParams;
@@ -145,7 +143,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*****************************************-*/
     public static WebTransaction get(Context context, long id) {
         WebTransaction obj = null;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getReadableDatabase();
@@ -155,7 +153,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             WebTransactionSqlHelper.getColumnNames(),
                             Column.ID + "=?",
                             new String[]{id + ""},
-                            null, null, null, "LIMIT 1");
+                            null, null, null, "1");
 
                     try {
                         if (cursor.moveToFirst()) {
@@ -176,7 +174,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public static WebTransaction getNext(Context context) {
         WebTransaction obj = null;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getReadableDatabase();
@@ -188,7 +186,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             new String[]{State.IDLE.ordinal() + ""},
                             null, null,
                             "ID ASC ",//"PRIORITY DESC, ID ASC ",
-                            "LIMIT 1");
+                            "1");
                     try {
                         if (cursor.moveToFirst()) {
                             obj = new WebTransaction(cursor);
@@ -217,7 +215,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
 
         boolean success = false;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -252,7 +250,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.USE_AUTH.getName(), useAuth ? 1 : 0);
 
         long id = -1;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -276,7 +274,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public static boolean delete(Context context, long id) {
         Transform.deleteTransaction(context, id);
         boolean success = false;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();

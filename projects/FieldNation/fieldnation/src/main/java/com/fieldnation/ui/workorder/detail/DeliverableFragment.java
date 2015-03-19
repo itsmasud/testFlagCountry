@@ -24,7 +24,6 @@ import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.service.auth.AuthTopicReceiver;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
@@ -33,9 +32,6 @@ import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.webclient.WorkorderWebClient;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -171,14 +167,18 @@ public class DeliverableFragment extends WorkorderFragment {
     public void onResume() {
         super.onResume();
         _context = getActivity().getApplicationContext();
+/*
         AuthTopicService.subscribeAuthState(_context, 0, TAG, _authReceiver);
         Topics.subscrubeProfileUpdated(_context, TAG + ":ProfileService", _profile_topicService);
+*/
     }
 
     @Override
     public void onPause() {
+/*
         TopicService.delete(_context, TAG);
         TopicService.delete(_context, TAG + ":ProfileService");
+*/
         super.onPause();
     }
 
@@ -381,9 +381,11 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
+/*
             _context.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
                     _workorder.getWorkorderId(),
                     document.getWorkorderUploadId()));
+*/
         }
     };
 
@@ -440,6 +442,7 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
+/*
     private final TopicReceiver _profile_topicService = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -476,6 +479,7 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
+*/
 
     private final WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {

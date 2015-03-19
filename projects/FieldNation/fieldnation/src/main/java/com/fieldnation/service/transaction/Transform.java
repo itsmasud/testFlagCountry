@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class Transform implements Parcelable, TransformConstants {
     private static final String TAG = "Transform";
-    private static final Object LOCK = new Object();
 
     private long _id;
     private long _transactionId;
@@ -103,7 +102,7 @@ public class Transform implements Parcelable, TransformConstants {
     /*-*****************************-*/
     public static Transform get(Context context, long id) {
         Transform obj = null;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getReadableDatabase();
@@ -113,7 +112,7 @@ public class Transform implements Parcelable, TransformConstants {
                             WebTransactionSqlHelper.getColumnNames(),
                             Column.ID + "=?",
                             new String[]{id + ""},
-                            null, null, null, "LIMIT 1");
+                            null, null, null, "1");
                     try {
                         if (cursor.moveToFirst()) {
                             obj = new Transform(cursor);
@@ -133,7 +132,7 @@ public class Transform implements Parcelable, TransformConstants {
 
     public static List<Transform> getObjectTransforms(Context context, String objectName, String objectKey) {
         List<Transform> list = new LinkedList<>();
-        synchronized (LOCK) {
+        synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getReadableDatabase();
@@ -172,7 +171,7 @@ public class Transform implements Parcelable, TransformConstants {
         v.put(Column.DATA.getName(), data);
 
         long id = -1;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -201,7 +200,7 @@ public class Transform implements Parcelable, TransformConstants {
         v.put(Column.DATA.getName(), query.getByteArray(PARAM_DATA));
 
         long id = -1;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -223,7 +222,7 @@ public class Transform implements Parcelable, TransformConstants {
 
     public static boolean deleteTransaction(Context context, long transactionId) {
         boolean success = false;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -244,7 +243,7 @@ public class Transform implements Parcelable, TransformConstants {
 
     public static boolean delete(Context context, long id) {
         boolean success = false;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();

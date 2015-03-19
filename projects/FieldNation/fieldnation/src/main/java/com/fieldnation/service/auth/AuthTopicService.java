@@ -21,7 +21,7 @@ import com.fieldnation.ui.AuthActivity;
  * Created by Michael on 12/15/2014.
  */
 public class AuthTopicService extends Service implements AuthTopicConstants {
-    private static final String TAG = "auth.client.AuthTopicService";
+    private static final String TAG = "AuthTopicService";
 
     private static final int STATE_NOT_AUTHENTICATED = 0;
     private static final int STATE_AUTHENTICATING = 1;

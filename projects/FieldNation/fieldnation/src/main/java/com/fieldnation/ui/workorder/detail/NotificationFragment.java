@@ -12,16 +12,14 @@ import android.widget.Toast;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.auth.AuthTopicReceiver;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -73,12 +71,12 @@ public class NotificationFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
     @Override
     public void onPause() {
-        TopicService.delete(getActivity(), TAG);
+//        TopicService.delete(getActivity(), TAG);
         super.onPause();
     }
 
@@ -150,7 +148,7 @@ public class NotificationFragment extends WorkorderFragment {
         WEB_LIST_NOTIFICATIONS = _rand.nextInt();
         _emptyTextView.setVisibility(View.GONE);
         try {
-            getActivity().startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
+//            getActivity().startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.v(TAG, "BP");
@@ -188,6 +186,7 @@ public class NotificationFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
+/*
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -215,6 +214,7 @@ public class NotificationFragment extends WorkorderFragment {
             AuthTopicService.requestAuthentication(getActivity());
         }
     };
+*/
 
     private class NotificationParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Notification>> {
 

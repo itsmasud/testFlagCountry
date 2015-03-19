@@ -49,7 +49,7 @@ public class HttpJson {
             headers = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_HEADERS);
         }
 
-        if (method == null)
+        if (misc.isEmptyOrNull(method))
             method = "GET";
 
         if (protocol == null)
@@ -66,7 +66,6 @@ public class HttpJson {
 
         if (hostname == null)
             hostname = "";
-
 
         if (params == null)
             params = "";

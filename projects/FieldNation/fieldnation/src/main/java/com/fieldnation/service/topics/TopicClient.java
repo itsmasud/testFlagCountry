@@ -11,6 +11,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -32,6 +34,7 @@ public class TopicClient implements TopicConstants {
     }
 
     public void connect(Context context) {
+        Log.v(TAG, "connect");
         context.bindService(new Intent(context, TopicService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -47,6 +50,7 @@ public class TopicClient implements TopicConstants {
     /*-         Commands            -*/
     /*-*****************************-*/
     public boolean register(String topicId, String userTag) {
+        Log.v(TAG, "register");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
@@ -65,6 +69,7 @@ public class TopicClient implements TopicConstants {
     }
 
     public boolean unregister(String topicId, String userTag) {
+        Log.v(TAG, "unregister");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
@@ -82,6 +87,7 @@ public class TopicClient implements TopicConstants {
     }
 
     public boolean delete(String userTag) {
+        Log.v(TAG, "delete");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_USER_TAG, userTag);
@@ -106,6 +112,7 @@ public class TopicClient implements TopicConstants {
      * @return
      */
     public boolean dispatchEvent(String topicId, Parcelable payload, boolean keepLast) {
+        Log.v(TAG, "dispatchEvent");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
@@ -144,6 +151,7 @@ public class TopicClient implements TopicConstants {
     private final ServiceConnection _serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.v(TAG, "onServiceConnected");
             _sndService = new Messenger(service);
             _isConnected = true;
             if (_listener != null)
@@ -152,6 +160,7 @@ public class TopicClient implements TopicConstants {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            Log.v(TAG, "onServiceDisconnected");
             _rcvService = null;
             _isConnected = false;
             if (_listener != null)
@@ -168,6 +177,7 @@ public class TopicClient implements TopicConstants {
 
         @Override
         public void handleMessage(Message msg) {
+            Log.v(TAG, "handleMessage");
             TopicClient client = _client.get();
             if (client == null) {
                 super.handleMessage(msg);

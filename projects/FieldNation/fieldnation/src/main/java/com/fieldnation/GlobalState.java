@@ -1,6 +1,7 @@
 package com.fieldnation;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
@@ -8,6 +9,7 @@ import android.os.Environment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.utils.misc;
@@ -49,6 +51,9 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        startService(new Intent(this, AuthTopicService.class));
+
         _context = this;
         new ExpenseCategories(this);
 

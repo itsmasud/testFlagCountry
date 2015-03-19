@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-
 import android.view.Window;
 import android.widget.Toast;
 
@@ -16,9 +15,8 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.topics.GaTopic;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.utils.Stopwatch;
 
 /**
@@ -121,7 +119,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             if (savedInstanceState == null) {
                 _signOffFrag.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
-                GaTopic.dispatchScreenView(this, "SignOffFragment");
+//                GaTopic.dispatchScreenView(this, "SignOffFragment");
             }
         } else if (savedInstanceState != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -171,6 +169,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         Log.v(TAG, "onCreate time " + stopwatch.finish());
     }
 
+/*
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
@@ -181,6 +180,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             }
         }
     }
+*/
 
     @Override
     protected void onResume() {
@@ -215,6 +215,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     private void sendSignature() {
         // not a task
+/*
         if (_taskId == -1) {
             startService(
                     _service.addSignatureJson(WEB_UPLOAD_SIGNATURE, _workorder.getWorkorderId(), _name, _signatureJson));
@@ -224,6 +225,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                     _service.completeSignatureTaskJson(WEB_COMPLETE_TASK, _workorder.getWorkorderId(),
                             _taskId, _name, _signatureJson));
         }
+*/
     }
 
     /*-*********************************-*/
@@ -233,23 +235,27 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
+/*
             GaTopic.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sigFrag);
             trans.addToBackStack(null);
             trans.commit();
+*/
         }
 
         @Override
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
+/*
             GaTopic.dispatchScreenView(SignOffActivity.this, "SorryFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sorryFrag);
             trans.addToBackStack(null);
             trans.commit();
+*/
         }
     };
 
@@ -264,6 +270,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureJson = signatureJson;
+/*
             GaTopic.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
@@ -272,6 +279,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             trans.commit();
 
             sendSignature();
+*/
         }
     };
 
@@ -322,9 +330,11 @@ public class SignOffActivity extends AuthFragmentActivity {
                 // we finished uploading the signature
                 if (_completeWorkorder) {
                     // if we need to complete, then start that process
+/*
                     GaTopic.dispatchEvent(SignOffActivity.this, "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "SignOffActivity", 1);
                     startService(
                             _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
+*/
 
                 } else {
                     // otherwise we're done

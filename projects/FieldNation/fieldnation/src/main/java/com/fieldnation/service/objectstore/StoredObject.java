@@ -23,7 +23,6 @@ import java.util.Random;
  */
 public class StoredObject implements Parcelable, ObjectStoreConstants {
     private static final String TAG = "StoredObject";
-    private static final Object LOCK = new Object();
 
     private static final Random RAND = new Random(System.currentTimeMillis());
 
@@ -32,7 +31,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     private String _objName;
     private long _lastupdated;
     private boolean _isFile;
-    private byte[] _metaData;
     private byte[] _data;
     private File _file;
 
@@ -42,7 +40,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _objName = cursor.getString(Column.OBJ_NAME.getIndex());
         _lastupdated = cursor.getLong(Column.LAST_UPDATED.getIndex());
         _isFile = cursor.getInt(Column.IS_FILE.getIndex()) == 1;
-        _metaData = cursor.getBlob(Column.META_DATA.getIndex());
         if (_isFile) {
             _file = new File(new String(cursor.getBlob(Column.DATA.getIndex())));
         } else {
@@ -56,7 +53,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _objName = bundle.getString(PARAM_OBJECT_TYPE);
         _lastupdated = bundle.getLong(PARAM_LAST_UPDATED);
         _isFile = bundle.getBoolean(PARAM_IS_FILE);
-        _metaData = bundle.getByteArray(PARAM_META_DATA);
         if (_isFile)
             _file = (File) bundle.getSerializable(PARAM_FILE);
         else
@@ -70,7 +66,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         bundle.putString(PARAM_OBJECT_TYPE, _objName);
         bundle.putLong(PARAM_LAST_UPDATED, _lastupdated);
         bundle.putBoolean(PARAM_IS_FILE, _isFile);
-        bundle.putByteArray(PARAM_META_DATA, _metaData);
         if (_isFile)
             bundle.putSerializable(PARAM_FILE, _file);
         else
@@ -117,14 +112,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _data = data;
     }
 
-    public byte[] getMetaData() {
-        return _metaData;
-    }
-
-    public void setMetaData(byte[] metaData) {
-        _metaData = metaData;
-    }
-
     public StoredObject save(Context context) {
         return put(context, this);
     }
@@ -145,7 +132,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      */
     public static StoredObject get(Context context, long id) {
         StoredObject obj = null;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getReadableDatabase();
@@ -155,7 +142,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                             ObjectStoreSqlHelper.getColumnNames(),
                             Column.ID + "=?",
                             new String[]{id + ""},
-                            null, null, null, "LIMIT 1");
+                            null, null, null, "1");
 
                     try {
                         if (cursor.moveToFirst()) {
@@ -185,7 +172,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      */
     public static StoredObject get(Context context, String objectTypeName, String objectKey) {
         StoredObject obj = null;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getReadableDatabase();
@@ -195,7 +182,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                             ObjectStoreSqlHelper.getColumnNames(),
                             Column.OBJ_NAME + "=? AND " + Column.OBJ_KEY + "=?",
                             new String[]{objectTypeName, objectKey},
-                            null, null, null, "LIMIT 1");
+                            null, null, null, "1");
 
                     try {
                         if (cursor.moveToFirst()) {
@@ -266,10 +253,9 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         } else {
             v.put(Column.DATA.getName(), obj._data);
         }
-        v.put(Column.META_DATA.getName(), obj._metaData);
 
         boolean success = false;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -291,16 +277,15 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
     }
 
-    public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] metaData, File file) {
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, File file) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
         v.put(Column.OBJ_KEY.getName(), objectKey);
         v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), true);
-        v.put(Column.META_DATA.getName(), metaData);
 
         long id = -1;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -344,17 +329,16 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return null;
     }
 
-    public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] metaData, byte[] data) {
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] data) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
         v.put(Column.OBJ_KEY.getName(), objectKey);
         v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), false);
         v.put(Column.DATA.getName(), data);
-        v.put(Column.META_DATA.getName(), metaData);
 
         long id = -1;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -379,7 +363,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     public static List<StoredObject> list(Context context, String objectTypeName) {
         List<StoredObject> list = new LinkedList<>();
 
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getReadableDatabase();
@@ -414,7 +398,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         if (keys == null || keys.length == 0)
             return list;
 
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getReadableDatabase();
@@ -457,7 +441,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
 
         boolean success = false;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();
@@ -483,7 +467,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
 
         boolean success = false;
-        synchronized (LOCK) {
+        synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
             try {
                 SQLiteDatabase db = helper.getWritableDatabase();

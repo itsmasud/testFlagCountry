@@ -1,9 +1,9 @@
 package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
-import android.os.Bundle;
 
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 
@@ -23,7 +23,7 @@ public class WorkorderDeclineTransactionHandler extends WebTransactionHandler {
     }
 
     @Override
-    public void handleResult(Context context, Listener listener, WebTransaction transaction, Bundle resultData) {
+    public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
 
     }
 }

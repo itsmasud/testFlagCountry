@@ -24,12 +24,19 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     /*-*************************************-*/
 
 
+/*
     @Override
     public Intent requestData(int resultCode, int page, boolean allowCache) {
         if (_service == null)
             return null;
 
         return _service.getAll(resultCode, page, allowCache);
+    }
+*/
+
+    @Override
+    public void requestData(int page) {
+
     }
 
     @Override
@@ -53,13 +60,16 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
         super.onResume();
     }
 
+/*
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
         if (_service == null || isNew) {
-            _service = new PaymentWebService(this, username, authToken, resultReceiver);
+//            _service = new PaymentWebService(this, username, authToken, resultReceiver);
         }
     }
+*/
 
+/*
     @Override
     public List<Payment> onParseData(int page, boolean isCached, byte[] data) {
         JsonArray objects = null;
@@ -81,9 +91,12 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
 
         return list;
     }
+*/
 
+/*
     @Override
     public void invalidateService() {
         _service = null;
     }
+*/
 }

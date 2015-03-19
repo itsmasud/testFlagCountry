@@ -22,8 +22,7 @@ class ObjectStoreSqlHelper extends SQLiteOpenHelper {
         OBJ_KEY(2, "obj_key", "text not null", true),
         OBJ_NAME(3, "obj_name", "text not null", true),
         IS_FILE(4, "is_file", "integer not null"),
-        DATA(5, "data", "blob not null"),
-        META_DATA(6, "meta_data", "blob not null");
+        DATA(5, "data", "blob");
 
         private int _index;
         private String _name;

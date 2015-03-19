@@ -152,10 +152,6 @@
             android:label="@string/activity_signature_info_title" />
 
         <service
-            android:name=".service.auth.AuthTopicService"
-            android:exported="false"
-            android:process=":topic" />
-        <service
             android:name=".service.auth.AuthService"
             android:exported="true"
             android:process="">
@@ -167,14 +163,6 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-        <service
-            android:name=".rpc.server.RpcService"
-            android:exported="false"
-            android:process=":data" />
-        <service
-            android:name=".topics.TopicService"
-            android:exported="false"
-            android:process=":topic" />
         <service
             android:name=".rpc.server.SyncService"
             android:exported="true"
@@ -189,6 +177,26 @@
         </service>
         <service
             android:name=".rpc.server.WebService"
+            android:exported="false"
+            android:process=":data" />
+        <service
+            android:name=".service.transaction.WebTransactionService"
+            android:exported="false"
+            android:process=":data" />
+        <service
+            android:name=".service.topics.TopicService"
+            android:process=":topics"
+            android:exported="false" />
+        <service
+            android:name=".service.auth.AuthTopicService"
+            android:process=":auth"
+            android:exported="false" />
+        <service
+            android:name=".service.data.photo.PhotoDataService"
+            android:exported="false"
+            android:process=":data" />
+        <service
+            android:name=".service.data.profile.ProfileDataService"
             android:exported="false"
             android:process=":data" />
         <service

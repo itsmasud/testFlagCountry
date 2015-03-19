@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -15,10 +14,9 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.GaTopic;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -83,15 +81,17 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         // TODO put into wait mode
     }
 
+/*
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
-            _service = new WorkorderWebClient(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
-            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
+//            _service = new WorkorderWebClient(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
+//            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
         }
     }
+*/
 
-    private View.OnClickListener _request_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // TODO Method Stub: onClick()
@@ -99,7 +99,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
     };
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
             // TODO Method Stub: onSuccess()
@@ -148,7 +148,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     @Override
     public void onRefresh() {
         if (_service != null) {
-            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
+//            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
         }
     }
 
@@ -171,8 +171,10 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         public void onLongClick(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: onLongClick()
             Log.v(TAG, "Method Stub: onLongClick()");
+/*
             GaTopic.dispatchEvent(WorkorderBundleDetailActivity.this,
                     "BundleActivity", GaTopic.ACTION_LONG_CLICK, "WorkorderCard", 1);
+*/
 
         }
 

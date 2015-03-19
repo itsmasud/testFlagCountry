@@ -134,13 +134,11 @@ class ObjectStoreService extends Service implements ObjectStoreConstants {
             obj = StoredObject.put(this,
                     bundle.getString(PARAM_OBJECT_TYPE),
                     bundle.getString(PARAM_OBJECT_KEY),
-                    bundle.getByteArray(PARAM_META_DATA),
                     (File) bundle.getSerializable(PARAM_FILE));
         } else {
             obj = StoredObject.put(this,
                     bundle.getString(PARAM_OBJECT_TYPE),
                     bundle.getString(PARAM_OBJECT_KEY),
-                    bundle.getByteArray(PARAM_META_DATA),
                     bundle.getByteArray(PARAM_DATA));
         }
 

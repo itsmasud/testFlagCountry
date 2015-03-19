@@ -1,18 +1,16 @@
 package com.fieldnation.ui;
 
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Window;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
+import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 
 /**
@@ -28,6 +26,8 @@ public class SplashActivity extends AuthFragmentActivity {
     private Profile _profile = null;
     private boolean _isAuth = false;
     private boolean _calledMyWork = false;
+    private GlobalTopicClient _globalClient;
+    private AuthTopicClient _authClient;
 
     public SplashActivity() {
         super();
@@ -64,35 +64,56 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        AuthTopicService.subscribeNeedUsernameAndPassword(this, TAG, _topicReceiver);
-        AuthTopicService.requestAuthentication(this);
+        _globalClient = new GlobalTopicClient(_globalTopic_listener);
+        _globalClient.connect(this);
+        _authClient = new AuthTopicClient(_authTopic_listener);
+        _authClient.connect(this);
     }
 
     @Override
     protected void onDestroy() {
-        TopicService.unRegisterListener(this, 0, TAG, AuthTopicService.TOPIC_AUTH_COMMAND);
+        _globalClient.disconnect(this);
+        _authClient.disconnect(this);
         super.onDestroy();
     }
 
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        Log.v(TAG, "onAuthentication");
-        _isAuth = true;
-        doNextStep();
-    }
+    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalClient.registerGotProfile();
+        }
 
-    @Override
-    public void onAuthenticationFailed(boolean networkDown) {
-        Log.v(TAG, "onAuthenticationFailed");
-        if (!networkDown)
-            AuthTopicService.requestAuthentication(this);
-    }
+        @Override
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
+            doNextStep();
+        }
+    };
 
-    @Override
-    public void onAuthenticationInvalidated() {
-        Log.v(TAG, "onAuthenticationInvalidated");
-        AuthTopicService.requestAuthentication(this);
-    }
+    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authClient.registerHaveAuth();
+            _authClient.registerFailedAuth();
+            _authClient.registerInvalidAuth();
+        }
+
+        @Override
+        public void onHaveAuth(OAuth oauth) {
+            _isAuth = true;
+            doNextStep();
+        }
+
+        @Override
+        public void onAuthFailed() {
+            AuthTopicClient.dispatchRequestAuth(SplashActivity.this);
+        }
+
+        @Override
+        public void onAuthInvalid() {
+            AuthTopicClient.dispatchRequestAuth(SplashActivity.this);
+        }
+    };
 
     private void doNextStep() {
         if (!_isAuth)
@@ -113,13 +134,7 @@ public class SplashActivity extends AuthFragmentActivity {
 
     }
 
-    @Override
-    public void onProfile(Profile profile) {
-        _profile = profile;
-        doNextStep();
-    }
-
-
+/*
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -143,7 +158,7 @@ public class SplashActivity extends AuthFragmentActivity {
             }
         }
     };
-
+*/
 
     @Override
     public void onRefresh() {

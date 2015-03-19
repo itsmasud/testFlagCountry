@@ -2,7 +2,6 @@ package com.fieldnation.service.data.photo;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
@@ -20,8 +19,8 @@ public class PhotoDataClient implements PhotoConstants {
 
     public PhotoDataClient(Context context, Listener listener) {
         _listener = listener;
-        _client = new TopicClient(_clientListener);
-        _client.connect(context);
+//        _client = new TopicClient(_clientListener);
+//        _client.connect(context);
     }
 
     /**
@@ -41,6 +40,7 @@ public class PhotoDataClient implements PhotoConstants {
         context.startService(intent);
     }
 
+/*
     private final TopicClient.Listener _clientListener = new TopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -62,6 +62,7 @@ public class PhotoDataClient implements PhotoConstants {
             }
         }
     };
+*/
 
     public interface Listener {
         public void onPhoto(String url, File file, boolean isCircle);

@@ -29,7 +29,7 @@ public class AuthTopicClient extends TopicClient {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_REQUEST_AUTH, null, false);
+        TopicService.dispatchEvent(context, TOPIC_REQUEST_AUTH, null, true);
     }
 
     public boolean registerRequestAuth() {

@@ -12,19 +12,14 @@ import android.widget.Toast;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.auth.AuthTopicReceiver;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.Stopwatch;
@@ -76,8 +71,10 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
+/*
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
         Topics.subscrubeProfileUpdated(getActivity(), TAG + ":ProfileService", _profile_topicReceiver);
+*/
 
         _markReadRunnable.run();
     }
@@ -86,7 +83,7 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         public void run() {
             if (getActivity() != null && _workorderService != null && _workorder != null) {
-                getActivity().startService(_workorderService.markMessagesRead(WEB_MARK_READ, _workorder.getWorkorderId()));
+//                getActivity().startService(_workorderService.markMessagesRead(WEB_MARK_READ, _workorder.getWorkorderId()));
             } else {
                 new Handler().postDelayed(_markReadRunnable, 1000);
             }
@@ -96,8 +93,8 @@ public class MessageFragment extends WorkorderFragment {
 
     @Override
     public void onPause() {
-        TopicService.delete(getActivity(), TAG);
-        TopicService.delete(getActivity(), TAG + ":ProfileService");
+//        TopicService.delete(getActivity(), TAG);
+//        TopicService.delete(getActivity(), TAG + ":ProfileService");
 
         WEB_GET_MESSAGES = 1;
         WEB_NEW_MESSAGE = 3;
@@ -144,7 +141,7 @@ public class MessageFragment extends WorkorderFragment {
 
         Log.v(TAG, "getMessages");
         WEB_GET_MESSAGES = _rand.nextInt();
-        getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
+//        getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
     }
 
     @Override
@@ -195,8 +192,10 @@ public class MessageFragment extends WorkorderFragment {
                 _refreshView.startRefreshing();
                 WEB_NEW_MESSAGE = _rand.nextInt();
                 Log.v(TAG, "_send_onClick");
+/*
                 getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
                         _inputView.getInputText()));
+*/
                 _inputView.clearText();
             }
         }
@@ -205,6 +204,7 @@ public class MessageFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
+/*
     private final TopicReceiver _profile_topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -219,7 +219,9 @@ public class MessageFragment extends WorkorderFragment {
             getMessages();
         }
     };
+*/
 
+/*
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -248,6 +250,7 @@ public class MessageFragment extends WorkorderFragment {
             AuthTopicService.requestAuthentication(getActivity());
         }
     };
+*/
 
     private class MessageAsyncTask extends AsyncTaskEx<Bundle, Object, List<Message>> {
         @Override
@@ -293,7 +296,7 @@ public class MessageFragment extends WorkorderFragment {
                 getMessages();
                 Log.v(TAG, "WEB_NEW_MESSAGE time " + stopwatch.finish());
             } else if (resultCode == WEB_MARK_READ) {
-                Topics.dispatchProfileInvalid(getActivity());
+//                Topics.dispatchProfileInvalid(getActivity());
             }
         }
 

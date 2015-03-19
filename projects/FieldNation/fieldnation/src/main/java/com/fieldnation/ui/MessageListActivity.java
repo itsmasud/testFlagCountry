@@ -73,28 +73,28 @@ public class MessageListActivity extends ItemListActivity<Message> {
     }
 
 
-    @Override
-    public List<Message> onParseData(int page, boolean isCached, byte[] data) {
-        JsonArray objects = null;
-        try {
-            objects = new JsonArray(new String(data));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-
-        List<Message> list = new LinkedList<>();
-        for (int i = 0; i < objects.size(); i++) {
-            try {
-                list.add(Message.fromJson(objects.getJsonObject(i)));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        // tell the system that the profile info is now invalid
-//        Topics.dispatchProfileInvalid(this);
-
-        return list;
-    }
+//    @Override
+//    public List<Message> onParseData(int page, boolean isCached, byte[] data) {
+//        JsonArray objects = null;
+//        try {
+//            objects = new JsonArray(new String(data));
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
+//
+//        List<Message> list = new LinkedList<>();
+//        for (int i = 0; i < objects.size(); i++) {
+//            try {
+//                list.add(Message.fromJson(objects.getJsonObject(i)));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        // tell the system that the profile info is now invalid
+////        Topics.dispatchProfileInvalid(this);
+//
+//        return list;
+//    }
 
 }

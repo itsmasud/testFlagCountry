@@ -16,10 +16,9 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -127,7 +126,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
             if (_authToken != null && _username != null) {
-                _service = new WorkorderWebClient(this, _username, _authToken, _rpcReceiver);
+//                _service = new WorkorderWebClient(this, _username, _authToken, _rpcReceiver);
             }
         }
 
@@ -147,7 +146,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         setLoading(true);
         populateUi(true);
 
-        TopicService.dispatchTopic(this, "NOTIFICATION_TEST", null);
+//        TopicService.dispatchTopic(this, "NOTIFICATION_TEST", null);
     }
 
     @Override
@@ -173,6 +172,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
+/*
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
@@ -192,6 +192,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         super.onAuthenticationInvalidated();
         _service = null;
     }
+*/
 
     private void buildFragments(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
@@ -335,7 +336,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         if (_service == null)
             return;
         setLoading(true);
-        startService(_service.getDetails(RPC_GET_DETAIL, _workorderId, allowCache));
+//        startService(_service.getDetails(RPC_GET_DETAIL, _workorderId, allowCache));
     }
 
     /*-*************************-*/
