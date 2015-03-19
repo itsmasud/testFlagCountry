@@ -159,53 +159,57 @@ public class AuthCache {
     /*-*****************************************-*/
 
     public static AuthCache get(Context context, String username) {
-        AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
         AuthCache obj = null;
-        try {
-            SQLiteDatabase db = helper.getReadableDatabase();
+        synchronized (TAG) {
+            AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
             try {
-                Cursor cursor = db.query(
-                        AuthCacheSqlHelper.TABLE_NAME,
-                        AuthCacheSqlHelper.getColumnNames(),
-                        Column.USERNAME + "=?",
-                        new String[]{username}, null, null, null);
-
+                SQLiteDatabase db = helper.getReadableDatabase();
                 try {
-                    if (cursor.moveToFirst()) {
-                        obj = new AuthCache(context, cursor);
+                    Cursor cursor = db.query(
+                            AuthCacheSqlHelper.TABLE_NAME,
+                            AuthCacheSqlHelper.getColumnNames(),
+                            Column.USERNAME + "=?",
+                            new String[]{username}, null, null, null);
+
+                    try {
+                        if (cursor.moveToFirst()) {
+                            obj = new AuthCache(context, cursor);
+                        }
+                    } finally {
+                        cursor.close();
                     }
                 } finally {
-                    cursor.close();
+                    db.close();
                 }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         return obj;
     }
 
     private static AuthCache get(Context context, long id) {
-        AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
         AuthCache obj = null;
-        try {
-            SQLiteDatabase db = helper.getReadableDatabase();
+        synchronized (TAG) {
+            AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
             try {
-                Cursor cursor = db.query(AuthCacheSqlHelper.TABLE_NAME, AuthCacheSqlHelper.getColumnNames(),
-                        Column.ID + "=" + id, null, null, null, null);
+                SQLiteDatabase db = helper.getReadableDatabase();
                 try {
-                    if (cursor.moveToFirst()) {
-                        obj = new AuthCache(context, cursor);
+                    Cursor cursor = db.query(AuthCacheSqlHelper.TABLE_NAME, AuthCacheSqlHelper.getColumnNames(),
+                            Column.ID + "=" + id, null, null, null, null);
+                    try {
+                        if (cursor.moveToFirst()) {
+                            obj = new AuthCache(context, cursor);
+                        }
+                    } finally {
+                        cursor.close();
                     }
                 } finally {
-                    cursor.close();
+                    db.close();
                 }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         return obj;
     }
@@ -229,17 +233,19 @@ public class AuthCache {
         values.put(Column.REQUEST_BLOB.getName(), authCache._requestBlob);
         values.put(Column.SESSION_EXPIRY.getName(), authCache._sessionExpiry);
 
-        AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
         long id = -1;
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        synchronized (TAG) {
+            AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
             try {
-                id = db.insert(AuthCacheSqlHelper.TABLE_NAME, null, values);
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    id = db.insert(AuthCacheSqlHelper.TABLE_NAME, null, values);
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
         if (id != -1) {
             return get(context, id);
@@ -257,16 +263,18 @@ public class AuthCache {
         values.put(Column.REQUEST_BLOB.getName(), authCache._requestBlob);
         values.put(Column.SESSION_EXPIRY.getName(), authCache._sessionExpiry);
 
-        AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
-        try {
-            SQLiteDatabase db = helper.getWritableDatabase();
+        synchronized (TAG) {
+            AuthCacheSqlHelper helper = new AuthCacheSqlHelper(context);
             try {
-                db.update(AuthCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + authCache._id, null);
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    db.update(AuthCacheSqlHelper.TABLE_NAME, values, Column.ID + "=" + authCache._id, null);
+                } finally {
+                    db.close();
+                }
             } finally {
-                db.close();
+                helper.close();
             }
-        } finally {
-            helper.close();
         }
     }
 }
