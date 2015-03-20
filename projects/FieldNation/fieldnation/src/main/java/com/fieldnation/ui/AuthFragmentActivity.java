@@ -172,12 +172,12 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicClient.dispatchRemoveAuth(AuthFragmentActivity.this);
+            AuthTopicClient.dispatchRemoveCommand(AuthFragmentActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicClient.dispatchRemoveAuth(AuthFragmentActivity.this);
+            AuthTopicClient.dispatchRemoveCommand(AuthFragmentActivity.this);
         }
     };
 

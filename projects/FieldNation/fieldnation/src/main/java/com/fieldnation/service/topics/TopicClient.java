@@ -34,7 +34,7 @@ public class TopicClient implements TopicConstants {
     }
 
     public void connect(Context context) {
-        Log.v(TAG, "connect");
+//        Log.v(TAG, "connect");
         context.bindService(new Intent(context, TopicService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -50,7 +50,7 @@ public class TopicClient implements TopicConstants {
     /*-         Commands            -*/
     /*-*****************************-*/
     public boolean register(String topicId, String userTag) {
-        Log.v(TAG, "register");
+        Log.v(TAG, "register(" + topicId + ", " + userTag + ")");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
@@ -177,7 +177,7 @@ public class TopicClient implements TopicConstants {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.v(TAG, "handleMessage");
+//            Log.v(TAG, "handleMessage");
             TopicClient client = _client.get();
             if (client == null) {
                 super.handleMessage(msg);

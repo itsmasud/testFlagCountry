@@ -116,6 +116,7 @@ public class TopicService extends Service implements TopicConstants {
         sendEvent(replyTo, WHAT_REGISTER_LISTENER, response, c.userTag);
 
         if (_lastSent.containsKey(topicId)) {
+            Log.v(TAG, "lastsent " + topicId);
             bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
             bundle.putParcelable(PARAM_TOPIC_PARCELABLE, _lastSent.get(topicId));
@@ -145,10 +146,11 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     private void dispatchEvent(Bundle bundle) {
-        Log.v(TAG, "dispatch");
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         boolean keepLast = bundle.getBoolean(PARAM_KEEP_LAST);
         Parcelable payload = bundle.getParcelable(PARAM_TOPIC_PARCELABLE);
+
+        Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
 
         Bundle response = new Bundle();
         //response.putString(TopicConstants.ACTION, TopicConstants.ACTION_DISPATCH_EVENT);

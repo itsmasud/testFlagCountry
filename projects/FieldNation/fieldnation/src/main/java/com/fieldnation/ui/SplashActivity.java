@@ -71,20 +71,27 @@ public class SplashActivity extends AuthFragmentActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onPause() {
         _globalClient.disconnect(this);
         _authClient.disconnect(this);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
     }
 
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
+            Log.v(TAG, "_globalTopic_listener.onConnected");
             _globalClient.registerGotProfile();
         }
 
         @Override
         public void onGotProfile(Profile profile) {
+            Log.v(TAG, "_globalTopic_listener.onGotProfile");
             _profile = profile;
             doNextStep();
         }
@@ -93,25 +100,18 @@ public class SplashActivity extends AuthFragmentActivity {
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _authClient.registerHaveAuth();
-            _authClient.registerFailedAuth();
-            _authClient.registerInvalidAuth();
+            _authClient.registerAuthState();
         }
 
         @Override
-        public void onHaveAuth(OAuth oauth) {
+        public void onAuthenticated(OAuth oauth) {
             _isAuth = true;
             doNextStep();
         }
 
         @Override
-        public void onAuthFailed() {
-            AuthTopicClient.dispatchRequestAuth(SplashActivity.this);
-        }
-
-        @Override
-        public void onAuthInvalid() {
-            AuthTopicClient.dispatchRequestAuth(SplashActivity.this);
+        public void onNotAuthenticated() {
+            AuthTopicClient.dispatchRequestCommand(SplashActivity.this);
         }
     };
 

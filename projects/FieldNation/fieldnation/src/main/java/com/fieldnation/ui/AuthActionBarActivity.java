@@ -186,12 +186,12 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicClient.dispatchRemoveAuth(AuthActionBarActivity.this);
+            AuthTopicClient.dispatchRemoveCommand(AuthActionBarActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicClient.dispatchRemoveAuth(AuthActionBarActivity.this);
+            AuthTopicClient.dispatchRemoveCommand(AuthActionBarActivity.this);
         }
     };
 

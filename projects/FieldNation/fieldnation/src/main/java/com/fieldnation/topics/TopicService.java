@@ -19,7 +19,7 @@ import java.util.Set;
  * Created by michael.carver on 12/12/2014.
  */
 class TopicService extends Service {
-    private static final String TAG = "topics.TopicService";
+    private static final String TAG = "TopicService";
 
     private Hashtable<String, Bundle> _lastSent;
 

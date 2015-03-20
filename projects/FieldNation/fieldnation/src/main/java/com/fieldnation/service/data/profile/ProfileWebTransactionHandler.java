@@ -3,6 +3,7 @@ package com.fieldnation.service.data.profile;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -14,8 +15,10 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
  * Created by Michael Carver on 3/13/2015.
  */
 public class ProfileWebTransactionHandler extends WebTransactionHandler implements ProfileConstants {
+    private static final String TAG = "ProfileWebTransactionHandler";
 
     public static byte[] generateGetProfileParams() {
+        Log.v(TAG, "generateGetProfileParams");
         try {
             JsonObject obj = new JsonObject();
             obj.put("action", PARAM_ACTION_GET_MY_PROFILE);
@@ -27,6 +30,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
     }
 
     public static byte[] getnerateGetAllNotificationsParams(int page) {
+        Log.v(TAG, "getnerateGetAllNotificationsParams");
         try {
             JsonObject obj = new JsonObject();
             obj.put("action", PARAM_ACTION_GET_ALL_NOTIFICATIONS);
@@ -41,11 +45,13 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
 
     @Override
     public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+        Log.v(TAG, "handleResult");
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
 
             if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
+                Log.v(TAG, "PARAM_ACTION_GET_MY_PROFILE");
                 // store object
                 byte[] profiledata = resultData.getResultsAsByteArray();
 
@@ -57,6 +63,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 bundle.putByteArray(PARAM_DATA, resultData.getResultsAsByteArray());
                 TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE, bundle, false);
             } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
+                Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
                 int page = params.getInt("page");
                 // store object
                 byte[] pagedata = resultData.getResultsAsByteArray();

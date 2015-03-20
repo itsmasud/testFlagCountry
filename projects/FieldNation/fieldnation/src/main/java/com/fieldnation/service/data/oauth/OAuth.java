@@ -23,7 +23,7 @@ import java.text.ParseException;
 public class OAuth implements Parcelable {
     private static final String TAG = "rpc.server.auth.OAuth";
 
-    public static final String KEY_OAUTH = TAG;
+//    public static final String KEY_OAUTH = TAG;
 
     @Json(name = "id")
     private long _id = -1;

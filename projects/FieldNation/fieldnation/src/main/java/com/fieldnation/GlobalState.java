@@ -15,7 +15,6 @@ import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
@@ -26,7 +25,7 @@ import java.io.File;
  * @author michael.carver
  */
 public class GlobalState extends Application {
-    private static final String TAG = "GlobalState";
+    private final String TAG = UniqueTag.makeTag("GlobalState");
 
     public static final String PREF_NAME = "GlobalPreferences";
     public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
@@ -51,6 +50,7 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(TAG, "onCreate");
 
         startService(new Intent(this, AuthTopicService.class));
 
@@ -96,13 +96,13 @@ public class GlobalState extends Application {
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
-            AuthTopicClient.dispatchRequestAuth(GlobalState.this);
-            _authTopicClient.registerHaveAuth();
+            _authTopicClient.registerAuthState();
+            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
         }
 
         @Override
-        public void onHaveAuth(OAuth oauth) {
-            ProfileDataClient.getProfile(GlobalState.this);
+        public void onAuthenticated(OAuth oauth) {
+
         }
     };
 
@@ -124,11 +124,14 @@ public class GlobalState extends Application {
     private final ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
         @Override
         public void onConnected() {
+            Log.v(TAG, "_profile_listener.onConnected");
             _profileClient.registerProfile();
+            ProfileDataClient.getProfile(GlobalState.this);
         }
 
         @Override
         public void onProfile(Profile profile) {
+            Log.v(TAG, "onProfile");
             _profile = profile;
             GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
         }
@@ -144,7 +147,7 @@ public class GlobalState extends Application {
     private synchronized Tracker getTracker() {
         if (_tracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
+//            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             analytics.enableAutoActivityReports(this);
             analytics.setLocalDispatchPeriod(getResources().getInteger(R.integer.ga_local_dispatch_period));
             analytics.setDryRun(getResources().getBoolean(R.bool.ga_dry_run) || BuildConfig.DEBUG);

@@ -26,7 +26,6 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -257,13 +256,13 @@ public class DrawerView extends RelativeLayout {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getContext().startActivity(intent);
 //            attachAnimations();
-            AuthTopicClient.dispatchInvalidAuth(getContext());
+            AuthTopicClient.dispatchInvalidateCommand(getContext());
         }
     };
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AuthTopicClient.dispatchRemoveAuth(getContext());
+            AuthTopicClient.dispatchRemoveCommand(getContext());
 
             Log.v(TAG, "SplashActivity");
             SplashActivity.startNew(getContext());

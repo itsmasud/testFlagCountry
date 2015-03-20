@@ -11,7 +11,7 @@ public class UniqueTag {
     private static Hashtable<String, Integer> _tags = new Hashtable<>();
 
     public static String makeTag(String root) {
-        return root + ":" + getTagNumber(root);
+        return android.os.Process.myPid() + "/" + root + "/" + getTagNumber(root);
     }
 
     private static int getTagNumber(String root) {

@@ -24,6 +24,7 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
@@ -35,7 +36,7 @@ import com.fieldnation.ui.dialog.UpdateDialog;
  * @author michael.carver
  */
 public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
-    private static final String TAG = "auth.server.AuthActivity";
+    private static final String TAG = "AuthActivity";
     // UI
     private LinearLayout _contentLayout;
     private EditText _usernameEditText;
@@ -236,7 +237,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
                         intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.auth_account_type));
                         intent.putExtra(AccountManager.KEY_AUTHTOKEN, auth.getAccessToken());
-                        intent.putExtra(OAuth.KEY_OAUTH, auth);
 
                         _authcomplete = true;
 
@@ -244,12 +244,14 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.setResult(RESULT_OK, intent);
                         AuthActivity.this.finish();
 
+                        AuthTopicClient.dispatchAddedAccountCommand(AuthActivity.this);
+
                         SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
                     }
-                    if (!getString(R.string.login_error_no_error).equals(error)) {
+                    if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
                         Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
                     }
                 }

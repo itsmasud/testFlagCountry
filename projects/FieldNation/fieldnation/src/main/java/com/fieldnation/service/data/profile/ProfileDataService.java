@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import com.fieldnation.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.topics.TopicService;
@@ -18,7 +19,7 @@ import java.lang.ref.WeakReference;
  * Created by Michael Carver on 3/13/2015.
  */
 public class ProfileDataService extends Service implements ProfileConstants {
-    public static final String TAG = "service.data.ProfileDataService";
+    public static final String TAG = "ProfileDataService";
 
     private static final Object LOCK = new Object();
     private static int COUNT = 0;
@@ -30,10 +31,15 @@ public class ProfileDataService extends Service implements ProfileConstants {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v(TAG, "onStartCommand");
+        if (intent != null) {
+            new Thread(new ProfileProcessingRunnable(this, intent)).start();
+        }
         return START_STICKY;
     }
 
     private void getMyUserInformation(Context context, Intent intent) {
+        Log.v(TAG, "getMyUserInformation");
         // send request (we always ask for an update)
         try {
             WebTransactionBuilder.builder(context)
@@ -63,6 +69,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
     }
 
     private void getAllNotifications(Context context, Intent intent) {
+        Log.v(TAG, "getAllNotifications");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
 
         try {

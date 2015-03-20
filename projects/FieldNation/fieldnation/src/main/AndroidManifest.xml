@@ -176,13 +176,9 @@
                 android:resource="@xml/syncadapter" />
         </service>
         <service
-            android:name=".rpc.server.WebService"
-            android:exported="false"
-            android:process=":data" />
-        <service
             android:name=".service.transaction.WebTransactionService"
             android:exported="false"
-            android:process=":data" />
+            android:process=":web" />
         <service
             android:name=".service.topics.TopicService"
             android:process=":topics"
@@ -197,10 +193,6 @@
             android:process=":data" />
         <service
             android:name=".service.data.profile.ProfileDataService"
-            android:exported="false"
-            android:process=":data" />
-        <service
-            android:name=".service.transaction.WebTransactionService"
             android:exported="false"
             android:process=":data" />
 

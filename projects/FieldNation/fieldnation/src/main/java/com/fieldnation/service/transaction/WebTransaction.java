@@ -185,7 +185,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             Column.STATE + "=?",
                             new String[]{State.IDLE.ordinal() + ""},
                             null, null,
-                            "ID ASC ",//"PRIORITY DESC, ID ASC ",
+                            "PRIORITY DESC, " + Column.ID + " ASC ",
                             "1");
                     try {
                         if (cursor.moveToFirst()) {

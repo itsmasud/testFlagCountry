@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
@@ -20,7 +21,7 @@ import com.fieldnation.service.data.oauth.OAuth;
  * 2) processes transactions from the queue until they are complete
  */
 public class WebTransactionService extends Service implements WebTransactionConstants {
-    private static final String TAG = "service.transaction.TransactionService";
+    private static final String TAG = "WebTransactionService";
 
     private WebTransaction _currentTransaction = null;
     private OAuth _auth;
@@ -29,6 +30,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(TAG, "onCreate");
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(this);
@@ -36,13 +38,14 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
     @Override
     public void onDestroy() {
+        Log.v(TAG, "onDestroy");
         _authTopicClient.disconnect(this);
         super.onDestroy();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        Log.v(TAG, "onStartCommand");
         // get transaction and transforms from intent, push into the database
         // kick off the next transaction if not running
         if (intent != null && intent.getExtras() != null) {
@@ -77,11 +80,13 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _authTopicClient.registerHaveAuth();
+            Log.v(TAG, "AuthTopicClient.onConnected");
+            _authTopicClient.registerAuthState();
         }
 
         @Override
-        public void onHaveAuth(OAuth oauth) {
+        public void onAuthenticated(OAuth oauth) {
+            Log.v(TAG, "AuthTopicClient.onAuthenticated");
             _auth = oauth;
             if (_currentTransaction == null)
                 startTransaction();
@@ -93,8 +98,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
         return null;
     }
 
-
     private void startTransaction() {
+        Log.v(TAG, "AuthTopicClient.startTransaction");
         _currentTransaction = WebTransaction.getNext(this);
         if (_currentTransaction == null) {
             stopSelf();
@@ -129,6 +134,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private final WebTransactionHandler.Listener _transactionListener = new WebTransactionHandler.Listener() {
         @Override
         public void onComplete() {
+            Log.v(TAG, "_transactionListener.onComplete");
             // finish up transaction
             WebTransaction.delete(WebTransactionService.this, _currentTransaction.getId());
             _currentTransaction = null;
@@ -138,6 +144,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
         @Override
         public void onError() {
+            Log.v(TAG, "_transactionListener.onError");
             // finish up transaction
             WebTransaction.delete(WebTransactionService.this, _currentTransaction.getId());
             _currentTransaction = null;

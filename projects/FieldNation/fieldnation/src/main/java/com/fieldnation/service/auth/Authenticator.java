@@ -64,7 +64,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
             result.putString(AccountManager.KEY_AUTHTOKEN, auth.getAccessToken());
             result.putString(AccountManager.KEY_ACCOUNT_NAME, auth.getUsername());
             result.putString(AccountManager.KEY_ACCOUNT_TYPE, _context.getString(R.string.auth_account_type));
-            result.putParcelable(OAuth.KEY_OAUTH, auth);
         } else {
             result.putString(AccountManager.KEY_AUTH_FAILED_MESSAGE, "Could not get Auth token");
         }

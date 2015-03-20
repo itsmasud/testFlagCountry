@@ -13,7 +13,7 @@ import java.util.Set;
  * Created by Michael Carver on 3/3/2015.
  */
 class TopicUser {
-    private static final String TAG = "topics.TopicClient";
+    private static final String TAG = "TopicUser";
 
     /**
      * The messenger to use to send events to the user
@@ -94,9 +94,9 @@ class TopicUser {
     public void addTopic(String topic) {
         topics.add(topic);
         if (getUsers(topic).add(this)) {
-            Log.v(TAG, "Added " + userTag + " to  " + topic);
+//            Log.v(TAG, "Added " + userTag + " to " + topic);
         } else {
-            Log.v(TAG, "Add Fail " + userTag + " to  " + topic);
+//            Log.v(TAG, "Add Fail " + userTag + " to " + topic);
         }
     }
 
