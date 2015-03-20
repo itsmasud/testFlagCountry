@@ -141,15 +141,17 @@ public class OAuth implements Parcelable {
         obj.save(context);
     }
 
-    public String applyToRequest(JsonObject request) throws ParseException {
+    public void applyToRequest(JsonObject request) throws ParseException {
         String params = null;
         if (request.has(HttpJsonBuilder.PARAM_WEB_URL_PARAMS))
             params = request.getString(HttpJsonBuilder.PARAM_WEB_URL_PARAMS);
 
         if (params == null || params.equals("")) {
-            return "?access_token=" + getAccessToken();
+            request.put(HttpJsonBuilder.PARAM_WEB_URL_PARAMS, "?access_token=" + getAccessToken());
+            return;
         } else if (params.startsWith("?")) { // if options already specified
-            return "?access_token=" + getAccessToken() + "&" + params.substring(1);
+            request.put(HttpJsonBuilder.PARAM_WEB_URL_PARAMS, "?access_token=" + getAccessToken() + "&" + params.substring(1));
+            return;
         }
         throw new ParseException("Options must be nothing, or start with '?'. Got: " + params, 0);
     }

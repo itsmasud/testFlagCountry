@@ -161,14 +161,14 @@ public class TopicService extends Service implements TopicConstants {
         synchronized (TAG) {
             users = TopicUser.getUsers(topicId);
             iter = users.iterator();
-        }
-        Log.v(TAG, "Topic: " + topicId);
-        Log.v(TAG, "Users: " + users.size());
-        while (iter.hasNext()) {
-            TopicUser c = iter.next();
-            //Log.v(TAG, "Client: " + c.tag);
-            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, payload);
-            sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
+            Log.v(TAG, "Topic: " + topicId);
+            Log.v(TAG, "Users: " + users.size());
+            while (iter.hasNext()) {
+                TopicUser c = iter.next();
+                //Log.v(TAG, "Client: " + c.tag);
+                bundle.putParcelable(PARAM_TOPIC_PARCELABLE, payload);
+                sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
+            }
         }
 
         if (keepLast)

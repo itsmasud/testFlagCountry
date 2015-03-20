@@ -11,6 +11,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 
 import java.lang.ref.WeakReference;
@@ -187,6 +188,10 @@ public class TopicClient implements TopicConstants {
             if (client._listener == null) {
                 super.handleMessage(msg);
                 return;
+            }
+
+            if (msg.getData() != null) {
+                msg.getData().setClassLoader(GlobalState.getContext().getClassLoader());
             }
 
             switch (msg.what) {

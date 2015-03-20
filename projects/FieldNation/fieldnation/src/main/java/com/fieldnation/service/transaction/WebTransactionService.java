@@ -1,10 +1,12 @@
 package com.fieldnation.service.transaction;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJson;
@@ -23,7 +25,6 @@ import com.fieldnation.service.data.oauth.OAuth;
 public class WebTransactionService extends Service implements WebTransactionConstants {
     private static final String TAG = "WebTransactionService";
 
-    private WebTransaction _currentTransaction = null;
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
 
@@ -65,14 +66,14 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         Transform.put(this, transaction.getId(), transform);
                     }
                 }
+                transaction.setState(WebTransaction.State.IDLE);
+                transaction.save(this);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        if (_currentTransaction == null) {
-            startTransaction();
-        }
+        startTransaction();
 
         return START_STICKY;
     }
@@ -88,8 +89,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
             _auth = oauth;
-            if (_currentTransaction == null)
-                startTransaction();
+            Log.v(TAG, _auth.toJson().display());
+            startTransaction();
         }
     };
 
@@ -99,55 +100,71 @@ public class WebTransactionService extends Service implements WebTransactionCons
     }
 
     private void startTransaction() {
-        Log.v(TAG, "AuthTopicClient.startTransaction");
-        _currentTransaction = WebTransaction.getNext(this);
-        if (_currentTransaction == null) {
-            stopSelf();
+        Log.v(TAG, "startTransaction");
+
+        if (_auth == null)
+            return;
+
+        WebTransaction next = WebTransaction.getNext(this);
+        if (next == null) {
             return;
         }
+        new AsyncTaskEx<Object, Object, Object>() {
 
-        // at some point call the web service
-        JsonObject request = _currentTransaction.getRequest();
-        try {
-            if (_currentTransaction.useAuth()) {
-                if (!request.has(HttpJsonBuilder.PARAM_WEB_HOST)) {
-                    request.put(HttpJsonBuilder.PARAM_WEB_HOST, _auth.getHost());
+            @Override
+            protected Object doInBackground(Object... params) {
+                Context context = (Context) params[0];
+                WebTransaction trans = (WebTransaction) params[1];
+                OAuth auth = (OAuth) params[2];
+
+                // at some point call the web service
+                JsonObject request = trans.getRequest();
+                try {
+                    if (trans.useAuth()) {
+                        if (!request.has(HttpJsonBuilder.PARAM_WEB_HOST)) {
+                            request.put(HttpJsonBuilder.PARAM_WEB_HOST, auth.getHost());
+                        }
+                        request.put(HttpJsonBuilder.PARAM_WEB_PROTOCOL, "https");
+                        auth.applyToRequest(request);
+                    }
+                    HttpResult result = HttpJson.run(context, request);
+
+                    String handler = trans.getHandlerName();
+                    WebTransactionHandler.completeTransaction(
+                            context,
+                            _transactionListener,
+                            handler,
+                            trans,
+                            result);
+                    return null;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    trans.setState(WebTransaction.State.IDLE);
+                    return null;
                 }
-                _auth.applyToRequest(request);
             }
-            HttpResult result = HttpJson.run(this, request);
-
-
-            String handler = _currentTransaction.getHandlerName();
-            WebTransactionHandler.completeTransaction(
-                    WebTransactionService.this,
-                    _transactionListener,
-                    handler,
-                    _currentTransaction,
-                    result);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        }.executeEx(WebTransactionService.this, next, _auth);
     }
+
 
     private final WebTransactionHandler.Listener _transactionListener = new WebTransactionHandler.Listener() {
         @Override
-        public void onComplete() {
+        public void onComplete(WebTransaction trans) {
             Log.v(TAG, "_transactionListener.onComplete");
             // finish up transaction
-            WebTransaction.delete(WebTransactionService.this, _currentTransaction.getId());
-            _currentTransaction = null;
+            WebTransaction.delete(WebTransactionService.this, trans.getId());
             // fire off the next one
             startTransaction();
         }
 
         @Override
-        public void onError() {
+        public void onError(WebTransaction trans) {
             Log.v(TAG, "_transactionListener.onError");
             // finish up transaction
-            WebTransaction.delete(WebTransactionService.this, _currentTransaction.getId());
+/*
+            WebTransaction.delete(WebTransactionService.this, trans.getId());
             _currentTransaction = null;
+*/
             // fire off the next one
             startTransaction();
         }

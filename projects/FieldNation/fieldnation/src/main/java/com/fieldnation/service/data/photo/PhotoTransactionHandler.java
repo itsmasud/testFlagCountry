@@ -87,12 +87,12 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY, response, true);
 
             // done!
-            listener.onComplete();
+            listener.onComplete(transaction);
             return;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        listener.onError();
+        listener.onError(transaction);
     }
 }

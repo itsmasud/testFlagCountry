@@ -50,6 +50,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
+                                    .protocol("https")
                                     .method("GET")
                                     .path("/api/rest/v1/profile")
                     ).send();

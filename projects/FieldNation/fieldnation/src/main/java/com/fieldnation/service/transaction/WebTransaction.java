@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 
@@ -15,7 +16,7 @@ import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
  * Created by Michael Carver on 3/3/2015.
  */
 public class WebTransaction implements Parcelable, WebTransactionConstants {
-    private static final String TAG = "service.transaction.Transaction";
+    private static final String TAG = "WebTransaction";
 
     private long _id;
     private String _handlerName;
@@ -31,7 +32,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public enum State {
-        BUILDING, IDLE
+        BUILDING, IDLE, WORKING
     }
 
     /*-*****************************-*/
@@ -40,6 +41,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     WebTransaction(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
         _handlerName = cursor.getString(Column.HANDLER.getIndex());
+        _handlerParams = cursor.getBlob(Column.HANDLER_PARAMS.getIndex());
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
         try {
@@ -53,6 +55,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public WebTransaction(Bundle bundle) {
         _id = bundle.getLong(PARAM_ID);
         _handlerName = bundle.getString(PARAM_HANDLER_NAME);
+        _handlerParams = bundle.getByteArray(PARAM_HANDLER_PARAMS);
         _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
         _state = State.values()[bundle.getInt(PARAM_STATE)];
         try {
@@ -67,6 +70,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         Bundle bundle = new Bundle();
         bundle.putLong(PARAM_ID, _id);
         bundle.putString(PARAM_HANDLER_NAME, _handlerName);
+        bundle.putByteArray(PARAM_HANDLER_PARAMS, _handlerParams);
         bundle.putInt(PARAM_STATE, _state.ordinal());
         bundle.putByteArray(PARAM_REQUEST, _request.toByteArray());
         bundle.putInt(PARAM_PRIORITY, _priority.ordinal());
@@ -200,6 +204,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             } finally {
                 helper.close();
             }
+            if (obj != null) {
+                obj.setState(State.WORKING);
+                obj.save(context);
+            }
         }
         return obj;
     }
@@ -240,6 +248,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public static WebTransaction put(Context context, Priority priority, String key, boolean useAuth,
                                      JsonObject request, String handlerName, byte[] handlerParams) {
+        Log.v(TAG, "put");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), handlerParams);

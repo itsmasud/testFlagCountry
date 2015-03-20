@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.service.topics.TopicClient;
@@ -135,7 +134,6 @@ public class AuthTopicClient extends TopicClient {
         public void onEvent(String topicId, Parcelable payload) {
             if (TOPIC_AUTH_STATE.equals(topicId)) {
                 Bundle bundle = (Bundle) payload;
-                bundle.setClassLoader(GlobalState.getContext().getClassLoader());
                 AuthState state = AuthState.values()[bundle.getInt(PARAM_STATE)];
 
                 switch (state) {

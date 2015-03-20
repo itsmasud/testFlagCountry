@@ -26,8 +26,8 @@ public abstract class WebTransactionHandler {
     public abstract void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData);
 
     public interface Listener {
-        public void onComplete();
+        public void onComplete(WebTransaction trans);
 
-        public void onError();
+        public void onError(WebTransaction trans);
     }
 }
