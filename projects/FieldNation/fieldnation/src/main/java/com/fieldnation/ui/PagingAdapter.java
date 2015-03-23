@@ -74,6 +74,9 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         Log.v(TAG, "setNoMorePages()");
         _noMorePages = true;
         notifyDataSetChanged();
+        if (_listener != null){
+            _listener.onLoadingComplete();
+        }
     }
 
     @Override

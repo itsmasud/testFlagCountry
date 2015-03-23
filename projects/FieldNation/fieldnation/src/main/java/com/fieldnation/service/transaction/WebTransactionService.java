@@ -15,6 +15,8 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.oauth.OAuth;
 
+import java.net.UnknownHostException;
+
 /**
  * Created by Michael Carver on 2/27/2015.
  * <p/>
@@ -143,9 +145,16 @@ public class WebTransactionService extends Service implements WebTransactionCons
                             trans,
                             result);
                     return null;
+                } catch (UnknownHostException ex) {
+                    // probably offline
+                    ex.printStackTrace();
+                    trans.setState(WebTransaction.State.IDLE);
+                    trans.save(context);
+                    return null;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     trans.setState(WebTransaction.State.IDLE);
+                    trans.save(context);
                     return null;
                 }
             }
