@@ -419,9 +419,6 @@ public class WorkFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
-        if (GlobalState.getContext() == null)
-            return;
-
         if (_sumView != null) {
             _sumView.setWorkorder(_workorder, isCached);
         }
@@ -513,9 +510,6 @@ public class WorkFragment extends WorkorderFragment {
         if (_service == null)
             return;
 
-        if (GlobalState.getContext() == null)
-            return;
-
         GlobalState.getContext().startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
     }
 
@@ -547,7 +541,7 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void showReviewDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(GlobalState.getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_review_message);
         builder.setTitle(R.string.dialog_review_title);
         builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
@@ -563,7 +557,7 @@ public class WorkFragment extends WorkorderFragment {
 
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
-        if (_gpsLocationService == null || _service == null || GlobalState.getContext() == null) {
+        if (_gpsLocationService == null || _service == null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1350,7 +1344,7 @@ public class WorkFragment extends WorkorderFragment {
                     Spannable test = new SpannableString(task.getPhoneNumber());
                     Linkify.addLinks(test, Linkify.PHONE_NUMBERS);
                     if (test.getSpans(0, test.length(), URLSpan.class).length == 0) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(GlobalState.getContext());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setMessage(R.string.dialog_no_number_message);
                         builder.setTitle(R.string.dialog_no_number_title);
                         builder.setPositiveButton(R.string.btn_ok, null);
@@ -1364,7 +1358,7 @@ public class WorkFragment extends WorkorderFragment {
                         setLoading(true);
                     }
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(GlobalState.getContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage(R.string.dialog_no_number_message);
                     builder.setTitle(R.string.dialog_no_number_title);
                     builder.setPositiveButton(R.string.btn_ok, null);
@@ -1451,7 +1445,7 @@ public class WorkFragment extends WorkorderFragment {
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
-            if ((_service == null || isNew) && GlobalState.getContext() != null) {
+            if (_service == null || isNew) {
                 _username = username;
                 _authToken = authToken;
                 _service = new WorkorderService(GlobalState.getContext(), username, authToken, _resultReceiver);
