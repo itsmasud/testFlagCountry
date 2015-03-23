@@ -272,8 +272,8 @@ public class WorkorderListFragment extends Fragment {
         if (_gpsLocationService != null)
             _gpsLocationService.stopLocationUpdates();
 
-        if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-            Toast.makeText(GlobalState.getContext(), "Aborted", Toast.LENGTH_LONG).show();
+        if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible() && getActivity() != null) {
+            Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
             _locationLoadingDialog.dismiss();
         }
         super.onPause();
@@ -720,7 +720,7 @@ public class WorkorderListFragment extends Fragment {
             }
 
             if (_pendingNotInterested.contains(object.getWorkorderId())) {
-                return new View(GlobalState.getContext());
+                return new View(parent.getContext());
             } else if (_requestWorking.contains(object.getWorkorderId())) {
                 v.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
             } else if (_selected.contains(object.getWorkorderId())) {
@@ -761,10 +761,8 @@ public class WorkorderListFragment extends Fragment {
             if (_service == null || isNew) {
                 _username = username;
                 _authToken = authToken;
-                if (GlobalState.getContext() != null) {
-                    _service = new WorkorderService(GlobalState.getContext(), username, authToken, _resultReciever);
-                    requestList(0, true);
-                }
+                _service = new WorkorderService(GlobalState.getContext(), username, authToken, _resultReciever);
+                requestList(0, true);
             }
         }
 
