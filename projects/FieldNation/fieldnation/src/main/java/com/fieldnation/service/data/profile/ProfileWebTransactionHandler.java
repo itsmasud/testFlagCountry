@@ -75,7 +75,8 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 Bundle bundle = new Bundle();
                 bundle.putByteArray(PARAM_DATA, pagedata);
                 bundle.putInt(PARAM_PAGE, page);
-                TopicService.dispatchEvent(context, PARAM_ACTION_GET_ALL_NOTIFICATIONS, bundle, false);
+                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
+                TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST, bundle, false);
                 listener.onComplete(transaction);
                 return;
             }

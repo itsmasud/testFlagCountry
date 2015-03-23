@@ -58,9 +58,9 @@ public class MessagesActionBarView extends RelativeLayout {
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    protected void onDetachedFromWindow() {
         _client.disconnect(getContext());
-        super.finalize();
+        super.onDetachedFromWindow();
     }
 
     private View.OnClickListener _this_onClickListener = new View.OnClickListener() {

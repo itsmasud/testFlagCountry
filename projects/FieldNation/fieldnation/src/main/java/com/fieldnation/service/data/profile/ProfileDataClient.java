@@ -148,7 +148,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
                 protected void onPostExecute(List<Notification> notifications) {
                     onAllNotificationPage(notifications, page);
                 }
-            };
+            }.executeEx(payload);
         }
 
         public void onAllNotificationPage(List<Notification> list, int page) {

@@ -1,10 +1,12 @@
 package com.fieldnation.ui;
 
+import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
@@ -13,7 +15,7 @@ import com.fieldnation.service.data.profile.ProfileDataClient;
 import java.util.List;
 
 public class NotificationListActivity extends ItemListActivity<Notification> {
-    private static final String TAG = "ui.NotificationListActivity";
+    private static final String TAG = "NotificationListActivity";
 
     // Data
     private ProfileDataClient _profiles;
@@ -21,6 +23,19 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        _profiles = new ProfileDataClient(_profile_listener);
+        _profiles.connect(this);
+    }
+
+    @Override
+    protected void onPause() {
+        _profiles.disconnect(this);
+        super.onPause();
+    }
 
     @Override
     public void requestData(int page) {
@@ -64,17 +79,20 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
 
     private ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
         @Override
+        public void onConnected() {
+            _profiles.registerAllNotifications();
+        }
+
+        @Override
         public void onProfile(Profile profile) {
         }
 
         @Override
         public void onAllNotificationPage(List<Notification> list, int page) {
+            Log.v(TAG, "onAllNotificationPage");
             addPage(page, list);
         }
 
-        @Override
-        public void onConnected() {
 
-        }
     };
 }

@@ -67,6 +67,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
 
         if (list.size() == 0) {
             _adapter.setNoMorePages();
+            return;
         }
         _adapter.setPage(page, list);
     }

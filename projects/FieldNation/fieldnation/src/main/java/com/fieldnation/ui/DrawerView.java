@@ -164,10 +164,11 @@ public class DrawerView extends RelativeLayout {
         _globalTopicClient.connect(getContext());
     }
 
+
     @Override
-    protected void finalize() throws Throwable {
+    protected void onDetachedFromWindow() {
         _globalTopicClient.disconnect(getContext());
-        super.finalize();
+        super.onDetachedFromWindow();
     }
 
     private void gotProfile() {
