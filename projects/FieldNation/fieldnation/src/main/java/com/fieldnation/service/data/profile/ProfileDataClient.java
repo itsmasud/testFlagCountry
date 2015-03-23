@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
@@ -99,32 +100,55 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         }
 
         protected void preProfile(Bundle payload) {
-            try {
-                Profile profile = Profile.fromJson(new JsonObject(payload.getByteArray(PARAM_DATA)));
-                onProfile(profile);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            new AsyncTaskEx<Object, Object, Profile>() {
+                @Override
+                protected Profile doInBackground(Object... params) {
+                    Bundle payload = (Bundle) params[0];
+                    try {
+                        return Profile.fromJson(new JsonObject(payload.getByteArray(PARAM_DATA)));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return null;
+                }
 
+                @Override
+                protected void onPostExecute(Profile o) {
+                    onProfile(o);
+                }
+            }.executeEx(payload);
         }
 
         public void onProfile(Profile profile) {
         }
 
         protected void preAllNotificationPage(Bundle payload) {
-            try {
-                List<Notification> list = new LinkedList<>();
-                int page = payload.getInt(PARAM_PAGE);
-                JsonArray jalerts = new JsonArray(payload.getByteArray(PARAM_DATA));
-                for (int i = 0; i < jalerts.size(); i++) {
-                    list.add(Notification.fromJson(jalerts.getJsonObject(i)));
+            new AsyncTaskEx<Bundle, Object, List<Notification>>() {
+                private int page;
+
+                @Override
+                protected List<Notification> doInBackground(Bundle... params) {
+                    Bundle payload = params[0];
+                    try {
+                        List<Notification> list = new LinkedList<>();
+                        page = payload.getInt(PARAM_PAGE);
+                        JsonArray jalerts = new JsonArray(payload.getByteArray(PARAM_DATA));
+                        for (int i = 0; i < jalerts.size(); i++) {
+                            list.add(Notification.fromJson(jalerts.getJsonObject(i)));
+                        }
+
+                        return list;
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return null;
                 }
 
-                onAllNotificationPage(list, page);
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+                @Override
+                protected void onPostExecute(List<Notification> notifications) {
+                    onAllNotificationPage(notifications, page);
+                }
+            };
         }
 
         public void onAllNotificationPage(List<Notification> list, int page) {

@@ -290,7 +290,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 try {
                     success = db.delete(
                             WebTransactionSqlHelper.TABLE_NAME,
-                            Column.ID + "=",
+                            Column.ID + "=?",
                             new String[]{id + ""}) > 0;
                 } finally {
                     db.close();

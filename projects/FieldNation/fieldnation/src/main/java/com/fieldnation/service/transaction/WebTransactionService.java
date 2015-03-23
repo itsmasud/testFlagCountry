@@ -27,6 +27,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
+    private static int THREAD_COUNT = 0;
 
     @Override
     public void onCreate() {
@@ -59,6 +60,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         new JsonObject(extras.getByteArray(PARAM_REQUEST)),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
+/*
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Bundle[] transforms = (Bundle[]) extras.getParcelableArray(PARAM_TRANSFORM_LIST);
                     for (int i = 0; i < transforms.length; i++) {
@@ -66,6 +68,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         Transform.put(this, transaction.getId(), transform);
                     }
                 }
+*/
                 transaction.setState(WebTransaction.State.IDLE);
                 transaction.save(this);
             } catch (Exception ex) {
@@ -113,6 +116,9 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
             @Override
             protected Object doInBackground(Object... params) {
+                synchronized (TAG) {
+                    THREAD_COUNT++;
+                }
                 Context context = (Context) params[0];
                 WebTransaction trans = (WebTransaction) params[1];
                 OAuth auth = (OAuth) params[2];
@@ -143,9 +149,17 @@ public class WebTransactionService extends Service implements WebTransactionCons
                     return null;
                 }
             }
+
         }.executeEx(WebTransactionService.this, next, _auth);
     }
 
+    private void finishTransaction() {
+        synchronized (TAG) {
+            THREAD_COUNT--;
+            if (THREAD_COUNT == 0)
+                stopSelf();
+        }
+    }
 
     private final WebTransactionHandler.Listener _transactionListener = new WebTransactionHandler.Listener() {
         @Override
@@ -155,6 +169,16 @@ public class WebTransactionService extends Service implements WebTransactionCons
             WebTransaction.delete(WebTransactionService.this, trans.getId());
             // fire off the next one
             startTransaction();
+            finishTransaction();
+        }
+
+        @Override
+        public void requeue(WebTransaction trans) {
+            trans.setState(WebTransaction.State.IDLE);
+            trans.save(WebTransactionService.this);
+
+            startTransaction();
+            finishTransaction();
         }
 
         @Override
@@ -167,6 +191,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
 */
             // fire off the next one
             startTransaction();
+            finishTransaction();
         }
     };
 }

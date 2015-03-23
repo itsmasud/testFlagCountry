@@ -28,6 +28,8 @@ public abstract class WebTransactionHandler {
     public interface Listener {
         public void onComplete(WebTransaction trans);
 
+        public void requeue(WebTransaction trans);
+
         public void onError(WebTransaction trans);
     }
 }

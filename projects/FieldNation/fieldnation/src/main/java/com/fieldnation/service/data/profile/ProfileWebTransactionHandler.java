@@ -29,8 +29,8 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         }
     }
 
-    public static byte[] getnerateGetAllNotificationsParams(int page) {
-        Log.v(TAG, "getnerateGetAllNotificationsParams");
+    public static byte[] generateGetAllNotificationsParams(int page) {
+        Log.v(TAG, "generateGetAllNotificationsParams");
         try {
             JsonObject obj = new JsonObject();
             obj.put("action", PARAM_ACTION_GET_ALL_NOTIFICATIONS);
@@ -62,6 +62,8 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 Bundle bundle = new Bundle();
                 bundle.putByteArray(PARAM_DATA, resultData.getResultsAsByteArray());
                 TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE, bundle, false);
+                listener.onComplete(transaction);
+                return;
             } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
                 Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
                 int page = params.getInt("page");
@@ -74,9 +76,13 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 bundle.putByteArray(PARAM_DATA, pagedata);
                 bundle.putInt(PARAM_PAGE, page);
                 TopicService.dispatchEvent(context, PARAM_ACTION_GET_ALL_NOTIFICATIONS, bundle, false);
+                listener.onComplete(transaction);
+                return;
             }
+            listener.onError(transaction);
         } catch (Exception ex) {
             ex.printStackTrace();
+            listener.requeue(transaction);
         }
 
     }

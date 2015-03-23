@@ -77,7 +77,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.LOW)
                     .handler(ProfileWebTransactionHandler.class)
-                    .handlerParams(ProfileWebTransactionHandler.getnerateGetAllNotificationsParams(page))
+                    .handlerParams(ProfileWebTransactionHandler.generateGetAllNotificationsParams(page))
                     .key("NotificationPage" + page)
                     .useAuth()
                     .request(
