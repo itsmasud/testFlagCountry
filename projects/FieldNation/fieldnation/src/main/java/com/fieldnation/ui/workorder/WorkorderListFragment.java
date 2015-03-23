@@ -255,9 +255,9 @@ public class WorkorderListFragment extends Fragment {
         GaTopic.dispatchScreenView(GlobalState.getContext(), getGaLabel());
         _gpsLocationService = new GpsLocationService(GlobalState.getContext());
 
-        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
-                getString(R.string.dialog_location_loading_body),
-                getString(R.string.dialog_location_loading_button),
+        _locationLoadingDialog.setData(GlobalState.getContext().getString(R.string.dialog_location_loading_title),
+                GlobalState.getContext().getString(R.string.dialog_location_loading_body),
+                GlobalState.getContext().getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
         _expiresDialog.setListener(_expiresDialog_listener);
