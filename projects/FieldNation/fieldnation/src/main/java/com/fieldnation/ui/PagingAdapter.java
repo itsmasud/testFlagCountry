@@ -28,7 +28,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     public void setPage(int page, List<T> items) {
         Log.v(TAG, "setPage()");
 
-        if (items.size() > 0) {
+        if (items != null && items.size() > 0) {
             _pages.put(page, items);
             countItems();
         }
@@ -74,7 +74,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         Log.v(TAG, "setNoMorePages()");
         _noMorePages = true;
         notifyDataSetChanged();
-        if (_listener != null){
+        if (_listener != null) {
             _listener.onLoadingComplete();
         }
     }

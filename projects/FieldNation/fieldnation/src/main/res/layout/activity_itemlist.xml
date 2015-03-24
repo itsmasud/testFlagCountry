@@ -19,7 +19,7 @@
             android:animateLayoutChanges="true"
             android:divider="@null"
             android:dividerHeight="0dp"
-            android:smoothScrollbar="false" />
+            android:smoothScrollbar="true" />
 
         <com.fieldnation.ui.ReconnectWarningView
             android:id="@+id/reconnect_view"

@@ -48,9 +48,8 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.webclient.ProfileWebService;
 import com.fieldnation.rpc.webclient.WorkorderWebClient;
-import com.fieldnation.service.auth.AuthTopicService;
+import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GpsLocationService;
 import com.fieldnation.ui.OverScrollView;
@@ -160,7 +159,7 @@ public class WorkFragment extends WorkorderFragment {
 
     // Data
     private WorkorderWebClient _service;
-    private ProfileWebService _profileService;
+    private ProfileDataClient _profileClient;
 
     private boolean _isCached = true;
     private File _tempFile;
@@ -1550,7 +1549,7 @@ public class WorkFragment extends WorkorderFragment {
             _username = null;
             _authToken = null;
             _service = null;
-            _profileService = null;
+//            _profileService = null;
             try {
                 Toast.makeText(getActivity(), new String(resultData.getByteArray(KEY_RESPONSE_DATA)), Toast.LENGTH_LONG).show();
             } catch (Exception ex) {

@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.View;
@@ -68,23 +67,10 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
 
-/*
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_profiles == null || isNew) {
-            _profiles = new ProfileDataClient(this, _profile_listener);
-        }
-    }
-*/
-
     private ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
         @Override
         public void onConnected() {
             _profiles.registerAllNotifications();
-        }
-
-        @Override
-        public void onProfile(Profile profile) {
         }
 
         @Override

@@ -27,6 +27,7 @@ public class TopicClient implements TopicConstants {
     private Messenger _sndService = null;
     private Listener _listener;
 
+
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/

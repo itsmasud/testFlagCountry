@@ -18,7 +18,7 @@ import java.lang.ref.WeakReference;
  * Created by Michael Carver on 3/12/2015.
  */
 public class PhotoDataService extends Service implements PhotoConstants {
-    public static final String TAG = "service.data.PhotoDataService";
+    public static final String TAG = "PhotoDataService";
 
     private static final Object LOCK = new Object();
     private static int COUNT = 0;
@@ -75,7 +75,9 @@ public class PhotoDataService extends Service implements PhotoConstants {
             if (obj != null) {
                 Bundle bundle = _intent.getExtras();
                 bundle.putSerializable(RESULT_IMAGE_FILE, obj.getFile());
-                TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY, bundle, true);
+                bundle.putBoolean(PARAM_CIRCLE, getCircle);
+                bundle.putString(PARAM_URL, url);
+                TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY + "/" + url, bundle, true);
                 return;
             }
             // doesn't exist, try to grab it.
@@ -84,9 +86,7 @@ public class PhotoDataService extends Service implements PhotoConstants {
                         .key(objectName + ":" + url)
                         .priority(WebTransaction.Priority.LOW)
                         .handler(PhotoTransactionHandler.class)
-                        .handlerParams(
-                                PhotoTransactionHandler.generateParams(url, getCircle)
-                        )
+                        .handlerParams(PhotoTransactionHandler.generateParams(url, getCircle))
                         .request(
                                 new HttpJsonBuilder()
                                         .method("GET")

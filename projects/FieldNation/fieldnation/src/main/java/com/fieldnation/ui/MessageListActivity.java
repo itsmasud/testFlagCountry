@@ -6,34 +6,41 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
-import com.fieldnation.json.JsonArray;
+import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class MessageListActivity extends ItemListActivity<Message> {
-    private static final String TAG = "ui.MessageListActivity";
+    private static final String TAG = "MessageListActivity";
 
     // Data
+    private ProfileDataClient _profiles;
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
 
-    @Override
-    public void requestData(int page) {
-
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+        _profiles = new ProfileDataClient(_profile_listener);
+        _profiles.connect(this);
     }
 
+    @Override
+    protected void onPause() {
+        _profiles.disconnect(this);
+        super.onPause();
+    }
+
+    @Override
+    public void requestData(int page) {
+        ProfileDataClient.getAllMessages(this, page);
+    }
 
     @Override
     public View getView(Message object, View convertView, ViewGroup parent) {
@@ -72,29 +79,16 @@ public class MessageListActivity extends ItemListActivity<Message> {
         return true;
     }
 
+    private ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
+        @Override
+        public void onConnected() {
+            _profiles.registerAllMessages();
+        }
 
-//    @Override
-//    public List<Message> onParseData(int page, boolean isCached, byte[] data) {
-//        JsonArray objects = null;
-//        try {
-//            objects = new JsonArray(new String(data));
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//            return null;
-//        }
-//
-//        List<Message> list = new LinkedList<>();
-//        for (int i = 0; i < objects.size(); i++) {
-//            try {
-//                list.add(Message.fromJson(objects.getJsonObject(i)));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        // tell the system that the profile info is now invalid
-////        Topics.dispatchProfileInvalid(this);
-//
-//        return list;
-//    }
-
+        @Override
+        public void onAllMessagesPage(List<Message> list, int page) {
+            Log.v(TAG, "onAllMessagesPage");
+            addPage(page, list);
+        }
+    };
 }

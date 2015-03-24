@@ -40,10 +40,12 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _objName = cursor.getString(Column.OBJ_NAME.getIndex());
         _lastupdated = cursor.getLong(Column.LAST_UPDATED.getIndex());
         _isFile = cursor.getInt(Column.IS_FILE.getIndex()) == 1;
-        if (_isFile) {
-            _file = new File(new String(cursor.getBlob(Column.DATA.getIndex())));
-        } else {
-            _data = cursor.getBlob(Column.DATA.getIndex());
+        if (!cursor.isNull(Column.DATA.getIndex())) {
+            if (_isFile) {
+                _file = new File(new String(cursor.getBlob(Column.DATA.getIndex())));
+            } else {
+                _data = cursor.getBlob(Column.DATA.getIndex());
+            }
         }
     }
 
@@ -66,9 +68,9 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         bundle.putString(PARAM_OBJECT_TYPE, _objName);
         bundle.putLong(PARAM_LAST_UPDATED, _lastupdated);
         bundle.putBoolean(PARAM_IS_FILE, _isFile);
-        if (_isFile)
+        if (_isFile && _file != null)
             bundle.putSerializable(PARAM_FILE, _file);
-        else
+        else if (_data != null)
             bundle.putByteArray(PARAM_DATA, _data);
 
         return bundle;
@@ -239,7 +241,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
                 if (copySuccess) {
                     // success, update entry to point to the file store
-                    v.put(Column.DATA.getName(), dest.getAbsolutePath());
+                    v.put(Column.DATA.getName(), dest.getAbsolutePath().getBytes());
                 } else {
                     // failed, delete atempt, return error
                     dest.delete();
@@ -247,7 +249,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 }
             } else {
                 // already in store, do nothing.
-                v.put(Column.DATA.getName(), obj._file.getAbsolutePath());
+                v.put(Column.DATA.getName(), obj._file.getAbsolutePath().getBytes());
             }
 
         } else {

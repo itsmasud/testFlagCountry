@@ -247,16 +247,16 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction put(Context context, Priority priority, String key, boolean useAuth,
-                                     JsonObject request, String handlerName, byte[] handlerParams) {
+                                     byte[] request, String handlerName, byte[] handlerParams) {
         Log.v(TAG, "put");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), handlerParams);
-        v.put(Column.KEY.getName(), key);
-        v.put(Column.STATE.getName(), State.BUILDING.ordinal());
-        v.put(Column.REQUEST.getName(), request.toByteArray());
-        v.put(Column.PRIORITY.getName(), priority.ordinal());
         v.put(Column.USE_AUTH.getName(), useAuth ? 1 : 0);
+        v.put(Column.STATE.getName(), State.BUILDING.ordinal());
+        v.put(Column.REQUEST.getName(), request);
+        v.put(Column.PRIORITY.getName(), priority.ordinal());
+        v.put(Column.KEY.getName(), key);
 
         long id = -1;
         synchronized (TAG) {
@@ -273,7 +273,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 helper.close();
             }
         }
-        if (id != 1) {
+        if (id != -1) {
             return get(context, id);
         } else {
             return null;

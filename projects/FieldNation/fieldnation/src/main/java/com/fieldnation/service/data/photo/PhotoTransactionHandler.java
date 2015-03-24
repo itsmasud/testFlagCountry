@@ -84,12 +84,13 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
                 response.putSerializable(RESULT_IMAGE_FILE, imageObj.getFile());
 
             // send
-            TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY, response, true);
+            TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY + "/" + url, response, true);
 
             // done!
             listener.onComplete(transaction);
             return;
         } catch (Exception ex) {
+            listener.requeue(transaction);
             ex.printStackTrace();
         }
 

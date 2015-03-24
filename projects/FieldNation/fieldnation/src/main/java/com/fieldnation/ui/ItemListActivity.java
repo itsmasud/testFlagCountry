@@ -40,6 +40,12 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        _adapter.refreshPages();
+    }
+
+    @Override
     public void onRefresh() {
         if (_refreshView != null) {
             _refreshView.startRefreshing();
@@ -60,15 +66,10 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
 
 
     public void addPage(int page, List<O> list) {
-        if (list == null) {
+        if (list == null || list.size() == 0) {
             _adapter.setNoMorePages();
-            return;
         }
 
-        if (list.size() == 0) {
-            _adapter.setNoMorePages();
-            return;
-        }
         _adapter.setPage(page, list);
     }
 

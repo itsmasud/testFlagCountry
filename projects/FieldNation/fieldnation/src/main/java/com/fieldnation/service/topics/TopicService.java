@@ -39,11 +39,18 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(final Intent intent, int flags, int startId) {
         _lastStartId = startId;
 
         if (intent != null && intent.getExtras() != null) {
-            dispatchEvent(intent.getExtras());
+            new Handler().post(new Runnable() {
+                private Intent i = intent;
+
+                @Override
+                public void run() {
+                    dispatchEvent(i.getExtras());
+                }
+            });
         }
 
         if (_bindCount == 0) {
@@ -156,9 +163,9 @@ public class TopicService extends Service implements TopicConstants {
         //response.putString(TopicConstants.ACTION, TopicConstants.ACTION_DISPATCH_EVENT);
         response.putString(PARAM_TOPIC_ID, topicId);
 
-        Set<TopicUser> users = null;
-        Iterator<TopicUser> iter = null;
         synchronized (TAG) {
+            Set<TopicUser> users = null;
+            Iterator<TopicUser> iter = null;
             users = TopicUser.getUsers(topicId);
             iter = users.iterator();
             Log.v(TAG, "Topic: " + topicId);

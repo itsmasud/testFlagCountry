@@ -2,6 +2,8 @@ package com.fieldnation.service.data.photo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
@@ -11,60 +13,38 @@ import java.io.File;
 /**
  * Created by Michael Carver on 3/12/2015.
  */
-public class PhotoDataClient implements PhotoConstants {
-    private String TAG = UniqueTag.makeTag("service.data.PhotoDataClient");
+public class PhotoDataClient extends TopicClient implements PhotoConstants {
+    private String TAG = UniqueTag.makeTag("PhotoDataClient");
 
-    private TopicClient _client = null;
-    private Listener _listener;
-
-    public PhotoDataClient(Context context, Listener listener) {
-        _listener = listener;
-//        _client = new TopicClient(_clientListener);
-//        _client.connect(context);
+    public PhotoDataClient(Listener listener) {
+        super(listener);
     }
 
-    /**
-     * Disconnects from the service. Call this in your activities onPause, or similar.
-     *
-     * @param context
-     */
-    public void stop(Context context) {
-        _client.disconnect(context);
+    public void unregisterAll() {
+        delete(TAG);
     }
 
-    public void getPhoto(Context context, String url, boolean getCircle) {
+    public boolean getPhoto(Context context, String url, boolean getCircle) {
         Intent intent = new Intent(context, PhotoDataService.class);
         intent.putExtra(PARAM_CIRCLE, getCircle);
         intent.putExtra(PARAM_URL, url);
-
         context.startService(intent);
+
+        return register(TOPIC_ID_PHOTO_READY + "/" + url, TAG);
     }
 
-/*
-    private final TopicClient.Listener _clientListener = new TopicClient.Listener() {
+    public static abstract class Listener extends TopicClient.Listener {
         @Override
-        public void onConnected() {
-            _client.register(TOPIC_ID_PHOTO_READY, TAG);
+        public void onEvent(String topicId, Parcelable payload) {
+            Bundle bundle = (Bundle) payload;
+            onPhoto(
+                    bundle.getString(PARAM_URL),
+                    (File) bundle.getSerializable(RESULT_IMAGE_FILE),
+                    bundle.getBoolean(PARAM_CIRCLE));
         }
 
-        @Override
-        public void onDisconnected() {
-        }
 
-        @Override
-        public void onRegistered(String topicId) {
+        public void onPhoto(String url, File file, boolean isCircle) {
         }
-
-        @Override
-        public void onEvent(String topicId, Bundle payload) {
-            if (topicId.equals(TOPIC_ID_PHOTO_READY)) {
-                _listener.onPhoto(payload.getString(PARAM_URL), (File) payload.getSerializable(RESULT_IMAGE_FILE), payload.getBoolean(PARAM_CIRCLE));
-            }
-        }
-    };
-*/
-
-    public interface Listener {
-        public void onPhoto(String url, File file, boolean isCircle);
     }
 }

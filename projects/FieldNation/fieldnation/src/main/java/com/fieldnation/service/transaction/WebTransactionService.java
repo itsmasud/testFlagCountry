@@ -59,7 +59,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         WebTransaction.Priority.values()[extras.getInt(PARAM_PRIORITY)],
                         extras.getString(PARAM_KEY),
                         extras.getBoolean(PARAM_USE_AUTH),
-                        new JsonObject(extras.getByteArray(PARAM_REQUEST)),
+                        extras.getByteArray(PARAM_REQUEST),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
 /*

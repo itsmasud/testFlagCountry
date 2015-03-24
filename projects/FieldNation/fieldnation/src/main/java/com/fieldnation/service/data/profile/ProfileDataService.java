@@ -59,7 +59,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         }
 
         // get stored object
-        StoredObject obj = StoredObject.get(context, "Profile", "Me");
+        StoredObject obj = StoredObject.get(context, PSO_PROFILE, PSO_MY_PROFILE_KEY);
         // if exists, then pass it back
         if (obj != null) {
             Bundle bundle = new Bundle();
@@ -90,7 +90,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
             ex.printStackTrace();
         }
 
-        StoredObject obj = StoredObject.get(context, "NotificationPage", page + "");
+        StoredObject obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
         if (obj != null) {
             Bundle bundle = new Bundle();
             bundle.putByteArray(PARAM_DATA, obj.getData());
@@ -103,6 +103,35 @@ public class ProfileDataService extends Service implements ProfileConstants {
     }
 
     private void getAllMessages(Context context, Intent intent) {
+        Log.v(TAG, "getAllMessages");
+        int page = intent.getIntExtra(PARAM_PAGE, 0);
+
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.LOW)
+                    .handler(ProfileWebTransactionHandler.class)
+                    .handlerParams(ProfileWebTransactionHandler.generateGetAllMessagesParams(page))
+                    .key("MessagePage" + page)
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .method("GET")
+                                    .path("/api/rest/v1/profile/messages/")
+                                    .urlParams("?page=" + page)
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page + "");
+        if (obj != null) {
+            Bundle bundle = new Bundle();
+            bundle.putByteArray(PARAM_DATA, obj.getData());
+            bundle.putInt(PARAM_PAGE, page);
+            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
+            TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST, bundle, false);
+            return;
+        }
     }
 
     private void addBlockedCompany(Context context, Intent intent) {
@@ -130,6 +159,8 @@ public class ProfileDataService extends Service implements ProfileConstants {
                     getMyUserInformation(context, _intent);
                 } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
                     getAllNotifications(context, _intent);
+                } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
+                    getAllMessages(context, _intent);
                 }
             }
             synchronized (LOCK) {

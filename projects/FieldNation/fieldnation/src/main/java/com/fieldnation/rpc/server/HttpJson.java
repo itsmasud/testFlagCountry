@@ -61,9 +61,6 @@ public class HttpJson {
         if (path == null)
             path = "";
 
-        if (!path.startsWith("/"))
-            path = "/" + path;
-
         if (hostname == null)
             hostname = "";
 

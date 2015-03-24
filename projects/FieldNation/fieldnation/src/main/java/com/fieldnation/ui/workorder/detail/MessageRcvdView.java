@@ -1,8 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.method.LinkMovementMethod;
@@ -13,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.service.data.photo.PhotoDataClient;
@@ -21,13 +18,12 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
-import java.util.Random;
 
 public class MessageRcvdView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.MessageRcvdView";
+    private static final String TAG = "MessageRcvdView";
 
-    private int WEB_GET_PHOTO = 1;
     // UI
     private TextView _messageTextView;
     private ImageView _profileImageView;
@@ -36,11 +32,9 @@ public class MessageRcvdView extends RelativeLayout {
     private TextView _usernameTextView;
 
     // Data
-    private GlobalState _gs;
-    private Message _message = null;
     private PhotoDataClient _photos;
-    private Random _rand = new Random();
-    private Drawable _profilePic = null;
+    private Message _message = null;
+    private WeakReference<Drawable> _profilePic = null;
 
     public MessageRcvdView(Context context) {
         super(context);
@@ -60,33 +54,26 @@ public class MessageRcvdView extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_rcvd, this);
 
-        _gs = (GlobalState) getContext().getApplicationContext();
-
         _messageTextView = (TextView) findViewById(R.id.message_textview);
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _checkImageView = (ImageView) findViewById(R.id.check_imageview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
-        _photos = new PhotoDataClient(getContext(), _photo_listener);
+        _photos = new PhotoDataClient(_photo_listener);
+        _photos.connect(getContext());
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        _photos.disconnect(getContext());
+        super.onDetachedFromWindow();
     }
 
     public void setMessage(Message message) {
         _message = message;
 
         populateUi();
-    }
-
-    private void getPhoto() {
-        if (_photos == null)
-            return;
-
-        if (_message == null)
-            return;
-
-        WEB_GET_PHOTO = _rand.nextInt();
-        if (_message.getFromUser().getPhotoThumbUrl() != null)
-            _photos.getPhoto(getContext(), _message.getFromUser().getPhotoUrl(), false);
     }
 
     private void populateUi() {
@@ -112,21 +99,29 @@ public class MessageRcvdView extends RelativeLayout {
 
         _usernameTextView.setText(_message.getFromUser().getFirstname());
 
-        if (_profilePic == null) {
+        if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _profileImageView.setBackgroundResource(R.drawable.missing);
-            getPhoto();
-        } else {
-            _profileImageView.setBackgroundDrawable(_profilePic);
+            String url = _message.getFromUser().getPhotoUrl();
+            if (!misc.isEmptyOrNull(url))
+                _photos.getPhoto(getContext(), url, false);
+        } else if (_profilePic != null && _profilePic.get() != null) {
+            _profileImageView.setBackgroundDrawable(_profilePic.get());
         }
     }
 
     private PhotoDataClient.Listener _photo_listener = new PhotoDataClient.Listener() {
         @Override
-        public void onPhoto(String url, File file, boolean isCircle) {
-            Bitmap photo = BitmapFactory.decodeFile(file.getAbsolutePath());
-            _profilePic = new BitmapDrawable(getContext().getResources(), photo);
-            _profileImageView.setBackgroundDrawable(_profilePic);
+        public void onConnected() {
+            populateUi();
         }
+
+        @Override
+        public void onPhoto(String url, File file, boolean isCircle) {
+            Drawable pic = new BitmapDrawable(getContext().getResources(), file.getAbsolutePath());
+            _profilePic = new WeakReference<Drawable>(pic);
+            _profileImageView.setBackgroundDrawable(pic);
+        }
+
     };
 
 }
