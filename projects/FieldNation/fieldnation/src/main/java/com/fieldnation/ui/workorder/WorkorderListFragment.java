@@ -889,6 +889,7 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void onWorkorderList(List<Workorder> list, WorkorderDataSelector selector, int page) {
+            addPage(page, list);
         }
     };
 
