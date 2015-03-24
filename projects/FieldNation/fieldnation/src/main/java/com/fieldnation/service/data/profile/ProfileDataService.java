@@ -19,7 +19,7 @@ import java.lang.ref.WeakReference;
  * Created by Michael Carver on 3/13/2015.
  */
 public class ProfileDataService extends Service implements ProfileConstants {
-    public static final String TAG = "ProfileDataService";
+    private static final String TAG = "ProfileDataService";
 
     private static final Object LOCK = new Object();
     private static int COUNT = 0;
@@ -38,7 +38,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         return START_STICKY;
     }
 
-    private void getMyUserInformation(Context context, Intent intent) {
+    private static void getMyUserInformation(Context context, Intent intent) {
         Log.v(TAG, "getMyUserInformation");
         // send request (we always ask for an update)
         try {

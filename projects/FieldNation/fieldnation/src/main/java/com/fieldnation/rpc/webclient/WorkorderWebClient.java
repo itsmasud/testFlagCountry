@@ -1,9 +1,15 @@
 package com.fieldnation.rpc.webclient;
 
 import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
 import android.os.ResultReceiver;
 
+import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 public class WorkorderWebClient extends WebClientAuth {
 
@@ -13,7 +19,7 @@ public class WorkorderWebClient extends WebClientAuth {
 
     // workorders
 
-/*
+
     public Intent getList(int resultCode, int page, WorkorderDataSelector selector, boolean allowCache) {
         return httpGet(resultCode, "/api/rest/v1/workorder/" + selector.getCall(), "?page=" + page, allowCache);
     }
@@ -305,6 +311,7 @@ public class WorkorderWebClient extends WebClientAuth {
         return httpGet(resultCode, "api/rest/v1/workorder/bundle/" + bundleId, allowCache);
     }
 
+    /*
     // counter offers
     public Intent setFixedCounterOffer(int resultCode, long workorderId, double fixedTotalAmount, String explanation,
                                        boolean expire, int expireAfterMinutes) {

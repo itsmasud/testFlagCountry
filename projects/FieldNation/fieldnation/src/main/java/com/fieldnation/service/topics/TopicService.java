@@ -27,6 +27,7 @@ public class TopicService extends Service implements TopicConstants {
     private Hashtable<String, Parcelable> _lastSent;
     private int _bindCount = 0;
     private int _lastStartId = -1;
+    private Handler _handler;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -36,6 +37,7 @@ public class TopicService extends Service implements TopicConstants {
         Log.v(TAG, "onCreate");
         super.onCreate();
         _lastSent = new Hashtable<>();
+        _handler = new Handler();
     }
 
     @Override
@@ -43,14 +45,7 @@ public class TopicService extends Service implements TopicConstants {
         _lastStartId = startId;
 
         if (intent != null && intent.getExtras() != null) {
-            new Handler().post(new Runnable() {
-                private Intent i = intent;
-
-                @Override
-                public void run() {
-                    dispatchEvent(i.getExtras());
-                }
-            });
+            dispatchEvent(intent.getExtras());
         }
 
         if (_bindCount == 0) {
@@ -89,20 +84,26 @@ public class TopicService extends Service implements TopicConstants {
     /*-*************************************-*/
     /*-         Command Handlers            -*/
     /*-*************************************-*/
-    private void sendEvent(Messenger messenger, int what, Bundle bundle, String userTag) {
-        try {
-            Message msg = Message.obtain();
-            msg.what = what;
-            msg.setData(bundle);
-            msg.replyTo = _me;
-            messenger.send(msg);
-        } catch (Exception ex) {
-            Log.e(TAG, userTag);
-            ex.printStackTrace();
-            synchronized (TAG) {
-                TopicUser.deleteUser(userTag);
+    private void sendEvent(final Messenger messenger, final int what, final Bundle bundle, final String userTag) {
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Message msg = Message.obtain();
+                    msg.what = what;
+                    msg.setData(bundle);
+                    msg.replyTo = _me;
+                    messenger.send(msg);
+                } catch (Exception ex) {
+                    Log.e(TAG, userTag);
+                    ex.printStackTrace();
+                    synchronized (TAG) {
+                        TopicUser.deleteUser(userTag);
+                    }
+                }
+
             }
-        }
+        });
     }
 
     private void register(Bundle bundle, Messenger replyTo) {

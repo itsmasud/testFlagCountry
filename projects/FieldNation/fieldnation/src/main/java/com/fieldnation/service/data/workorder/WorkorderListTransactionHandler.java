@@ -1,30 +1,25 @@
 package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
+import android.os.Bundle;
 
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionConstants;
 import com.fieldnation.service.transaction.WebTransactionHandler;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Michael Carver on 3/4/2015.
  */
-public class WorkorderListTransactionHandler extends WebTransactionHandler implements WebServiceConstants, WebTransactionConstants {
+public class WorkorderListTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
 
-    public static byte[] generateParams(int page, String listName) {
+    public static byte[] generateParams(int page, String selector) {
         JsonObject obj = new JsonObject();
         try {
             obj.put("page", page);
-            obj.put("listName", listName);
+            obj.put("selector", selector);
         } catch (Exception ex) {
         }
 
@@ -33,18 +28,31 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
 
     @Override
     public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+        // get the basics, send out the event
         int page = 0;
+        String selector = "";
 
-        String listName = "";
         try {
             JsonObject obj = new JsonObject(transaction.getHandlerParams());
             page = obj.getInt("page");
-            listName = obj.getString("listName");
+            selector = obj.getString("selector");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-//        String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
+        byte[] bdata = resultData.getResultsAsByteArray();
+        StoredObject obj = StoredObject.put(context, PSO_WORKORDER_LIST + selector, page + "", bdata);
+        Bundle bundle = new Bundle();
+        bundle.putByteArray(PARAM_DATA, obj.getData());
+        bundle.putInt(PARAM_PAGE, page);
+        bundle.putString(PARAM_LIST_SELECTOR, selector);
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
+        TopicService.dispatchEvent(context, PARAM_ACTION_LIST, bundle, true);
+        listener.onComplete(transaction);
+        // now parse all the workorders?
+//
+//        String data = new String(resultData.getResultsAsByteArray());
+//        // TODO need to figure out how to detect end of list, and delete extra pages
 //
 //        JsonArray objects = null;
 //        try {
@@ -52,6 +60,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
 //        } catch (Exception ex) {
 //            ex.printStackTrace();
 //            // TODO do something about this. Set up a transaction to re-request this page?
+//            listener.onError(transaction);
 //        }
 //
 //        List<Workorder> workorders = new LinkedList<>();
@@ -102,7 +111,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
 //                }
 //            }
 //        }
-//        listener.onComplete();
+
     }
 
 }

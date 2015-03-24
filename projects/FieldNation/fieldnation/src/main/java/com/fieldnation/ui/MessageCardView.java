@@ -220,6 +220,9 @@ public class MessageCardView extends RelativeLayout {
 
         @Override
         public void onPhoto(String url, File file, boolean isCircle) {
+            if (file == null || url == null)
+                return;
+            
             Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
             _profilePic = new WeakReference<>(pic);
             _picCache.put(url, _profilePic);
