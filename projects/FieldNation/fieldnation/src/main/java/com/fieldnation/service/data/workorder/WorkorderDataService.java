@@ -71,11 +71,39 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             bundle.putInt(PARAM_PAGE, page);
             bundle.putString(PARAM_LIST_SELECTOR, selector);
             bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
-            TopicService.dispatchEvent(context, PARAM_ACTION_LIST, bundle, true);
-            return;
+            TopicService.dispatchEvent(context, PARAM_ACTION_LIST + "/" + selector, bundle, true);
         }
     }
 
+    private static void details(Context context, Intent intent) {
+        Log.v(TAG, "details");
+        long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .key("Workorder/" + workorderId)
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .method("GET")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/details")
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId + "");
+        if (obj != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
+            bundle.putByteArray(PARAM_DATA, obj.getData());
+            bundle.putLong(PARAM_ID, workorderId);
+            TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + "/" + workorderId, bundle, true);
+        }
+    }
 
     private class WorkorderProcessingRunnable implements Runnable {
         private WeakReference<Context> _context;
@@ -96,6 +124,8 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                 String action = _intent.getStringExtra(PARAM_ACTION);
                 if (action.equals(PARAM_ACTION_LIST)) {
                     listWorkorders(context, _intent);
+                } else if (action.equals(PARAM_ACTION_DETAILS)) {
+                    details(context, _intent);
                 }
             }
             // todo do stuff here

@@ -75,7 +75,7 @@ public class TimeLoggedView extends RelativeLayout implements WorkorderRenderer 
 
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
         final LoggedWork[] logs = _workorder.getLoggedWork();

@@ -47,7 +47,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
         bundle.putInt(PARAM_PAGE, page);
         bundle.putString(PARAM_LIST_SELECTOR, selector);
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
-        TopicService.dispatchEvent(context, PARAM_ACTION_LIST, bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_LIST + "/" + selector, bundle, true);
         listener.onComplete(transaction);
         // now parse all the workorders?
 //

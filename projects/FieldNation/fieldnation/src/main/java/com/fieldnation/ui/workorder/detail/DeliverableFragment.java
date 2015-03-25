@@ -24,7 +24,6 @@ import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
@@ -86,7 +85,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private File _tempFile;
 
     // Temporary storage
-    private boolean _isCached = true;
     private ActivityResult _activityResult = null;
 
     /*-*************************************-*/
@@ -198,9 +196,8 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        _isCached = isCached;
         populateUi();
     }
 

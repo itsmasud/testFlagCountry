@@ -19,7 +19,6 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.webclient.WorkorderWebClient;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -86,7 +85,7 @@ public class NotificationFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         Log.v(TAG, "setWorkorder: wokorder==null:" + (workorder == null)
                 + " _service==null:" + (_service == null)
                 + " _gs==null:" + (getActivity() == null));

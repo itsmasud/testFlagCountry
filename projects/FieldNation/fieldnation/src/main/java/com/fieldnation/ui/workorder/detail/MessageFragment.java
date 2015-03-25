@@ -115,7 +115,7 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         getMessages();
     }

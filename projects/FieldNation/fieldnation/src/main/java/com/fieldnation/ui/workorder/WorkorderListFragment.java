@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -238,6 +239,7 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onAttach(Activity activity) {
+        Log.v(TAG, "onAttach()");
         super.onAttach(activity);
         _workorderClient = new WorkorderDataClient(_workorderData_listener);
         _workorderClient.connect(getActivity());
@@ -245,6 +247,7 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.v(TAG, "onDetach()");
         _workorderClient.disconnect(getActivity());
         super.onDetach();
     }
@@ -253,7 +256,10 @@ public class WorkorderListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
-        _adapter.refreshPages();
+
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _adapter.refreshPages();
+
         setLoading(true);
 
         GoogleAnalyticsTopicClient.dispatchScreenView(getActivity(), getGaLabel());
@@ -274,6 +280,7 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onPause() {
+        Log.v(TAG, "onPause()");
         if (_gpsLocationService != null)
             _gpsLocationService.stopLocationUpdates();
 
@@ -285,6 +292,7 @@ public class WorkorderListFragment extends Fragment {
     }
 
     private void setLoading(boolean loading) {
+        Log.v(TAG, "setLoading()");
         if (_loadingView != null) {
             if (loading) {
                 _loadingView.startRefreshing();
@@ -295,16 +303,14 @@ public class WorkorderListFragment extends Fragment {
     }
 
     public void update() {
+        Log.v(TAG, "update()");
         _adapter.refreshPages();
     }
 
     private void requestList(int page) {
-        if (getActivity() == null)
-            return;
-
+        Log.v(TAG, "requestList " + page);
         setLoading(true);
-
-        WorkorderDataClient.listWorkorders(getActivity(), _displayView, page);
+        WorkorderDataClient.listWorkorders(GlobalState.getContext(), _displayView, page);
     }
 
     private void addPage(int page, List<Workorder> list) {
@@ -318,6 +324,7 @@ public class WorkorderListFragment extends Fragment {
         if (list.size() == 0) {
             _adapter.setNoMorePages();
         }
+
 
 /*
         if (!isCached) {
@@ -333,8 +340,7 @@ public class WorkorderListFragment extends Fragment {
             }
         }
 */
-
-//        _adapter.setPage(page, list, isCached);
+        _adapter.setPage(page, list);
     }
 
     private void startCheckin() {
@@ -377,6 +383,7 @@ public class WorkorderListFragment extends Fragment {
     }
 
     private void doCheckin() {
+        Log.v(TAG, "doCheckin()");
         _gpsLocationService.setListener(null);
         setLoading(true);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
@@ -401,6 +408,7 @@ public class WorkorderListFragment extends Fragment {
     }
 
     private void doCheckOut() {
+        Log.v(TAG, "doCheckOut()");
         setLoading(true);
         _gpsLocationService.setListener(null);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
@@ -434,6 +442,7 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v(TAG, "onActivityResult()");
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
@@ -449,6 +458,7 @@ public class WorkorderListFragment extends Fragment {
     private OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
+            Log.v(TAG, "_locationLoadingDialog_listener.onButtonClick()");
             _gpsLocationService.stopLocationUpdates();
             setLoading(false);
         }
@@ -796,6 +806,7 @@ public class WorkorderListFragment extends Fragment {
     private final RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
+            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
             _adapter.refreshPages();
         }
     };
@@ -803,7 +814,7 @@ public class WorkorderListFragment extends Fragment {
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-//            Log.v(TAG, "getView()");
+            Log.v(TAG, "_adapter.getView()");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -832,7 +843,7 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-            Log.v(TAG, "requestPage(), " + _displayView.getCall() + " " + page);
+            Log.v(TAG, "_adapter.requestPage(), " + _displayView.getCall() + " " + page);
             requestList(page);
         }
     };
@@ -840,6 +851,7 @@ public class WorkorderListFragment extends Fragment {
     private final PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
         @Override
         public void onLoadingComplete() {
+            Log.v(TAG, "_adapterListener.onLoadingComplete");
             setLoading(false);
         }
     };
@@ -884,11 +896,14 @@ public class WorkorderListFragment extends Fragment {
     private final WorkorderDataClient.Listener _workorderData_listener = new WorkorderDataClient.Listener() {
         @Override
         public void onConnected() {
+            Log.v(TAG, "_workorderData_listener.onConnected");
             _workorderClient.registerWorkorderList(_displayView);
+            _adapter.refreshPages();
         }
 
         @Override
         public void onWorkorderList(List<Workorder> list, WorkorderDataSelector selector, int page) {
+            Log.v(TAG, "_workorderData_listener.onWorkorderList");
             addPage(page, list);
         }
     };

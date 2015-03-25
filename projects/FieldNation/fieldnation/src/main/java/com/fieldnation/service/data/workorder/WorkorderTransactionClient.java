@@ -44,7 +44,7 @@ public class WorkorderTransactionClient {
                 .priority(WebTransaction.Priority.NORMAL)
                 .key("WorkorderDetails:" + workorderId)
                 .handler(WorkorderDetailsTransactionHandler.class)
-                .handlerParams(WorkorderDetailsTransactionHandler.generateParams())
+                .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
                 .request(new HttpJsonBuilder()
                         .method("GET")
                         .path(API_REV + "/workorder/" + workorderId + "/details"))

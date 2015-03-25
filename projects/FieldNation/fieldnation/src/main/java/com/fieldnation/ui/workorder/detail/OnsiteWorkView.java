@@ -1,49 +1,49 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.fieldnation.R;
-import com.fieldnation.data.workorder.Workorder;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
+import com.fieldnation.R;
+import com.fieldnation.data.workorder.Workorder;
+
 public class OnsiteWorkView extends LinearLayout implements WorkorderRenderer {
-	private static final String TAG = "ui.workorder.detail.OnsiteWorkView";
+    private static final String TAG = "ui.workorder.detail.OnsiteWorkView";
 
-	// UI
+    // UI
 
-	// Data
-	private Workorder _workorder;
+    // Data
+    private Workorder _workorder;
 
 	/*-*************************************-*/
-	/*-				Life Cycle				-*/
+    /*-				Life Cycle				-*/
 	/*-*************************************-*/
 
-	public OnsiteWorkView(Context context) {
-		this(context, null);
-	}
+    public OnsiteWorkView(Context context) {
+        this(context, null);
+    }
 
-	public OnsiteWorkView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		LayoutInflater.from(context).inflate(R.layout.view_wd_onsitework, this);
+    public OnsiteWorkView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        LayoutInflater.from(context).inflate(R.layout.view_wd_onsitework, this);
 
-		if (isInEditMode())
-			return;
+        if (isInEditMode())
+            return;
 
-	}
+    }
 
 	/*-*************************************-*/
 	/*-				Mutators				-*/
 	/*-*************************************-*/
 
-	@Override
-	public void setWorkorder(Workorder workorder, boolean isCached) {
-		_workorder = workorder;
-		refresh();
-	}
+    @Override
+    public void setWorkorder(Workorder workorder) {
+        _workorder = workorder;
+        refresh();
+    }
 
-	private void refresh() {
-	}
+    private void refresh() {
+    }
 
 }

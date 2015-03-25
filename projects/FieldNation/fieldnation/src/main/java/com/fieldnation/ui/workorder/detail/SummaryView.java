@@ -86,7 +86,7 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         _workorder.addListener(_workorder_listener);
         refresh();

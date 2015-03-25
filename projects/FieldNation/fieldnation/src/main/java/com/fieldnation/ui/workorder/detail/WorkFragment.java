@@ -161,7 +161,6 @@ public class WorkFragment extends WorkorderFragment {
     private WorkorderWebClient _service;
     private ProfileDataClient _profileClient;
 
-    private boolean _isCached = true;
     private File _tempFile;
     private GpsLocationService _gpsLocationService;
     private List<Signature> _signatures = null;
@@ -292,7 +291,7 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
-        populateUi(true);
+        populateUi();
     }
 
     @Override
@@ -396,10 +395,10 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         requestTasks(true);
-        populateUi(isCached);
+        populateUi();
     }
 
     private void setTasks(List<Task> tasks, boolean isCached) {
@@ -413,7 +412,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-    private void populateUi(boolean isCached) {
+    private void populateUi() {
         if (_workorder == null)
             return;
 
@@ -421,31 +420,31 @@ public class WorkFragment extends WorkorderFragment {
             return;
 
         if (_sumView != null) {
-            _sumView.setWorkorder(_workorder, isCached);
+            _sumView.setWorkorder(_workorder);
         }
 
         if (_locView != null) {
-            _locView.setWorkorder(_workorder, isCached);
+            _locView.setWorkorder(_workorder);
         }
 
         if (_scheduleView != null) {
-            _scheduleView.setWorkorder(_workorder, isCached);
+            _scheduleView.setWorkorder(_workorder);
         }
 
         if (_payView != null) {
-            _payView.setWorkorder(_workorder, isCached);
+            _payView.setWorkorder(_workorder);
         }
 
         if (_actionView != null) {
-            _actionView.setWorkorder(_workorder, isCached);
+            _actionView.setWorkorder(_workorder);
         }
 
         if (_topBar != null) {
-            _topBar.setWorkorder(_workorder, isCached);
+            _topBar.setWorkorder(_workorder);
         }
 
         if (_exView != null) {
-            _exView.setWorkorder(_workorder, isCached);
+            _exView.setWorkorder(_workorder);
         }
 
         if (_shipments != null && _timeLogged != null) {
@@ -462,28 +461,27 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         if (_shipments != null)
-            _shipments.setWorkorder(_workorder, _isCached);
+            _shipments.setWorkorder(_workorder);
 
         if (_timeLogged != null)
-            _timeLogged.setWorkorder(_workorder, _isCached);
+            _timeLogged.setWorkorder(_workorder);
 
         if (_closingNotes != null)
-            _closingNotes.setWorkorder(_workorder, _isCached);
+            _closingNotes.setWorkorder(_workorder);
 
 
         if (_topBar != null)
-            _topBar.setWorkorder(_workorder, _isCached);
+            _topBar.setWorkorder(_workorder);
 
         if (_customFields != null) {
-            _customFields.setData(_workorder, _workorder.getCustomFields(), _isCached);
+            _customFields.setData(_workorder, _workorder.getCustomFields());
         }
 
         if (_signatureView != null) {
-            _signatureView.setWorkorder(_workorder, _isCached);
+            _signatureView.setWorkorder(_workorder);
         }
 
-        if (!isCached)
-            setLoading(false);
+        setLoading(false);
 
         if (_bundleWarningTextView != null) {
             if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {

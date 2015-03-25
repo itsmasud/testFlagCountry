@@ -1,6 +1,5 @@
 package com.fieldnation.ui.workorder;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.fieldnation.data.workorder.Workorder;
@@ -13,7 +12,7 @@ public abstract class WorkorderFragment extends Fragment {
 
     public abstract void update();
 
-    public abstract void setWorkorder(Workorder workorder, boolean isCached);
+    public abstract void setWorkorder(Workorder workorder);
 
     public void setPageRequestListener(PageRequestListener listener) {
         pageRequestListener = listener;

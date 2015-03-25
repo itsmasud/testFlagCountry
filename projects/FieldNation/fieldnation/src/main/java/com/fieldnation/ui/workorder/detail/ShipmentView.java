@@ -51,7 +51,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();
     }
