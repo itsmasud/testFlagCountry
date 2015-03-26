@@ -1,38 +1,44 @@
 package com.fieldnation.ui;
 
-import android.content.Intent;
-import android.os.ResultReceiver;
 import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.data.profile.Profile;
+import com.fieldnation.service.data.profile.ProfileDataClient;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class NotificationListActivity extends ItemListActivity<Notification> {
-    private static final String TAG = "ui.NotificationListActivity";
+    private static final String TAG = "NotificationListActivity";
 
     // Data
-    private ProfileService _service;
+    private ProfileDataClient _profiles;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        _profiles = new ProfileDataClient(_profile_listener);
+        _profiles.connect(this);
+    }
 
     @Override
-    public Intent requestData(int resultCode, int page, boolean allowCache) {
-        if (_service == null)
-            return null;
+    protected void onPause() {
+        _profiles.disconnect(this);
+        super.onPause();
+    }
 
-        return _service.getAllNotifications(resultCode, page, allowCache);
+    @Override
+    public void requestData(int page) {
+        ProfileDataClient.getAllNotifications(this, page);
     }
 
     @Override
@@ -52,11 +58,6 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.notifications, menu);
 
@@ -66,38 +67,18 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
 
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
-        if (_service == null || isNew)
-            _service = new ProfileService(this, username, authToken, resultReceiver);
-    }
-
-    @Override
-    public List<Notification> onParseData(int page, boolean isCached, byte[] data) {
-        JsonArray objects = null;
-        try {
-            objects = new JsonArray(new String(data));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
+    private ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
+        @Override
+        public void onConnected() {
+            _profiles.registerAllNotifications();
         }
 
-        List<Notification> list = new LinkedList<Notification>();
-        for (int i = 0; i < objects.size(); i++) {
-            try {
-                list.add(Notification.fromJson(objects.getJsonObject(i)));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        @Override
+        public void onAllNotificationPage(List<Notification> list, int page) {
+            Log.v(TAG, "onAllNotificationPage");
+            addPage(page, list);
         }
 
-        Topics.dispatchProfileInvalid(this);
 
-        return list;
-    }
-
-    @Override
-    public void invalidateService() {
-        _service = null;
-    }
+    };
 }

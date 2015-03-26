@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -88,7 +87,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         Log.v(TAG, "Method Stub: setWorkorder()");
 
         _workorder = workorder;

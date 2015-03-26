@@ -17,16 +17,16 @@
 
             <include layout="@layout/view_toolbar" />
 
-            <com.fieldnation.ui.OverScrollListView
-                android:id="@+id/items_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:animateLayoutChanges="true"
-                android:divider="@null"
-                android:dividerHeight="0dp"
-                android:smoothScrollbar="false" />
+        <com.fieldnation.ui.OverScrollListView
+            android:id="@+id/items_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:animateLayoutChanges="true"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:smoothScrollbar="true" />
         </LinearLayout>
 
         <com.fieldnation.ui.ReconnectWarningView

@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.rpc.webclient.PaymentWebService;
 import com.fieldnation.ui.ItemListActivity;
 
 import java.util.LinkedList;
@@ -17,19 +17,26 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     private static final String TAG = "ui.payment.PaymentListActivity";
 
     // Data
-    private PaymentService _service;
+    private PaymentDataClient _paymentClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
 
+// todo delete
     @Override
     public Intent requestData(int resultCode, int page, boolean allowCache) {
         if (_service == null)
             return null;
 
         return _service.getAll(resultCode, page, allowCache);
+    }
+
+
+    @Override
+    public void requestData(int page) {
+
     }
 
     @Override
@@ -53,13 +60,16 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
         super.onResume();
     }
 
+// todo remove
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
         if (_service == null || isNew) {
-            _service = new PaymentService(this, username, authToken, resultReceiver);
+            _service = new PaymentWebService(this, username, authToken, resultReceiver);
         }
     }
 
+
+// todo remove
     @Override
     public List<Payment> onParseData(int page, boolean isCached, byte[] data) {
         JsonArray objects = null;
@@ -82,8 +92,11 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
         return list;
     }
 
+
+// todo remove
     @Override
     public void invalidateService() {
         _service = null;
     }
+
 }

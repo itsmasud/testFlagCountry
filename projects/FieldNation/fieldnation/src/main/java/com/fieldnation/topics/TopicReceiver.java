@@ -7,7 +7,7 @@ import android.os.ResultReceiver;
 /**
  * Created by michael.carver on 12/12/2014.
  */
-public abstract class TopicReceiver extends ResultReceiver implements TopicConstants {
+abstract class TopicReceiver extends ResultReceiver implements TopicConstants {
     public TopicReceiver(Handler handler) {
         super(handler);
     }

@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,18 +24,13 @@ import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -81,7 +75,7 @@ public class DeliverableFragment extends WorkorderFragment {
     // Data
     private Context _context;
     private Workorder _workorder;
-    private WorkorderService _service;
+    private WorkorderDataClient _workorderClient;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
     private final SecureRandom _rand = new SecureRandom();
@@ -91,7 +85,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private File _tempFile;
 
     // Temporary storage
-    private boolean _isCached = true;
     private ActivityResult _activityResult = null;
 
     /*-*************************************-*/
@@ -172,14 +165,13 @@ public class DeliverableFragment extends WorkorderFragment {
     public void onResume() {
         super.onResume();
         _context = getActivity().getApplicationContext();
+//todo remove
         AuthTopicService.subscribeAuthState(_context, 0, TAG, _authReceiver);
         Topics.subscrubeProfileUpdated(_context, TAG + ":ProfileService", _profile_topicService);
     }
 
     @Override
     public void onPause() {
-        TopicService.delete(_context, TAG);
-        TopicService.delete(_context, TAG + ":ProfileService");
         super.onPause();
     }
 
@@ -199,9 +191,8 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        _isCached = isCached;
         populateUi();
     }
 
@@ -343,6 +334,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     return false;
 
                 Log.v(TAG, "local path");
+// todo remove
                 getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                         _workorder.getWorkorderId(), _uploadingSlotId,
                         _tempFile.getAbsolutePath(), getNotificationIntent()));
@@ -350,6 +342,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 return true;
             } else {
                 Log.v(TAG, "from intent");
+// todo remove
                 getActivity().startService(_service.uploadDeliverable(
                         WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                         _uploadingSlotId, data, getNotificationIntent()));
@@ -382,6 +375,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
+// todo remove
             _context.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
                     _workorder.getWorkorderId(),
                     document.getWorkorderUploadId()));
@@ -441,6 +435,8 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
+// todo remove
+
     private final TopicReceiver _profile_topicService = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -457,7 +453,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {
-                _service = new WorkorderService(_context, username, authToken, _resultReceiver);
+                _service = new WorkorderWebClient(_context, username, authToken, _resultReceiver);
             }
         }
 

@@ -3,7 +3,7 @@ package com.fieldnation.topics;
 /**
  * Created by michael.carver on 12/12/2014.
  */
-public interface TopicConstants {
+interface TopicConstants {
     public static final String ACTION = "ACTION";
     public static final String ACTION_REGISTER_LISTENER = "ACTION_REGISTER_LISTENER";
     public static final String ACTION_UNREGISTER_LISTENER = "ACTION_UNREGISTER_LISTENER";

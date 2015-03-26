@@ -34,15 +34,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/title_textview"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:text="Project Title Goes Here dot dot dot dot dot dot"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                <TextView
+                    android:id="@+id/title_textview"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:text="Project Title Goes Here dot dot dot dot dot dot"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <LinearLayout
                 android:id="@+id/substatus_layout"

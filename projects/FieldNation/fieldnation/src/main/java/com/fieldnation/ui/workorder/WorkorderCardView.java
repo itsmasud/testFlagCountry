@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -11,12 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.topics.GaTopic;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
@@ -309,7 +308,7 @@ public class WorkorderCardView extends RelativeLayout {
     private View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            GaTopic.dispatchEvent(getContext(), "WorkorderCardView", "ActionClick", _actionButton.getText().toString(), 1);
+            GoogleAnalyticsTopicClient.dispatchEvent(getContext(), "WorkorderCardView", GoogleAnalyticsTopicClient.EventAction.CLICK, _actionButton.getText().toString(), 1);
 
             switch (_workorder.getButtonAction()) {
                 case Workorder.BUTTON_ACTION_CHECKIN:

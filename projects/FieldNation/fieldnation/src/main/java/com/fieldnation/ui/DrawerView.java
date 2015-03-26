@@ -3,18 +3,13 @@ package com.fieldnation.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ResultReceiver;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,21 +17,15 @@ import android.widget.TextView;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalState;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.PaymentService;
-import com.fieldnation.rpc.client.PhotoService;
-import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -45,7 +34,6 @@ import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.util.Calendar;
-import java.util.Random;
 
 /**
  * This view defines what is in the pull out drawer, and what the buttons do.
@@ -54,8 +42,6 @@ import java.util.Random;
  */
 public class DrawerView extends RelativeLayout {
     private static final String TAG = "ui.DrawerView";
-
-    private int WEB_GET_PHOTO = 1;
 
     // UI
     private LinearLayout _profileContainerLayout;
@@ -86,15 +72,15 @@ public class DrawerView extends RelativeLayout {
     private TextView _versionTextView;
 
     // Data
-    private PaymentService _dataService;
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
     private int _nextPage = 0;
     private Profile _profile = null;
     private Drawable _profilePic = null;
-    private PhotoService _photoService;
+    private PhotoDataClient _photoClient;
     private Random _rand = new Random();
 
+    private GlobalTopicClient _globalTopicClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -119,8 +105,6 @@ public class DrawerView extends RelativeLayout {
 
         if (isInEditMode())
             return;
-
-        AuthTopicService.subscribeAuthState(getContext(), 0, TAG, _authReceiver);
 
         // profile
         _profileContainerLayout = (LinearLayout) findViewById(R.id.profile_container);
@@ -183,15 +167,18 @@ public class DrawerView extends RelativeLayout {
         } else {
         }
 
-        _photoService = new PhotoService(GlobalState.getContext(), _photoReceiver);
-        Topics.subscrubeProfileUpdated(getContext(), TAG + ":PROFILE", _topicReceiver);
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(getContext());
+	
+		_photoClient = new PhotoDataClient();
+		_photoClient.connect(getContext());
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        TopicService.delete(getContext(), TAG);
-        TopicService.delete(getContext(), TAG + ":PROFILE");
-        super.finalize();
+    protected void onDetachedFromWindow() {
+        _globalTopicClient.disconnect(getContext());
+		_photoClient.disconnect(getContext());
+        super.onDetachedFromWindow();
     }
 
     private void populateUi() {
@@ -225,9 +212,9 @@ public class DrawerView extends RelativeLayout {
         }
 
         if (_profile != null) {
-            _providerIdTextView.setVisibility(View.VISIBLE);
-            _providerIdTextView.setText("Provider Id: " + _profile.getUserId());
-
+        _providerIdTextView.setVisibility(View.VISIBLE);
+        _providerIdTextView.setText("Provider Id: " + _profile.getUserId());
+    
             _profileNameTextView.setText(_profile.getFirstname() + " " + _profile.getLastname());
             _profileNameTextView.setVisibility(View.VISIBLE);
 
@@ -245,12 +232,12 @@ public class DrawerView extends RelativeLayout {
 //                _profileImageView.setBackgroundDrawable(_profilePic);
             }
         }
+	}
 
-    }
 
-    /*-*****************************************-*/
-    /*-				Profile Events				-*/
-    /*-*****************************************-*/
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
     private final OnClickListener _profileContainerLayout_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -260,6 +247,27 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             _profileExpandButton.setActivated(!_profileExpandButton.isActivated());
+        }
+
+    private final OnClickListener _review_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
+            getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
+        }
+    };
+
+    private final OnClickListener _sendlog_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            File tempfile = misc.dumpLogcat(getContext());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
+            intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
+            getContext().startActivity(intent);
         }
     };
 
@@ -304,7 +312,7 @@ public class DrawerView extends RelativeLayout {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getContext().startActivity(intent);
 //            attachAnimations();
-            AuthTopicService.requestAuthInvalid(getContext());
+            AuthTopicClient.dispatchInvalidateCommand(getContext());
         }
     };
 
@@ -323,11 +331,10 @@ public class DrawerView extends RelativeLayout {
 
         }
     };
-
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AuthTopicService.requestAuthRemove(getContext());
+            AuthTopicClient.dispatchRemoveCommand(getContext());
 
             Log.v(TAG, "SplashActivity");
             SplashActivity.startNew(getContext());
@@ -338,6 +345,18 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************************-*/
     /*-				System/web Events				-*/
     /*-*********************************************-*/
+    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalTopicClient.registerGotProfile();
+        }
+
+        @Override
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
+            gotProfile();
+        }
+    };
 
     private ResultReceiver _photoReceiver = new ResultReceiver(new Handler()) {
         @Override
@@ -395,11 +414,12 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
+/*
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_dataService == null || isNew) {
-                _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
+                _dataService = new PaymentWebService(getContext(), username, authToken, _resultReciever);
 
                 getContext().startService(_dataService.getAll(1, 0, true));
                 _nextPage = 1;
@@ -421,6 +441,7 @@ public class DrawerView extends RelativeLayout {
             AuthTopicService.requestAuthentication(getContext());
         }
     };
+*/
 
     private class PaymentParseAsyncTask extends AsyncTaskEx<Bundle, Object, Payment[]> {
 
@@ -464,7 +485,7 @@ public class DrawerView extends RelativeLayout {
                 if (ja.size() == 0) {
                     return new Payment[]{selPaid, selEst};
                 } else {
-                    getContext().startService(_dataService.getAll(1, _nextPage, true));
+//                    getContext().startService(_dataService.getAll(1, _nextPage, true));
                     _nextPage++;
                     return new Payment[]{selPaid, selEst};
                 }
@@ -485,6 +506,35 @@ public class DrawerView extends RelativeLayout {
         }
     }
 
+    private void populateUi() {
+        if (_estPayment != null) {
+            _estimatedLayout.setVisibility(View.VISIBLE);
+            _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
+            try {
+                Calendar cal = ISO8601.toCalendar(_estPayment.getDatePaid());
+                _estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                _estimatedDateTextView.setText("");
+            }
+        } else {
+            _estimatedLayout.setVisibility(View.GONE);
+        }
+
+        if (_paidPayment != null) {
+            _paidLayout.setVisibility(View.VISIBLE);
+            _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
+            try {
+                Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
+                _paidDateTextView.setText("Estimated " + misc.formatDate(cal));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                _paidDateTextView.setText("");
+            }
+        } else {
+            _paidLayout.setVisibility(View.GONE);
+        }
+    }
 
     private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
@@ -500,9 +550,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-
-            _dataService = null;
-            AuthTopicService.requestAuthInvalid(getContext());
+//            _dataService = null;
         }
     };
 
@@ -514,3 +562,4 @@ public class DrawerView extends RelativeLayout {
 
     }
 }
+

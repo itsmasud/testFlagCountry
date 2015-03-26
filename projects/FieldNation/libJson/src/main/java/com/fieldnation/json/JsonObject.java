@@ -20,11 +20,14 @@ public class JsonObject {
         _isNullObject = isNullObject;
     }
 
+    public JsonObject(byte[] data) throws ParseException {
+        this(new String(data));
+    }
+
     public JsonObject(String string) throws ParseException {
         _isNullObject = false;
         JsonTokenizer tokenizer = new JsonTokenizer(string);
         fromTokenizer(tokenizer);
-
     }
 
     public JsonObject(String key, Object value) throws ParseException {
@@ -173,7 +176,9 @@ public class JsonObject {
 
         Object obj = _fields.get(item);
 
-        if (obj instanceof JsonObject) {
+        if (obj == null && directions.size() == 0) {
+            return null;
+        } else if (obj instanceof JsonObject) {
             return ((JsonObject) obj).get(directions);
         } else if (obj instanceof JsonArray) {
             return ((JsonArray) obj).get(directions);
@@ -184,7 +189,7 @@ public class JsonObject {
     }
 
     public String getString(String path) throws ParseException {
-        return get(path).toString();
+        return (String) get(path);
     }
 
     public int getInt(String path) throws ParseException {
@@ -246,7 +251,9 @@ public class JsonObject {
 
         Object obj = get(item);
 
-        if (obj instanceof JsonObject) {
+        if (obj == null) {
+            return false;
+        } else if (obj instanceof JsonObject) {
             JsonObject jo = (JsonObject) obj;
 
             return jo.has(directions);
@@ -476,6 +483,10 @@ public class JsonObject {
     @Override
     public String toString() {
         return toStringBuilder().toString();
+    }
+
+    public byte[] toByteArray() {
+        return toString().getBytes();
     }
 
     @Override

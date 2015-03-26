@@ -12,7 +12,7 @@ import com.fieldnation.utils.misc;
 /**
  * Created by michael.carver on 12/18/2014.
  */
-public class Topics {
+class Topics {
     private static final String TAG = "topics.Topics";
 
     public static final String TOPIC_SHUTDOWN = "TOPIC_SHUTDOWN";

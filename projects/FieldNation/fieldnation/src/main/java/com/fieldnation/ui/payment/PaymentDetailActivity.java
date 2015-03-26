@@ -4,19 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.PaymentService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.rpc.webclient.PaymentWebService;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -42,7 +40,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
     // Data
     private long _paymentId = -1;
-    private PaymentService _service;
+    private PaymentDataClient _paymentClient;
     private Payment _paid;
     private PaymentDetailAdapter _adapter;
 
@@ -84,6 +82,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         if (_service == null)
             return;
 
+// todo remove
         startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
     }
 
@@ -127,13 +126,15 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
     }
 
+// todo remove
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
-            _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
+            _service = new PaymentWebService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
             requestData();
         }
     }
+
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -162,6 +163,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             return PaymentDetailActivity.this;
         }
 
+// todo remove
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);

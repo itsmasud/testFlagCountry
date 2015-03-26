@@ -5,394 +5,401 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class JsonArray {
-	private List<Object> _objects = new LinkedList<Object>();
+    private List<Object> _objects = new LinkedList<Object>();
 
-	public JsonArray() {
+    public JsonArray() {
+    }
 
-	}
+    public JsonArray(byte[] data) throws ParseException {
+        this(new String(data));
+    }
 
-	public JsonArray(String string) throws ParseException {
-		JsonTokenizer tokenizer = new JsonTokenizer(string);
-		fromTokenizer(tokenizer);
+    public JsonArray(String string) throws ParseException {
+        JsonTokenizer tokenizer = new JsonTokenizer(string);
+        fromTokenizer(tokenizer);
+    }
+
+    public JsonArray(JsonTokenizer tokenizer) throws ParseException {
+        fromTokenizer(tokenizer);
+    }
+
+    private void fromTokenizer(JsonTokenizer tokenizer) throws ParseException {
+        if (!tokenizer.isNextTokenStartArray()) {
+            throw new ParseException("Not an array!", -1);
+        }
+        // pop the open brace
+        tokenizer.nextToken();
 
-	}
+        // check for empty array
+        if (tokenizer.isNextTokenFinishArray()) {
+            tokenizer.nextToken();
+            return;
+        }
 
-	public JsonArray(JsonTokenizer tokenizer) throws ParseException {
-		fromTokenizer(tokenizer);
-	}
+        while (true) {
+            _objects.add(tokenizer.parseValue());
 
-	private void fromTokenizer(JsonTokenizer tokenizer) throws ParseException {
-		if (!tokenizer.isNextTokenStartArray()) {
-			throw new ParseException("Not an array!", -1);
-		}
-		// pop the open brace
-		tokenizer.nextToken();
+            // if not comma, then it should've been a ']'
+            if (!tokenizer.nextToken().equals(",")) {
+                break;
+            }
+        }
 
-		// check for empty array
-		if (tokenizer.isNextTokenFinishArray()) {
-			tokenizer.nextToken();
-			return;
-		}
+    }
 
-		while (true) {
-			_objects.add(tokenizer.parseValue());
+    public int size() {
+        return _objects.size();
+    }
 
-			// if not comma, then it should've been a ']'
-			if (!tokenizer.nextToken().equals(",")) {
-				break;
-			}
-		}
+    public Object get(int index) {
+        return _objects.get(index);
+    }
 
-	}
+    public Object get(String path) {
+        List<String> dir = JsonTokenizer.parsePath(path);
 
-	public int size() {
-		return _objects.size();
-	}
+        return get(dir);
+    }
+
+    protected Object get(List<String> directions) {
+        if (directions.size() == 0)
+            return this;
+
+        String value = directions.remove(0);
+
+        value = value.replace("[", "");
+        value = value.replace("]", "");
 
-	public Object get(int index) {
-		return _objects.get(index);
-	}
+        int item = Integer.parseInt(value);
+
+        Object obj = _objects.get(item);
 
-	public Object get(String path) {
-		List<String> dir = JsonTokenizer.parsePath(path);
+        if (obj == null && directions.size() == 0) {
+            return null;
+        } else if (obj instanceof JsonObject) {
+            return ((JsonObject) obj).get(directions);
+        } else if (obj instanceof JsonArray) {
+            return ((JsonArray) obj).get(directions);
+        }
 
-		return get(dir);
-	}
+        return obj;
+    }
 
-	protected Object get(List<String> directions) {
-		if (directions.size() == 0)
-			return this;
+    public String getString(int index) {
+        return (String) get(index);
+    }
 
-		String value = directions.remove(0);
+    public JsonObject getJsonObject(int index) {
+        return (JsonObject) get(index);
+    }
 
-		value = value.replace("[", "");
-		value = value.replace("]", "");
+    public JsonArray getJsonArray(int index) {
+        return (JsonArray) get(index);
+    }
 
-		int item = Integer.parseInt(value);
+    public int getInt(int index) {
+        return Integer.parseInt(getString(index));
+    }
 
-		Object obj = _objects.get(item);
+    public long getLong(int index) {
+        return Long.parseLong(getString(index));
+    }
 
-		if (obj instanceof JsonObject) {
-			return ((JsonObject) obj).get(directions);
-		} else if (obj instanceof JsonArray) {
-			return ((JsonArray) obj).get(directions);
-		}
+    public float getFloat(int index) {
+        return Float.parseFloat(getString(index));
+    }
 
-		return obj;
-	}
+    public double getDouble(int index) {
+        return Double.parseDouble(getString(index));
+    }
 
-	public String getString(int index) {
-		return (String) get(index);
-	}
+    public void merge(JsonArray source) {
+        for (int i = 0; i < source.size(); i++) {
+            add(source.get(i));
+        }
+    }
 
-	public JsonObject getJsonObject(int index) {
-		return (JsonObject) get(index);
-	}
+    public Object set(int index, Object value) {
+        while (index >= _objects.size())
+            _objects.add(null);
 
-	public JsonArray getJsonArray(int index) {
-		return (JsonArray) get(index);
-	}
+        return _objects.set(index, value);
+    }
 
-	public int getInt(int index) {
-		return Integer.parseInt(getString(index));
-	}
+    protected void set(List<String> directions, Object value) throws ParseException {
+        if (directions.size() == 0)
+            throw new ParseException("Invalid path", 0);
 
-	public long getLong(int index) {
-		return Long.parseLong(getString(index));
-	}
+        String item = directions.remove(0);
 
-	public float getFloat(int index) {
-		return Float.parseFloat(getString(index));
-	}
+        item = item.replaceAll("\\[", "");
+        item = item.replaceAll("\\]", "");
 
-	public double getDouble(int index) {
-		return Double.parseDouble(getString(index));
-	}
+        int index = Integer.parseInt(item);
 
-	public void merge(JsonArray source) {
-		for (int i = 0; i < source.size(); i++) {
-			add(source.get(i));
-		}
-	}
+        if (directions.size() == 0) {
+            set(index, value);
+        } else {
+            // already exists
+            if (_objects.size() > index) {
+                Object obj = _objects.get(index);
 
-	public Object set(int index, Object value) {
-		while (index >= _objects.size())
-			_objects.add(null);
+                if (obj instanceof JsonObject) {
+                    JsonObject jo = (JsonObject) obj;
 
-		return _objects.set(index, value);
-	}
+                    jo.put(directions, value);
+                    return;
+                } else if (obj instanceof JsonArray) {
+                    JsonArray ja = (JsonArray) obj;
 
-	protected void set(List<String> directions, Object value) throws ParseException {
-		if (directions.size() == 0)
-			throw new ParseException("Invalid path", 0);
+                    String child = directions.get(0);
+                    if (child.equals("[]"))
+                        ja.add(directions, value);
+                    else
+                        ja.set(directions, value);
+                    return;
+                }
+            } else {
 
-		String item = directions.remove(0);
+                String child = directions.get(0);
+                if (child.startsWith("[") && child.endsWith("]")) {
+                    JsonArray ja = new JsonArray();
 
-		item = item.replaceAll("\\[", "");
-		item = item.replaceAll("\\]", "");
+                    set(index, ja);
 
-		int index = Integer.parseInt(item);
+                    if (child.equals("[]"))
+                        ja.add(directions, value);
+                    else
+                        ja.set(directions, value);
 
-		if (directions.size() == 0) {
-			set(index, value);
-		} else {
-			// already exists
-			if (_objects.size() > index) {
-				Object obj = _objects.get(index);
+                    return;
+                } else {
+                    JsonObject jo = new JsonObject();
 
-				if (obj instanceof JsonObject) {
-					JsonObject jo = (JsonObject) obj;
+                    set(index, jo);
 
-					jo.put(directions, value);
-					return;
-				} else if (obj instanceof JsonArray) {
-					JsonArray ja = (JsonArray) obj;
+                    jo.put(directions, value);
+                    return;
 
-					String child = directions.get(0);
-					if (child.equals("[]"))
-						ja.add(directions, value);
-					else
-						ja.set(directions, value);
-					return;
-				}
-			} else {
+                }
+            }
 
-				String child = directions.get(0);
-				if (child.startsWith("[") && child.endsWith("]")) {
-					JsonArray ja = new JsonArray();
+        }
 
-					set(index, ja);
+    }
 
-					if (child.equals("[]"))
-						ja.add(directions, value);
-					else
-						ja.set(directions, value);
+    public boolean add(Object value) {
+        return _objects.add(value);
+    }
 
-					return;
-				} else {
-					JsonObject jo = new JsonObject();
+    public void add(int index, Object value) {
+        _objects.add(index, value);
+    }
 
-					set(index, jo);
+    protected void add(List<String> directions, Object value) throws ParseException {
+        if (directions.size() == 0)
+            throw new ParseException("Invalid path", 0);
 
-					jo.put(directions, value);
-					return;
+        String item = directions.remove(0);
 
-				}
-			}
+        if (!item.equals("[]"))
+            throw new ParseException("This should never happen!", 0);
 
-		}
+        if (directions.size() == 0) {
+            add(value);
+        } else {
+            String child = directions.get(0);
+            if (child.startsWith("[") && child.endsWith("]")) {
+                JsonArray ja = new JsonArray();
 
-	}
+                _objects.add(ja);
 
-	public boolean add(Object value) {
-		return _objects.add(value);
-	}
+                if (child.equals("[]"))
+                    ja.add(directions, value);
+                else
+                    ja.set(directions, value);
 
-	public void add(int index, Object value) {
-		_objects.add(index, value);
-	}
+                return;
+            } else {
+                JsonObject jo = new JsonObject();
 
-	protected void add(List<String> directions, Object value) throws ParseException {
-		if (directions.size() == 0)
-			throw new ParseException("Invalid path", 0);
+                _objects.add(jo);
 
-		String item = directions.remove(0);
+                jo.put(directions, value);
+                return;
 
-		if (!item.equals("[]"))
-			throw new ParseException("This should never happen!", 0);
+            }
 
-		if (directions.size() == 0) {
-			add(value);
-		} else {
-			String child = directions.get(0);
-			if (child.startsWith("[") && child.endsWith("]")) {
-				JsonArray ja = new JsonArray();
+        }
 
-				_objects.add(ja);
+    }
 
-				if (child.equals("[]"))
-					ja.add(directions, value);
-				else
-					ja.set(directions, value);
+    public Object remove(int index) {
+        return _objects.remove(index);
+    }
 
-				return;
-			} else {
-				JsonObject jo = new JsonObject();
+    protected Object remove(List<String> directions) throws ParseException {
+        if (directions.size() == 0)
+            throw new ParseException("Invalid path!", -1);
 
-				_objects.add(jo);
+        String item = directions.remove(0);
 
-				jo.put(directions, value);
-				return;
+        item = item.replaceAll("\\[", "");
+        item = item.replaceAll("\\]", "");
 
-			}
+        int index = Integer.parseInt(item);
 
-		}
+        if (directions.size() == 0) {
+            return remove(index);
+        } else {
+            Object obj = get(index);
 
-	}
+            if (obj instanceof JsonObject) {
+                JsonObject jo = (JsonObject) obj;
 
-	public Object remove(int index) {
-		return _objects.remove(index);
-	}
+                return jo.remove(directions);
+            } else if (obj instanceof JsonArray) {
+                JsonArray jo = (JsonArray) obj;
 
-	protected Object remove(List<String> directions) throws ParseException {
-		if (directions.size() == 0)
-			throw new ParseException("Invalid path!", -1);
+                return jo.remove(directions);
+            }
 
-		String item = directions.remove(0);
+        }
+        return null;
 
-		item = item.replaceAll("\\[", "");
-		item = item.replaceAll("\\]", "");
+    }
 
-		int index = Integer.parseInt(item);
+    public void clear() {
+        _objects.clear();
+    }
 
-		if (directions.size() == 0) {
-			return remove(index);
-		} else {
-			Object obj = get(index);
+    public String display() {
+        return display(0).toString();
+    }
 
-			if (obj instanceof JsonObject) {
-				JsonObject jo = (JsonObject) obj;
+    protected StringBuilder display(int depth) {
+        StringBuilder sb = new StringBuilder();
 
-				return jo.remove(directions);
-			} else if (obj instanceof JsonArray) {
-				JsonArray jo = (JsonArray) obj;
+        sb.append("[\n");
+        for (int i = 0; i < _objects.size(); i++) {
+            Object obj = _objects.get(i);
 
-				return jo.remove(directions);
-			}
+            sb.append(JsonTokenizer.repeat("  ", depth + 1));
+            if (obj == null) {
+                sb.append("null");
+            } else if (obj instanceof JsonObject) {
+                sb.append(((JsonObject) obj).display(depth + 1));
+            } else if (obj instanceof JsonArray) {
+                sb.append(((JsonArray) obj).display(depth + 1));
+            } else if (obj instanceof String) {
+                sb.append(JsonTokenizer.escapeString((String) obj));
+            } else {
+                sb.append(obj + "");
+            }
 
-		}
-		return null;
+            if (i < _objects.size() - 1) {
+                sb.append(",");
+            }
 
-	}
+            sb.append("\n");
+        }
+        sb.append(JsonTokenizer.repeat("  ", depth));
+        sb.append("]");
 
-	public void clear() {
-		_objects.clear();
-	}
+        return sb;
+    }
 
-	public String display() {
-		return display(0).toString();
-	}
+    public StringBuilder toStringBuilder() {
+        StringBuilder sb = new StringBuilder();
 
-	protected StringBuilder display(int depth) {
-		StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < _objects.size(); i++) {
+            Object obj = _objects.get(i);
 
-		sb.append("[\n");
-		for (int i = 0; i < _objects.size(); i++) {
-			Object obj = _objects.get(i);
+            if (obj == null) {
+                sb.append("null");
+            } else if (obj instanceof JsonObject) {
+                sb.append(((JsonObject) obj).toStringBuilder());
+            } else if (obj instanceof JsonArray) {
+                sb.append(((JsonArray) obj).toStringBuilder());
+            } else if (obj instanceof String) {
+                sb.append(JsonTokenizer.escapeString((String) obj));
+            } else {
+                sb.append(obj + "");
+            }
 
-			sb.append(JsonTokenizer.repeat("  ", depth + 1));
-			if (obj == null) {
-				sb.append("null");
-			} else if (obj instanceof JsonObject) {
-				sb.append(((JsonObject) obj).display(depth + 1));
-			} else if (obj instanceof JsonArray) {
-				sb.append(((JsonArray) obj).display(depth + 1));
-			} else if (obj instanceof String) {
-				sb.append(JsonTokenizer.escapeString((String) obj));
-			} else {
-				sb.append(obj + "");
-			}
+            if (i < _objects.size() - 1) {
+                sb.append(",");
+            }
+        }
+        sb.append("]");
 
-			if (i < _objects.size() - 1) {
-				sb.append(",");
-			}
+        return sb;
+    }
 
-			sb.append("\n");
-		}
-		sb.append(JsonTokenizer.repeat("  ", depth));
-		sb.append("]");
+    public boolean has(int index) {
+        if (index < _objects.size())
+            return true;
 
-		return sb;
-	}
+        return false;
+    }
 
-	public StringBuilder toStringBuilder() {
-		StringBuilder sb = new StringBuilder();
+    protected boolean has(List<String> directions) throws ParseException {
+        if (directions.size() == 0)
+            throw new ParseException("Invalid path!", -1);
 
-		sb.append("[");
-		for (int i = 0; i < _objects.size(); i++) {
-			Object obj = _objects.get(i);
+        String item = directions.remove(0);
 
-			if (obj == null) {
-				sb.append("null");
-			} else if (obj instanceof JsonObject) {
-				sb.append(((JsonObject) obj).toStringBuilder());
-			} else if (obj instanceof JsonArray) {
-				sb.append(((JsonArray) obj).toStringBuilder());
-			} else if (obj instanceof String) {
-				sb.append(JsonTokenizer.escapeString((String) obj));
-			} else {
-				sb.append(obj + "");
-			}
+        item = item.replaceAll("\\[", "");
+        item = item.replaceAll("\\]", "");
 
-			if (i < _objects.size() - 1) {
-				sb.append(",");
-			}
-		}
-		sb.append("]");
+        int index = Integer.parseInt(item);
 
-		return sb;
-	}
+        if (!has(index))
+            return false;
+        else if (directions.size() == 0)
+            return true;
 
-	public boolean has(int index) {
-		if (index < _objects.size())
-			return true;
+        Object obj = get(index);
 
-		return false;
-	}
+        if (obj instanceof JsonObject) {
+            JsonObject jo = (JsonObject) obj;
 
-	protected boolean has(List<String> directions) throws ParseException {
-		if (directions.size() == 0)
-			throw new ParseException("Invalid path!", -1);
+            return jo.has(directions);
+        } else if (obj instanceof JsonArray) {
+            JsonArray ja = (JsonArray) obj;
 
-		String item = directions.remove(0);
+            return ja.has(directions);
+        }
 
-		item = item.replaceAll("\\[", "");
-		item = item.replaceAll("\\]", "");
+        return false;
+    }
 
-		int index = Integer.parseInt(item);
+    @Override
+    public String toString() {
+        return toStringBuilder().toString();
+    }
 
-		if (!has(index))
-			return false;
-		else if (directions.size() == 0)
-			return true;
+    public byte[] toByteArray() {
+        return toString().getBytes();
+    }
 
-		Object obj = get(index);
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        try {
+            return new JsonArray(this.toString());
+        } catch (ParseException e) {
+        }
+        return null;
+    }
 
-		if (obj instanceof JsonObject) {
-			JsonObject jo = (JsonObject) obj;
-
-			return jo.has(directions);
-		} else if (obj instanceof JsonArray) {
-			JsonArray ja = (JsonArray) obj;
-
-			return ja.has(directions);
-		}
-
-		return false;
-	}
-
-	@Override
-	public String toString() {
-		return toStringBuilder().toString();
-
-	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		try {
-			return new JsonArray(this.toString());
-		} catch (ParseException e) {
-		}
-		return null;
-	}
-
-	public JsonArray copy() {
-		try {
-			return new JsonArray(this.toString());
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    public JsonArray copy() {
+        try {
+            return new JsonArray(this.toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

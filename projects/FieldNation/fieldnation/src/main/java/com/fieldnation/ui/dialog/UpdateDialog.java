@@ -13,9 +13,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.topics.Topics;
 
 /**
  * Created by Michael Carver on 1/16/2015.
@@ -49,14 +49,14 @@ public class UpdateDialog extends DialogFragmentBase {
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
-        
+
         return v;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        Topics.dispatchShutdown(getActivity());
+        GlobalTopicClient.dispatchAppShutdown(getActivity());
     }
 
     private View.OnClickListener _ok_onClick = new View.OnClickListener() {

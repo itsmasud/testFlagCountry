@@ -12,16 +12,13 @@ import android.widget.Toast;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
 import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicService;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -43,7 +40,7 @@ public class NotificationFragment extends WorkorderFragment {
     // Data
     private Workorder _workorder;
     private Random _rand = new Random();
-    private WorkorderService _service;
+    private WorkorderDataClient _workorderClient;
     private List<Notification> _notes;
     private NotificationListAdapter _adapter;
 
@@ -73,11 +70,13 @@ public class NotificationFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
+// todo remove
         AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
     @Override
     public void onPause() {
+// todo remove
         TopicService.delete(getActivity(), TAG);
         super.onPause();
     }
@@ -88,7 +87,7 @@ public class NotificationFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         Log.v(TAG, "setWorkorder: wokorder==null:" + (workorder == null)
                 + " _service==null:" + (_service == null)
                 + " _gs==null:" + (getActivity() == null));
@@ -150,6 +149,7 @@ public class NotificationFragment extends WorkorderFragment {
         WEB_LIST_NOTIFICATIONS = _rand.nextInt();
         _emptyTextView.setVisibility(View.GONE);
         try {
+// todo remove
             getActivity().startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -188,6 +188,7 @@ public class NotificationFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
+// todo remove
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -195,7 +196,7 @@ public class NotificationFragment extends WorkorderFragment {
                 return;
 
             if (_service == null || isNew) {
-                _service = new WorkorderService(getActivity(), username, authToken, _resultReceiver);
+                _service = new WorkorderWebClient(getActivity(), username, authToken, _resultReceiver);
                 getNotifications();
             }
         }
@@ -215,6 +216,7 @@ public class NotificationFragment extends WorkorderFragment {
             AuthTopicService.requestAuthentication(getActivity());
         }
     };
+
 
     private class NotificationParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Notification>> {
 

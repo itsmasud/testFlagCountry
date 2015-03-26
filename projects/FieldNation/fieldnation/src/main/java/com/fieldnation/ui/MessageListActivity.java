@@ -1,44 +1,45 @@
 package com.fieldnation.ui;
 
 import android.content.Intent;
-import android.os.ResultReceiver;
 import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class MessageListActivity extends ItemListActivity<Message> {
-    private static final String TAG = "ui.MessageListActivity";
+    private static final String TAG = "MessageListActivity";
 
     // Data
-    private ProfileService _service;
+    private ProfileDataClient _profiles;
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
 
-    @Override
-    public Intent requestData(int resultCode, int page, boolean allowCache) {
-        if (_service == null)
-            return null;
-
-        return _service.getAllMessages(resultCode, page, allowCache);
+    protected void onResume() {
+        super.onResume();
+        _profiles = new ProfileDataClient(_profile_listener);
+        _profiles.connect(this);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onPause() {
+        _profiles.disconnect(this);
+        super.onPause();
+    }
+
+    @Override
+    public void requestData(int page) {
+        ProfileDataClient.getAllMessages(this, page);
     }
 
     @Override
@@ -78,41 +79,16 @@ public class MessageListActivity extends ItemListActivity<Message> {
         return true;
     }
 
-
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
-        if (_service == null || isNew) {
-            _service = new ProfileService(this, username, authToken, resultReceiver);
-        }
-    }
-
-    @Override
-    public void invalidateService() {
-        _service = null;
-    }
-
-    @Override
-    public List<Message> onParseData(int page, boolean isCached, byte[] data) {
-        JsonArray objects = null;
-        try {
-            objects = new JsonArray(new String(data));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
+    private ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
+        @Override
+        public void onConnected() {
+            _profiles.registerAllMessages();
         }
 
-        List<Message> list = new LinkedList<>();
-        for (int i = 0; i < objects.size(); i++) {
-            try {
-                list.add(Message.fromJson(objects.getJsonObject(i)));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        @Override
+        public void onAllMessagesPage(List<Message> list, int page) {
+            Log.v(TAG, "onAllMessagesPage");
+            addPage(page, list);
         }
-        // tell the system that the profile info is now invalid
-        Topics.dispatchProfileInvalid(this);
-
-        return list;
-    }
-
+    };
 }

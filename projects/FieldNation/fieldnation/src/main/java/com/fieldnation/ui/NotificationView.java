@@ -137,6 +137,11 @@ public class NotificationView extends RelativeLayout {
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _note.getWorkorder().getWorkorderId());
                 getContext().startActivity(intent);
+            } else if (_note.getWorkorderId() != null) {
+                Intent intent = new Intent(getContext(), WorkorderActivity.class);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _note.getWorkorderId());
+                getContext().startActivity(intent);
             } else if (_span != null) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_span.getURL()));
                 getContext().startActivity(intent);

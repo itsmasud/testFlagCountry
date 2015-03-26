@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Created by michael.carver on 12/12/2014.
  */
-public class TopicClient {
+class TopicClient {
     private static final String TAG = "topics.TopicClient";
 
     public int resultCode;

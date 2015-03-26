@@ -1,28 +1,21 @@
 package com.fieldnation.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.server.ClockReceiver;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.TopicShutdownReciever;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -51,8 +44,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private TwoButtonDialog _coiWarningDialog;
 
     // Services
-    private ProfileService _service;
-    private TopicShutdownReciever _shutdownListener;
+    private GlobalTopicClient _globalClient;
 
     // Data
     private Profile _profile;
@@ -90,7 +82,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
-
         onFinishCreate(savedInstanceState);
     }
 
@@ -111,10 +102,8 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
-        _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
-        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
-        Topics.subscrubeProfileUpdated(this, TAG + ":PROFILE", _topicReceiver);
+        _globalClient = new GlobalTopicClient(_globalListener);
+        _globalClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
@@ -123,8 +112,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
-        TopicService.delete(this, TAG);
-        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
+        _globalClient.disconnect(this);
         super.onPause();
     }
 
@@ -134,15 +122,10 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    protected void onDestroy() {
-        if (_shutdownListener != null)
-            _shutdownListener.onPause();
-        TopicService.unRegisterListener(this, 0, TAG + ":PROFILE", Topics.TOPIC_PROFILE_UPDATE);
-        super.onDestroy();
-    }
+	private void gotProfile(Profile profile) {
+        if (_profile == null)
+            return;
 
-    private void gotProfile(Profile profile) {
         if (_profileBounceProtect)
             return;
 
@@ -197,12 +180,12 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicService.requestAuthRemove(AuthActionBarActivity.this);
+            AuthTopicClient.dispatchRemoveCommand(AuthActionBarActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicService.requestAuthRemove(AuthActionBarActivity.this);
+            AuthTopicClient.dispatchRemoveCommand(AuthActionBarActivity.this);
         }
     };
 
@@ -211,7 +194,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            startService(_service.acceptTos(0, _profile.getUserId()));
+            ProfileDataClient.acceptTos(AuthActionBarActivity.this, _profile.getUserId());
         }
 
         @Override
@@ -262,69 +245,26 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         }
     };
 
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalListener = new GlobalTopicClient.Listener() {
         @Override
-        public void onRegister(int resultCode, String topicId) {
-			AuthTopicService.requestAuthentication(AuthActionBarActivity.this);
+        public void onConnected() {
+            _globalClient.registerGotProfile();
+            _globalClient.registerUpdateApp();
         }
 
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || isNew) {
-                _service = new ProfileService(AuthActionBarActivity.this, username, authToken, _webReceiver);
-            }
-            AuthActionBarActivity.this.onAuthentication(username, authToken, isNew);
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
+            gotProfile();
         }
 
         @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            AuthActionBarActivity.this.onAuthenticationFailed(networkDown);
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            AuthActionBarActivity.this.onAuthenticationInvalidated();
+        public void onNeedAppUpdate() {
+            _updateDialog.show();
         }
     };
 
-    private final WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "WebResultReceiver");
-            _profileBounceProtect = false;
-            Topics.dispatchProfileInvalid(AuthActionBarActivity.this);
-        }
-
-        @Override
-        public Context getContext() {
-            return AuthActionBarActivity.this;
-        }
-    };
-
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
-                _updateDialog.show();
-            }
-
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
-                parcel.setClassLoader(getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                gotProfile(_profile);
-            }
-        }
-    };
-
-    public abstract void onAuthentication(String username, String authToken, boolean isNew);
-
-    public void onAuthenticationFailed(boolean networkDown) {
-    }
-
-    public void onAuthenticationInvalidated() {
-    }
-
+	private final AuthTopicClient.Listener
     // Menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -336,3 +276,4 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+

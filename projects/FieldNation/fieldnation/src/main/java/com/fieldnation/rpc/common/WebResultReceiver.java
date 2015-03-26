@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.Log;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.Stopwatch;
 
 /**
@@ -35,7 +33,9 @@ public abstract class WebResultReceiver extends ResultReceiver implements WebSer
             Log.v(TAG, "onSuccess time: " + stopwatch.finish());
         } else {
             if (ERROR_NETWORK_ERROR.equals(errorType)) {
-                Topics.dispatchNetworkDown(getContext());
+//                Topics.dispatchNetworkDown(getContext());
+            } else if (ERROR_SESSION_INVALID.equals(errorType)) {
+//                AuthTopicService.requestAuthInvalid(getContext());
             }
             onError(resultCode, resultData, errorType);
         }

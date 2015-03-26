@@ -1,0 +1,117 @@
+package com.fieldnation.service.transaction;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Created by Michael Carver on 3/4/2015.
+ */
+public class TransformSqlHelper extends SQLiteOpenHelper {
+    // Note: increment this value every time the structure of the database is
+    // changed.
+    private static final int TABLE_VER = 1;
+    public static final String TABLE_NAME = "transforms";
+
+    public enum Column {
+        ID(0, "_id", "integer primary key autoincrement"),
+        TRANSACTION_ID(1, "transaction_id", "integer not null", true),
+        OBJECT_NAME(2, "object_name", "text not null", true),
+        OBJECT_KEY(3, "object_key", "text not null", true),
+        ACTION(4, "action", "integer not null"),
+        DATA(5, "data", "blob not null");
+
+        private int _index;
+        private String _name;
+        private String _declaration;
+        private boolean _doIndex = false;
+
+        private static String[] _names = null;
+
+        private Column(int index, String name, String declaration, boolean doIndex) {
+            this(index, name, declaration);
+            _doIndex = doIndex;
+        }
+
+        private Column(int index, String name, String declaration) {
+            _index = index;
+            _name = name;
+            _declaration = declaration;
+        }
+
+        public int getIndex() {
+            return _index;
+        }
+
+        public String getName() {
+            return _name;
+        }
+
+        public String getDeclaration() {
+            return _declaration;
+        }
+
+        public boolean hasIndex() {
+            return _doIndex;
+        }
+
+        public static String[] getColumnNames() {
+            if (_names == null) {
+                Column[] vs = values();
+                _names = new String[vs.length];
+                for (int i = 0; i < vs.length; i++) {
+                    _names[i] = vs[i]._name;
+                }
+            }
+            return _names;
+        }
+
+        @Override
+        public String toString() {
+            return _name;
+        }
+    }
+
+    public TransformSqlHelper(Context context) {
+        super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        StringBuilder sb = new StringBuilder();
+        List<String> indicies = new LinkedList<String>();
+
+        sb.append("CREATE TABLE " + TABLE_NAME + " (");
+        Column[] vs = Column.values();
+        for (int i = 0; i < vs.length; i++) {
+            Column c = vs[i];
+            sb.append(c.getName()).append(" ").append(c.getDeclaration());
+            if (i < vs.length - 1) {
+                sb.append(",");
+            }
+
+            if (c.hasIndex()) {
+                indicies.add("CREATE INDEX " + TABLE_NAME + "_" + c.getName() + " ON " + TABLE_NAME + " (" + c.getName() + ");");
+            }
+        }
+        sb.append(");");
+        db.execSQL(sb.toString());
+
+        for (int i = 0; i < indicies.size(); i++) {
+            db.execSQL(indicies.get(i));
+        }
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME + ";");
+        onCreate(db);
+    }
+
+    public static String[] getColumnNames() {
+        return Column.getColumnNames();
+    }
+}

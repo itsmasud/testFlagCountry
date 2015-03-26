@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-
 import android.view.Window;
 import android.widget.Toast;
 
@@ -15,11 +14,9 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
 import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.topics.GaTopic;
+import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.utils.Stopwatch;
 
 /**
@@ -60,7 +57,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     private SorryFragment _sorryFrag;
 
     // Data
-    private WorkorderService _service;
+    private WorkorderDataClient _workorderClient;
 
     private int _displayMode = DISPLAY_SUMMARY;
     private String _name;
@@ -172,16 +169,18 @@ public class SignOffActivity extends AuthFragmentActivity {
         Log.v(TAG, "onCreate time " + stopwatch.finish());
     }
 
+// TODO remove
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
         if (_service == null || isNew) {
             try {
-                _service = new WorkorderService(SignOffActivity.this, username, authToken, _resultReceiver);
+                _service = new WorkorderWebClient(SignOffActivity.this, username, authToken, _resultReceiver);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
+
 
     @Override
     protected void onResume() {
@@ -216,6 +215,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     private void sendSignature() {
         // not a task
+// TODO remove
         if (_taskId == -1) {
             startService(
                     _service.addSignatureJson(WEB_UPLOAD_SIGNATURE, _workorder.getWorkorderId(), _name, _signatureJson));
@@ -234,6 +234,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
+// todo remove
             GaTopic.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
@@ -245,6 +246,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
+// todo remove
             GaTopic.dispatchScreenView(SignOffActivity.this, "SorryFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
@@ -265,6 +267,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureJson = signatureJson;
+// todo remove
             GaTopic.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
@@ -323,6 +326,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                 // we finished uploading the signature
                 if (_completeWorkorder) {
                     // if we need to complete, then start that process
+// todo remove
                     GaTopic.dispatchEvent(SignOffActivity.this, "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "SignOffActivity", 1);
                     startService(
                             _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
