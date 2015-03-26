@@ -3,8 +3,8 @@ package com.fieldnation.ui;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,10 +27,8 @@ import com.fieldnation.ui.dialog.UpdateDialog;
  * @author michael.carver
  */
 public abstract class AuthActionBarActivity extends ActionBarActivity {
-    private static final String TAG_BASE = "ui.AuthActionBarActivity";
+    private static final String TAG_BASE = "AuthActionBarActivity";
     private String TAG = TAG_BASE;
-
-    private final static int AUTH_SERVICE = 1;
 
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
@@ -45,10 +43,12 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     // Services
     private GlobalTopicClient _globalClient;
+    private AuthTopicClient _authClient;
 
     // Data
     private Profile _profile;
     private boolean _profileBounceProtect = false;
+
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -74,13 +74,14 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             TAG = UniqueTag.makeTag(TAG_BASE);
         }
 
-        ClockReceiver.registerClock(this);
-
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
+
         _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":TOS");
         _acceptTermsDialog.setCancelable(false);
+
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
+
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
         onFinishCreate(savedInstanceState);
     }
@@ -105,6 +106,9 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         _globalClient = new GlobalTopicClient(_globalListener);
         _globalClient.connect(this);
 
+        _authClient = new AuthTopicClient(_authClient_listener);
+        _authClient.connect(this);
+
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
@@ -113,6 +117,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         _globalClient.disconnect(this);
+        _authClient.disconnect(this);
         super.onPause();
     }
 
@@ -122,7 +127,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
-	private void gotProfile(Profile profile) {
+    private void gotProfile(Profile profile) {
         if (_profile == null)
             return;
 
@@ -255,7 +260,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
-            gotProfile();
+            gotProfile(profile);
         }
 
         @Override
@@ -264,9 +269,20 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         }
     };
 
-	private final AuthTopicClient.Listener
+    private final AuthTopicClient.Listener _authClient_listener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authClient.registerAuthState();
+        }
+
+        @Override
+        public void onNotAuthenticated() {
+        }
+    };
+
     // Menu
     @Override
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
