@@ -54,7 +54,7 @@ import java.util.List;
 import java.util.Set;
 
 public class WorkorderListFragment extends Fragment {
-    private static final String TAG_BASE = "ui.workorder.WorkorderListFragment";
+    private static final String TAG_BASE = "WorkorderListFragment";
     private String TAG = TAG_BASE;
 
     // State
@@ -95,7 +95,7 @@ public class WorkorderListFragment extends Fragment {
     private OneButtonDialog _locationLoadingDialog;
 
     // Data
-    private WorkorderService _service;
+    private WorkorderService _service = null;
     private Set<Long> _pendingNotInterested = new HashSet<Long>();
     private Set<Long> _selected = new HashSet<Long>();
     private GpsLocationService _gpsLocationService;
@@ -111,9 +111,12 @@ public class WorkorderListFragment extends Fragment {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        _service = null;
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG)) {
@@ -147,6 +150,7 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         return inflater.inflate(R.layout.fragment_workorder_list, container, false);
     }
 
@@ -191,6 +195,7 @@ public class WorkorderListFragment extends Fragment {
             }
 
             if (_authToken != null && _username != null) {
+                Log.v(TAG, "Restoring workorder service");
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReciever);
             }
         }
@@ -269,6 +274,7 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onPause() {
+        Log.v(TAG, "onPause");
         if (_gpsLocationService != null)
             _gpsLocationService.stopLocationUpdates();
 
@@ -276,10 +282,14 @@ public class WorkorderListFragment extends Fragment {
             Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
             _locationLoadingDialog.dismiss();
         }
+
+        AuthTopicService.unsubscribeAuthState(GlobalState.getContext(), TAG);
+        _service = null;
         super.onPause();
     }
 
     private void setLoading(boolean loading) {
+        Log.v(TAG, "setLoading(" + loading + ")");
         if (_loadingView != null) {
             if (loading) {
                 _loadingView.startRefreshing();
@@ -290,12 +300,16 @@ public class WorkorderListFragment extends Fragment {
     }
 
     public void update() {
+        Log.v(TAG, "update");
         _adapter.refreshPages();
     }
 
     private void requestList(int page, boolean allowCache) {
+        Log.v(TAG, "requestList");
         if (_service == null)
             return;
+
+        Log.v(TAG, "requestList start");
 
         setLoading(true);
         Intent intent = _service.getList(WEB_GET_LIST, page, _displayView, allowCache);
@@ -388,6 +402,7 @@ public class WorkorderListFragment extends Fragment {
     }
 
     private void doCheckin() {
+        Log.v(TAG, "doCheckin");
         _gpsLocationService.setListener(null);
         setLoading(true);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
@@ -408,6 +423,7 @@ public class WorkorderListFragment extends Fragment {
     }
 
     private void doCheckOut() {
+        Log.v(TAG, "doCheckOut");
         setLoading(true);
         _gpsLocationService.setListener(null);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
@@ -439,6 +455,7 @@ public class WorkorderListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v(TAG, "onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
@@ -703,6 +720,7 @@ public class WorkorderListFragment extends Fragment {
     private final RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
+            Log.v(TAG, "_refreshViewListener.onStartRefresh");
             _adapter.refreshPages();
         }
     };
@@ -710,6 +728,7 @@ public class WorkorderListFragment extends Fragment {
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
+            Log.v(TAG, "_adapter.getView");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -737,7 +756,7 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-            Log.v(TAG, "requestPage(), " + _displayView.getCall() + " " + page);
+            Log.v(TAG, "_adapter.requestPage(), " + _displayView.getCall() + " " + page);
             requestList(page, allowCache);
         }
     };
@@ -745,6 +764,7 @@ public class WorkorderListFragment extends Fragment {
     private final PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
         @Override
         public void onLoadingComplete() {
+            Log.v(TAG, "_adapterListener.onLoadingComplete()");
             setLoading(false);
         }
     };
@@ -753,12 +773,13 @@ public class WorkorderListFragment extends Fragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-    private final AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
+    private AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
 
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
-            Log.v(TAG, "onAuthentication");
+            Log.v(TAG, "onAuthentication(" + username + "," + authToken + ", " + isNew + ")" + (_service == null));
             if (_service == null || isNew) {
+                Log.v(TAG, "onAuthentication 2");
                 _username = username;
                 _authToken = authToken;
                 _service = new WorkorderService(GlobalState.getContext(), username, authToken, _resultReciever);
@@ -788,6 +809,7 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         protected List<Workorder> doInBackground(Bundle... params) {
+            Log.v(TAG, "WorkorderParseAsync.doInBackground()");
             Bundle resultData = params[0];
 
             page = resultData.getInt(KEY_PAGE_NUM);
@@ -827,6 +849,7 @@ public class WorkorderListFragment extends Fragment {
     private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
+            Log.v(TAG, "_resultReciever.onSuccess()");
             if (resultCode == WEB_GET_LIST) {
                 new WorkorderParseAsync().executeEx(resultData);
 
@@ -854,6 +877,7 @@ public class WorkorderListFragment extends Fragment {
 
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
+            Log.v(TAG, "_resultReciever.onError()");
             super.onError(resultCode, resultData, errorType);
             _service = null;
             AuthTopicService.requestAuthInvalid(GlobalState.getContext());
