@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 3/17/2015.
@@ -41,6 +42,8 @@ public class GlobalTopicClient extends TopicClient {
     public static void dispatchGotProfile(Context context, Profile profile) {
         if (context == null)
             return;
+
+        misc.printStackTrace("GlobalTopicClient.dispatchGotProfile");
 
         TopicService.dispatchEvent(context, TOPIC_GOT_PROFILE, profile, true);
     }
@@ -106,7 +109,7 @@ public class GlobalTopicClient extends TopicClient {
         public void onEvent(String topicId, Parcelable payload) {
             if (TOPIC_APP_UPDATE.equals(topicId)) {
                 onNeedAppUpdate();
-            } else if (TOPIC_GOT_PROFILE.equals(topicId)) {
+            } else if (TOPIC_GOT_PROFILE.equals(topicId) && payload instanceof Profile) {
                 onGotProfile((Profile) payload);
             } else if (TOPIC_PROFILE_INVALID.equals(topicId)) {
                 onProfileInvalid();

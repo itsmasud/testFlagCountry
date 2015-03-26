@@ -476,7 +476,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 try {
                     success = db.delete(
                             ObjectStoreSqlHelper.TABLE_NAME,
-                            Column.ID + "=",
+                            Column.ID + "=?",
                             new String[]{id + ""}) > 0;
                 } finally {
                     db.close();

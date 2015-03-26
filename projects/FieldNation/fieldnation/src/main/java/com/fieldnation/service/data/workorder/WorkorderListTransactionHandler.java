@@ -3,6 +3,7 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -14,6 +15,7 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
  * Created by Michael Carver on 3/4/2015.
  */
 public class WorkorderListTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
+    private static final String TAG = "WorkorderListTransactionHandler";
 
     public static byte[] generateParams(int page, String selector) {
         JsonObject obj = new JsonObject();
@@ -28,6 +30,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
 
     @Override
     public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+        Log.v(TAG, "handleResult");
         // get the basics, send out the event
         int page = 0;
         String selector = "";

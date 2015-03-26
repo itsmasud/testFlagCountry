@@ -325,21 +325,6 @@ public class WorkorderListFragment extends Fragment {
             _adapter.setNoMorePages();
         }
 
-
-/*
-        if (!isCached) {
-            for (int i = 0; i < list.size(); i++) {
-                Long j = list.get(i).getWorkorderId();
-*/
-/*
-                _pendingNotInterested.remove(j);
-                _requestWorking.remove(j);
-                _selected.remove(j);
-*/
-/*
-            }
-        }
-*/
         _adapter.setPage(page, list);
     }
 
@@ -904,7 +889,8 @@ public class WorkorderListFragment extends Fragment {
         @Override
         public void onWorkorderList(List<Workorder> list, WorkorderDataSelector selector, int page) {
             Log.v(TAG, "_workorderData_listener.onWorkorderList");
-            addPage(page, list);
+            if (list != null)
+                addPage(page, list);
         }
     };
 

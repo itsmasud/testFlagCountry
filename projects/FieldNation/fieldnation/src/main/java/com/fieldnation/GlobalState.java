@@ -132,8 +132,10 @@ public class GlobalState extends Application {
         @Override
         public void onProfile(Profile profile) {
             Log.v(TAG, "onProfile");
-            _profile = profile;
-            GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
+            if (profile != null) {
+                _profile = profile;
+                GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
+            }
         }
     };
 

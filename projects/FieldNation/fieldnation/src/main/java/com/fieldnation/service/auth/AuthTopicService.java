@@ -14,6 +14,7 @@ import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.ui.AuthActivity;
 
@@ -21,7 +22,7 @@ import com.fieldnation.ui.AuthActivity;
  * Created by Michael on 12/15/2014.
  */
 public class AuthTopicService extends Service implements AuthTopicConstants {
-    private static final String TAG = "AuthTopicService";
+    private static final String TAG = UniqueTag.makeTag("AuthTopicService");
 
     // Data
     private boolean _isStarted = false;

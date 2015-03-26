@@ -30,6 +30,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
     private static int THREAD_COUNT = 0;
+    private boolean _isAuthenticated = false;
 
     @Override
     public void onCreate() {
@@ -88,6 +89,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
         public void onConnected() {
             Log.v(TAG, "AuthTopicClient.onConnected");
             _authTopicClient.registerAuthState();
+            _authTopicClient.registerAuthState();
         }
 
         @Override
@@ -95,7 +97,13 @@ public class WebTransactionService extends Service implements WebTransactionCons
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
             _auth = oauth;
             Log.v(TAG, _auth.toJson().display());
+            _isAuthenticated = true;
             startTransaction();
+        }
+
+        @Override
+        public void onNotAuthenticated() {
+            _isAuthenticated = false;
         }
     };
 
@@ -107,7 +115,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private void startTransaction() {
         Log.v(TAG, "startTransaction");
 
-        if (_auth == null)
+        if (_auth == null || !_isAuthenticated)
             return;
 
         WebTransaction next = WebTransaction.getNext(this);
@@ -126,7 +134,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 OAuth auth = (OAuth) params[2];
 
                 // at some point call the web service
-                JsonObject request = trans.getRequest();
+                JsonObject request = trans.getRequest().copy();
                 try {
                     if (trans.useAuth()) {
                         if (!request.has(HttpJsonBuilder.PARAM_WEB_HOST)) {
@@ -136,6 +144,24 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         auth.applyToRequest(request);
                     }
                     HttpResult result = HttpJson.run(context, request);
+
+                    try {
+                        Log.v(TAG, result.getResponseCode() + "");
+                        Log.v(TAG, result.getResponseMessage());
+                        Log.v(TAG, result.getResultsAsString());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    // need to re-auth
+                    if (result.getResponseCode() == 400) {
+                        Log.v(TAG, "Reauth");
+                        _isAuthenticated = false;
+                        AuthTopicClient.dispatchInvalidateCommand(context);
+                        _transactionListener.requeue(trans);
+                        AuthTopicClient.dispatchRequestCommand(context);
+                        return null;
+                    }
 
                     String handler = trans.getHandlerName();
                     WebTransactionHandler.completeTransaction(
