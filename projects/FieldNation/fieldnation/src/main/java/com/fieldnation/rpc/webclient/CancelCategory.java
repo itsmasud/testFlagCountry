@@ -1,6 +1,6 @@
 package com.fieldnation.rpc.webclient;
 
-public enum CancelCategory {
+enum CancelCategory {
     // TODO, make localizable
     OTHER(1, "Other", false),
     COULD_NOT(7, "Could not arrive on site"),

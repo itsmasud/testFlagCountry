@@ -97,12 +97,18 @@ public class GlobalState extends Application {
         @Override
         public void onConnected() {
             _authTopicClient.registerAuthState();
+            _authTopicClient.registerAuthState();
             AuthTopicClient.dispatchRequestCommand(GlobalState.this);
         }
 
         @Override
         public void onAuthenticated(OAuth oauth) {
 
+        }
+
+        @Override
+        public void onNotAuthenticated() {
+            GlobalTopicClient.dispatchOffline(getContext());
         }
     };
 
@@ -113,11 +119,17 @@ public class GlobalState extends Application {
         @Override
         public void onConnected() {
             _globalTopicClient.registerProfileInvalid(GlobalState.this);
+            _globalTopicClient.registerOnline();
         }
 
         @Override
         public void onProfileInvalid() {
             ProfileDataClient.getProfile(GlobalState.this);
+        }
+
+        @Override
+        public void onOnline() {
+            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
         }
     };
 

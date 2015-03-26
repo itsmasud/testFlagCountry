@@ -43,12 +43,10 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
     // Services
     private GlobalTopicClient _globalClient;
-    private AuthTopicClient _authClient;
 
     // Data
     private Profile _profile;
     private boolean _profileBounceProtect = false;
-
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -106,9 +104,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         _globalClient = new GlobalTopicClient(_globalListener);
         _globalClient.connect(this);
 
-        _authClient = new AuthTopicClient(_authClient_listener);
-        _authClient.connect(this);
-
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
@@ -117,7 +112,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         _globalClient.disconnect(this);
-        _authClient.disconnect(this);
         super.onPause();
     }
 
@@ -255,6 +249,10 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         public void onConnected() {
             _globalClient.registerGotProfile();
             _globalClient.registerUpdateApp();
+            _globalClient.registerAppShutdown();
+            _globalClient.registerNetworkConnected();
+            _globalClient.registerNetworkConnecting();
+            _globalClient.registerNetworkDisconnected();
         }
 
         @Override
@@ -267,22 +265,27 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         public void onNeedAppUpdate() {
             _updateDialog.show();
         }
-    };
 
-    private final AuthTopicClient.Listener _authClient_listener = new AuthTopicClient.Listener() {
         @Override
-        public void onConnected() {
-            _authClient.registerAuthState();
+        public void onShutdown() {
         }
 
         @Override
-        public void onNotAuthenticated() {
+        public void onNetworkConnected() {
+        }
+
+        @Override
+        public void onNetworkDisconnected() {
+        }
+
+        @Override
+        public void onNetworkConnecting() {
         }
     };
+
 
     // Menu
     @Override
-
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

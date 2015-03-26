@@ -11,7 +11,7 @@ import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-public class WorkorderWebClient extends WebClientAuth {
+class WorkorderWebClient extends WebClientAuth {
 
     public WorkorderWebClient(Context context, OAuth auth, ResultReceiver callback) {
         super(context, auth, callback);

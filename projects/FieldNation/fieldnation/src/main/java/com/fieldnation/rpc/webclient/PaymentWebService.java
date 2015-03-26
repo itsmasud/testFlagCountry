@@ -5,7 +5,7 @@ import android.os.ResultReceiver;
 
 import com.fieldnation.service.data.oauth.OAuth;
 
-public class PaymentWebService extends WebClientAuth {
+class PaymentWebService extends WebClientAuth {
 
     public PaymentWebService(Context context, OAuth auth, ResultReceiver callback) {
         super(context, auth, callback);

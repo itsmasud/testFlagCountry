@@ -1,6 +1,6 @@
 package com.fieldnation.rpc.common;
 
-public interface PhotoServiceConstants {
+interface PhotoServiceConstants {
     public static final String ACTION_NAME = "photo_request";
 
     public static final String KEY_PARAM_URL = "PARAM_URL";

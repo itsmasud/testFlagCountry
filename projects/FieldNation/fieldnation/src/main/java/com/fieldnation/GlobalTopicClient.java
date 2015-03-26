@@ -18,13 +18,16 @@ public class GlobalTopicClient extends TopicClient {
     private static final String TOPIC_GOT_PROFILE = "GlobalTopicClient:TOPIC_GOT_PROFILE";
     private static final String TOPIC_PROFILE_INVALID = "GlobalTopicClient:TOPIC_PROFILE_INVALID";
     private static final String TOPIC_SHUTDOWN = "GlobalTopicClient:TOPIC_SHUTDOWN";
-    private static final String TOPIC_OFFLINE = "GlobalTopicClient:TOPIC_OFFLINE";
-    private static final String TOPIC_ONLINE = "GlobalTopicClient:TOPIC_ONLINE";
+    private static final String TOPIC_NETWORK_DISCONNECTED = "GlobalTopicClient:TOPIC_NETWORK_DISCONNECTED";
+    private static final String TOPIC_NETWORK_CONNECTED = "GlobalTopicClient:TOPIC_NETWORK_CONNECTED";
+    private static final String TOPIC_NETWORK_CONNECT = "GlobalTopicClient:TOPIC_NETWORK_CONNECT";
+    private static final String TOPIC_NETWORK_CONNECTING = "GlobalTopicClient:TOPIC_NETWORK_CONNECTING";
 
     public GlobalTopicClient(Listener listener) {
         super(listener);
     }
 
+    // update app
     public static void dispatchUpdateApp(Context context) {
         if (context == null)
             return;
@@ -39,6 +42,7 @@ public class GlobalTopicClient extends TopicClient {
         return register(TOPIC_APP_UPDATE, TAG);
     }
 
+    // profile
     public static void dispatchGotProfile(Context context, Profile profile) {
         if (context == null)
             return;
@@ -55,6 +59,7 @@ public class GlobalTopicClient extends TopicClient {
         return register(TOPIC_GOT_PROFILE, TAG);
     }
 
+    // invalid
     public static void dispatchProfileInvalid(Context context) {
         if (context == null)
             return;
@@ -69,6 +74,7 @@ public class GlobalTopicClient extends TopicClient {
         return register(TOPIC_PROFILE_INVALID, TAG);
     }
 
+    // shutdown
     public static void dispatchAppShutdown(Context context) {
         if (context == null)
             return;
@@ -83,27 +89,65 @@ public class GlobalTopicClient extends TopicClient {
         return register(TOPIC_APP_UPDATE, TAG);
     }
 
-    public static void dispatchOffline(Context context) {
+    // disconnected
+    public static void dispatchNetworkDisconnected(Context context) {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_OFFLINE, null, false);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_DISCONNECTED, null, false);
     }
 
-    public boolean registerOffline() {
+    public boolean registerNetworkDisconnected() {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_OFFLINE, TAG);
+        return register(TOPIC_NETWORK_DISCONNECTED, TAG);
     }
 
-    public static void dispathOnline(Context context) {
+    // connected
+    public static void dispathNetworkConnected(Context context) {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_ONLINE, null, false);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_CONNECTED, null, false);
     }
 
+    public boolean registerNetworkConnected() {
+        if (!isConnected())
+            return false;
+
+        return register(TOPIC_NETWORK_CONNECTED, TAG);
+    }
+
+    // try connect
+    public static void dispatchNetworkConnect(Context context) {
+        if (context == null)
+            return;
+
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_CONNECT, null, false);
+    }
+
+    public boolean registerNetworkConnect() {
+        if (!isConnected())
+            return false;
+        return register(TOPIC_NETWORK_CONNECT, TAG);
+    }
+
+    // connecting
+    public static void dispatchNetworkConnecting(Context context) {
+        if (context == null)
+            return;
+
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_CONNECTING, null, false);
+    }
+
+    public boolean registerNetworkConnecting() {
+        if (!isConnected())
+            return false;
+        return register(TOPIC_NETWORK_CONNECTING, TAG);
+    }
+
+    // events
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
@@ -115,10 +159,14 @@ public class GlobalTopicClient extends TopicClient {
                 onProfileInvalid();
             } else if (TOPIC_SHUTDOWN.equals(topicId)) {
                 onShutdown();
-            } else if (TOPIC_OFFLINE.equals(topicId)) {
-                onOffline();
-            } else if (TOPIC_ONLINE.equals(topicId)) {
-                onOnline();
+            } else if (TOPIC_NETWORK_DISCONNECTED.equals(topicId)) {
+                onNetworkDisconnected();
+            } else if (TOPIC_NETWORK_CONNECTED.equals(topicId)) {
+                onNetworkConnected();
+            } else if (TOPIC_NETWORK_CONNECT.equals(topicId)) {
+                onNetworkConnect();
+            } else if (TOPIC_NETWORK_CONNECTING.equals(topicId)) {
+                onNetworkConnecting();
             }
         }
 
@@ -134,10 +182,16 @@ public class GlobalTopicClient extends TopicClient {
         public void onShutdown() {
         }
 
-        public void onOffline() {
+        public void onNetworkDisconnected() {
         }
 
-        public void onOnline() {
+        public void onNetworkConnected() {
+        }
+
+        public void onNetworkConnect() {
+        }
+
+        public void onNetworkConnecting() {
         }
     }
 

@@ -3,13 +3,15 @@ package com.fieldnation.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,9 +25,8 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -74,12 +75,11 @@ public class DrawerView extends RelativeLayout {
     // Data
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
-    private int _nextPage = 0;
+    //    private int _nextPage = 0;
     private Profile _profile = null;
     private Drawable _profilePic = null;
-    private PhotoDataClient _photoClient;
-    private Random _rand = new Random();
 
+    private PhotoDataClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
 
     /*-*************************************-*/
@@ -169,15 +169,15 @@ public class DrawerView extends RelativeLayout {
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(getContext());
-	
-		_photoClient = new PhotoDataClient();
-		_photoClient.connect(getContext());
+
+        _photoClient = new PhotoDataClient();
+        _photoClient.connect(getContext());
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _globalTopicClient.disconnect(getContext());
-		_photoClient.disconnect(getContext());
+        _photoClient.disconnect(getContext());
         super.onDetachedFromWindow();
     }
 
@@ -212,9 +212,9 @@ public class DrawerView extends RelativeLayout {
         }
 
         if (_profile != null) {
-        _providerIdTextView.setVisibility(View.VISIBLE);
-        _providerIdTextView.setText("Provider Id: " + _profile.getUserId());
-    
+            _providerIdTextView.setVisibility(View.VISIBLE);
+            _providerIdTextView.setText("Provider Id: " + _profile.getUserId());
+
             _profileNameTextView.setText(_profile.getFirstname() + " " + _profile.getLastname());
             _profileNameTextView.setVisibility(View.VISIBLE);
 
@@ -232,7 +232,7 @@ public class DrawerView extends RelativeLayout {
 //                _profileImageView.setBackgroundDrawable(_profilePic);
             }
         }
-	}
+    }
 
 
     /*-*********************************-*/
@@ -248,6 +248,7 @@ public class DrawerView extends RelativeLayout {
         public void onClick(View v) {
             _profileExpandButton.setActivated(!_profileExpandButton.isActivated());
         }
+    };
 
     private final OnClickListener _review_onClick = new OnClickListener() {
         @Override
@@ -354,7 +355,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
-            gotProfile();
+            gotProfile(profile);
         }
     };
 

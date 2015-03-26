@@ -14,7 +14,7 @@ import com.fieldnation.utils.Stopwatch;
  *
  * @author michael.carver
  */
-public abstract class WebResultReceiver extends ResultReceiver implements WebServiceConstants {
+abstract class WebResultReceiver extends ResultReceiver implements WebServiceConstants {
     private static final String TAG = "rpc.common.WebServiceResultReceiver";
 
     public WebResultReceiver(Handler handler) {

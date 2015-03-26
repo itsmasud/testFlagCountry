@@ -85,7 +85,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     @Override
     protected void onResume() {
-		super.onResume();
+        super.onResume();
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(this);
 
@@ -93,7 +93,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
 
-        
+
     }
 
     @Override
@@ -237,12 +237,15 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             _globalTopicClient.registerGotProfile();
             _globalTopicClient.registerUpdateApp();
             _globalTopicClient.registerAppShutdown();
+            _globalTopicClient.registerNetworkConnected();
+            _globalTopicClient.registerNetworkConnecting();
+            _globalTopicClient.registerNetworkDisconnected();
         }
 
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
-            gotProfile();
+            gotProfile(profile);
 
         }
 
@@ -254,10 +257,21 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         @Override
         public void onShutdown() {
         }
+
+        @Override
+        public void onNetworkConnected() {
+        }
+
+        @Override
+        public void onNetworkDisconnected() {
+        }
+
+        @Override
+        public void onNetworkConnecting() {
+        }
+
     };
 
-	private final AuthTopicClient.Listener
-get not authenticated status
     // Menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -268,6 +282,4 @@ get not authenticated status
         }
         return super.onOptionsItemSelected(item);
     }
-
-    public abstract void onRefresh();
 }

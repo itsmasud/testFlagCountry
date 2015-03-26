@@ -1,6 +1,6 @@
 package com.fieldnation.rpc.common;
 
-public interface WebServiceConstants {
+interface WebServiceConstants {
     public static final String KEY_PARAM_REQUEST = "KEY_PARAM_REQUEST";
     public static final String KEY_PARAM_RESULT_CODE = "RESULT_CODE";
     public static final String KEY_PARAM_CALLBACK = "PARAM_CALLBACK";
