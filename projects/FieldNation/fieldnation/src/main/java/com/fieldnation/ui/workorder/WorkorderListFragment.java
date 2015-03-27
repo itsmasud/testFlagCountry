@@ -46,7 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class WorkorderListFragment extends Fragment implements TabActionBarFragmentActivity.TabFragment{
+public class WorkorderListFragment extends Fragment implements TabActionBarFragmentActivity.TabFragment {
     private static final String TAG_BASE = "WorkorderListFragment";
     private String TAG = TAG_BASE;
 
@@ -188,7 +188,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
@@ -224,7 +224,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     }
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    public void onViewStateRestored(Bundle savedInstanceState) {
         Log.v(TAG, "onViewStateRestored");
         super.onViewStateRestored(savedInstanceState);
     }
@@ -457,7 +457,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
             getActivity().startService(intent);
         }
-   }
+    }
 
     private void doCheckOut() {
         Log.v(TAG, "doCheckOut()");
@@ -954,7 +954,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 
-// todo remove
+    // todo remove
     private class WorkorderParseAsync extends AsyncTaskEx<Bundle, Object, List<Workorder>> {
         private int page;
         private boolean cached;

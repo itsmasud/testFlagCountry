@@ -60,6 +60,27 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         return register(PARAM_ACTION_DETAILS + "/" + id, TAG);
     }
 
+    // signatures
+    public static void dispatchGetSignature(Context context, long workorderId, long signatureId) {
+        Intent intent = new Intent(context, WorkorderDataService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_SIGNATURE_ID, signatureId);
+        context.startService(intent);
+    }
+
+    public boolean registerGetSignature(long signatureId) {
+        if (!isConnected())
+            return false;
+
+        return register(PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, TAG);
+    }
+
+    public boolean getSignature(Context context, long workorderId, long signatureId) {
+        dispatchGetSignature(context, workorderId, signatureId);
+        return registerGetSignature(signatureId);
+    }
+
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {

@@ -24,12 +24,15 @@ public class PhotoDataClient extends TopicClient implements PhotoConstants {
         delete(TAG);
     }
 
-    public boolean getPhoto(Context context, String url, boolean getCircle) {
+    public static void dispatchGetPhoto(Context context, String url, boolean getCircle) {
         Intent intent = new Intent(context, PhotoDataService.class);
         intent.putExtra(PARAM_CIRCLE, getCircle);
         intent.putExtra(PARAM_URL, url);
         context.startService(intent);
+    }
 
+    public boolean getPhoto(Context context, String url, boolean getCircle) {
+        dispatchGetPhoto(context, url, getCircle);
         return register(TOPIC_ID_PHOTO_READY + "/" + url, TAG);
     }
 
