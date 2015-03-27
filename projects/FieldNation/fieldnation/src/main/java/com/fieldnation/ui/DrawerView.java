@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalState;
 import com.fieldnation.GlobalTopicClient;
@@ -25,8 +22,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.json.JsonArray;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.payment.PaymentDataClient;
 import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -37,6 +34,7 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * This view defines what is in the pull out drawer, and what the buttons do.
@@ -176,12 +174,16 @@ public class DrawerView extends RelativeLayout {
 
         _photoClient = new PhotoDataClient(_photo_listener);
         _photoClient.connect(getContext());
+
+        _paymentClient = new PaymentDataClient(_payment_listener);
+        _paymentClient.connect(getContext());
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _globalTopicClient.disconnect(getContext());
         _photoClient.disconnect(getContext());
+        _paymentClient.disconnect(getContext());
         super.onDetachedFromWindow();
     }
 
@@ -393,128 +395,49 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+    private final PaymentDataClient.Listener _payment_listener = new PaymentDataClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
-                parcel.setClassLoader(getContext().getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                populateUi();
+        public void onConnected() {
+            _paymentClient.registerGetAll();
+            PaymentDataClient.getAll(getContext(), 0);
+        }
+
+        @Override
+        public void onGetAll(List<Payment> list, int page) {
+            if (list.size() == 0) {
+                return;
             }
-        }
-    };
 
+            PaymentDataClient.getAll(getContext(), page + 1);
 
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
-        @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_dataService == null || isNew) {
-                _dataService = new PaymentWebService(getContext(), username, authToken, _resultReciever);
+            for (int i = 0; i < list.size(); i++) {
+                try {
+                    Payment payment = list.get(i);
 
-                getContext().startService(_dataService.getAll(1, 0, true));
-                _nextPage = 1;
-            }
-        }
+                    if (payment == null)
+                        continue;
+                    ;
 
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _dataService = null;
-        }
+                    if (payment.getDatePaid() == null)
+                        continue;
 
-        @Override
-        public void onAuthenticationInvalidated() {
-            _dataService = null;
-        }
+                    long date = ISO8601.toUtc(payment.getDatePaid());
 
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(getContext());
-        }
-    };
-
-
-    private class PaymentParseAsyncTask extends AsyncTaskEx<Bundle, Object, Payment[]> {
-
-        @Override
-        protected Payment[] doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-
-            Payment selPaid = _paidPayment;
-            Payment selEst = _estPayment;
-            try {
-                JsonArray ja = new JsonArray(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-
-                for (int i = 0; i < ja.size(); i++) {
-                    try {
-                        Payment payment = Payment.fromJson(ja.getJsonObject(i));
-
-                        if (payment == null) {
-                            continue;
+                    if ("paid".equals(payment.getStatus())) {
+                        if (_paidPayment == null || date >= ISO8601.toUtc(_paidPayment.getDatePaid())) {
+                            _paidPayment = payment;
                         }
-
-                        if (payment.getDatePaid() == null)
-                            continue;
-
-                        Log.v(TAG, payment.getDatePaid());
-                        long date = ISO8601.toUtc(payment.getDatePaid());
-
-                        if ("paid".equals(payment.getStatus())) {
-                            if (selPaid == null || date >= ISO8601.toUtc(selPaid.getDatePaid())) {
-                                selPaid = payment;
-                            }
-                        } else {
-                            if (selEst == null || date >= ISO8601.toUtc(selEst.getDatePaid())) {
-                                selEst = payment;
-                            }
+                    } else {
+                        if (_estPayment == null || date >= ISO8601.toUtc(_estPayment.getDatePaid())) {
+                            _estPayment = payment;
                         }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-
-                if (ja.size() == 0) {
-                    return new Payment[]{selPaid, selEst};
-                } else {
-//                    getContext().startService(_dataService.getAll(1, _nextPage, true));
-                    _nextPage++;
-                    return new Payment[]{selPaid, selEst};
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Payment[] payments) {
-            super.onPostExecute(payments);
-            if (payments != null) {
-                _paidPayment = payments[0];
-                _estPayment = payments[1];
-                populateUi();
-            }
-        }
-    }
-
-
-    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            new PaymentParseAsyncTask().executeEx(resultData);
-        }
-
-        @Override
-        public Context getContext() {
-            return DrawerView.this.getContext();
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-//            _dataService = null;
+            populateUi();
         }
     };
-
 }
 

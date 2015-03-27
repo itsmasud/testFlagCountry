@@ -1,10 +1,13 @@
 package com.fieldnation.data.accounting;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Payment {
+public class Payment implements Parcelable {
     @Json(name = "amount")
     private Double _amount;
     @Json(name = "datePaid")
@@ -73,4 +76,34 @@ public class Payment {
         }
     }
 
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
+    public static final Creator<Payment> CREATOR = new Creator<Payment>() {
+        @Override
+        public Payment createFromParcel(Parcel source) {
+            try {
+                return Payment.fromJson(new JsonObject(source.readString()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public Payment[] newArray(int size) {
+            return new Payment[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(toJson().toString());
+    }
 }

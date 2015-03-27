@@ -19,9 +19,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.utils.misc;
 
 /**
@@ -186,6 +184,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             return;
 
         _loadingView.setVisibility(View.VISIBLE);
+
+        WorkorderDataClient.
 
         startService(
                 _service.getSignature(WEB_GET_SIGNATURE, _workorder.getWorkorderId(), _signatureId, true));

@@ -73,7 +73,7 @@ public class MessageCardView extends RelativeLayout {
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _statusView = findViewById(R.id.status_view);
-        
+
         _photos = new PhotoDataClient(_photo_listener);
         _photos.connect(getContext());
 
@@ -108,15 +108,6 @@ public class MessageCardView extends RelativeLayout {
             _substatusLayout.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             _substatusLayout.setVisibility(View.GONE);
-        }
-
-        try {
-            if (_message.isRead())
-                _unreadImageView.setVisibility(View.GONE);
-            else
-                _unreadImageView.setVisibility(View.VISIBLE);
-        } catch (Exception ex) {
-            _unreadImageView.setVisibility(View.GONE);
         }
 
         _viewId = _message.getMessageId() % Integer.MAX_VALUE;
@@ -218,7 +209,7 @@ public class MessageCardView extends RelativeLayout {
         public void onPhoto(String url, File file, boolean isCircle) {
             if (file == null || url == null)
                 return;
-            
+
             Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
             _profilePic = new WeakReference<>(pic);
             _picCache.put(url, _profilePic);
