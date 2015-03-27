@@ -1,6 +1,7 @@
 package com.fieldnation;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.data.profile.Profile;
@@ -18,10 +19,14 @@ public class GlobalTopicClient extends TopicClient {
     private static final String TOPIC_GOT_PROFILE = "GlobalTopicClient:TOPIC_GOT_PROFILE";
     private static final String TOPIC_PROFILE_INVALID = "GlobalTopicClient:TOPIC_PROFILE_INVALID";
     private static final String TOPIC_SHUTDOWN = "GlobalTopicClient:TOPIC_SHUTDOWN";
-    private static final String TOPIC_NETWORK_DISCONNECTED = "GlobalTopicClient:TOPIC_NETWORK_DISCONNECTED";
-    private static final String TOPIC_NETWORK_CONNECTED = "GlobalTopicClient:TOPIC_NETWORK_CONNECTED";
-    private static final String TOPIC_NETWORK_CONNECT = "GlobalTopicClient:TOPIC_NETWORK_CONNECT";
-    private static final String TOPIC_NETWORK_CONNECTING = "GlobalTopicClient:TOPIC_NETWORK_CONNECTING";
+    private static final String TOPIC_NETWORK_STATE = "GlobalTopicClient:TOPIC_NETWORK_STATE";
+    private static final String PARAM_NETWORK_STATE = "NETWORK_STATE";
+    private static final int NETWORK_STATE_CONNECTED = 1;
+    private static final int NETWORK_STATE_DISCONNECTED = 2;
+    private static final int NETWORK_STATE_CONNECTING = 3;
+
+    private static final String TOPIC_NETWORK_COMMAND_CONNECT = "GlobalTopicClient:TOPIC_NETWORK_COMMAND_CONNECT";
+
 
     public GlobalTopicClient(Listener listener) {
         super(listener);
@@ -89,34 +94,39 @@ public class GlobalTopicClient extends TopicClient {
         return register(TOPIC_APP_UPDATE, TAG);
     }
 
-    // disconnected
+    // NETWORK STATE
     public static void dispatchNetworkDisconnected(Context context) {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_NETWORK_DISCONNECTED, null, false);
+        Bundle bundle = new Bundle();
+        bundle.putInt(PARAM_NETWORK_STATE, NETWORK_STATE_DISCONNECTED);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, true);
     }
 
-    public boolean registerNetworkDisconnected() {
-        if (!isConnected())
-            return false;
-
-        return register(TOPIC_NETWORK_DISCONNECTED, TAG);
-    }
-
-    // connected
     public static void dispathNetworkConnected(Context context) {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_NETWORK_CONNECTED, null, false);
+        Bundle bundle = new Bundle();
+        bundle.putInt(PARAM_NETWORK_STATE, NETWORK_STATE_CONNECTED);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, true);
     }
 
-    public boolean registerNetworkConnected() {
+    public static void dispatchNetworkConnecting(Context context) {
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(PARAM_NETWORK_STATE, NETWORK_STATE_CONNECTING);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, true);
+    }
+
+    public boolean registerNetworkState() {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_NETWORK_CONNECTED, TAG);
+        return register(TOPIC_NETWORK_STATE, TAG);
     }
 
     // try connect
@@ -124,28 +134,15 @@ public class GlobalTopicClient extends TopicClient {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_NETWORK_CONNECT, null, false);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_COMMAND_CONNECT, null, false);
     }
 
     public boolean registerNetworkConnect() {
         if (!isConnected())
             return false;
-        return register(TOPIC_NETWORK_CONNECT, TAG);
+        return register(TOPIC_NETWORK_COMMAND_CONNECT, TAG);
     }
 
-    // connecting
-    public static void dispatchNetworkConnecting(Context context) {
-        if (context == null)
-            return;
-
-        TopicService.dispatchEvent(context, TOPIC_NETWORK_CONNECTING, null, false);
-    }
-
-    public boolean registerNetworkConnecting() {
-        if (!isConnected())
-            return false;
-        return register(TOPIC_NETWORK_CONNECTING, TAG);
-    }
 
     // events
     public static abstract class Listener extends TopicClient.Listener {
@@ -159,14 +156,20 @@ public class GlobalTopicClient extends TopicClient {
                 onProfileInvalid();
             } else if (TOPIC_SHUTDOWN.equals(topicId)) {
                 onShutdown();
-            } else if (TOPIC_NETWORK_DISCONNECTED.equals(topicId)) {
-                onNetworkDisconnected();
-            } else if (TOPIC_NETWORK_CONNECTED.equals(topicId)) {
-                onNetworkConnected();
-            } else if (TOPIC_NETWORK_CONNECT.equals(topicId)) {
+            } else if (TOPIC_NETWORK_STATE.equals(topicId)) {
+                switch (((Bundle) payload).getInt(PARAM_NETWORK_STATE)) {
+                    case NETWORK_STATE_CONNECTED:
+                        onNetworkConnected();
+                        break;
+                    case NETWORK_STATE_CONNECTING:
+                        onNetworkConnecting();
+                        break;
+                    case NETWORK_STATE_DISCONNECTED:
+                        onNetworkDisconnected();
+                        break;
+                }
+            } else if (TOPIC_NETWORK_COMMAND_CONNECT.equals(topicId)) {
                 onNetworkConnect();
-            } else if (TOPIC_NETWORK_CONNECTING.equals(topicId)) {
-                onNetworkConnecting();
             }
         }
 

@@ -13,7 +13,7 @@ import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.service.auth.OAuth;
 
 import java.net.UnknownHostException;
 
@@ -29,6 +29,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
+    private static final int MAX_THREAD_COUNT = 10;
     private static int THREAD_COUNT = 0;
     private boolean _isAuthenticated = false;
 
@@ -118,6 +119,11 @@ public class WebTransactionService extends Service implements WebTransactionCons
         if (_auth == null || !_isAuthenticated)
             return;
 
+        synchronized (TAG) {
+            if (THREAD_COUNT >= MAX_THREAD_COUNT)
+                return;
+        }
+
         WebTransaction next = WebTransaction.getNext(this);
         if (next == null) {
             return;
@@ -191,8 +197,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private void finishTransaction() {
         synchronized (TAG) {
             THREAD_COUNT--;
-            if (THREAD_COUNT == 0)
-                stopSelf();
+//            if (THREAD_COUNT == 0)
+//                stopSelf();
         }
     }
 

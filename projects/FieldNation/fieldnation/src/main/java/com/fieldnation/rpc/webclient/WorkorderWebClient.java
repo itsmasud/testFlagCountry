@@ -6,7 +6,7 @@ import android.location.Location;
 import android.os.ResultReceiver;
 
 import com.fieldnation.data.workorder.ExpenseCategory;
-import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;

@@ -10,8 +10,9 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
-import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileDataClient;
+import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -108,7 +109,7 @@ public class GlobalState extends Application {
 
         @Override
         public void onNotAuthenticated() {
-            GlobalTopicClient.dispatchOffline(getContext());
+            GlobalTopicClient.dispatchNetworkDisconnected(getContext());
         }
     };
 
@@ -119,7 +120,8 @@ public class GlobalState extends Application {
         @Override
         public void onConnected() {
             _globalTopicClient.registerProfileInvalid(GlobalState.this);
-            _globalTopicClient.registerOnline();
+            _globalTopicClient.registerNetworkConnect();
+            _globalTopicClient.registerNetworkState();
         }
 
         @Override
@@ -128,8 +130,22 @@ public class GlobalState extends Application {
         }
 
         @Override
-        public void onOnline() {
+        public void onNetworkConnected() {
             AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+        }
+
+        @Override
+        public void onNetworkConnecting() {
+        }
+
+        @Override
+        public void onNetworkConnect() {
+            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+            startService(new Intent(GlobalState.this, WebTransactionService.class));
+        }
+
+        @Override
+        public void onNetworkDisconnected() {
         }
     };
 

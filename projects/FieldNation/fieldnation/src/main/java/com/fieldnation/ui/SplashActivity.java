@@ -10,7 +10,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 
 /**

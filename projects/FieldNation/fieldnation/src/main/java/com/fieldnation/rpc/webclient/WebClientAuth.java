@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.ResultReceiver;
 
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.data.oauth.OAuth;
+import com.fieldnation.service.auth.OAuth;
 
 /**
  * <p>

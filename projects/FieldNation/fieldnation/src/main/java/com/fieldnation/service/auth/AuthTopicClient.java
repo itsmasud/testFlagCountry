@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.UniqueTag;
-import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.topics.TopicService;
 

@@ -1,4 +1,4 @@
-package com.fieldnation.service.data.oauth;
+package com.fieldnation.service.auth;
 
 import android.content.Context;
 import android.os.Parcel;

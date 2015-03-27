@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by michael.carver on 12/1/2014.
  */
-public abstract class ItemListActivity<O> extends DrawerActivity { // AuthActionBarActivity
+public abstract class ItemListActivity<O> extends AuthActionBarActivity {
     private static final String TAG = "ui.ItemListActivity";
 
     // UI
@@ -45,7 +45,7 @@ public abstract class ItemListActivity<O> extends DrawerActivity { // AuthAction
     protected void onResume() {
         super.onResume();
         _adapter.refreshPages();
-            _refreshView.startRefreshing();
+        _refreshView.startRefreshing();
     }
 
     private void getData(int page) {

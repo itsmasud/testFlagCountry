@@ -10,7 +10,6 @@ import android.os.Bundle;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.data.oauth.OAuth;
 
 /**
  * The OS will call this when authenticating a user. It is mostly a wrapper for

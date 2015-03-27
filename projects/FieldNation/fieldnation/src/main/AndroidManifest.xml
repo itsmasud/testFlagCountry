@@ -216,6 +216,10 @@
             android:name=".service.data.workorder.WorkorderDataService"
             android:exported="false"
             android:process=":backside" />
+        <service
+            android:name=".service.data.payment.PaymentDataService"
+            android:exported="false"
+            android:process=":backside" />
 
         <provider
             android:name=".rpc.server.StubProvider"

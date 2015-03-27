@@ -3,24 +3,11 @@ package com.fieldnation.ui.workorder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBar.TabListener;
-
-import android.view.View;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.ui.DrawerActivity;
-import com.fieldnation.ui.dialog.CustomFieldDialog;
+import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.utils.misc;
 
 import java.util.List;

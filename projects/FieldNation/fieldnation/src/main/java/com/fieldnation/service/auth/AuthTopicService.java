@@ -15,7 +15,6 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.service.data.oauth.OAuth;
 import com.fieldnation.ui.AuthActivity;
 
 /**

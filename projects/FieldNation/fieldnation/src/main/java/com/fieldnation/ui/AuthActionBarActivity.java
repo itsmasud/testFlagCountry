@@ -250,9 +250,6 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
             _globalClient.registerGotProfile();
             _globalClient.registerUpdateApp();
             _globalClient.registerAppShutdown();
-            _globalClient.registerNetworkConnected();
-            _globalClient.registerNetworkConnecting();
-            _globalClient.registerNetworkDisconnected();
         }
 
         @Override
@@ -268,18 +265,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
 
         @Override
         public void onShutdown() {
-        }
-
-        @Override
-        public void onNetworkConnected() {
-        }
-
-        @Override
-        public void onNetworkDisconnected() {
-        }
-
-        @Override
-        public void onNetworkConnecting() {
+            finish();
         }
     };
 

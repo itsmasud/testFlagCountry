@@ -5,10 +5,7 @@ import android.content.Intent;
 import android.os.ResultReceiver;
 
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.rpc.server.WebService;
-import com.fieldnation.service.objectstore.StoredObject;
 
 /**
  * <p>
@@ -22,7 +19,7 @@ import com.fieldnation.service.objectstore.StoredObject;
  *
  * @author michael.carver
  */
-class WebClient implements WebServiceConstants {
+class WebClient {
     protected Context _context;
     protected ResultReceiver _callback;
 
@@ -39,20 +36,21 @@ class WebClient implements WebServiceConstants {
     }
 
     public Intent http(int resultCode, JsonObject request, boolean allowCache) {
-        Intent intent = new Intent(_context, WebService.class);
-        intent.putExtra(KEY_PARAM_RESULT_CODE, resultCode);
-        intent.putExtra(KEY_PARAM_REQUEST, request.toByteArray());
-        intent.putExtra(KEY_PARAM_ALLOW_CACHE, allowCache);
+//        Intent intent = new Intent(_context, WebService.class);
+//        intent.putExtra(KEY_PARAM_RESULT_CODE, resultCode);
+//        intent.putExtra(KEY_PARAM_REQUEST, request.toByteArray());
+//        intent.putExtra(KEY_PARAM_ALLOW_CACHE, allowCache);
+//
+//        if (_callback != null) {
+//            intent.putExtra(KEY_PARAM_CALLBACK, _callback);
+//        }
 
-        if (_callback != null) {
-            intent.putExtra(KEY_PARAM_CALLBACK, _callback);
-        }
-
-        return intent;
+        return null;
     }
 
     public Intent httpWrite(int resultCode, String host, String method, String path, String options, byte[] data,
                             String contentType, boolean allowCache) {
+/*
         try {
             StoredObject obj = StoredObject.put(_context, "HttpBody", StoredObject.randomKey(), data);
 
@@ -69,6 +67,7 @@ class WebClient implements WebServiceConstants {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+*/
 
         return null;
     }

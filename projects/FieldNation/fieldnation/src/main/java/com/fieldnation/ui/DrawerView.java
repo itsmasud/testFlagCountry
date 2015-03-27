@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 
 /**
@@ -76,9 +78,11 @@ public class DrawerView extends RelativeLayout {
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
     //    private int _nextPage = 0;
-    private Profile _profile = null;
-    private Drawable _profilePic = null;
 
+    private Profile _profile = null;
+    private WeakReference<Drawable> _profilePic = null;
+
+    private PaymentDataClient _paymentClient;
     private PhotoDataClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
 
@@ -170,7 +174,7 @@ public class DrawerView extends RelativeLayout {
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(getContext());
 
-        _photoClient = new PhotoDataClient();
+        _photoClient = new PhotoDataClient(_photo_listener);
         _photoClient.connect(getContext());
     }
 
@@ -185,14 +189,7 @@ public class DrawerView extends RelativeLayout {
         if (_estPayment != null) {
             _estimatedLayout.setVisibility(View.VISIBLE);
             _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
-            try {
-//                Calendar cal = ISO8601.toCalendar(_estPayment.getDatePaid());
-//                _estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
-                _estimatedDateTextView.setText("Pending");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                _estimatedDateTextView.setText("");
-            }
+            _estimatedDateTextView.setText("Pending");
         } else {
             _estimatedLayout.setVisibility(View.GONE);
         }
@@ -219,21 +216,33 @@ public class DrawerView extends RelativeLayout {
             _profileNameTextView.setVisibility(View.VISIBLE);
 
             // TODO add service company name
-
-            if (_profilePic == null) {
-//                _profileImageView.setBackgroundResource(R.drawable.missing_circle);
-                _profileImageView.setImageResource(R.drawable.missing_circle);
-                if (_profile.getPhoto().getThumb() != null) {
-                    WEB_GET_PHOTO = _rand.nextInt();
-                    getContext().startService(_photoService.getPhoto(WEB_GET_PHOTO, _profile.getPhoto().getThumb(), true));
-                }
-            } else {
-                _profileImageView.setImageDrawable(_profilePic);
-//                _profileImageView.setBackgroundDrawable(_profilePic);
-            }
+            addProfilePhoto();
         }
     }
 
+    private void addProfilePhoto() {
+        if (_profile == null || _photoClient == null || !_photoClient.isConnected()) {
+            _profileImageView.setImageResource(R.drawable.missing_circle);
+            return;
+        }
+
+        if (_profilePic == null || _profilePic.get() == null) {
+            _profileImageView.setImageResource(R.drawable.missing_circle);
+            if (!misc.isEmptyOrNull(_profile.getPhoto().getLarge())) {
+                _photoClient.getPhoto(getContext(), _profile.getPhoto().getLarge(), true);
+            }
+        } else {
+            _profileImageView.setImageDrawable(_profilePic.get());
+        }
+    }
+
+    private void attachAnimations() {
+        Context context = getContext();
+        if (context instanceof Activity) {
+            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in, 0);
+        }
+
+    }
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -343,6 +352,14 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
+    private final OnClickListener _call_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:18775734353"));
+            getContext().startActivity(intent);
+        }
+    };
+
     /*-*********************************************-*/
     /*-				System/web Events				-*/
     /*-*********************************************-*/
@@ -355,20 +372,24 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
-            gotProfile(profile);
+            populateUi();
         }
     };
 
-    private ResultReceiver _photoReceiver = new ResultReceiver(new Handler()) {
+    private final PhotoDataClient.Listener _photo_listener = new PhotoDataClient.Listener() {
         @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_PHOTO) {
-                Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
-                _profilePic = new BitmapDrawable(getContext().getResources(), photo);
-//                _profileImageView.setBackgroundDrawable(_profilePic);
-                _profileImageView.setImageDrawable(_profilePic);
-            }
-            super.onReceiveResult(resultCode, resultData);
+        public void onConnected() {
+            addProfilePhoto();
+        }
+
+        @Override
+        public void onPhoto(String url, File file, boolean isCircle) {
+            if (file == null || url == null)
+                return;
+
+            Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
+            _profilePic = new WeakReference<>(pic);
+            addProfilePhoto();
         }
     };
 
@@ -384,38 +405,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _review_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
-            getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
-        }
-    };
 
-    private final OnClickListener _sendlog_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            File tempfile = misc.dumpLogcat(getContext());
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("plain/text");
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
-            intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
-            getContext().startActivity(intent);
-        }
-    };
-
-
-    private final OnClickListener _call_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:18775734353"));
-            getContext().startActivity(intent);
-        }
-    };
-
-/*
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -442,7 +432,7 @@ public class DrawerView extends RelativeLayout {
             AuthTopicService.requestAuthentication(getContext());
         }
     };
-*/
+
 
     private class PaymentParseAsyncTask extends AsyncTaskEx<Bundle, Object, Payment[]> {
 
@@ -507,35 +497,6 @@ public class DrawerView extends RelativeLayout {
         }
     }
 
-    private void populateUi() {
-        if (_estPayment != null) {
-            _estimatedLayout.setVisibility(View.VISIBLE);
-            _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
-            try {
-                Calendar cal = ISO8601.toCalendar(_estPayment.getDatePaid());
-                _estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                _estimatedDateTextView.setText("");
-            }
-        } else {
-            _estimatedLayout.setVisibility(View.GONE);
-        }
-
-        if (_paidPayment != null) {
-            _paidLayout.setVisibility(View.VISIBLE);
-            _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
-            try {
-                Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
-                _paidDateTextView.setText("Estimated " + misc.formatDate(cal));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                _paidDateTextView.setText("");
-            }
-        } else {
-            _paidLayout.setVisibility(View.GONE);
-        }
-    }
 
     private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
         @Override
@@ -555,12 +516,5 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private void attachAnimations() {
-        Context context = getContext();
-        if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in, 0);
-        }
-
-    }
 }
 
