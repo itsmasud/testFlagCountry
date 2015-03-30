@@ -289,7 +289,7 @@ public class WorkorderListFragment extends Fragment {
         super.onPause();
     }
 
-    private void setLoading(boolean loading) {
+    private void setLoading(final boolean loading) {
         Log.v(TAG, "setLoading(" + loading + ")");
         if (_loadingView != null) {
             if (loading) {
@@ -822,8 +822,14 @@ public class WorkorderListFragment extends Fragment {
                 objects = new JsonArray(data);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                if (cached)
-                    requestList(page, false);
+                if (cached) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            requestList(page, false);
+                        }
+                    });
+                }
                 return null;
             }
 
@@ -845,6 +851,7 @@ public class WorkorderListFragment extends Fragment {
                 addPage(page, workorders, cached);
             setLoading(false);
         }
+
     }
 
     private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
