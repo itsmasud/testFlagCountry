@@ -191,7 +191,7 @@ public class MessageFragment extends WorkorderFragment {
     private View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (getActivity() != null) {
+            if (getActivity() != null && _workorderService != null && _workorder != null) {
                 _refreshView.startRefreshing();
                 WEB_NEW_MESSAGE = _rand.nextInt();
                 Log.v(TAG, "_send_onClick");
