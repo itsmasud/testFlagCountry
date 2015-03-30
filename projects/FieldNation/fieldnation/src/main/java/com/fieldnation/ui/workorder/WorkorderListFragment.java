@@ -171,15 +171,6 @@ public class WorkorderListFragment extends Fragment {
 
         _emptyView = (EmptyWoListView) view.findViewById(R.id.empty_view);
 
-        _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
-        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
-        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-
         Log.v(TAG, "Display Type: " + _displayView.getCall());
 
         if (savedInstanceState != null) {
@@ -259,6 +250,16 @@ public class WorkorderListFragment extends Fragment {
         AuthTopicService.subscribeAuthState(GlobalState.getContext(), 0, TAG, _topicReceiver);
         GaTopic.dispatchScreenView(GlobalState.getContext(), getGaLabel());
         _gpsLocationService = new GpsLocationService(GlobalState.getContext());
+
+        _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
+        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
+        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+
 
         _locationLoadingDialog.setData(GlobalState.getContext().getString(R.string.dialog_location_loading_title),
                 GlobalState.getContext().getString(R.string.dialog_location_loading_body),
