@@ -220,6 +220,10 @@
             android:name=".service.data.payment.PaymentDataService"
             android:exported="false"
             android:process=":backside" />
+        <service
+            android:name=".service.objectstore.ObjectStoreService"
+            android:exported="false"
+            android:process=":backside" />
 
         <provider
             android:name=".rpc.server.StubProvider"

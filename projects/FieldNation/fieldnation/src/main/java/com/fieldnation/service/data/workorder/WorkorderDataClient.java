@@ -8,11 +8,16 @@ import android.os.Parcelable;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,8 +32,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         super(listener);
     }
 
-    // work order lists
-    public static void listWorkorders(Context context, WorkorderDataSelector selector, int page) {
+    // list
+    public static void requestList(Context context, WorkorderDataSelector selector, int page) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
@@ -36,7 +41,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerWorkorderList(WorkorderDataSelector selector) {
+    public boolean registerList(WorkorderDataSelector selector) {
         if (!isConnected())
             return false;
 
@@ -45,8 +50,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         return register(PARAM_ACTION_LIST + "/" + selector.getCall(), TAG);
     }
 
+    public boolean list(Context context, WorkorderDataSelector selector, int page) {
+        boolean reg = registerList(selector);
+        requestList(context, selector, page);
+        return reg;
+    }
+
     // details
-    public static void details(Context context, long id) {
+    public static void requestDetails(Context context, long id) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DETAILS);
         intent.putExtra(PARAM_ID, id);
@@ -60,8 +71,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         return register(PARAM_ACTION_DETAILS + "/" + id, TAG);
     }
 
-    // signatures
-    public static void dispatchGetSignature(Context context, long workorderId, long signatureId) {
+    public boolean details(Context context, long id) {
+        boolean reg = registerDetails(id);
+        requestDetails(context, id);
+        return reg;
+    }
+
+    // get signature
+    public static void requestGetSignature(Context context, long workorderId, long signatureId) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
         intent.putExtra(PARAM_ID, workorderId);
@@ -77,9 +94,34 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public boolean getSignature(Context context, long workorderId, long signatureId) {
-        dispatchGetSignature(context, workorderId, signatureId);
+        requestGetSignature(context, workorderId, signatureId);
         return registerGetSignature(signatureId);
     }
+
+    // add signature json
+    public static void requestAddSignatureJson(Context context, long workorderId, String name, String signatureJson) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(AddSignatureTransactionHandler.class)
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .method("GET")
+                                    .path("api/rest/v1/workorder/" + workorderId + "/signature")
+                                    .body("signatureFormat=json"
+                                            + "&printName=" + misc.escapeForURL(name)
+                                            + "&signature=" + signatureJson)
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    // complete signature
 
     public static abstract class Listener extends TopicClient.Listener {
         @Override
@@ -88,6 +130,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 preOnWorkorderList((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_DETAILS)) {
                 preOnDetails((Bundle) payload);
+            } else if (topicId.startsWith(PARAM_ACTION_GET_SIGNATURE)) {
+                preOnGetSignature((Bundle) payload);
             }
         }
 
@@ -148,6 +192,31 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
 
         public void onDetails(Workorder workorder) {
+        }
+
+        // get signature
+        private void preOnGetSignature(Bundle payload) {
+            new AsyncTaskEx<Bundle, Object, Signature>() {
+
+                @Override
+                protected Signature doInBackground(Bundle... params) {
+                    Bundle bundle = params[0];
+                    try {
+                        return Signature.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Signature signature) {
+                    onGetSignature(signature);
+                }
+            }.executeEx(payload);
+        }
+
+        public void onGetSignature(Signature signature) {
         }
     }
 }

@@ -1,23 +1,9 @@
 package com.fieldnation.ui.market;
 
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBar.TabListener;
 
-import android.view.View;
-
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.ui.DrawerActivity;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.ui.workorder.WorkorderListFragment;
@@ -44,7 +30,7 @@ public class MarketActivity extends TabActionBarFragmentActivity {
     public void onFinishCreate(Bundle savedInstanceState) {
         setTitle(R.string.activity_market_title);
         super.onFinishCreate(savedInstanceState);
-	}
+    }
 
     @Override
     public void loadFragments() {
@@ -75,8 +61,8 @@ public class MarketActivity extends TabActionBarFragmentActivity {
         }
         return (WorkorderListFragment) fragment;
     }
-    
-	@Override
+
+    @Override
     public int getFragmentCount() {
         return _fragments.length;
     }

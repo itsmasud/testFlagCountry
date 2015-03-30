@@ -12,11 +12,11 @@ import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GlobalState;
+import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
+import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.utils.Stopwatch;
 
 /**
@@ -119,7 +119,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             if (savedInstanceState == null) {
                 _signOffFrag.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
-                GaTopic.dispatchScreenView(this, "SignOffFragment");
+                GoogleAnalyticsTopicClient.dispatchScreenView(this, "SignOffFragment");
             }
         } else if (savedInstanceState != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -169,28 +169,17 @@ public class SignOffActivity extends AuthFragmentActivity {
         Log.v(TAG, "onCreate time " + stopwatch.finish());
     }
 
-// TODO remove
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            try {
-                _service = new WorkorderWebClient(SignOffActivity.this, username, authToken, _resultReceiver);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-
     @Override
     protected void onResume() {
         super.onResume();
+        _workorderClient = new WorkorderDataClient();
+        _workorderClient.connect(this);
     }
 
     @Override
-    public void onRefresh() {
-        // TODO STUB com.fieldnation.ui.SignOffActivity.onRefresh()
-        Log.v(TAG, "STUB com.fieldnation.ui.SignOffActivity.onRefresh()");
+    protected void onPause() {
+        _workorderClient.disconnect(this);
+        super.onPause();
     }
 
     @Override
@@ -230,12 +219,18 @@ public class SignOffActivity extends AuthFragmentActivity {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
+    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
+        @Override
+        public void onConnected() {
+
+        }
+    };
+
     private SignOffFragment.Listener _signOff_listener = new SignOffFragment.Listener() {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
-// todo remove
-            GaTopic.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
+            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sigFrag);
@@ -246,8 +241,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
-// todo remove
-            GaTopic.dispatchScreenView(SignOffActivity.this, "SorryFragment");
+            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "SorryFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sorryFrag);

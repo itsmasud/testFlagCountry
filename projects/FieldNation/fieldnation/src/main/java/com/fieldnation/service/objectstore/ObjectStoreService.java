@@ -21,7 +21,7 @@ import java.util.List;
  * <p/>
  * This service provides an interface to the database to other processes
  */
-class ObjectStoreService extends Service implements ObjectStoreConstants {
+public class ObjectStoreService extends Service implements ObjectStoreConstants {
     private static final String TAG = "ObjectStoreService";
 
     public static final String TOPIC_ID_OBJECT_UPDATE = "com.fieldnation.service.objectstore.ObjectStoreService:OBJECT_UPDATE";

@@ -50,8 +50,10 @@ public interface WorkorderDataConstants {
     public static final String PARAM_DATA = "PARAM_DATA";
     public static final String PARAM_ID = "PARAM_ID";
     public static final String PARAM_SIGNATURE_ID = "PARAM_SIGNATURE_ID";
+    public static final String PARAM_NAME = "PARAM_NAME";
 
 
     public static final String PSO_WORKORDER_LIST = "WorkorderList";
     public static final String PSO_WORKORDER = "Workorder";
+    public static final String PSO_SIGNATURE = "Signature";
 }

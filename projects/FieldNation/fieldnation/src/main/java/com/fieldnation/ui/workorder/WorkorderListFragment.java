@@ -53,8 +53,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     // State
     private static final String STATE_DISPLAY = TAG_BASE + ".STATE_DISPLAY";
     private static final String STATE_CURRENT_WORKORDER = TAG_BASE + ".STATE_CURRENT_WORKORDER";
-    private static final String STATE_AUTHTOKEN = TAG_BASE + ".STATE_AUTHTOKEN";
-    private static final String STATE_USERNAME = TAG_BASE + ".STATE_USERNAME";
     private static final String STATE_DEVICE_COUNT = TAG_BASE + ".STATE_DEVICE_COUNT";
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
     private static final String STATE_WORKING_LIST = TAG_BASE + ".STATE_WORKING_LIST";
@@ -94,8 +92,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private GpsLocationService _gpsLocationService;
 
     // state data
-    private String _username;
-    private String _authToken;
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
     private Set<Long> _requestWorking = new HashSet<Long>();
     private Workorder _currentWorkorder;
@@ -204,20 +200,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 }
             }
 
-            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
-                _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
-            }
-            if (savedInstanceState.containsKey(STATE_USERNAME)) {
-                _username = savedInstanceState.getString(STATE_USERNAME);
-            }
-
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
-            }
-
-            if (_authToken != null && _username != null) {
-// TODO remove
-                _service = new WorkorderWebClient(view.getContext(), _username, _authToken, _resultReciever);
             }
         }
         Log.v(TAG, "onActivityCreated: " + WorkorderListFragment.this.toString() + "/" + _displayView.getCall());
@@ -244,14 +228,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         if (_currentWorkorder != null)
             outState.putParcelable(STATE_CURRENT_WORKORDER, _currentWorkorder);
-
-        if (_authToken != null) {
-            outState.putString(STATE_AUTHTOKEN, _authToken);
-        }
-
-        if (_username != null) {
-            outState.putString(STATE_USERNAME, _username);
-        }
 
         if (_deviceCount > -1) {
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);

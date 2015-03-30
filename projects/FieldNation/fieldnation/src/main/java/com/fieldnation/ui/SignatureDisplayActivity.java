@@ -18,7 +18,6 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.utils.misc;
 
@@ -156,7 +155,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                     _signature = (Signature) objects[0];
                     _workorder = (Workorder) objects[1];
                     _signatureId = (Long) objects[2];
-                    populateUi(true);
+                    populateUi();
                 }
             }.executeEx(savedInstanceState);
         }
@@ -177,27 +176,29 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
 
     private void getData() {
-        if (_service == null)
-            return;
-
         if (_workorder == null)
             return;
 
         _loadingView.setVisibility(View.VISIBLE);
 
-        WorkorderDataClient.
-
-        startService(
-                _service.getSignature(WEB_GET_SIGNATURE, _workorder.getWorkorderId(), _signatureId, true));
+        WorkorderDataClient.requestGetSignature(this, _workorder.getWorkorderId(), _signatureId);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        populateUi(false);
+        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient.connect(this);
+        populateUi();
     }
 
-    private void populateUi(boolean isCached) {
+    @Override
+    protected void onPause() {
+        _workorderClient.disconnect(this);
+        super.onPause();
+    }
+
+    private void populateUi() {
         if (_signature == null)
             return;
 
@@ -287,40 +288,18 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _loadingView.setVisibility(View.GONE);
     }
 
-    private class SignatureParseAsyncTask extends AsyncTaskEx<Bundle, Object, Signature> {
-        private boolean isCached;
-
+    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
         @Override
-        protected Signature doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-            isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-            Signature signature = null;
-
-            try {
-                JsonObject obj = new JsonObject(data);
-                signature = Signature.fromJson(obj);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            return signature;
+        public void onConnected() {
+            _workorderClient.registerGetSignature(_signatureId);
         }
 
         @Override
-        protected void onPostExecute(Signature signature) {
-            super.onPostExecute(signature);
-
-            if (signature != null) {
-                _signature = signature;
-                populateUi(isCached);
-            } else {
-                // Todo re-request? pop error?
-            }
-
+        public void onGetSignature(Signature signature) {
+            _signature = signature;
+            populateUi();
         }
-    }
+    };
 
     /*-*************************************-*/
     /*-                 Events              -*/
@@ -331,21 +310,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             finish();
         }
     };
-
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public Context getContext() {
-            return SignatureDisplayActivity.this;
-        }
-
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_SIGNATURE) {
-                new SignatureParseAsyncTask().executeEx(resultData);
-            }
-        }
-    };
-
 
     public static void startIntent(Context context, long signatureId, Workorder workorder) {
         new AsyncTaskEx<Object, Object, Object>() {

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.rpc.webclient.PaymentWebService;
+import com.fieldnation.service.data.payment.PaymentDataClient;
 import com.fieldnation.ui.ItemListActivity;
 
 import java.util.LinkedList;

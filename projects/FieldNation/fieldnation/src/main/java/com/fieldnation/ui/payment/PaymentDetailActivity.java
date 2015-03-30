@@ -1,20 +1,14 @@
 package com.fieldnation.ui.payment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.webclient.PaymentWebService;
+import com.fieldnation.service.data.payment.PaymentDataClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -78,18 +72,24 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         // TODO set loading info
     }
 
-    private void requestData() {
-        if (_service == null)
-            return;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        _paymentClient = new PaymentDataClient(_paymentClient_listener);
+        _paymentClient.connect(this);
+    }
 
-// todo remove
-        startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
+    @Override
+    protected void onPause() {
+        _paymentClient.disconnect(this);
+        super.onPause();
+    }
+
+    private void requestData() {
+        PaymentDataClient.requestGetPayment(this, _paymentId);
     }
 
     private void populateUi() {
-        if (_service == null)
-            return;
-
         if (_paid == null)
             return;
 
@@ -126,48 +126,19 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
     }
 
-// todo remove
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            _service = new PaymentWebService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
-            requestData();
-        }
-    }
-
-
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
+    private PaymentDataClient.Listener _paymentClient_listener = new PaymentDataClient.Listener() {
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_PAY) {
-                byte[] data = resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA);
-
-                Log.v(TAG, new String(data));
-
-                try {
-                    _paid = Payment.fromJson(new JsonObject(new String(data)));
-                    populateUi();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Log.v(TAG, "BP");
-            }
+        public void onConnected() {
+            _paymentClient.registerGetPayment();
         }
 
         @Override
-        public Context getContext() {
-            return PaymentDetailActivity.this;
-        }
-
-// todo remove
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(PaymentDetailActivity.this);
+        public void onPayment(Payment payment) {
+            _paid = payment;
+            populateUi();
         }
     };
 }

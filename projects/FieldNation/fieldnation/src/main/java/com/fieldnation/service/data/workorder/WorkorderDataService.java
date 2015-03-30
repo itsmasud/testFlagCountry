@@ -105,6 +105,43 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         }
     }
 
+    private static void getSignature(Context context, Intent intent) {
+        Log.v(TAG, "getSignature");
+        long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        long signatureId = intent.getLongExtra(PARAM_SIGNATURE_ID, 0);
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(SignatureTransactionHandler.class)
+                    .handlerParams(SignatureTransactionHandler.generateParams(workorderId, signatureId))
+                    .key("GetSignature/" + signatureId)
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .method("GET")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId)
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId + "");
+        if (obj != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
+            bundle.putByteArray(PARAM_DATA, obj.getData());
+            bundle.putLong(PARAM_ID, workorderId);
+            bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
+            TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);
+        }
+    }
+
+    private static void addSignatureJson(Context context, Intent intent) {
+        Log.v(TAG, "addSignatureJson");
+
+    }
+
     private class WorkorderProcessingRunnable implements Runnable {
         private WeakReference<Context> _context;
         private Intent _intent;
@@ -126,10 +163,10 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     listWorkorders(context, _intent);
                 } else if (action.equals(PARAM_ACTION_DETAILS)) {
                     details(context, _intent);
+                } else if (action.equals(PARAM_ACTION_GET_SIGNATURE)) {
+                    getSignature(context, _intent);
                 }
             }
-            // todo do stuff here
-
             synchronized (LOCK) {
                 COUNT--;
                 if (COUNT == 0) {

@@ -28,7 +28,8 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     /*-********************************-*/
     /*-         Data Interface         -*/
     /*-********************************-*/
-    public static void getAll(Context context, int page) {
+    // get all
+    public static void requestGetAll(Context context, int page) {
         Intent intent = new Intent(context, PaymentDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL);
         intent.putExtra(PARAM_PAGE, page);
@@ -42,7 +43,14 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
         return register(TOPIC_ID_GET_ALL, TAG);
     }
 
-    public static void getPayment(Context context, long paymentId) {
+    public boolean getAll(Context context, int page) {
+        boolean reg = registerGetAll();
+        requestGetAll(context, page);
+        return reg;
+    }
+
+    // get payment
+    public static void requestGetPayment(Context context, long paymentId) {
         Intent intent = new Intent(context, PaymentDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_PAYMENT);
         intent.putExtra(PARAM_ID, paymentId);
@@ -56,10 +64,15 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
         return register(TOPIC_ID_PAYMENT, TAG);
     }
 
+    public boolean getPayment(Context context, long paymentId) {
+        boolean reg = registerGetPayment();
+        requestGetPayment(context, paymentId);
+        return reg;
+    }
+
     /*-*********************************-*/
     /*-         Service events          -*/
     /*-*********************************-*/
-
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {

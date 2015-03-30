@@ -16,7 +16,7 @@ import java.lang.ref.WeakReference;
 /**
  * Created by Michael Carver on 2/26/2015.
  */
-class ObjectStoreClient implements ObjectStoreConstants {
+public class ObjectStoreClient implements ObjectStoreConstants {
     public static final String TAG = "ObjectStoreClient";
 
     private boolean _isConnected = false;
@@ -212,7 +212,7 @@ class ObjectStoreClient implements ObjectStoreConstants {
         }
     }
 
-    // call backs
+    // callbacks
     private void handleDelete(Message msg) {
         Bundle bundle = msg.getData();
         _listener.onDelete(
