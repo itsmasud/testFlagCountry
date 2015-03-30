@@ -103,7 +103,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(AddSignatureTransactionHandler.class)
+                    .handler(SignatureStubTrasactionHandler.class)
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()

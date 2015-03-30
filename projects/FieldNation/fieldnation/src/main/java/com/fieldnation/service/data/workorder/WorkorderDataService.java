@@ -137,11 +137,6 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         }
     }
 
-    private static void addSignatureJson(Context context, Intent intent) {
-        Log.v(TAG, "addSignatureJson");
-
-    }
-
     private class WorkorderProcessingRunnable implements Runnable {
         private WeakReference<Context> _context;
         private Intent _intent;

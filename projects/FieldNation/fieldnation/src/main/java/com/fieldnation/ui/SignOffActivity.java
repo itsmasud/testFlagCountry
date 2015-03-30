@@ -172,7 +172,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _workorderClient = new WorkorderDataClient();
+        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
         _workorderClient.connect(this);
     }
 
@@ -206,8 +206,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         // not a task
 // TODO remove
         if (_taskId == -1) {
-            startService(
-                    _service.addSignatureJson(WEB_UPLOAD_SIGNATURE, _workorder.getWorkorderId(), _name, _signatureJson));
+            WorkorderDataClient.requestAddSignatureJson(this, _workorder.getWorkorderId(), _name, _signatureJson);
         } else {
             // is a task
             startService(
@@ -321,7 +320,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                 if (_completeWorkorder) {
                     // if we need to complete, then start that process
 // todo remove
-                    GaTopic.dispatchEvent(SignOffActivity.this, "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "SignOffActivity", 1);
+                    GoogleAnalyticsTopicClient.dispatchEvent(SignOffActivity.this, "WorkorderActivity", GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK, "SignOffActivity", 1);
                     startService(
                             _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
 

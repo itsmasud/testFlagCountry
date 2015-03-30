@@ -265,11 +265,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         super.onDestroy();
     }
 
-    @Override
-    public void onDetach() {
-        Log.v(TAG, "onDetach");
-        super.onDetach();
-    }
 
     public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
         Log.v(TAG, "setDisplayType");
@@ -285,11 +280,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         return "Work" + misc.capitalize(_displayView.getCall()) + "List";
     }
 
-
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach()");
-        _workorderClient.disconnect(getActivity());
         super.onDetach();
     }
 
@@ -322,6 +315,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     @Override
     public void onPause() {
         Log.v(TAG, "onPause()");
+
+        _workorderClient.disconnect(getActivity());
+
         if (_gpsLocationService != null)
             _gpsLocationService.stopLocationUpdates();
 
@@ -335,7 +331,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     @Override
     public void isShowing() {
         Log.v(TAG, "isShowing");
-        GaTopic.dispatchScreenView(getActivity(), getGaLabel());
+        if (getActivity() != null)
+            GoogleAnalyticsTopicClient.dispatchScreenView(getActivity(), getGaLabel());
     }
 
     private void setLoading(boolean loading) {
@@ -441,8 +438,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _gpsLocationService.setListener(null);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
-// TODO fix
-        GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CHECKOUT, "WorkorderCardView", 1);
+        GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CHECKOUT, "WorkorderCardView", 1);
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
                 Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount, _gpsLocationService.getLocation());
@@ -602,10 +598,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onLongClick(WorkorderCardView view, Workorder workorder) {
-// todo fix
-            GaTopic.dispatchEvent(getActivity(),
-                    getGaLabel(), GaTopic.ACTION_LONG_CLICK, "WorkorderCardView", 1);
-
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.LONG_CLICK, "WorkorderCardView", 1);
 //            if (_selected.contains(workorder.getWorkorderId())) {
 //                _selected.remove(workorder.getWorkorderId());
 //                view.setDisplayMode(WorkorderCardView.MODE_NORMAL);
@@ -701,8 +694,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 }
             }
             // request the workorder
-// todo fix
-            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_REQUEST_WORK, "WorkorderCardView", 1);
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkorderCardView", 1);
             Intent intent = _service.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), time);
             intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
             getActivity().startService(intent);
@@ -718,7 +710,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             //set  loading mode
 // todo fix
             try {
-                GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_CONFIRM_ASSIGN, "WorkorderCardView", 1);
+                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkorderCardView", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 Intent intent = _service.confirmAssignment(WEB_CHANGING_WORKORDER,
                         workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
@@ -746,7 +738,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
 // todo fix
-            GaTopic.dispatchEvent(getActivity(), getGaLabel(), GaTopic.ACTION_COUNTER, "WorkorderCardView", 1);
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.COUNTER, "WorkorderCardView", 1);
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGING_WORKORDER,
                             workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,
