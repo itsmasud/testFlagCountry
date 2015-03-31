@@ -129,8 +129,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
 //        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
         setLoading(true);
         populateUi();
-
-          TopicService.dispatchTopic(this, "NOTIFICATION_TEST", null);
     }
 
     @Override
@@ -149,28 +147,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
         super.onSaveInstanceState(outState);
     }
-
-// todo remove
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            _service = new WorkorderWebClient(WorkorderActivity.this, username, authToken, _rpcReceiver);
-            getData(true);
-        }
-    }
-
-    @Override
-    public void onAuthenticationFailed(boolean networkDown) {
-        super.onAuthenticationFailed(networkDown);
-        _service = null;
-    }
-
-    @Override
-    public void onAuthenticationInvalidated() {
-        super.onAuthenticationInvalidated();
-        _service = null;
-    }
-
 
     private void buildFragments(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
@@ -316,7 +292,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
     public void getData() {
         setLoading(true);
-        WorkorderDataClient.details(this, _workorderId);
+        WorkorderDataClient.requestDetails(this, _workorderId);
     }
 
     /*-*************************-*/

@@ -237,9 +237,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             _globalTopicClient.registerGotProfile();
             _globalTopicClient.registerUpdateApp();
             _globalTopicClient.registerAppShutdown();
-            _globalTopicClient.registerNetworkConnected();
-            _globalTopicClient.registerNetworkConnecting();
-            _globalTopicClient.registerNetworkDisconnected();
+            _globalTopicClient.registerNetworkState();
         }
 
         @Override

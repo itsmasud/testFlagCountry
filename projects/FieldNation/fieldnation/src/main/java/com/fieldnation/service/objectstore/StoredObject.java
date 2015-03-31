@@ -164,6 +164,10 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
 
+    public static StoredObject get(Context context, String objectTypeName, long objectKey) {
+        return get(context, objectTypeName, objectKey + "");
+    }
+
     /**
      * Finds the objectType with the matching key and returns it.
      *
@@ -279,6 +283,10 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
     }
 
+    public static StoredObject put(Context context, String objectTypeName, long objectKey, File file) {
+        return put(context, objectTypeName, objectKey + "", file);
+    }
+
     public static StoredObject put(Context context, String objectTypeName, String objectKey, File file) {
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
@@ -329,6 +337,10 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
 
         return null;
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, long objectKey, byte[] data) {
+        return put(context, objectTypeName, objectKey + "", data);
     }
 
     public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] data) {
@@ -434,6 +446,10 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
         }
         return list;
+    }
+
+    public static boolean delete(Context context, String objectTypeName, long objkey) {
+        return delete(context, objectTypeName, objkey + "");
     }
 
     public static boolean delete(Context context, String objectTypeName, String objkey) {

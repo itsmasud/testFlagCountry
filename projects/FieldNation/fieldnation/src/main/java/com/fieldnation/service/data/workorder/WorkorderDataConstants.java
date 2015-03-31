@@ -51,9 +51,13 @@ public interface WorkorderDataConstants {
     public static final String PARAM_ID = "PARAM_ID";
     public static final String PARAM_SIGNATURE_ID = "PARAM_SIGNATURE_ID";
     public static final String PARAM_NAME = "PARAM_NAME";
+    public static final String PARAM_UPLOAD_SLOT_ID = "PARAM_UPLOAD_SLOT_ID";
+    public static final String PARAM_LOCAL_PATH = "PARAM_LOCAL_PATH";
+    public static final String PARAM_FILE_NAME = "PARAM_FILE_NAME";
 
 
     public static final String PSO_WORKORDER_LIST = "WorkorderList";
     public static final String PSO_WORKORDER = "Workorder";
     public static final String PSO_SIGNATURE = "Signature";
+    public static final String PSO_BUNDLE = "Bundle";
 }

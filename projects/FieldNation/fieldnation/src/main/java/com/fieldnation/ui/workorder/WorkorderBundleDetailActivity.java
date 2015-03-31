@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
@@ -84,23 +85,51 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient.connect(this);
+
+        WorkorderDataClient.requestBundle(this, _bundleId);
     }
 
     @Override
     protected void onPause() {
+        _workorderClient.disconnect(this);
         super.onPause();
     }
 
-    // Todo remove
-
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            _service = new WorkorderWebClient(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
-            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
+    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
+        @Override
+        public void onConnected() {
+            _workorderClient.registerBundle(_bundleId);
         }
-    }
 
+        @Override
+        public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle) {
+            _woBundle = bundle;
+            NumberFormat form = NumberFormat.getNumberInstance();
+            form.setMinimumFractionDigits(1);
+            form.setMaximumFractionDigits(1);
+
+            try {
+                _distanceTextView.setText("Average Distance: " + form.format(_woBundle.getAverageDistance()) + " mi");
+            } catch (Exception ex) {
+            }
+            try {
+                _requestButton.setText("Request (" + _woBundle.getWorkorder().length + ")");
+            } catch (Exception ex) {
+            }
+            try {
+                _dateTextView.setText("Range " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
+            } catch (Exception ex) {
+            }
+
+            _adapter = new BundleAdapter(_woBundle, _wocard_listener);
+
+            _listview.setAdapter(_adapter);
+
+            _loadingLayout.setVisibility(View.GONE);
+        }
+    };
 
     private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
@@ -109,60 +138,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
             Log.v(TAG, "Method Stub: onClick()");
         }
     };
-
-    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            // TODO Method Stub: onSuccess()
-            Log.v(TAG, "Method Stub: onSuccess()");
-            Log.v(TAG, resultData.toString());
-            byte[] data = resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA);
-            Log.v(TAG, new String(data));
-            if (resultCode == WEB_GET_BUNDLE) {
-                try {
-                    _woBundle = com.fieldnation.data.workorder.Bundle.fromJson(new JsonObject(new String(data)));
-                    NumberFormat form = NumberFormat.getNumberInstance();
-                    form.setMinimumFractionDigits(1);
-                    form.setMaximumFractionDigits(1);
-
-                    try {
-                        _distanceTextView.setText("Average Distance: " + form.format(_woBundle.getAverageDistance()) + " mi");
-                    } catch (Exception ex) {
-                    }
-                    try {
-                        _requestButton.setText("Request (" + _woBundle.getWorkorder().length + ")");
-                    } catch (Exception ex) {
-                    }
-                    try {
-                        _dateTextView.setText("Range " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
-                    } catch (Exception ex) {
-                    }
-
-                    _adapter = new BundleAdapter(_woBundle, _wocard_listener);
-
-                    _listview.setAdapter(_adapter);
-
-                    _loadingLayout.setVisibility(View.GONE);
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        @Override
-        public Context getContext() {
-            return WorkorderBundleDetailActivity.this;
-        }
-    };
-
-    // TODO remove
-    @Override
-    public void onRefresh() {
-        if (_service != null) {
-            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
-        }
-    }
 
     private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.Listener() {
         @Override
@@ -183,10 +158,9 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         public void onLongClick(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: onLongClick()
             Log.v(TAG, "Method Stub: onLongClick()");
-// todo remove
-            GaTopic.dispatchEvent(WorkorderBundleDetailActivity.this,
-                    "BundleActivity", GaTopic.ACTION_LONG_CLICK, "WorkorderCard", 1);
-
+            GoogleAnalyticsTopicClient.dispatchEvent(WorkorderBundleDetailActivity.this,
+                    "BundleActivity", GoogleAnalyticsTopicClient.EventAction.LONG_CLICK,
+                    "WorkorderCard", 1);
         }
 
         @Override

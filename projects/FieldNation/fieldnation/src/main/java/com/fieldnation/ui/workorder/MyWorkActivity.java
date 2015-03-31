@@ -74,10 +74,6 @@ public class MyWorkActivity extends TabActionBarFragmentActivity {
         return _fragments[index];
     }
 
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-    }
-
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
         misc.printStackTrace("startNew");

@@ -62,24 +62,25 @@ public class ReconnectWarningView extends RelativeLayout {
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerOffline();
+            _globalClient.registerNetworkState();
         }
 
         @Override
-        public void onOffline() {
+        public void onNetworkDisconnected() {
             ReconnectWarningView.this.setVisibility(View.VISIBLE);
         }
 
         @Override
-        public void onOnline() {
+        public void onNetworkConnected() {
             ReconnectWarningView.this.setVisibility(View.GONE);
         }
+
     };
 
     private OnClickListener _retry_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.dispathOnline(getContext());
+            GlobalTopicClient.dispatchNetworkConnect(getContext());
             ReconnectWarningView.this.setVisibility(View.GONE);
         }
     };

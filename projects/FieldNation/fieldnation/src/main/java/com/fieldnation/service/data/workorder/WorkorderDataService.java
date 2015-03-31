@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -126,7 +128,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             ex.printStackTrace();
         }
 
-        StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId + "");
+        StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId);
         if (obj != null) {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
@@ -135,6 +137,63 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
             TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);
         }
+    }
+
+    private static void getBundle(Context context, Intent intent) {
+        Log.v(TAG, "getBundle");
+        long bundleId = intent.getLongExtra(PARAM_ID, 0);
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(BundleTransactionHandler.class)
+                    .handlerParams(BundleTransactionHandler.generateGetParams(bundleId))
+                    .key("GetBundle/" + bundleId)
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .method("GET")
+                                    .path("api/rest/v1/workorder/bundle/" + bundleId)
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
+        if (obj != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
+            bundle.putByteArray(PARAM_DATA, obj.getData());
+            bundle.putLong(PARAM_ID, bundleId);
+            TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + "/" + bundleId, bundle, true);
+        }
+    }
+
+    private static void requestUploadDeliverable(Context context, Intent intent) {
+        long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
+        String filePath = intent.getStringExtra(PARAM_LOCAL_PATH);
+        String filename = intent.getStringExtra(PARAM_FILE_NAME);
+
+        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
+
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header()
+                                    .method("POST")
+                                    .path("api/rest/v1/workorder/" + workorderId + "/deliverables")
+                                    .multipartFile("file", filename,upFile,)
+
+                    )
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
 
     private class WorkorderProcessingRunnable implements Runnable {
@@ -160,6 +219,10 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     details(context, _intent);
                 } else if (action.equals(PARAM_ACTION_GET_SIGNATURE)) {
                     getSignature(context, _intent);
+                } else if (action.equals(PARAM_ACTION_GET_BUNDLE)) {
+                    getBundle(context, _intent);
+                } else if (action.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
+                    uploadDeliverable(context, _intent);
                 }
             }
             synchronized (LOCK) {

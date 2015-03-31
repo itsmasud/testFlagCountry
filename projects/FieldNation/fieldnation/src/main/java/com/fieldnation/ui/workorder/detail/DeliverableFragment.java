@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.ActivityResult;
 import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
@@ -52,11 +53,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;
     private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 2;
 
-    // private static final int WEB_GET_DOCUMENTS = 1;
-    private static final int WEB_GET_PROFILE = 2;
-    private static final int WEB_DELETE_DELIVERABLE = 3;
-    private static final int WEB_SEND_DELIVERABLE = 4;
-    private static final int WEB_CHANGE = 5;
 
     // State
     private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
@@ -72,9 +68,9 @@ public class DeliverableFragment extends WorkorderFragment {
     private AppPickerDialog _appPickerDialog;
 
     // Data
-    private Context _context;
     private Workorder _workorder;
     private WorkorderDataClient _workorderClient;
+    private GlobalTopicClient _globalClient;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
     private final SecureRandom _rand = new SecureRandom();
@@ -132,24 +128,6 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        _context = getActivity().getApplicationContext();
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Get Content");
-
-        if (_context.getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
-            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Take Picture");
-        }
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         if (_uploadingSlotId > 0)
             outState.putInt(STATE_UPLOAD_SLOTID, _uploadingSlotId);
@@ -161,17 +139,31 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        _context = getActivity().getApplicationContext();
-//todo remove
-        AuthTopicService.subscribeAuthState(_context, 0, TAG, _authReceiver);
-        Topics.subscrubeProfileUpdated(_context, TAG + ":ProfileService", _profile_topicService);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        _globalClient = new GlobalTopicClient(_globalClient_listener);
+        _globalClient.connect(activity);
+
+        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient.connect(activity);
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appPickerDialog.addIntent(activity.getPackageManager(), intent, "Get Content");
+
+        if (activity.getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appPickerDialog.addIntent(activity.getPackageManager(), intent, "Take Picture");
+        }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDetach() {
+        _globalClient.disconnect(getActivity());
+        _workorderClient.disconnect(getActivity());
+        super.onDetach();
     }
 
     private boolean checkMedia() {
@@ -196,10 +188,12 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     private PendingIntent getNotificationIntent() {
-        Intent intent = new Intent(_context, WorkorderActivity.class);
+        if (getActivity() == null)
+            return null;
+        Intent intent = new Intent(getActivity(), WorkorderActivity.class);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-        return PendingIntent.getActivity(_context, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(getActivity(), _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -246,7 +240,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     if (i < _reviewList.getChildCount()) {
                         v = (DocumentView) _reviewList.getChildAt(i);
                     } else {
-                        v = new DocumentView(_context);
+                        v = new DocumentView(getActivity());
                         _reviewList.addView(v);
                     }
                     Document doc = _docs[i];
@@ -282,7 +276,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     if (i < _filesLayout.getChildCount()) {
                         v = (UploadSlotView) _filesLayout.getChildAt(i);
                     } else {
-                        v = new UploadSlotView(_context);
+                        v = new UploadSlotView(getActivity());
                         _filesLayout.addView(v);
                     }
                     UploadSlot slot = _slots[i];
@@ -317,9 +311,6 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_uploadingSlotId < 0)
             return false;
 
-        if (_service == null)
-            return false;
-
         if (getActivity() == null)
             return false;
 
@@ -333,18 +324,15 @@ public class DeliverableFragment extends WorkorderFragment {
                     return false;
 
                 Log.v(TAG, "local path");
-// todo remove
-                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                WorkorderDataClient.requestUploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(), _uploadingSlotId,
-                        _tempFile.getAbsolutePath(), getNotificationIntent()));
-
+                        _tempFile.getAbsolutePath());
                 return true;
             } else {
                 Log.v(TAG, "from intent");
-// todo remove
-                getActivity().startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _uploadingSlotId, data, getNotificationIntent()));
+                WorkorderDataClient.requestUploadDeliverable(getActivity(),
+                        _workorder.getWorkorderId(),
+                        _uploadingSlotId, data);
                 return true;
             }
         }
@@ -374,10 +362,8 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
-// todo remove
-            _context.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
-                    _workorder.getWorkorderId(),
-                    document.getWorkorderUploadId()));
+            WorkorderDataClient.requestDeleteDeliverable(getActivity(), _workorder.getWorkorderId(),
+                    document.getWorkorderUploadId());
         }
     };
 
@@ -390,9 +376,9 @@ public class DeliverableFragment extends WorkorderFragment {
                 // start of the upload process
                 _uploadingSlotId = slot.getSlotId();
                 _appPickerDialog.show();
-            } else {
+            } else if (getActivity() != null) {
                 Toast.makeText(
-                        _context,
+                        getActivity(),
                         "Need External Storage, please insert storage device before continuing",
                         Toast.LENGTH_LONG).show();
             }
@@ -418,7 +404,7 @@ public class DeliverableFragment extends WorkorderFragment {
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                String packageName = _context.getPackageName();
+                String packageName = getActivity().getPackageName();
                 File externalPath = Environment.getExternalStorageDirectory();
                 new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
                 File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
@@ -434,44 +420,25 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-// todo remove
-
-    private final TopicReceiver _profile_topicService = new TopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (getActivity() == null)
-                return;
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                parcel.setClassLoader(getActivity().getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-            }
+        public void onConnected() {
+            _globalClient.registerGotProfile();
+        }
+
+        @Override
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
             populateUi();
         }
     };
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
-        @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || isNew) {
-                _service = new WorkorderWebClient(_context, username, authToken, _resultReceiver);
-            }
-        }
 
+    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
         @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _service = null;
-        }
+        public void onConnected() {
 
-        @Override
-        public void onAuthenticationInvalidated() {
-            _service = null;
-        }
-
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(_context);
         }
     };
-
 
     private final WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {

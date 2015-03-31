@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Expense;
@@ -24,6 +25,7 @@ import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -436,6 +438,54 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
     }
 
+    // Bundle
+    public static void requestBundle(Context context, long bundleId) {
+        Intent intent = new Intent(context, WorkorderDataService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
+        intent.putExtra(PARAM_ID, bundleId);
+        context.startService(intent);
+    }
+
+    public boolean registerBundle(long bundleId) {
+        if (!isConnected())
+            return false;
+
+        Log.v(TAG, "registerBundle");
+
+        return register(PARAM_ACTION_GET_BUNDLE + "/" + bundleId, TAG);
+    }
+
+    public static void requestUploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
+        Intent intent = new Intent(context, WorkorderDataService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_UPLOAD_SLOT_ID, uploadSlotId);
+        intent.putExtra(PARAM_LOCAL_PATH, filePath);
+        intent.putExtra(PARAM_FILE_NAME, filename);
+        context.startService(intent);
+    }
+
+    public static void requestUploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
+        FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
+            @Override
+            public void fileReady(String filename, File file) {
+                requestUploadDeliverable(context, workorderId, uploadSlotId, filename, file.getPath());
+            }
+
+            @Override
+            public void fail(String reason) {
+                Log.v("WorkorderDataClient.requestUploadDeliverable", reason);
+            }
+        });
+    }
+
+    public static void requestDeleteDeliverable(Context context, long workorderId, long uploadId) {
+
+    }
+
+    /*-******************************-*/
+    /*-         Listener             -*/
+    /*-******************************-*/
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
@@ -445,6 +495,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 preOnDetails((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_GET_SIGNATURE)) {
                 preOnGetSignature((Bundle) payload);
+            } else if (topicId.startsWith(PARAM_ACTION_GET_BUNDLE)) {
+                preOnGetBundle((Bundle) payload);
             }
         }
 
@@ -480,7 +532,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
 
         public void onWorkorderList(List<Workorder> list, WorkorderDataSelector selector, int page) {
-
         }
 
         // details
@@ -531,6 +582,29 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
 
         public void onGetSignature(Signature signature) {
+        }
+
+        private void preOnGetBundle(Bundle payload) {
+            new AsyncTaskEx<Bundle, Object, com.fieldnation.data.workorder.Bundle>() {
+                @Override
+                protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {
+                    Bundle bundle = params[0];
+                    try {
+                        return com.fieldnation.data.workorder.Bundle.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(com.fieldnation.data.workorder.Bundle bundle) {
+                    onGetBundle(bundle);
+                }
+            }.executeEx(payload);
+        }
+
+        public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle) {
         }
     }
 }
