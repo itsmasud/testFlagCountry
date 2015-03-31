@@ -354,7 +354,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private void requestList(int page) {
         Log.v(TAG, "requestList " + page);
         setLoading(true);
-        WorkorderDataClient.listWorkorders(GlobalState.getContext(), _displayView, page);
+        WorkorderDataClient.requestList(GlobalState.getContext(), _displayView, page);
     }
 
     private void addPage(int page, List<Workorder> list) {
@@ -419,17 +419,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _adapter.notifyDataSetChanged();
         GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkorderCardView", 1);
         if (_gpsLocationService.hasLocation()) {
-            // TODO do checkin
-            Intent intent = _service.checkin(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
-            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-            getActivity().startService(intent);
-
+            WorkorderDataClient.requestCheckin(getActivity(), _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
         } else {
-            // TODO checkout
-            Intent intent = _service.checkin(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
-            intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-            getActivity().startService(intent);
+            WorkorderDataClient.requestCheckin(getActivity(), _currentWorkorder.getWorkorderId());
         }
+        // TODO Need to know when this completes!?
     }
 
     private void doCheckOut() {
@@ -438,27 +432,29 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _gpsLocationService.setListener(null);
         _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
-        GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CHECKOUT, "WorkorderCardView", 1);
+        GoogleAnalyticsTopicClient.dispatchEvent(
+                getActivity(),
+                getGaLabel(),
+                GoogleAnalyticsTopicClient.EventAction.CHECKOUT,
+                "WorkorderCardView", 1);
+
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
-                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount, _gpsLocationService.getLocation());
-                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-                getActivity().startService(intent);
+                WorkorderDataClient.requestCheckout(getActivity(),
+                        _currentWorkorder.getWorkorderId(),
+                        _deviceCount,
+                        _gpsLocationService.getLocation());
             } else {
-                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
-                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-                getActivity().startService(intent);
+                WorkorderDataClient.requestCheckout(getActivity(),
+                        _currentWorkorder.getWorkorderId(),
+                        _gpsLocationService.getLocation());
             }
 
         } else {
             if (_deviceCount > -1) {
-                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId(), _deviceCount);
-                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-                getActivity().startService(intent);
+                WorkorderDataClient.requestCheckout(getActivity(), _currentWorkorder.getWorkorderId(), _deviceCount);
             } else {
-                Intent intent = _service.checkout(WEB_CHANGING_WORKORDER, _currentWorkorder.getWorkorderId());
-                intent.putExtra(KEY_WORKORDER_ID, _currentWorkorder.getWorkorderId());
-                getActivity().startService(intent);
+                WorkorderDataClient.requestCheckout(getActivity(), _currentWorkorder.getWorkorderId());
             }
         }
     }
@@ -583,9 +579,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
             //TODO set loading mode
-            Intent intent = _service.acknowledgeHold(WEB_CHANGING_WORKORDER, workorder.getWorkorderId());
-            intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-            getActivity().startService(intent);
+            WorkorderDataClient.requestAcknowledgeHold(getActivity(), workorder.getWorkorderId());
             _requestWorking.add(workorder.getWorkorderId());
             _adapter.notifyDataSetChanged();
         }

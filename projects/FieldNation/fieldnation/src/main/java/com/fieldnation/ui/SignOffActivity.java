@@ -45,11 +45,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     public static final String INTENT_PARAM_TASK_ID = "SignOffActivity.INTENT_PARAM_TASK_ID";
     public static final String INTENT_COMPLETE_WORKORDER = "SignOffActivity.INTENT_COMPLETE_WORKORDER";
 
-    // Web
-    private static final int WEB_COMPLETE_TASK = 1;
-    private static final int WEB_UPLOAD_SIGNATURE = 2;
-    private static final int WEB_COMPLETE_WORKORDER = 3;
-
     // Ui
     private SignOffFragment _signOffFrag;
     private SignatureFragment _sigFrag;
@@ -204,15 +199,24 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     private void sendSignature() {
         // not a task
-// TODO remove
         if (_taskId == -1) {
             WorkorderDataClient.requestAddSignatureJson(this, _workorder.getWorkorderId(), _name, _signatureJson);
         } else {
             // is a task
-            startService(
-                    _service.completeSignatureTaskJson(WEB_COMPLETE_TASK, _workorder.getWorkorderId(),
-                            _taskId, _name, _signatureJson));
+            WorkorderDataClient.requestCompleteSignatureTaskJson(this, _workorder.getWorkorderId(), _taskId, _name, _signatureJson);
         }
+
+        if (_completeWorkorder) {
+            WorkorderDataClient.requestComplete(this, _workorder.getWorkorderId());
+            ((GlobalState) getApplication()).setCompletedWorkorder();
+            GoogleAnalyticsTopicClient.dispatchEvent(
+                    SignOffActivity.this,
+                    "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK,
+                    "SignOffActivity", 1);
+        }
+
+        _thankYouFrag.setUploadComplete();
     }
 
     /*-*********************************-*/
@@ -260,8 +264,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureJson = signatureJson;
-// todo remove
-            GaTopic.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
+            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _thankYouFrag);
@@ -305,47 +308,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     /*-******************************-*/
     /*-             Web              -*/
     /*-******************************-*/
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-
-            if (resultCode == WEB_COMPLETE_WORKORDER) {
-                // we completed the workorder... done
-                _thankYouFrag.setUploadComplete();
-
-                ((GlobalState) getApplication()).setCompletedWorkorder();
-
-            } else if (resultCode == WEB_COMPLETE_TASK || resultCode == WEB_UPLOAD_SIGNATURE) {
-                // we finished uploading the signature
-                if (_completeWorkorder) {
-                    // if we need to complete, then start that process
-// todo remove
-                    GoogleAnalyticsTopicClient.dispatchEvent(SignOffActivity.this, "WorkorderActivity", GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK, "SignOffActivity", 1);
-                    startService(
-                            _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
-
-                } else {
-                    // otherwise we're done
-                    _thankYouFrag.setUploadComplete();
-                }
-            }
-        }
-
-        @Override
-        public Context getContext() {
-            return SignOffActivity.this;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(SignOffActivity.this);
-            Toast.makeText(SignOffActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
-            _thankYouFrag.setUploadComplete();
-        }
-    };
-
-
     public static void startSignOff(Context context, Workorder workorder) {
         startSignOff(context, workorder, false);
     }

@@ -2,6 +2,7 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
 
@@ -17,6 +18,7 @@ import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
@@ -108,7 +110,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")
-                                    .method("GET")
+                                    .method("POST")
                                     .path("api/rest/v1/workorder/" + workorderId + "/signature")
                                     .body("signatureFormat=json"
                                             + "&printName=" + misc.escapeForURL(name)
@@ -122,6 +124,193 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
 
     // complete signature
+    public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String printName, String signatureJson) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
+                                    .body("print_name=" + misc.escapeForURL(printName)
+                                            + "&signature_json=" + signatureJson)
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // complete workorder
+    public static void requestComplete(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .method("POST")
+                                    .path("api/rest/v1/workorder/" + workorderId + "/complete")
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // checkin workorder
+    public static void requestCheckin(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
+                                    .body("checkin_time=" + ISO8601.now())
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void requestCheckin(Context context, long workorderId, Location location) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
+                                    .body("checkin_time=" + ISO8601.now()
+                                            + "&gps_lat=" + location.getLatitude()
+                                            + "&gps_lon=" + location.getLongitude())
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void requestCheckout(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
+                                    .body("checkout_time=" + ISO8601.now())
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void requestCheckout(Context context, long workorderId, Location location) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
+                                    .body("checkout_time=" + ISO8601.now()
+                                            + "&gps_lat=" + location.getLatitude()
+                                            + "&gps_lon=" + location.getLongitude())
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void requestCheckout(Context context, long workorderId, int deviceCount) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
+                                    .body("device_count=" + deviceCount
+                                            + "&checkout_time=" + ISO8601.now())
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void requestCheckout(Context context, long workorderId, int deviceCount, Location location) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
+                                    .body("device_count=" + deviceCount
+                                            + "&checkout_time=" + ISO8601.now()
+                                            + "&gps_lat=" + location.getLatitude()
+                                            + "&gps_lon=" + location.getLongitude())
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void requestAcknowledgeHold(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .method("GET")
+                                    .path("api/rest/v1/workorder/" + workorderId + "/acknowledge-hold")
+
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public static abstract class Listener extends TopicClient.Listener {
         @Override

@@ -130,7 +130,7 @@ public class SplashActivity extends AuthFragmentActivity {
 
     }
 
-// Todo remove
+/*// Todo remove
     private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -153,11 +153,8 @@ public class SplashActivity extends AuthFragmentActivity {
                 }
             }
         }
-    };
+    };*/
 
-    @Override
-    public void onRefresh() {
-    }
 
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);
