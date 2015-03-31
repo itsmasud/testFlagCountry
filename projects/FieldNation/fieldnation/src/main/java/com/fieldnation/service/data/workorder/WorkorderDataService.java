@@ -169,7 +169,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         }
     }
 
-    private static void requestUploadDeliverable(Context context, Intent intent) {
+    private static void uploadDeliverable(Context context, Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
         long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
         String filePath = intent.getStringExtra(PARAM_LOCAL_PATH);
@@ -178,22 +178,24 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
 
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("api/rest/v1/workorder/" + workorderId + "/deliverables")
+                    .multipartFile("file", filename, upFile);
+
+            if (uploadSlotId != 0) {
+                builder.path("api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
+            }
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header()
-                                    .method("POST")
-                                    .path("api/rest/v1/workorder/" + workorderId + "/deliverables")
-                                    .multipartFile("file", filename,upFile,)
-
-                    )
+                    .request(builder)
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     private class WorkorderProcessingRunnable implements Runnable {

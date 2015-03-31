@@ -4,6 +4,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
 
+import java.net.URLConnection;
 import java.text.ParseException;
 
 /**
@@ -133,6 +134,16 @@ public class HttpJsonBuilder {
         f.put("filename", filename);
         f.put("soid", obj.getId());
         f.put("contentType", contentType);
+        multiPartFiles.put(fieldName, f);
+        return this;
+    }
+
+    public HttpJsonBuilder multipartFile(String fieldName, String filename, StoredObject obj) throws ParseException {
+        getMultiPartFile();
+        JsonObject f = new JsonObject();
+        f.put("filename", filename);
+        f.put("soid", obj.getId());
+        f.put("contentType", URLConnection.guessContentTypeFromName(filename));
         multiPartFiles.put(fieldName, f);
         return this;
     }
