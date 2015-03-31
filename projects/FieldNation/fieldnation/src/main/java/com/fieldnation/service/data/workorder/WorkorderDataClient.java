@@ -9,6 +9,9 @@ import android.os.Parcelable;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.data.workorder.Expense;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
@@ -312,6 +315,127 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
     }
 
+    public static void requestCounterOffer(Context context, long workorderId, boolean expires,
+                                           String reason, int expiresAfterInSecond, Pay pay,
+                                           Schedule schedule, Expense[] expenses) {
+        String payload = "";
+        // reason/expire
+        if (expires)
+            payload += "expires=true&expiresAfterInSecond=" + expiresAfterInSecond;
+        else
+            payload += "expires=false";
+
+        if (!misc.isEmptyOrNull(reason)) {
+            payload += "&providerExplanation=" + misc.escapeForURL(reason);
+        }
+
+        // pay counter
+        if (pay != null) {
+            if (pay.isPerDeviceRate()) {
+                payload += "&payBasis=per_device";
+                payload += "&payPerDevice=" + pay.getPerDevice();
+                payload += "&maxDevices=" + pay.getMaxDevice();
+            } else if (pay.isBlendedRate()) {
+                payload += "&payBasis=blended";
+                payload += "&hourlyRate=" + pay.getBlendedStartRate();
+                payload += "&maxHours=" + pay.getBlendedFirstHours();
+                payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
+                payload += "&additionalMaxHours=" + pay.getBlendedAdditionalHours();
+            } else if (pay.isFixedRate()) {
+                payload += "&payBasis=fixed";
+                payload += "&fixedTotalAmount=" + pay.getFixedAmount();
+            } else if (pay.isHourlyRate()) {
+                payload += "&payBasis=per_hour";
+                payload += "&hourlyRate=" + pay.getPerHour();
+                payload += "&maxHours=" + pay.getMaxHour();
+            }
+        }
+        // schedule counter
+        if (schedule != null) {
+            if (schedule.isExact()) {
+                payload += "&startTime=" + schedule.getStartTime();
+            } else {
+                payload += "&startTime=" + schedule.getStartTime();
+                payload += "&endTime=" + schedule.getEndTime();
+            }
+        }
+        // expenses counter
+        if (expenses != null && expenses.length > 0) {
+            StringBuilder json = new StringBuilder();
+            json.append("[");
+            for (int i = 0; i < expenses.length; i++) {
+                Expense expense = expenses[i];
+                json.append("{\"description\":\"").append(expense.getDescription()).append("\",");
+                json.append("\"price\":\"").append(expense.getPrice()).append("\"}");
+            }
+            json.append("]");
+
+            payload += "&expenses=" + json.toString();
+        }
+
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("api/rest/v1/workorder/" + workorderId + "/counter_offer")
+                                    .body(payload)
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void request(Context context, long workorderId, long expireInSeconds) {
+        HttpJsonBuilder builder;
+        try {
+
+            builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                    .method("POST")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/request");
+
+            if (expireInSeconds != -1) {
+                builder.body("expiration=" + expireInSeconds);
+            }
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(builder).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void requestConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderDetailsTransactionHandler.class)
+                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/assignment")
+                                    .body("start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601)
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
@@ -356,6 +480,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
 
         public void onWorkorderList(List<Workorder> list, WorkorderDataSelector selector, int page) {
+
         }
 
         // details

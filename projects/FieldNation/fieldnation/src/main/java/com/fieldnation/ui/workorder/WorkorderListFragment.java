@@ -310,6 +310,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+
+        requestList(0);
     }
 
     @Override
@@ -688,10 +690,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 }
             }
             // request the workorder
-            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkorderCardView", 1);
-            Intent intent = _service.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), time);
-            intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-            getActivity().startService(intent);
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(),
+                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkorderCardView", 1);
+            WorkorderDataClient.request(getActivity(), workorder.getWorkorderId(), time);
 
             // notify the UI
             _requestWorking.add(workorder.getWorkorderId());
@@ -702,14 +703,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             //set  loading mode
-// todo fix
             try {
                 GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkorderCardView", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                Intent intent = _service.confirmAssignment(WEB_CHANGING_WORKORDER,
+                WorkorderDataClient.requestConfirmAssignment(getActivity(),
                         workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
-                intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-                getActivity().startService(intent);
                 _requestWorking.add(workorder.getWorkorderId());
                 _adapter.notifyDataSetChanged();
             } catch (Exception ex) {
@@ -730,13 +728,15 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private final CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {
         @Override
-        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
-// todo fix
-            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.COUNTER, "WorkorderCardView", 1);
-            getActivity().startService(
-                    _service.setCounterOffer(WEB_CHANGING_WORKORDER,
-                            workorder.getWorkorderId(), expires, reason, expirationInSeconds, pay,
-                            schedule, expenses));
+        public void onOk(Workorder workorder, String reason, boolean expires,
+                         int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
+
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(),
+                    GoogleAnalyticsTopicClient.EventAction.COUNTER, "WorkorderCardView", 1);
+
+            WorkorderDataClient.requestCounterOffer(getActivity(), workorder.getWorkorderId(),
+                    expires, reason, expirationInSeconds, pay, schedule, expenses);
+
             _requestWorking.add(workorder.getWorkorderId());
             setLoading(true);
         }
@@ -867,44 +867,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-// todo remove
-    private final AuthTopicReceiver _topicReceiver = new AuthTopicReceiver(new Handler()) {
-
-        @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            Log.v(TAG, "onAuthentication");
-            if (_service == null || isNew) {
-                _username = username;
-                _authToken = authToken;
-                if (getActivity() != null) {
-                    _service = new WorkorderWebClient(getActivity(), username, authToken, _resultReciever);
-                    requestList(0, true);
-                }
-            }
-        }
-
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _service = null;
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            _service = null;
-        }
-
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(getActivity());
-        }
-    };
-
-
     private final WorkorderDataClient.Listener _workorderData_listener = new WorkorderDataClient.Listener() {
         @Override
         public void onConnected() {
             Log.v(TAG, "_workorderData_listener.onConnected");
-            _workorderClient.registerWorkorderList(_displayView);
+            _workorderClient.registerList(_displayView);
             _adapter.refreshPages();
         }
 
@@ -917,7 +884,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     };
 
     // todo remove
-    private class WorkorderParseAsync extends AsyncTaskEx<Bundle, Object, List<Workorder>> {
+/*    private class WorkorderParseAsync extends AsyncTaskEx<Bundle, Object, List<Workorder>> {
         private int page;
         private boolean cached;
 
@@ -995,5 +962,5 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             setLoading(false);
             //Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
         }
-    };
+    };*/
 }

@@ -14,6 +14,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -21,7 +22,7 @@ import com.fieldnation.utils.misc;
 import java.text.NumberFormat;
 
 public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
-    private static final String TAG = "ui.workorder.WorkorderBundleDetailActivity";
+    private static final String TAG = "WorkorderBundleDetailActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:workorder_id";
     public static final String INTENT_FIELD_BUNDLE_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:bundle_id";
@@ -80,7 +81,17 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         // TODO put into wait mode
     }
 
-// Todo remove
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    // Todo remove
 
     @Override
     public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -145,7 +156,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
     };
 
-// TODO remove
+    // TODO remove
     @Override
     public void onRefresh() {
         if (_service != null) {

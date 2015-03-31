@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.ResultReceiver;
 
+import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
@@ -390,7 +393,7 @@ class WorkorderWebClient extends WebClientAuth {
         }
     }
 
-
+*/
     public Intent setCounterOffer(int resultCode, long workorderId, boolean expires, String reason, int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
         String payload = "";
         // reason/expire
@@ -461,7 +464,7 @@ class WorkorderWebClient extends WebClientAuth {
                 false);
     }
 
-*/
+
 /*
     public Intent uploadDeliverable(int resultCode, long workorderId, long deliverableSlotId, String localFilename) {
         if (deliverableSlotId <= 0) {
