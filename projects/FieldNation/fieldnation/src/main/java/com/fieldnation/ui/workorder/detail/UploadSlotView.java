@@ -71,7 +71,7 @@ public class UploadSlotView extends RelativeLayout {
         _uploadTextView.setOnClickListener(_upload_onClick);
 
 // todo remove
-        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
+//        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
 
         populateUi();
     }
@@ -182,6 +182,7 @@ public class UploadSlotView extends RelativeLayout {
     /*-			Events			-*/
     /*-*************************-*/
 // todo remove
+/*
     private FileUploadTopicReceiver _uploadReceiver = new FileUploadTopicReceiver(new Handler()) {
         @Override
         public void onStart(String url, String filename) {
@@ -210,8 +211,9 @@ public class UploadSlotView extends RelativeLayout {
             }
         }
     };
+*/
 
-    private View.OnClickListener _upload_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _upload_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)

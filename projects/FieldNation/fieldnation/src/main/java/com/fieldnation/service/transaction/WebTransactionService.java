@@ -64,7 +64,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         extras.getByteArray(PARAM_REQUEST),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
-/*
+
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Bundle[] transforms = (Bundle[]) extras.getParcelableArray(PARAM_TRANSFORM_LIST);
                     for (int i = 0; i < transforms.length; i++) {
@@ -72,7 +72,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         Transform.put(this, transaction.getId(), transform);
                     }
                 }
-*/
+
                 transaction.setState(WebTransaction.State.IDLE);
                 transaction.save(this);
             } catch (Exception ex) {
@@ -194,11 +194,10 @@ public class WebTransactionService extends Service implements WebTransactionCons
         }.executeEx(WebTransactionService.this, next, _auth);
     }
 
-    private void finishTransaction() {
+    private void finishTransaction(WebTransaction trans) {
+        Transform.deleteTransaction(this, trans.getId());
         synchronized (TAG) {
             THREAD_COUNT--;
-//            if (THREAD_COUNT == 0)
-//                stopSelf();
         }
     }
 
@@ -210,7 +209,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
             WebTransaction.delete(WebTransactionService.this, trans.getId());
             // fire off the next one
             startTransaction();
-            finishTransaction();
+            finishTransaction(trans);
         }
 
         @Override
@@ -219,7 +218,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
             trans.save(WebTransactionService.this);
 
             startTransaction();
-            finishTransaction();
+            finishTransaction(trans);
         }
 
         @Override
@@ -232,7 +231,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
 */
             // fire off the next one
             startTransaction();
-            finishTransaction();
+            finishTransaction(trans);
         }
     };
 }

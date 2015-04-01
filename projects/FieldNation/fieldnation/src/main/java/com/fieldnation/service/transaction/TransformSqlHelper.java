@@ -10,10 +10,10 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/4/2015.
  */
-public class TransformSqlHelper extends SQLiteOpenHelper {
+class TransformSqlHelper extends SQLiteOpenHelper {
     // Note: increment this value every time the structure of the database is
     // changed.
-    private static final int TABLE_VER = 1;
+    private static final int TABLE_VER = 2;
     public static final String TABLE_NAME = "transforms";
 
     public enum Column {
@@ -21,7 +21,7 @@ public class TransformSqlHelper extends SQLiteOpenHelper {
         TRANSACTION_ID(1, "transaction_id", "integer not null", true),
         OBJECT_NAME(2, "object_name", "text not null", true),
         OBJECT_KEY(3, "object_key", "text not null", true),
-        ACTION(4, "action", "integer not null"),
+        ACTION(4, "action", "text not null"),
         DATA(5, "data", "blob not null");
 
         private int _index;

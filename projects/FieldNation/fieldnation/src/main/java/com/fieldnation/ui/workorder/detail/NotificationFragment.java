@@ -1,29 +1,20 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
+import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -71,13 +62,13 @@ public class NotificationFragment extends WorkorderFragment {
     public void onResume() {
         super.onResume();
 // todo remove
-        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
     @Override
     public void onPause() {
 // todo remove
-        TopicService.delete(getActivity(), TAG);
+//        TopicService.delete(getActivity(), TAG);
         super.onPause();
     }
 
@@ -89,7 +80,6 @@ public class NotificationFragment extends WorkorderFragment {
     @Override
     public void setWorkorder(Workorder workorder) {
         Log.v(TAG, "setWorkorder: wokorder==null:" + (workorder == null)
-                + " _service==null:" + (_service == null)
                 + " _gs==null:" + (getActivity() == null));
 
         _workorder = workorder;
@@ -129,9 +119,7 @@ public class NotificationFragment extends WorkorderFragment {
     }
 
     private void getNotifications() {
-        Log.v(TAG, "getNotifications, _service:" + (_service == null) + " _workorder:" + (_workorder == null));
-        if (_service == null)
-            return;
+        Log.v(TAG, "getNotifications, _workorder:" + (_workorder == null));
 
         if (_workorder == null)
             return;
@@ -150,7 +138,7 @@ public class NotificationFragment extends WorkorderFragment {
         _emptyTextView.setVisibility(View.GONE);
         try {
 // todo remove
-            getActivity().startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
+//            getActivity().startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.v(TAG, "BP");
@@ -189,6 +177,7 @@ public class NotificationFragment extends WorkorderFragment {
     /*-             WEB             -*/
     /*-*****************************-*/
 // todo remove
+/*
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -216,8 +205,10 @@ public class NotificationFragment extends WorkorderFragment {
             AuthTopicService.requestAuthentication(getActivity());
         }
     };
+*/
 
 
+/*
     private class NotificationParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Notification>> {
 
         @Override
@@ -250,7 +241,9 @@ public class NotificationFragment extends WorkorderFragment {
             }
         }
     }
+*/
 
+/*
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
@@ -280,5 +273,5 @@ public class NotificationFragment extends WorkorderFragment {
         }
 
     };
-
+*/
 }

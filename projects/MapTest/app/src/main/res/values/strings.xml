@@ -3,4 +3,43 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string-array name="cities">
+        <item>Algiers, Algeria</item>
+        <item>Ankara, Turkey</item>
+        <item>Athens, Greece</item>
+        <item>Baghdad, Iraq</item>
+        <item>Bangkok, Thailand</item>
+        <item>Beijing, China</item>
+        <item>Berlin, Germany</item>
+        <item>Brasilia, Brazil</item>
+        <item>Brussels, Belgium</item>
+        <item>Budapest, Hungary</item>
+        <item>Cairo, Egypt</item>
+        <item>Copenhagen, Denmark</item>
+        <item>Dhaka, Bangladesh</item>
+        <item>Dublin, Ireland</item>
+        <item>Gaborone, Botswana</item>
+        <item>Hanoi, Vietnam</item>
+        <item>Harare, Zimbabwe</item>
+        <item>Islamabad, Pakistan</item>
+        <item>Jakarta, Indonesia</item>
+        <item>Jerusalem, Israel</item>
+        <item>Juba, South Sudan</item>
+        <item>Kingston, Jamaica</item>
+        <item>Lima, Peru</item>
+        <item>Madrid, Spain</item>
+        <item>Nairobi, Kenya</item>
+        <item>Oranjestad, Aruba</item>
+        <item>Pago Pago, American Samoa</item>
+        <item>Quito, Ecuador</item>
+        <item>Rabat, Morocco</item>
+        <item>San Juan, Puerto Rico</item>
+        <item>Taipei, Taiwan</item>
+        <item>Ulaanbaatar, Mongolia</item>
+        <item>Vaduz, Liechtenstein</item>
+        <item>Warsaw, Poland</item>
+        <item>Yerevan, Armenia</item>
+        <item>Zagreb, Croatia</item>
+    </string-array>
 </resources>

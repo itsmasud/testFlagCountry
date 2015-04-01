@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -325,7 +324,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 Log.v(TAG, "local path");
                 WorkorderDataClient.requestUploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(), _uploadingSlotId,
+                        _workorder.getWorkorderId(), _uploadingSlotId, _tempFile.getName(),
                         _tempFile.getAbsolutePath());
                 return true;
             } else {
@@ -440,7 +439,7 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
-    private final WebResultReceiver _resultReceiver = new WebResultReceiver(
+/*    private final WebResultReceiver _resultReceiver = new WebResultReceiver(
             new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
@@ -497,6 +496,6 @@ public class DeliverableFragment extends WorkorderFragment {
             }
             setLoading(false);
         }
-    };
+    };*/
 
 }

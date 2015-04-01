@@ -11,6 +11,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
@@ -50,18 +51,15 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderListTransactionHandler.class)
-                    .handlerParams(
-                            WorkorderListTransactionHandler.generateParams(page, selector)
-                    )
+                    .handlerParams(WorkorderListTransactionHandler.generateParams(page, selector))
                     .key("WorkorderList" + selector + page)
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("GET")
-                                    .path("/api/rest/v1/workorder/" + selector)
-                                    .urlParams("?page=" + page)
-                    ).send();
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + selector)
+                            .urlParams("?page=" + page))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -83,16 +81,15 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .key("Workorder/" + workorderId)
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("GET")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/details")
-                    ).send();
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/details"))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -114,16 +111,15 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(SignatureTransactionHandler.class)
-                    .handlerParams(SignatureTransactionHandler.generateParams(workorderId, signatureId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
                     .key("GetSignature/" + signatureId)
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("GET")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId)
-                    ).send();
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -149,12 +145,11 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     .handlerParams(BundleTransactionHandler.generateGetParams(bundleId))
                     .key("GetBundle/" + bundleId)
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("GET")
-                                    .path("api/rest/v1/workorder/bundle/" + bundleId)
-                    ).send();
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("api/rest/v1/workorder/bundle/" + bundleId))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -178,6 +173,12 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
 
         try {
+            JsonObject mute = new JsonObject();
+            mute.put("type", "upload");
+            mute.put("uploadSlotId", uploadSlotId);
+            mute.put("filePath", filePath);
+            mute.put("filename", filename);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -192,6 +193,11 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     .priority(WebTransaction.Priority.HIGH)
                     .useAuth()
                     .request(builder)
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("_proc:[" + mute.toString() + "]").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();

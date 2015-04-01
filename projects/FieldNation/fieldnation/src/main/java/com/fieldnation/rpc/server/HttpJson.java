@@ -19,7 +19,7 @@ import java.util.Enumeration;
  * Created by Michael Carver on 3/6/2015.
  */
 public class HttpJson {
-    private static final String TAG = "rpc.server.HttpJson";
+    private static final String TAG = "HttpJson";
 
     public static HttpResult run(Context context, JsonObject request) throws ParseException, IOException {
         String protocol = "";
@@ -88,7 +88,7 @@ public class HttpJson {
 
         conn.setDoInput(true);
 
-        if (request.has("multipart")) {
+        if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART)) {
             MultipartUtility util = new MultipartUtility(conn, "UTF-8");
             if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS)) {
                 JsonObject fields = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS);

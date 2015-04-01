@@ -20,6 +20,7 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_PATH = "path";
     public static final String PARAM_WEB_URL_PARAMS = "urlParams";
     public static final String PARAM_WEB_HEADERS = "headers";
+    public static final String PARAM_WEB_MULTIPART = "multipart";
     public static final String PARAM_WEB_MULTIPART_FILES = "multipart/files";
     public static final String PARAM_WEB_MULTIPART_FIELDS = "multipart/fields";
     public static final String PARAM_WEB_BODY_SOID = "PARAM_BODY_SOID";

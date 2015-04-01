@@ -1,14 +1,12 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Task;
@@ -59,7 +57,7 @@ public class TaskRowView extends RelativeLayout {
     @Override
     protected void finalize() throws Throwable {
 // todo remove
-        TopicService.delete(getContext(), TAG);
+//        TopicService.delete(getContext(), TAG);
 
         super.finalize();
     }
@@ -71,7 +69,7 @@ public class TaskRowView extends RelativeLayout {
         if (_task.getSlotId() != null) {
             _uploadUrl = _workorder.getWorkorderId() + "/deliverables/" + _task.getSlotId();
 // todo remove
-            Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
+//            Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
         }
 
 
@@ -104,6 +102,7 @@ public class TaskRowView extends RelativeLayout {
     /*-*********************************-*/
 
 // todo remove
+/*
     private FileUploadTopicReceiver _uploadReceiver = new FileUploadTopicReceiver(new Handler()) {
         @Override
         public void onStart(String url, String filename) {
@@ -138,6 +137,7 @@ public class TaskRowView extends RelativeLayout {
             }
         }
     };
+*/
 
     public void setOnTaskClickListener(Listener listener) {
         _listener = listener;

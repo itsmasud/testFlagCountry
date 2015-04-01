@@ -19,6 +19,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
@@ -57,12 +58,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         return register(PARAM_ACTION_LIST + "/" + selector.getCall(), TAG);
     }
 
-    public boolean list(Context context, WorkorderDataSelector selector, int page) {
-        boolean reg = registerList(selector);
-        requestList(context, selector, page);
-        return reg;
-    }
-
     // details
     public static void requestDetails(Context context, long id) {
         Intent intent = new Intent(context, WorkorderDataService.class);
@@ -76,12 +71,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
             return false;
 
         return register(PARAM_ACTION_DETAILS + "/" + id, TAG);
-    }
-
-    public boolean details(Context context, long id) {
-        boolean reg = registerDetails(id);
-        requestDetails(context, id);
-        return reg;
     }
 
     // get signature
@@ -100,41 +89,49 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         return register(PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, TAG);
     }
 
-    public boolean getSignature(Context context, long workorderId, long signatureId) {
-        requestGetSignature(context, workorderId, signatureId);
-        return registerGetSignature(signatureId);
-    }
-
     // add signature json
     public static void requestAddSignatureJson(Context context, long workorderId, String name, String signatureJson) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "addSignatureJson");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(SignatureStubTrasactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("POST")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                                     .path("api/rest/v1/workorder/" + workorderId + "/signature")
                                     .body("signatureFormat=json"
                                             + "&printName=" + misc.escapeForURL(name)
-                                            + "&signature=" + signatureJson)
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                    ).send();
+                                            + "&signature=" + signatureJson))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-
     // complete signature
     public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String printName, String signatureJson) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "completeSignatureTaskJson");
+            merge.put("taskId", taskId);
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -143,8 +140,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .method("POST")
                                     .path("api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
                                     .body("print_name=" + misc.escapeForURL(printName)
-                                            + "&signature_json=" + signatureJson)
-                    ).send();
+                                            + "&signature_json=" + signatureJson))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -153,17 +156,26 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // complete workorder
     public static void requestComplete(Context context, long workorderId) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "complete");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("POST")
-                                    .path("api/rest/v1/workorder/" + workorderId + "/complete")
-                    ).send();
+                                    .path("api/rest/v1/workorder/" + workorderId + "/complete"))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -172,10 +184,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // checkin workorder
     public static void requestCheckin(Context context, long workorderId) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "checkin");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -183,7 +198,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                                     .method("POST")
                                     .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
-                                    .body("checkin_time=" + ISO8601.now())
+                                    .body("checkin_time=" + ISO8601.now()))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes())
                     ).send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -192,10 +213,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckin(Context context, long workorderId, Location location) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "checkin");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -205,19 +229,29 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
                                     .body("checkin_time=" + ISO8601.now()
                                             + "&gps_lat=" + location.getLatitude()
-                                            + "&gps_lon=" + location.getLongitude())
-                    ).send();
+                                            + "&gps_lon=" + location.getLongitude()))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    // checkout
     public static void requestCheckout(Context context, long workorderId) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "checkout");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -225,8 +259,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                                     .method("POST")
                                     .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                                    .body("checkout_time=" + ISO8601.now())
-                    ).send();
+                                    .body("checkout_time=" + ISO8601.now()))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -234,10 +274,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, Location location) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "checkout");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -247,8 +290,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
                                     .body("checkout_time=" + ISO8601.now()
                                             + "&gps_lat=" + location.getLatitude()
-                                            + "&gps_lon=" + location.getLongitude())
-                    ).send();
+                                            + "&gps_lon=" + location.getLongitude()))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -256,10 +305,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, int deviceCount) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "checkout");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -268,8 +320,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .method("POST")
                                     .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
                                     .body("device_count=" + deviceCount
-                                            + "&checkout_time=" + ISO8601.now())
-                    ).send();
+                                            + "&checkout_time=" + ISO8601.now()))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -277,10 +335,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, int deviceCount, Location location) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "checkout");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -291,32 +352,48 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .body("device_count=" + deviceCount
                                             + "&checkout_time=" + ISO8601.now()
                                             + "&gps_lat=" + location.getLatitude()
-                                            + "&gps_lon=" + location.getLongitude())
-                    ).send();
+                                            + "&gps_lon=" + location.getLongitude()))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    // acknowledge hold
     public static void requestAcknowledgeHold(Context context, long workorderId) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "ackHold");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
-                                    .path("api/rest/v1/workorder/" + workorderId + "/acknowledge-hold")
-
-                    ).send();
+                                    .path("api/rest/v1/workorder/" + workorderId + "/acknowledge-hold"))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    // counter offer
     public static void requestCounterOffer(Context context, long workorderId, boolean expires,
                                            String reason, int expiresAfterInSecond, Pay pay,
                                            Schedule schedule, Expense[] expenses) {
@@ -376,10 +453,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
 
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "counter-offer");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -387,16 +467,25 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                                     .method("POST")
                                     .path("api/rest/v1/workorder/" + workorderId + "/counter_offer")
-                                    .body(payload)
-                    ).send();
+                                    .body(payload))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    // request
     public static void request(Context context, long workorderId, long expireInSeconds) {
         HttpJsonBuilder builder;
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "request");
 
             builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -409,10 +498,17 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
             }
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(builder).send();
+                    .request(builder)
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -420,10 +516,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "confirm-assignment");
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderDetailsTransactionHandler.class)
-                    .handlerParams(WorkorderDetailsTransactionHandler.generateParams(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -431,8 +530,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                                     .method("POST")
                                     .path("/api/rest/v1/workorder/" + workorderId + "/assignment")
-                                    .body("start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601)
-                    ).send();
+                                    .body("start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -480,7 +585,31 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public static void requestDeleteDeliverable(Context context, long workorderId, long uploadId) {
+        try {
+            JsonObject merge = new JsonObject();
+            merge.put("type", "deleteDeliverable");
+            merge.put("uploadId", uploadId);
 
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .useAuth()
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .method("DELETE")
+                                    .path("api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadId))
+                    .transform(
+                            Transform.makeTransformQuery(
+                                    "Workorder",
+                                    workorderId,
+                                    "merges",
+                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /*-******************************-*/

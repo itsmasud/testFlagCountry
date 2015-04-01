@@ -14,14 +14,16 @@ import android.widget.ListView;
 
 
 public class MainActivity extends ActionBarActivity {
-    private static final String[] PLACES = {"Paris, France", "Moscow, Russia", "Cairo, Egypt", "Hong Kong, China", "Washington, USA"};
 
+    private String[] cities;
     private ListView _list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        cities = getResources().getStringArray(R.array.cities);
 
         _list = (ListView) findViewById(R.id.list_view);
         _list.setAdapter(_listAdapter);
@@ -31,12 +33,12 @@ public class MainActivity extends ActionBarActivity {
     private final BaseAdapter _listAdapter = new BaseAdapter() {
         @Override
         public int getCount() {
-            return PLACES.length;
+            return cities.length;
         }
 
         @Override
         public Object getItem(int position) {
-            return PLACES[position];
+            return cities[position];
         }
 
         @Override
@@ -53,7 +55,7 @@ public class MainActivity extends ActionBarActivity {
                 v = new ListItemView(parent.getContext());
             }
 
-            v.setText(PLACES[position]);
+            v.setText(cities[position]);
             return v;
         }
     };
@@ -61,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
     private final AdapterView.OnItemClickListener _list_itemClicked = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + PLACES[position]));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + cities[position]));
             MainActivity.this.startActivity(intent);
         }
     };

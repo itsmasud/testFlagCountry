@@ -1,28 +1,19 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
+import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.Stopwatch;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -72,22 +63,23 @@ public class MessageFragment extends WorkorderFragment {
     public void onResume() {
         super.onResume();
 // TODO remove
-
-        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
-        Topics.subscrubeProfileUpdated(getActivity(), TAG + ":ProfileService", _profile_topicReceiver);
+//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+//        Topics.subscrubeProfileUpdated(getActivity(), TAG + ":ProfileService", _profile_topicReceiver);
 
         _markReadRunnable.run();
     }
 
-// todo remove
+    // todo remove
     private final Runnable _markReadRunnable = new Runnable() {
         @Override
         public void run() {
+/*
             if (getActivity() != null && _workorderService != null && _workorder != null) {
                 getActivity().startService(_workorderService.markMessagesRead(WEB_MARK_READ, _workorder.getWorkorderId()));
             } else {
                 new Handler().postDelayed(_markReadRunnable, 1000);
             }
+*/
 
         }
     };
@@ -95,8 +87,8 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void onPause() {
 // todo remove
-        TopicService.delete(getActivity(), TAG);
-        TopicService.delete(getActivity(), TAG + ":ProfileService");
+//        TopicService.delete(getActivity(), TAG);
+//        TopicService.delete(getActivity(), TAG + ":ProfileService");
 
         WEB_GET_MESSAGES = 1;
         WEB_NEW_MESSAGE = 3;
@@ -123,8 +115,8 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     private void getMessages() {
-        if (_workorderService == null)
-            return;
+//        if (_workorderService == null)
+//            return;
 
         if (_workorder == null)
             return;
@@ -144,7 +136,7 @@ public class MessageFragment extends WorkorderFragment {
         Log.v(TAG, "getMessages");
         WEB_GET_MESSAGES = _rand.nextInt();
 // todo remove
-        getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
+//        getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
     }
 
     @Override
@@ -196,8 +188,8 @@ public class MessageFragment extends WorkorderFragment {
                 WEB_NEW_MESSAGE = _rand.nextInt();
                 Log.v(TAG, "_send_onClick");
 // todo remove
-                getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
-                        _inputView.getInputText()));
+//                getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
+//                        _inputView.getInputText()));
 
                 _inputView.clearText();
             }
@@ -208,6 +200,7 @@ public class MessageFragment extends WorkorderFragment {
     /*-				Web				-*/
     /*-*****************************-*/
 // todo remove
+/*
     private final TopicReceiver _profile_topicReceiver = new TopicReceiver(new Handler()) {
         @Override
         public void onTopic(int resultCode, String topicId, Bundle parcel) {
@@ -222,8 +215,10 @@ public class MessageFragment extends WorkorderFragment {
             getMessages();
         }
     };
+*/
 
-// todo remove
+    // todo remove
+/*
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -252,7 +247,9 @@ public class MessageFragment extends WorkorderFragment {
             AuthTopicService.requestAuthentication(getActivity());
         }
     };
+*/
 
+/*
     private class MessageAsyncTask extends AsyncTaskEx<Bundle, Object, List<Message>> {
         @Override
         protected List<Message> doInBackground(Bundle... params) {
@@ -284,8 +281,10 @@ public class MessageFragment extends WorkorderFragment {
             }
         }
     }
+*/
 
 
+/*
     private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
         @Override
         public void onSuccess(int resultCode, Bundle resultData) {
@@ -320,4 +319,5 @@ public class MessageFragment extends WorkorderFragment {
             Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
         }
     };
+*/
 }

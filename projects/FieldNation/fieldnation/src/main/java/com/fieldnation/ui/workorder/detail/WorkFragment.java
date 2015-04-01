@@ -13,7 +13,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -26,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
@@ -45,11 +43,8 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.webclient.WorkorderWebClient;
 import com.fieldnation.service.data.profile.ProfileDataClient;
+import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GpsLocationService;
 import com.fieldnation.ui.OverScrollView;
@@ -156,7 +151,7 @@ public class WorkFragment extends WorkorderFragment {
     private OneButtonDialog _locationLoadingDialog;
 
     // Data
-    private WorkorderWebClient _service;
+    private WorkorderDataClient _workorderClient;
     private ProfileDataClient _profileClient;
 
     private File _tempFile;
@@ -252,12 +247,6 @@ public class WorkFragment extends WorkorderFragment {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
-            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
-                _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
-            }
-            if (savedInstanceState.containsKey(STATE_USERNAME)) {
-                _username = savedInstanceState.getString(STATE_USERNAME);
-            }
             if (savedInstanceState.containsKey(STATE_TASKS)) {
                 Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
                 _tasks = new LinkedList<>();
@@ -286,12 +275,6 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (_authToken != null) {
-            outState.putString(STATE_AUTHTOKEN, _authToken);
-        }
-        if (_username != null) {
-            outState.putString(STATE_USERNAME, _username);
-        }
         if (_workorder != null) {
             outState.putParcelable(STATE_WORKORDER, _workorder);
         }
@@ -341,14 +324,14 @@ public class WorkFragment extends WorkorderFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 // todo remove
-        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 // todo remove
-        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
 
         _gpsLocationService = new GpsLocationService(getActivity());
 
@@ -378,7 +361,7 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onPause() {
 // todo remove
-        TopicService.delete(getActivity(), TAG);
+//        TopicService.delete(getActivity(), TAG);
         _gpsLocationService.stopLocationUpdates();
         super.onPause();
     }
@@ -499,14 +482,11 @@ public class WorkFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
-        if (_service == null)
-            return;
-
         if (getActivity() == null)
             return;
 
 // todo remove
-        getActivity().startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
+//        getActivity().startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
     }
 
     @Override
@@ -594,6 +574,7 @@ public class WorkFragment extends WorkorderFragment {
         setLoading(true);
         _gpsLocationService.setListener(null);
 // todo fix
+/*
         GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
             getActivity().startService(
@@ -602,6 +583,7 @@ public class WorkFragment extends WorkorderFragment {
             getActivity().startService(
                     _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
         }
+*/
 
     }
 
@@ -609,6 +591,7 @@ public class WorkFragment extends WorkorderFragment {
         setLoading(true);
         _gpsLocationService.setListener(null);
 // todo fix
+/*
         GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
@@ -627,7 +610,7 @@ public class WorkFragment extends WorkorderFragment {
                         _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
             }
         }
-
+*/
     }
 
     /*-*********************************-*/
@@ -671,14 +654,14 @@ public class WorkFragment extends WorkorderFragment {
 
             if (data == null) {
 // todo remove
-                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        _tempFile.getAbsolutePath()));
+//                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+//                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
+//                        _tempFile.getAbsolutePath()));
             } else {
 // todo remove
-                getActivity().startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _currentTask.getSlotId(), data, getNotificationIntent()));
+//                getActivity().startService(_service.uploadDeliverable(
+//                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+//                        _currentTask.getSlotId(), data, getNotificationIntent()));
             }
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
             GlobalState gs = (GlobalState) getActivity().getApplication();
@@ -744,7 +727,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String message) {
 // todo remove
-            getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+//            getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
             setLoading(true);
         }
 
@@ -758,11 +741,12 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
 // todo remove
-
+/*
                 GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CONFIRM_ASSIGN, "WorkFragment", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 getActivity().startService(_service.confirmAssignment(WEB_CHANGED,
                         _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end)));
+*/
 
                 setLoading(true);
 
@@ -786,11 +770,13 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
                          Pay pay, Schedule schedule, Expense[] expenses) {
- // todo remove
+            // todo remove
+/*
             GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_COUNTER, "WorkFragment", 1);
             getActivity().startService(
                     _service.setCounterOffer(WEB_CHANGED, workorder.getWorkorderId(), expires, reason,
                             expirationInSeconds, pay, schedule, expenses));
+*/
             setLoading(true);
 
         }
@@ -800,9 +786,10 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(CustomField field, String value) {
 // todo remove
-
+/*
             getActivity().startService(
                     _service.setCustomField(WEB_CHANGED, _workorder.getWorkorderId(), field.getCustomLabelId(), value));
+*/
             setLoading(true);
         }
     };
@@ -811,13 +798,14 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(boolean blockBuyer, int reasonId, String details) {
 // todo remove
-
+/*
             getActivity().startService(_service.decline(WEB_CHANGED, _workorder.getWorkorderId()));
             if (blockBuyer) {
                 GlobalState gs = (GlobalState) getActivity().getApplication();
                 getActivity().startService(
                         _profileService.addBlockedCompany(WEB_NOTHING, gs.getProfile().getUserId(), _workorder.getCompanyId(), reasonId, details));
             }
+*/
             getActivity().finish();
 
         }
@@ -844,11 +832,13 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String description, double amount) {
 // todo remove
+/*
             getActivity().startService(
                     _service.addDiscount(WEB_CHANGED,
                             _workorder.getWorkorderId(), amount, description));
+*/
             setLoading(true);
-       }
+        }
 
         @Override
         public void onCancel() {
@@ -859,10 +849,12 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
 // todo remove
+/*
             getActivity().startService(
                     _service.addExpense(WEB_CHANGED, _workorder.getWorkorderId(),
                             description, amount, category));
-           setLoading(true);
+*/
+            setLoading(true);
         }
 
         @Override
@@ -882,10 +874,12 @@ public class WorkFragment extends WorkorderFragment {
                 }
             }
 // todo remove
+/*
             GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_REQUEST_WORK, "WorkFragment", 1);
             getActivity().startService(
                     _service.request(WEB_CHANGED,
                             _workorder.getWorkorderId(), seconds));
+*/
             setLoading(true);
 
         }
@@ -912,6 +906,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onContinueClick() {
 // todo remove
+/*
             GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "WorkFragment", 1);
             try {
                 GaTopic.dispatchEvent(getActivity(), "WorkorderActivity",
@@ -929,9 +924,12 @@ public class WorkFragment extends WorkorderFragment {
                 // I don't expect this to ever fail, but it could. just a safe guard.
                 ex.printStackTrace();
             }
+*/
 
+/*
             getActivity().startService(
                     _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
+*/
             setLoading(true);
 
         }
@@ -941,18 +939,22 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
 //todo remove
+/*
             getActivity().startService(
                     _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
                             carrier, carrierName, trackingId));
+*/
             setLoading(true);
         }
 
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
 // todo remove
+/*
             getActivity().startService(
                     _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
                             carrier, carrierName, trackingId, taskId));
+*/
             setLoading(true);
 
         }
@@ -966,7 +968,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
 // todo remove
-            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+//            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
 
             setLoading(true);
         }
@@ -975,8 +977,10 @@ public class WorkFragment extends WorkorderFragment {
         public void onAssign(Workorder workorder, int shipmentId, long taskId) {
             Log.v(TAG, "Method Stub: onAssign()" + shipmentId + "=" + taskId);
 // todo remove
+/*
             getActivity().startService(
                     _service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));
+*/
             setLoading(true);
         }
 
@@ -987,20 +991,22 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
 // todo remove
+/*
             GlobalState.getContext().startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description,
                             shipToSite, carrier, carrierName, trackingId));
-
+*/
             setLoading(true);
         }
 
         @Override
         public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
 // todo remove
+/*
             GlobalState.getContext().startService(
                     _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description,
                             shipToSite, carrier, carrierName, trackingId, taskId));
-
+*/
             setLoading(true);
         }
     };
@@ -1011,30 +1017,35 @@ public class WorkFragment extends WorkorderFragment {
             if (loggedWork == null) {
                 if (deviceCount <= 0) {
 // todo remove
+/*
                     GlobalState.getContext().startService(
                             _service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
                                     end.getTimeInMillis()));
-
+*/
                 } else {
 // todo remove
+/*
                     GlobalState.getContext().startService(
                             _service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
                                     end.getTimeInMillis(), deviceCount));
-
+*/
                 }
             } else {
                 if (deviceCount <= 0) {
 // todo remove
+/*
                     GlobalState.getContext().startService(
                             _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
                                     loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis()));
+*/
 
                 } else {
 // todo remove
+/*
                     GlobalState.getContext().startService(
                             _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
                                     loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount));
-
+*/
                 }
             }
             setLoading(true);
@@ -1111,9 +1122,10 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onAcknowledge() {
 // todo remove
+/*
             getActivity().startService(
                     _service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
-
+*/
             setLoading(true);
         }
 
@@ -1187,10 +1199,11 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onDeleteExpense(Workorder workorder, Expense expense) {
 // todo remove
+/*
             getActivity().startService(_service.deleteExpense(WEB_CHANGED,
                     _workorder.getWorkorderId(),
                     expense.getExpenseId()));
-
+*/
             setLoading(true);
         }
 
@@ -1217,10 +1230,11 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onDeleteDiscount(Workorder workorder, int discountId) {
 // todo remove
+/*
             getActivity().startService(
                     _service.deleteDiscount(WEB_CHANGED,
                             _workorder.getWorkorderId(), discountId));
-
+*/
             setLoading(true);
         }
     };
@@ -1242,7 +1256,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
 // todo remove
-            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+//            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
             setLoading(true);
         }
 
@@ -1326,10 +1340,11 @@ public class WorkFragment extends WorkorderFragment {
                         // task completed here
                         if (!task.getCompleted()) {
 // todo remove
+/*
                             getActivity().startService(
                                     _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(),
                                             task.getTaskId()));
-
+*/
                         }
 
                         FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
@@ -1349,9 +1364,10 @@ public class WorkFragment extends WorkorderFragment {
 
             if (!task.getCompleted()) {
 // todo remove
+/*
                 getActivity().startService(
                         _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-
+*/
             }
             setLoading(true);
         }
@@ -1360,8 +1376,10 @@ public class WorkFragment extends WorkorderFragment {
         public void onPhone(Task task) {
             if (!task.getCompleted()) {
 // todo remove
+/*
                 getActivity().startService(
                         _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+*/
 
                 setLoading(true);
             }
@@ -1430,8 +1448,10 @@ public class WorkFragment extends WorkorderFragment {
             if (task.getCompleted())
                 return;
 // todo remove
+/*
             getActivity().startService(
                     _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
+*/
 
             setLoading(true);
         }
@@ -1451,9 +1471,11 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
 // todo remove
+/*
             getActivity().startService(
                     _service.deleteLogTime(WEB_CHANGED,
                             workorder.getWorkorderId(), loggedWork.getLoggedHoursId()));
+*/
 
             setLoading(true);
         }
@@ -1474,6 +1496,7 @@ public class WorkFragment extends WorkorderFragment {
     /*-				Web				-*/
     /*-*****************************-*/
 // todo remove
+/*
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
@@ -1554,7 +1577,9 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
     };
+*/
 
+/*
     private class TaskParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Task>> {
         private boolean cached = false;
 
@@ -1586,4 +1611,5 @@ public class WorkFragment extends WorkorderFragment {
             setTasks(tasks, cached);
         }
     }
+*/
 }
