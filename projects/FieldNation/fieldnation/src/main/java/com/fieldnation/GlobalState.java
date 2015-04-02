@@ -97,6 +97,7 @@ public class GlobalState extends Application {
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
+            Log.v(TAG, "onConnected");
             _authTopicClient.registerAuthState();
             _authTopicClient.registerAuthState();
             AuthTopicClient.dispatchRequestCommand(GlobalState.this);
@@ -109,7 +110,8 @@ public class GlobalState extends Application {
 
         @Override
         public void onNotAuthenticated() {
-            GlobalTopicClient.dispatchNetworkDisconnected(getContext());
+            Log.v(TAG, "onNotAuthenticated");
+//            GlobalTopicClient.dispatchNetworkDisconnected(getContext());
         }
     };
 

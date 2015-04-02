@@ -127,6 +127,22 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
+
+        if (getActivity().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         if (_uploadingSlotId > 0)
             outState.putInt(STATE_UPLOAD_SLOTID, _uploadingSlotId);
@@ -146,16 +162,6 @@ public class DeliverableFragment extends WorkorderFragment {
         _workorderClient = new WorkorderDataClient(_workorderClient_listener);
         _workorderClient.connect(activity);
 
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appPickerDialog.addIntent(activity.getPackageManager(), intent, "Get Content");
-
-        if (activity.getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
-            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appPickerDialog.addIntent(activity.getPackageManager(), intent, "Take Picture");
-        }
     }
 
     @Override

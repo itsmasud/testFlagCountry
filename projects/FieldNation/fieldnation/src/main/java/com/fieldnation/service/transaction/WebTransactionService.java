@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
@@ -66,9 +67,9 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
 
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
-                    Bundle[] transforms = (Bundle[]) extras.getParcelableArray(PARAM_TRANSFORM_LIST);
+                    Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
                     for (int i = 0; i < transforms.length; i++) {
-                        Bundle transform = transforms[i];
+                        Bundle transform = (Bundle) transforms[i];
                         Transform.put(this, transaction.getId(), transform);
                     }
                 }
@@ -167,6 +168,11 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         _transactionListener.requeue(trans);
                         AuthTopicClient.dispatchRequestCommand(context);
                         return null;
+                    } else if (result.getResponseCode() == 404) {
+                        Thread.sleep(5000);
+                        _transactionListener.requeue(trans);
+                        AuthTopicClient.dispatchRequestCommand(context);
+                        return null;
                     }
 
                     String handler = trans.getHandlerName();
@@ -195,6 +201,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     }
 
     private void finishTransaction(WebTransaction trans) {
+        Log.v(TAG, "finishTransaction(" + trans.getId() + ")");
         Transform.deleteTransaction(this, trans.getId());
         synchronized (TAG) {
             THREAD_COUNT--;
@@ -218,7 +225,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
             trans.save(WebTransactionService.this);
 
             startTransaction();
-            finishTransaction(trans);
+//            finishTransaction(trans);
         }
 
         @Override

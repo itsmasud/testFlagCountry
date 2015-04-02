@@ -3,6 +3,7 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -18,6 +19,7 @@ import java.util.List;
  * Created by Michael Carver on 3/6/2015.
  */
 public class WorkorderTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
+    private static final String TAG = "WorkorderTransactionHandler";
 
     // parameter generators
     public static byte[] pDetails(long workorderId) {
@@ -63,6 +65,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
     // individual commands
     private void handleDetails(Context context, Listener listener, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleDetails " + transaction.getId());
         long workorderId = params.getLong("workorderId");
         byte[] workorderData = resultData.getResultsAsByteArray();
 
@@ -74,7 +77,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         List<Transform> transList = Transform.getObjectTransforms(context, "Workorder", workorderId);
         for (int i = 0; i < transList.size(); i++) {
             Transform t = transList.get(i);
-
+            Log.v(TAG, "handleDetails, trans: " + new String(t.getData()));
             JsonObject tObj = new JsonObject(t.getData());
             workorder.deepmerge(tObj);
         }

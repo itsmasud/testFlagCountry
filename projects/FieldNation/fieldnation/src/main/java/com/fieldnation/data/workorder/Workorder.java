@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -17,6 +18,8 @@ import java.util.Set;
 
 public class Workorder implements Parcelable {
 
+    @Json(name = "_proc")
+    public JsonArray _proc;
     @Json(name = "acl")
     private String[] _acl;
     @Json(name = "additionalExpenses")

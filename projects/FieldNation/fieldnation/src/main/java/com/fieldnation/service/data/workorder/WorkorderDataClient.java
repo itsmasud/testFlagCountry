@@ -34,6 +34,7 @@ import java.util.List;
  * Created by Michael Carver on 3/13/2015.
  */
 public class WorkorderDataClient extends TopicClient implements WorkorderDataConstants {
+    public static final String STAG = "WorkorderDataClient";
     public final String TAG = UniqueTag.makeTag("WorkorderDataClient");
 
     public WorkorderDataClient(Listener listener) {
@@ -100,21 +101,19 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("POST")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .path("api/rest/v1/workorder/" + workorderId + "/signature")
-                                    .body("signatureFormat=json"
-                                            + "&printName=" + misc.escapeForURL(name)
-                                            + "&signature=" + signatureJson))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/signature")
+                            .body("signatureFormat=json"
+                                    + "&printName=" + misc.escapeForURL(name)
+                                    + "&signature=" + signatureJson))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -133,20 +132,18 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
-                                    .body("print_name=" + misc.escapeForURL(printName)
-                                            + "&signature_json=" + signatureJson))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
+                            .body("print_name=" + misc.escapeForURL(printName)
+                                    + "&signature_json=" + signatureJson))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -164,17 +161,15 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("POST")
-                                    .path("api/rest/v1/workorder/" + workorderId + "/complete"))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/complete"))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -183,6 +178,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     // checkin workorder
     public static void requestCheckin(Context context, long workorderId) {
+        Log.v(STAG, "requestCheckin");
         try {
             JsonObject merge = new JsonObject();
             merge.put("type", "checkin");
@@ -192,26 +188,26 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
-                                    .body("checkin_time=" + ISO8601.now()))
-                    .transform(
-                            Transform.makeTransformQuery(
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/1111/api/rest/v1/workorder/" + workorderId + "/checkin")
+                            .body("checkin_time=" + ISO8601.now()))
+                    .transform(Transform.makeTransformQuery(
                                     "Workorder",
                                     workorderId,
                                     "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes())
+                                    ("{_proc:[" + merge.toString() + "]}").getBytes())
                     ).send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        requestDetails(context, workorderId);
     }
 
     public static void requestCheckin(Context context, long workorderId, Location location) {
+        Log.v(STAG, "requestCheckin");
         try {
             JsonObject merge = new JsonObject();
             merge.put("type", "checkin");
@@ -221,25 +217,24 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
-                                    .body("checkin_time=" + ISO8601.now()
-                                            + "&gps_lat=" + location.getLatitude()
-                                            + "&gps_lon=" + location.getLongitude()))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/11111/api/rest/v1/workorder/" + workorderId + "/checkin")
+                            .body("checkin_time=" + ISO8601.now()
+                                    + "&gps_lat=" + location.getLatitude()
+                                    + "&gps_lon=" + location.getLongitude()))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        requestDetails(context, workorderId);
     }
 
     // checkout
@@ -253,19 +248,17 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                                    .body("checkout_time=" + ISO8601.now()))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
+                            .body("checkout_time=" + ISO8601.now()))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -282,21 +275,19 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                                    .body("checkout_time=" + ISO8601.now()
-                                            + "&gps_lat=" + location.getLatitude()
-                                            + "&gps_lon=" + location.getLongitude()))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
+                            .body("checkout_time=" + ISO8601.now()
+                                    + "&gps_lat=" + location.getLatitude()
+                                    + "&gps_lon=" + location.getLongitude()))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -313,20 +304,18 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                                    .body("device_count=" + deviceCount
-                                            + "&checkout_time=" + ISO8601.now()))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
+                            .body("device_count=" + deviceCount
+                                    + "&checkout_time=" + ISO8601.now()))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -343,22 +332,20 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                                    .body("device_count=" + deviceCount
-                                            + "&checkout_time=" + ISO8601.now()
-                                            + "&gps_lat=" + location.getLatitude()
-                                            + "&gps_lon=" + location.getLongitude()))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
+                            .body("device_count=" + deviceCount
+                                    + "&checkout_time=" + ISO8601.now()
+                                    + "&gps_lat=" + location.getLatitude()
+                                    + "&gps_lon=" + location.getLongitude()))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -376,17 +363,15 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("GET")
-                                    .path("api/rest/v1/workorder/" + workorderId + "/acknowledge-hold"))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/acknowledge-hold"))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -461,19 +446,17 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("api/rest/v1/workorder/" + workorderId + "/counter_offer")
-                                    .body(payload))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/counter_offer")
+                            .body(payload))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -502,12 +485,11 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(builder)
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -524,19 +506,17 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/assignment")
-                                    .body("start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/assignment")
+                            .body("start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -599,13 +579,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("DELETE")
-                                    .path("api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadId))
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadId))
                     .transform(
                             Transform.makeTransformQuery(
                                     "Workorder",
                                     workorderId,
                                     "merges",
-                                    ("_proc:[" + merge.toString() + "]").getBytes()))
+                                    ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -680,6 +660,11 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
                 @Override
                 protected void onPostExecute(Workorder workorder) {
+                    if (workorder._proc != null)
+                        Log.v(STAG, workorder._proc.display());
+                    else
+                        Log.v(STAG, "no _proc");
+
                     onDetails(workorder);
                 }
             }.executeEx(payload);

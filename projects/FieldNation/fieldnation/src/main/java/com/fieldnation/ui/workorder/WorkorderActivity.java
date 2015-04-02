@@ -22,7 +22,7 @@ import com.fieldnation.ui.workorder.detail.WorkFragment;
 import java.util.List;
 
 public class WorkorderActivity extends AuthActionBarActivity {
-    private static final String TAG = "ui.workorder.WorkorderActivity";
+    private static final String TAG = "WorkorderActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
     public static final String INTENT_FIELD_CURRENT_TAB = "com.fieldnation.ui.workorder.WorkorderActivity:current_tab";
@@ -291,6 +291,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
 
     public void getData() {
+        Log.v(TAG, "getData");
         setLoading(true);
         WorkorderDataClient.requestDetails(this, _workorderId);
     }
@@ -387,6 +388,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
         @Override
         public void onDetails(Workorder workorder) {
+            Log.v(TAG, "_workorderClient_listener.onDetails");
             if (workorder == null) {
                 try {
                     Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();

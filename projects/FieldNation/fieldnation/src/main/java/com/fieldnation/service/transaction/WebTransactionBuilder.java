@@ -83,7 +83,11 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         }
 
         if (transforms != null) {
-            intent.putExtra(PARAM_TRANSFORM_LIST, (Parcelable[]) transforms.toArray());
+            Parcelable[] p = new Parcelable[transforms.size()];
+            for (int i = 0; i < transforms.size(); i++) {
+                p[i] = transforms.get(i);
+            }
+            intent.putExtra(PARAM_TRANSFORM_LIST, p);
         }
 
         context.startService(intent);

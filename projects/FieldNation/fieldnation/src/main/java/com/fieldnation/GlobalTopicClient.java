@@ -13,6 +13,7 @@ import com.fieldnation.utils.misc;
  * Created by Michael Carver on 3/17/2015.
  */
 public class GlobalTopicClient extends TopicClient {
+    private static final String STAG = "GlobalTopicClient";
     private String TAG = UniqueTag.makeTag("GlobalTopicClient");
 
     private static final String TOPIC_APP_UPDATE = "GlobalTopicClient:TOPIC_APP_UPDATE";
@@ -96,6 +97,7 @@ public class GlobalTopicClient extends TopicClient {
 
     // NETWORK STATE
     public static void dispatchNetworkDisconnected(Context context) {
+        Log.v(STAG, "dispatchNetworkDisconnected");
         if (context == null)
             return;
 
@@ -105,6 +107,7 @@ public class GlobalTopicClient extends TopicClient {
     }
 
     public static void dispathNetworkConnected(Context context) {
+        Log.v(STAG, "dispathNetworkConnected");
         if (context == null)
             return;
 
@@ -114,6 +117,7 @@ public class GlobalTopicClient extends TopicClient {
     }
 
     public static void dispatchNetworkConnecting(Context context) {
+        Log.v(STAG, "dispathNetworkConnected");
         if (context == null)
             return;
 
@@ -131,6 +135,7 @@ public class GlobalTopicClient extends TopicClient {
 
     // try connect
     public static void dispatchNetworkConnect(Context context) {
+        Log.v(STAG, "dispathNetworkConnected");
         if (context == null)
             return;
 

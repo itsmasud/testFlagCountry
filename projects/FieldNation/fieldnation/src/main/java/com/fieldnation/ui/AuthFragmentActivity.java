@@ -115,6 +115,9 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         if (_profile == null)
             return;
 
+        if (isFinishing())
+            return;
+
         _profileBounceProtect = true;
 
         if (!_profile.isProvider()) {

@@ -100,21 +100,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
-    @Override
-    public void onAttach(Activity activity) {
-        Log.v(TAG, "onAttach");
-        super.onAttach(activity);
-
-        if (getArguments() != null) {
-            Bundle bundle = getArguments();
-            _displayView = WorkorderDataSelector.fromName(bundle.getString(STATE_DISPLAY));
-        }
-
-        _workorderClient = new WorkorderDataClient(_workorderData_listener);
-        _workorderClient.connect(getActivity());
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -281,12 +266,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     }
 
     @Override
-    public void onDetach() {
-        Log.v(TAG, "onDetach()");
-        super.onDetach();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
@@ -318,8 +297,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     public void onPause() {
         Log.v(TAG, "onPause()");
 
-        _workorderClient.disconnect(getActivity());
-
         if (_gpsLocationService != null)
             _gpsLocationService.stopLocationUpdates();
 
@@ -328,6 +305,29 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _locationLoadingDialog.dismiss();
         }
         super.onPause();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        Log.v(TAG, "onAttach");
+        super.onAttach(activity);
+
+        if (getArguments() != null) {
+            Bundle bundle = getArguments();
+            _displayView = WorkorderDataSelector.fromName(bundle.getString(STATE_DISPLAY));
+        }
+
+        _workorderClient = new WorkorderDataClient(_workorderData_listener);
+        _workorderClient.connect(getActivity());
+    }
+
+    @Override
+    public void onDetach() {
+        Log.v(TAG, "onDetach()");
+
+        _workorderClient.disconnect(getActivity());
+
+        super.onDetach();
     }
 
     @Override

@@ -79,6 +79,9 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         Log.v(TAG, "details");
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
         try {
+            JsonObject merge = new JsonObject();
+            merge.put("test", "details" + workorderId);
+
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -89,6 +92,11 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                             .protocol("https")
                             .method("GET")
                             .path("/api/rest/v1/workorder/" + workorderId + "/details"))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merge",
+                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -197,7 +205,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("_proc:[" + mute.toString() + "]").getBytes()))
+                            ("{_proc:[" + mute.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();

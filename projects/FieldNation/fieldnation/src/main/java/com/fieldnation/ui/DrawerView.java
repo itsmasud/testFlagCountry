@@ -405,7 +405,7 @@ public class DrawerView extends RelativeLayout {
 
         @Override
         public void onGetAll(List<Payment> list, int page) {
-            if (list.size() == 0) {
+            if (list == null || list.size() == 0) {
                 return;
             }
             PaymentDataClient.requestGetAll(getContext(), page + 1);

@@ -146,6 +146,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-             Database interface          -*/
     /*-*****************************************-*/
     public static WebTransaction get(Context context, long id) {
+        Log.v(TAG, "get(" + id + ")");
         WebTransaction obj = null;
         synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
@@ -177,6 +178,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction getNext(Context context) {
+        Log.v(TAG, "getNext()");
         WebTransaction obj = null;
         synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
@@ -213,6 +215,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction put(Context context, WebTransaction obj) {
+        Log.v(TAG, "put(" + obj._key + ")");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), obj._handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), obj._handlerParams);
@@ -248,7 +251,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public static WebTransaction put(Context context, Priority priority, String key, boolean useAuth,
                                      byte[] request, String handlerName, byte[] handlerParams) {
-        Log.v(TAG, "put");
+        Log.v(TAG, "put(" + key + ")");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), handlerParams);
@@ -281,6 +284,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static boolean delete(Context context, long id) {
+        Log.v(TAG, "delete(" + id + ")");
         Transform.deleteTransaction(context, id);
         boolean success = false;
         synchronized (TAG) {

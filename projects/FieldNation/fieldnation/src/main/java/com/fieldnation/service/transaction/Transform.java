@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.service.transaction.TransformSqlHelper.Column;
 
 import java.util.LinkedList;
@@ -89,6 +90,7 @@ public class Transform implements Parcelable, TransformConstants {
     }
 
     public static Bundle makeTransformQuery(String objectName, String objectKey, String action, byte[] data) {
+        Log.v(TAG, "makeTransformQuery(" + objectName + "," + objectKey + "," + action + ")");
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_OBJECT_NAME, objectName);
         bundle.putString(PARAM_OBJECT_KEY, objectKey);
@@ -101,6 +103,7 @@ public class Transform implements Parcelable, TransformConstants {
     /*-         Database            -*/
     /*-*****************************-*/
     public static Transform get(Context context, long id) {
+        Log.v(TAG, "get(" + id + ")");
         Transform obj = null;
         synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
@@ -109,7 +112,7 @@ public class Transform implements Parcelable, TransformConstants {
                 try {
                     Cursor cursor = db.query(
                             TransformSqlHelper.TABLE_NAME,
-                            WebTransactionSqlHelper.getColumnNames(),
+                            TransformSqlHelper.getColumnNames(),
                             Column.ID + "=?",
                             new String[]{id + ""},
                             null, null, null, "1");
@@ -135,6 +138,7 @@ public class Transform implements Parcelable, TransformConstants {
     }
 
     public static List<Transform> getObjectTransforms(Context context, String objectName, String objectKey) {
+        Log.v(TAG, "getObjectTransforms(" + objectName + "," + objectKey + ")");
         List<Transform> list = new LinkedList<>();
         synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
@@ -143,7 +147,7 @@ public class Transform implements Parcelable, TransformConstants {
                 try {
                     Cursor cursor = db.query(
                             TransformSqlHelper.TABLE_NAME,
-                            WebTransactionSqlHelper.getColumnNames(),
+                            TransformSqlHelper.getColumnNames(),
                             Column.OBJECT_NAME + "=? AND " + Column.OBJECT_KEY + "=?",
                             new String[]{objectName, objectKey},
                             null, null,
@@ -167,11 +171,17 @@ public class Transform implements Parcelable, TransformConstants {
         return list;
     }
 
+    public static Transform put(Context context, long transactionId, Bundle query) {
+        return put(context, transactionId, query.getString(PARAM_OBJECT_NAME), query.getString(PARAM_OBJECT_KEY),
+                query.getString(PARAM_ACTION), query.getByteArray(PARAM_DATA));
+    }
+
     public static Transform put(Context context, long transactionId, String objectName, long objectKey, String action, byte[] data) {
         return put(context, transactionId, objectName, objectKey + "", action, data);
     }
 
     public static Transform put(Context context, long transactionId, String objectName, String objectKey, String action, byte[] data) {
+        Log.v(TAG, "put(" + transactionId + "," + objectName + "," + objectKey + "," + action + "," + new String(data) + ")");
         ContentValues v = new ContentValues();
         v.put(Column.TRANSACTION_ID.getName(), transactionId);
         v.put(Column.OBJECT_NAME.getName(), objectName);
@@ -199,35 +209,8 @@ public class Transform implements Parcelable, TransformConstants {
             return null;
     }
 
-    public static Transform put(Context context, long transactionId, Bundle query) {
-        ContentValues v = new ContentValues();
-        v.put(Column.TRANSACTION_ID.getName(), transactionId);
-        v.put(Column.OBJECT_NAME.getName(), query.getString(PARAM_OBJECT_NAME));
-        v.put(Column.OBJECT_KEY.getName(), query.getString(PARAM_OBJECT_KEY));
-        v.put(Column.ACTION.getName(), query.getInt(PARAM_ACTION));
-        v.put(Column.DATA.getName(), query.getByteArray(PARAM_DATA));
-
-        long id = -1;
-        synchronized (TAG) {
-            TransformSqlHelper helper = new TransformSqlHelper(context);
-            try {
-                SQLiteDatabase db = helper.getWritableDatabase();
-                try {
-                    id = db.insert(TransformSqlHelper.TABLE_NAME, null, v);
-                } finally {
-                    db.close();
-                }
-            } finally {
-                helper.close();
-            }
-        }
-        if (id != -1)
-            return get(context, id);
-        else
-            return null;
-    }
-
     public static boolean deleteTransaction(Context context, long transactionId) {
+        Log.v(TAG, "deleteTransaction(" + transactionId + ")");
         boolean success = false;
         synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
@@ -249,6 +232,7 @@ public class Transform implements Parcelable, TransformConstants {
     }
 
     public static boolean delete(Context context, long id) {
+        Log.v(TAG, "delete(" + id + ")");
         boolean success = false;
         synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);

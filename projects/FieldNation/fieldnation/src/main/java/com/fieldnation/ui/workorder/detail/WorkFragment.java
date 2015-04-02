@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GlobalState;
+import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
@@ -328,6 +329,11 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 // todo remove
@@ -469,7 +475,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-    private void requestWorkorder(boolean allowCache) {
+    private void requestWorkorder() {
         if (_workorder == null)
             return;
 
@@ -573,18 +579,13 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckin() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-// todo fix
-/*
-        GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKIN, "WorkFragment", 1);
+        GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity", GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
-            getActivity().startService(
-                    _service.checkin(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
+            WorkorderDataClient.requestCheckin(getActivity(), _workorder.getWorkorderId(),
+                    _gpsLocationService.getLocation());
         } else {
-            getActivity().startService(
-                    _service.checkin(WEB_CHANGED, _workorder.getWorkorderId()));
+            WorkorderDataClient.requestCheckin(getActivity(), _workorder.getWorkorderId());
         }
-*/
-
     }
 
     private void doCheckOut() {
@@ -668,7 +669,7 @@ public class WorkFragment extends WorkorderFragment {
             if (gs.shouldShowReviewDialog()) {
                 showReviewDialog();
                 gs.setShownReviewDialog();
-                requestWorkorder(false);
+                requestWorkorder();
             }
         } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
             startCheckin();
@@ -1116,6 +1117,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCheckIn() {
+            Log.v(TAG, "onCheckIn");
             startCheckin();
         }
 
@@ -1242,7 +1244,7 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            requestWorkorder(false);
+            requestWorkorder();
         }
     };
 
