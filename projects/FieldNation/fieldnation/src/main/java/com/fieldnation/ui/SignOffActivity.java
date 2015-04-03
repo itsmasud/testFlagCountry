@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GlobalState;
@@ -214,6 +212,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                     "WorkorderActivity",
                     GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK,
                     "SignOffActivity", 1);
+            WorkorderDataClient.requestDetails(this, _workorder.getWorkorderId());
         }
 
         _thankYouFrag.setUploadComplete();

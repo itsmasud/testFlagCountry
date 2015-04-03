@@ -96,20 +96,12 @@ public class WorkFragment extends WorkorderFragment {
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = RESULT_CODE_BASE + 6;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = RESULT_CODE_BASE + 7;
 
-    // Web request result codes
-    private static final int WEB_CHANGED = 1;
-    private static final int WEB_GET_TASKS = 2;
-    private static final int WEB_SEND_DELIVERABLE = 3;
-    private static final int WEB_COMPLETE_WORKORDER = 4;
-    private static final int WEB_NOTHING = 5;
-
     // saved state keys
     private static final String STATE_WORKORDER = "ui.workorder.detail.WorkFragment:STATE_WORKORDER";
     private static final String STATE_TASKS = "ui.workorder.detail.WorkFragment:STATE_TASKS";
     private static final String STATE_CURRENT_TASK = "ui.workorder.detail.WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_SIGNATURES = "ui.workorder.detail.WorkFragment:STATE_SIGNATURES";
     private static final String STATE_DEVICE_COUNT = "ui.workorder.detail.WorkFragment:STATE_DEVICE_COUNT";
-
 
     // UI
     private OverScrollView _scrollView;
@@ -586,6 +578,7 @@ public class WorkFragment extends WorkorderFragment {
         } else {
             WorkorderDataClient.requestCheckin(getActivity(), _workorder.getWorkorderId());
         }
+        WorkorderDataClient.requestDetails(getActivity(), _workorder.getWorkorderId());
     }
 
     private void doCheckOut() {

@@ -144,7 +144,7 @@
     <string name="tab_completed">COMPLETED</string>
     <string name="tab_canceled">CANCELED</string>
     <string name="tab_available">AVAILABLE</string>
-    <string name="tab_requested">REQUETSED</string>
+    <string name="tab_requested">REQUESTED</string>
 
     <string name="workorder_card_status_selected">Selected</string>
     <string name="time_logged">Time Logged</string>

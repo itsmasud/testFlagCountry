@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -17,6 +18,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 /**
  * Created by Michael Carver on 3/24/2015.
@@ -66,12 +68,29 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
         StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page + "");
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            bundle.putInt(PARAM_PAGE, page);
-            bundle.putString(PARAM_LIST_SELECTOR, selector);
-            bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
-            TopicService.dispatchEvent(context, PARAM_ACTION_LIST + "/" + selector, bundle, true);
+            try {
+                JsonArray ja = new JsonArray(obj.getData());
+                for (int i = 0; i < ja.size(); i++) {
+                    JsonObject json = ja.getJsonObject(i);
+
+                    List<Transform> tlist = Transform.getObjectTransforms(context, PSO_WORKORDER, json.getLong("workorderId"));
+                    for (int j = 0; j < tlist.size(); j++) {
+                        Transform t = tlist.get(j);
+                        Log.v(TAG, "handleResult, trans: " + new String(t.getData()));
+                        JsonObject to = new JsonObject(t.getData());
+                        json.deepmerge(to);
+                    }
+                }
+
+                Bundle bundle = new Bundle();
+                bundle.putByteArray(PARAM_DATA, ja.toByteArray());
+                bundle.putInt(PARAM_PAGE, page);
+                bundle.putString(PARAM_LIST_SELECTOR, selector);
+                bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
+                TopicService.dispatchEvent(context, PARAM_ACTION_LIST + "/" + selector, bundle, true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -79,9 +98,6 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         Log.v(TAG, "details");
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("test", "details" + workorderId);
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -92,11 +108,6 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                             .protocol("https")
                             .method("GET")
                             .path("/api/rest/v1/workorder/" + workorderId + "/details"))
-                    .transform(Transform.makeTransformQuery(
-                            "Workorder",
-                            workorderId,
-                            "merge",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -181,11 +192,11 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
 
         try {
-            JsonObject mute = new JsonObject();
-            mute.put("type", "upload");
-            mute.put("uploadSlotId", uploadSlotId);
-            mute.put("filePath", filePath);
-            mute.put("filename", filename);
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.uploadDeliverable[0].type", "upload");
+            _proc.put("_proc.uploadDeliverable[0].uploadSlotId", uploadSlotId);
+            _proc.put("_proc.uploadDeliverable[0].filePath", filePath);
+            _proc.put("_proc.uploadDeliverable[0].filename", filename);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -205,7 +216,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + mute.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -425,7 +425,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         } else {
             WorkorderDataClient.requestCheckin(getActivity(), _currentWorkorder.getWorkorderId());
         }
-        // TODO Need to know when this completes!?
+        WorkorderDataClient.requestDetails(getActivity(), _currentWorkorder.getWorkorderId());
     }
 
     private void doCheckOut() {
@@ -458,6 +458,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             } else {
                 WorkorderDataClient.requestCheckout(getActivity(), _currentWorkorder.getWorkorderId());
             }
+            WorkorderDataClient.requestDetails(getActivity(), _currentWorkorder.getWorkorderId());
         }
     }
 

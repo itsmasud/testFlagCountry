@@ -93,8 +93,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // add signature json
     public static void requestAddSignatureJson(Context context, long workorderId, String name, String signatureJson) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "addSignatureJson");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.upload[0]", "addSignatureJson");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -113,7 +113,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -123,9 +123,9 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // complete signature
     public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String printName, String signatureJson) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "completeSignatureTaskJson");
-            merge.put("taskId", taskId);
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.task[0]/type", "signature");
+            _proc.put("_proc.task[0]/taskId", taskId);
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -143,7 +143,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -153,8 +153,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // complete workorder
     public static void requestComplete(Context context, long workorderId) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "complete");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.complete", "working");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -169,7 +169,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -180,8 +180,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestCheckin(Context context, long workorderId) {
         Log.v(STAG, "requestCheckin");
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "checkin");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.checkin", "waiting");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -195,22 +195,21 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .path("/1111/api/rest/v1/workorder/" + workorderId + "/checkin")
                             .body("checkin_time=" + ISO8601.now()))
                     .transform(Transform.makeTransformQuery(
-                                    "Workorder",
-                                    workorderId,
-                                    "merges",
-                                    ("{_proc:[" + merge.toString() + "]}").getBytes())
-                    ).send();
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            _proc.toByteArray()))
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        requestDetails(context, workorderId);
     }
 
     public static void requestCheckin(Context context, long workorderId, Location location) {
         Log.v(STAG, "requestCheckin");
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "checkin");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.checkin", "waiting");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -229,7 +228,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -240,8 +239,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // checkout
     public static void requestCheckout(Context context, long workorderId) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "checkout");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.checkout", "workout");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -258,7 +257,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -267,8 +266,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, Location location) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "checkout");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.checkout", "working");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -287,7 +286,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -296,8 +295,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, int deviceCount) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "checkout");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.checkout", "working");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -315,7 +314,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -324,8 +323,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, int deviceCount, Location location) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "checkout");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.checkout", "working");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -345,7 +344,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -355,8 +354,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // acknowledge hold
     public static void requestAcknowledgeHold(Context context, long workorderId) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "ackHold");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.ackHold", "working");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -371,7 +370,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -438,8 +437,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
 
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "counter-offer");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.counter-offer", "working");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -456,7 +455,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -467,8 +466,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void request(Context context, long workorderId, long expireInSeconds) {
         HttpJsonBuilder builder;
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "request");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.request", "working");
 
             builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -489,7 +488,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -498,8 +497,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "confirm-assignment");
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.confirm", "working");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -516,7 +515,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                            _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -566,9 +565,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestDeleteDeliverable(Context context, long workorderId, long uploadId) {
         try {
-            JsonObject merge = new JsonObject();
-            merge.put("type", "deleteDeliverable");
-            merge.put("uploadId", uploadId);
+            JsonObject _proc = new JsonObject();
+            _proc.put("_proc.deleteDeliverable[0]", "uploadId");
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -585,7 +583,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     "Workorder",
                                     workorderId,
                                     "merges",
-                                    ("{_proc:[" + merge.toString() + "]}").getBytes()))
+                                    _proc.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();

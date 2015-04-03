@@ -19,7 +19,7 @@ import java.util.Set;
 public class Workorder implements Parcelable {
 
     @Json(name = "_proc")
-    public JsonArray _proc;
+    public JsonObject _proc;
     @Json(name = "acl")
     private String[] _acl;
     @Json(name = "additionalExpenses")

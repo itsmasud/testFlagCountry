@@ -7,7 +7,6 @@ import android.widget.BaseAdapter;
 
 import com.fieldnation.Log;
 
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -54,24 +53,18 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         }
     }
 
-    public Hashtable<Integer, List<T>> getPages() {
-        return _pages;
-    }
-
     private void countItems() {
         int count = 0;
-        Enumeration<Integer> e = _pages.keys();
-        while (e.hasMoreElements()) {
-            Integer i = e.nextElement();
-
-            count += _pages.get(i).size();
+        for (int i = 0; i < _pages.size(); i++) {
+            List<T> page = _pages.get(i);
+            if (page != null)
+                count += page.size();
         }
-
         _size = count;
     }
 
     public void setNoMorePages() {
-        Log.v(TAG, "setNoMorePages()");
+        // Log.v(TAG, "setNoMorePages()");
         _noMorePages = true;
         notifyDataSetChanged();
         if (_listener != null) {
@@ -81,7 +74,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
-//        Log.v(TAG, "registerDataSetObserver()");
+        // Log.v(TAG, "registerDataSetObserver()");
         super.registerDataSetObserver(observer);
         if (!_noMorePages && !_loadingPages.contains(_pages.size())) {
             requestPage(_pages.size(), true);
@@ -90,7 +83,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     @Override
     public int getCount() {
-//        Log.v(TAG, "getCount()");
+        // Log.v(TAG, "getCount()");
         return _size;
     }
 
@@ -127,14 +120,18 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-//        Log.v(TAG, "getView()");
-
+        // Log.v(TAG, "getView()");
         // find the page
         int count = 0;
         List<T> page = null;
         int page_num = 0;
+        Log.v(TAG, "_pages:" + _pages.size());
         for (page_num = 0; page_num < _pages.size(); page_num++) {
             page = _pages.get(page_num);
+            if (page == null) {
+                Log.v(TAG, "page is null");
+                continue;
+            }
             count = count + page.size();
             if (count > position)
                 break;
@@ -157,12 +154,9 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     private void preRequestPage(int page, boolean allowCache) {
         if (!_loadingPages.contains(page)) {
-//            Log.v(TAG, "preRequestPage(), requesting");
             _loadingPages.add(page);
             requestPage(page, allowCache);
-            return;
         }
-//        Log.v(TAG, "preRequestPage(), skipping");
     }
 
     public abstract View getView(int page, int position, T object, View convertView, ViewGroup parent);

@@ -130,8 +130,10 @@ public class SummaryView extends LinearLayout implements WorkorderRenderer {
             _companyTextView.setText(_workorder.getCompanyName());
         }
 
-        _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
-        _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        if (!misc.isEmptyOrNull(_workorder.getFullWorkDescription())) {
+            _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
+            _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        }
 
         _worktypeTextView.setText(_workorder.getTypeOfWork());
 
