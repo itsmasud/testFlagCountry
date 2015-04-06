@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 import android.database.DataSetObserver;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -29,7 +28,14 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     public void setPage(int page, List<T> items, boolean isCached) {
         Log.v(TAG, "setPage()");
 
-        if (items.size() > 0) {
+        if (items == null || items.size() == 0) {
+            int i = page;
+            while (_pages.containsKey(i)) {
+                _pages.remove(i);
+                i++;
+            }
+            countItems();
+        } else if (items.size() > 0) {
             _pages.put(page, items);
             countItems();
         }
