@@ -11,14 +11,15 @@ import com.fieldnation.json.annotations.Json;
  * Created by Michael on 4/6/2015.
  */
 public class Transfer implements Parcelable {
+
     @Json(name = "checkin")
     private String _checkin;
     @Json(name = "checkout")
     private String _checkout;
     @Json(name = "addSignatureJson")
     private String _addSignatureJson;
-    @Json(name = "completeSignatureTaskJson")
-    private JsonObject _completeSignatureTaskJson;
+    @Json(name = "completeTask")
+    private JsonObject _completeTask;
     @Json(name = "complete")
     private String _complete;
     @Json(name = "ackHold")
@@ -31,6 +32,29 @@ public class Transfer implements Parcelable {
     private String _confirmAssignment;
     @Json(name = "deleteDeliverable")
     private JsonObject _deleteDeliverable;
+
+    public Transfer() {
+    }
+
+    public String getCheckIn() {
+        return _checkin;
+    }
+
+    public String getCheckOut() {
+        return _checkout;
+    }
+
+    public String getAddSignatureJson() {
+        return _addSignatureJson;
+    }
+
+    public JsonObject getCompleteTask() {
+        return _completeTask;
+    }
+
+    public String getComplete() {
+        return _complete;
+    }
 
 
     public JsonObject toJson() {

@@ -1,0 +1,31 @@
+{
+	"checkin": [
+		{ "state": "idle" }
+	],
+
+	"uploadDeliverable":[
+		{ "state": "idle",
+			"taskId": 1234,
+			"slotId": 1234,
+			"fileName": "Picture.png" },
+		
+		{ "state": "idle",
+			"slotId": 1234,
+			"fileName": "Picture.png" },
+	],
+
+	"completeTask":[
+		{ "state": "idle",
+			"type": "signatureJson",
+			"taskId": 1234 },
+
+		{ "state": "idle",
+			"type": "phone",
+			"taskId": 1234 }
+	],
+
+	"addSignatureJson":[
+		{ "state": "idle",
+			"printName": "Some Guy" }
+	]
+}
