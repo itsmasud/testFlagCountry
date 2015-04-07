@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import com.fieldnation.Log;
+import com.fieldnation.data.transfer.WorkorderTransfer;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
@@ -192,12 +193,6 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
 
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.uploadDeliverable[0].type", "upload");
-            _proc.put("_proc.uploadDeliverable[0].uploadSlotId", uploadSlotId);
-            _proc.put("_proc.uploadDeliverable[0].filePath", filePath);
-            _proc.put("_proc.uploadDeliverable[0].filename", filename);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -216,7 +211,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeUploadDeliverable(uploadSlotId, filename).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();

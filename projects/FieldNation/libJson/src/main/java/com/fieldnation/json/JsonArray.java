@@ -119,16 +119,18 @@ public class JsonArray {
         }
     }
 
-    public Object set(int index, Object value) {
+    public JsonArray set(int index, Object value) {
         while (index >= _objects.size())
             _objects.add(null);
 
-        return _objects.set(index, value);
+        _objects.set(index, value);
+        return this;
     }
 
-    protected void set(List<String> directions, Object value) throws ParseException {
-        if (directions.size() == 0)
+    protected JsonArray set(List<String> directions, Object value) throws ParseException {
+        if (directions.size() == 0) {
             throw new ParseException("Invalid path", 0);
+        }
 
         String item = directions.remove(0);
 
@@ -148,16 +150,15 @@ public class JsonArray {
                     JsonObject jo = (JsonObject) obj;
 
                     jo.put(directions, value);
-                    return;
                 } else if (obj instanceof JsonArray) {
                     JsonArray ja = (JsonArray) obj;
 
                     String child = directions.get(0);
-                    if (child.equals("[]"))
+                    if (child.equals("[]")) {
                         ja.add(directions, value);
-                    else
+                    } else {
                         ja.set(directions, value);
-                    return;
+                    }
                 }
             } else {
 
@@ -167,36 +168,35 @@ public class JsonArray {
 
                     set(index, ja);
 
-                    if (child.equals("[]"))
+                    if (child.equals("[]")) {
                         ja.add(directions, value);
-                    else
+                    } else {
                         ja.set(directions, value);
-
-                    return;
+                    }
                 } else {
                     JsonObject jo = new JsonObject();
 
                     set(index, jo);
 
                     jo.put(directions, value);
-                    return;
-
                 }
             }
 
         }
-
+        return this;
     }
 
-    public boolean add(Object value) {
-        return _objects.add(value);
+    public JsonArray add(Object value) {
+        _objects.add(value);
+        return this;
     }
 
-    public void add(int index, Object value) {
+    public JsonArray add(int index, Object value) {
         _objects.add(index, value);
+        return this;
     }
 
-    protected void add(List<String> directions, Object value) throws ParseException {
+    protected JsonArray add(List<String> directions, Object value) throws ParseException {
         if (directions.size() == 0)
             throw new ParseException("Invalid path", 0);
 
@@ -218,20 +218,15 @@ public class JsonArray {
                     ja.add(directions, value);
                 else
                     ja.set(directions, value);
-
-                return;
             } else {
                 JsonObject jo = new JsonObject();
 
                 _objects.add(jo);
 
                 jo.put(directions, value);
-                return;
-
             }
-
         }
-
+        return this;
     }
 
     public Object remove(int index) {
@@ -269,8 +264,9 @@ public class JsonArray {
 
     }
 
-    public void clear() {
+    public JsonArray clear() {
         _objects.clear();
+        return this;
     }
 
     public String display() {

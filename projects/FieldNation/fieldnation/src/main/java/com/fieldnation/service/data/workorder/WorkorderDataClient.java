@@ -10,6 +10,7 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.data.transfer.WorkorderTransfer;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -93,9 +94,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // add signature json
     public static void requestAddSignatureJson(Context context, long workorderId, String name, String signatureJson) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.upload[0]", "addSignatureJson");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -113,7 +111,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeAddSignatureTransfer(name).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -123,10 +121,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // complete signature
     public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String printName, String signatureJson) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.task[0]/type", "signature");
-            _proc.put("_proc.task[0]/taskId", taskId);
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -143,7 +137,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeCompletingTaskTransfer("signature", taskId, printName).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -169,7 +163,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeMarkCompleteTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -180,9 +174,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestCheckin(Context context, long workorderId) {
         Log.v(STAG, "requestCheckin");
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.checkin", "waiting");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -198,7 +189,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeCheckinTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -208,9 +199,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestCheckin(Context context, long workorderId, Location location) {
         Log.v(STAG, "requestCheckin");
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.checkin", "waiting");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -228,7 +216,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeCheckinTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -239,9 +227,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // checkout
     public static void requestCheckout(Context context, long workorderId) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.checkout", "workout");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -257,7 +242,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeCheckoutTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -266,9 +251,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, Location location) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.checkout", "working");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -286,7 +268,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeCheckoutTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -295,9 +277,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, int deviceCount) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.checkout", "working");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -314,7 +293,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeCheckoutTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -323,9 +302,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     public static void requestCheckout(Context context, long workorderId, int deviceCount, Location location) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.checkout", "working");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -344,7 +320,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeCheckoutTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -354,9 +330,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     // acknowledge hold
     public static void requestAcknowledgeHold(Context context, long workorderId) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.ackHold", "working");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -370,7 +343,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeAckHoldTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -437,9 +410,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
 
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.counter-offer", "working");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -455,7 +425,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeCounterOfferTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -466,9 +436,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void request(Context context, long workorderId, long expireInSeconds) {
         HttpJsonBuilder builder;
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.request", "working");
-
             builder = new HttpJsonBuilder()
                     .protocol("https")
                     .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -488,7 +455,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeRequestTransfer().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -515,7 +482,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             "Workorder",
                             workorderId,
                             "merges",
-                            _proc.toByteArray()))
+                            WorkorderTransfer.makeConfirmAssignment().getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -563,11 +530,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         });
     }
 
-    public static void requestDeleteDeliverable(Context context, long workorderId, long uploadId) {
+    public static void requestDeleteDeliverable(Context context, long workorderId, long workorderUploadId, String filename) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.deleteDeliverable[0]", "uploadId");
-
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -577,13 +541,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("DELETE")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadId))
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + workorderUploadId))
                     .transform(
                             Transform.makeTransformQuery(
                                     "Workorder",
                                     workorderId,
                                     "merges",
-                                    _proc.toByteArray()))
+                                    WorkorderTransfer.makeDeleteDeliverable(workorderUploadId, filename).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -658,8 +622,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
                 @Override
                 protected void onPostExecute(Workorder workorder) {
-                    if (workorder._proc != null)
-                        Log.v(STAG, workorder._proc.display());
+                    if (workorder.getTransfer() != null)
+                        Log.v(STAG, workorder.getTransfer().toJson().display());
                     else
                         Log.v(STAG, "no _proc");
 

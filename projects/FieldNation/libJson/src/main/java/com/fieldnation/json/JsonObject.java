@@ -82,7 +82,7 @@ public class JsonObject {
      * @param value
      * @throws ParseException
      */
-    public void put(String key, Object value) throws ParseException {
+    public JsonObject put(String key, Object value) throws ParseException {
         if (_isNullObject) {
             throw new ParseException("JsonNULL cannot contain keys!", -1);
         }
@@ -90,20 +90,24 @@ public class JsonObject {
         List<String> directions = JsonTokenizer.parsePath(key);
 
         put(directions, value);
+
+        return this;
     }
 
-    protected void put(List<String> directions, Object value) throws ParseException {
-        if (directions.size() == 0)
+    protected JsonObject put(List<String> directions, Object value) throws ParseException {
+        if (directions.size() == 0) {
             throw new ParseException("Invalid path", 0);
+        }
 
         String item = directions.remove(0);
 
         if (directions.size() == 0) {
             // goes in this object
-            if (value == null)
+            if (value == null) {
                 _fields.put(item, JsonNULL);
-            else
+            } else {
                 _fields.put(item, value);
+            }
         } else {
             // goes into a child
             if (_fields.containsKey(item)) {
@@ -113,17 +117,15 @@ public class JsonObject {
                     JsonObject jo = (JsonObject) obj;
 
                     jo.put(directions, value);
-                    return;
                 } else if (obj instanceof JsonArray) {
                     JsonArray ja = (JsonArray) obj;
 
                     String child = directions.get(0);
-                    if (child.equals("[]"))
+                    if (child.equals("[]")) {
                         ja.add(directions, value);
-                    else
+                    } else {
                         ja.set(directions, value);
-
-                    return;
+                    }
                 }
             } else {
                 // need to create object
@@ -134,24 +136,21 @@ public class JsonObject {
 
                     _fields.put(item, ja);
 
-                    if (child.equals("[]"))
+                    if (child.equals("[]")) {
                         ja.add(directions, value);
-                    else
+                    } else {
                         ja.set(directions, value);
-
-                    return;
+                    }
                 } else {
                     JsonObject jo = new JsonObject();
 
                     _fields.put(item, jo);
 
                     jo.put(directions, value);
-                    return;
                 }
-
             }
         }
-
+        return this;
     }
 
     public Object get(String path) throws ParseException {
