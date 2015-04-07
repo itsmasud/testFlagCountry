@@ -584,27 +584,24 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckOut() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-// todo fix
-/*
-        GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CHECKOUT, "WorkFragment", 1);
+        GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                GoogleAnalyticsTopicClient.EventAction.CHECKOUT, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
-                getActivity().startService(
-                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _deviceCount, _gpsLocationService.getLocation()));
+                WorkorderDataClient.requestCheckout(getActivity(), _workorder.getWorkorderId(),
+                        _deviceCount, _gpsLocationService.getLocation());
             } else {
-                getActivity().startService(
-                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _gpsLocationService.getLocation()));
+                WorkorderDataClient.requestCheckout(getActivity(), _workorder.getWorkorderId(),
+                        _gpsLocationService.getLocation());
             }
         } else {
             if (_deviceCount > -1) {
-                getActivity().startService(
-                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId(), _deviceCount));
+                WorkorderDataClient.requestCheckout(getActivity(), _workorder.getWorkorderId(),
+                        _deviceCount);
             } else {
-                getActivity().startService(
-                        _service.checkout(WEB_CHANGED, _workorder.getWorkorderId()));
+                WorkorderDataClient.requestCheckout(getActivity(), _workorder.getWorkorderId());
             }
         }
-*/
     }
 
     /*-*********************************-*/
@@ -647,15 +644,12 @@ public class WorkFragment extends WorkorderFragment {
                 && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
-// todo remove
-//                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-//                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
-//                        _tempFile.getAbsolutePath()));
+                WorkorderDataClient.requestUploadDeliverable(getActivity(),
+                        _workorder.getWorkorderId(), _currentTask.getSlotId(), _tempFile.getName(),
+                        _tempFile.getAbsolutePath());
             } else {
-// todo remove
-//                getActivity().startService(_service.uploadDeliverable(
-//                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-//                        _currentTask.getSlotId(), data, getNotificationIntent()));
+                WorkorderDataClient.requestUploadDeliverable(getActivity(),
+                        _workorder.getWorkorderId(), _currentTask.getSlotId(), data);
             }
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
             GlobalState gs = (GlobalState) getActivity().getApplication();
@@ -720,8 +714,8 @@ public class WorkFragment extends WorkorderFragment {
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
-// todo remove
-//            getActivity().startService(_service.closingNotes(WEB_CHANGED, _workorder.getWorkorderId(), message));
+            WorkorderDataClient.requestSetClosingNotes(getActivity(), _workorder.getWorkorderId(), message);
+            _workorder.dispatchOnChange();
             setLoading(true);
         }
 
@@ -734,14 +728,11 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
-// todo remove
-/*
-                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_CONFIRM_ASSIGN, "WorkFragment", 1);
+                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                        GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkFragment", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                getActivity().startService(_service.confirmAssignment(WEB_CHANGED,
-                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end)));
-*/
-
+                WorkorderDataClient.requestConfirmAssignment(getActivity(),
+                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
                 setLoading(true);
 
             } catch (Exception ex) {

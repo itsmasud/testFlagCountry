@@ -18,7 +18,7 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        HANDLER(1, "handler", "text not null"),
+        HANDLER(1, "handler", "text"),
         HANDLER_PARAMS(2, "handler_params", "blob"),
         USE_AUTH(3, "use_auth", "integer not null"),
         STATE(4, "state", "integer not null", true),

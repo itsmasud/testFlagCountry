@@ -41,10 +41,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class WorkorderListFragment extends Fragment implements TabActionBarFragmentActivity.TabFragment {
     private static final String TAG_BASE = "WorkorderListFragment";
@@ -55,20 +52,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private static final String STATE_CURRENT_WORKORDER = TAG_BASE + ".STATE_CURRENT_WORKORDER";
     private static final String STATE_DEVICE_COUNT = TAG_BASE + ".STATE_DEVICE_COUNT";
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
-    private static final String STATE_WORKING_LIST = TAG_BASE + ".STATE_WORKING_LIST";
 
     private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
-
-    // WEB
-    private static final int WEB_GET_LIST = 0;
-    //private static final int WEB_REMOVING_WORKRODER = 1;
-    private static final int WEB_CHANGING_WORKORDER = 2;
-    private static final int WEB_CHECKING_IN = 3;
-
-    // Request Key
-    private static final String KEY_PAGE_NUM = TAG_BASE + ".PAGE_NUM";
-    private static final String KEY_WORKORDER_ID = TAG_BASE + ".WORKORDER_ID";
 
     // UI
     private OverScrollListView _listView;
@@ -87,13 +73,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     // Data
     private WorkorderDataClient _workorderClient;
-    private Set<Long> _pendingNotInterested = new HashSet<Long>();
-    private Set<Long> _selected = new HashSet<Long>();
+    //    private Set<Long> _selected = new HashSet<Long>();
     private GpsLocationService _gpsLocationService;
 
     // state data
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
-    private Set<Long> _requestWorking = new HashSet<Long>();
     private Workorder _currentWorkorder;
     private int _deviceCount = -1;
 
@@ -109,13 +93,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 TAG = savedInstanceState.getString(STATE_TAG);
             } else {
                 TAG = UniqueTag.makeTag(TAG_BASE);
-            }
-
-            if (savedInstanceState.containsKey(STATE_WORKING_LIST)) {
-                long[] a = savedInstanceState.getLongArray(STATE_WORKING_LIST);
-                for (int i = 0; i < a.length; i++) {
-                    _requestWorking.add(a[i]);
-                }
             }
 
             if (savedInstanceState.containsKey(STATE_DISPLAY)) {
@@ -178,13 +155,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
             }
 
-            if (savedInstanceState.containsKey(STATE_WORKING_LIST)) {
-                long[] a = savedInstanceState.getLongArray(STATE_WORKING_LIST);
-                for (int i = 0; i < a.length; i++) {
-                    _requestWorking.add(a[i]);
-                }
-            }
-
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
             }
@@ -216,17 +186,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         if (_deviceCount > -1) {
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
-        }
-
-        if (_requestWorking.size() > 0) {
-            Iterator<Long> iter = _requestWorking.iterator();
-            long[] a = new long[_requestWorking.size()];
-            int i = 0;
-            while (iter.hasNext()) {
-                a[i] = iter.next();
-                i++;
-            }
-            outState.putLongArray(STATE_WORKING_LIST, a);
         }
 
         super.onSaveInstanceState(outState);
@@ -417,7 +376,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "doCheckin()");
         _gpsLocationService.setListener(null);
         setLoading(true);
-        _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
         GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkorderCardView", 1);
         if (_gpsLocationService.hasLocation()) {
@@ -432,7 +390,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "doCheckOut()");
         setLoading(true);
         _gpsLocationService.setListener(null);
-        _requestWorking.add(_currentWorkorder.getWorkorderId());
         _adapter.notifyDataSetChanged();
         GoogleAnalyticsTopicClient.dispatchEvent(
                 getActivity(),
@@ -562,11 +519,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 _deviceCountDialog.show(workorder, pay.getMaxDevice());
             } else {
                 startCheckOut();
-                _requestWorking.add(workorder.getWorkorderId());
                 _adapter.notifyDataSetChanged();
             }
         }
-
 
         @Override
         public void actionCheckin(WorkorderCardView view, Workorder workorder) {
@@ -581,15 +536,12 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
-            //TODO set loading mode
             WorkorderDataClient.requestAcknowledgeHold(getActivity(), workorder.getWorkorderId());
-            _requestWorking.add(workorder.getWorkorderId());
-            _adapter.notifyDataSetChanged();
+            _adapter.refreshPages();
         }
 
         @Override
         public void viewCounter(WorkorderCardView view, Workorder workorder) {
-            //TODO set loading mode
             _counterOfferDialog.show(workorder);
         }
 
@@ -637,7 +589,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onViewPayments(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: onViewPayments()
             if (workorder.getPaymentId() != null) {
                 Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
                 intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, workorder.getPaymentId());
@@ -665,7 +616,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             Log.v(TAG, "_deviceCountDialog_listener");
             _currentWorkorder = workorder;
             _deviceCount = count;
-            _requestWorking.add(workorder.getWorkorderId());
             _adapter.notifyDataSetChanged();
             setLoading(true);
             startCheckOut();
@@ -696,8 +646,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             WorkorderDataClient.request(getActivity(), workorder.getWorkorderId(), time);
 
             // notify the UI
-            _requestWorking.add(workorder.getWorkorderId());
-            _adapter.notifyDataSetChanged();
+            _adapter.refreshPages();
         }
     };
 
@@ -709,8 +658,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 WorkorderDataClient.requestConfirmAssignment(getActivity(),
                         workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
-                _requestWorking.add(workorder.getWorkorderId());
-                _adapter.notifyDataSetChanged();
+                _adapter.refreshPages();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -738,7 +686,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             WorkorderDataClient.requestCounterOffer(getActivity(), workorder.getWorkorderId(),
                     expires, reason, expirationInSeconds, pay, schedule, expenses);
 
-            _requestWorking.add(workorder.getWorkorderId());
             setLoading(true);
         }
     };
@@ -832,17 +779,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 v = new WorkorderCardView(parent.getContext());
             }
 
-            if (_pendingNotInterested.contains(object.getWorkorderId())) {
-                // wosum.setDisplayMode(WorkorderCardView.MODE_UNDO_NOT_INTERESTED);
-                return new View(getActivity());
-            } else if (_requestWorking.contains(object.getWorkorderId())) {
-                v.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
-            } else if (_selected.contains(object.getWorkorderId())) {
-                v.setDisplayMode(WorkorderCardView.MODE_SELECTED);
-            } else {
-                v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
-            }
-
             v.setWorkorder(object);
             v.setWorkorderSummaryListener(_wocv_listener);
 
@@ -883,85 +819,4 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 addPage(page, list);
         }
     };
-
-    // todo remove
-/*    private class WorkorderParseAsync extends AsyncTaskEx<Bundle, Object, List<Workorder>> {
-        private int page;
-        private boolean cached;
-
-        @Override
-        protected List<Workorder> doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-
-            page = resultData.getInt(KEY_PAGE_NUM);
-            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-            cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-
-            JsonArray objects = null;
-            try {
-                objects = new JsonArray(data);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                if (cached)
-                    requestList(page);
-                return null;
-            }
-
-            List<Workorder> list = new LinkedList<Workorder>();
-            for (int i = 0; i < objects.size(); i++) {
-                try {
-                    list.add(Workorder.fromJson(objects.getJsonObject(i)));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return list;
-        }
-
-        @Override
-        protected void onPostExecute(List<Workorder> workorders) {
-            super.onPostExecute(workorders);
-            if (workorders != null)
-                addPage(page, workorders, cached);
-            setLoading(false);
-        }
-    }
-
-    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_LIST) {
-                new WorkorderParseAsync().executeEx(resultData);
-
-            } else if (resultCode == WEB_CHANGING_WORKORDER) {
-                _adapter.refreshPages();
-
-            } else if (resultCode == WEB_CHECKING_IN) {
-                long woId = resultData.getLong(KEY_WORKORDER_ID);
-                Intent intent = new Intent(getActivity(), WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, woId);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-                getActivity().startActivity(intent);
-                _adapter.refreshPages();
-                setLoading(false);
-            } else {
-                setLoading(false);
-            }
-
-        }
-
-        @Override
-        public Context getContext() {
-            return WorkorderListFragment.this.getActivity();
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            _service = null;
-            AuthTopicService.requestAuthInvalid(getActivity());
-            setLoading(false);
-            //Toast.makeText(getActivity(), "Request failed please try again.", Toast.LENGTH_LONG).show();
-        }
-    };*/
 }

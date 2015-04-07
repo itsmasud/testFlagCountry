@@ -168,7 +168,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("api/rest/v1/workorder/bundle/" + bundleId))
+                            .path("/api/rest/v1/workorder/bundle/" + bundleId))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -196,11 +196,11 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .path("api/rest/v1/workorder/" + workorderId + "/deliverables")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile);
 
             if (uploadSlotId != 0) {
-                builder.path("api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
+                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
             }
 
             WebTransactionBuilder.builder(context)

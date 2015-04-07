@@ -275,6 +275,31 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
     }
 
+    public static void requestSetClosingNotes(Context context, long workorderId, String closingNotes) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .useAuth()
+                    .key("Workorder/" + workorderId + "/closingNotes")
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/closing-notes")
+                            .body("notes=" + (closingNotes == null ? "" : misc.escapeForURL(closingNotes))))
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            WorkorderTransfer.makeClosingNotesTransfer(closingNotes).getBytes()))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void requestCheckout(Context context, long workorderId, int deviceCount) {
         try {
             WebTransactionBuilder.builder(context)
@@ -507,6 +532,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public static void requestUploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
+        Log.v(STAG, "requestUploadDeliverable");
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
         intent.putExtra(PARAM_ID, workorderId);
@@ -612,9 +638,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 protected Workorder doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     try {
-                        JsonObject obj = new JsonObject(bundle.getByteArray(PARAM_DATA));
-                        Log.v("WOTEST", obj.display());
-                        return Workorder.fromJson(obj);
+                        return Workorder.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

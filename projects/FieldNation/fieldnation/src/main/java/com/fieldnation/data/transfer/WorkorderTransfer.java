@@ -38,6 +38,8 @@ public class WorkorderTransfer implements Parcelable {
     private JsonArray _deleteDeliverable;
     @Json(name = "uploadDeliverable")
     private JsonArray _uploadDeliverable;
+    @Json(name = "closingNotes")
+    private String _closingNotes;
 
     public WorkorderTransfer() {
     }
@@ -194,6 +196,22 @@ public class WorkorderTransfer implements Parcelable {
         return null;
     }
 
+    public String getClosingNotes() {
+        return _closingNotes;
+    }
+
+    public static String makeClosingNotesTransfer(String closingNotes) {
+        try {
+            return new JsonObject()
+                    .put("_transfer.closingNotes", closingNotes)
+                    .toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    // JSON
     public JsonObject toJson() {
         return toJson(this);
     }

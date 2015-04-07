@@ -129,6 +129,10 @@ public class WebTransactionService extends Service implements WebTransactionCons
         if (next == null) {
             return;
         }
+
+        if (next.getKey() != null)
+            Log.v(TAG, next.getKey());
+
         new AsyncTaskEx<Object, Object, Object>() {
 
             @Override

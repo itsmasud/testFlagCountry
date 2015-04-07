@@ -94,10 +94,6 @@ public class Serializer {
         if (isCollection(destClass)) {
             return unserializeCollection(destClass, (JsonArray) source, (Collection<Object>) init, paramType);
         }
-        if (hasInterface(JsonArray.class, destClass) || hasInterface(JsonObject.class, destClass)) {
-            return source;
-        }
-
         return unserializeObject(destClass, (JsonObject) source);
     }
 
@@ -189,8 +185,7 @@ public class Serializer {
             CollectionParameterType collectionParameterType = field.getAnnotation(CollectionParameterType.class);
             try {
                 if (source.has(jname) && source.get(jname) != null) {
-                    // System.out.println("Parsing " + clazz.getName() + ":" +
-                    // jname);
+                    // System.out.println("Parsing " + clazz.getName() + ":" + jname);
                     Object value = null;
                     try {
                         if (collectionParameterType != null) {

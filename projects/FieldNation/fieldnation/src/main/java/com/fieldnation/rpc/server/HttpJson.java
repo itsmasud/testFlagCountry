@@ -89,6 +89,8 @@ public class HttpJson {
         conn.setDoInput(true);
 
         if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART)) {
+            conn.setDoInput(false);
+            Log.v(TAG, "PARAM_WEB_MULTIPART");
             MultipartUtility util = new MultipartUtility(conn, "UTF-8");
             if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS)) {
                 JsonObject fields = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS);
@@ -100,6 +102,7 @@ public class HttpJson {
             }
 
             if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES)) {
+                Log.v(TAG, "PARAM_WEB_MULTIPART_FILES");
                 JsonObject files = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES);
                 Enumeration<String> e = files.keys();
                 while (e.hasMoreElements()) {

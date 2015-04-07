@@ -32,8 +32,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
     public static final int TAB_DELIVERABLES = 2;
     public static final int TAB_NOTIFICATIONS = 3;
 
-    private static final int RPC_GET_DETAIL = 1;
-
     // SavedInstance fields
     private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
     private static final String STATE_CURRENT_TAB = "STATE_CURRENT_TAB";
@@ -167,18 +165,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
                             _fragments[0].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
-//                        if (frag instanceof DetailFragment) {
-//                            _fragments[0] = (WorkorderFragment) frag;
-//                            _fragments[0].setPageRequestListener(_pageRequestListener);
-//                            _fragments[0].setLoadingListener(_workorderFrag_loadingListener);
-//                        }
-//
-//                        if (frag instanceof TasksFragment) {
-//                            _fragments[1] = (WorkorderFragment) frag;
-//                            _fragments[1].setPageRequestListener(_pageRequestListener);
-//                            _fragments[1].setLoadingListener(_workorderFrag_loadingListener);
-//                        }
-
                         if (frag instanceof MessageFragment) {
                             _fragments[1] = (WorkorderFragment) frag;
                             _fragments[1].setPageRequestListener(_pageRequestListener);
@@ -202,10 +188,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
             if (_fragments[0] == null)
                 _fragments[0] = new WorkFragment();
-//            if (_fragments[0] == null)
-//                _fragments[0] = new DetailFragment();
-//            if (_fragments[1] == null)
-//                _fragments[1] = new TasksFragment();
             if (_fragments[1] == null)
                 _fragments[1] = new MessageFragment();
             if (_fragments[2] == null)
@@ -288,7 +270,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
             _fragments[i].setLoading(loading);
         }
     }
-
 
     public void getData() {
         Log.v(TAG, "getData");
