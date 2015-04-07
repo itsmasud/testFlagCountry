@@ -613,6 +613,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     Bundle bundle = params[0];
                     try {
                         JsonObject obj = new JsonObject(bundle.getByteArray(PARAM_DATA));
+                        Log.v("WOTEST", obj.display());
                         return Workorder.fromJson(obj);
                     } catch (Exception ex) {
                         ex.printStackTrace();

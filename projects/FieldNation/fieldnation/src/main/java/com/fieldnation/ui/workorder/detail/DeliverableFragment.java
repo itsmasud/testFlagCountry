@@ -368,7 +368,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
             WorkorderDataClient.requestDeleteDeliverable(getActivity(), _workorder.getWorkorderId(),
-                    document.getWorkorderUploadId());
+                    document.getWorkorderUploadId(), document.getFileName());
         }
     };
 
