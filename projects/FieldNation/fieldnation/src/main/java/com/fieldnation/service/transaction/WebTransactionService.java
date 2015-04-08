@@ -164,8 +164,12 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         ex.printStackTrace();
                     }
 
-                    // need to re-auth
                     if (result.getResponseCode() == 400) {
+                        // Bad request
+                        // need to report this
+
+                        // need to re-auth
+                    } else if (result.getResponseCode() == 401) {
                         Log.v(TAG, "Reauth");
                         _isAuthenticated = false;
                         AuthTopicClient.dispatchInvalidateCommand(context);
