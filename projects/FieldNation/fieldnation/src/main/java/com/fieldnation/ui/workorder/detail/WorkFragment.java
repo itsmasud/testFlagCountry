@@ -1127,9 +1127,16 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
+        public void onWithdrawRequest(Workorder workorder) {
+            getActivity().startService(
+                    _service.withdrawRequest(WEB_CHANGED, workorder.getWorkorderId()));
+        }
+
+        @Override
         public void onShowCounterOfferDialog(Workorder workorder) {
             _counterOfferDialog.show(workorder);
         }
+
 
         @Override
         public void onNotInterested(Workorder workorder) {

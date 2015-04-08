@@ -343,6 +343,11 @@ public class WorkorderCardView extends RelativeLayout {
                         _listener.onViewPayments(WorkorderCardView.this, _workorder);
                     }
                     break;
+                case Workorder.BUTTON_ACTION_WITHDRAW_REQUEST:
+                    if (_listener != null) {
+                        _listener.actionWithdrawRequest(WorkorderCardView.this, _workorder);
+                    }
+                    break;
             }
         }
     };
@@ -711,6 +716,8 @@ public class WorkorderCardView extends RelativeLayout {
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _rightLayout.setVisibility(VISIBLE);
+                _actionButton.setVisibility(VISIBLE);
+                _actionButton.setText("Withdraw");
                 break;
             case COUNTEROFFERED:
                 _actionButton.setVisibility(VISIBLE);
@@ -846,6 +853,8 @@ public class WorkorderCardView extends RelativeLayout {
     public interface Listener {
 
         public void actionRequest(WorkorderCardView view, Workorder workorder);
+
+        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder);
 
         public void actionAssignment(WorkorderCardView view, Workorder workorder);
 

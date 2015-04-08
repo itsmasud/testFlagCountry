@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +12,6 @@ import android.widget.RelativeLayout;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderSubstatus;
 
 public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private static final String TAG = "ui.workorder.detail.ActionView";
@@ -23,6 +21,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private Button _notInterestedButton;
     private Button _counterOfferButton;
     private Button _completeButton;
+    private Button _withdrawRequestButton;
     private LinearLayout _buttonLayout;
     private ProgressBar _progressBar;
 
@@ -68,6 +67,9 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
         _buttonLayout = (LinearLayout) findViewById(R.id.button_layout);
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        _withdrawRequestButton = (Button) findViewById(R.id.withdraw_request_button);
+        _withdrawRequestButton.setOnClickListener(_withdraw_onClick);
 
         setLoading(true);
         setVisibility(View.GONE);
@@ -131,19 +133,36 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
             _notInterestedButton.setVisibility(View.GONE);
         }
 
+        if (_workorder.canWithdrawRequest()) {
+            _withdrawRequestButton.setVisibility(View.VISIBLE);
+        } else {
+            _withdrawRequestButton.setVisibility(View.GONE);
+        }
+
         setVisibility(View.VISIBLE);
     }
 
-	/*-*************************-*/
+    /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
+    private final OnClickListener _withdraw_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setLoading(true);
+            if (_listener != null) {
+                if (_workorder.canWithdrawRequest()) {
+                    _listener.onWithdrawRequest(_workorder);
+                }
+            }
+        }
+    };
 
     private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setLoading(true);
             if (_listener != null) {
-                if (_workorder.getStatus().getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
+                if (_workorder.canConfirm()) {
                     _listener.onConfirmAssignment(_workorder);
                 } else {
                     _listener.onRequest(_workorder);
@@ -188,6 +207,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         public void onRequest(Workorder workorder);
 
         public void onShowCounterOfferDialog(Workorder workorder);
+
+        public void onWithdrawRequest(Workorder workorder);
     }
 
 }
