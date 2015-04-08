@@ -42,38 +42,68 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
         String selector = "";
 
         try {
+            // <free>
             JsonObject obj = new JsonObject(transaction.getHandlerParams());
             page = obj.getInt("page");
             selector = obj.getString("selector");
-
             byte[] bdata = resultData.getResultsAsByteArray();
+            // </free>
 
+            // <350ms>
             StoredObject.put(context, PSO_WORKORDER_LIST + selector, page, bdata);
+            // </350ms>
 
+            // 3.3 seconds
+//            Stopwatch processTime = new Stopwatch(true);
+            // <588ms>
             JsonArray ja = new JsonArray(bdata);
+            // </588ms>
+
+//            Stopwatch transformQuery = new Stopwatch(false);
             for (int i = 0; i < ja.size(); i++) {
                 JsonObject json = ja.getJsonObject(i);
 
+                // <3s>
+//                transformQuery.start();
                 List<Transform> transList = Transform.getObjectTransforms(context, PSO_WORKORDER, json.getLong("workorderId"));
+//                transformQuery.pause();
+                // </3s>
+
+                //<free>
                 for (int j = 0; j < transList.size(); j++) {
                     Transform t = transList.get(j);
-                    Log.v(TAG, "handleResult, trans: " + new String(t.getData()));
                     JsonObject to = new JsonObject(t.getData());
                     json.deepmerge(to);
                 }
+                //</free>
             }
+//            Log.v(TAG, "transformQuery time: " + transformQuery.finish());
+//            Log.v(TAG, "process time: " + processTime.finish());
+            // /3.3 seconds
 
+            // <10s>
+//            Stopwatch createBundleTime = new Stopwatch(true);
             Bundle bundle = new Bundle();
+
+//            Stopwatch toByteArray = new Stopwatch(true);
             bundle.putByteArray(PARAM_DATA, ja.toByteArray());
+//            bundle.putByteArray(PARAM_DATA, bdata);
+//            Log.v(TAG, "toByteArray time: " + toByteArray.finish());
+
             bundle.putInt(PARAM_PAGE, page);
             bundle.putString(PARAM_LIST_SELECTOR, selector);
             bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
+//            Log.v(TAG, "createBundle time: " + createBundleTime.finish());
+
+//            Stopwatch dispatchTime = new Stopwatch(true);
             TopicService.dispatchEvent(context, PARAM_ACTION_LIST + "/" + selector, bundle, true);
             listener.onComplete(transaction);
+//            Log.v(TAG, "dispatch time: " + dispatchTime.finish());
+            // </10s>
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        Log.v(TAG, "handleResult " + watch.finish());
+        Log.v(TAG, "handleResult time: " + watch.finish());
     }
 
 }

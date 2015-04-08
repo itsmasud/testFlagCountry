@@ -5,8 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.fieldnation.Log;
-
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -25,7 +23,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private Listener _listener;
 
     public void setPage(int page, List<T> items) {
-        Log.v(TAG, "setPage()");
+//        Log.v(TAG, "setPage()");
 
         if (items != null && items.size() > 0) {
             _pages.put(page, items);
@@ -125,11 +123,11 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         int count = 0;
         List<T> page = null;
         int page_num = 0;
-        Log.v(TAG, "_pages:" + _pages.size());
+//        Log.v(TAG, "_pages:" + _pages.size());
         for (page_num = 0; page_num < _pages.size(); page_num++) {
             page = _pages.get(page_num);
             if (page == null) {
-                Log.v(TAG, "page is null");
+//                Log.v(TAG, "page is null");
                 continue;
             }
             count = count + page.size();

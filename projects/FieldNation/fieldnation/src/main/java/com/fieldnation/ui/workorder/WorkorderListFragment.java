@@ -761,7 +761,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
+//            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
             _adapter.refreshPages();
         }
     };
@@ -769,7 +769,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-            Log.v(TAG, "_adapter.getView()");
+//            Log.v(TAG, "_adapter.getView()");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -787,7 +787,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-            Log.v(TAG, "_adapter.requestPage(), " + _displayView.getCall() + " " + page);
+//            Log.v(TAG, "_adapter.requestPage(), " + _displayView.getCall() + " " + page);
             requestList(page);
         }
     };
@@ -795,7 +795,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
         @Override
         public void onLoadingComplete() {
-            Log.v(TAG, "_adapterListener.onLoadingComplete");
+//            Log.v(TAG, "_adapterListener.onLoadingComplete");
             setLoading(false);
         }
     };

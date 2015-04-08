@@ -10,14 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <include layout="@layout/view_toolbar" />
-
         <com.fieldnation.ui.OverScrollListView
+            android:layout_below="@+id/toolbar"
             android:id="@+id/items_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -27,7 +21,6 @@
             android:divider="@null"
             android:dividerHeight="0dp"
             android:smoothScrollbar="true" />
-        </LinearLayout>
 
         <com.fieldnation.ui.ReconnectWarningView
             android:id="@+id/reconnect_view"
@@ -40,8 +33,11 @@
             android:id="@+id/refresh_view"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
+            android:layout_below="@+id/toolbar"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-50dp" />
+
+        <include layout="@layout/view_toolbar" />
 
     </RelativeLayout>
 

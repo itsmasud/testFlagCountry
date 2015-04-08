@@ -370,9 +370,15 @@ public class JsonObject {
     public StringBuilder toStringBuilder() {
         StringBuilder sb = new StringBuilder();
 
+        addToStringBuilder(sb);
+
+        return sb;
+    }
+
+    public void addToStringBuilder(StringBuilder sb) {
         if (_isNullObject) {
             sb.append("null");
-            return sb;
+            return;
         }
 
         sb.append("{");
@@ -394,9 +400,9 @@ public class JsonObject {
             if (obj == null) {
                 sb.append("null");
             } else if (obj instanceof JsonObject) {
-                sb.append(((JsonObject) obj).toStringBuilder());
+                ((JsonObject) obj).addToStringBuilder(sb);
             } else if (obj instanceof JsonArray) {
-                sb.append(((JsonArray) obj).toStringBuilder());
+                ((JsonArray) obj).addToStringBuilder(sb);
             } else if (obj instanceof String) {
                 sb.append(JsonTokenizer.escapeString((String) obj));
             } else {
@@ -411,8 +417,6 @@ public class JsonObject {
         }
 
         sb.append("}");
-
-        return sb;
     }
 
     /**

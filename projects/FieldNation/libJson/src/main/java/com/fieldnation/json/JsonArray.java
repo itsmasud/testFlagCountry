@@ -308,6 +308,12 @@ public class JsonArray {
     public StringBuilder toStringBuilder() {
         StringBuilder sb = new StringBuilder();
 
+        addToStringBuilder(sb);
+
+        return sb;
+    }
+
+    public void addToStringBuilder(StringBuilder sb) {
         sb.append("[");
         for (int i = 0; i < _objects.size(); i++) {
             Object obj = _objects.get(i);
@@ -315,9 +321,9 @@ public class JsonArray {
             if (obj == null) {
                 sb.append("null");
             } else if (obj instanceof JsonObject) {
-                sb.append(((JsonObject) obj).toStringBuilder());
+                ((JsonObject) obj).addToStringBuilder(sb);
             } else if (obj instanceof JsonArray) {
-                sb.append(((JsonArray) obj).toStringBuilder());
+                ((JsonArray) obj).addToStringBuilder(sb);
             } else if (obj instanceof String) {
                 sb.append(JsonTokenizer.escapeString((String) obj));
             } else {
@@ -329,8 +335,6 @@ public class JsonArray {
             }
         }
         sb.append("]");
-
-        return sb;
     }
 
     public boolean has(int index) {
@@ -377,7 +381,7 @@ public class JsonArray {
     }
 
     public byte[] toByteArray() {
-        return toString().getBytes();
+        return toStringBuilder().toString().getBytes();
     }
 
     @Override
