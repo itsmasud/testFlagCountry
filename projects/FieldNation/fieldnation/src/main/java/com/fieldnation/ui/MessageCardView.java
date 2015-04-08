@@ -7,8 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +22,9 @@ import com.fieldnation.rpc.common.PhotoServiceConstants;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
+import java.util.Hashtable;
 
 public class MessageCardView extends RelativeLayout {
     private static final String TAG = "ui.MessageView";
@@ -41,7 +41,8 @@ public class MessageCardView extends RelativeLayout {
     private PhotoService _photoService;
     private Message _message;
     private String[] _substatus;
-    private Drawable _profilePic = null;
+    private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
+    private WeakReference<Drawable> _profilePic = null;
 
     /*-*****************************-*/
     /*-			LifeCycle			-*/
@@ -85,7 +86,7 @@ public class MessageCardView extends RelativeLayout {
 
     public void setMessage(Message message) {
         _message = message;
-
+        _profilePic = null;
         populateUi();
     }
 
@@ -135,18 +136,8 @@ public class MessageCardView extends RelativeLayout {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        if (_profilePic == null) {
-            try {
-                _profileImageView.setBackgroundResource(R.drawable.missing_circle);
-                String url = _message.getFromUser().getPhotoUrl();
-                if (url != null)
-                    getContext().startService(_photoService.getPhoto(_viewId, url, true));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            _profileImageView.setBackgroundDrawable(_profilePic);
-        }
+
+        addPhoto();
 
         try {
             switch (_message.getStatus().getStatusIntent()) {
@@ -171,6 +162,30 @@ public class MessageCardView extends RelativeLayout {
         }
     }
 
+    private void addPhoto() {
+        if (_message == null || _photoService == null) {
+            _profileImageView.setBackgroundResource(R.drawable.missing_circle);
+            return;
+        }
+
+        if (_profilePic == null || _profilePic.get() == null) {
+            String url = _message.getFromUser().getPhotoUrl();
+            if (misc.isEmptyOrNull(url)) {
+                _profileImageView.setBackgroundResource(R.drawable.missing_circle);
+            } else {
+                if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
+                    _profilePic = _picCache.get(url);
+                    _profileImageView.setBackgroundDrawable(_profilePic.get());
+                } else {
+                    _profileImageView.setBackgroundResource(R.drawable.missing_circle);
+                    getContext().startService(_photoService.getPhoto(_viewId, url, true));
+                }
+            }
+        } else {
+            _profileImageView.setBackgroundDrawable(_profilePic.get());
+        }
+    }
+
     public Message getMessage() {
         return _message;
     }
@@ -180,8 +195,11 @@ public class MessageCardView extends RelativeLayout {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == _viewId) {
                 Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
-                _profilePic = new BitmapDrawable(getContext().getResources(), photo);
-                _profileImageView.setBackgroundDrawable(_profilePic);
+                Drawable d = new BitmapDrawable(getContext().getResources(), photo);
+                _profilePic = new WeakReference<>(d);
+                _profileImageView.setBackgroundDrawable(_profilePic.get());
+                _picCache.put(_message.getFromUser().getPhotoUrl(), _profilePic);
+                addPhoto();
             }
             super.onReceiveResult(resultCode, resultData);
         }

@@ -550,6 +550,15 @@ public class WorkorderListFragment extends Fragment {
         }
 
         @Override
+        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder) {
+            getActivity().startService(
+                    _service.withdrawRequest(WEB_CHANGING_WORKORDER, workorder.getWorkorderId()));
+            _requestWorking.add(workorder.getWorkorderId());
+            _adapter.notifyDataSetChanged();
+
+        }
+
+        @Override
         public void actionCheckout(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
             Pay pay = workorder.getPay();

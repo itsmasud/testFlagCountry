@@ -58,6 +58,7 @@
     <string name="btn_accept">Accept</string>
     <string name="btn_later">Remind me later</string>
     <string name="btn_no_later">Never show again</string>
+    <string name="btn_withdraw_request">Withdraw Request</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
