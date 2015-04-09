@@ -61,6 +61,24 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     // details
+    public static void detailsWebRequest(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(WebTransaction.Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .key("Workorder/" + workorderId)
+                    .useAuth()
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/details"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void requestDetails(Context context, long id) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DETAILS);
@@ -560,8 +578,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-//                    .handler(WorkorderTransactionHandler.class)
-//                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(DeliverableDeleteTransactionHandler.class)
+                    .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()

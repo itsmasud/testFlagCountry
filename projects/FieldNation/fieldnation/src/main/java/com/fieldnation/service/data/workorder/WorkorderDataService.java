@@ -95,24 +95,12 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         }
     }
 
+
     private static void details(Context context, Intent intent) {
         Log.v(TAG, "details");
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .key("Workorder/" + workorderId)
-                    .useAuth()
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/details"))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+
+        WorkorderDataClient.detailsWebRequest(context, workorderId);
 
         StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
         if (obj != null) {
@@ -205,6 +193,8 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
+                    .handler(DeliverableDeleteTransactionHandler.class)
+                    .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
                     .useAuth()
                     .request(builder)
                     .transform(Transform.makeTransformQuery(
