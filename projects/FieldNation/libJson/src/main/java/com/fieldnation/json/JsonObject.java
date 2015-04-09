@@ -184,7 +184,7 @@ public class JsonObject {
     }
 
     public String getString(String path) throws ParseException {
-        return get(path) + "";
+        return get(path).toString();
     }
 
     public int getInt(String path) throws ParseException {
