@@ -52,9 +52,6 @@ public class GlobalTopicClient extends TopicClient {
     public static void dispatchGotProfile(Context context, Profile profile) {
         if (context == null)
             return;
-
-        misc.printStackTrace("GlobalTopicClient.dispatchGotProfile");
-
         TopicService.dispatchEvent(context, TOPIC_GOT_PROFILE, profile, true);
     }
 

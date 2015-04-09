@@ -15,6 +15,7 @@ import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.utils.misc;
 
 import java.net.UnknownHostException;
 
@@ -121,8 +122,10 @@ public class WebTransactionService extends Service implements WebTransactionCons
             return;
 
         synchronized (TAG) {
-            if (THREAD_COUNT >= MAX_THREAD_COUNT)
+            if (THREAD_COUNT >= MAX_THREAD_COUNT) {
+                Log.v(TAG, "startTransaction leaving: " + THREAD_COUNT);
                 return;
+            }
         }
 
         WebTransaction next = WebTransaction.getNext(this);
@@ -134,7 +137,6 @@ public class WebTransactionService extends Service implements WebTransactionCons
             Log.v(TAG, next.getKey());
 
         new AsyncTaskEx<Object, Object, Object>() {
-
             @Override
             protected Object doInBackground(Object... params) {
                 synchronized (TAG) {
@@ -154,6 +156,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         request.put(HttpJsonBuilder.PARAM_WEB_PROTOCOL, "https");
                         auth.applyToRequest(request);
                     }
+                    Log.v(TAG, request.display());
                     HttpResult result = HttpJson.run(context, request);
 
                     try {
@@ -164,7 +167,14 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         ex.printStackTrace();
                     }
 
-                    if (result.getResponseCode() == 400) {
+                    if (result.getResultsAsString().equals("You must provide a valid OAuth token to make a request")) {
+                        Log.v(TAG, "Reauth");
+                        _isAuthenticated = false;
+                        AuthTopicClient.dispatchInvalidateCommand(context);
+                        _transactionListener.requeue(trans);
+                        AuthTopicClient.dispatchRequestCommand(context);
+                        return null;
+                    } else if (result.getResponseCode() == 400) {
                         // Bad request
                         // need to report this
 
@@ -184,12 +194,14 @@ public class WebTransactionService extends Service implements WebTransactionCons
                     }
 
                     String handler = trans.getHandlerName();
-                    WebTransactionHandler.completeTransaction(
-                            context,
-                            _transactionListener,
-                            handler,
-                            trans,
-                            result);
+                    if (!misc.isEmptyOrNull(handler)) {
+                        WebTransactionHandler.completeTransaction(
+                                context,
+                                _transactionListener,
+                                handler,
+                                trans,
+                                result);
+                    }
                     return null;
                 } catch (UnknownHostException ex) {
                     // probably offline
@@ -205,6 +217,12 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 }
             }
 
+            @Override
+            protected void onPostExecute(Object o) {
+                synchronized (TAG) {
+                    THREAD_COUNT--;
+                }
+            }
         }.executeEx(WebTransactionService.this, next, _auth);
     }
 
@@ -231,7 +249,6 @@ public class WebTransactionService extends Service implements WebTransactionCons
         public void requeue(WebTransaction trans) {
             trans.setState(WebTransaction.State.IDLE);
             trans.save(WebTransactionService.this);
-
             startTransaction();
 //            finishTransaction(trans);
         }

@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class WorkorderDataClient extends TopicClient implements WorkorderDataConstants {
     public static final String STAG = "WorkorderDataClient";
-    public final String TAG = UniqueTag.makeTag("WorkorderDataClient");
+    public final String TAG = UniqueTag.makeTag(STAG);
 
     public WorkorderDataClient(Listener listener) {
         super(listener);
@@ -108,7 +108,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     + "&printName=" + misc.escapeForURL(name)
                                     + "&signature=" + signatureJson))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeAddSignatureTransfer(name).getBytes()))
@@ -134,7 +134,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .body("print_name=" + misc.escapeForURL(printName)
                                     + "&signature_json=" + signatureJson))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeCompletingTaskTransfer("signature", taskId, printName).getBytes()))
@@ -160,7 +160,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .method("POST")
                             .path("/api/rest/v1/workorder/" + workorderId + "/complete"))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeMarkCompleteTransfer().getBytes()))
@@ -186,7 +186,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .path("/1111/api/rest/v1/workorder/" + workorderId + "/checkin")
                             .body("checkin_time=" + ISO8601.now()))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeCheckinTransfer().getBytes()))
@@ -213,7 +213,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     + "&gps_lat=" + location.getLatitude()
                                     + "&gps_lon=" + location.getLongitude()))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeCheckinTransfer().getBytes()))
@@ -239,7 +239,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
                             .body("checkout_time=" + ISO8601.now()))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeCheckoutTransfer().getBytes()))
@@ -265,7 +265,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     + "&gps_lat=" + location.getLatitude()
                                     + "&gps_lon=" + location.getLongitude()))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeCheckoutTransfer().getBytes()))
@@ -290,7 +290,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .path("/api/rest/v1/workorder/" + workorderId + "/closing-notes")
                             .body("notes=" + (closingNotes == null ? "" : misc.escapeForURL(closingNotes))))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeClosingNotesTransfer(closingNotes).getBytes()))
@@ -315,7 +315,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .body("device_count=" + deviceCount
                                     + "&checkout_time=" + ISO8601.now()))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeCheckoutTransfer().getBytes()))
@@ -342,7 +342,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     + "&gps_lat=" + location.getLatitude()
                                     + "&gps_lon=" + location.getLongitude()))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeCheckoutTransfer().getBytes()))
@@ -365,7 +365,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .method("GET")
                             .path("/api/rest/v1/workorder/" + workorderId + "/acknowledge-hold"))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeAckHoldTransfer().getBytes()))
@@ -447,7 +447,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .path("/api/rest/v1/workorder/" + workorderId + "/counter_offer")
                             .body(payload))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeCounterOfferTransfer().getBytes()))
@@ -477,7 +477,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .useAuth()
                     .request(builder)
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeRequestTransfer().getBytes()))
@@ -504,7 +504,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                             .path("/api/rest/v1/workorder/" + workorderId + "/assignment")
                             .body("start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601))
                     .transform(Transform.makeTransformQuery(
-                            "Workorder",
+                            PSO_WORKORDER,
                             workorderId,
                             "merges",
                             WorkorderTransfer.makeConfirmAssignment().getBytes()))
@@ -560,8 +560,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+//                    .handler(WorkorderTransactionHandler.class)
+//                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(
                             new HttpJsonBuilder()
@@ -570,7 +570,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + workorderUploadId))
                     .transform(
                             Transform.makeTransformQuery(
-                                    "Workorder",
+                                    PSO_WORKORDER,
                                     workorderId,
                                     "merges",
                                     WorkorderTransfer.makeDeleteDeliverable(workorderUploadId, filename).getBytes()))

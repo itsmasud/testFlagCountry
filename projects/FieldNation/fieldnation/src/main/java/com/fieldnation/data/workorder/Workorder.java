@@ -899,7 +899,6 @@ public class Workorder implements Parcelable {
                 Log.v(TAG, "Unknown Status (" + _workorderId + "): "
                         + status.toJson().toString());
                 break;
-
         }
     }
 

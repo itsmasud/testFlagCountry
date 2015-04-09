@@ -47,6 +47,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
             page = obj.getInt("page");
             selector = obj.getString("selector");
             byte[] bdata = resultData.getResultsAsByteArray();
+            Log.v(TAG, "page: " + page + " selector:" + selector);
             // </free>
 
             // <350ms>

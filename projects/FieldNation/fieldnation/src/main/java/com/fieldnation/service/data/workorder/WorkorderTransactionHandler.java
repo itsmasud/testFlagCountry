@@ -64,22 +64,28 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
 
     // individual commands
-    private void handleDetails(Context context, Listener listener, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+    private void handleDetails(Context context, Listener listener, WebTransaction transaction,
+                               JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleDetails " + transaction.getId());
         long workorderId = params.getLong("workorderId");
         byte[] workorderData = resultData.getResultsAsByteArray();
 
+        Log.v(TAG, "handleDetails workorderId:" + workorderId);
+
         // store it in the store
-        StoredObject.put(context, PSO_WORKORDER, workorderId + "", workorderData);
+        StoredObject.put(context, PSO_WORKORDER, workorderId, workorderData);
 
         JsonObject workorder = new JsonObject(workorderData);
 
-        List<Transform> transList = Transform.getObjectTransforms(context, "Workorder", workorderId);
+        List<Transform> transList = Transform.getObjectTransforms(context, PSO_WORKORDER, workorderId);
         for (int i = 0; i < transList.size(); i++) {
             Transform t = transList.get(i);
-            Log.v(TAG, "handleDetails, trans: " + new String(t.getData()));
-            JsonObject tObj = new JsonObject(t.getData());
-            workorder.deepmerge(tObj);
+            try {
+                JsonObject tObj = new JsonObject(t.getData());
+                workorder.deepmerge(tObj);
+            } catch (Exception ex) {
+                Log.v(TAG, "Transform " + new String(t.getData()));
+            }
         }
 
         // dispatch the event

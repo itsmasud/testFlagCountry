@@ -55,8 +55,9 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         int count = 0;
         for (int i = 0; i < _pages.size(); i++) {
             List<T> page = _pages.get(i);
-            if (page != null)
-                count += page.size();
+            if (page == null)
+                break;
+            count += page.size();
         }
         _size = count;
     }

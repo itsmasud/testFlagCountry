@@ -55,7 +55,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     .priority(WebTransaction.Priority.HIGH)
                     .handler(WorkorderListTransactionHandler.class)
                     .handlerParams(WorkorderListTransactionHandler.generateParams(page, selector))
-                    .key("WorkorderList" + selector + page)
+                    .key("WorkorderList/" + selector + "/" + page)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -67,7 +67,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             ex.printStackTrace();
         }
 
-        StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page + "");
+        StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page);
         if (obj != null) {
             try {
                 JsonArray ja = new JsonArray(obj.getData());

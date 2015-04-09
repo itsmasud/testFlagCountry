@@ -341,6 +341,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private Workorder.Listener _workorder_listener = new Workorder.Listener() {
         @Override
         public void onChange(Workorder workorder) {
+            Log.v(TAG, "_workorder_listener");
             getData();
         }
     };

@@ -1,5 +1,7 @@
 package com.fieldnation.json;
 
+import android.os.Bundle;
+
 import java.text.ParseException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -188,7 +190,7 @@ public class JsonObject {
     }
 
     public String getString(String path) throws ParseException {
-        return (String) get(path);
+        return get(path) + "";
     }
 
     public int getInt(String path) throws ParseException {
