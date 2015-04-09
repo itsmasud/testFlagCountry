@@ -276,7 +276,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
         if (success) {
             StoredObject result = get(context, obj._id);
-            TopicService.dispatchEvent(context, TOPIC_ID_OBJECT_STORE_WRITE, obj.toBundle(), true);
             return result;
         } else {
             return null;
@@ -288,6 +287,13 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static StoredObject put(Context context, String objectTypeName, String objectKey, File file) {
+        StoredObject result = get(context, objectTypeName, objectKey);
+        if (result != null) {
+            result.setFile(file);
+            result.save(context);
+            return result;
+        }
+
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
         v.put(Column.OBJ_KEY.getName(), objectKey);
@@ -328,10 +334,9 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 delete(context, id);
                 dest.delete();
             } else {
-                StoredObject result = get(context, id);
+                result = get(context, id);
                 result.setFile(dest);
                 result.save(context);
-                TopicService.dispatchEvent(context, TOPIC_ID_OBJECT_STORE_WRITE, result.toBundle(), true);
                 return result;
             }
         }
@@ -344,6 +349,14 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] data) {
+        StoredObject result = get(context, objectTypeName, objectKey);
+
+        if (result != null) {
+            result.setData(data);
+            result.save(context);
+            return result;
+        }
+
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), objectTypeName);
         v.put(Column.OBJ_KEY.getName(), objectKey);
@@ -366,8 +379,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
         }
         if (id != -1) {
-            StoredObject result = get(context, id);
-            TopicService.dispatchEvent(context, TOPIC_ID_OBJECT_STORE_WRITE, result.toBundle(), true);
+            result = get(context, id);
             return result;
         }
 

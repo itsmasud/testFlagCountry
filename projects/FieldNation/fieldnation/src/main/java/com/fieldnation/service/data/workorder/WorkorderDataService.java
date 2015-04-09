@@ -114,7 +114,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             ex.printStackTrace();
         }
 
-        StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId + "");
+        StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
         if (obj != null) {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);

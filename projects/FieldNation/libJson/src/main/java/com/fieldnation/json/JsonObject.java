@@ -1,7 +1,5 @@
 package com.fieldnation.json;
 
-import android.os.Bundle;
-
 import java.text.ParseException;
 import java.util.Enumeration;
 import java.util.Hashtable;
