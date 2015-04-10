@@ -69,8 +69,6 @@ public class UploadSlotView extends RelativeLayout {
         _uploadList = (LinearLayout) findViewById(R.id.upload_list);
         _uploadTextView = (TextView) findViewById(R.id.upload_textview);
         _uploadTextView.setOnClickListener(_upload_onClick);
-// todo remove
-//        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
 
         populateUi();
     }
@@ -96,11 +94,9 @@ public class UploadSlotView extends RelativeLayout {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    ;
                 }
             }
         }
-
 
         populateUi();
     }
