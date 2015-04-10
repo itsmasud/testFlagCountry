@@ -16,6 +16,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +34,6 @@ public class UploadSlotView extends RelativeLayout {
     private Workorder _workorder;
     private UploadSlot _slot;
     private Listener _listener;
-    private String _uploadUrl;
     private List<String> _uploadingFiles;
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
@@ -69,7 +69,6 @@ public class UploadSlotView extends RelativeLayout {
         _uploadList = (LinearLayout) findViewById(R.id.upload_list);
         _uploadTextView = (TextView) findViewById(R.id.upload_textview);
         _uploadTextView.setOnClickListener(_upload_onClick);
-
 // todo remove
 //        Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
 
@@ -86,7 +85,22 @@ public class UploadSlotView extends RelativeLayout {
         _docListener = listener;
         _profileId = profileId;
 
-        _uploadUrl = _workorder.getWorkorderId() + "/deliverables/" + _slot.getSlotId();
+        _uploadingFiles.clear();
+        if (_workorder.getTransfer() != null && _workorder.getTransfer().isUploadingDeliverable()) {
+            String[] uploads = _workorder.getTransfer().getUploadingDeliverables();
+            for (int i = 0; i < uploads.length; i++) {
+                try {
+                    JsonObject upload = new JsonObject(uploads[i]);
+                    if (upload.getInt("slotId") == _slot.getSlotId()) {
+                        _uploadingFiles.add(upload.getString("filename"));
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    ;
+                }
+            }
+        }
+
 
         populateUi();
     }
@@ -181,38 +195,6 @@ public class UploadSlotView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-// todo remove
-/*
-    private FileUploadTopicReceiver _uploadReceiver = new FileUploadTopicReceiver(new Handler()) {
-        @Override
-        public void onStart(String url, String filename) {
-            if (url.contains(_uploadUrl)) {
-                Log.v(TAG, "onStart");
-                _uploadingFiles.add(filename);
-                populateUi();
-            }
-        }
-
-        @Override
-        public void onFinish(String url, String filename) {
-            if (url.contains(_uploadUrl)) {
-                Log.v(TAG, "onFinish");
-                _uploadingFiles.remove(filename);
-                //populateUi();
-            }
-        }
-
-        @Override
-        public void onError(String url, String filename, String message) {
-            if (url.contains(_uploadUrl)) {
-                Log.v(TAG, "onError");
-                _uploadingFiles.remove(filename);
-                //populateUi();
-            }
-        }
-    };
-*/
-
     private final View.OnClickListener _upload_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

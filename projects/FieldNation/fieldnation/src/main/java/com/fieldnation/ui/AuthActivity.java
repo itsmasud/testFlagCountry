@@ -215,6 +215,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     if (auth == null) {
                         Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect,
                                 Toast.LENGTH_LONG).show();
+                        GlobalTopicClient.dispatchNetworkDisconnected(AuthActivity.this);
+                        return;
                     }
                     String authToken = auth.getAccessToken();
                     String error = auth.getErrorType();

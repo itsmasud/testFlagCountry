@@ -77,16 +77,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         JsonObject workorder = new JsonObject(workorderData);
 
-        List<Transform> transList = Transform.getObjectTransforms(context, PSO_WORKORDER, workorderId);
-        for (int i = 0; i < transList.size(); i++) {
-            Transform t = transList.get(i);
-            try {
-                JsonObject tObj = new JsonObject(t.getData());
-                workorder.deepmerge(tObj);
-            } catch (Exception ex) {
-                Log.v(TAG, "Transform " + new String(t.getData()));
-            }
-        }
+        Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
         // dispatch the event
         Bundle bundle = new Bundle();

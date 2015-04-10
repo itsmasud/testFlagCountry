@@ -86,13 +86,17 @@ public class HttpJson {
             }
         }
 
-        conn.setDoInput(true);
+        if (request.has(HttpJsonBuilder.PARAM_DO_NOT_READ)) {
+            conn.setDoInput(false);
+        } else {
+            conn.setDoInput(true);
+        }
 
         if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART)) {
-            conn.setDoInput(false);
             Log.v(TAG, "PARAM_WEB_MULTIPART");
             MultipartUtility util = new MultipartUtility(conn, "UTF-8");
             if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS)) {
+                Log.v(TAG, "PARAM_WEB_MULTIPART_FIELDS");
                 JsonObject fields = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS);
                 Enumeration<String> e = fields.keys();
                 while (e.hasMoreElements()) {
@@ -100,7 +104,6 @@ public class HttpJson {
                     util.addFormField(key, fields.getString(key));
                 }
             }
-
             if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES)) {
                 Log.v(TAG, "PARAM_WEB_MULTIPART_FILES");
                 JsonObject files = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES);
@@ -113,12 +116,14 @@ public class HttpJson {
                     String contentType = fo.getString("contentType");
                     StoredObject so = StoredObject.get(context, soId);
 
+                    Log.v(TAG, so.getFile().toString() + ":" + so.getFile().length());
                     if (so.isFile()) {
                         util.addFilePart(key, filename, new FileInputStream(so.getFile()), (int) so.getFile().length());
                     } else {
                         util.addFilePart(key, filename, so.getData(), contentType);
                     }
                 }
+                util.finish();
             }
 
         } else if (request.has(HttpJsonBuilder.PARAM_WEB_BODY_SOID)) {

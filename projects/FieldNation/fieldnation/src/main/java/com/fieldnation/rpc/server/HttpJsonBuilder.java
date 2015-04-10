@@ -25,6 +25,8 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_MULTIPART_FIELDS = "multipart.fields";
     public static final String PARAM_WEB_BODY_SOID = "PARAM_BODY_SOID";
     public static final String PARAM_WEB_BODY = "PARAM_BODY";
+    public static final String PARAM_DO_NOT_READ = "PARAM_DO_NOT_READ";
+
 
     private JsonObject request;
     private JsonObject headers;
@@ -72,6 +74,12 @@ public class HttpJsonBuilder {
         getRequest();
         if (!misc.isEmptyOrNull(urlParams))
             request.put(PARAM_WEB_URL_PARAMS, urlParams);
+        return this;
+    }
+
+    public HttpJsonBuilder doNotRead() throws ParseException {
+        getRequest();
+        request.put(PARAM_DO_NOT_READ, true);
         return this;
     }
 

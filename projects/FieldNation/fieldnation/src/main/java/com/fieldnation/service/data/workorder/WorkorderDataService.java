@@ -104,11 +104,19 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
         StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            bundle.putLong(PARAM_ID, workorderId);
-            TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + "/" + workorderId, bundle, true);
+            try {
+                JsonObject workorder = new JsonObject(obj.getData());
+
+                Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
+
+                Bundle bundle = new Bundle();
+                bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
+                bundle.putByteArray(PARAM_DATA, workorder.toByteArray());
+                bundle.putLong(PARAM_ID, workorderId);
+                TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + "/" + workorderId, bundle, true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -185,7 +193,8 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
-                    .multipartFile("file", filename, upFile);
+                    .multipartFile("file", filename, upFile)
+                    .doNotRead();
 
             if (uploadSlotId != 0) {
                 builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);

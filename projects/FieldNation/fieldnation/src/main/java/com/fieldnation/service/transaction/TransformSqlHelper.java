@@ -20,10 +20,10 @@ class TransformSqlHelper extends SQLiteOpenHelper {
         ID(0, "_id", "integer primary key autoincrement"),
         TRANSACTION_ID(1, "transaction_id", "integer not null", true),
         OBJECT_NAME_KEY(2, "object_name_key", "text not null", true),
-        OBJECT_NAME(2, "object_name", "text not null"),
-        OBJECT_KEY(3, "object_key", "text not null"),
-        ACTION(4, "action", "text not null"),
-        DATA(5, "data", "blob not null");
+        OBJECT_NAME(3, "object_name", "text not null"),
+        OBJECT_KEY(4, "object_key", "text not null"),
+        ACTION(5, "action", "text not null"),
+        DATA(6, "data", "blob not null");
 
         private int _index;
         private String _name;

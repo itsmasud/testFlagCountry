@@ -15,5 +15,4 @@ public interface WebTransactionConstants {
     public static final String PARAM_REQUEST = "PARAM_REQUEST";
     public static final String PARAM_KEY = "PARAM_KEY";
     public static final String PARAM_TRANSFORM_LIST = "PARAM_TRANSFORM_LIST";
-
 }

@@ -3,7 +3,6 @@ package com.fieldnation.data.transfer;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -31,13 +30,13 @@ public class WorkorderTransfer implements Parcelable {
 
     // objects
     @Json(name = "addSignatureJson")
-    private JsonArray _addSignatureJson;
+    private String[] _addSignatureJson;
     @Json(name = "completeTask")
-    private JsonArray _completeTask;
+    private String[] _completeTask;
     @Json(name = "deleteDeliverable")
-    private JsonArray _deleteDeliverable;
+    private String[] _deleteDeliverable;
     @Json(name = "uploadDeliverable")
-    private JsonArray _uploadDeliverable;
+    private String[] _uploadDeliverable;
     @Json(name = "closingNotes")
     private String _closingNotes;
 
@@ -119,10 +118,10 @@ public class WorkorderTransfer implements Parcelable {
 
     // objects
     public boolean isAddingSignature() {
-        return _addSignatureJson != null && _addSignatureJson.size() > 0;
+        return _addSignatureJson != null && _addSignatureJson.length > 0;
     }
 
-    public JsonArray getAddSignatureJson() {
+    public String[] getAddSignatureJson() {
         return _addSignatureJson;
     }
 
@@ -136,10 +135,10 @@ public class WorkorderTransfer implements Parcelable {
     }
 
     public boolean isCompletingTask() {
-        return _completeTask != null && _completeTask.size() > 0;
+        return _completeTask != null && _completeTask.length > 0;
     }
 
-    public JsonArray getCompletingTask() {
+    public String[] getCompletingTask() {
         return _completeTask;
     }
 
@@ -157,10 +156,10 @@ public class WorkorderTransfer implements Parcelable {
     }
 
     public boolean isDeletingDeliverable() {
-        return _deleteDeliverable != null && _deleteDeliverable.size() > 0;
+        return _deleteDeliverable != null && _deleteDeliverable.length > 0;
     }
 
-    public JsonArray getDeleteDeliverable() {
+    public String[] getDeleteDeliverable() {
         return _deleteDeliverable;
     }
 
@@ -177,10 +176,10 @@ public class WorkorderTransfer implements Parcelable {
     }
 
     public boolean isUploadingDeliverable() {
-        return _uploadDeliverable != null && _uploadDeliverable.size() > 0;
+        return _uploadDeliverable != null && _uploadDeliverable.length > 0;
     }
 
-    public JsonArray getUploadingDeliverables() {
+    public String[] getUploadingDeliverables() {
         return _uploadDeliverable;
     }
 

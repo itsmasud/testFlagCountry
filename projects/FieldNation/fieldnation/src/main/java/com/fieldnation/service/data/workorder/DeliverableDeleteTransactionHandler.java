@@ -20,5 +20,7 @@ public class DeliverableDeleteTransactionHandler extends WebTransactionHandler i
         long workorderId = Long.parseLong(new String(transaction.getHandlerParams()));
 
         WorkorderDataClient.detailsWebRequest(context, workorderId);
+
+        listener.onComplete(transaction);
     }
 }

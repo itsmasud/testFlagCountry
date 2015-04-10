@@ -9,6 +9,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.transaction.TransformSqlHelper.Column;
 
 import java.util.LinkedList;
@@ -37,6 +38,11 @@ public class Transform implements Parcelable, TransformConstants {
         _objectKey = cursor.getString(Column.OBJECT_KEY.getIndex());
         _action = cursor.getString(Column.ACTION.getIndex());
         _data = cursor.getBlob(Column.DATA.getIndex());
+
+        Log.v(TAG, "get Transform(" + _id + "," + _transactionId + "," + _objectNameKey + ")");
+        Log.v(TAG, "action: " + _action);
+        Log.v(TAG, "data: " + new String(_data));
+        Log.v(TAG, "------------");
     }
 
     public Transform(Bundle bundle) {
@@ -138,6 +144,23 @@ public class Transform implements Parcelable, TransformConstants {
         return obj;
     }
 
+    public static void applyTransform(Context context, JsonObject dest, String objectName, long objectKey) {
+        applyTransform(context, dest, objectName, objectKey + "");
+    }
+
+    public static void applyTransform(Context context, JsonObject dest, String objectName, String objectKey) {
+        List<Transform> transList = getObjectTransforms(context, objectName, objectKey);
+        for (int i = 0; i < transList.size(); i++) {
+            Transform t = transList.get(i);
+            try {
+                JsonObject tObj = new JsonObject(t.getData());
+                dest.deepmerge(tObj);
+            } catch (Exception ex) {
+                Log.v(TAG, "Transform " + new String(t.getData()));
+            }
+        }
+    }
+
     public static List<Transform> getObjectTransforms(Context context, String objectName, long objectKey) {
         return getObjectTransforms(context, objectName, objectKey + "");
     }
@@ -218,7 +241,7 @@ public class Transform implements Parcelable, TransformConstants {
     }
 
     public static boolean deleteTransaction(Context context, long transactionId) {
-//        Log.v(TAG, "deleteTransaction(" + transactionId + ")");
+        Log.v(TAG, "deleteTransaction(" + transactionId + ")");
         boolean success = false;
         synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);

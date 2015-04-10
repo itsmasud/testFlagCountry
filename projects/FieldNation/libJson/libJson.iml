@@ -9,7 +9,6 @@
     <facet type="java-gradle" name="Java-Gradle">
       <configuration>
         <option name="BUILD_FOLDER_PATH" value="$MODULE_DIR$/build" />
-        <option name="BUILDABLE" value="true" />
       </configuration>
     </facet>
   </component>
@@ -27,6 +26,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="android-v7" level="project" />
+    <orderEntry type="library" exported="" name="C__Users_Michael_Carver_Code_android_dev_projects_FieldNation_libJson_libs_android_v7_jar" level="project" />
   </component>
 </module>
+

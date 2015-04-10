@@ -1,5 +1,6 @@
 package com.fieldnation.rpc.server;
 
+import com.fieldnation.Log;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -18,6 +19,7 @@ import java.net.URLConnection;
  * @author www.codejava.net
  */
 public class MultipartUtility {
+    private static final String TAG = "MultipartUtility";
 
     private final String boundary;
     private static final String LINE_FEED = "\r\n";
@@ -30,7 +32,7 @@ public class MultipartUtility {
      * This constructor initializes a new HTTP POST request with content type is
      * set to multipart/form-data
      *
-     * @param requestURL
+     * @param httpConnection
      * @param charset
      * @throws IOException
      */
@@ -65,9 +67,12 @@ public class MultipartUtility {
     }
 
     public void addFilePart(String fieldName, String filename, InputStream inputStream, int length) throws IOException {
-        System.out.println("addFilePart(" + fieldName + "," + filename + ")");
+        Log.v(TAG, "addFilePart(" + fieldName + "," + filename + "," + length + ","
+                + URLConnection.guessContentTypeFromName(filename) + ")");
+
         writer.append("--").append(boundary).append(LINE_FEED);
-        writer.append("Content-Disposition: form-data; name=\"").append(fieldName).append("\"; filename=\"").append(filename).append("\"").append(LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"").append(fieldName)
+                .append("\"; filename=\"").append(filename).append("\"").append(LINE_FEED);
         writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(filename)).append(LINE_FEED);
         writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
 
@@ -77,12 +82,9 @@ public class MultipartUtility {
         writer.append(LINE_FEED);
         writer.flush();
 
-        System.out.println("Start upload...." + ISO8601.now());
-
+        Log.v(TAG, "Start upload...." + ISO8601.now());
         misc.copyStream(inputStream, outputStream, 1024, length, 1000);
-
-        System.out.println("Finish upload...." + ISO8601.now());
-
+        Log.v(TAG, "Finish upload...." + ISO8601.now());
         outputStream.flush();
 
         writer.append(LINE_FEED);
@@ -91,8 +93,8 @@ public class MultipartUtility {
 
     public void addFilePart(String fieldName, String filename, byte[] filedata, String contentType) throws IOException {
         writer.append("--" + boundary).append(LINE_FEED);
-        writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + filename + "\"").append(
-                LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"").append(fieldName)
+                .append("\"; filename=\"").append(filename).append("\"").append(LINE_FEED);
         writer.append("Content-Type: ").append(contentType).append(LINE_FEED);
         writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
         writer.append("Content-Length: " + filedata.length).append(LINE_FEED);
@@ -100,7 +102,6 @@ public class MultipartUtility {
         writer.flush();
 
         outputStream.write(filedata);
-
         outputStream.flush();
 
         writer.append(LINE_FEED);
