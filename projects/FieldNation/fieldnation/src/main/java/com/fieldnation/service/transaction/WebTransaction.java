@@ -145,6 +145,33 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*****************************************-*/
     /*-             Database interface          -*/
     /*-*****************************************-*/
+    public static boolean keyExists(Context context, String key) {
+        Log.v(TAG, "keyExists(" + key + ")");
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
+            try {
+                SQLiteDatabase db = helper.getReadableDatabase();
+                try {
+                    Cursor cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.KEY + "=?",
+                            new String[]{key},
+                            null, null, null, "1");
+                    try {
+                        return cursor.getCount() > 0;
+                    } finally {
+                        cursor.close();
+                    }
+                } finally {
+                    db.close();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+    }
+
     public static WebTransaction get(Context context, long id) {
         Log.v(TAG, "get(" + id + ")");
         WebTransaction obj = null;

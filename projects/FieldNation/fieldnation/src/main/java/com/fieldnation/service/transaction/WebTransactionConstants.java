@@ -4,8 +4,6 @@ package com.fieldnation.service.transaction;
  * Created by Michael Carver on 2/27/2015.
  */
 public interface WebTransactionConstants {
-    public static final int WHAT_ADD = 1;
-
     public static final String PARAM_ID = "PARAM_ID";
     public static final String PARAM_HANDLER_NAME = "PARAM_HANDLER_NAME";
     public static final String PARAM_HANDLER_PARAMS = "PARAM_HANDLER_PARAMS";

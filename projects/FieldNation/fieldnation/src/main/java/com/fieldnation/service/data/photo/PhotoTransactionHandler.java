@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -21,6 +22,8 @@ import java.io.FileOutputStream;
  * Created by Michael Carver on 3/12/2015.
  */
 public class PhotoTransactionHandler extends WebTransactionHandler implements PhotoConstants {
+    private static final String TAG = "PhotoTransactionHandler";
+
     public static byte[] generateParams(String url, boolean getCircle) {
         try {
             JsonObject json = new JsonObject();
@@ -36,12 +39,15 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
     @Override
     public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+        Log.v(TAG, "handleResult");
         try {
             JsonObject json = new JsonObject(transaction.getHandlerParams());
             boolean getCircle = json.getBoolean(PARAM_CIRCLE);
             String url = json.getString(PARAM_URL);
             String imageObjectName = "PhotoCache";
             String circleObjectName = "PhotoCacheCircle";
+
+            Log.v(TAG, "handleResult " + url + "," + getCircle);
 
             // generate the bitmaps
             byte[] imageData = resultData.getResultsAsByteArray();
@@ -78,22 +84,28 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             Bundle response = new Bundle();
             response.putBoolean(PARAM_CIRCLE, getCircle);
             response.putString(PARAM_URL, url);
-            if (getCircle)
+            Log.v(TAG, "url: " + url);
+            if (getCircle) {
+                Log.v(TAG, "path: " + circleObj.getFile().getAbsolutePath());
                 response.putSerializable(RESULT_IMAGE_FILE, circleObj.getFile());
-            else
+            } else {
+                Log.v(TAG, "path: " + imageObj.getFile().getAbsolutePath());
                 response.putSerializable(RESULT_IMAGE_FILE, imageObj.getFile());
+            }
 
             // send
             TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY + "/" + url, response, true);
 
             // done!
             listener.onComplete(transaction);
+            Log.v(TAG, "handleResult");
             return;
         } catch (Exception ex) {
             listener.requeue(transaction);
             ex.printStackTrace();
+            Log.v(TAG, "handleResult");
+            return;
         }
 
-        listener.onError(transaction);
     }
 }

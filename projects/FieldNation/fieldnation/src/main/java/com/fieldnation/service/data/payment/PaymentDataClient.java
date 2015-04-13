@@ -28,6 +28,13 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     /*-********************************-*/
     /*-         Data Interface         -*/
     /*-********************************-*/
+
+    @Override
+    public void disconnect(Context context) {
+        delete(TAG);
+        super.disconnect(context);
+    }
+
     // get all
     public static void requestGetAll(Context context, int page) {
         Intent intent = new Intent(context, PaymentDataService.class);

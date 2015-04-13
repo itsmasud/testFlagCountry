@@ -38,7 +38,13 @@ public class AuthTopicClient extends TopicClient {
         TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, true);
     }
 
-/*
+    @Override
+    public void disconnect(Context context) {
+        delete(TAG);
+        super.disconnect(context);
+    }
+
+    /*
     public static void dispatchNotAuthenticated(Context context) {
         dispatchAuthState(context, AuthState.NOT_AUTHENTICATED);
     }

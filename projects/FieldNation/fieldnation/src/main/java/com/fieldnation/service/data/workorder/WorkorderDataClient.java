@@ -42,6 +42,12 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         super(listener);
     }
 
+    @Override
+    public void disconnect(Context context) {
+        delete(TAG);
+        super.disconnect(context);
+    }
+
     // list
     public static void requestList(Context context, WorkorderDataSelector selector, int page) {
         Intent intent = new Intent(context, WorkorderDataService.class);
@@ -634,6 +640,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                         }
                         return list;
                     } catch (Exception ex) {
+                        Log.v(STAG, selector.name());
                         ex.printStackTrace();
                     }
                     return null;

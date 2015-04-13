@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import com.fieldnation.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.topics.TopicService;
@@ -77,25 +78,27 @@ public class PhotoDataService extends Service implements PhotoConstants {
                 bundle.putSerializable(RESULT_IMAGE_FILE, obj.getFile());
                 bundle.putBoolean(PARAM_CIRCLE, getCircle);
                 bundle.putString(PARAM_URL, url);
+                Log.v(TAG, "url: " + url);
+                Log.v(TAG, "path: " + obj.getFile().getAbsolutePath());
                 TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY + "/" + url, bundle, true);
                 return;
+            } else {
+                // doesn't exist, try to grab it.
+                try {
+                    WebTransactionBuilder.builder(context)
+                            .key(objectName + ":" + url)
+                            .priority(WebTransaction.Priority.LOW)
+                            .handler(PhotoTransactionHandler.class)
+                            .handlerParams(PhotoTransactionHandler.generateParams(url, getCircle))
+                            .request(
+                                    new HttpJsonBuilder()
+                                            .method("GET")
+                                            .path(url)
+                            ).send();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
-            // doesn't exist, try to grab it.
-            try {
-                WebTransactionBuilder.builder(context)
-                        .key(objectName + ":" + url)
-                        .priority(WebTransaction.Priority.LOW)
-                        .handler(PhotoTransactionHandler.class)
-                        .handlerParams(PhotoTransactionHandler.generateParams(url, getCircle))
-                        .request(
-                                new HttpJsonBuilder()
-                                        .method("GET")
-                                        .path(url)
-                        ).send();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
         }
     }
 }

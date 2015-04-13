@@ -77,7 +77,8 @@ public class PaymentWorkorderView extends RelativeLayout {
         _distanceTextView.setVisibility(GONE);
         _whenTextView = (TextView) findViewById(R.id.when_textview);
 
-        _actionButton = (Button) findViewById(R.id.action_button);
+        // todo need to pick a button, and hide the others
+        _actionButton = (Button) findViewById(R.id.action_button_green);
         _actionButton.setVisibility(GONE);
 
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);

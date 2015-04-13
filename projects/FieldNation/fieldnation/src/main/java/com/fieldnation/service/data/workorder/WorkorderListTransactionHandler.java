@@ -103,8 +103,10 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
             // </10s>
         } catch (Exception ex) {
             ex.printStackTrace();
+            listener.requeue(transaction);
         }
         Log.v(TAG, "handleResult time: " + watch.finish());
+
     }
 
 }

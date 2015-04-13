@@ -54,6 +54,12 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         }
     }
 
+    @Override
+    public void disconnect(Context context) {
+        delete(TAG);
+        super.disconnect(context);
+    }
+
     public static void dispatchEvent(Context context, String category, EventAction action, String label, long value) {
         if (context == null)
             return;

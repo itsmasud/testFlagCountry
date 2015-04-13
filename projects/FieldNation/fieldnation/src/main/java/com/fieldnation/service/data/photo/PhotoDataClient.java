@@ -20,6 +20,12 @@ public class PhotoDataClient extends TopicClient implements PhotoConstants {
         super(listener);
     }
 
+    @Override
+    public void disconnect(Context context) {
+        delete(TAG);
+        super.disconnect(context);
+    }
+
     public void unregisterAll() {
         delete(TAG);
     }

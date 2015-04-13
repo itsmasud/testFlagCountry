@@ -59,6 +59,12 @@ public class WebTransactionService extends Service implements WebTransactionCons
         if (intent != null && intent.getExtras() != null) {
             try {
                 Bundle extras = intent.getExtras();
+
+                if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(this, extras.getString(PARAM_KEY))) {
+                    Log.v(TAG, "Duplicate key: " + extras.getString(PARAM_KEY));
+                    return START_STICKY;
+                }
+
                 WebTransaction transaction = WebTransaction.put(this,
                         WebTransaction.Priority.values()[extras.getInt(PARAM_PRIORITY)],
                         extras.getString(PARAM_KEY),

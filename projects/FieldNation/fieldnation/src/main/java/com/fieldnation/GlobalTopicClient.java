@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.topics.TopicService;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 3/17/2015.
@@ -31,6 +30,12 @@ public class GlobalTopicClient extends TopicClient {
 
     public GlobalTopicClient(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        delete(TAG);
+        super.disconnect(context);
     }
 
     // update app

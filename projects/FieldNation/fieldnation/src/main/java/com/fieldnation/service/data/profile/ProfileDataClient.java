@@ -31,6 +31,12 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         super(listener);
     }
 
+    @Override
+    public void disconnect(Context context) {
+        delete(TAG);
+        super.disconnect(context);
+    }
+
     public static void acceptTos(Context context, long userId) {
         try {
             WebTransactionBuilder.builder(context)
