@@ -4,84 +4,85 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class CheckInOutInfo{
-	@Json(name="checkInDate")
-	private String _checkInDate;
-	@Json(name="checkInDistance")
-	private Double _checkInDistance;
-	@Json(name="checkInId")
-	private Integer _checkInId;
-	@Json(name="checkInTime")
-	private String _checkInTime;
-	@Json(name="checkOutDate")
-	private String _checkOutDate;
-	@Json(name="checkOutDistance")
-	private Double _checkOutDistance;
-	@Json(name="checkOutId")
-	private Integer _checkOutId;
-	@Json(name="checkOutTime")
-	private String _checkOutTime;
-	@Json(name="totalHours")
-	private Double _totalHours;
+public class CheckInOutInfo {
+    @Json(name = "checkInDate")
+    private String _checkInDate;
+    //	@Json(name="checkInDistance")
+//	private Double _checkInDistance;
+    @Json(name = "checkInId")
+    private Integer _checkInId;
+    @Json(name = "checkInTime")
+    private String _checkInTime;
+    @Json(name = "checkOutDate")
+    private String _checkOutDate;
+//    @Json(name = "checkOutDistance")
+//    private Double _checkOutDistance;
+    @Json(name = "checkOutId")
+    private Integer _checkOutId;
+    @Json(name = "checkOutTime")
+    private String _checkOutTime;
+    @Json(name = "totalHours")
+    private Double _totalHours;
 
-	public CheckInOutInfo(){
-	}
-	public String getCheckInDate(){
-		return _checkInDate;
-	}
+    public CheckInOutInfo() {
+    }
 
-	public Double getCheckInDistance(){
-		return _checkInDistance;
-	}
+    public String getCheckInDate() {
+        return _checkInDate;
+    }
 
-	public Integer getCheckInId(){
-		return _checkInId;
-	}
+//    public Double getCheckInDistance() {
+//        return _checkInDistance;
+//    }
 
-	public String getCheckInTime(){
-		return _checkInTime;
-	}
+    public Integer getCheckInId() {
+        return _checkInId;
+    }
 
-	public String getCheckOutDate(){
-		return _checkOutDate;
-	}
+    public String getCheckInTime() {
+        return _checkInTime;
+    }
 
-	public Double getCheckOutDistance(){
-		return _checkOutDistance;
-	}
+    public String getCheckOutDate() {
+        return _checkOutDate;
+    }
 
-	public Integer getCheckOutId(){
-		return _checkOutId;
-	}
+//    public Double getCheckOutDistance() {
+//        return _checkOutDistance;
+//    }
 
-	public String getCheckOutTime(){
-		return _checkOutTime;
-	}
+    public Integer getCheckOutId() {
+        return _checkOutId;
+    }
 
-	public Double getTotalHours(){
-		return _totalHours;
-	}
+    public String getCheckOutTime() {
+        return _checkOutTime;
+    }
 
-	public JsonObject toJson(){
-		return toJson(this);
-	}
+    public Double getTotalHours() {
+        return _totalHours;
+    }
 
-	public static JsonObject toJson(CheckInOutInfo checkInOutInfo) {
-		try {
-			return Serializer.serializeObject(checkInOutInfo);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static CheckInOutInfo fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(CheckInOutInfo.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(CheckInOutInfo checkInOutInfo) {
+        try {
+            return Serializer.serializeObject(checkInOutInfo);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static CheckInOutInfo fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(CheckInOutInfo.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }

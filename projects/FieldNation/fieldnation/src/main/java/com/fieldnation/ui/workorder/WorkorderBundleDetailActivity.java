@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -160,11 +159,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     }
 
     private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.Listener() {
+
         @Override
         public void viewCounter(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: viewCounter()
             Log.v(TAG, "Method Stub: viewCounter()");
-
         }
 
         @Override
@@ -190,6 +189,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
             WorkorderBundleDetailActivity.this.startActivity(intent);
             // Todo set loading here
         }
+
 
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
