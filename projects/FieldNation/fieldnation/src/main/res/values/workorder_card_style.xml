@@ -1,165 +1,225 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="WorkorderCard">
-        <item name="android:background">@color/fn_transparent</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">5dp</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingBottom">5dp</item>
+    <style name="Card">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingTop">2dp</item>
     </style>
 
-    <!-- not interested -->
-    <style name="WorkorderCard_NotInterested">
-        <item name="android:background">@color/fn_dark_text</item>
-        <item name="android:layout_margin">20dp</item>
-    </style>
-
-    <style name="WorkorderCard_NotInterested_BackButton">
-        <item name="android:layout_width">32dp</item>
-        <item name="android:layout_height">32dp</item>
-        <item name="android:src">@drawable/grabbar</item>
-    </style>
-
-    <style name="WorkorderCard_NotInterested_Icon">
-        <item name="android:layout_width">32dp</item>
-        <item name="android:layout_height">32dp</item>
-        <item name="android:src">@drawable/ic_cancel</item>
-    </style>
-
-    <style name="WorkorderCard_NotInterested_Text">
-        <item name="android:maxLines">1</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:textColor">@color/fn_white_text</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
-
-
-    <!-- background -->
-    <style name="WorkorderCard_Background">
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">5dp</item>
-    </style>
-
-    <style name="WorkorderCard_StatusView">
-        <item name="android:layout_width">32dp</item>
-    </style>
-
-    <style name="WorkorderCard_BackgroundView">
-        <item name="android:layout_marginLeft">30dp</item>
+    <style name="Card_Container">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/card_bg</item>
     </style>
 
-    <!-- main content -->
-    <style name="WorkorderCard_MainContent">
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingBottom">5dp</item>
-        <item name="android:paddingRight">10dp</item>
+    <style name="Card_Stilt">
+        <item name="android:layout_width">1px</item>
+        <item name="android:layout_height">110dp</item>
+        <item name="android:visibility">invisible</item>
     </style>
 
-    <style name="WorkorderCard_StatusText">
+
+    <style name="Card_Body_Right">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">32dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+    </style>
+
+    <style name="Card_Body_Left">
         <item name="android:layout_width">32dp</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingLeft">2dp</item>
-        <item name="android:paddingRight">2dp</item>
-        <item name="android:ellipsize">none</item>
+        <item name="android:layout_height">16dp</item>
+        <item name="android:layout_alignBottom">@+id/content_layout</item>
+        <item name="android:layout_alignTop">@+id/content_layout</item>
+        <item name="android:background">@drawable/card_status_orange</item>
     </style>
 
-    <style name="WorkorderCard_BundleLayout">
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:background">@drawable/wo_bundle_bg</item>
-    </style>
 
-    <style name="WorkorderCard_Bundle_Icon">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
-        <item name="android:src">@drawable/ic_bundle</item>
-        <item name="android:layout_marginRight">5dp</item>
+    <style name="Card_OverlayContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/card_loading</item>
+        <item name="android:layout_alignLeft">@+id/content_layout</item>
+        <item name="android:layout_alignRight">@+id/content_layout</item>
+        <item name="android:layout_alignBottom">@+id/content_layout</item>
+        <item name="android:layout_alignTop">@+id/content_layout</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:visibility">gone</item>
     </style>
+    <!--
+        <style name="WorkorderCard">
+            <item name="android:background">@color/fn_transparent</item>
+            <item name="android:paddingLeft">5dp</item>
+            <item name="android:paddingRight">5dp</item>
+            <item name="android:paddingTop">5dp</item>
+            <item name="android:paddingBottom">5dp</item>
+        </style>
 
-    <style name="WorkorderCard_Bundle_Title">
-        <item name="android:maxLines">1</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
+        &lt;!&ndash; not interested &ndash;&gt;
+        <style name="WorkorderCard_NotInterested">
+            <item name="android:background">@color/fn_dark_text</item>
+            <item name="android:layout_margin">20dp</item>
+        </style>
 
-    <style name="WorkorderCard_Bundle_Text">
-        <item name="android:maxLines">1</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
+        <style name="WorkorderCard_NotInterested_BackButton">
+            <item name="android:layout_width">32dp</item>
+            <item name="android:layout_height">32dp</item>
+            <item name="android:src">@drawable/grabbar</item>
+        </style>
 
-    <style name="WorkorderCard_CenterPanel">
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingBottom">5dp</item>
-    </style>
+        <style name="WorkorderCard_NotInterested_Icon">
+            <item name="android:layout_width">32dp</item>
+            <item name="android:layout_height">32dp</item>
+            <item name="android:src">@drawable/ic_cancel</item>
+        </style>
 
-    <style name="WorkorderCard_MessageIcon">
-        <item name="android:layout_width">15dp</item>
-        <item name="android:layout_height">15dp</item>
-        <item name="android:src">@drawable/ic_message_thumb</item>
-        <item name="android:layout_marginRight">1dp</item>
-    </style>
+        <style name="WorkorderCard_NotInterested_Text">
+            <item name="android:maxLines">1</item>
+            <item name="android:paddingLeft">5dp</item>
+            <item name="android:textColor">@color/fn_white_text</item>
+            <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        </style>
 
-    <style name="WorkorderCard_NotificationIcon">
-        <item name="android:layout_width">15dp</item>
-        <item name="android:layout_height">15dp</item>
-        <item name="android:src">@drawable/ic_alert_thumb</item>
-        <item name="android:layout_marginRight">2dp</item>
-    </style>
 
-    <style name="WorkorderCard_Title">
-        <item name="android:maxLines">1</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-        <item name="android:ellipsize">end</item>
-    </style>
+        &lt;!&ndash; background &ndash;&gt;
+        <style name="WorkorderCard_Background">
+            <item name="android:paddingLeft">5dp</item>
+            <item name="android:paddingRight">5dp</item>
+        </style>
 
-    <style name="WorkorderCard_Item">
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-    </style>
+        <style name="WorkorderCard_StatusView">
+            <item name="android:layout_width">32dp</item>
+        </style>
 
-    <style name="WorkorderCard_RightPanel">
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingRight">5dp</item>
-        <!--<item name="android:paddingBottom">53dp</item>-->
-    </style>
+        <style name="WorkorderCard_BackgroundView">
+            <item name="android:layout_marginLeft">30dp</item>
+            <item name="android:background">@drawable/card_bg</item>
+        </style>
 
-    <style name="WorkorderCard_MoneySymbol">
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-    </style>
+        &lt;!&ndash; main content &ndash;&gt;
+        <style name="WorkorderCard_MainContent">
+            <item name="android:paddingTop">5dp</item>
+            <item name="android:paddingLeft">5dp</item>
+            <item name="android:paddingBottom">5dp</item>
+            <item name="android:paddingRight">10dp</item>
+        </style>
 
-    <style name="WorkorderCard_PaymentLabel">
-        <item name="android:ellipsize">none</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
+        <style name="WorkorderCard_StatusText">
+            <item name="android:layout_width">32dp</item>
+            <item name="android:maxLines">1</item>
+            <item name="android:paddingTop">2dp</item>
+            <item name="android:paddingLeft">2dp</item>
+            <item name="android:paddingRight">2dp</item>
+            <item name="android:ellipsize">none</item>
+        </style>
 
-    <style name="WorkorderCard_Basis">
-        <item name="android:maxLines">1</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:textSize">12sp</item>
-    </style>
+        <style name="WorkorderCard_BundleLayout">
+            <item name="android:paddingLeft">10dp</item>
+            <item name="android:background">@drawable/wo_bundle_bg</item>
+        </style>
 
-    <style name="WorkorderCard_Button" parent="android:attr/buttonStyleSmall">
-        <item name="android:background">@drawable/btn_white</item>
-        <item name="android:textColor">@color/fn_white_text</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:ellipsize">none</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:layout_width">110dp</item>
-        <item name="android:layout_height">48dp</item>
-    </style>
+        <style name="WorkorderCard_Bundle_Icon">
+            <item name="android:layout_width">24dp</item>
+            <item name="android:layout_height">24dp</item>
+            <item name="android:src">@drawable/ic_bundle</item>
+            <item name="android:layout_marginRight">5dp</item>
+        </style>
 
-    <style name="WorkorderCard_LoadingLayout">
-        <item name="android:background">@color/fn_shadow</item>
-    </style>
+        <style name="WorkorderCard_Bundle_Title">
+            <item name="android:maxLines">1</item>
+            <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        </style>
 
-    <style name="WorkorderCard_UndoLayout">
-        <item name="android:background">@color/fn_shadow</item>
-    </style>
+        <style name="WorkorderCard_Bundle_Text">
+            <item name="android:maxLines">1</item>
+            <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        </style>
+
+        <style name="WorkorderCard_CenterPanel">
+            <item name="android:paddingTop">5dp</item>
+            <item name="android:paddingLeft">5dp</item>
+            <item name="android:paddingBottom">5dp</item>
+        </style>
+
+        <style name="WorkorderCard_MessageIcon">
+            <item name="android:layout_width">15dp</item>
+            <item name="android:layout_height">15dp</item>
+            <item name="android:src">@drawable/ic_message_thumb</item>
+            <item name="android:layout_marginRight">1dp</item>
+        </style>
+
+        <style name="WorkorderCard_NotificationIcon">
+            <item name="android:layout_width">15dp</item>
+            <item name="android:layout_height">15dp</item>
+            <item name="android:src">@drawable/ic_alert_thumb</item>
+            <item name="android:layout_marginRight">2dp</item>
+        </style>
+
+        <style name="WorkorderCard_Title">
+            <item name="android:maxLines">1</item>
+            <item name="android:singleLine">true</item>
+            <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+            <item name="android:ellipsize">end</item>
+        </style>
+
+        <style name="WorkorderCard_Item">
+            <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        </style>
+
+        <style name="WorkorderCard_RightPanel">
+            <item name="android:paddingTop">5dp</item>
+            <item name="android:paddingRight">5dp</item>
+            &lt;!&ndash;<item name="android:paddingBottom">53dp</item>&ndash;&gt;
+        </style>
+
+        <style name="WorkorderCard_MoneySymbol">
+            <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        </style>
+
+        <style name="WorkorderCard_PaymentLabel">
+            <item name="android:ellipsize">none</item>
+            <item name="android:singleLine">true</item>
+            <item name="android:maxLines">1</item>
+            <item name="android:textSize">24sp</item>
+            <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        </style>
+
+        <style name="WorkorderCard_Basis">
+            <item name="android:maxLines">1</item>
+            <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+            <item name="android:textSize">12sp</item>
+        </style>
+
+        <style name="WorkorderCard_Button" parent="android:attr/buttonStyleSmall">
+            <item name="android:background">@drawable/btn_white</item>
+            <item name="android:textColor">@color/fn_white_text</item>
+            <item name="android:maxLines">1</item>
+            <item name="android:ellipsize">none</item>
+            <item name="android:singleLine">true</item>
+            <item name="android:layout_width">110dp</item>
+            <item name="android:layout_height">48dp</item>
+        </style>
+
+        <style name="WorkorderCard_LoadingLayout">
+            <item name="android:background">@drawable/card_loading</item>
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">match_parent</item>
+            <item name="android:layout_margin">2dp</item>
+            <item name="android:clickable">true</item>
+            <item name="android:visibility">gone</item>
+        </style>
+
+        <style name="WorkorderCard_UndoLayout">
+            <item name="android:background">@color/fn_shadow</item>
+        </style>
+    -->
 
 </resources>

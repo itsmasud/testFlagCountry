@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        <item>
+            <nine-patch android:src="@drawable/btn_shadow" />
+        </item>
+    -->
+
+    <item>
+        <shape>
+            <padding
+                android:bottom="@dimen/btn_gradient_padding"
+                android:left="@dimen/btn_gradient_padding"
+                android:right="@dimen/btn_gradient_padding"
+                android:top="@dimen/btn_gradient_padding" />
+
+            <solid android:color="@color/fn_shadow" />
+
+            <corners android:radius="@dimen/btn_gradient_corner_radius" />
+        </shape>
+    </item>
+
+</layer-list>

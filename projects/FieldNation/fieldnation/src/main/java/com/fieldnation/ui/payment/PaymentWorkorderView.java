@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,7 +26,7 @@ public class PaymentWorkorderView extends RelativeLayout {
     private View _statusView;
     private TextView _statusTextView;
     // bundle
-    private RelativeLayout _bundleLayout;
+    private ImageView _bundleImageView;
 
     // center panel
     // title
@@ -66,7 +67,7 @@ public class PaymentWorkorderView extends RelativeLayout {
         _statusTextView = (TextView) findViewById(R.id.status_textview);
 
         // bundle
-        _bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
+        _bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);
 
         // center panel
         // title box
@@ -96,15 +97,9 @@ public class PaymentWorkorderView extends RelativeLayout {
 
     private void setIsBundle(boolean isBundle) {
         if (isBundle) {
-            _bundleLayout.setVisibility(VISIBLE);
-            _titleTextView.setVisibility(GONE);
-            _basisTextView.setVisibility(GONE);
-            _paymentTextView.setVisibility(GONE);
+            _bundleImageView.setVisibility(VISIBLE);
         } else {
-            _bundleLayout.setVisibility(GONE);
-            _titleTextView.setVisibility(VISIBLE);
-            _basisTextView.setVisibility(VISIBLE);
-            _paymentTextView.setVisibility(VISIBLE);
+            _bundleImageView.setVisibility(GONE);
         }
     }
 

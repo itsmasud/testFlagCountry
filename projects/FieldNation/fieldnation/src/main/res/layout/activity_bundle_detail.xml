@@ -37,10 +37,14 @@
 
                         <ImageView
                             android:id="@+id/bundle_imageview"
-                            style="@style/WorkorderCard_Bundle_Icon" />
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_bundle"
+                            android:layout_marginRight="4dp" />
 
                         <TextView
-                            style="@style/WorkorderCard_Bundle_Title"
+                            android:maxLines="1"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/bundle" />

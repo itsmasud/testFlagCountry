@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:paddingBottom="4dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="4dp">
+    style="@style/Card">
 
     <!-- not interested layout -->
 
@@ -47,53 +42,15 @@
 
     <RelativeLayout
         android:id="@+id/content_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_bg"
-        android:visibility="visible">
+        style="@style/Card_Container">
 
         <!-- stilt to set minimum height -->
 
-        <View
-            android:layout_width="1px"
-            android:layout_height="110dp" />
+        <View style="@style/Card_Stilt" />
 
         <!-- bundle bar -->
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
-            android:padding="8dp">
-
-            <RelativeLayout
-                android:id="@+id/bundle_layout"
-                style="@style/WorkorderCard_BundleLayout"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/bundle_imageview"
-                    style="@style/WorkorderCard_Bundle_Icon"
-                    android:layout_alignParentLeft="true" />
-
-                <TextView
-                    android:id="@+id/bundle_title"
-                    style="@style/WorkorderCard_Bundle_Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/bundle_imageview"
-                    android:text="@string/bundle" />
-
-                <TextView
-                    android:id="@+id/bundle_textview"
-                    style="@style/WorkorderCard_Bundle_Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/placeholder_word" />
-            </RelativeLayout>
+        <RelativeLayout style="@style/Card_Body_Right">
 
             <!-- title + pay -->
             <LinearLayout
@@ -109,6 +66,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
+                        android:layout_marginBottom="4dp"
                         android:layout_toLeftOf="@+id/payment_layout"
                         android:orientation="vertical">
 
@@ -116,6 +74,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/bundle_imageview"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerInParent="true"
+                                android:layout_marginRight="5dp"
+                                android:src="@drawable/ic_bundle"
+                                android:visibility="gone" />
 
                             <ImageView
                                 android:id="@+id/message_alert_imageview"
@@ -138,7 +106,7 @@
                                 android:ellipsize="end"
                                 android:maxLines="1"
                                 android:singleLine="true"
-                                android:text="@string/placeholder_phrase"
+                                android:text="Workorder Name"
                                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
                         </LinearLayout>
@@ -149,12 +117,14 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                style="?attr/tileTextStatusStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Work Order Id: " />
 
                             <TextView
                                 android:id="@+id/workorderid_textview"
+                                style="?attr/tileTextStatusStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="6546513516516" />
@@ -167,6 +137,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
+                        android:layout_marginRight="2dp"
                         android:gravity="right"
                         android:orientation="vertical">
 
@@ -174,12 +145,15 @@
                             android:id="@+id/payment_textview"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:gravity="right"
                             android:text="$1000.00" />
 
                         <TextView
                             android:id="@+id/basis_textview"
+                            style="?attr/tileTextStatusStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:gravity="right"
                             android:text="Hourly" />
 
                     </LinearLayout>
@@ -189,50 +163,50 @@
                     android:id="@+id/clientname_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/placeholder_word" />
+                    android:text="@string/placeholder_phrase" />
 
                 <TextView
                     android:id="@+id/distance_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/placeholder_word"
+                    android:text="@string/placeholder_phrase"
                     android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/location_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/placeholder_word" />
+                    android:text="@string/placeholder_phrase" />
 
                 <TextView
                     android:id="@+id/when_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/placeholder_word" />
+                    android:text="@string/placeholder_phrase" />
 
                 <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right">
 
                     <Button
                         android:id="@+id/action_button_green"
+                        style="?attr/buttonGreenStyle"
                         android:minWidth="150dp"
-                        style="@style/Material.Button.Raised.Green"
                         android:text="@string/placeholder_phrase"
                         android:visibility="visible" />
 
                     <Button
                         android:id="@+id/action_button_gray"
-                        android:minWidth="150dp"
                         style="?attr/buttonGrayStyle"
+                        android:minWidth="150dp"
                         android:text="@string/placeholder_phrase"
                         android:visibility="visible" />
 
                     <Button
                         android:id="@+id/action_button_orange"
-                        android:minWidth="150dp"
                         style="?attr/buttonOrangeStyle"
+                        android:minWidth="150dp"
                         android:text="@string/placeholder_phrase"
                         android:visibility="visible" />
                 </FrameLayout>
@@ -245,11 +219,7 @@
     <!-- status layout -->
     <View
         android:id="@id/status_view"
-        android:layout_width="32dp"
-        android:layout_height="10dp"
-        android:layout_alignTop="@id/content_layout"
-        android:layout_alignBottom="@+id/content_layout"
-        android:background="@drawable/card_status_orange" />
+        style="@style/Card_Body_Left" />
 
     <com.fieldnation.ui.VerticalTextView
         android:id="@+id/status_textview"
@@ -257,6 +227,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"
         android:ellipsize="none"
         android:gravity="center"
         android:maxLines="1"
@@ -265,16 +236,12 @@
 
     <RelativeLayout
         android:id="@+id/loading_layout"
-        style="@style/WorkorderCard_LoadingLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:visibility="gone">
+        style="@style/Card_OverlayContainer">
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true" />
     </RelativeLayout>
 
@@ -282,10 +249,7 @@
 
     <RelativeLayout
         android:id="@+id/undo_layout"
-        style="@style/WorkorderCard_UndoLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        style="@style/Card_OverlayContainer">
 
         <Button
             android:id="@+id/undo_button"
