@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.Stopwatch;
@@ -17,7 +16,7 @@ import com.fieldnation.utils.Stopwatch;
  * @author michael.carver
  */
 public abstract class WebResultReceiver extends ResultReceiver implements WebServiceConstants {
-    private static final String TAG = "rpc.common.WebServiceResultReceiver";
+    private static final String TAG = "WebResultReceiver";
 
     public WebResultReceiver(Handler handler) {
         super(handler);
@@ -50,6 +49,13 @@ public abstract class WebResultReceiver extends ResultReceiver implements WebSer
     public void onError(int resultCode, Bundle resultData, String errorType) {
         Log.v(TAG, "onError[" + resultCode + "] " + errorType);
         Log.v(TAG, resultData.toString());
+        if (resultData.containsKey(KEY_RESPONSE_DATA)) {
+            String response = new String(resultData.getByteArray(KEY_RESPONSE_DATA));
+
+            if (response.contains("The authtoken is invalid or has expired.")) {
+                Topics.dispatchNetworkUp(getContext());
+            }
+        }
         try {
             Log.v(TAG, new String(resultData.getByteArray(KEY_RESPONSE_DATA)));
         } catch (Exception ex) {

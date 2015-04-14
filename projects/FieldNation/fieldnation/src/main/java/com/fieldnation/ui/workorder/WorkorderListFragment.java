@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -242,14 +243,8 @@ public class WorkorderListFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.v(TAG, "onResume");
-        _adapter.refreshPages();
-        setLoading(true);
-        AuthTopicService.subscribeAuthState(GlobalState.getContext(), 0, TAG, _topicReceiver);
-        GaTopic.dispatchScreenView(GlobalState.getContext(), getGaLabel());
-        _gpsLocationService = new GpsLocationService(GlobalState.getContext());
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
         _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
         _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
@@ -260,17 +255,27 @@ public class WorkorderListFragment extends Fragment {
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
 
-
-        _locationLoadingDialog.setData(GlobalState.getContext().getString(R.string.dialog_location_loading_title),
-                GlobalState.getContext().getString(R.string.dialog_location_loading_body),
-                GlobalState.getContext().getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
-
         _expiresDialog.setListener(_expiresDialog_listener);
         _confirmDialog.setListener(_confirmDialog_listener);
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume");
+        _adapter.refreshPages();
+        setLoading(true);
+        AuthTopicService.subscribeAuthState(GlobalState.getContext(), 0, TAG, _topicReceiver);
+        GaTopic.dispatchScreenView(GlobalState.getContext(), getGaLabel());
+        _gpsLocationService = new GpsLocationService(GlobalState.getContext());
+
+        _locationLoadingDialog.setData(GlobalState.getContext().getString(R.string.dialog_location_loading_title),
+                GlobalState.getContext().getString(R.string.dialog_location_loading_body),
+                GlobalState.getContext().getString(R.string.dialog_location_loading_button),
+                _locationLoadingDialog_listener);
     }
 
     @Override

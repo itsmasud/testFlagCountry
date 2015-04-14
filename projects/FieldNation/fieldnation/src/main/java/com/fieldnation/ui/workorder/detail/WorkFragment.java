@@ -237,26 +237,6 @@ public class WorkFragment extends WorkorderFragment {
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signaturelist_listener);
 
-        _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
-        _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
-        _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
-        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
-        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
-        _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
-        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
-        _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
-        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
-        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -354,19 +334,26 @@ public class WorkFragment extends WorkorderFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         AuthTopicService.subscribeAuthState(GlobalState.getContext(), 0, TAG, _authReceiver);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        AuthTopicService.subscribeAuthState(GlobalState.getContext(), 0, TAG, _authReceiver);
-
-        _gpsLocationService = new GpsLocationService(GlobalState.getContext());
-
-        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
-                getString(R.string.dialog_location_loading_body),
-                getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
+        _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
+        _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
+        _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
+        _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
+        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
+        _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
+        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
+        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
+        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
+        _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
+        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
+        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
 
         _deviceCountDialog.setListener(_deviceCountListener);
         _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
@@ -384,6 +371,19 @@ public class WorkFragment extends WorkorderFragment {
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
+
+        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
+                getString(R.string.dialog_location_loading_body),
+                getString(R.string.dialog_location_loading_button),
+                _locationLoadingDialog_listener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AuthTopicService.subscribeAuthState(GlobalState.getContext(), 0, TAG, _authReceiver);
+
+        _gpsLocationService = new GpsLocationService(GlobalState.getContext());
     }
 
     @Override

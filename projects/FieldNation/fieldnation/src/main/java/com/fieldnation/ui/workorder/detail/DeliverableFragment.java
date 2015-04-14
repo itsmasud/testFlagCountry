@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,9 +130,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
 
-        _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
-        _appPickerDialog.setListener(_appdialog_listener);
-
         checkMedia();
 
         populateUi();
@@ -169,9 +165,16 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        _context = activity.getApplicationContext();
+        _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
+        _appPickerDialog.setListener(_appdialog_listener);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        _context = getActivity().getApplicationContext();
         AuthTopicService.subscribeAuthState(_context, 0, TAG, _authReceiver);
         Topics.subscrubeProfileUpdated(_context, TAG + ":ProfileService", _profile_topicService);
     }
