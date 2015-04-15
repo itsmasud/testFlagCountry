@@ -1,10 +1,6 @@
 package com.fieldnation.ui;
 
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 
 import com.fieldnation.R;
 
@@ -13,49 +9,18 @@ import com.fieldnation.R;
  *
  * @author michael.carver
  */
-public class SettingsActivity extends PreferenceActivity {
-    private static final String TAG = "ui.SettingsActivity";
+public class SettingsActivity extends AuthActionBarActivity {
+    private static final String TAG = "SettingsActivity";
 
-    @SuppressWarnings("deprecation")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.white));
-
-
-        addPreferencesFromResource(R.xml.pref_general);
-        bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+    public int getLayoutResource() {
+        return R.layout.activity_settings;
     }
 
-    private static Preference.OnPreferenceChangeListener _preference_onChange = new Preference.OnPreferenceChangeListener() {
-
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            String stringValue = newValue.toString();
-
-            if (preference instanceof ListPreference) {
-                ListPreference listPreference = (ListPreference) preference;
-
-                int index = listPreference.findIndexOfValue(stringValue);
-
-                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-
-            }
-            return true;
-        }
-    };
-
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(_preference_onChange);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        _preference_onChange.onPreferenceChange(
-                preference,
-                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(),
-                        ""));
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content, new SettingsFragment())
+                .commit();
     }
-
 }
