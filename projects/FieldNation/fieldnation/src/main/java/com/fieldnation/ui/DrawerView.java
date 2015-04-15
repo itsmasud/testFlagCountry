@@ -322,11 +322,11 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            Intent intent = new Intent(getContext(), SettingsActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            getContext().startActivity(intent);
-//            attachAnimations();
-            AuthTopicClient.dispatchInvalidateCommand(getContext());
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+            attachAnimations();
+//            AuthTopicClient.dispatchInvalidateCommand(getContext());
         }
     };
 

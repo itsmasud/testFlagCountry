@@ -295,7 +295,9 @@
     <string name="paid">Paid</string>
     <string name="confirm">Confirm</string>
 
-    <!-- Account Preferences -->
+    <!-- Preferences -->
+    <string name="data_Storage">Data Storage</string>
+
     <string name="pref_sync">Sync Frequency</string>
 
     <string-array name="pref_sync_titles">

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
@@ -51,6 +52,7 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
         Log.v(TAG, "onCreate");
 
         startService(new Intent(this, AuthTopicService.class));

@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/data_Storage"
+        android:key="pref_data_settings">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_enable_data_timeout"
+            android:title="Data Cache"
+            android:summary="Enables purging old data" />
+        <ListPreference
+            android:dependency="pref_enable_data_timeout"
+            android:defaultValue="180"
+            android:entries="@array/pref_sync_titles"
+            android:entryValues="@array/pref_sync_values"
+            android:key="sync_frequency"
+            android:summary="Summary2"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_sync" />
 
-    <ListPreference
-        android:defaultValue="180"
-        android:entries="@array/pref_sync_titles"
-        android:entryValues="@array/pref_sync_values"
-        android:key="sync_frequency"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_sync" />
-
-
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="checkbox"
+            android:title="test"
+            android:summary="Summary" />
+    </PreferenceCategory>
 </PreferenceScreen>
