@@ -51,6 +51,8 @@ public class DrawerView extends RelativeLayout {
     private TextView _profileCompanyTextView;
     private ImageButton _profileExpandButton;
     private TextView _providerIdTextView;
+    private NavProfileDetailListView _profileListView;
+    private LinearLayout _linkContainerView;
 
     // items
     private RelativeLayout _myworkView;
@@ -122,7 +124,10 @@ public class DrawerView extends RelativeLayout {
         _profileExpandButton = (ImageButton) findViewById(R.id.profileexpand_button);
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
+        _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+
         // items
+        _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
         _myworkView.setOnClickListener(_myworkView_onClick);
 
@@ -260,6 +265,13 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             _profileExpandButton.setActivated(!_profileExpandButton.isActivated());
+            if (_profileExpandButton.isActivated()) {
+                _profileListView.setVisibility(View.VISIBLE);
+                _linkContainerView.setVisibility(View.GONE);
+            } else {
+                _profileListView.setVisibility(View.GONE);
+                _linkContainerView.setVisibility(View.VISIBLE);
+            }
         }
     };
 
