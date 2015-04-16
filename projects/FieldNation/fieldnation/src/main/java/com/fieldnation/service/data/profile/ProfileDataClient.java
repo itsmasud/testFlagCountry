@@ -141,7 +141,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
                 protected Profile doInBackground(Object... params) {
                     Bundle payload = (Bundle) params[0];
                     try {
-                        return Profile.fromJson(new JsonObject(payload.getByteArray(PARAM_DATA)));
+                        return Profile.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -168,7 +168,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
                     try {
                         List<Notification> list = new LinkedList<>();
                         page = payload.getInt(PARAM_PAGE);
-                        JsonArray jalerts = new JsonArray(payload.getByteArray(PARAM_DATA));
+                        JsonArray jalerts = (JsonArray) payload.getParcelable(PARAM_DATA_PARCELABLE);
                         for (int i = 0; i < jalerts.size(); i++) {
                             list.add(Notification.fromJson(jalerts.getJsonObject(i)));
                         }
@@ -200,7 +200,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
                     try {
                         List<Message> list = new LinkedList<>();
                         page = payload.getInt(PARAM_PAGE);
-                        JsonArray jalerts = new JsonArray(payload.getByteArray(PARAM_DATA));
+                        JsonArray jalerts = payload.getParcelable(PARAM_DATA_PARCELABLE);
                         for (int i = 0; i < jalerts.size(); i++) {
                             list.add(Message.fromJson(jalerts.getJsonObject(i)));
                         }

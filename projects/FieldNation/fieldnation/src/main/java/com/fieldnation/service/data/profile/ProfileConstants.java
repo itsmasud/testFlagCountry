@@ -13,7 +13,7 @@ public interface ProfileConstants {
     public static final String PARAM_ACTION_GET_ALL_NOTIFICATIONS = "PARAM_ACTION_GET_ALL_NOTIFICATIONS";
     public static final String PARAM_ACTION_GET_ALL_MESSAGES = "PARAM_ACTION_GET_ALL_MESSAGES";
 
-    public static final String PARAM_DATA = "DATA";
+    public static final String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
     public static final String PARAM_PAGE = "PAGE";
 
     public static final String PSO_MESSAGE_PAGE = "MessagePage";

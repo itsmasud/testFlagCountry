@@ -634,13 +634,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                         selector = WorkorderDataSelector.fromName(bundle.getString(PARAM_LIST_SELECTOR));
                         page = bundle.getInt(PARAM_PAGE);
                         List<Workorder> list = new LinkedList<>();
-                        JsonArray ja = new JsonArray(bundle.getByteArray(PARAM_DATA));
+                        JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
                         for (int i = 0; i < ja.size(); i++) {
                             list.add(Workorder.fromJson(ja.getJsonObject(i)));
                         }
                         return list;
                     } catch (Exception ex) {
-                        Log.v(STAG, selector.name());
+//                        Log.v(STAG, selector.name());
                         ex.printStackTrace();
                     }
                     return null;
@@ -663,7 +663,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 protected Workorder doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     try {
-                        return Workorder.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                        return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -693,7 +693,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 protected Signature doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     try {
-                        return Signature.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                        return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -716,7 +716,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     try {
-                        return com.fieldnation.data.workorder.Bundle.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                        return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

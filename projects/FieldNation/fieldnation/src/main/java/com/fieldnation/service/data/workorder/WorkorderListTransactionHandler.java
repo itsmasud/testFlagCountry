@@ -87,7 +87,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
             Bundle bundle = new Bundle();
 
             Stopwatch toByteArray = new Stopwatch(true);
-            bundle.putByteArray(PARAM_DATA, ja.toByteArray());
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, ja);
 //            bundle.putByteArray(PARAM_DATA, bdata);
             Log.v(TAG, "toByteArray time: " + toByteArray.finish());
 

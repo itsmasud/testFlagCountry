@@ -84,7 +84,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                 }
 
                 Bundle bundle = new Bundle();
-                bundle.putByteArray(PARAM_DATA, ja.toByteArray());
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, ja);
                 bundle.putInt(PARAM_PAGE, page);
                 bundle.putString(PARAM_LIST_SELECTOR, selector);
                 bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
@@ -111,7 +111,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
                 Bundle bundle = new Bundle();
                 bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
-                bundle.putByteArray(PARAM_DATA, workorder.toByteArray());
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
                 bundle.putLong(PARAM_ID, workorderId);
                 TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + "/" + workorderId, bundle, true);
             } catch (Exception ex) {
@@ -142,12 +142,16 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
         StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId);
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            bundle.putLong(PARAM_ID, workorderId);
-            bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
-            TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);
+            try {
+                Bundle bundle = new Bundle();
+                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(obj.getData()));
+                bundle.putLong(PARAM_ID, workorderId);
+                bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
+                TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -172,11 +176,15 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
         StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            bundle.putLong(PARAM_ID, bundleId);
-            TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + "/" + bundleId, bundle, true);
+            try {
+                Bundle bundle = new Bundle();
+                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(obj.getData()));
+                bundle.putLong(PARAM_ID, bundleId);
+                TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + "/" + bundleId, bundle, true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
