@@ -23,7 +23,7 @@ import com.fieldnation.topics.Topics;
  * Created by michael.carver on 12/22/2014.
  */
 public class ReconnectWarningView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ui.ReconnectWarningView");
+    private final String TAG = UniqueTag.makeTag("ReconnectWarningView");
 
 
     // Ui

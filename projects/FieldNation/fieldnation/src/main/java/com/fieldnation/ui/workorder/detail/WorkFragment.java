@@ -1327,8 +1327,11 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onEmail(Task task) {
             String email = task.getEmailAddress();
-            Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setData(Uri.parse("mailto:" + email));
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Work Order " + _workorder.getWorkorderId() + " E-mail Task");
+
             startActivityForResult(intent, RESULT_CODE_SEND_EMAIL);
 
             if (!task.getCompleted()) {

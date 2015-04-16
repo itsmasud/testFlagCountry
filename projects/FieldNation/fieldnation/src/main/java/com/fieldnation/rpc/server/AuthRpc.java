@@ -19,7 +19,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 
 public class AuthRpc extends RpcInterface implements AuthServiceConstants {
-    private final static String TAG = "rpc.server.AuthRpc";
+    private final static String TAG = "AuthRpc";
 
     private GlobalState _gs;
 
