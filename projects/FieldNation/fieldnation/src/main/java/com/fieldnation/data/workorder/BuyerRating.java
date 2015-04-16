@@ -9,8 +9,8 @@ public class BuyerRating {
     private String _buyerRateComments;
     @Json(name = "companyLogo")
     private String _companyLogo;
-    @Json(name = "dayLeftToGivingBuyerRating")
-	private Integer _dayLeftToGivingBuyerRating;
+//    @Json(name = "dayLeftToGivingBuyerRating")
+//	private Integer _dayLeftToGivingBuyerRating;
     @Json(name = "ratingId")
     private Integer _ratingId;
     @Json(name = "respectful")
@@ -35,9 +35,9 @@ public class BuyerRating {
         return _companyLogo;
     }
 
-	public Integer getDayLeftToGivingBuyerRating(){
-        return _dayLeftToGivingBuyerRating;
-    }
+//	public Integer getDayLeftToGivingBuyerRating(){
+//        return _dayLeftToGivingBuyerRating;
+//    }
 
     public Integer getRatingId() {
         return _ratingId;

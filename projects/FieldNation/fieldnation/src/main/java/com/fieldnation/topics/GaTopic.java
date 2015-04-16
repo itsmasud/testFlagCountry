@@ -15,6 +15,7 @@ public class GaTopic {
 
     public static final String ACTION_LONG_CLICK = "LongClick";
     public static final String ACTION_REQUEST_WORK = "RequestWork";
+    public static final String ACTION_ACCEPT_WORK = "AcceptWork";
     public static final String ACTION_COUNTER = "CounterOffer";
     public static final String ACTION_CONFIRM_ASSIGN = "ConfirmAssign";
     public static final String ACTION_CHECKIN = "Checkin";

@@ -162,7 +162,9 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         public void onClick(View v) {
             setLoading(true);
             if (_listener != null) {
-                if (_workorder.canConfirm()) {
+                if (_workorder.canAcceptWork()) {
+                    _listener.onConfirmAssignment(_workorder);
+                } else if (_workorder.canConfirm()) {
                     _listener.onConfirmAssignment(_workorder);
                 } else {
                     _listener.onRequest(_workorder);

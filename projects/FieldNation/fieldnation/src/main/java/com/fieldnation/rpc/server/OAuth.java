@@ -238,7 +238,7 @@ public class OAuth {
 
     public boolean hasError() {
         try {
-            return _oauth.getString("error") != null;
+            return _oauth.get("error") != null;
         } catch (Exception ex) {
             ex.printStackTrace();
         }

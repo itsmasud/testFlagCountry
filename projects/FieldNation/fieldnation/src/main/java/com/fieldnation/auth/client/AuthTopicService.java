@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-
 import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -159,8 +158,8 @@ public class AuthTopicService extends Service {
             if (Topics.TOPIC_NETWORK_DOWN.equals(topicId)) {
                 _isNetworkDown = true;
                 setState(STATE_NOT_AUTHENTICATED);
-//                dispatchNoNetwork(AuthTopicService.this);
-            } else if (Topics.TOPIC_NETWORK_UP.equals(topicId)) {
+                requestAuthentication(AuthTopicService.this);
+            } else if (Topics.TOPIC_NETWORK_UP.equals(topicId) && _isNetworkDown) {
                 _isNetworkDown = false;
                 setState(STATE_NOT_AUTHENTICATED);
                 requestAuthentication(AuthTopicService.this);

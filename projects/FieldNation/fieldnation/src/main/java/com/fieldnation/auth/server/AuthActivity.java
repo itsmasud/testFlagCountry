@@ -210,10 +210,12 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             Log.v(TAG, "onReceiveResult");
             try {
+                Log.v(TAG, "try");
                 String authToken = resultData.getString(AccountManager.KEY_AUTHTOKEN);
                 String error = resultData.getString("error");
 
                 if (getString(R.string.login_error_update_app).equals(error)) {
+                    Log.v(TAG, "not supported");
                     Topics.dispatchNeedUpdate(AuthActivity.this);
                 } else if (authToken != null) {
                     Log.v(TAG, "have authtoken");
@@ -240,18 +242,21 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
                     ClockService.enableClock(AuthActivity.this);
                 } else {
+                    Log.v(TAG, "else");
                     _contentLayout.setVisibility(View.VISIBLE);
                     _signupButton.setVisibility(View.VISIBLE);
                 }
 
                 if (!error.equals(getString(R.string.login_error_no_error))) {
+                    Log.v(TAG, "success");
                     Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
                 }
 
             } catch (Exception e) {
+                Log.v(TAG, "exception");
+                e.printStackTrace();
                 Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect,
                         Toast.LENGTH_LONG).show();
-                e.printStackTrace();
             }
         }
     };
