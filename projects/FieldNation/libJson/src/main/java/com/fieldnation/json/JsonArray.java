@@ -258,13 +258,23 @@ public class JsonArray implements Parcelable {
         }
     }
 
+    private void addThis(int index, Object value) {
+        // move all the items up one
+        for (int i = _objs.size(); i > index; i--) {
+            setThis(i, get(i - 1));
+        }
+
+        // insert
+        setThis(index, value);
+    }
+
     public JsonArray add(Object value) {
         addThis(value);
         return this;
     }
 
     public JsonArray add(int index, Object value) {
-        setThis(index, value);
+        addThis(index, value);
         return this;
     }
 
@@ -306,6 +316,8 @@ public class JsonArray implements Parcelable {
         for (int i = index; i < last - 1; i++) {
             setThis(index, _objs.get((index + 1) + ""));
         }
+
+        _objs.remove((_objs.size() - 1) + "");
     }
 
     public Object remove(int index) {
