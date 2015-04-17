@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -73,7 +74,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 // todo parse json and put Profile/id ?
 
                 Bundle bundle = new Bundle();
-                bundle.putByteArray(PARAM_DATA, resultData.getResultsAsByteArray());
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(resultData.getResultsAsByteArray()));
                 TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE, bundle, false);
                 return;
             } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
@@ -85,7 +86,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 StoredObject.put(context, PSO_NOTIFICATION_PAGE, page + "", pagedata);
 
                 Bundle bundle = new Bundle();
-                bundle.putByteArray(PARAM_DATA, pagedata);
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonArray(pagedata));
                 bundle.putInt(PARAM_PAGE, page);
                 bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
                 TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST, bundle, false);
@@ -99,7 +100,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 StoredObject.put(context, PSO_MESSAGE_PAGE, page + "", pagedata);
 
                 Bundle bundle = new Bundle();
-                bundle.putByteArray(PARAM_DATA, pagedata);
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonArray(pagedata));
                 bundle.putInt(PARAM_PAGE, page);
                 bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
                 TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST, bundle, false);

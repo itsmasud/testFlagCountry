@@ -26,7 +26,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="C__Users_Michael_Carver_Code_android_dev_projects_FieldNation_libJson_libs_android_v7_jar" level="project" />
+    <orderEntry type="library" exported="" name="android-v7" level="project" />
   </component>
 </module>
 

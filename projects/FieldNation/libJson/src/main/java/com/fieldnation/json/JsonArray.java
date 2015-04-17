@@ -1,13 +1,23 @@
 package com.fieldnation.json;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+import java.io.Serializable;
 import java.text.ParseException;
-import java.util.LinkedList;
 import java.util.List;
 
-public class JsonArray {
-    private List<Object> _objects = new LinkedList<Object>();
+public class JsonArray implements Parcelable {
+
+    private Bundle _objs = new Bundle();
 
     public JsonArray() {
+    }
+
+    JsonArray(Bundle bundle) {
+        _objs = bundle;
     }
 
     public JsonArray(byte[] data) throws ParseException {
@@ -37,7 +47,7 @@ public class JsonArray {
         }
 
         while (true) {
-            _objects.add(tokenizer.parseValue());
+            addThis(tokenizer.parseValue());
 
             // if not comma, then it should've been a ']'
             if (!tokenizer.nextToken().equals(",")) {
@@ -48,11 +58,11 @@ public class JsonArray {
     }
 
     public int size() {
-        return _objects.size();
+        return _objs.size();
     }
 
     public Object get(int index) {
-        return _objects.get(index);
+        return _objs.get(index + "");
     }
 
     public Object get(String path) {
@@ -72,7 +82,7 @@ public class JsonArray {
 
         int item = Integer.parseInt(value);
 
-        Object obj = _objects.get(item);
+        Object obj = _objs.get(item + "");
 
         if (obj == null && directions.size() == 0) {
             return null;
@@ -120,10 +130,10 @@ public class JsonArray {
     }
 
     public JsonArray set(int index, Object value) {
-        while (index >= _objects.size())
-            _objects.add(null);
+        while (index >= _objs.size())
+            addThis(null);
 
-        _objects.set(index, value);
+        setThis(index, value);
         return this;
     }
 
@@ -143,8 +153,8 @@ public class JsonArray {
             set(index, value);
         } else {
             // already exists
-            if (_objects.size() > index) {
-                Object obj = _objects.get(index);
+            if (_objs.size() > index) {
+                Object obj = _objs.get(index + "");
 
                 if (obj instanceof JsonObject) {
                     JsonObject jo = (JsonObject) obj;
@@ -186,13 +196,85 @@ public class JsonArray {
         return this;
     }
 
+    private void addThis(Object value) {
+        String key = _objs.size() + "";
+        if (value == null) {
+            _objs.putParcelable(key, null);
+        } else if (value instanceof Parcelable) {
+            _objs.putParcelable(key, (Parcelable) value);
+        } else if (value instanceof String) {
+            _objs.putString(key, (String) value);
+        } else if (value instanceof Short) {
+            _objs.putShort(key, (Short) value);
+        } else if (value instanceof Integer) {
+            _objs.putInt(key, (Integer) value);
+        } else if (value instanceof Long) {
+            _objs.putLong(key, (Long) value);
+        } else if (value instanceof Byte) {
+            _objs.putByte(key, (Byte) value);
+        } else if (value instanceof Boolean) {
+            _objs.putBoolean(key, (Boolean) value);
+        } else if (value instanceof Character) {
+            _objs.putChar(key, (Character) value);
+        } else if (value instanceof Double) {
+            _objs.putDouble(key, (Double) value);
+        } else if (value instanceof Float) {
+            _objs.putFloat(key, (Float) value);
+        } else if (value instanceof Serializable) {
+            _objs.putSerializable(key, (Serializable) value);
+        } else {
+            Log.v("JsonObject", "can't put object of type: " + value.getClass().getName());
+        }
+    }
+
+    private void setThis(int index, Object value) {
+        String key = index + "";
+        if (value == null) {
+            _objs.putParcelable(key, null);
+        } else if (value instanceof Parcelable) {
+            _objs.putParcelable(key, (Parcelable) value);
+        } else if (value instanceof String) {
+            _objs.putString(key, (String) value);
+        } else if (value instanceof Short) {
+            _objs.putShort(key, (Short) value);
+        } else if (value instanceof Integer) {
+            _objs.putInt(key, (Integer) value);
+        } else if (value instanceof Long) {
+            _objs.putLong(key, (Long) value);
+        } else if (value instanceof Byte) {
+            _objs.putByte(key, (Byte) value);
+        } else if (value instanceof Boolean) {
+            _objs.putBoolean(key, (Boolean) value);
+        } else if (value instanceof Character) {
+            _objs.putChar(key, (Character) value);
+        } else if (value instanceof Double) {
+            _objs.putDouble(key, (Double) value);
+        } else if (value instanceof Float) {
+            _objs.putFloat(key, (Float) value);
+        } else if (value instanceof Serializable) {
+            _objs.putSerializable(key, (Serializable) value);
+        } else {
+            Log.v("JsonObject", "can't put object of type: " + value.getClass().getName());
+        }
+    }
+
+    private void addThis(int index, Object value) {
+        // move all the items up one
+        for (int i = _objs.size(); i > index; i--) {
+            setThis(i, get(i - 1));
+        }
+
+        // insert
+        setThis(index, value);
+    }
+
     public JsonArray add(Object value) {
-        _objects.add(value);
+        addThis(value);
         return this;
     }
 
     public JsonArray add(int index, Object value) {
-        _objects.add(index, value);
+        addThis(index, value);
         return this;
     }
 
@@ -212,7 +294,7 @@ public class JsonArray {
             if (child.startsWith("[") && child.endsWith("]")) {
                 JsonArray ja = new JsonArray();
 
-                _objects.add(ja);
+                _objs.putParcelable(_objs.size() + "", ja);
 
                 if (child.equals("[]"))
                     ja.add(directions, value);
@@ -221,7 +303,7 @@ public class JsonArray {
             } else {
                 JsonObject jo = new JsonObject();
 
-                _objects.add(jo);
+                _objs.putParcelable(_objs.size() + "", jo);
 
                 jo.put(directions, value);
             }
@@ -229,8 +311,19 @@ public class JsonArray {
         return this;
     }
 
+    private void removeThis(int index) {
+        int last = _objs.size() - 1;
+        for (int i = index; i < last - 1; i++) {
+            setThis(index, _objs.get((index + 1) + ""));
+        }
+
+        _objs.remove((_objs.size() - 1) + "");
+    }
+
     public Object remove(int index) {
-        return _objects.remove(index);
+        Object obj = get(index);
+        removeThis(index);
+        return obj;
     }
 
     protected Object remove(List<String> directions) throws ParseException {
@@ -265,7 +358,7 @@ public class JsonArray {
     }
 
     public JsonArray clear() {
-        _objects.clear();
+        _objs.clear();
         return this;
     }
 
@@ -277,8 +370,8 @@ public class JsonArray {
         StringBuilder sb = new StringBuilder();
 
         sb.append("[\n");
-        for (int i = 0; i < _objects.size(); i++) {
-            Object obj = _objects.get(i);
+        for (int i = 0; i < _objs.size(); i++) {
+            Object obj = _objs.get(i + "");
 
             sb.append(JsonTokenizer.repeat("  ", depth + 1));
             if (obj == null) {
@@ -293,7 +386,7 @@ public class JsonArray {
                 sb.append(obj + "");
             }
 
-            if (i < _objects.size() - 1) {
+            if (i < _objs.size() - 1) {
                 sb.append(",");
             }
 
@@ -315,8 +408,8 @@ public class JsonArray {
 
     public void addToStringBuilder(StringBuilder sb) {
         sb.append("[");
-        for (int i = 0; i < _objects.size(); i++) {
-            Object obj = _objects.get(i);
+        for (int i = 0; i < _objs.size(); i++) {
+            Object obj = _objs.get(i + "");
 
             if (obj == null) {
                 sb.append("null");
@@ -330,7 +423,7 @@ public class JsonArray {
                 sb.append(obj + "");
             }
 
-            if (i < _objects.size() - 1) {
+            if (i < _objs.size() - 1) {
                 sb.append(",");
             }
         }
@@ -338,7 +431,7 @@ public class JsonArray {
     }
 
     public boolean has(int index) {
-        if (index < _objects.size())
+        if (index < _objs.size())
             return true;
 
         return false;
@@ -402,4 +495,25 @@ public class JsonArray {
         return null;
     }
 
+    public static final Creator<JsonArray> CREATOR = new Creator<JsonArray>() {
+        @Override
+        public JsonArray createFromParcel(Parcel parcel) {
+            return new JsonArray(parcel.readBundle(JsonArray.class.getClassLoader()));
+        }
+
+        @Override
+        public JsonArray[] newArray(int i) {
+            return new JsonArray[i];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeBundle(_objs);
+    }
 }

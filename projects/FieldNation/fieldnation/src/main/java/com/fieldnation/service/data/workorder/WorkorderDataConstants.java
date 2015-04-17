@@ -47,7 +47,7 @@ public interface WorkorderDataConstants {
 
     public static final String PARAM_LIST_SELECTOR = "PARAM_LIST_SELECTOR";
     public static final String PARAM_PAGE = "PARAM_PAGE";
-    public static final String PARAM_DATA = "PARAM_DATA";
+    public static final String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
     public static final String PARAM_ID = "PARAM_ID";
     public static final String PARAM_SIGNATURE_ID = "PARAM_SIGNATURE_ID";
     public static final String PARAM_NAME = "PARAM_NAME";

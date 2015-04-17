@@ -2,7 +2,6 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 
-import com.fieldnation.data.workorder.Bundle;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -39,7 +38,7 @@ public class BundleTransactionHandler extends WebTransactionHandler implements W
 
             android.os.Bundle bundle = new android.os.Bundle();
             bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
-            bundle.putByteArray(PARAM_DATA, data);
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(data));
             bundle.putLong(PARAM_ID, bundleId);
             TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + "/" + bundleId, bundle, true);
         } catch (Exception ex) {

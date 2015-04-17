@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="android-v7">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libUtils/libs/android-v7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libJson/libs/android-v7.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

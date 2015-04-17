@@ -13,7 +13,6 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 
 import java.text.ParseException;
-import java.util.List;
 
 /**
  * Created by Michael Carver on 3/6/2015.
@@ -82,7 +81,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         // dispatch the event
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
-        bundle.putByteArray(PARAM_DATA, workorder.toByteArray());
+        bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
         bundle.putLong(PARAM_ID, workorderId);
         TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + "/" + workorderId, bundle, true);
         listener.onComplete(transaction);
@@ -98,7 +97,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
-        bundle.putByteArray(PARAM_DATA, data);
+        bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(data));
         bundle.putLong(PARAM_ID, workorderId);
         bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
         TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);

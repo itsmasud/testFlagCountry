@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * Created by Michael Carver on 3/6/2015.
@@ -79,9 +79,9 @@ public class HttpJson {
         conn.setRequestMethod(method);
 
         if (headers != null) {
-            Enumeration<String> e = headers.keys();
-            while (e.hasMoreElements()) {
-                String key = e.nextElement();
+            Iterator<String> e = headers.keys();
+            while (e.hasNext()) {
+                String key = e.next();
                 conn.setRequestProperty(key, headers.getString(key));
             }
         }
@@ -98,18 +98,18 @@ public class HttpJson {
             if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS)) {
                 Log.v(TAG, "PARAM_WEB_MULTIPART_FIELDS");
                 JsonObject fields = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FIELDS);
-                Enumeration<String> e = fields.keys();
-                while (e.hasMoreElements()) {
-                    String key = e.nextElement();
+                Iterator<String> e = fields.keys();
+                while (e.hasNext()) {
+                    String key = e.next();
                     util.addFormField(key, fields.getString(key));
                 }
             }
             if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES)) {
                 Log.v(TAG, "PARAM_WEB_MULTIPART_FILES");
                 JsonObject files = request.getJsonObject(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES);
-                Enumeration<String> e = files.keys();
-                while (e.hasMoreElements()) {
-                    String key = e.nextElement();
+                Iterator<String> e = files.keys();
+                while (e.hasNext()) {
+                    String key = e.next();
                     JsonObject fo = files.getJsonObject(key);
                     String filename = fo.getString("filename");
                     long soId = fo.getLong("soid");

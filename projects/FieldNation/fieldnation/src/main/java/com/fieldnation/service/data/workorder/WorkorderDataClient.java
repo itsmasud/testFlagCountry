@@ -20,6 +20,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.service.transaction.NullWebTransactionHandler;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -200,14 +201,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                             .method("POST")
-                            .path("/1111/api/rest/v1/workorder/" + workorderId + "/checkin")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
                             .body("checkin_time=" + ISO8601.now()))
                     .transform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
@@ -225,14 +225,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                             .method("POST")
-                            .path("/11111/api/rest/v1/workorder/" + workorderId + "/checkin")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
                             .body("checkin_time=" + ISO8601.now()
                                     + "&gps_lat=" + location.getLatitude()
                                     + "&gps_lon=" + location.getLongitude()))
@@ -253,8 +252,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -277,8 +275,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -634,13 +631,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                         selector = WorkorderDataSelector.fromName(bundle.getString(PARAM_LIST_SELECTOR));
                         page = bundle.getInt(PARAM_PAGE);
                         List<Workorder> list = new LinkedList<>();
-                        JsonArray ja = new JsonArray(bundle.getByteArray(PARAM_DATA));
+                        JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
                         for (int i = 0; i < ja.size(); i++) {
                             list.add(Workorder.fromJson(ja.getJsonObject(i)));
                         }
                         return list;
                     } catch (Exception ex) {
-                        Log.v(STAG, selector.name());
+//                        Log.v(STAG, selector.name());
                         ex.printStackTrace();
                     }
                     return null;
@@ -663,7 +660,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 protected Workorder doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     try {
-                        return Workorder.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                        return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -693,7 +690,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 protected Signature doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     try {
-                        return Signature.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                        return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -716,7 +713,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     try {
-                        return com.fieldnation.data.workorder.Bundle.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                        return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

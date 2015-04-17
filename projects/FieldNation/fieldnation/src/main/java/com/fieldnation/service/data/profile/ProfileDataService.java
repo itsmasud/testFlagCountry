@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonArray;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.topics.TopicService;
@@ -62,10 +64,14 @@ public class ProfileDataService extends Service implements ProfileConstants {
         StoredObject obj = StoredObject.get(context, PSO_PROFILE, PSO_MY_PROFILE_KEY);
         // if exists, then pass it back
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE, bundle, true);
-            return;
+            try {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(obj.getData()));
+                TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE, bundle, true);
+                return;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -92,12 +98,16 @@ public class ProfileDataService extends Service implements ProfileConstants {
 
         StoredObject obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            bundle.putInt(PARAM_PAGE, page);
-            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
-            TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST, bundle, false);
-            return;
+            try {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonArray(obj.getData()));
+                bundle.putInt(PARAM_PAGE, page);
+                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
+                TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST, bundle, false);
+                return;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
     }
@@ -125,12 +135,16 @@ public class ProfileDataService extends Service implements ProfileConstants {
 
         StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page + "");
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            bundle.putInt(PARAM_PAGE, page);
-            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
-            TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST, bundle, false);
-            return;
+            try {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonArray(obj.getData()));
+                bundle.putInt(PARAM_PAGE, page);
+                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
+                TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST, bundle, false);
+                return;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

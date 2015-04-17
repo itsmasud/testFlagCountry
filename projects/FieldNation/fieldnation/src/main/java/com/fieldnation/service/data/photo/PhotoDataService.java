@@ -65,6 +65,7 @@ public class PhotoDataService extends Service implements PhotoConstants {
             if (context == null)
                 return;
 
+            Log.v(TAG, _intent.getExtras().toString());
             String url = _intent.getStringExtra(PARAM_URL);
             boolean getCircle = _intent.getBooleanExtra(PARAM_CIRCLE, false);
             String objectName = "PhotoCache" + (getCircle ? "Circle" : "");

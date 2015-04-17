@@ -13,9 +13,9 @@
     <color name="card_gradient_center">@color/fn_clickable_bg_0</color>
     <color name="card_gradient_bottom">#05000000</color>
 
-    <dimen name="card_status_left">2dp</dimen>
-    <dimen name="card_status_bottom">2dp</dimen>
-    <dimen name="card_status_top">2dp</dimen>
+    <dimen name="card_status_left">3dp</dimen>
+    <dimen name="card_status_bottom">3dp</dimen>
+    <dimen name="card_status_top">3dp</dimen>
 
     <color name="card_status_orange_fill">@color/fn_brandcolor</color>
     <color name="card_status_orange_top">@color/fn_brandcolor_80</color>
