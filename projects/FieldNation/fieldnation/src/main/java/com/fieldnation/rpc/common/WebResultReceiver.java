@@ -49,13 +49,18 @@ public abstract class WebResultReceiver extends ResultReceiver implements WebSer
     public void onError(int resultCode, Bundle resultData, String errorType) {
         Log.v(TAG, "onError[" + resultCode + "] " + errorType);
         Log.v(TAG, resultData.toString());
-        if (resultData.containsKey(KEY_RESPONSE_DATA)) {
-            String response = new String(resultData.getByteArray(KEY_RESPONSE_DATA));
+        try {
+            if (resultData.containsKey(KEY_RESPONSE_DATA) && resultData.getByteArray(KEY_RESPONSE_DATA) != null) {
+                String response = new String(resultData.getByteArray(KEY_RESPONSE_DATA));
 
-            if (response.contains("The authtoken is invalid or has expired.")) {
-                Topics.dispatchNetworkUp(getContext());
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    Topics.dispatchNetworkUp(getContext());
+                }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
         try {
             Log.v(TAG, new String(resultData.getByteArray(KEY_RESPONSE_DATA)));
         } catch (Exception ex) {
