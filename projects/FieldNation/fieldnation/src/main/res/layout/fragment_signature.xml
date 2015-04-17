@@ -87,14 +87,14 @@
 
         <Button
             android:id="@+id/back_button"
-            style="@style/ButtonWhiteMaterial"
+            style="?attr/buttonWhiteStyle"
             android:layout_width="150dp"
             android:layout_centerVertical="true"
             android:text="BACK TO REVIEW" />
 
         <Button
             android:id="@+id/submit_button"
-            style="@style/ButtonOrangeMaterial"
+            style="?attr/buttonOrangeStyle"
             android:layout_width="150dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"

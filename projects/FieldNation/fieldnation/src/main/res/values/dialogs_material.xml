@@ -11,7 +11,7 @@
 
     <color name="dialogBg_Material">@color/fn_menu_bg</color>
 
-    <style name="DurationNumberPad.Material" parent="ButtonWhiteMaterial">
+    <style name="DurationNumberPad.Material" parent="Material.Button.Raised.White">
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20sp</item>
         <item name="android:layout_width">64dp</item>
