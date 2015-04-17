@@ -20,7 +20,6 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.transaction.NullWebTransactionHandler;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -196,12 +195,21 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     // checkin workorder
+    public boolean registerCheckin() {
+        if (!isConnected())
+            return false;
+
+        return register(PARAM_ACTION_CHECKIN, TAG);
+    }
+
+
     public static void requestCheckin(Context context, long workorderId) {
         Log.v(STAG, "requestCheckin");
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -225,7 +233,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -252,7 +261,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -275,7 +285,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -615,7 +626,17 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 preOnGetSignature((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_GET_BUNDLE)) {
                 preOnGetBundle((Bundle) payload);
+            } else if (topicId.equals(PARAM_ACTION_CHECKIN)) {
+                preCheckIn((Bundle) payload);
             }
+
+        }
+
+        private void preCheckIn(Bundle payload) {
+            onCheckIn(payload.getLong(PARAM_ID));
+        }
+
+        public void onCheckIn(long WorkorderId) {
         }
 
         // list

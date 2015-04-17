@@ -44,6 +44,17 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
+    public static byte[] pCheckIn(long workorderId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pCheckIn");
+            obj.put("workorderId", workorderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     // plumbing
     @Override
     public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
@@ -54,6 +65,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                 handleDetails(context, listener, transaction, params, resultData);
             } else if (action.equals("pGetSignature")) {
                 handleGetSignature(context, listener, transaction, params, resultData);
+            } else if (action.equals("pCheckIn")) {
+                handleCheckIn(context, listener, transaction, params, resultData);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -61,6 +74,18 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         listener.requeue(transaction);
     }
 
+    private void handleCheckIn(Context context, Listener listener, WebTransaction transaction,
+                               JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCheckIn");
+        long workorderId = params.getLong("workorderId");
+
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_CHECKIN);
+        bundle.putLong(PARAM_ID, workorderId);
+        bundle.putByteArray(PARAM_DATA_BYTE_ARRAY, resultData.getResultsAsByteArray());
+        TopicService.dispatchEvent(context, PARAM_ACTION_CHECKIN, bundle, true);
+        listener.onComplete(transaction);
+    }
 
     // individual commands
     private void handleDetails(Context context, Listener listener, WebTransaction transaction,

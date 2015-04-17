@@ -383,7 +383,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         } else {
             WorkorderDataClient.requestCheckin(getActivity(), _currentWorkorder.getWorkorderId());
         }
-        WorkorderDataClient.requestDetails(getActivity(), _currentWorkorder.getWorkorderId());
+//        _adapter.refreshPages();
     }
 
     private void doCheckOut() {
@@ -415,7 +415,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             } else {
                 WorkorderDataClient.requestCheckout(getActivity(), _currentWorkorder.getWorkorderId());
             }
-            WorkorderDataClient.requestDetails(getActivity(), _currentWorkorder.getWorkorderId());
+//            _adapter.refreshPages();
         }
     }
 
@@ -809,6 +809,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onConnected() {
             Log.v(TAG, "_workorderData_listener.onConnected");
             _workorderClient.registerList(_displayView);
+            _workorderClient.registerCheckin();
             _adapter.refreshPages();
         }
 
@@ -817,6 +818,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             Log.v(TAG, "_workorderData_listener.onWorkorderList");
             if (list != null)
                 addPage(page, list);
+        }
+
+        @Override
+        public void onCheckIn(long WorkorderId) {
+            _adapter.refreshPages();
         }
     };
 }

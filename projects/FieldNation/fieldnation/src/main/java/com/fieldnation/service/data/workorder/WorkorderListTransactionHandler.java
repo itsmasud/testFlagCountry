@@ -14,8 +14,6 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.Stopwatch;
 
-import java.util.List;
-
 /**
  * Created by Michael Carver on 3/4/2015.
  */
@@ -66,17 +64,9 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
 
                 // <3s>
                 transformQuery.start();
-                List<Transform> transList = Transform.getObjectTransforms(context, PSO_WORKORDER, json.getLong("workorderId"));
+                Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
                 transformQuery.pause();
                 // </3s>
-
-                //<free>
-                for (int j = 0; j < transList.size(); j++) {
-                    Transform t = transList.get(j);
-                    JsonObject to = new JsonObject(t.getData());
-                    json.deepmerge(to);
-                }
-                //</free>
             }
             Log.v(TAG, "transformQuery time: " + transformQuery.finish());
             Log.v(TAG, "process time: " + processTime.finish());

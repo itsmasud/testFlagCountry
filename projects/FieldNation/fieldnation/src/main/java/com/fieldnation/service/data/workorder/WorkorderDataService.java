@@ -19,7 +19,6 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 /**
  * Created by Michael Carver on 3/24/2015.
@@ -73,14 +72,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                 JsonArray ja = new JsonArray(obj.getData());
                 for (int i = 0; i < ja.size(); i++) {
                     JsonObject json = ja.getJsonObject(i);
-
-                    List<Transform> tlist = Transform.getObjectTransforms(context, PSO_WORKORDER, json.getLong("workorderId"));
-                    for (int j = 0; j < tlist.size(); j++) {
-                        Transform t = tlist.get(j);
-                        Log.v(TAG, "handleResult, trans: " + new String(t.getData()));
-                        JsonObject to = new JsonObject(t.getData());
-                        json.deepmerge(to);
-                    }
+                    Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
                 }
 
                 Bundle bundle = new Bundle();
