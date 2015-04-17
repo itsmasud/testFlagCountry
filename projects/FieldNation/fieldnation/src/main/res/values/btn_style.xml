@@ -19,16 +19,19 @@
     <color name="btn_status_orange_top">@color/fn_brandcolor_80</color>
     <color name="btn_status_orange_center">@color/fn_brandcolor_0</color>
     <color name="btn_status_orange_bottom">#05000000</color>
+    <color name="btn_status_orange_pressed">@color/fn_brandcolor_medium</color>
 
     <color name="btn_status_white_fill">@color/fn_primary_bg</color>
     <color name="btn_status_white_top">@color/fn_primary_bg_80</color>
     <color name="btn_status_white_center">@color/fn_primary_bg_0</color>
     <color name="btn_status_white_bottom">#05000000</color>
+    <color name="btn_status_white_pressed">@color/fn_primary_bg_medium</color>
 
     <color name="btn_status_green_fill">@color/fn_accent_color</color>
     <color name="btn_status_green_top">@color/fn_accent_color_80</color>
     <color name="btn_status_green_center">@color/fn_accent_color_0</color>
     <color name="btn_status_green_bottom">#05000000</color>
+    <color name="btn_status_green_pressed">@color/fn_accent_color_medium</color>
 
     <color name="btn_status_gray_fill">@color/fn_light_text</color>
     <color name="btn_status_gray_top">@color/fn_light_text_80</color>
@@ -54,6 +57,7 @@
         <item name="android:layout_marginBottom">@dimen/button_vert_margin</item>
         <item name="android:paddingLeft">@dimen/button_horr_padding</item>
         <item name="android:paddingRight">@dimen/button_horr_padding</item>
+        <item name="android:paddingBottom">4dp</item>
     </style>
 
     <style name="Material.Button.Flat" parent="Material.Button">
@@ -62,7 +66,7 @@
     </style>
 
     <style name="Material.Button.Raised.White" parent="Material.Button">
-        <item name="android:background">@drawable/btn_white_material</item>
+        <item name="android:background">@drawable/btn_white</item>
         <item name="android:textColor">@color/fn_dark_button_text</item>
     </style>
 
@@ -72,12 +76,12 @@
     </style>
 
     <style name="Material.Button.Raised.Orange" parent="Material.Button">
-        <item name="android:background">@drawable/btn_orange_material</item>
+        <item name="android:background">@drawable/btn_orange</item>
         <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
     <style name="Material.Button.Raised.Gray" parent="Material.Button">
-        <item name="android:background">@drawable/btn_white_material</item>
+        <item name="android:background">@drawable/btn_white</item>
         <item name="android:textColor">@color/fn_dark_button_text</item>
     </style>
 

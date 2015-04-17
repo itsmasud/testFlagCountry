@@ -3,11 +3,13 @@
     <!-- new colors -->
 
     <color name="fn_brandcolor">#FFFF5F00</color>
+    <color name="fn_brandcolor_medium">#FFe65600</color>
     <color name="fn_brandcolor_80">#CCFF5F00</color>
     <color name="fn_brandcolor_0">#00FF5F00</color>
     <color name="fn_brandcolor_dark">#FFbd4600</color>
 
     <color name="fn_primary_bg">#FFF3F3EB</color>
+    <color name="fn_primary_bg_medium">#FFd9d9d2</color>
     <color name="fn_primary_bg_80">#CCF3F3EB</color>
     <color name="fn_primary_bg_0">#00F3F3EB</color>
     <color name="fn_primary_bg_dark">#FFb8b9b6</color>
@@ -18,6 +20,7 @@
     <color name="fn_menu_bg">#FFf9f9f9</color>
 
     <color name="fn_accent_color">#FF3FD4AD</color>
+    <color name="fn_accent_color_medium">#FF37ba98</color>
     <color name="fn_accent_color_80">#CC3FD4AD</color>
     <color name="fn_accent_color_50">#803FD4AD</color>
     <color name="fn_accent_color_25">#3F3FD4AD</color>

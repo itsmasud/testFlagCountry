@@ -20,6 +20,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.service.transaction.NullWebTransactionHandler;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -200,14 +201,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                             .method("POST")
-                            .path("/1111/api/rest/v1/workorder/" + workorderId + "/checkin")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
                             .body("checkin_time=" + ISO8601.now()))
                     .transform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
@@ -225,14 +225,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                             .method("POST")
-                            .path("/11111/api/rest/v1/workorder/" + workorderId + "/checkin")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
                             .body("checkin_time=" + ISO8601.now()
                                     + "&gps_lat=" + location.getLatitude()
                                     + "&gps_lon=" + location.getLongitude()))
@@ -253,8 +252,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -277,8 +275,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth()
                     .request(new HttpJsonBuilder()
                             .protocol("https")
