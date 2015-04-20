@@ -206,7 +206,7 @@ public class OAuth implements Parcelable {
         @Override
         public OAuth createFromParcel(Parcel source) {
             try {
-                return OAuth.fromJson(new JsonObject(source.readString()));
+                return OAuth.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -226,9 +226,7 @@ public class OAuth implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
-
-
 }
 

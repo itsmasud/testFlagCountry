@@ -27,7 +27,7 @@ public class BundleTransactionHandler extends WebTransactionHandler implements W
     }
 
     @Override
-    public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
@@ -44,5 +44,6 @@ public class BundleTransactionHandler extends WebTransactionHandler implements W
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return Result.FINISH;
     }
 }

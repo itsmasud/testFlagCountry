@@ -24,7 +24,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     private static final String TAG = UniqueTag.makeTag("AuthTopicService");
 
     // Data
-    private boolean _isStarted = false;
     private Account _account = null;
     private OAuth _authToken = null;
     private AuthState _state = null;
@@ -50,6 +49,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     public void onCreate() {
         Log.v(TAG, "onCreate");
         super.onCreate();
+        _authTopicClient = new AuthTopicClient(_authClientListener);
+        _authTopicClient.connect(this);
+
         _state = null;
         setState(AuthState.NOT_AUTHENTICATED);
     }
@@ -57,11 +59,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
-        if (!_isStarted) {
-            _authTopicClient = new AuthTopicClient(_authClientListener);
-            _authTopicClient.connect(this);
-            _isStarted = true;
-        }
 
         return START_STICKY;
     }
@@ -321,6 +318,13 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                 // have token string, get the full token
                 Log.v(TAG, "have token");
                 _authToken = OAuth.lookup(AuthTopicService.this, bundle.getString(AccountManager.KEY_ACCOUNT_NAME));
+
+                if (_authToken == null) {
+                    invalidateToken();
+                    setState(AuthState.NOT_AUTHENTICATED);
+                    return;
+                }
+
                 Log.v(TAG, _authToken.toJson().display());
                 setState(AuthState.AUTHENTICATED);
             }

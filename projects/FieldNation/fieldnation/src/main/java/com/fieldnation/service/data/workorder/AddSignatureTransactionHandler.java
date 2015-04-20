@@ -11,7 +11,7 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
  */
 public class AddSignatureTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
     @Override
-    public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
-
+    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+        return Result.FINISH;
     }
 }

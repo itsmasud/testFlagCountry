@@ -81,6 +81,10 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
 
     public abstract View getView(O object, View convertView, ViewGroup parent);
 
+    public void notifyDataSetChanged(){
+        _adapter.notifyDataSetChanged();
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/

@@ -16,11 +16,11 @@ public class DeliverableDeleteTransactionHandler extends WebTransactionHandler i
     }
 
     @Override
-    public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         long workorderId = Long.parseLong(new String(transaction.getHandlerParams()));
 
         WorkorderDataClient.detailsWebRequest(context, workorderId);
 
-        listener.onComplete(transaction);
+        return Result.FINISH;
     }
 }

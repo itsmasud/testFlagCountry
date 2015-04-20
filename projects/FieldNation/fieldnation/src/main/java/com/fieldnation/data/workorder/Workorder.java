@@ -11,7 +11,6 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -992,11 +991,11 @@ public class Workorder implements Parcelable {
         @Override
         public Workorder createFromParcel(Parcel source) {
             try {
-                return Workorder.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException e) {
-                e.printStackTrace();
+                return Workorder.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
             }
-            return null;
         }
 
         @Override
@@ -1012,7 +1011,7 @@ public class Workorder implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 
 }

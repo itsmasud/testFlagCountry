@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -100,6 +101,9 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         _loadingView = (LoadingView) findViewById(R.id.loading_view);
 
+        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient.connect(this);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -179,7 +183,14 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         if (_workorder == null)
             return;
 
+        if (_workorderClient == null)
+            return;
+
         _loadingView.setVisibility(View.VISIBLE);
+
+        if (_workorderClient.isConnected()) {
+            _workorderClient.registerGetSignature(_signatureId);
+        }
 
         WorkorderDataClient.requestGetSignature(this, _workorder.getWorkorderId(), _signatureId);
     }
@@ -187,8 +198,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
-        _workorderClient.connect(this);
         populateUi();
     }
 
@@ -291,7 +300,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
         @Override
         public void onConnected() {
-            _workorderClient.registerGetSignature(_signatureId);
         }
 
         @Override
@@ -322,7 +330,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
                 Intent intent = new Intent(context, SignatureDisplayActivity.class);
                 intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
-                intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
+                intent.putExtra(INTENT_PARAM_WORKORDER, (Parcelable) workorder);
                 if (!(context instanceof Activity)) {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }

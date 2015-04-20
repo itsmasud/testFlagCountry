@@ -35,25 +35,6 @@ public class PaymentDataService extends Service implements PaymentConstants {
 
     private void getAll(Context context, Intent intent) {
         int page = intent.getIntExtra(PARAM_PAGE, 0);
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
-                    .handler(PaymentTransactionHandler.class)
-                    .handlerParams(
-                            PaymentTransactionHandler.generateGetAllParams(page)
-                    )
-                    .key("PaymentGetAll" + page)
-                    .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .method("GET")
-                                    .path("/api/rest/v1/accounting/payment-queue/all")
-                                    .urlParams("?page=" + page)
-                    ).send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
         StoredObject obj = StoredObject.get(context, PSO_PAYMENT_GET_ALL, page + "");
         if (obj != null) {
             Bundle bundle = new Bundle();
@@ -62,26 +43,31 @@ public class PaymentDataService extends Service implements PaymentConstants {
             bundle.putByteArray(PARAM_DATA, obj.getData());
             TopicService.dispatchEvent(context, TOPIC_ID_GET_ALL, bundle, true);
         }
+
+        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+            try {
+                WebTransactionBuilder.builder(context)
+                        .priority(WebTransaction.Priority.HIGH)
+                        .handler(PaymentTransactionHandler.class)
+                        .handlerParams(
+                                PaymentTransactionHandler.generateGetAllParams(page)
+                        )
+                        .key("PaymentGetAll" + page)
+                        .useAuth()
+                        .request(
+                                new HttpJsonBuilder()
+                                        .method("GET")
+                                        .path("/api/rest/v1/accounting/payment-queue/all")
+                                        .urlParams("?page=" + page)
+                        ).send();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     private void getPayment(Context context, Intent intent) {
         long paymentId = intent.getLongExtra(PARAM_ID, 0);
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
-                    .handler(PaymentTransactionHandler.class)
-                    .handlerParams(PaymentTransactionHandler.generatePaymentParams(paymentId))
-                    .key("GetPayment" + paymentId)
-                    .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .method("GET")
-                                    .path("/api/rest/v1/accounting/payment-queue/" + paymentId)
-                    ).send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
         StoredObject obj = StoredObject.get(context, PSO_PAYMENT_GET, paymentId + "");
         if (obj != null) {
             Bundle bundle = new Bundle();
@@ -89,6 +75,24 @@ public class PaymentDataService extends Service implements PaymentConstants {
             bundle.putLong(PARAM_ID, paymentId);
             bundle.putByteArray(PARAM_DATA, obj.getData());
             TopicService.dispatchEvent(context, TOPIC_ID_PAYMENT, bundle, true);
+        }
+
+        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+            try {
+                WebTransactionBuilder.builder(context)
+                        .priority(WebTransaction.Priority.HIGH)
+                        .handler(PaymentTransactionHandler.class)
+                        .handlerParams(PaymentTransactionHandler.generatePaymentParams(paymentId))
+                        .key("GetPayment" + paymentId)
+                        .useAuth()
+                        .request(
+                                new HttpJsonBuilder()
+                                        .method("GET")
+                                        .path("/api/rest/v1/accounting/payment-queue/" + paymentId)
+                        ).send();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

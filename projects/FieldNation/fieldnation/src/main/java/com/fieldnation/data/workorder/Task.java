@@ -7,8 +7,6 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-import java.text.ParseException;
-
 public class Task implements Parcelable {
 
     @Json(name = "alertOnCompletion")
@@ -47,8 +45,8 @@ public class Task implements Parcelable {
     private Boolean _showAlertMenu;
     @Json(name = "showTimeMenu")
     private Boolean _showTimeMenu;
-	@Json(name="slotData")
-	private SlotData _slotData;
+    @Json(name = "slotData")
+    private SlotData _slotData;
     @Json(name = "slotId")
     private Long _slotId;
     @Json(name = "stage")
@@ -143,9 +141,9 @@ public class Task implements Parcelable {
         return _showTimeMenu;
     }
 
-	public SlotData getSlotData(){
-		return _slotData;
-	}
+    public SlotData getSlotData() {
+        return _slotData;
+    }
 
     public Long getSlotId() {
         return _slotId;
@@ -218,18 +216,13 @@ public class Task implements Parcelable {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
-    }
-
     public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
 
         @Override
         public Task createFromParcel(Parcel source) {
             try {
-                return Task.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException e) {
+                return Task.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -241,4 +234,8 @@ public class Task implements Parcelable {
         }
     };
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
+    }
 }

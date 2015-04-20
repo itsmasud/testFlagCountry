@@ -60,7 +60,7 @@
     <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_payments">PAYMENTS</string>
-	<string name="btn_not_now">NOT NOW</string>
+    <string name="btn_not_now">NOT NOW</string>
     <string name="btn_later">LATER</string>
     <string name="btn_no_later">NEVER SHOW AGAIN</string>
 
@@ -296,27 +296,32 @@
     <string name="confirm">Confirm</string>
 
     <!-- Preferences -->
-    <string name="data_Storage">Data Storage</string>
+    <string name="pref_data_settings">Data Settings</string>
 
-    <string name="pref_sync">Sync Frequency</string>
-
-    <string-array name="pref_sync_titles">
-        <item>1 minute</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
+    <string name="pref_allow_data_purge">Allow Data Purging</string>
+    <string name="pref_allow_data_purge_summary">Allows removing old data</string>
+    <string name="pref_allow_data_purge_key">pref_allow_data_purge_key</string>
+    <string name="purge_rate">Purge data older than</string>
+    <string name="pref_purge_rate_key">pref_purge_rate_key</string>
+    <string-array name="pref_purge_titles">
+        <item>1 day</item>
+        <item>3 days</item>
+        <item>1 week</item>
+        <item>2 weeks</item>
+        <item>1 month </item>
+        <item>2 months</item>
+        <item>3 months</item>
+        <item>6 months</item>
     </string-array>
-    <string-array name="pref_sync_values">
+    <string-array name="pref_purge_values">
         <item>1</item>
-        <item>15</item>
+        <item>3</item>
+        <item>7</item>
+        <item>14</item>
         <item>30</item>
         <item>60</item>
+        <item>90</item>
         <item>180</item>
-        <item>360</item>
-        <item>-1</item>
     </string-array>
 
     <!-- login error messages -->

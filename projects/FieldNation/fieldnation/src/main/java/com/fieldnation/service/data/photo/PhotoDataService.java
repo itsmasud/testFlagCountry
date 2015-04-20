@@ -73,7 +73,8 @@ public class PhotoDataService extends Service implements PhotoConstants {
             // check cache
             StoredObject obj = StoredObject.get(context, objectName, url);
 
-            // if exists, then send result via broadcast?
+            // if exists, then send result via broadcast
+            // this code keeps images for ever
             if (obj != null) {
                 Bundle bundle = _intent.getExtras();
                 bundle.putSerializable(RESULT_IMAGE_FILE, obj.getFile());

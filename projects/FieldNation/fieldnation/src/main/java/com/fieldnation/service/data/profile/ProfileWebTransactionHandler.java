@@ -58,7 +58,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
 
 
     @Override
-    public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         Log.v(TAG, "handleResult");
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
@@ -76,7 +76,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(resultData.getResultsAsByteArray()));
                 TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE, bundle, false);
-                return;
+                return Result.FINISH;
             } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
                 Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
                 int page = params.getInt("page");
@@ -90,26 +90,26 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 bundle.putInt(PARAM_PAGE, page);
                 bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
                 TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST, bundle, false);
-                return;
+                return Result.FINISH;
             } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
                 Log.v(TAG, "PARAM_ACTION_GET_ALL_MESSAGES");
                 int page = params.getInt("page");
                 // store object
                 byte[] pagedata = resultData.getResultsAsByteArray();
 
-                StoredObject.put(context, PSO_MESSAGE_PAGE, page + "", pagedata);
+                StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
 
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonArray(pagedata));
                 bundle.putInt(PARAM_PAGE, page);
                 bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
                 TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST, bundle, false);
-                return;
+                return Result.FINISH;
             }
-            listener.onComplete(transaction);
+            return Result.FINISH;
         } catch (Exception ex) {
             ex.printStackTrace();
-            listener.requeue(transaction);
+            return Result.REQUEUE;
         }
 
     }

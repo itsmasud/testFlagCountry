@@ -240,7 +240,7 @@ public class WorkorderTransfer implements Parcelable {
         @Override
         public WorkorderTransfer createFromParcel(Parcel source) {
             try {
-                return WorkorderTransfer.fromJson(new JsonObject(source.readString()));
+                return WorkorderTransfer.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
@@ -260,6 +260,6 @@ public class WorkorderTransfer implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 }

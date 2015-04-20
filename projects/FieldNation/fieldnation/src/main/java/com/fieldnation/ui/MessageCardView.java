@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -11,17 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
-import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.Calendar;
-import java.util.Hashtable;
 
 public class MessageCardView extends RelativeLayout {
     private static final String TAG = "MessageView";
@@ -34,11 +28,9 @@ public class MessageCardView extends RelativeLayout {
     private ImageView _profileImageView;
     private int _viewId;
 
-    private PhotoDataClient _photos;
     private Message _message;
     private String[] _substatus;
-    private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
-    private WeakReference<Drawable> _profilePic = null;
+    private Listener _listener;
 
     /*-*****************************-*/
     /*-			LifeCycle			-*/
@@ -74,26 +66,23 @@ public class MessageCardView extends RelativeLayout {
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _statusView = findViewById(R.id.status_view);
 
-        _photos = new PhotoDataClient(_photo_listener);
-        _photos.connect(getContext());
-
         populateUi();
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        _photos.disconnect(getContext());
-        super.onDetachedFromWindow();
-    }
-
-    public void setMessage(Message message) {
+    public void setData(Message message, Listener listener) {
         _message = message;
-        _profilePic = null;
-
-        if (_photos.isConnected())
-            _photos.unregisterAll();
+        _listener = listener;
+        _profileImageView.setBackgroundResource(R.drawable.missing_circle);
 
         populateUi();
+    }
+
+    public void setPhoto(Drawable photo) {
+        if (photo == null) {
+            _profileImageView.setBackgroundResource(R.drawable.missing_circle);
+            return;
+        }
+        _profileImageView.setBackgroundDrawable(photo);
     }
 
     private void populateUi() {
@@ -133,24 +122,11 @@ public class MessageCardView extends RelativeLayout {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
+
+        if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoUrl())) {
+            _listener.getPhoto(this, _message.getFromUser().getPhotoUrl(), true);
+        } else {
             _profileImageView.setBackgroundResource(R.drawable.missing_circle);
-            String url = _message.getFromUser().getPhotoUrl();
-            if (!misc.isEmptyOrNull(url)) {
-                if (_picCache.containsKey(url)) {
-                    _profilePic = _picCache.get(url);
-                    if (_profilePic.get() != null) {
-                        _profileImageView.setBackgroundDrawable(_profilePic.get());
-                    } else {
-                        _picCache.remove(url);
-                        _photos.getPhoto(getContext(), url, true);
-                    }
-                } else {
-                    _photos.getPhoto(getContext(), url, true);
-                }
-            }
-        } else if (_profilePic != null && _profilePic.get() != null) {
-            _profileImageView.setBackgroundDrawable(_profilePic.get());
         }
 
         try {
@@ -180,42 +156,8 @@ public class MessageCardView extends RelativeLayout {
         return _message;
     }
 
-    private final PhotoDataClient.Listener _photo_listener = new PhotoDataClient.Listener() {
-        @Override
-        public void onConnected() {
-            if (_message != null && _profilePic == null || _profilePic.get() == null) {
-                _profileImageView.setBackgroundResource(R.drawable.missing_circle);
-                String url = _message.getFromUser().getPhotoUrl();
-                if (!misc.isEmptyOrNull(url)) {
-                    if (_picCache.containsKey(url)) {
-                        _profilePic = _picCache.get(url);
-                        if (_profilePic.get() != null) {
-                            _profileImageView.setBackgroundDrawable(_profilePic.get());
-                        } else {
-                            _picCache.remove(url);
-                            _photos.getPhoto(getContext(), url, true);
-                        }
-                    } else {
-                        _photos.getPhoto(getContext(), url, true);
-                    }
-                }
-            } else if (_profilePic != null && _profilePic.get() != null) {
-                _profileImageView.setBackgroundDrawable(_profilePic.get());
-            }
-
-        }
-
-        @Override
-        public void onPhoto(String url, File file, boolean isCircle) {
-            if (file == null || url == null)
-                return;
-
-            Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
-            _profilePic = new WeakReference<>(pic);
-            _picCache.put(url, _profilePic);
-            _profileImageView.setBackgroundDrawable(pic);
-        }
-    };
-
+    public interface Listener {
+        public void getPhoto(MessageCardView view, String url, boolean circle);
+    }
 }
 

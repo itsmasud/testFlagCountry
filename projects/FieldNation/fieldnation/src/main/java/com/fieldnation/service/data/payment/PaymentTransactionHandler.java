@@ -38,7 +38,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
     }
 
     @Override
-    public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
             JsonObject obj = new JsonObject(transaction.getHandlerParams());
             String action = obj.getString("action");
@@ -53,8 +53,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
                 bundle.putInt(PARAM_PAGE, page);
                 bundle.putByteArray(PARAM_DATA, data);
                 TopicService.dispatchEvent(context, TOPIC_ID_GET_ALL, bundle, true);
-                listener.onComplete(transaction);
-                return;
+                return Result.FINISH;
             } else if (action.equals("get")) {
                 long paymentId = obj.getLong("paymentId");
 
@@ -67,14 +66,12 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
                 bundle.putLong(PARAM_ID, paymentId);
                 bundle.putByteArray(PARAM_DATA, data);
                 TopicService.dispatchEvent(context, TOPIC_ID_PAYMENT, bundle, true);
-                listener.onComplete(transaction);
-                return;
+                return Result.FINISH;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            listener.onError(transaction);
-            return;
+            return Result.ERROR;
         }
-        listener.requeue(transaction);
+        return Result.REQUEUE;
     }
 }

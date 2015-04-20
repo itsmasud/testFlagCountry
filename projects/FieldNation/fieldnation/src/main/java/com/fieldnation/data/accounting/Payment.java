@@ -84,7 +84,7 @@ public class Payment implements Parcelable {
         @Override
         public Payment createFromParcel(Parcel source) {
             try {
-                return Payment.fromJson(new JsonObject(source.readString()));
+                return Payment.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -104,6 +104,6 @@ public class Payment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 }

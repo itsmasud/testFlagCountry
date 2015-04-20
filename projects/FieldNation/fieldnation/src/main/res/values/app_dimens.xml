@@ -5,4 +5,5 @@
     <dimen name="button_horr_margin">1dp</dimen>
     <dimen name="button_vert_margin">4dp</dimen>
     <dimen name="button_min_width">88dp</dimen>
+
 </resources>

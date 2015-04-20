@@ -62,6 +62,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
                 if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(this, extras.getString(PARAM_KEY))) {
                     Log.v(TAG, "Duplicate key: " + extras.getString(PARAM_KEY));
+                    // TODO, need to send a response!?
                     return START_STICKY;
                 }
 
@@ -177,48 +178,70 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         Log.v(TAG, "Reauth");
                         _isAuthenticated = false;
                         AuthTopicClient.dispatchInvalidateCommand(context);
-                        _transactionListener.requeue(trans);
+                        requeue(context, trans);
                         AuthTopicClient.dispatchRequestCommand(context);
                         return null;
                     } else if (result.getResponseCode() == 400) {
                         // Bad request
                         // need to report this
 
-                        // need to re-auth
+                        // need to re-auth?
+                        Thread.sleep(5000);
+                        requeue(context, trans);
+                        AuthTopicClient.dispatchRequestCommand(context);
                     } else if (result.getResponseCode() == 401) {
                         Log.v(TAG, "Reauth");
                         _isAuthenticated = false;
                         AuthTopicClient.dispatchInvalidateCommand(context);
-                        _transactionListener.requeue(trans);
+                        requeue(context, trans);
                         AuthTopicClient.dispatchRequestCommand(context);
                         return null;
                     } else if (result.getResponseCode() == 404) {
                         Thread.sleep(5000);
-                        _transactionListener.requeue(trans);
+                        requeue(context, trans);
+                        AuthTopicClient.dispatchRequestCommand(context);
+                        return null;
+                    } else if (result.getResponseCode() == 502) {
+                        Thread.sleep(5000);
+                        requeue(context, trans);
                         AuthTopicClient.dispatchRequestCommand(context);
                         return null;
                     }
 
                     String handler = trans.getHandlerName();
                     if (!misc.isEmptyOrNull(handler)) {
-                        WebTransactionHandler.completeTransaction(
+                        WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
                                 context,
-                                _transactionListener,
                                 handler,
                                 trans,
                                 result);
+
+                        switch (wresult) {
+                            case ERROR:
+                                WebTransaction.delete(context, trans.getId());
+                                Transform.deleteTransaction(context, trans.getId());
+                                startTransaction();
+                                break;
+                            case FINISH:
+                                WebTransaction.delete(context, trans.getId());
+                                Transform.deleteTransaction(context, trans.getId());
+                                startTransaction();
+                                break;
+                            case REQUEUE:
+                                requeue(context, trans);
+                                startTransaction();
+                                break;
+                        }
                     }
                     return null;
                 } catch (UnknownHostException ex) {
                     // probably offline
                     ex.printStackTrace();
-                    trans.setState(WebTransaction.State.IDLE);
-                    trans.save(context);
+                    requeue(context, trans);
                     return null;
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    trans.setState(WebTransaction.State.IDLE);
-                    trans.save(context);
+                    requeue(context, trans);
                     return null;
                 }
             }
@@ -234,42 +257,11 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
     private void finishTransaction(WebTransaction trans) {
         Log.v(TAG, "finishTransaction(" + trans.getId() + ")");
-        Transform.deleteTransaction(this, trans.getId());
-        synchronized (TAG) {
-            THREAD_COUNT--;
-        }
     }
 
-    private final WebTransactionHandler.Listener _transactionListener = new WebTransactionHandler.Listener() {
-        @Override
-        public void onComplete(WebTransaction trans) {
-            Log.v(TAG, "_transactionListener.onComplete");
-            // finish up transaction
-            WebTransaction.delete(WebTransactionService.this, trans.getId());
-            // fire off the next one
-            startTransaction();
-            finishTransaction(trans);
-        }
+    private static final void requeue(Context context, WebTransaction trans) {
+        trans.setState(WebTransaction.State.IDLE);
+        trans.save(context);
 
-        @Override
-        public void requeue(WebTransaction trans) {
-            trans.setState(WebTransaction.State.IDLE);
-            trans.save(WebTransactionService.this);
-            startTransaction();
-//            finishTransaction(trans);
-        }
-
-        @Override
-        public void onError(WebTransaction trans) {
-            Log.v(TAG, "_transactionListener.onError");
-            // finish up transaction
-/*
-            WebTransaction.delete(WebTransactionService.this, trans.getId());
-            _currentTransaction = null;
-*/
-            // fire off the next one
-            startTransaction();
-            finishTransaction(trans);
-        }
-    };
+    }
 }

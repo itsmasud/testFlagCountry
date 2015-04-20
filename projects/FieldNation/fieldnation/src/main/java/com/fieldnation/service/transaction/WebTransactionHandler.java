@@ -9,27 +9,25 @@ import com.fieldnation.rpc.server.HttpResult;
  */
 public abstract class WebTransactionHandler {
 
-    public static void completeTransaction(Context context, Listener listener, String handlerName, WebTransaction transaction, HttpResult resultData) {
+    public static enum Result {
+        REQUEUE, FINISH, ERROR;
+    }
+
+
+    public static Result completeTransaction(Context context, String handlerName, WebTransaction transaction, HttpResult resultData) {
         try {
             Class<?> clazz = context.getClassLoader().loadClass(handlerName);
 
             WebTransactionHandler handler = (WebTransactionHandler) clazz.getConstructor((Class<?>[]) null)
                     .newInstance((Object[]) null);
 
-            handler.handleResult(context, listener, transaction, resultData);
+            return handler.handleResult(context, transaction, resultData);
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return Result.ERROR;
     }
 
-    public abstract void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData);
-
-    public interface Listener {
-        public void onComplete(WebTransaction trans);
-
-        public void requeue(WebTransaction trans);
-
-        public void onError(WebTransaction trans);
-    }
+    public abstract Result handleResult(Context context, WebTransaction transaction, HttpResult resultData);
 }

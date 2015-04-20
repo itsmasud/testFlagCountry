@@ -49,6 +49,21 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         String selector = intent.getStringExtra(PARAM_LIST_SELECTOR);
         int page = intent.getIntExtra(PARAM_PAGE, 0);
 
+        StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page);
+        if (obj != null) {
+            try {
+                JsonArray ja = new JsonArray(obj.getData());
+                for (int i = 0; i < ja.size(); i++) {
+                    JsonObject json = ja.getJsonObject(i);
+                    Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
+                }
+
+                WorkorderDataDispatch.workorderList(context, ja, page, selector);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
         try {
             WebTransactionBuilder.builder(context)
                     .priority(WebTransaction.Priority.HIGH)
@@ -64,26 +79,6 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
-
-        StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page);
-        if (obj != null) {
-            try {
-                JsonArray ja = new JsonArray(obj.getData());
-                for (int i = 0; i < ja.size(); i++) {
-                    JsonObject json = ja.getJsonObject(i);
-                    Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
-                }
-
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(PARAM_DATA_PARCELABLE, ja);
-                bundle.putInt(PARAM_PAGE, page);
-                bundle.putString(PARAM_LIST_SELECTOR, selector);
-                bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
-                TopicService.dispatchEvent(context, PARAM_ACTION_LIST + "/" + selector, bundle, true);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
         }
     }
 
@@ -101,11 +96,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
                 Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
-                Bundle bundle = new Bundle();
-                bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
-                bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
-                bundle.putLong(PARAM_ID, workorderId);
-                TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + "/" + workorderId, bundle, true);
+                WorkorderDataDispatch.workorder(context, workorder, workorderId);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -116,22 +107,6 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         Log.v(TAG, "getSignature");
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
         long signatureId = intent.getLongExtra(PARAM_SIGNATURE_ID, 0);
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
-                    .key("GetSignature/" + signatureId)
-                    .useAuth()
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
         StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId);
         if (obj != null) {
             try {
@@ -141,6 +116,22 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                 bundle.putLong(PARAM_ID, workorderId);
                 bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
                 TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            try {
+                WebTransactionBuilder.builder(context)
+                        .priority(WebTransaction.Priority.HIGH)
+                        .handler(WorkorderTransactionHandler.class)
+                        .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
+                        .key("GetSignature/" + signatureId)
+                        .useAuth()
+                        .request(new HttpJsonBuilder()
+                                .protocol("https")
+                                .method("GET")
+                                .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
+                        .send();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

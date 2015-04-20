@@ -42,23 +42,6 @@ public class ProfileDataService extends Service implements ProfileConstants {
 
     private static void getMyUserInformation(Context context, Intent intent) {
         Log.v(TAG, "getMyUserInformation");
-        // send request (we always ask for an update)
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .handlerParams(ProfileWebTransactionHandler.generateGetProfileParams())
-                    .key("ProfileGet")
-                    .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("GET")
-                                    .path("/api/rest/v1/profile")
-                    ).send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
 
         // get stored object
         StoredObject obj = StoredObject.get(context, PSO_PROFILE, PSO_MY_PROFILE_KEY);
@@ -73,28 +56,31 @@ public class ProfileDataService extends Service implements ProfileConstants {
                 ex.printStackTrace();
             }
         }
+
+        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+            // send request (we always ask for an update)
+            try {
+                WebTransactionBuilder.builder(context)
+                        .priority(WebTransaction.Priority.HIGH)
+                        .handler(ProfileWebTransactionHandler.class)
+                        .handlerParams(ProfileWebTransactionHandler.generateGetProfileParams())
+                        .key("ProfileGet")
+                        .useAuth()
+                        .request(
+                                new HttpJsonBuilder()
+                                        .protocol("https")
+                                        .method("GET")
+                                        .path("/api/rest/v1/profile")
+                        ).send();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     private void getAllNotifications(Context context, Intent intent) {
         Log.v(TAG, "getAllNotifications");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
-
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.LOW)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .handlerParams(ProfileWebTransactionHandler.generateGetAllNotificationsParams(page))
-                    .key("NotificationPage" + page)
-                    .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .method("GET")
-                                    .path("/api/rest/v1/profile/notifications/")
-                                    .urlParams("?page=" + page)
-                    ).send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
 
         StoredObject obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
         if (obj != null) {
@@ -110,30 +96,31 @@ public class ProfileDataService extends Service implements ProfileConstants {
             }
         }
 
+        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+            try {
+                WebTransactionBuilder.builder(context)
+                        .priority(WebTransaction.Priority.LOW)
+                        .handler(ProfileWebTransactionHandler.class)
+                        .handlerParams(ProfileWebTransactionHandler.generateGetAllNotificationsParams(page))
+                        .key("NotificationPage" + page)
+                        .useAuth()
+                        .request(
+                                new HttpJsonBuilder()
+                                        .method("GET")
+                                        .path("/api/rest/v1/profile/notifications/")
+                                        .urlParams("?page=" + page)
+                        ).send();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     private void getAllMessages(Context context, Intent intent) {
         Log.v(TAG, "getAllMessages");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
 
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.LOW)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .handlerParams(ProfileWebTransactionHandler.generateGetAllMessagesParams(page))
-                    .key("MessagePage" + page)
-                    .useAuth()
-                    .request(
-                            new HttpJsonBuilder()
-                                    .method("GET")
-                                    .path("/api/rest/v1/profile/messages/")
-                                    .urlParams("?page=" + page)
-                    ).send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page + "");
+        StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page);
         if (obj != null) {
             try {
                 Bundle bundle = new Bundle();
@@ -142,6 +129,25 @@ public class ProfileDataService extends Service implements ProfileConstants {
                 bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
                 TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST, bundle, false);
                 return;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+            try {
+                WebTransactionBuilder.builder(context)
+                        .priority(WebTransaction.Priority.LOW)
+                        .handler(ProfileWebTransactionHandler.class)
+                        .handlerParams(ProfileWebTransactionHandler.generateGetAllMessagesParams(page))
+                        .key("MessagePage" + page)
+                        .useAuth()
+                        .request(
+                                new HttpJsonBuilder()
+                                        .method("GET")
+                                        .path("/api/rest/v1/profile/messages/")
+                                        .urlParams("?page=" + page)
+                        ).send();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

@@ -781,6 +781,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
             v.setWorkorder(object);
             v.setWorkorderSummaryListener(_wocv_listener);
+            v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 
             return v;
         }
@@ -810,6 +811,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             Log.v(TAG, "_workorderData_listener.onConnected");
             _workorderClient.registerList(_displayView);
             _workorderClient.registerCheckin();
+            _workorderClient.registerCheckout();
             _adapter.refreshPages();
         }
 
@@ -822,6 +824,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onCheckIn(long WorkorderId) {
+            _adapter.refreshPages();
+        }
+
+        @Override
+        public void onCheckOut(long WorkorderId) {
             _adapter.refreshPages();
         }
     };

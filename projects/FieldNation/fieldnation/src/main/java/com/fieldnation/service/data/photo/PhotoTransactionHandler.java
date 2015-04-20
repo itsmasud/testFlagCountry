@@ -38,7 +38,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
     }
 
     @Override
-    public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         Log.v(TAG, "handleResult");
         try {
             JsonObject json = new JsonObject(transaction.getHandlerParams());
@@ -97,14 +97,12 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY + "/" + url, response, true);
 
             // done!
-            listener.onComplete(transaction);
             Log.v(TAG, "handleResult");
-            return;
+            return Result.FINISH;
         } catch (Exception ex) {
-            listener.requeue(transaction);
             ex.printStackTrace();
             Log.v(TAG, "handleResult");
-            return;
+            return Result.REQUEUE;
         }
 
     }

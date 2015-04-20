@@ -195,8 +195,8 @@ public class Schedule implements Parcelable {
         @Override
         public Schedule createFromParcel(Parcel source) {
             try {
-                return Schedule.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException ex) {
+                return Schedule.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
             return null;
@@ -215,7 +215,7 @@ public class Schedule implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 
 }

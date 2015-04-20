@@ -1,13 +1,11 @@
 package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
-import android.os.Bundle;
 
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
@@ -55,41 +53,61 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
+    public static byte[] pCheckOut(long workorderId){
+        try {
+            JsonObject obj = new JsonObject("action", "pCheckOut");
+            obj.put("workorderId", workorderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     // plumbing
     @Override
-    public void handleResult(Context context, Listener listener, WebTransaction transaction, HttpResult resultData) {
+    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
             if (action.equals("pDetails")) {
-                handleDetails(context, listener, transaction, params, resultData);
+                return handleDetails(context, transaction, params, resultData);
             } else if (action.equals("pGetSignature")) {
-                handleGetSignature(context, listener, transaction, params, resultData);
+                return handleGetSignature(context, transaction, params, resultData);
             } else if (action.equals("pCheckIn")) {
-                handleCheckIn(context, listener, transaction, params, resultData);
+                return handleCheckIn(context, transaction, params, resultData);
+            } else if(action.equals("pCheckOut")){
+                return handleCheckOut(context, transaction, params, resultData);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        listener.requeue(transaction);
+        return Result.FINISH;
     }
 
-    private void handleCheckIn(Context context, Listener listener, WebTransaction transaction,
-                               JsonObject params, HttpResult resultData) throws ParseException {
+    private Result handleCheckIn(Context context, WebTransaction transaction,
+                                 JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCheckIn");
         long workorderId = params.getLong("workorderId");
 
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_CHECKIN);
-        bundle.putLong(PARAM_ID, workorderId);
-        bundle.putByteArray(PARAM_DATA_BYTE_ARRAY, resultData.getResultsAsByteArray());
-        TopicService.dispatchEvent(context, PARAM_ACTION_CHECKIN, bundle, true);
-        listener.onComplete(transaction);
+        WorkorderDataDispatch.checkIn(context, workorderId, resultData.getResultsAsByteArray());
+
+        return Result.FINISH;
+    }
+
+    private Result handleCheckOut(Context context, WebTransaction transaction,
+                                 JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCheckOut");
+        long workorderId = params.getLong("workorderId");
+
+        WorkorderDataDispatch.checkOut(context, workorderId, resultData.getResultsAsByteArray());
+
+        return Result.FINISH;
     }
 
     // individual commands
-    private void handleDetails(Context context, Listener listener, WebTransaction transaction,
-                               JsonObject params, HttpResult resultData) throws ParseException {
+    private Result handleDetails(Context context, WebTransaction transaction,
+                                 JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleDetails " + transaction.getId());
         long workorderId = params.getLong("workorderId");
         byte[] workorderData = resultData.getResultsAsByteArray();
@@ -104,15 +122,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
         // dispatch the event
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
-        bundle.putLong(PARAM_ID, workorderId);
-        TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + "/" + workorderId, bundle, true);
-        listener.onComplete(transaction);
+        WorkorderDataDispatch.workorder(context, workorder, workorderId);
+        return Result.FINISH;
     }
 
-    private void handleGetSignature(Context context, Listener listener, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+    private Result handleGetSignature(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         long workorderId = params.getLong("workorderId");
         long signatureId = params.getLong("signatureId");
         byte[] data = resultData.getResultsAsByteArray();
@@ -120,12 +134,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         //store the signature data
         StoredObject.put(context, PSO_SIGNATURE, signatureId + "", data);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(data));
-        bundle.putLong(PARAM_ID, workorderId);
-        bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
-        TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);
-        listener.onComplete(transaction);
+        WorkorderDataDispatch.signature(context, new JsonObject(data), workorderId, signatureId);
+
+        return Result.FINISH;
     }
 }

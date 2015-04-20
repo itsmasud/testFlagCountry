@@ -145,7 +145,7 @@ public class JsonObject implements Parcelable {
         if (directions.size() == 0) {
             // goes in this object
             if (value == null) {
-                _fieldsB.putParcelable(item, JsonNULL);
+                _fieldsB.putParcelable(item, null);
             } else {
                 putThis(item, value);
             }
@@ -557,8 +557,7 @@ public class JsonObject implements Parcelable {
     public static final Creator<JsonObject> CREATOR = new Creator<JsonObject>() {
         @Override
         public JsonObject createFromParcel(Parcel parcel) {
-            JsonObject j = new JsonObject(parcel.readBundle(JsonObject.class.getClassLoader()));
-            return j;
+            return new JsonObject(parcel.readBundle(JsonObject.class.getClassLoader()));
         }
 
         @Override
