@@ -3,13 +3,11 @@ package com.fieldnation.service.data.payment;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 
 import com.fieldnation.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
@@ -37,11 +35,7 @@ public class PaymentDataService extends Service implements PaymentConstants {
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         StoredObject obj = StoredObject.get(context, PSO_PAYMENT_GET_ALL, page + "");
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL);
-            bundle.putInt(PARAM_PAGE, page);
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            TopicService.dispatchEvent(context, TOPIC_ID_GET_ALL, bundle, true);
+            PaymentDataDispatch.allPage(context, page, obj.getData());
         }
 
         if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
@@ -70,11 +64,7 @@ public class PaymentDataService extends Service implements PaymentConstants {
         long paymentId = intent.getLongExtra(PARAM_ID, 0);
         StoredObject obj = StoredObject.get(context, PSO_PAYMENT_GET, paymentId + "");
         if (obj != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(PARAM_ACTION, PARAM_ACTION_PAYMENT);
-            bundle.putLong(PARAM_ID, paymentId);
-            bundle.putByteArray(PARAM_DATA, obj.getData());
-            TopicService.dispatchEvent(context, TOPIC_ID_PAYMENT, bundle, true);
+            PaymentDataDispatch.payment(context, paymentId, obj.getData());
         }
 
         if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {

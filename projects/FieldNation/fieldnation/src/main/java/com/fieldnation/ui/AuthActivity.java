@@ -217,6 +217,9 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect,
                                 Toast.LENGTH_LONG).show();
                         GlobalTopicClient.dispatchNetworkDisconnected(AuthActivity.this);
+                        _contentLayout.setVisibility(View.VISIBLE);
+                        _signupButton.setVisibility(View.VISIBLE);
+                        _stiltView.setVisibility(View.VISIBLE);
                         return;
                     }
                     String authToken = auth.getAccessToken();

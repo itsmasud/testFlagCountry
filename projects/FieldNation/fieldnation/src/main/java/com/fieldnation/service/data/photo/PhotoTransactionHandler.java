@@ -81,22 +81,13 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             circleBitmap.recycle();
 
             // build the response
-            Bundle response = new Bundle();
-            response.putBoolean(PARAM_CIRCLE, getCircle);
-            response.putString(PARAM_URL, url);
-            Log.v(TAG, "url: " + url);
-            if (getCircle) {
-                Log.v(TAG, "path: " + circleObj.getFile().getAbsolutePath());
-                response.putSerializable(RESULT_IMAGE_FILE, circleObj.getFile());
-            } else {
-                Log.v(TAG, "path: " + imageObj.getFile().getAbsolutePath());
-                response.putSerializable(RESULT_IMAGE_FILE, imageObj.getFile());
-            }
-
-            // send
-            TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY + "/" + url, response, true);
 
             // done!
+            if (getCircle) {
+                PhotoDataDispatch.photo(context,circleObj.getFile(), url, getCircle );
+            } else {
+                PhotoDataDispatch.photo(context, imageObj.getFile(), url, getCircle);
+            }
             Log.v(TAG, "handleResult");
             return Result.FINISH;
         } catch (Exception ex) {

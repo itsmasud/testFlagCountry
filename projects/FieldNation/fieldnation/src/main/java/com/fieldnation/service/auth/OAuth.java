@@ -175,7 +175,6 @@ public class OAuth implements Parcelable {
     public static List<OAuth> list(Context context) {
         try {
             List<StoredObject> objs = StoredObject.list(context, "OAuthToken");
-
             List<OAuth> list = new LinkedList<>();
             for (int i = 0; i < objs.size(); i++) {
                 try {
@@ -184,7 +183,6 @@ public class OAuth implements Parcelable {
                     ex.printStackTrace();
                 }
             }
-
             return list;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -211,6 +209,8 @@ public class OAuth implements Parcelable {
         HttpResult result = HttpJson.run(context, builder.build());
 
         Log.v(TAG, result.getResponseCode() + "");
+        Log.v(TAG, result.getResponseMessage());
+        Log.v(TAG, result.getResultsAsString());
 
         JsonObject token = result.getResultsAsJsonObject();
         token.put("username", username);

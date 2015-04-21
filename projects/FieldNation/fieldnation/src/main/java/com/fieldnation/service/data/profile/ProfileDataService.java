@@ -48,9 +48,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         // if exists, then pass it back
         if (obj != null) {
             try {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(obj.getData()));
-                TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE, bundle, true);
+                ProfileDataDispatch.myUserInformation(context, new JsonObject(obj.getData()));
                 return;
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -85,11 +83,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         StoredObject obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
         if (obj != null) {
             try {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonArray(obj.getData()));
-                bundle.putInt(PARAM_PAGE, page);
-                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
-                TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST, bundle, false);
+                ProfileDataDispatch.allNotifications(context, new JsonArray(obj.getData()), page);
                 return;
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -123,11 +117,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page);
         if (obj != null) {
             try {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonArray(obj.getData()));
-                bundle.putInt(PARAM_PAGE, page);
-                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
-                TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST, bundle, false);
+                ProfileDataDispatch.allMessages(context, new JsonArray(obj.getData()), page);
                 return;
             } catch (Exception ex) {
                 ex.printStackTrace();

@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@+id/retry_button"
-                android:text="No internet connection" />
+                android:text="Could not connect to servers" />
 
             <Button
                 android:textColor="@color/fn_accent_color"

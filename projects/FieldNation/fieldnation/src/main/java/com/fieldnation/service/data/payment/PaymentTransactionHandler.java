@@ -1,12 +1,10 @@
 package com.fieldnation.service.data.payment;
 
 import android.content.Context;
-import android.os.Bundle;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 
@@ -46,13 +44,9 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
                 int page = obj.getInt("page");
                 byte[] data = resultData.getResultsAsByteArray();
 
-                StoredObject so = StoredObject.put(context, PSO_PAYMENT_GET_ALL, page + "", data);
+                StoredObject.put(context, PSO_PAYMENT_GET_ALL, page + "", data);
 
-                Bundle bundle = new Bundle();
-                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL);
-                bundle.putInt(PARAM_PAGE, page);
-                bundle.putByteArray(PARAM_DATA, data);
-                TopicService.dispatchEvent(context, TOPIC_ID_GET_ALL, bundle, true);
+                PaymentDataDispatch.allPage(context, page, data);
                 return Result.FINISH;
             } else if (action.equals("get")) {
                 long paymentId = obj.getLong("paymentId");
@@ -61,11 +55,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
                 StoredObject.put(context, PSO_PAYMENT_GET, paymentId + "", data);
 
-                Bundle bundle = new Bundle();
-                bundle.putString(PARAM_ACTION, PARAM_ACTION_PAYMENT);
-                bundle.putLong(PARAM_ID, paymentId);
-                bundle.putByteArray(PARAM_DATA, data);
-                TopicService.dispatchEvent(context, TOPIC_ID_PAYMENT, bundle, true);
+                PaymentDataDispatch.payment(context, paymentId, data);
                 return Result.FINISH;
             }
         } catch (Exception ex) {
