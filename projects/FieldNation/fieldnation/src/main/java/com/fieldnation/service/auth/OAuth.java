@@ -16,6 +16,8 @@ import com.fieldnation.utils.misc;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Michael Carver on 3/12/2015.
@@ -164,6 +166,26 @@ public class OAuth implements Parcelable {
                 return null;
 
             return fromJson(new JsonObject(obj.getData()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<OAuth> list(Context context) {
+        try {
+            List<StoredObject> objs = StoredObject.list(context, "OAuthToken");
+
+            List<OAuth> list = new LinkedList<>();
+            for (int i = 0; i < objs.size(); i++) {
+                try {
+                    list.add(fromJson(new JsonObject(objs.get(i).getData())));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            return list;
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -27,6 +27,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
         Log.v(TAG, "Constructor");
     }
 
+
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType,
                              String[] requiredFeatures, Bundle options) throws NetworkErrorException {

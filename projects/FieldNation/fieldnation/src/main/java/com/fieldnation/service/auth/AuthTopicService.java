@@ -3,6 +3,7 @@ package com.fieldnation.service.auth;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
+import android.accounts.OnAccountsUpdateListener;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.ui.AuthActivity;
+
+import java.util.List;
 
 /**
  * Created by Michael on 12/15/2014.
@@ -86,6 +89,40 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             }
         }
     }
+
+    private final OnAccountsUpdateListener _accounts_updateListener = new OnAccountsUpdateListener() {
+        @Override
+        public void onAccountsUpdated(Account[] accounts) {
+            List<OAuth> auths = OAuth.list(AuthTopicService.this);
+            String type = getAccountType();
+            if (auths == null || auths.size() == 0)
+                return;
+
+            for (int j = 0; j < auths.size(); j++) {
+                OAuth auth = auths.get(j);
+                boolean match = false;
+                for (int i = 0; i < accounts.length; i++) {
+                    Account account = accounts[i];
+                    if (account.type.equals(type)) {
+                        if (auth.getUsername().equals(account.name)) {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!match) {
+                    // what now?
+                    auth.delete(AuthTopicService.this);
+                    _authToken = null;
+                    _account = null;
+                    setState(AuthState.NOT_AUTHENTICATED);
+                    requestToken();
+                }
+            }
+
+        }
+    };
 
     private final AuthTopicClient.Listener _authClientListener = new AuthTopicClient.Listener() {
         @Override
@@ -224,8 +261,10 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
 
         setState(AuthState.AUTHENTICATING);
-        if (_accountManager == null)
+        if (_accountManager == null) {
             _accountManager = AccountManager.get(this);
+            _accountManager.addOnAccountsUpdatedListener(_accounts_updateListener, new Handler(), false);
+        }
 
         Account[] accounts = _accountManager.getAccountsByType(getAccountType());
         Log.v(TAG, "Found accounts: " + accounts.length);
