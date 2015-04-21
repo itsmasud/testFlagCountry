@@ -100,7 +100,8 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         @Override
         public void onCommandInvalidate() {
             Log.v(TAG, "onCommandInvalidate");
-            invalidateToken();
+            if (_authToken != null && _authToken.getAccessToken() != null)
+                invalidateToken(_authToken.getAccessToken());
         }
 
         @Override
@@ -129,11 +130,11 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         return getString(R.string.auth_account_type);
     }
 
-    private void invalidateToken() {
+    private void invalidateToken(String token) {
         Log.v(TAG, "invalidateToken");
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.NOT_AUTHENTICATED);
-            _accountManager.invalidateAuthToken(getAccountType(), _authToken.getAccessToken());
+            _accountManager.invalidateAuthToken(getAccountType(), token);
             _authToken.delete(this);
             _authToken = null;
         }
@@ -320,7 +321,8 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                 _authToken = OAuth.lookup(AuthTopicService.this, bundle.getString(AccountManager.KEY_ACCOUNT_NAME));
 
                 if (_authToken == null) {
-                    invalidateToken();
+                    _account = null;
+                    _accountManager.invalidateAuthToken(getAccountType(), bundle.getString(AccountManager.KEY_AUTHTOKEN));
                     setState(AuthState.NOT_AUTHENTICATED);
                     return;
                 }
