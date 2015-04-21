@@ -12,6 +12,7 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.utils.misc;
@@ -55,6 +56,7 @@ public class GlobalState extends Application {
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
         Log.v(TAG, "onCreate");
 
+        startService(new Intent(this, WebCrawlerService.class));
         startService(new Intent(this, AuthTopicService.class));
 
         _context = this;

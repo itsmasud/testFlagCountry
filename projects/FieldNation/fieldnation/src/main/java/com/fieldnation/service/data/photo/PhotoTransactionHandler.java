@@ -3,14 +3,12 @@ package com.fieldnation.service.data.photo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.misc;
@@ -71,8 +69,8 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             fout.close();
 
             // push into data store
-            StoredObject imageObj = StoredObject.put(context, imageObjectName, url, imageFile);
-            StoredObject circleObj = StoredObject.put(context, circleObjectName, url, circleFile);
+            StoredObject imageObj = StoredObject.put(context, imageObjectName, url, imageFile, false);
+            StoredObject circleObj = StoredObject.put(context, circleObjectName, url, circleFile, false);
 
             // delete temporary stuff
             imageFile.delete();
@@ -84,7 +82,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             // done!
             if (getCircle) {
-                PhotoDataDispatch.photo(context,circleObj.getFile(), url, getCircle );
+                PhotoDataDispatch.photo(context, circleObj.getFile(), url, getCircle);
             } else {
                 PhotoDataDispatch.photo(context, imageObj.getFile(), url, getCircle);
             }

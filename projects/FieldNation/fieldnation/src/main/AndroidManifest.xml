@@ -224,6 +224,10 @@
             android:name=".service.objectstore.ObjectStoreService"
             android:exported="false"
             android:process=":backside" />
+        <service
+            android:name=".service.crawler.WebCrawlerService"
+            android:exported="false"
+            android:process=":backside" />
 
         <provider
             android:name=".rpc.server.StubProvider"

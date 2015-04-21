@@ -12,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
 
@@ -78,6 +79,29 @@ public class misc {
             ex.printStackTrace();
         }
         return tempfile;
+    }
+
+    public static void flushLogs(Context context, long deathAge) {
+        File externalPath = Environment.getExternalStorageDirectory();
+        String packageName = context.getPackageName();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+
+        String[] files = temppath.list();
+
+        if (files == null)
+            return;
+
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(temppath.getAbsolutePath() + "/" + files[i]);
+
+            Log.v("misc", "checking " + file.getAbsolutePath() + ":" + file.lastModified());
+
+            if (file.lastModified() + deathAge < System.currentTimeMillis()) {
+                Log.v("misc", "deleting " + file.getAbsolutePath());
+                file.delete();
+            }
+        }
+
     }
 
 /*
