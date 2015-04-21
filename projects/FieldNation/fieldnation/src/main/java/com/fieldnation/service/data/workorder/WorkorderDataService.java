@@ -13,8 +13,8 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
-import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
 import java.io.File;
@@ -66,7 +66,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderListTransactionHandler.class)
                     .handlerParams(WorkorderListTransactionHandler.generateParams(page, selector))
                     .key("WorkorderList/" + selector + "/" + page)
@@ -122,7 +122,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         } else {
             try {
                 WebTransactionBuilder.builder(context)
-                        .priority(WebTransaction.Priority.HIGH)
+                        .priority(Priority.HIGH)
                         .handler(WorkorderTransactionHandler.class)
                         .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
                         .key("GetSignature/" + signatureId)
@@ -143,7 +143,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         long bundleId = intent.getLongExtra(PARAM_ID, 0);
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(BundleTransactionHandler.class)
                     .handlerParams(BundleTransactionHandler.generateGetParams(bundleId))
                     .key("GetBundle/" + bundleId)
@@ -192,7 +192,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             }
 
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(DeliverableDeleteTransactionHandler.class)
                     .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
                     .useAuth()

@@ -67,7 +67,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 }
 
                 WebTransaction transaction = WebTransaction.put(this,
-                        WebTransaction.Priority.values()[extras.getInt(PARAM_PRIORITY)],
+                        Priority.values()[extras.getInt(PARAM_PRIORITY)],
                         extras.getString(PARAM_KEY),
                         extras.getBoolean(PARAM_USE_AUTH),
                         extras.getByteArray(PARAM_REQUEST),

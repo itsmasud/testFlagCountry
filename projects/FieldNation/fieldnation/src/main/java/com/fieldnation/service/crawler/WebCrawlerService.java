@@ -21,7 +21,7 @@ public class WebCrawlerService extends Service {
             @Override
             protected Object doInBackground(Object... params) {
                 misc.flushLogs(WebCrawlerService.this, 86400000);
-                StoredObject.flush(WebCrawlerService.this,0 /*604800000*/);
+                StoredObject.flush(WebCrawlerService.this,604800000);
                 return null;
             }
         }.executeEx();

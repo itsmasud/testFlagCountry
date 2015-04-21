@@ -27,10 +27,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private JsonObject _request;
     private String _key;
 
-    public enum Priority {
-        HIGH, NORMAL, LOW
-    }
-
     public enum State {
         BUILDING, IDLE, WORKING
     }

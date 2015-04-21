@@ -3,7 +3,6 @@ package com.fieldnation.service.data.profile;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 
 import com.fieldnation.Log;
@@ -11,8 +10,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.topics.TopicService;
-import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
 import java.lang.ref.WeakReference;
@@ -59,7 +57,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
             // send request (we always ask for an update)
             try {
                 WebTransactionBuilder.builder(context)
-                        .priority(WebTransaction.Priority.HIGH)
+                        .priority(Priority.HIGH)
                         .handler(ProfileWebTransactionHandler.class)
                         .handlerParams(ProfileWebTransactionHandler.generateGetProfileParams())
                         .key("ProfileGet")
@@ -93,7 +91,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
             try {
                 WebTransactionBuilder.builder(context)
-                        .priority(WebTransaction.Priority.LOW)
+                        .priority(Priority.LOW)
                         .handler(ProfileWebTransactionHandler.class)
                         .handlerParams(ProfileWebTransactionHandler.generateGetAllNotificationsParams(page))
                         .key("NotificationPage" + page)
@@ -127,7 +125,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
             try {
                 WebTransactionBuilder.builder(context)
-                        .priority(WebTransaction.Priority.LOW)
+                        .priority(Priority.LOW)
                         .handler(ProfileWebTransactionHandler.class)
                         .handlerParams(ProfileWebTransactionHandler.generateGetAllMessagesParams(page))
                         .key("MessagePage" + page)

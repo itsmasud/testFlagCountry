@@ -55,6 +55,8 @@ public interface WorkorderDataConstants {
     public static final String PARAM_LOCAL_PATH = "PARAM_LOCAL_PATH";
     public static final String PARAM_FILE_NAME = "PARAM_FILE_NAME";
     public static final String PARAM_DATA_BYTE_ARRAY = "PARAM_DATA_BYTE_ARRAY";
+    public static final String PARAM_PRIORITY = "PARAM_PRIORITY";
+    public static final String PARAM_FORCE_WEB = "PARAM_FORCE_WEB";
 
 
     public static final String PSO_WORKORDER_LIST = "WorkorderList";
