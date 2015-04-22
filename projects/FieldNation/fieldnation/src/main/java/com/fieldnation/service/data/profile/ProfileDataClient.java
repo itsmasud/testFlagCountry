@@ -12,11 +12,7 @@ import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
-import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -38,27 +34,18 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
     }
 
     public static void acceptTos(Context context, long userId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .useAuth(true)
-                    .key("ProfileAcceptTos")
-                    .request(
-                            new HttpJsonBuilder()
-                                    .method("POST")
-                                    .path("/api/rest/v1/profile/" + userId + "/accept-tos")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                    )
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        ProfileTransactionBuilder.acceptTos(context, userId);
     }
 
+
     public static void getProfile(Context context) {
+        getProfile(context, false);
+    }
+
+    public static void getProfile(Context context, boolean isSync) {
         Intent intent = new Intent(context, ProfileDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_MY_PROFILE);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
@@ -70,9 +57,14 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
     }
 
     public static void getAllNotifications(Context context, int page) {
+        getAllNotifications(context, page, false);
+    }
+
+    public static void getAllNotifications(Context context, int page, boolean isSync) {
         Intent intent = new Intent(context, ProfileDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
         intent.putExtra(PARAM_PAGE, page);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
@@ -84,9 +76,14 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
     }
 
     public static void getAllMessages(Context context, int page) {
+        getAllMessages(context, page, false);
+    }
+
+    public static void getAllMessages(Context context, int page, boolean isSync) {
         Intent intent = new Intent(context, ProfileDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
         intent.putExtra(PARAM_PAGE, page);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
@@ -98,26 +95,12 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
     }
 
     public void addBlockedCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .key("BlockCompany" + profileId + "/" + companyId)
-                    .useAuth(true)
-                    .request(
-                            new HttpJsonBuilder()
-                                    .method("POST")
-                                    .path("/api/rest/v1/profile/" + profileId + "/block/" + companyId)
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .body("eventReasonId=" + eventReasonId
-                                            + "&explanation=" + misc.escapeForURL(explanation))
-                    )
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        ProfileTransactionBuilder.postBlockedCompany(context, profileId, companyId, eventReasonId, explanation);
     }
 
+    /*-******************************-*/
+    /*-          Listener            -*/
+    /*-******************************-*/
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {

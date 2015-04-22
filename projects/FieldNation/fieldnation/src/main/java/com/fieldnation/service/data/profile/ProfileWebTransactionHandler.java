@@ -70,7 +70,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 StoredObject.put(context, PSO_PROFILE, PSO_MY_PROFILE_KEY, profiledata);
 
                 // todo parse json and put Profile/id ?
-                ProfileDataDispatch.myUserInformation(context, new JsonObject(resultData.getResultsAsByteArray()));
+                ProfileDispatch.myUserInformation(context, new JsonObject(resultData.getResultsAsByteArray()));
                 return Result.FINISH;
             } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
                 Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
@@ -80,7 +80,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
 
                 StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
 
-                ProfileDataDispatch.allNotifications(context, new JsonArray(pagedata), page);
+                ProfileDispatch.allNotifications(context, new JsonArray(pagedata), page);
                 return Result.FINISH;
             } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
                 Log.v(TAG, "PARAM_ACTION_GET_ALL_MESSAGES");
@@ -90,7 +90,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
 
                 StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
 
-                ProfileDataDispatch.allMessages(context, new JsonArray(pagedata), page);
+                ProfileDispatch.allMessages(context, new JsonArray(pagedata), page);
                 return Result.FINISH;
             }
             return Result.FINISH;

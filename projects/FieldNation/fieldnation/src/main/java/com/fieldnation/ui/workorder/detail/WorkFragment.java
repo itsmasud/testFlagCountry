@@ -578,7 +578,7 @@ public class WorkFragment extends WorkorderFragment {
         } else {
             WorkorderDataClient.requestCheckin(getActivity(), _workorder.getWorkorderId());
         }
-        WorkorderDataClient.requestDetails(getActivity(), _workorder.getWorkorderId(), false);
+        WorkorderDataClient.requestDetails(getActivity(), _workorder.getWorkorderId());
     }
 
     private void doCheckOut() {

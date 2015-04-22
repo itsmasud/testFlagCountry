@@ -5,22 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
-
-import java.lang.ref.WeakReference;
 
 /**
  * Created by Michael Carver on 3/13/2015.
  */
 public class ProfileDataService extends Service implements ProfileConstants {
     private static final String TAG = "ProfileDataService";
-
 
 
     private static final Object LOCK = new Object();
@@ -35,151 +30,97 @@ public class ProfileDataService extends Service implements ProfileConstants {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
         if (intent != null) {
-            new Thread(new ProfileProcessingRunnable(this, intent)).start();
+            new AsyncTaskEx<Object, Object, Object>() {
+                @Override
+                protected Object doInBackground(Object... params) {
+                    Context context = (Context) params[0];
+                    Intent intent = (Intent) params[1];
+                    synchronized (LOCK) {
+                        COUNT++;
+                    }
+                    if (context != null) {
+                        String action = intent.getStringExtra(PARAM_ACTION);
+                        if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
+                            getMyUserInformation(context, intent);
+                        } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
+                            getAllNotifications(context, intent);
+                        } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
+                            getAllMessages(context, intent);
+                        }
+                    }
+                    synchronized (LOCK) {
+                        COUNT--;
+                        if (COUNT == 0) {
+                            stopSelf();
+                        }
+                    }
+                    return null;
+                }
+            }.executeEx(this, intent);
         }
         return START_STICKY;
     }
 
     private static void getMyUserInformation(Context context, Intent intent) {
         Log.v(TAG, "getMyUserInformation");
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         // get stored object
         StoredObject obj = StoredObject.get(context, PSO_PROFILE, PSO_MY_PROFILE_KEY);
         // if exists, then pass it back
         if (obj != null) {
             try {
-                ProfileDataDispatch.myUserInformation(context, new JsonObject(obj.getData()));
+                ProfileDispatch.myUserInformation(context, new JsonObject(obj.getData()));
                 return;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        if (obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             // send request (we always ask for an update)
-            try {
-                WebTransactionBuilder.builder(context)
-                        .priority(Priority.HIGH)
-                        .handler(ProfileWebTransactionHandler.class)
-                        .handlerParams(ProfileWebTransactionHandler.generateGetProfileParams())
-                        .key("ProfileGet")
-                        .useAuth(true)
-                        .request(
-                                new HttpJsonBuilder()
-                                        .protocol("https")
-                                        .method("GET")
-                                        .path("/api/rest/v1/profile")
-                        ).send();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            ProfileTransactionBuilder.getProfile(context, false);
         }
     }
 
     private void getAllNotifications(Context context, Intent intent) {
         Log.v(TAG, "getAllNotifications");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         StoredObject obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
         if (obj != null) {
             try {
-                ProfileDataDispatch.allNotifications(context, new JsonArray(obj.getData()), page);
+                ProfileDispatch.allNotifications(context, new JsonArray(obj.getData()), page);
                 return;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        if (obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
-            try {
-                WebTransactionBuilder.builder(context)
-                        .priority(Priority.LOW)
-                        .handler(ProfileWebTransactionHandler.class)
-                        .handlerParams(ProfileWebTransactionHandler.generateGetAllNotificationsParams(page))
-                        .key("NotificationPage" + page)
-                        .useAuth(true)
-                        .request(
-                                new HttpJsonBuilder()
-                                        .method("GET")
-                                        .path("/api/rest/v1/profile/notifications/")
-                                        .urlParams("?page=" + page)
-                        ).send();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+            ProfileTransactionBuilder.getAllNotifications(context, page, isSync);
         }
     }
 
     private void getAllMessages(Context context, Intent intent) {
         Log.v(TAG, "getAllMessages");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page);
         if (obj != null) {
             try {
-                ProfileDataDispatch.allMessages(context, new JsonArray(obj.getData()), page);
+                ProfileDispatch.allMessages(context, new JsonArray(obj.getData()), page);
                 return;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        if (obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
-            try {
-                WebTransactionBuilder.builder(context)
-                        .priority(Priority.LOW)
-                        .handler(ProfileWebTransactionHandler.class)
-                        .handlerParams(ProfileWebTransactionHandler.generateGetAllMessagesParams(page))
-                        .key("MessagePage" + page)
-                        .useAuth(true)
-                        .request(
-                                new HttpJsonBuilder()
-                                        .method("GET")
-                                        .path("/api/rest/v1/profile/messages/")
-                                        .urlParams("?page=" + page)
-                        ).send();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+            ProfileTransactionBuilder.getAllMessages(context, page, isSync);
         }
     }
 
-    private void addBlockedCompany(Context context, Intent intent) {
-    }
-
-
-    private class ProfileProcessingRunnable implements Runnable {
-        private WeakReference<Context> _context;
-        private Intent _intent;
-
-        ProfileProcessingRunnable(Context context, Intent intent) {
-            _context = new WeakReference<Context>(context);
-            _intent = intent;
-        }
-
-        @Override
-        public void run() {
-            synchronized (LOCK) {
-                COUNT++;
-            }
-            Context context = _context.get();
-            if (context != null) {
-                String action = _intent.getStringExtra(PARAM_ACTION);
-                if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
-                    getMyUserInformation(context, _intent);
-                } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
-                    getAllNotifications(context, _intent);
-                } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
-                    getAllMessages(context, _intent);
-                }
-            }
-            synchronized (LOCK) {
-                COUNT--;
-                if (COUNT == 0) {
-                    stopSelf();
-                }
-            }
-        }
-
-    }
 }

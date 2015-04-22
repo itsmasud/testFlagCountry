@@ -85,7 +85,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         _workorderClient = new WorkorderDataClient(_workorderClient_listener);
         _workorderClient.connect(this);
 
-        WorkorderDataClient.requestBundle(this, _bundleId, false);
+        WorkorderDataClient.requestBundle(this, _bundleId);
     }
 
     @Override

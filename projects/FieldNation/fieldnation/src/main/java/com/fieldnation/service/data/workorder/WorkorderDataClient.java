@@ -63,6 +63,10 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     // details
+    public static void requestDetails(Context context, long id) {
+        requestDetails(context, id, false);
+    }
+
     public static void requestDetails(Context context, long id, boolean isSync) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DETAILS);
@@ -79,6 +83,10 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     // get signature
+    public static void requestGetSignature(Context context, long workorderId, long signatureId) {
+        requestGetSignature(context, workorderId, signatureId, false);
+    }
+
     public static void requestGetSignature(Context context, long workorderId, long signatureId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
@@ -179,6 +187,10 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     // Bundle
+    public static void requestBundle(Context context, long bundleId) {
+        requestBundle(context, bundleId, false);
+    }
+
     public static void requestBundle(Context context, long bundleId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);

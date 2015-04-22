@@ -18,6 +18,8 @@ public interface ProfileConstants {
     public static final String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
     public static final String PARAM_PAGE = "PAGE";
 
+    public static final String PARAM_IS_SYNC = "PARAM_IS_SYNC";
+
     public static final String PSO_MESSAGE_PAGE = "MessagePage";
     public static final String PSO_NOTIFICATION_PAGE = "NotificationPage";
     public static final String PSO_PROFILE = "Profile";

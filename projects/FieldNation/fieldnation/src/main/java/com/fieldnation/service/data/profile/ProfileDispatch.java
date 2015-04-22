@@ -10,7 +10,7 @@ import com.fieldnation.service.topics.TopicService;
 /**
  * Created by Michael Carver on 4/21/2015.
  */
-public class ProfileDataDispatch implements ProfileConstants {
+public class ProfileDispatch implements ProfileConstants {
 
     public static void myUserInformation(Context context, JsonObject data) {
         Bundle bundle = new Bundle();
