@@ -286,6 +286,7 @@ public class JsonObject implements Parcelable {
 
         if (!_fieldsB.containsKey(item))
             return false;
+            // we have item and no more
         else if (directions.size() == 0)
             return true;
 
@@ -295,11 +296,9 @@ public class JsonObject implements Parcelable {
             return false;
         } else if (obj instanceof JsonObject) {
             JsonObject jo = (JsonObject) obj;
-
             return jo.has(directions);
         } else if (obj instanceof JsonArray) {
             JsonArray ja = (JsonArray) obj;
-
             return ja.has(directions);
         }
 

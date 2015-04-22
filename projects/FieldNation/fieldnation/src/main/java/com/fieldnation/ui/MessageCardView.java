@@ -77,7 +77,7 @@ public class MessageCardView extends RelativeLayout {
         populateUi();
     }
 
-    public void setPhoto(Drawable photo) {
+    private void setPhoto(Drawable photo) {
         if (photo == null) {
             _profileImageView.setBackgroundResource(R.drawable.missing_circle);
             return;
@@ -124,7 +124,17 @@ public class MessageCardView extends RelativeLayout {
         }
 
         if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoUrl())) {
-            _listener.getPhoto(this, _message.getFromUser().getPhotoUrl(), true);
+            Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoUrl(), true);
+            if (result == null) {
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        populateUi();
+                    }
+                }, 2000);
+            } else {
+                setPhoto(result);
+            }
         } else {
             _profileImageView.setBackgroundResource(R.drawable.missing_circle);
         }
@@ -157,7 +167,7 @@ public class MessageCardView extends RelativeLayout {
     }
 
     public interface Listener {
-        public void getPhoto(MessageCardView view, String url, boolean circle);
+        public Drawable getPhoto(MessageCardView view, String url, boolean circle);
     }
 }
 

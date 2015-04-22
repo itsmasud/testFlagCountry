@@ -5,6 +5,7 @@ import android.location.Location;
 
 import com.fieldnation.data.transfer.WorkorderTransfer;
 import com.fieldnation.data.workorder.Expense;
+import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.json.JsonObject;
@@ -88,7 +89,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .priority(Priority.HIGH)
                     .handler(BundleTransactionHandler.class)
                     .handlerParams(BundleTransactionHandler.generateGetParams(bundleId))
-                    .key("GetBundle/" + bundleId)
+                    .key((isSync ? "Sync/" : "") + "GetBundle/" + bundleId)
                     .useAuth(true)
                     .isSyncCall(isSync)
                     .request(new HttpJsonBuilder()
@@ -138,7 +139,6 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(NullWebTransactionHandler.class)
-//                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -194,6 +194,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Complete/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("POST")
@@ -216,6 +217,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Checkin/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -240,6 +242,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Checkin/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -266,6 +269,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Checkout/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -290,6 +294,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Checkout/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -316,6 +321,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Checkout/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -341,6 +347,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Checkout/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -393,6 +400,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth(true)
+                    .key("Workorder/AckHold/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
@@ -506,6 +514,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Request/" + workorderId)
                     .request(builder)
                     .transform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
@@ -528,6 +537,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth(true)
+                    .key("Workorder/Assignment/" + workorderId)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -552,6 +562,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .handler(DeliverableDeleteTransactionHandler.class)
                     .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
                     .useAuth(true)
+                    .key("Workorder/DeleteDeliverable/" + workorderId + "/" + workorderUploadId)
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")
@@ -569,4 +580,294 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
         }
     }
 
+    public static void postDecline(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .key("Workorder/Decline/" + workorderId)
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/decline"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postReady(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .key("Workorder/Ready/" + workorderId)
+                    .useAuth(true)
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/ready"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postCustomField(Context context, long workorderId, long customFieldId, String value) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                                    .method("POST")
+                                    .path("/api/rest/v1/workorder/" + workorderId + "/custom-fields/" + customFieldId)
+                                    .body("value=" + misc.escapeForURL(value)))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postMessagesRead(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .key("Workorder/MessagesRead/" + workorderId)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/messages")
+                            .body("?mark_read=1"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void getMessages(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .key("Workorder/Messages/" + workorderId)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/messages"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postExpense(Context context, long workorderId, String description, double price,
+                                   ExpenseCategory category) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/expense")
+                            .body(("description=" + misc.escapeForURL(description)
+                                    + "&price=" + misc.escapeForURL(price + "")
+                                    + "&category_id=" + category.getId()).trim()))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void deleteExpense(Context context, long workorderId, long expenseId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .key("Workorder/DeleteExpense/" + workorderId + "/" + expenseId)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/expense/" + expenseId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postTimeLog(Context context, long workorderId, long startDate, long endDate) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/log")
+                            .body("startDate=" + ISO8601.fromUTC(startDate)
+                                    + "&endDate=" + ISO8601.fromUTC(endDate)))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId)
+                            .body("startDate=" + ISO8601.fromUTC(startDate)
+                                    + "&endDate=" + ISO8601.fromUTC(endDate)))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId)
+                            .body("startDate=" + ISO8601.fromUTC(startDate)
+                                    + "&endDate=" + ISO8601.fromUTC(endDate)
+                                    + "&noOfDevices=" + numberOfDevices))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void deleteTimeLog(Context context, long workorderId, long loggedHoursId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
+                                    String carrier, String carrierName, String trackingNumber) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments")
+                            .body("description=" + misc.escapeForURL(description)
+                                    + "&direction=" + (isToSite ? "to_site" : "from_site")
+                                    + "&carrier=" + carrier
+                                    + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
+                                    String carrier, String carrierName, String trackingNumber, long taskId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments")
+                            .body("description=" + misc.escapeForURL(description)
+                                    + "&direction=" + (isToSite ? "to_site" : "from_site")
+                                    + "&carrier=" + carrier
+                                    + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)
+                                    + "&task_id=" + taskId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postShipment(Context context, long workorderId, long shipmentId, String description, boolean isToSite,
+                                    String carrier, String carrierName, String trackingNumber) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId)
+                            .body("description=" + misc.escapeForURL(description)
+                                    + "&direction=" + (isToSite ? "to_site" : "from_site")
+                                    + "&carrier=" + carrier
+                                    + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void deleteShipment(Context context, long workorderId, long shipmentId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }

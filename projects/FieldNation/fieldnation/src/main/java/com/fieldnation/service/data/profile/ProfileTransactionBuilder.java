@@ -43,6 +43,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .isSyncCall(isSync)
                     .request(
                             new HttpJsonBuilder()
+                                    .protocol("https")
                                     .method("GET")
                                     .path("/api/rest/v1/profile/notifications/")
                                     .urlParams("?page=" + page)
@@ -63,6 +64,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .isSyncCall(isSync)
                     .request(
                             new HttpJsonBuilder()
+                                    .protocol("https")
                                     .method("GET")
                                     .path("/api/rest/v1/profile/messages/")
                                     .urlParams("?page=" + page)
@@ -81,6 +83,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .key("ProfileAcceptTos")
                     .request(
                             new HttpJsonBuilder()
+                                    .protocol("https")
                                     .method("POST")
                                     .path("/api/rest/v1/profile/" + userId + "/accept-tos")
                                     .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -100,6 +103,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .useAuth(true)
                     .request(
                             new HttpJsonBuilder()
+                                    .protocol("https")
                                     .method("POST")
                                     .path("/api/rest/v1/profile/" + profileId + "/block/" + companyId)
                                     .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)

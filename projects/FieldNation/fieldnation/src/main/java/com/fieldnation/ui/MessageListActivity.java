@@ -84,12 +84,13 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
     private final MessageCardView.Listener _messageCard_listener = new MessageCardView.Listener() {
         @Override
-        public void getPhoto(MessageCardView view, String url, boolean circle) {
+        public Drawable getPhoto(MessageCardView view, String url, boolean circle) {
             if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
-                view.setPhoto(_picCache.get(url).get());
+                return _picCache.get(url).get();
             } else {
                 _photos.getPhoto(MessageListActivity.this, url, circle);
             }
+            return null;
         }
     };
 
@@ -105,7 +106,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
             Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
             _picCache.put(url, new WeakReference<>(pic));
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
         }
     };
 

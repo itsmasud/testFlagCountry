@@ -24,6 +24,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                     .isSyncCall(isSync)
                     .request(
                             new HttpJsonBuilder()
+                                    .protocol("https")
                                     .method("GET")
                                     .path("/api/rest/v1/accounting/payment-queue/all")
                                     .urlParams("?page=" + page)
@@ -44,6 +45,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                     .isSyncCall(isSync)
                     .request(
                             new HttpJsonBuilder()
+                                    .protocol("https")
                                     .method("GET")
                                     .path("/api/rest/v1/accounting/payment-queue/" + paymentId)
                     ).send();
