@@ -1,9 +1,7 @@
 package com.fieldnation.ui.workorder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -14,7 +12,6 @@ import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
@@ -88,7 +85,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         _workorderClient = new WorkorderDataClient(_workorderClient_listener);
         _workorderClient.connect(this);
 
-        WorkorderDataClient.requestBundle(this, _bundleId);
+        WorkorderDataClient.requestBundle(this, _bundleId, false);
     }
 
     @Override
