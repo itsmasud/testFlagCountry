@@ -40,7 +40,8 @@ public class TopicClient implements TopicConstants {
         context.bindService(new Intent(context, TopicService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public void disconnect(Context context) {
+    public void disconnect(Context context, String userTag) {
+        delete(userTag);
         context.unbindService(_serviceConnection);
     }
 

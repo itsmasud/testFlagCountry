@@ -20,25 +20,20 @@ public class PhotoDataClient extends TopicClient implements PhotoConstants {
         super(listener);
     }
 
-    @Override
     public void disconnect(Context context) {
-        delete(TAG);
-        super.disconnect(context);
+        super.disconnect(context, TAG);
     }
 
-    public void unregisterAll() {
-        delete(TAG);
-    }
-
-    public static void dispatchGetPhoto(Context context, String url, boolean getCircle) {
+    public static void dispatchGetPhoto(Context context, String url, boolean getCircle, boolean isSync) {
         Intent intent = new Intent(context, PhotoDataService.class);
         intent.putExtra(PARAM_CIRCLE, getCircle);
         intent.putExtra(PARAM_URL, url);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
     public boolean getPhoto(Context context, String url, boolean getCircle) {
-        dispatchGetPhoto(context, url, getCircle);
+        dispatchGetPhoto(context, url, getCircle, false);
         return register(TOPIC_ID_PHOTO_READY + "/" + url, TAG);
     }
 
@@ -46,8 +41,7 @@ public class PhotoDataClient extends TopicClient implements PhotoConstants {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Bundle bundle = (Bundle) payload;
-            onPhoto(
-                    bundle.getString(PARAM_URL),
+            onPhoto(bundle.getString(PARAM_URL),
                     (File) bundle.getSerializable(RESULT_IMAGE_FILE),
                     bundle.getBoolean(PARAM_CIRCLE));
         }

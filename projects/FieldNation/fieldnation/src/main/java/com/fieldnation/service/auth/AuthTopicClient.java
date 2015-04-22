@@ -38,10 +38,8 @@ public class AuthTopicClient extends TopicClient {
         TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, true);
     }
 
-    @Override
     public void disconnect(Context context) {
-        delete(TAG);
-        super.disconnect(context);
+        super.disconnect(context, TAG);
     }
 
     /*

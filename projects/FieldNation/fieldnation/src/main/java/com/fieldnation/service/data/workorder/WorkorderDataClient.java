@@ -35,10 +35,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         super(listener);
     }
 
-    @Override
     public void disconnect(Context context) {
-        delete(TAG);
-        super.disconnect(context);
+        super.disconnect(context, TAG);
     }
 
     // list

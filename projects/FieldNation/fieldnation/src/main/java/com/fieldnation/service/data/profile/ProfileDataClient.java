@@ -27,16 +27,13 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         super(listener);
     }
 
-    @Override
     public void disconnect(Context context) {
-        delete(TAG);
-        super.disconnect(context);
+        super.disconnect(context, TAG);
     }
 
     public static void acceptTos(Context context, long userId) {
         ProfileTransactionBuilder.acceptTos(context, userId);
     }
-
 
     public static void getProfile(Context context) {
         getProfile(context, false);

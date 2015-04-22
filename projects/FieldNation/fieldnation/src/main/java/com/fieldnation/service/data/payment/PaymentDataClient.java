@@ -29,17 +29,20 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     /*-         Data Interface         -*/
     /*-********************************-*/
 
-    @Override
     public void disconnect(Context context) {
-        delete(TAG);
-        super.disconnect(context);
+        super.disconnect(context, TAG);
     }
 
     // get all
     public static void requestGetAll(Context context, int page) {
+        requestGetAll(context, page, false);
+    }
+
+    public static void requestGetAll(Context context, int page, boolean isSync) {
         Intent intent = new Intent(context, PaymentDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL);
         intent.putExtra(PARAM_PAGE, page);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
@@ -50,17 +53,16 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
         return register(TOPIC_ID_GET_ALL, TAG);
     }
 
-    public boolean getAll(Context context, int page) {
-        boolean reg = registerGetAll();
-        requestGetAll(context, page);
-        return reg;
-    }
-
     // get payment
     public static void requestGetPayment(Context context, long paymentId) {
+        requestGetPayment(context, paymentId, false);
+    }
+
+    public static void requestGetPayment(Context context, long paymentId, boolean isSync) {
         Intent intent = new Intent(context, PaymentDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_PAYMENT);
         intent.putExtra(PARAM_ID, paymentId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
@@ -69,12 +71,6 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
             return false;
 
         return register(TOPIC_ID_PAYMENT, TAG);
-    }
-
-    public boolean getPayment(Context context, long paymentId) {
-        boolean reg = registerGetPayment();
-        requestGetPayment(context, paymentId);
-        return reg;
     }
 
     /*-*********************************-*/
@@ -92,12 +88,11 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
 
         private void preOnPayment(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, Payment>() {
-
                 @Override
                 protected Payment doInBackground(Bundle... params) {
                     try {
                         Bundle bundle = params[0];
-                        return Payment.fromJson(new JsonObject(bundle.getByteArray(PARAM_DATA)));
+                        return Payment.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -122,9 +117,9 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
                 protected List<Payment> doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     page = bundle.getInt(PARAM_PAGE);
-                    List<Payment> list = new LinkedList<Payment>();
+                    List<Payment> list = new LinkedList<>();
                     try {
-                        JsonArray ja = new JsonArray(bundle.getByteArray(PARAM_DATA));
+                        JsonArray ja = (JsonArray) bundle.getParcelable(PARAM_DATA_PARCELABLE);
 
                         for (int i = 0; i < ja.size(); i++) {
                             list.add(Payment.fromJson(ja.getJsonObject(i)));

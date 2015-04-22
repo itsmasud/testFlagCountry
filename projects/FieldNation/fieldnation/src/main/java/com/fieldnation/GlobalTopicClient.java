@@ -32,10 +32,8 @@ public class GlobalTopicClient extends TopicClient {
         super(listener);
     }
 
-    @Override
     public void disconnect(Context context) {
-        delete(TAG);
-        super.disconnect(context);
+        super.disconnect(context, TAG);
     }
 
     // update app

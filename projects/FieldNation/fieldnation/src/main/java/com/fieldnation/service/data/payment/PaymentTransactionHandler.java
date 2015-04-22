@@ -2,6 +2,7 @@ package com.fieldnation.service.data.payment;
 
 import android.content.Context;
 
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -13,7 +14,7 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
  */
 public class PaymentTransactionHandler extends WebTransactionHandler implements PaymentConstants {
 
-    public static byte[] generateGetAllParams(int page) {
+    public static byte[] pGetAll(int page) {
         try {
             JsonObject obj = new JsonObject("page", page);
             obj.put("action", "getall");
@@ -24,7 +25,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         return null;
     }
 
-    public static byte[] generatePaymentParams(long paymentId) {
+    public static byte[] pPayment(long paymentId) {
         try {
             JsonObject obj = new JsonObject("paymentId", paymentId);
             obj.put("action", "get");
@@ -44,18 +45,18 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
                 int page = obj.getInt("page");
                 byte[] data = resultData.getResultsAsByteArray();
 
-                StoredObject.put(context, PSO_PAYMENT_GET_ALL, page + "", data);
+                StoredObject.put(context, PSO_PAYMENT_GET_ALL, page, data);
 
-                PaymentDataDispatch.allPage(context, page, data);
+                PaymentDataDispatch.allPage(context, page, new JsonArray(data));
                 return Result.FINISH;
             } else if (action.equals("get")) {
                 long paymentId = obj.getLong("paymentId");
 
                 byte[] data = resultData.getResultsAsByteArray();
 
-                StoredObject.put(context, PSO_PAYMENT_GET, paymentId + "", data);
+                StoredObject.put(context, PSO_PAYMENT_GET, paymentId, data);
 
-                PaymentDataDispatch.payment(context, paymentId, data);
+                PaymentDataDispatch.payment(context, paymentId, new JsonObject(data));
                 return Result.FINISH;
             }
         } catch (Exception ex) {

@@ -124,7 +124,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else {
+        } else if (obj == null || isSync) {
             WorkorderTransactionBuilder.getSignature(context, workorderId, signatureId, isSync);
         }
     }

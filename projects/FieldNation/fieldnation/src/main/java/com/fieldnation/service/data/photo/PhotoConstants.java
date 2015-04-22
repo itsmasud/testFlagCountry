@@ -8,6 +8,7 @@ public interface PhotoConstants {
 
     public static final String PARAM_URL = "URL";
     public static final String PARAM_CIRCLE = "CIRCLE";
+    public static final String PARAM_IS_SYNC = "PARAM_IS_SYNC";
 
     public static final String RESULT_IMAGE_FILE = "IMAGE_FILE";
 }
