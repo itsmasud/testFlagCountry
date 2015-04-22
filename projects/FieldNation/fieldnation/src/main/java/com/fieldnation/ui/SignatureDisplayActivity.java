@@ -192,7 +192,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             _workorderClient.registerGetSignature(_signatureId);
         }
 
-        WorkorderDataClient.requestGetSignature(this, _workorder.getWorkorderId(), _signatureId);
+        WorkorderDataClient.requestGetSignature(this, _workorder.getWorkorderId(), _signatureId, false);
     }
 
     @Override

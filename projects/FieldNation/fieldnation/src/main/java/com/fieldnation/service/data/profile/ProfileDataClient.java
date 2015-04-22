@@ -42,7 +42,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(ProfileWebTransactionHandler.class)
-                    .useAuth()
+                    .useAuth(true)
                     .key("ProfileAcceptTos")
                     .request(
                             new HttpJsonBuilder()
@@ -103,7 +103,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
                     .priority(Priority.HIGH)
                     .handler(ProfileWebTransactionHandler.class)
                     .key("BlockCompany" + profileId + "/" + companyId)
-                    .useAuth()
+                    .useAuth(true)
                     .request(
                             new HttpJsonBuilder()
                                     .method("POST")

@@ -3,30 +3,22 @@ package com.fieldnation.service.data.workorder;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
-import com.fieldnation.data.transfer.WorkorderTransfer;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.topics.TopicService;
-import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
-
-import java.io.File;
-import java.lang.ref.WeakReference;
 
 /**
  * Created by Michael Carver on 3/24/2015.
  */
 public class WorkorderDataService extends Service implements WorkorderDataConstants {
     private static final String TAG = "WorkorderDataService";
-
     private static final Object LOCK = new Object();
+
     private static int COUNT = 0;
 
     @Override
@@ -38,7 +30,37 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
         if (intent != null) {
-            new Thread(new WorkorderProcessingRunnable(this, intent)).start();
+            new AsyncTaskEx<Object, Object, Object>() {
+                @Override
+                protected Object doInBackground(Object... params) {
+                    Context context = (Context) params[0];
+                    Intent intent = (Intent) params[1];
+                    synchronized (LOCK) {
+                        COUNT++;
+                    }
+                    if (context != null) {
+                        String action = intent.getStringExtra(PARAM_ACTION);
+                        if (action.equals(PARAM_ACTION_LIST)) {
+                            listWorkorders(context, intent);
+                        } else if (action.equals(PARAM_ACTION_DETAILS)) {
+                            details(context, intent);
+                        } else if (action.equals(PARAM_ACTION_GET_SIGNATURE)) {
+                            getSignature(context, intent);
+                        } else if (action.equals(PARAM_ACTION_GET_BUNDLE)) {
+                            getBundle(context, intent);
+                        } else if (action.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
+                            uploadDeliverable(context, intent);
+                        }
+                    }
+                    synchronized (LOCK) {
+                        COUNT--;
+                        if (COUNT == 0) {
+                            stopSelf();
+                        }
+                    }
+                    return null;
+                }
+            }.executeEx(this, intent);
         }
         return START_STICKY;
     }
@@ -48,6 +70,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         Log.v(TAG, "listWorkorders");
         String selector = intent.getStringExtra(PARAM_LIST_SELECTOR);
         int page = intent.getIntExtra(PARAM_PAGE, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page);
         if (obj != null) {
@@ -58,36 +81,21 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
                 }
 
-                WorkorderDataDispatch.workorderList(context, ja, page, selector);
+                WorkorderDispatch.workorderList(context, ja, page, selector);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderListTransactionHandler.class)
-                    .handlerParams(WorkorderListTransactionHandler.generateParams(page, selector))
-                    .key("WorkorderList/" + selector + "/" + page)
-                    .useAuth()
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + selector)
-                            .urlParams("?page=" + page))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        WorkorderTransactionBuilder.getWorkorderList(context, selector, page, isSync);
     }
-
 
     private static void details(Context context, Intent intent) {
         Log.v(TAG, "details");
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        WorkorderDataClient.detailsWebRequest(context, workorderId);
+        WorkorderTransactionBuilder.getWorkorder(context, workorderId, isSync);
 
         StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
         if (obj != null) {
@@ -96,7 +104,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
                 Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
-                WorkorderDataDispatch.workorder(context, workorder, workorderId);
+                WorkorderDispatch.workorder(context, workorder, workorderId);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -107,64 +115,31 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         Log.v(TAG, "getSignature");
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
         long signatureId = intent.getLongExtra(PARAM_SIGNATURE_ID, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+
         StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId);
         if (obj != null) {
             try {
-                Bundle bundle = new Bundle();
-                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
-                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(obj.getData()));
-                bundle.putLong(PARAM_ID, workorderId);
-                bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
-                TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);
+                WorkorderDispatch.signature(context, new JsonObject(obj.getData()), workorderId, signatureId);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {
-            try {
-                WebTransactionBuilder.builder(context)
-                        .priority(Priority.HIGH)
-                        .handler(WorkorderTransactionHandler.class)
-                        .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
-                        .key("GetSignature/" + signatureId)
-                        .useAuth()
-                        .request(new HttpJsonBuilder()
-                                .protocol("https")
-                                .method("GET")
-                                .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
-                        .send();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            WorkorderTransactionBuilder.getSignature(context, workorderId, signatureId, isSync);
         }
     }
 
     private static void getBundle(Context context, Intent intent) {
         Log.v(TAG, "getBundle");
         long bundleId = intent.getLongExtra(PARAM_ID, 0);
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(BundleTransactionHandler.class)
-                    .handlerParams(BundleTransactionHandler.generateGetParams(bundleId))
-                    .key("GetBundle/" + bundleId)
-                    .useAuth()
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/bundle/" + bundleId))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+
+        WorkorderTransactionBuilder.getBundle(context, bundleId, isSync);
 
         StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
         if (obj != null) {
             try {
-                Bundle bundle = new Bundle();
-                bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
-                bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(obj.getData()));
-                bundle.putLong(PARAM_ID, bundleId);
-                TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + "/" + bundleId, bundle, true);
+                WorkorderDispatch.bundle(context, new JsonObject(obj.getData()), bundleId);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -177,72 +152,6 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         String filePath = intent.getStringExtra(PARAM_LOCAL_PATH);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
 
-        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
-
-        try {
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
-                    .multipartFile("file", filename, upFile)
-                    .doNotRead();
-
-            if (uploadSlotId != 0) {
-                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
-            }
-
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(DeliverableDeleteTransactionHandler.class)
-                    .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
-                    .useAuth()
-                    .request(builder)
-                    .transform(Transform.makeTransformQuery(
-                            "Workorder",
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeUploadDeliverable(uploadSlotId, filename).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private class WorkorderProcessingRunnable implements Runnable {
-        private WeakReference<Context> _context;
-        private Intent _intent;
-
-        WorkorderProcessingRunnable(Context context, Intent intent) {
-            _context = new WeakReference<>(context);
-            _intent = intent;
-        }
-
-        @Override
-        public void run() {
-            synchronized (LOCK) {
-                COUNT++;
-            }
-            Context context = _context.get();
-            if (context != null) {
-                String action = _intent.getStringExtra(PARAM_ACTION);
-                if (action.equals(PARAM_ACTION_LIST)) {
-                    listWorkorders(context, _intent);
-                } else if (action.equals(PARAM_ACTION_DETAILS)) {
-                    details(context, _intent);
-                } else if (action.equals(PARAM_ACTION_GET_SIGNATURE)) {
-                    getSignature(context, _intent);
-                } else if (action.equals(PARAM_ACTION_GET_BUNDLE)) {
-                    getBundle(context, _intent);
-                } else if (action.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
-                    uploadDeliverable(context, _intent);
-                }
-            }
-            synchronized (LOCK) {
-                COUNT--;
-                if (COUNT == 0) {
-                    stopSelf();
-                }
-            }
-        }
+        WorkorderTransactionBuilder.postDeliverable(context, filePath, filename, workorderId, uploadSlotId);
     }
 }

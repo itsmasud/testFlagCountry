@@ -4,6 +4,8 @@ package com.fieldnation.service.data.profile;
  * Created by Michael Carver on 3/13/2015.
  */
 public interface ProfileConstants {
+    public static final long CALL_BOUNCE_TIMER = 30000;
+
     public static final String TOPIC_ID_HAVE_PROFILE = "ProfileDataService:TOPIC_ID_HAVE_PROFILE";
     public static final String TOPIC_ID_ALL_NOTIFICATION_LIST = "ProfileDataService:TOPIC_ID_ALL_NOTIFICATION_LIST";
     public static final String TOPIC_ID_ALL_MESSAGES_LIST = "ProfileDataService:TOPIC_ID_ALL_MESSAGES_LIST";

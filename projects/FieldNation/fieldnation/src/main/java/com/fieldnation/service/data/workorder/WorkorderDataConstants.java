@@ -57,6 +57,7 @@ public interface WorkorderDataConstants {
     public static final String PARAM_DATA_BYTE_ARRAY = "PARAM_DATA_BYTE_ARRAY";
     public static final String PARAM_PRIORITY = "PARAM_PRIORITY";
     public static final String PARAM_FORCE_WEB = "PARAM_FORCE_WEB";
+    public static final String PARAM_IS_SYNC = "PARAM_IS_SYNC";
 
 
     public static final String PSO_WORKORDER_LIST = "WorkorderList";

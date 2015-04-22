@@ -26,6 +26,8 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         this.context = context;
         intent = new Intent(context, WebTransactionService.class);
         intent.putExtra(PARAM_PRIORITY, Priority.NORMAL);
+        intent.putExtra(PARAM_IS_SYNC, false);
+        intent.putExtra(PARAM_USE_AUTH, false);
     }
 
     public static WebTransactionBuilder builder(Context context) {
@@ -43,8 +45,14 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         return this;
     }
 
-    public WebTransactionBuilder useAuth() {
-        intent.putExtra(PARAM_USE_AUTH, true);
+    public WebTransactionBuilder useAuth(boolean use) {
+        intent.putExtra(PARAM_USE_AUTH, use);
+        return this;
+    }
+
+    public WebTransactionBuilder isSyncCall(boolean sync) {
+        intent.putExtra(PARAM_USE_AUTH, sync);
+        intent.putExtra(PARAM_PRIORITY, Priority.LOW.ordinal());
         return this;
     }
 

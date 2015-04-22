@@ -21,6 +21,8 @@ import java.lang.ref.WeakReference;
 public class ProfileDataService extends Service implements ProfileConstants {
     private static final String TAG = "ProfileDataService";
 
+
+
     private static final Object LOCK = new Object();
     private static int COUNT = 0;
 
@@ -53,7 +55,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
             }
         }
 
-        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+        if (obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             // send request (we always ask for an update)
             try {
                 WebTransactionBuilder.builder(context)
@@ -61,7 +63,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
                         .handler(ProfileWebTransactionHandler.class)
                         .handlerParams(ProfileWebTransactionHandler.generateGetProfileParams())
                         .key("ProfileGet")
-                        .useAuth()
+                        .useAuth(true)
                         .request(
                                 new HttpJsonBuilder()
                                         .protocol("https")
@@ -88,14 +90,14 @@ public class ProfileDataService extends Service implements ProfileConstants {
             }
         }
 
-        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+        if (obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             try {
                 WebTransactionBuilder.builder(context)
                         .priority(Priority.LOW)
                         .handler(ProfileWebTransactionHandler.class)
                         .handlerParams(ProfileWebTransactionHandler.generateGetAllNotificationsParams(page))
                         .key("NotificationPage" + page)
-                        .useAuth()
+                        .useAuth(true)
                         .request(
                                 new HttpJsonBuilder()
                                         .method("GET")
@@ -122,14 +124,14 @@ public class ProfileDataService extends Service implements ProfileConstants {
             }
         }
 
-        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+        if (obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             try {
                 WebTransactionBuilder.builder(context)
                         .priority(Priority.LOW)
                         .handler(ProfileWebTransactionHandler.class)
                         .handlerParams(ProfileWebTransactionHandler.generateGetAllMessagesParams(page))
                         .key("MessagePage" + page)
-                        .useAuth()
+                        .useAuth(true)
                         .request(
                                 new HttpJsonBuilder()
                                         .method("GET")

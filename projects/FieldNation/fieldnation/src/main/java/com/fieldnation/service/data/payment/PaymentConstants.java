@@ -4,6 +4,8 @@ package com.fieldnation.service.data.payment;
  * Created by Michael Carver on 3/27/2015.
  */
 public interface PaymentConstants {
+    public static final long CALL_BOUNCE_TIMER = 30000;
+
     public static final String TOPIC_ID_GET_ALL = "PaymentConstants:TOPIC_ID_GET_ALL";
     public static final String TOPIC_ID_PAYMENT = "PaymentConstants:TOPIC_ID_PAYMENT";
 

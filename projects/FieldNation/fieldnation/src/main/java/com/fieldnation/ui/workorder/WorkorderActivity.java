@@ -274,7 +274,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     public void getData() {
         Log.v(TAG, "getData");
         setLoading(true);
-        WorkorderDataClient.requestDetails(this, _workorderId);
+        WorkorderDataClient.requestDetails(this, _workorderId, false);
     }
 
     /*-*************************-*/

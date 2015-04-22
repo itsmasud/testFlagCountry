@@ -53,7 +53,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
-    public static byte[] pCheckOut(long workorderId){
+    public static byte[] pCheckOut(long workorderId) {
         try {
             JsonObject obj = new JsonObject("action", "pCheckOut");
             obj.put("workorderId", workorderId);
@@ -76,7 +76,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                 return handleGetSignature(context, transaction, params, resultData);
             } else if (action.equals("pCheckIn")) {
                 return handleCheckIn(context, transaction, params, resultData);
-            } else if(action.equals("pCheckOut")){
+            } else if (action.equals("pCheckOut")) {
                 return handleCheckOut(context, transaction, params, resultData);
             }
         } catch (Exception ex) {
@@ -90,17 +90,17 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleCheckIn");
         long workorderId = params.getLong("workorderId");
 
-        WorkorderDataDispatch.checkIn(context, workorderId, resultData.getResultsAsByteArray());
+        WorkorderDispatch.checkIn(context, workorderId, resultData.getResultsAsByteArray());
 
         return Result.FINISH;
     }
 
     private Result handleCheckOut(Context context, WebTransaction transaction,
-                                 JsonObject params, HttpResult resultData) throws ParseException {
+                                  JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCheckOut");
         long workorderId = params.getLong("workorderId");
 
-        WorkorderDataDispatch.checkOut(context, workorderId, resultData.getResultsAsByteArray());
+        WorkorderDispatch.checkOut(context, workorderId, resultData.getResultsAsByteArray());
 
         return Result.FINISH;
     }
@@ -122,7 +122,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
         // dispatch the event
-        WorkorderDataDispatch.workorder(context, workorder, workorderId);
+        WorkorderDispatch.workorder(context, workorder, workorderId);
         return Result.FINISH;
     }
 
@@ -134,7 +134,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         //store the signature data
         StoredObject.put(context, PSO_SIGNATURE, signatureId + "", data);
 
-        WorkorderDataDispatch.signature(context, new JsonObject(data), workorderId, signatureId);
+        WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId);
 
         return Result.FINISH;
     }

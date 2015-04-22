@@ -20,7 +20,6 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.transaction.NullWebTransactionHandler;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -51,10 +50,15 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
     // list
     public static void requestList(Context context, WorkorderDataSelector selector, int page) {
+        requestList(context, selector, page, false);
+    }
+
+    public static void requestList(Context context, WorkorderDataSelector selector, int page, boolean isSync) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
         intent.putExtra(PARAM_PAGE, page);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
@@ -62,34 +66,15 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         if (!isConnected())
             return false;
 
-        Log.v(TAG, "registerWorkorderList");
-
         return register(PARAM_ACTION_LIST + "/" + selector.getCall(), TAG);
     }
 
     // details
-    public static void detailsWebRequest(Context context, long workorderId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .key("Workorder/" + workorderId)
-                    .useAuth()
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/details"))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void requestDetails(Context context, long id) {
+    public static void requestDetails(Context context, long id, boolean isSync) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DETAILS);
         intent.putExtra(PARAM_ID, id);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
@@ -101,11 +86,12 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     // get signature
-    public static void requestGetSignature(Context context, long workorderId, long signatureId) {
+    public static void requestGetSignature(Context context, long workorderId, long signatureId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
         intent.putExtra(PARAM_ID, workorderId);
         intent.putExtra(PARAM_SIGNATURE_ID, signatureId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
@@ -117,56 +103,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     // add signature json
-    public static void requestAddSignatureJson(Context context, long workorderId, String name, String signatureJson) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-//                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth()
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/signature")
-                            .body("signatureFormat=json"
-                                    + "&printName=" + misc.escapeForURL(name)
-                                    + "&signature=" + signatureJson))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeAddSignatureTransfer(name).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void requestAddSignatureJson(Context context, long workorderId, String name, String json) {
+        WorkorderTransactionBuilder.postSignatureJson(context, workorderId, name, json);
     }
 
     // complete signature
-    public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String printName, String signatureJson) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth()
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
-                            .body("print_name=" + misc.escapeForURL(printName)
-                                    + "&signature_json=" + signatureJson))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCompletingTaskTransfer("signature", taskId, printName).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String name, String json) {
+        WorkorderTransactionBuilder.postSignatureJsonTask(context, workorderId, taskId, name, json);
     }
 
     // complete workorder
@@ -179,7 +122,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("POST")
@@ -211,7 +154,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -236,7 +179,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -254,7 +197,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        requestDetails(context, workorderId);
+        requestDetails(context, workorderId, false);
     }
 
     // checkout
@@ -272,7 +215,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -296,7 +239,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -322,7 +265,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -347,7 +290,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -374,7 +317,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .key("Workorder/" + workorderId + "/closingNotes")
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -400,7 +343,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
@@ -480,7 +423,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -515,7 +458,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(builder)
                     .transform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
@@ -537,7 +480,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
@@ -603,7 +546,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                     .priority(Priority.HIGH)
                     .handler(DeliverableDeleteTransactionHandler.class)
                     .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
-                    .useAuth()
+                    .useAuth(true)
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")
@@ -621,9 +564,9 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         }
     }
 
-    /*-******************************-*/
-    /*-         Listener             -*/
-    /*-******************************-*/
+    /*-**********************************-*/
+    /*-             Listener             -*/
+    /*-**********************************-*/
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {

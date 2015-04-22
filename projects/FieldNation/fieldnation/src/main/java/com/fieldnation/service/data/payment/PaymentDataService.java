@@ -38,7 +38,7 @@ public class PaymentDataService extends Service implements PaymentConstants {
             PaymentDataDispatch.allPage(context, page, obj.getData());
         }
 
-        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+        if (obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             try {
                 WebTransactionBuilder.builder(context)
                         .priority(Priority.HIGH)
@@ -47,7 +47,7 @@ public class PaymentDataService extends Service implements PaymentConstants {
                                 PaymentTransactionHandler.generateGetAllParams(page)
                         )
                         .key("PaymentGetAll" + page)
-                        .useAuth()
+                        .useAuth(true)
                         .request(
                                 new HttpJsonBuilder()
                                         .method("GET")
@@ -67,14 +67,14 @@ public class PaymentDataService extends Service implements PaymentConstants {
             PaymentDataDispatch.payment(context, paymentId, obj.getData());
         }
 
-        if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
+        if (obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             try {
                 WebTransactionBuilder.builder(context)
                         .priority(Priority.HIGH)
                         .handler(PaymentTransactionHandler.class)
                         .handlerParams(PaymentTransactionHandler.generatePaymentParams(paymentId))
                         .key("GetPayment" + paymentId)
-                        .useAuth()
+                        .useAuth(true)
                         .request(
                                 new HttpJsonBuilder()
                                         .method("GET")
