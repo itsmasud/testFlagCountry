@@ -21,10 +21,11 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         HANDLER(1, "handler", "text"),
         HANDLER_PARAMS(2, "handler_params", "blob"),
         USE_AUTH(3, "use_auth", "integer not null"),
-        STATE(4, "state", "integer not null", true),
-        REQUEST(5, "request", "text"),
-        PRIORITY(6, "priority", "integer not null", true),
-        KEY(7, "key", "text", true);
+        IS_SYNC(4, "is_sync", "integer not null"),
+        STATE(5, "state", "integer not null", true),
+        REQUEST(6, "request", "text"),
+        PRIORITY(7, "priority", "integer not null", true),
+        KEY(8, "key", "text", true);
 
         private int _index;
         private String _name;

@@ -70,6 +70,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         Priority.values()[extras.getInt(PARAM_PRIORITY)],
                         extras.getString(PARAM_KEY),
                         extras.getBoolean(PARAM_USE_AUTH),
+                        extras.getBoolean(PARAM_IS_SYNC),
                         extras.getByteArray(PARAM_REQUEST),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
@@ -134,8 +135,10 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 return;
             }
         }
+        // TODO calculate allow sync.
+        boolean allowSync = true;
 
-        WebTransaction next = WebTransaction.getNext(this);
+        WebTransaction next = WebTransaction.getNext(this, allowSync);
         if (next == null) {
             return;
         }
@@ -144,11 +147,17 @@ public class WebTransactionService extends Service implements WebTransactionCons
             Log.v(TAG, next.getKey());
 
         new AsyncTaskEx<Object, Object, Object>() {
+
             @Override
-            protected Object doInBackground(Object... params) {
+            protected void onPreExecute() {
+                super.onPreExecute();
                 synchronized (TAG) {
                     THREAD_COUNT++;
                 }
+            }
+
+            @Override
+            protected Object doInBackground(Object... params) {
                 Context context = (Context) params[0];
                 WebTransaction trans = (WebTransaction) params[1];
                 OAuth auth = (OAuth) params[2];
@@ -253,10 +262,6 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 }
             }
         }.executeEx(WebTransactionService.this, next, _auth);
-    }
-
-    private void finishTransaction(WebTransaction trans) {
-        Log.v(TAG, "finishTransaction(" + trans.getId() + ")");
     }
 
     private static final void requeue(Context context, WebTransaction trans) {

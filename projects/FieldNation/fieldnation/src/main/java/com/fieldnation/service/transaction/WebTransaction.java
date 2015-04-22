@@ -22,6 +22,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private String _handlerName;
     private byte[] _handlerParams;
     private boolean _useAuth;
+    private boolean _isSync;
     private State _state;
     private Priority _priority;
     private JsonObject _request;
@@ -40,6 +41,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _handlerParams = cursor.getBlob(Column.HANDLER_PARAMS.getIndex());
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
+        _isSync = cursor.getInt(Column.IS_SYNC.getIndex()) == 1;
         try {
             _request = new JsonObject(cursor.getBlob(Column.REQUEST.getIndex()));
         } catch (Exception ex) {
@@ -54,6 +56,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _handlerParams = bundle.getByteArray(PARAM_HANDLER_PARAMS);
         _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
         _state = State.values()[bundle.getInt(PARAM_STATE)];
+        _isSync = bundle.getBoolean(PARAM_IS_SYNC);
         try {
             _request = new JsonObject(bundle.getByteArray(PARAM_REQUEST));
         } catch (Exception ex) {
@@ -72,6 +75,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putInt(PARAM_PRIORITY, _priority.ordinal());
         bundle.putString(PARAM_KEY, _key);
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
+        bundle.putBoolean(PARAM_IS_SYNC, _isSync);
         return bundle;
     }
 
@@ -92,6 +96,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public boolean useAuth() {
         return _useAuth;
+    }
+
+    public boolean isSync() {
+        return _isSync;
     }
 
     public State getState() {
@@ -200,7 +208,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
-    public static WebTransaction getNext(Context context) {
+    public static WebTransaction getNext(Context context, boolean allowSync) {
         Log.v(TAG, "getNext()");
         WebTransaction obj = null;
         synchronized (TAG) {
@@ -211,7 +219,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     Cursor cursor = db.query(
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
-                            Column.STATE + "=?",
+                            Column.STATE + "=?"
+                                    + (allowSync ? "" : " AND " + Column.IS_SYNC + "=0"),
                             new String[]{State.IDLE.ordinal() + ""},
                             null, null,
                             "PRIORITY DESC, " + Column.ID + " ASC ",
@@ -247,6 +256,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.KEY.getName(), obj._key);
         v.put(Column.PRIORITY.getName(), obj._priority.ordinal());
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
+        v.put(Column.IS_SYNC.getName(), obj._isSync ? 1 : 0);
 
         boolean success = false;
         synchronized (TAG) {
@@ -273,12 +283,13 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction put(Context context, Priority priority, String key, boolean useAuth,
-                                     byte[] request, String handlerName, byte[] handlerParams) {
+                                     boolean isSync, byte[] request, String handlerName, byte[] handlerParams) {
         Log.v(TAG, "put(" + key + ")");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), handlerParams);
         v.put(Column.USE_AUTH.getName(), useAuth ? 1 : 0);
+        v.put(Column.IS_SYNC.getName(), isSync ? 1 : 0);
         v.put(Column.STATE.getName(), State.BUILDING.ordinal());
         v.put(Column.REQUEST.getName(), request);
         v.put(Column.PRIORITY.getName(), priority.ordinal());
