@@ -870,4 +870,20 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
             ex.printStackTrace();
         }
     }
+
+    public static void deleteRequest(Context context, long workorderId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/withdraw-request"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
