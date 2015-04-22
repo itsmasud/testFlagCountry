@@ -20,8 +20,8 @@ public class WebCrawlerService extends Service {
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
-                misc.flushLogs(WebCrawlerService.this, 86400000);
-                StoredObject.flush(WebCrawlerService.this,604800000);
+                misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
+                StoredObject.flush(WebCrawlerService.this, 604800000); // 1 week
                 return null;
             }
         }.executeEx();
@@ -29,7 +29,7 @@ public class WebCrawlerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
