@@ -33,6 +33,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     private boolean _isFile;
     private byte[] _data;
     private File _file;
+    private boolean _expires;
 
     StoredObject(Cursor cursor) {
         updateFromDatabase(cursor);
@@ -44,6 +45,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _objName = cursor.getString(Column.OBJ_NAME.getIndex());
         _lastupdated = cursor.getLong(Column.LAST_UPDATED.getIndex());
         _isFile = cursor.getInt(Column.IS_FILE.getIndex()) == 1;
+        _expires = cursor.getInt(Column.EXPIRES.getIndex()) == 1;
         if (!cursor.isNull(Column.DATA.getIndex())) {
             if (_isFile) {
                 _file = new File(new String(cursor.getBlob(Column.DATA.getIndex())));
@@ -60,6 +62,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         _objName = bundle.getString(PARAM_OBJECT_TYPE);
         _lastupdated = bundle.getLong(PARAM_LAST_UPDATED);
         _isFile = bundle.getBoolean(PARAM_IS_FILE);
+        _expires = bundle.getBoolean(PARAM_EXPIRES);
         if (_isFile)
             _file = (File) bundle.getSerializable(PARAM_FILE);
         else
@@ -73,6 +76,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         bundle.putString(PARAM_OBJECT_TYPE, _objName);
         bundle.putLong(PARAM_LAST_UPDATED, _lastupdated);
         bundle.putBoolean(PARAM_IS_FILE, _isFile);
+        bundle.putBoolean(PARAM_EXPIRES, _expires);
         if (_isFile && _file != null)
             bundle.putSerializable(PARAM_FILE, _file);
         else if (_data != null)
@@ -117,6 +121,10 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     public void setData(byte[] data) {
         _isFile = false;
         _data = data;
+    }
+
+    public boolean expires() {
+        return _expires;
     }
 
     public StoredObject save(Context context) {
@@ -229,6 +237,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.OBJ_KEY.getName(), obj._objKey);
         v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), obj._isFile);
+        v.put(Column.EXPIRES.getName(), obj._expires);
 
         if (obj._isFile) {
             Log.v(TAG, "put1 is file, " + obj.getFile().getAbsolutePath());
@@ -294,11 +303,19 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static StoredObject put(Context context, String objectTypeName, long objectKey, File file) {
-        return put(context, objectTypeName, objectKey + "", file);
+        return put(context, objectTypeName, objectKey + "", file, true);
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, long objectKey, File file, boolean expires) {
+        return put(context, objectTypeName, objectKey + "", file, expires);
     }
 
     public static StoredObject put(Context context, String objectTypeName, String objectKey, File file) {
-        Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath());
+        return put(context, objectTypeName, objectKey, file, true);
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, File file, boolean expires) {
+        Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(context, objectTypeName, objectKey);
         if (result != null) {
             Log.v(TAG, "put2, overwrite");
@@ -312,6 +329,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.OBJ_KEY.getName(), objectKey);
         v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), true);
+        v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
 
         long id = -1;
         synchronized (TAG) {
@@ -361,10 +379,18 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static StoredObject put(Context context, String objectTypeName, long objectKey, byte[] data) {
-        return put(context, objectTypeName, objectKey + "", data);
+        return put(context, objectTypeName, objectKey + "", data, true);
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, long objectKey, byte[] data, boolean expires) {
+        return put(context, objectTypeName, objectKey + "", data, expires);
     }
 
     public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] data) {
+        return put(context, objectTypeName, objectKey, data, true);
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] data, boolean expires) {
         Log.v(TAG, "put3(" + objectTypeName + "/" + objectKey + ")");
         StoredObject result = get(context, objectTypeName, objectKey);
 
@@ -380,6 +406,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), false);
         v.put(Column.DATA.getName(), data);
+        v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
 
         long id = -1;
         synchronized (TAG) {
@@ -475,6 +502,45 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
         }
         return list;
+    }
+
+    public static void flush(Context context, long deathAge) {
+        List<StoredObject> list = new LinkedList<>();
+        synchronized (TAG) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
+            try {
+                SQLiteDatabase db = helper.getReadableDatabase();
+                try {
+                    Cursor cursor = db.query(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            ObjectStoreSqlHelper.getColumnNames(),
+                            Column.LAST_UPDATED + " < ? AND " + Column.EXPIRES + " = ?",
+                            new String[]{(System.currentTimeMillis() - deathAge) + "", "1"},
+                            null, null, null);
+
+                    try {
+                        while (cursor.moveToNext()) {
+                            list.add(new StoredObject(cursor));
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                } finally {
+                    db.close();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            StoredObject obj = list.get(i);
+            Log.v(TAG, "flush " + obj.getObjName() + "/" + obj.getObjKey());
+            if (obj.isFile()) {
+                obj.getFile().delete();
+            }
+            delete(context, obj.getId());
+        }
     }
 
     public static boolean delete(Context context, String objectTypeName, long objkey) {

@@ -8,7 +8,7 @@ import android.os.IBinder;
 import com.fieldnation.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
 /**
@@ -41,7 +41,7 @@ public class PaymentDataService extends Service implements PaymentConstants {
         if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
             try {
                 WebTransactionBuilder.builder(context)
-                        .priority(WebTransaction.Priority.HIGH)
+                        .priority(Priority.HIGH)
                         .handler(PaymentTransactionHandler.class)
                         .handlerParams(
                                 PaymentTransactionHandler.generateGetAllParams(page)
@@ -70,7 +70,7 @@ public class PaymentDataService extends Service implements PaymentConstants {
         if (obj == null || (obj.getLastUpdated() + 30000 < System.currentTimeMillis())) {
             try {
                 WebTransactionBuilder.builder(context)
-                        .priority(WebTransaction.Priority.HIGH)
+                        .priority(Priority.HIGH)
                         .handler(PaymentTransactionHandler.class)
                         .handlerParams(PaymentTransactionHandler.generatePaymentParams(paymentId))
                         .key("GetPayment" + paymentId)

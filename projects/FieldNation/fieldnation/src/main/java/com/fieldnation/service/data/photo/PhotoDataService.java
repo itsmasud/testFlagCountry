@@ -8,7 +8,7 @@ import android.os.IBinder;
 import com.fieldnation.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
 import java.lang.ref.WeakReference;
@@ -81,7 +81,7 @@ public class PhotoDataService extends Service implements PhotoConstants {
                 try {
                     WebTransactionBuilder.builder(context)
                             .key(objectName + ":" + url)
-                            .priority(WebTransaction.Priority.LOW)
+                            .priority(Priority.LOW)
                             .handler(PhotoTransactionHandler.class)
                             .handlerParams(PhotoTransactionHandler.generateParams(url, getCircle))
                             .request(

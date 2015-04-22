@@ -25,7 +25,7 @@ public class WebTransactionBuilder implements WebTransactionConstants {
     public WebTransactionBuilder(Context context) {
         this.context = context;
         intent = new Intent(context, WebTransactionService.class);
-        intent.putExtra(PARAM_PRIORITY, WebTransaction.Priority.NORMAL);
+        intent.putExtra(PARAM_PRIORITY, Priority.NORMAL);
     }
 
     public static WebTransactionBuilder builder(Context context) {
@@ -33,7 +33,7 @@ public class WebTransactionBuilder implements WebTransactionConstants {
     }
 
     // Intent
-    public WebTransactionBuilder priority(WebTransaction.Priority priority) {
+    public WebTransactionBuilder priority(Priority priority) {
         intent.putExtra(PARAM_PRIORITY, priority.ordinal());
         return this;
     }

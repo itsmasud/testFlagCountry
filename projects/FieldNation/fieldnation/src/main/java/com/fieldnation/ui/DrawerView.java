@@ -345,9 +345,21 @@ public class DrawerView extends RelativeLayout {
     private final OnClickListener _feedback_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/forms/d/1ImIpsrdzWdVUytIjEcKfGpbNFHm0cZP0q_ZHI2FUb48/viewform?usp=send_form"));
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
+*/
+
+            File tempfile = misc.dumpLogcat(getContext());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
+            intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
+            getContext().startActivity(intent);
+
         }
     };
 

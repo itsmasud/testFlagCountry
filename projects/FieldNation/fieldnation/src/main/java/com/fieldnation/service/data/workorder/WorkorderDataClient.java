@@ -21,8 +21,8 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.transaction.NullWebTransactionHandler;
+import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
-import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
@@ -71,7 +71,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void detailsWebRequest(Context context, long workorderId) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .key("Workorder/" + workorderId)
@@ -120,7 +120,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestAddSignatureJson(Context context, long workorderId, String name, String signatureJson) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(NullWebTransactionHandler.class)
 //                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
@@ -147,7 +147,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String printName, String signatureJson) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
@@ -176,7 +176,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
             _proc.put("_proc.complete", "working");
 
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
@@ -208,7 +208,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         Log.v(STAG, "requestCheckin");
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
                     .useAuth()
@@ -233,7 +233,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         Log.v(STAG, "requestCheckin");
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
                     .useAuth()
@@ -269,7 +269,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestCheckout(Context context, long workorderId) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
                     .useAuth()
@@ -293,7 +293,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestCheckout(Context context, long workorderId, Location location) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
                     .useAuth()
@@ -319,7 +319,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestCheckout(Context context, long workorderId, int deviceCount) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
                     .useAuth()
@@ -344,7 +344,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestCheckout(Context context, long workorderId, int deviceCount, Location location) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
                     .useAuth()
@@ -371,7 +371,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestSetClosingNotes(Context context, long workorderId, String closingNotes) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
@@ -397,7 +397,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestAcknowledgeHold(Context context, long workorderId) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
@@ -477,7 +477,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
@@ -512,7 +512,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 builder.body("expiration=" + expireInSeconds);
             }
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
@@ -534,7 +534,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
             _proc.put("_proc.confirm", "working");
 
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth()
@@ -600,7 +600,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static void requestDeleteDeliverable(Context context, long workorderId, long workorderUploadId, String filename) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(WebTransaction.Priority.HIGH)
+                    .priority(Priority.HIGH)
                     .handler(DeliverableDeleteTransactionHandler.class)
                     .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
                     .useAuth()
