@@ -53,11 +53,11 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerList(WorkorderDataSelector selector) {
+    public boolean registerList() {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_LIST + "/" + selector.getCall(), TAG);
+        return register(PARAM_ACTION_LIST, TAG);
     }
 
     // details
@@ -73,11 +73,11 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerDetails(long id) {
+    public boolean registerDetails() {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_DETAILS + "/" + id, TAG);
+        return register(PARAM_ACTION_DETAILS, TAG);
     }
 
     // get signature
@@ -94,11 +94,11 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerGetSignature(long signatureId) {
+    public boolean registerGetSignature() {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, TAG);
+        return register(PARAM_ACTION_GET_SIGNATURE, TAG);
     }
 
     // add signature json
@@ -197,13 +197,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerBundle(long bundleId) {
+    public boolean registerBundle() {
         if (!isConnected())
             return false;
 
         Log.v(TAG, "registerBundle");
 
-        return register(PARAM_ACTION_GET_BUNDLE + "/" + bundleId, TAG);
+        return register(PARAM_ACTION_GET_BUNDLE, TAG);
     }
 
     public static void requestUploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
@@ -241,13 +241,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            if (topicId.startsWith(PARAM_ACTION_LIST)) {
+            if (topicId.equals(PARAM_ACTION_LIST)) {
                 preOnWorkorderList((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_DETAILS)) {
+            } else if (topicId.equals(PARAM_ACTION_DETAILS)) {
                 preOnDetails((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_GET_SIGNATURE)) {
+            } else if (topicId.equals(PARAM_ACTION_GET_SIGNATURE)) {
                 preOnGetSignature((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_GET_BUNDLE)) {
+            } else if (topicId.equals(PARAM_ACTION_GET_BUNDLE)) {
                 preOnGetBundle((Bundle) payload);
             } else if (topicId.equals(PARAM_ACTION_CHECKIN)) {
                 preCheckIn((Bundle) payload);
@@ -281,7 +281,8 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 protected List<Workorder> doInBackground(Bundle... params) {
                     Bundle bundle = params[0];
                     try {
-                        selector = WorkorderDataSelector.fromName(bundle.getString(PARAM_LIST_SELECTOR));
+                        selector = WorkorderDataSelector.fromCall(bundle.getString(PARAM_LIST_SELECTOR));
+                        Log.v(STAG, "Selector " + bundle.getString(PARAM_LIST_SELECTOR));
                         page = bundle.getInt(PARAM_PAGE);
                         List<Workorder> list = new LinkedList<>();
                         JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);

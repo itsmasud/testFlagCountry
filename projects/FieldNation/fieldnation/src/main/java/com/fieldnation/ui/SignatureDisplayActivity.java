@@ -189,7 +189,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _loadingView.setVisibility(View.VISIBLE);
 
         if (_workorderClient.isConnected()) {
-            _workorderClient.registerGetSignature(_signatureId);
+            _workorderClient.registerGetSignature();
         }
 
         WorkorderDataClient.requestGetSignature(this, _workorder.getWorkorderId(), _signatureId);

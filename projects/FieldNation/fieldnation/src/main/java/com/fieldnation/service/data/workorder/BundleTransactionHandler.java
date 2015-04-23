@@ -40,7 +40,7 @@ public class BundleTransactionHandler extends WebTransactionHandler implements W
             bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
             bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(data));
             bundle.putLong(PARAM_ID, bundleId);
-            TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + "/" + bundleId, bundle, true);
+            TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE, bundle, true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

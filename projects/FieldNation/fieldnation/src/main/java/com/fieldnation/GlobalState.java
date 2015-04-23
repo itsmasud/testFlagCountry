@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,6 +46,7 @@ public class GlobalState extends Application {
     private GlobalTopicClient _globalTopicClient;
     private ProfileDataClient _profileClient;
     private AuthTopicClient _authTopicClient;
+    private int _memoryClass;
 
     public GlobalState() {
         super();
@@ -56,7 +58,9 @@ public class GlobalState extends Application {
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
         Log.v(TAG, "onCreate");
 
-        startService(new Intent(this, WebCrawlerService.class));
+        _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
+        Log.v(TAG, "memoryClass " + _memoryClass);
+
         startService(new Intent(this, AuthTopicService.class));
 
         _context = this;
@@ -79,6 +83,10 @@ public class GlobalState extends Application {
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(this);
+    }
+
+    public int getMemoryClass() {
+        return _memoryClass;
     }
 
     @Override

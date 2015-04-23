@@ -809,7 +809,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onConnected() {
             Log.v(TAG, "_workorderData_listener.onConnected");
-            _workorderClient.registerList(_displayView);
+            _workorderClient.registerList();
             _workorderClient.registerCheckin();
             _workorderClient.registerCheckout();
             _adapter.refreshPages();

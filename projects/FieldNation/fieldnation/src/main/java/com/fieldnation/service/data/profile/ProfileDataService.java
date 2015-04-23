@@ -71,7 +71,6 @@ public class ProfileDataService extends Service implements ProfileConstants {
         if (obj != null) {
             try {
                 ProfileDispatch.myUserInformation(context, new JsonObject(obj.getData()));
-                return;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -92,7 +91,6 @@ public class ProfileDataService extends Service implements ProfileConstants {
         if (obj != null) {
             try {
                 ProfileDispatch.allNotifications(context, new JsonArray(obj.getData()), page);
-                return;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -112,7 +110,6 @@ public class ProfileDataService extends Service implements ProfileConstants {
         if (obj != null) {
             try {
                 ProfileDispatch.allMessages(context, new JsonArray(obj.getData()), page);
-                return;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

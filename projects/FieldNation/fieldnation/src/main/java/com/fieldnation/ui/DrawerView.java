@@ -23,6 +23,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.payment.PaymentDataClient;
 import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.ui.market.MarketActivity;
@@ -351,6 +352,7 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
 */
 
+/*
             File tempfile = misc.dumpLogcat(getContext());
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("plain/text");
@@ -359,7 +361,8 @@ public class DrawerView extends RelativeLayout {
             intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
             getContext().startActivity(intent);
-
+*/
+            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
         }
     };
 

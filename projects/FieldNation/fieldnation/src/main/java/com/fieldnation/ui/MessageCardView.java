@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.utils.ISO8601;
@@ -31,6 +32,7 @@ public class MessageCardView extends RelativeLayout {
     private Message _message;
     private String[] _substatus;
     private Listener _listener;
+    private int _memoryClass;
 
     /*-*****************************-*/
     /*-			LifeCycle			-*/
@@ -55,6 +57,8 @@ public class MessageCardView extends RelativeLayout {
 
         if (isInEditMode())
             return;
+
+        _memoryClass = GlobalState.getContext().getMemoryClass();
 
         _substatus = getResources().getStringArray(R.array.workorder_substatus);
 
@@ -123,20 +127,38 @@ public class MessageCardView extends RelativeLayout {
             e.printStackTrace();
         }
 
-        if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoUrl())) {
-            Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoUrl(), true);
-            if (result == null) {
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        populateUi();
-                    }
-                }, 2000);
+        if (_memoryClass <= 64) {
+            if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoThumbUrl())) {
+                Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoThumbUrl(), true);
+                if (result == null) {
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            populateUi();
+                        }
+                    }, 2000);
+                } else {
+                    setPhoto(result);
+                }
             } else {
-                setPhoto(result);
+                _profileImageView.setBackgroundResource(R.drawable.missing_circle);
             }
         } else {
-            _profileImageView.setBackgroundResource(R.drawable.missing_circle);
+            if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoUrl())) {
+                Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoUrl(), true);
+                if (result == null) {
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            populateUi();
+                        }
+                    }, 2000);
+                } else {
+                    setPhoto(result);
+                }
+            } else {
+                _profileImageView.setBackgroundResource(R.drawable.missing_circle);
+            }
         }
 
         try {

@@ -17,7 +17,7 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
         bundle.putLong(PARAM_ID, workorderId);
-        TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + "/" + workorderId, bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS, bundle, true);
     }
 
     public static void workorderList(Context context, JsonArray workorders, int page, String selector) {
@@ -26,7 +26,7 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putInt(PARAM_PAGE, page);
         bundle.putString(PARAM_LIST_SELECTOR, selector);
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
-        TopicService.dispatchEvent(context, PARAM_ACTION_LIST + "/" + selector, bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_LIST, bundle, true);
     }
 
     public static void bundle(Context context, JsonObject data, long bundleId) {
@@ -34,7 +34,7 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putLong(PARAM_ID, bundleId);
-        TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + "/" + bundleId, bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE, bundle, true);
     }
 
     public static void checkIn(Context context, long workorderId, byte[] data) {
@@ -59,7 +59,7 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putParcelable(PARAM_DATA_PARCELABLE, signature);
         bundle.putLong(PARAM_ID, workorderId);
         bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
-        TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + "/" + signatureId, bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE, bundle, true);
     }
 
 }
