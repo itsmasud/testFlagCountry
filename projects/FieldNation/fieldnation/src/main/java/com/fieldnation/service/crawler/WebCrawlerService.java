@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
@@ -14,9 +13,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.service.data.workorder.WorkorderDataClient;
-import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.misc;
 
 import java.util.List;
 
@@ -31,10 +28,17 @@ public class WebCrawlerService extends Service {
 
     private boolean _haveProfile = false;
 
+    public WebCrawlerService() {
+        super();
+        Log.v(TAG, "WebCrawlerService");
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(TAG, "onCreate");
 
+/*
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
@@ -43,12 +47,22 @@ public class WebCrawlerService extends Service {
                 return null;
             }
         }.executeEx();
+*/
 
         startStuff();
     }
 
     @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        _workorderClient.disconnect(this);
+        _profileClient.disconnect(this);
+        super.onDestroy();
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v(TAG, "onStartCommand");
         // TODO set up a clock
         return START_STICKY;
     }
@@ -59,6 +73,7 @@ public class WebCrawlerService extends Service {
     }
 
     public void startStuff() {
+        Log.v(TAG, "startStuff");
         _profileClient = new ProfileDataClient(_profileClient_listener);
         _profileClient.connect(this);
 
@@ -69,9 +84,10 @@ public class WebCrawlerService extends Service {
     private final ProfileDataClient.Listener _profileClient_listener = new ProfileDataClient.Listener() {
         @Override
         public void onConnected() {
-            _profileClient.registerAllMessages();
-            _profileClient.registerProfile();
-            _profileClient.registerAllNotifications();
+            Log.v(TAG, "_profileClient_listener.onConnected");
+            _profileClient.registerAllMessages(true);
+            _profileClient.registerAllNotifications(true);
+            _profileClient.registerProfile(true);
 
             ProfileDataClient.getProfile(WebCrawlerService.this, true);
             ProfileDataClient.getAllMessages(WebCrawlerService.this, 0, true);
@@ -80,6 +96,7 @@ public class WebCrawlerService extends Service {
 
         @Override
         public void onProfile(Profile profile) {
+            Log.v(TAG, "onProfile " + _haveProfile);
             if (!_haveProfile) {
                 Log.v(TAG, "onProfile");
                 PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
@@ -123,8 +140,9 @@ public class WebCrawlerService extends Service {
     private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
         @Override
         public void onConnected() {
-            _workorderClient.registerList();
-            _workorderClient.registerDetails();
+            Log.v(TAG, "_workorderClient_listener.onConnected");
+            _workorderClient.registerList(true);
+            _workorderClient.registerDetails(true);
 
             WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true);
             WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true);
@@ -141,12 +159,14 @@ public class WebCrawlerService extends Service {
 
             WorkorderDataClient.requestList(WebCrawlerService.this, selector, page + 1, true);
 
+            Log.v(TAG, "onWorkorderList, Request details");
             for (int i = 0; i < list.size(); i++) {
                 Workorder workorder = list.get(i);
 
                 WorkorderDataClient.requestDetails(WebCrawlerService.this, workorder.getWorkorderId(), true);
                 WorkorderDataClient.requestBundle(WebCrawlerService.this, workorder.getWorkorderId(), true);
             }
+            Log.v(TAG, "onWorkorderList, done");
         }
 
         @Override
@@ -156,6 +176,7 @@ public class WebCrawlerService extends Service {
             Signature[] sigs = workorder.getSignatureList();
             if (sigs != null && sigs.length > 0) {
                 for (int i = 0; i < sigs.length; i++) {
+                    Log.v(TAG, "getSignature");
                     WorkorderDataClient.requestGetSignature(WebCrawlerService.this, workorder.getWorkorderId(), sigs[i].getSignatureId(), true);
                 }
             }

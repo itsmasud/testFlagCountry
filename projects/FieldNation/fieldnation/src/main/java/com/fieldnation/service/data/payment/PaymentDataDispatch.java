@@ -12,20 +12,22 @@ import com.fieldnation.service.topics.TopicService;
  */
 public class PaymentDataDispatch implements PaymentConstants {
 
-    public static void allPage(Context context, int page, JsonArray data) {
+    public static void allPage(Context context, int page, JsonArray data, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
-        TopicService.dispatchEvent(context, TOPIC_ID_GET_ALL, bundle, true);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, TOPIC_ID_GET_ALL + (isSync ? "/Sync" : ""), bundle, true);
 
     }
 
-    public static void payment(Context context, long paymentId, JsonObject data) {
+    public static void payment(Context context, long paymentId, JsonObject data, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_PAYMENT);
         bundle.putLong(PARAM_ID, paymentId);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
-        TopicService.dispatchEvent(context, TOPIC_ID_PAYMENT, bundle, true);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, TOPIC_ID_PAYMENT + (isSync ? "/Sync" : ""), bundle, true);
     }
 }

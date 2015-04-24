@@ -12,7 +12,6 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.GlobalState;
-import com.fieldnation.Log;
 
 import java.lang.ref.WeakReference;
 
@@ -20,7 +19,7 @@ import java.lang.ref.WeakReference;
  * Created by Michael Carver on 2/27/2015.
  */
 public class TopicClient implements TopicConstants {
-    public static final String TAG = "TopicClient";
+//    public static final String TAG = "TopicClient";
 
     private boolean _isConnected = false;
     private Messenger _rcvService = new Messenger(new IncomeHandler(this));
@@ -53,7 +52,7 @@ public class TopicClient implements TopicConstants {
     /*-         Commands            -*/
     /*-*****************************-*/
     public boolean register(String topicId, String userTag) {
-        Log.v(TAG, "register(" + topicId + ", " + userTag + ")");
+//        Log.v(TAG, "register(" + topicId + ", " + userTag + ")");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
@@ -72,7 +71,7 @@ public class TopicClient implements TopicConstants {
     }
 
     public boolean unregister(String topicId, String userTag) {
-        Log.v(TAG, "unregister");
+//        Log.v(TAG, "unregister");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
@@ -90,7 +89,7 @@ public class TopicClient implements TopicConstants {
     }
 
     public boolean delete(String userTag) {
-        Log.v(TAG, "delete");
+//        Log.v(TAG, "delete");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_USER_TAG, userTag);
@@ -101,7 +100,7 @@ public class TopicClient implements TopicConstants {
             msg.replyTo = _rcvService;
             _sndService.send(msg);
         } catch (Exception ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
         }
         return false;
     }
@@ -115,7 +114,7 @@ public class TopicClient implements TopicConstants {
      * @return
      */
     public boolean dispatchEvent(String topicId, Parcelable payload, boolean keepLast) {
-        Log.v(TAG, "dispatchEvent");
+//        Log.v(TAG, "dispatchEvent");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
@@ -154,7 +153,7 @@ public class TopicClient implements TopicConstants {
     private final ServiceConnection _serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.v(TAG, "onServiceConnected");
+//            Log.v(TAG, "onServiceConnected");
             _sndService = new Messenger(service);
             _isConnected = true;
             if (_listener != null)
@@ -163,7 +162,7 @@ public class TopicClient implements TopicConstants {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.v(TAG, "onServiceDisconnected");
+//            Log.v(TAG, "onServiceDisconnected");
             _rcvService = null;
             _isConnected = false;
             if (_listener != null)

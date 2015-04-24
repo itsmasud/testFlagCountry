@@ -18,6 +18,5 @@ public class PhotoDataDispatch implements PhotoConstants {
         response.putString(PARAM_URL, url);
         response.putSerializable(RESULT_IMAGE_FILE, file);
         TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY + "/" + url, response, true);
-
     }
 }

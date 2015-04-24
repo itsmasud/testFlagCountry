@@ -260,11 +260,12 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 synchronized (TAG) {
                     THREAD_COUNT--;
                 }
+                startTransaction();
             }
         }.executeEx(WebTransactionService.this, next, _auth);
     }
 
-    private static final void requeue(Context context, WebTransaction trans) {
+    private static void requeue(Context context, WebTransaction trans) {
         trans.setState(WebTransaction.State.IDLE);
         trans.save(context);
 

@@ -9,6 +9,8 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 
+import java.text.ParseException;
+
 /**
  * Created by Michael Carver on 3/27/2015.
  */
@@ -42,27 +44,38 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
             JsonObject obj = new JsonObject(transaction.getHandlerParams());
             String action = obj.getString("action");
             if (action.equals("getall")) {
-                int page = obj.getInt("page");
-                byte[] data = resultData.getResultsAsByteArray();
-
-                StoredObject.put(context, PSO_PAYMENT_GET_ALL, page, data);
-
-                PaymentDataDispatch.allPage(context, page, new JsonArray(data));
-                return Result.FINISH;
+                return handleGetAll(context, transaction, resultData, obj);
             } else if (action.equals("get")) {
-                long paymentId = obj.getLong("paymentId");
-
-                byte[] data = resultData.getResultsAsByteArray();
-
-                StoredObject.put(context, PSO_PAYMENT_GET, paymentId, data);
-
-                PaymentDataDispatch.payment(context, paymentId, new JsonObject(data));
-                return Result.FINISH;
+                return handleGet(context, transaction, resultData, obj);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
             return Result.ERROR;
         }
         return Result.REQUEUE;
+    }
+
+
+    private Result handleGetAll(Context context, WebTransaction transaction, HttpResult resultData,
+                                JsonObject params) throws ParseException {
+        int page = params.getInt("page");
+        byte[] data = resultData.getResultsAsByteArray();
+
+        StoredObject.put(context, PSO_PAYMENT_GET_ALL, page, data);
+
+        PaymentDataDispatch.allPage(context, page, new JsonArray(data), transaction.isSync());
+        return Result.FINISH;
+    }
+
+    private Result handleGet(Context context, WebTransaction transaction, HttpResult resultData,
+                             JsonObject params) throws ParseException {
+        long paymentId = params.getLong("paymentId");
+
+        byte[] data = resultData.getResultsAsByteArray();
+
+        StoredObject.put(context, PSO_PAYMENT_GET, paymentId, data);
+
+        PaymentDataDispatch.payment(context, paymentId, new JsonObject(data), transaction.isSync());
+        return Result.FINISH;
     }
 }

@@ -818,6 +818,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onWorkorderList(List<Workorder> list, WorkorderDataSelector selector, int page) {
             Log.v(TAG, "_workorderData_listener.onWorkorderList");
+            if (!selector.equals(_displayView))
+                return;
             if (list != null)
                 addPage(page, list);
         }

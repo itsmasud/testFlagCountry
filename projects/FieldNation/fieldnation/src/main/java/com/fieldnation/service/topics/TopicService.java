@@ -10,8 +10,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -34,7 +32,7 @@ public class TopicService extends Service implements TopicConstants {
     /*-*****************************-*/
     @Override
     public void onCreate() {
-        Log.v(TAG, "onCreate");
+//        Log.v(TAG, "onCreate");
         super.onCreate();
         _lastSent = new Hashtable<>();
         _handler = new Handler();
@@ -58,14 +56,14 @@ public class TopicService extends Service implements TopicConstants {
     @Override
     public IBinder onBind(Intent intent) {
         _bindCount++;
-        Log.v(TAG, "onBind:" + _bindCount);
+//        Log.v(TAG, "onBind:" + _bindCount);
         return _me.getBinder();
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         _bindCount--;
-        Log.v(TAG, "onUnbind:" + _bindCount);
+//        Log.v(TAG, "onUnbind:" + _bindCount);
         if (_bindCount == 0 && _lastStartId != -1) {
             stopSelf(_lastStartId);
             _lastStartId = -1;
@@ -75,7 +73,7 @@ public class TopicService extends Service implements TopicConstants {
 
     @Override
     public void onDestroy() {
-        Log.v(TAG, "onDestroy");
+//        Log.v(TAG, "onDestroy");
         TopicUser.reset();
         _lastSent = new Hashtable<>();
         super.onDestroy();
@@ -95,8 +93,7 @@ public class TopicService extends Service implements TopicConstants {
                     msg.replyTo = _me;
                     messenger.send(msg);
                 } catch (Exception ex) {
-                    Log.e(TAG, userTag);
-                    ex.printStackTrace();
+//                    Log.e(TAG, ex.getLocalizedMessage() + ": " + userTag);
                     synchronized (TAG) {
                         TopicUser.deleteUser(userTag);
                     }
@@ -110,7 +107,7 @@ public class TopicService extends Service implements TopicConstants {
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String userTag = bundle.getString(PARAM_USER_TAG);
 
-        Log.v(TAG, "register(" + userTag + ", " + topicId + ")");
+//        Log.v(TAG, "register(" + userTag + ", " + topicId + ")");
 
         TopicUser c = null;
         synchronized (TAG) {
@@ -124,7 +121,7 @@ public class TopicService extends Service implements TopicConstants {
         sendEvent(replyTo, WHAT_REGISTER_LISTENER, response, c.userTag);
 
         if (_lastSent.containsKey(topicId)) {
-            Log.v(TAG, "lastsent " + topicId);
+//            Log.v(TAG, "lastsent " + topicId);
             bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
             bundle.putParcelable(PARAM_TOPIC_PARCELABLE, _lastSent.get(topicId));
@@ -136,7 +133,7 @@ public class TopicService extends Service implements TopicConstants {
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String userTag = bundle.getString(PARAM_USER_TAG);
 
-        Log.v(TAG, "unregister " + userTag + ":" + topicId);
+//        Log.v(TAG, "unregister " + userTag + ":" + topicId);
 
         synchronized (TAG) {
             TopicUser.unregisterUser(userTag, topicId);
@@ -146,7 +143,7 @@ public class TopicService extends Service implements TopicConstants {
     private void deleteUser(Bundle bundle) {
         String userTag = bundle.getString(PARAM_USER_TAG);
 
-        Log.v(TAG, "deleteUser " + userTag);
+//        Log.v(TAG, "deleteUser " + userTag);
 
         synchronized (TAG) {
             TopicUser.deleteUser(userTag);
@@ -158,7 +155,7 @@ public class TopicService extends Service implements TopicConstants {
         boolean keepLast = bundle.getBoolean(PARAM_KEEP_LAST);
         Parcelable payload = bundle.getParcelable(PARAM_TOPIC_PARCELABLE);
 
-        Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
+//        Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
 
         Bundle response = new Bundle();
         //response.putString(TopicConstants.ACTION, TopicConstants.ACTION_DISPATCH_EVENT);
@@ -169,8 +166,8 @@ public class TopicService extends Service implements TopicConstants {
             Iterator<TopicUser> iter = null;
             users = TopicUser.getUsers(topicId);
             iter = users.iterator();
-            Log.v(TAG, "Topic: " + topicId);
-            Log.v(TAG, "Users: " + users.size());
+//            Log.v(TAG, "Topic: " + topicId);
+//            Log.v(TAG, "Users: " + users.size());
             while (iter.hasNext()) {
                 TopicUser c = iter.next();
                 //Log.v(TAG, "Client: " + c.tag);

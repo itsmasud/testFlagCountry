@@ -122,7 +122,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
         // dispatch the event
-        WorkorderDispatch.workorder(context, workorder, workorderId);
+        WorkorderDispatch.workorder(context, workorder, workorderId, transaction.isSync());
         return Result.FINISH;
     }
 
@@ -132,9 +132,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         byte[] data = resultData.getResultsAsByteArray();
 
         //store the signature data
-        StoredObject.put(context, PSO_SIGNATURE, signatureId + "", data);
+        StoredObject.put(context, PSO_SIGNATURE, signatureId, data);
 
-        WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId);
+        WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, transaction.isSync());
 
         return Result.FINISH;
     }

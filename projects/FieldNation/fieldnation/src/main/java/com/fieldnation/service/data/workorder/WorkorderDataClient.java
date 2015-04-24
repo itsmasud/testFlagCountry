@@ -54,10 +54,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public boolean registerList() {
+        return registerList(false);
+    }
+
+    public boolean registerList(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_LIST, TAG);
+        return register(PARAM_ACTION_LIST + (isSync ? "/Sync" : ""), TAG);
     }
 
     // details
@@ -74,10 +78,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public boolean registerDetails() {
+        return registerDetails(false);
+    }
+
+    public boolean registerDetails(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_DETAILS, TAG);
+        return register(PARAM_ACTION_DETAILS + (isSync ? "/Sync" : ""), TAG);
     }
 
     // get signature
@@ -95,10 +103,14 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public boolean registerGetSignature() {
+        return registerGetSignature(false);
+    }
+
+    public boolean registerGetSignature(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_GET_SIGNATURE, TAG);
+        return register(PARAM_ACTION_GET_SIGNATURE + (isSync ? "/Sync" : ""), TAG);
     }
 
     // add signature json
@@ -198,12 +210,16 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public boolean registerBundle() {
+        return registerBundle(false);
+    }
+
+    public boolean registerBundle(boolean isSync) {
         if (!isConnected())
             return false;
 
         Log.v(TAG, "registerBundle");
 
-        return register(PARAM_ACTION_GET_BUNDLE, TAG);
+        return register(PARAM_ACTION_GET_BUNDLE + (isSync ? "/Sync" : ""), TAG);
     }
 
     public static void requestUploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
@@ -241,17 +257,17 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            if (topicId.equals(PARAM_ACTION_LIST)) {
+            if (topicId.startsWith(PARAM_ACTION_LIST)) {
                 preOnWorkorderList((Bundle) payload);
-            } else if (topicId.equals(PARAM_ACTION_DETAILS)) {
+            } else if (topicId.startsWith(PARAM_ACTION_DETAILS)) {
                 preOnDetails((Bundle) payload);
-            } else if (topicId.equals(PARAM_ACTION_GET_SIGNATURE)) {
+            } else if (topicId.startsWith(PARAM_ACTION_GET_SIGNATURE)) {
                 preOnGetSignature((Bundle) payload);
-            } else if (topicId.equals(PARAM_ACTION_GET_BUNDLE)) {
+            } else if (topicId.startsWith(PARAM_ACTION_GET_BUNDLE)) {
                 preOnGetBundle((Bundle) payload);
-            } else if (topicId.equals(PARAM_ACTION_CHECKIN)) {
+            } else if (topicId.startsWith(PARAM_ACTION_CHECKIN)) {
                 preCheckIn((Bundle) payload);
-            } else if (topicId.equals(PARAM_ACTION_CHECKOUT)) {
+            } else if (topicId.startsWith(PARAM_ACTION_CHECKOUT)) {
                 preCheckOut((Bundle) payload);
             }
 

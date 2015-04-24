@@ -12,29 +12,32 @@ import com.fieldnation.service.topics.TopicService;
  */
 public class WorkorderDispatch implements WorkorderDataConstants {
 
-    public static void workorder(Context context, JsonObject workorder, long workorderId) {
+    public static void workorder(Context context, JsonObject workorder, long workorderId, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
         bundle.putLong(PARAM_ID, workorderId);
-        TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS, bundle, true);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + (isSync ? "/Sync" : ""), bundle, true);
     }
 
-    public static void workorderList(Context context, JsonArray workorders, int page, String selector) {
+    public static void workorderList(Context context, JsonArray workorders, int page, String selector, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_DATA_PARCELABLE, workorders);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putString(PARAM_LIST_SELECTOR, selector);
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
-        TopicService.dispatchEvent(context, PARAM_ACTION_LIST, bundle, true);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, PARAM_ACTION_LIST + (isSync ? "/Sync" : ""), bundle, true);
     }
 
-    public static void bundle(Context context, JsonObject data, long bundleId) {
+    public static void bundle(Context context, JsonObject data, long bundleId, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putLong(PARAM_ID, bundleId);
-        TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE, bundle, true);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + (isSync ? "/Sync" : ""), bundle, true);
     }
 
     public static void checkIn(Context context, long workorderId, byte[] data) {
@@ -53,13 +56,14 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         TopicService.dispatchEvent(context, PARAM_ACTION_CHECKOUT, bundle, true);
     }
 
-    public static void signature(Context context, JsonObject signature, long workorderId, long signatureId) {
+    public static void signature(Context context, JsonObject signature, long workorderId, long signatureId, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, signature);
         bundle.putLong(PARAM_ID, workorderId);
         bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
-        TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE, bundle, true);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + (isSync ? "/Sync" : ""), bundle, true);
     }
 
 }

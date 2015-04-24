@@ -70,7 +70,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
-                    .key((isSync ? "Sync/" : "") + "GetSignature/" + signatureId)
+                    .key((isSync ? "Sync/" : "") + "GetSignature/" + workorderId + "/" + signatureId)
                     .useAuth(true)
                     .isSyncCall(isSync)
                     .request(new HttpJsonBuilder()

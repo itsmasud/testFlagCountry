@@ -10,6 +10,8 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 
+import java.text.ParseException;
+
 /**
  * Created by Michael Carver on 3/13/2015.
  */
@@ -63,40 +65,52 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
             String action = params.getString("action");
 
             if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
-                Log.v(TAG, "PARAM_ACTION_GET_MY_PROFILE");
-                // store object
-                byte[] profiledata = resultData.getResultsAsByteArray();
-
-                StoredObject.put(context, PSO_PROFILE, PSO_MY_PROFILE_KEY, profiledata);
-
-                // todo parse json and put Profile/id ?
-                ProfileDispatch.myUserInformation(context, new JsonObject(resultData.getResultsAsByteArray()));
-                return Result.FINISH;
+                return handleGetProfile(context, transaction, resultData);
             } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
-                Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
-                int page = params.getInt("page");
-                // store object
-                byte[] pagedata = resultData.getResultsAsByteArray();
-
-                StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
-
-                ProfileDispatch.allNotifications(context, new JsonArray(pagedata), page);
-                return Result.FINISH;
+                return handleGetAllNotifications(context, transaction, resultData, params);
             } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
-                Log.v(TAG, "PARAM_ACTION_GET_ALL_MESSAGES");
-                int page = params.getInt("page");
-                // store object
-                byte[] pagedata = resultData.getResultsAsByteArray();
-
-                StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
-
-                ProfileDispatch.allMessages(context, new JsonArray(pagedata), page);
-                return Result.FINISH;
+                return handleGetAllMessages(context, transaction, resultData, params);
             }
             return Result.FINISH;
         } catch (Exception ex) {
             ex.printStackTrace();
             return Result.REQUEUE;
         }
+    }
+
+    private Result handleGetProfile(Context context, WebTransaction transaction, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "PARAM_ACTION_GET_MY_PROFILE");
+        // store object
+        byte[] profiledata = resultData.getResultsAsByteArray();
+
+        StoredObject.put(context, PSO_PROFILE, PSO_MY_PROFILE_KEY, profiledata);
+
+        // todo parse json and put Profile/id ?
+        ProfileDispatch.myUserInformation(context, new JsonObject(resultData.getResultsAsByteArray()), transaction.isSync());
+        return Result.FINISH;
+    }
+
+    private Result handleGetAllNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
+        int page = params.getInt("page");
+        // store object
+        byte[] pagedata = resultData.getResultsAsByteArray();
+
+        StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
+
+        ProfileDispatch.allNotifications(context, new JsonArray(pagedata), page, transaction.isSync());
+        return Result.FINISH;
+    }
+
+    private Result handleGetAllMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "PARAM_ACTION_GET_ALL_MESSAGES");
+        int page = params.getInt("page");
+        // store object
+        byte[] pagedata = resultData.getResultsAsByteArray();
+
+        StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
+
+        ProfileDispatch.allMessages(context, new JsonArray(pagedata), page, transaction.isSync());
+        return Result.FINISH;
     }
 }

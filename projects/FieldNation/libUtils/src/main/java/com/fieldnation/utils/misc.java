@@ -503,7 +503,7 @@ public class misc {
         long size = src.length();
         long pos = 0;
         int read = 0;
-        byte[] packet = new byte[10485760]; // 10MB
+        byte[] packet = new byte[1024]; // 10MB
 
         try {
             inFile = new BufferedInputStream(new FileInputStream(src));

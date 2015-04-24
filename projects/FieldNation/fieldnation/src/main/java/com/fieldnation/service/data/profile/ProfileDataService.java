@@ -1,65 +1,61 @@
 package com.fieldnation.service.data.profile;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
+
+import java.util.List;
 
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileDataService extends Service implements ProfileConstants {
+public class ProfileDataService extends MSService implements ProfileConstants {
     private static final String TAG = "ProfileDataService";
 
+    @Override
+    public int getMaxWorkerCount() {
+        return 1;
+    }
 
-    private static final Object LOCK = new Object();
-    private static int COUNT = 0;
+    @Override
+    public WorkerThread getNewWorker(List<Intent> intents) {
+        return new MyWorkerThread(this, intents);
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand");
-        if (intent != null) {
-            new AsyncTaskEx<Object, Object, Object>() {
-                @Override
-                protected Object doInBackground(Object... params) {
-                    Context context = (Context) params[0];
-                    Intent intent = (Intent) params[1];
-                    synchronized (LOCK) {
-                        COUNT++;
-                    }
-                    if (context != null) {
-                        String action = intent.getStringExtra(PARAM_ACTION);
-                        if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
-                            getMyUserInformation(context, intent);
-                        } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
-                            getAllNotifications(context, intent);
-                        } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
-                            getAllMessages(context, intent);
-                        }
-                    }
-                    synchronized (LOCK) {
-                        COUNT--;
-                        if (COUNT == 0) {
-                            stopSelf();
-                        }
-                    }
-                    return null;
-                }
-            }.executeEx(this, intent);
+    private class MyWorkerThread extends WorkerThread {
+        private Context _context;
+
+        public MyWorkerThread(Context context, List<Intent> intents) {
+            super("MyWorkerThread", intents);
+            _context = context;
         }
-        return START_STICKY;
+
+        @Override
+        public void processIntent(Intent intent) {
+            if (_context != null) {
+                String action = intent.getStringExtra(PARAM_ACTION);
+                if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
+                    getMyUserInformation(_context, intent);
+                } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
+                    getAllNotifications(_context, intent);
+                } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
+                    getAllMessages(_context, intent);
+                }
+            }
+        }
     }
+
 
     private static void getMyUserInformation(Context context, Intent intent) {
         Log.v(TAG, "getMyUserInformation");
@@ -70,7 +66,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         // if exists, then pass it back
         if (obj != null) {
             try {
-                ProfileDispatch.myUserInformation(context, new JsonObject(obj.getData()));
+                ProfileDispatch.myUserInformation(context, new JsonObject(obj.getData()), isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -90,7 +86,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         StoredObject obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
         if (obj != null) {
             try {
-                ProfileDispatch.allNotifications(context, new JsonArray(obj.getData()), page);
+                ProfileDispatch.allNotifications(context, new JsonArray(obj.getData()), page, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -109,7 +105,7 @@ public class ProfileDataService extends Service implements ProfileConstants {
         StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page);
         if (obj != null) {
             try {
-                ProfileDispatch.allMessages(context, new JsonArray(obj.getData()), page);
+                ProfileDispatch.allMessages(context, new JsonArray(obj.getData()), page, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

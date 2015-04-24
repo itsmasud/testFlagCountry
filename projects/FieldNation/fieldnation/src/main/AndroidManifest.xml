@@ -227,7 +227,7 @@
         <service
             android:name=".service.crawler.WebCrawlerService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":crawler" />
 
         <provider
             android:name=".rpc.server.StubProvider"

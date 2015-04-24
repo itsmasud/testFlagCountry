@@ -54,7 +54,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
                 Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
             }
 
-            WorkorderDispatch.workorderList(context, ja, page, selector);
+            WorkorderDispatch.workorderList(context, ja, page, selector, transaction.isSync());
 
             return Result.FINISH;
         } catch (Exception ex) {

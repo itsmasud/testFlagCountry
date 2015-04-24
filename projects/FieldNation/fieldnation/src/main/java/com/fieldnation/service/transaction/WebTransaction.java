@@ -159,7 +159,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     Cursor cursor = db.query(
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
-                            Column.KEY + "=?",
+                            Column.KEY + " = ?",
                             new String[]{key},
                             null, null, null, "1");
                     try {
@@ -220,7 +220,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
                             Column.STATE + "=?"
-                                    + (allowSync ? "" : " AND " + Column.IS_SYNC + "=0"),
+                                    + (allowSync ? "" : " AND " + Column.IS_SYNC + " = 0"),
                             new String[]{State.IDLE.ordinal() + ""},
                             null, null,
                             "PRIORITY DESC, " + Column.ID + " ASC ",

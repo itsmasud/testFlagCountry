@@ -47,10 +47,14 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
     }
 
     public boolean registerProfile() {
+        return registerProfile(false);
+    }
+
+    public boolean registerProfile(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_HAVE_PROFILE, TAG);
+        return register(TOPIC_ID_HAVE_PROFILE + (isSync ? "/Sync" : ""), TAG);
     }
 
     public static void getAllNotifications(Context context, int page) {
@@ -65,11 +69,16 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         context.startService(intent);
     }
 
+
     public boolean registerAllNotifications() {
+        return registerAllNotifications(false);
+    }
+
+    public boolean registerAllNotifications(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_ALL_NOTIFICATION_LIST, TAG);
+        return register(TOPIC_ID_ALL_NOTIFICATION_LIST + (isSync ? "/Sync" : ""), TAG);
     }
 
     public static void getAllMessages(Context context, int page) {
@@ -85,10 +94,14 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
     }
 
     public boolean registerAllMessages() {
+        return registerAllMessages(false);
+    }
+
+    public boolean registerAllMessages(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_ALL_MESSAGES_LIST, TAG);
+        return register(TOPIC_ID_ALL_MESSAGES_LIST + (isSync ? "/Sync" : ""), TAG);
     }
 
     public void addBlockedCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
@@ -105,11 +118,11 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
                 return;
             }
             Bundle bundle = (Bundle) payload;
-            if (topicId.equals(TOPIC_ID_HAVE_PROFILE)) {
+            if (topicId.startsWith(TOPIC_ID_HAVE_PROFILE)) {
                 preProfile(bundle);
-            } else if (topicId.equals(TOPIC_ID_ALL_NOTIFICATION_LIST)) {
+            } else if (topicId.startsWith(TOPIC_ID_ALL_NOTIFICATION_LIST)) {
                 preAllNotificationPage(bundle);
-            } else if (topicId.equals(TOPIC_ID_ALL_MESSAGES_LIST)) {
+            } else if (topicId.startsWith(TOPIC_ID_ALL_MESSAGES_LIST)) {
                 preAllMessagesPage(bundle);
             }
 

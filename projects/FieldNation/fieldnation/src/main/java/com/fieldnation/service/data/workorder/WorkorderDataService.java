@@ -1,6 +1,5 @@
 package com.fieldnation.service.data.workorder;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
@@ -8,35 +7,37 @@ import android.os.IBinder;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.Transform;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Michael Carver on 3/24/2015.
  */
-public class WorkorderDataService extends Service implements WorkorderDataConstants {
+public class WorkorderDataService extends MSService implements WorkorderDataConstants {
     private static final String TAG = "WorkorderDataService";
-    private static final Object LOCK = new Object();
 
-    private static int COUNT = 0;
-
-    private List<Intent> _intents = new LinkedList<>();
-    private List<WorkerThread> _threads = new LinkedList<>();
+    public WorkorderDataService() {
+        super();
+        Log.v(TAG, "WorkorderDataService");
+    }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v(TAG, "onStartCommand");
+        return super.onStartCommand(intent, flags, startId);
+    }
 
-        synchronized (_intents) {
-            for (int i = 0; i < 10; i++) {
-                WorkerThread thread = new WorkerThread(this, _intents);
-                thread.start();
-                _threads.add(thread);
-            }
-        }
+    @Override
+    public int getMaxWorkerCount() {
+        return 2;
+    }
+
+    @Override
+    public WorkerThread getNewWorker(List<Intent> intents) {
+        return new MyWorkerThread(this, intents);
     }
 
     @Override
@@ -44,72 +45,34 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         return null;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand");
-        if (intent != null) {
-            synchronized (_intents) {
-                _intents.add(intent);
-            }
-        }
-        return START_STICKY;
-    }
 
-    private class WorkerThread extends Thread {
-        private List<Intent> _intents;
+    private class MyWorkerThread extends WorkerThread {
         private Context _context;
 
-        public WorkerThread(Context context, List<Intent> intents) {
-            _intents = intents;
+        public MyWorkerThread(Context context, List<Intent> intents) {
+            super("MyWorkerThread", intents);
             _context = context;
         }
 
         @Override
-        public void run() {
-            Intent intent = null;
-            Context context = _context;
-
-            while (true) {
-                synchronized (_intents) {
-                    if (_intents.size() > 0) {
-                        intent = _intents.remove(0);
-                    } else {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        continue;
-                    }
-                }
-                synchronized (LOCK) {
-                    COUNT++;
-                }
-                if (context != null) {
-                    String action = intent.getStringExtra(PARAM_ACTION);
-                    if (action.equals(PARAM_ACTION_LIST)) {
-                        listWorkorders(context, intent);
-                    } else if (action.equals(PARAM_ACTION_DETAILS)) {
-                        details(context, intent);
-                    } else if (action.equals(PARAM_ACTION_GET_SIGNATURE)) {
-                        getSignature(context, intent);
-                    } else if (action.equals(PARAM_ACTION_GET_BUNDLE)) {
-                        getBundle(context, intent);
-                    } else if (action.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
-                        uploadDeliverable(context, intent);
-                    }
-                }
-                synchronized (LOCK) {
-                    COUNT--;
-                    if (COUNT == 0) {
-                        stopSelf();
-                    }
+        public void processIntent(Intent intent) {
+            Log.v(TAG, "MyWorkerThread, processIntent");
+            if (_context != null) {
+                String action = intent.getStringExtra(PARAM_ACTION);
+                if (action.equals(PARAM_ACTION_LIST)) {
+                    listWorkorders(_context, intent);
+                } else if (action.equals(PARAM_ACTION_DETAILS)) {
+                    details(_context, intent);
+                } else if (action.equals(PARAM_ACTION_GET_SIGNATURE)) {
+                    getSignature(_context, intent);
+                } else if (action.equals(PARAM_ACTION_GET_BUNDLE)) {
+                    getBundle(_context, intent);
+                } else if (action.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
+                    uploadDeliverable(_context, intent);
                 }
             }
         }
-
     }
-
 
     // commands
     private static void listWorkorders(Context context, Intent intent) {
@@ -127,7 +90,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
                     Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
                 }
 
-                WorkorderDispatch.workorderList(context, ja, page, selector);
+                WorkorderDispatch.workorderList(context, ja, page, selector, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -150,7 +113,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
 
                 Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
-                WorkorderDispatch.workorder(context, workorder, workorderId);
+                WorkorderDispatch.workorder(context, workorder, workorderId, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -166,11 +129,13 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId);
         if (obj != null) {
             try {
-                WorkorderDispatch.signature(context, new JsonObject(obj.getData()), workorderId, signatureId);
+                WorkorderDispatch.signature(context, new JsonObject(obj.getData()), workorderId, signatureId, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else if (obj == null || isSync) {
+        }
+
+        if (obj == null || isSync) {
             WorkorderTransactionBuilder.getSignature(context, workorderId, signatureId, isSync);
         }
     }
@@ -185,7 +150,7 @@ public class WorkorderDataService extends Service implements WorkorderDataConsta
         StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
         if (obj != null) {
             try {
-                WorkorderDispatch.bundle(context, new JsonObject(obj.getData()), bundleId);
+                WorkorderDispatch.bundle(context, new JsonObject(obj.getData()), bundleId, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

@@ -47,10 +47,14 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     }
 
     public boolean registerGetAll() {
+        return registerGetAll(false);
+    }
+
+    public boolean registerGetAll(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_GET_ALL, TAG);
+        return register(TOPIC_ID_GET_ALL + (isSync ? "/Sync" : ""), TAG);
     }
 
     // get payment
@@ -67,10 +71,14 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     }
 
     public boolean registerGetPayment() {
+        return registerGetPayment(false);
+    }
+
+    public boolean registerGetPayment(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_PAYMENT, TAG);
+        return register(TOPIC_ID_PAYMENT + (isSync ? "/Sync" : ""), TAG);
     }
 
     /*-*********************************-*/
@@ -79,9 +87,9 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            if (TOPIC_ID_GET_ALL.equals(topicId)) {
+            if (TOPIC_ID_GET_ALL.startsWith(topicId)) {
                 preOnGetAll((Bundle) payload);
-            } else if (TOPIC_ID_PAYMENT.equals(topicId)) {
+            } else if (TOPIC_ID_PAYMENT.startsWith(topicId)) {
                 preOnPayment((Bundle) payload);
             }
         }
