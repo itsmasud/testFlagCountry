@@ -25,7 +25,8 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         STATE(5, "state", "integer not null", true),
         REQUEST(6, "request", "text"),
         PRIORITY(7, "priority", "integer not null", true),
-        KEY(8, "key", "text", true);
+        KEY(8, "key", "text", true),
+        QUEUE_TIME(9, "queue_time", "integer not null", true);
 
         private int _index;
         private String _name;

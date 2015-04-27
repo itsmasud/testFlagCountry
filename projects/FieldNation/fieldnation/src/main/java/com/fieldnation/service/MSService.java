@@ -2,6 +2,7 @@ package com.fieldnation.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.IBinder;
 
 import com.fieldnation.Log;
 
@@ -24,6 +25,11 @@ public abstract class MSService extends Service {
     public void onCreate() {
         super.onCreate();
         _maxWorkerCount = getMaxWorkerCount();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     public abstract int getMaxWorkerCount();

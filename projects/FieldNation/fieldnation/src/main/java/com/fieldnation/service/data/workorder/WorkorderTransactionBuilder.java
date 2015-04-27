@@ -102,6 +102,42 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
         }
     }
 
+    public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pGet(workorderId, deliverableId))
+                    .key((isSync ? "Sync/" : "") + "GetDeliverable/" + workorderId + "/" + deliverableId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
+                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .method("GET")
+                            .path(url))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void postDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
         StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
 
@@ -119,8 +155,8 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
 
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(DeliverableDeleteTransactionHandler.class)
-                    .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pChange(workorderId))
                     .useAuth(true)
                     .request(builder)
                     .transform(Transform.makeTransformQuery(
@@ -559,8 +595,8 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(DeliverableDeleteTransactionHandler.class)
-                    .handlerParams(DeliverableDeleteTransactionHandler.generateParams(workorderId))
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pChange(workorderId))
                     .useAuth(true)
                     .key("Workorder/DeleteDeliverable/" + workorderId + "/" + workorderUploadId)
                     .request(

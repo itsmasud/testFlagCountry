@@ -7,6 +7,8 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.topics.TopicService;
 
+import java.io.File;
+
 /**
  * Created by Michael Carver on 4/20/2015.
  */
@@ -64,6 +66,26 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + (isSync ? "/Sync" : ""), bundle, true);
+    }
+
+    public static void deliverableFile(Context context, long workorderId, long deliverableId, File file, boolean isSync) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
+        bundle.putLong(PARAM_ID, workorderId);
+        bundle.putLong(PARAM_DELIVERABLE_ID, deliverableId);
+        bundle.putSerializable(PARAM_FILE, file);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DOWNLOAD_DELIVERABLE + (isSync ? "/Sync" : "") + "/" + workorderId + "/" + deliverableId, bundle, true);
+    }
+
+    public static void deliverable(Context context, JsonObject obj, long workorderId, long deliverableId, boolean isSync) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_DELIVERABLE);
+        bundle.putLong(PARAM_ID, workorderId);
+        bundle.putLong(PARAM_DELIVERABLE_ID, deliverableId);
+        bundle.putParcelable(PARAM_DATA_PARCELABLE, obj);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DELIVERABLE + (isSync ? "/Sync" : "") + "/" + workorderId + "/" + deliverableId, bundle, true);
     }
 
 }

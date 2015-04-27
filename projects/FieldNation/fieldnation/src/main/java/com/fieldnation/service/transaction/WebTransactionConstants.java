@@ -14,4 +14,5 @@ public interface WebTransactionConstants {
     public static final String PARAM_KEY = "PARAM_KEY";
     public static final String PARAM_TRANSFORM_LIST = "PARAM_TRANSFORM_LIST";
     public static final String PARAM_IS_SYNC = "PARAM_IS_SYNC";
+    public static final String PARAM_QUEUE_TIME = "PARAM_QUEUE_TIME";
 }

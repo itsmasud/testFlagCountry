@@ -56,7 +56,6 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         }
     }
 
-
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         Log.v(TAG, "handleResult");
@@ -71,11 +70,11 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
             } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
                 return handleGetAllMessages(context, transaction, resultData, params);
             }
-            return Result.FINISH;
         } catch (Exception ex) {
             ex.printStackTrace();
             return Result.REQUEUE;
         }
+        return Result.FINISH;
     }
 
     private Result handleGetProfile(Context context, WebTransaction transaction, HttpResult resultData) throws ParseException {
@@ -86,7 +85,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         StoredObject.put(context, PSO_PROFILE, PSO_MY_PROFILE_KEY, profiledata);
 
         // todo parse json and put Profile/id ?
-        ProfileDispatch.myUserInformation(context, new JsonObject(resultData.getResultsAsByteArray()), transaction.isSync());
+        ProfileDispatch.myUserInformation(context, new JsonObject(profiledata), transaction.isSync());
         return Result.FINISH;
     }
 

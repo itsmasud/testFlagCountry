@@ -2,7 +2,6 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
 
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
@@ -19,17 +18,6 @@ import java.util.List;
 public class WorkorderDataService extends MSService implements WorkorderDataConstants {
     private static final String TAG = "WorkorderDataService";
 
-    public WorkorderDataService() {
-        super();
-        Log.v(TAG, "WorkorderDataService");
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand");
-        return super.onStartCommand(intent, flags, startId);
-    }
-
     @Override
     public int getMaxWorkerCount() {
         return 2;
@@ -39,12 +27,6 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
     public WorkerThread getNewWorker(List<Intent> intents) {
         return new MyWorkerThread(this, intents);
     }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
 
     private class MyWorkerThread extends WorkerThread {
         private Context _context;
@@ -69,6 +51,10 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
                     getBundle(_context, intent);
                 } else if (action.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
                     uploadDeliverable(_context, intent);
+                } else if (action.equals(PARAM_ACTION_DELIVERABLE)) {
+                    getDeliverable(_context, intent);
+                } else if (action.equals(PARAM_ACTION_DOWNLOAD_DELIVERABLE)) {
+                    downloadDeliverable(_context, intent);
                 }
             }
         }
@@ -164,5 +150,45 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
 
         WorkorderTransactionBuilder.postDeliverable(context, filePath, filename, workorderId, uploadSlotId);
+    }
+
+    private static void getDeliverable(Context context, Intent intent) {
+        long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+
+        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE, uploadSlotId);
+
+        if (obj != null) {
+            try {
+                WorkorderDispatch.deliverable(context, new JsonObject(obj.getData()), workorderId, uploadSlotId, isSync);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        if (obj == null || isSync) {
+            WorkorderTransactionBuilder.getDeliverable(context, workorderId, uploadSlotId, isSync);
+        }
+    }
+
+    private static void downloadDeliverable(Context context, Intent intent) {
+        long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
+        String url = intent.getStringExtra(PARAM_URL);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+
+        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, uploadSlotId);
+
+        if (obj != null) {
+            try {
+                WorkorderDispatch.deliverableFile(context, workorderId, uploadSlotId, obj.getFile(), isSync);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (obj == null || isSync) {
+            WorkorderTransactionBuilder.downloadDeliverable(context, workorderId, uploadSlotId, url, isSync);
+        }
     }
 }

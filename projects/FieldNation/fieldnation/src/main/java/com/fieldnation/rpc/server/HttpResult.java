@@ -44,14 +44,26 @@ public class HttpResult {
         try {
             if (conn.getDoInput()) {
                 InputStream in = conn.getInputStream();
-                _baResults = misc.readAllFromStream(in, 1024, -1, 3000);
+
+                if (conn.getContentLength() > 10240) {
+                    // TODO put data in temp storage
+                    _baResults = misc.readAllFromStream(in, 1024, -1, 3000);
+                } else {
+                    _baResults = misc.readAllFromStream(in, 1024, -1, 3000);
+                }
                 in.close();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
             _baResults = null;
             try {
-                _baResults = misc.readAllFromStream(conn.getErrorStream(), 1024, -1, 1000);
+
+                if (conn.getContentLength() > 10240) {
+                    // TODO put data in temp storage
+                    _baResults = misc.readAllFromStream(conn.getErrorStream(), 1024, -1, 1000);
+                } else {
+                    _baResults = misc.readAllFromStream(conn.getErrorStream(), 1024, -1, 1000);
+                }
             } catch (Exception ex1) {
                 ex1.printStackTrace();
             }

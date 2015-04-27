@@ -251,6 +251,10 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId, filename);
     }
 
+    public static void requestGetDeliverable(Context context, long workorderId, long workorderUploadId) {
+        
+    }
+
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
@@ -270,7 +274,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
             } else if (topicId.startsWith(PARAM_ACTION_CHECKOUT)) {
                 preCheckOut((Bundle) payload);
             }
-
         }
 
         private void preCheckOut(Bundle payload) {

@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
@@ -18,6 +18,8 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.utils.misc;
 
 import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -32,8 +34,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
     private static final int MAX_THREAD_COUNT = 10;
-    private static int THREAD_COUNT = 0;
     private boolean _isAuthenticated = false;
+    private List<WorkerThread> _threads = new LinkedList<>();
 
     @Override
     public void onCreate() {
@@ -42,13 +44,60 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(this);
+
+        for (int i = 0; i < MAX_THREAD_COUNT; i++) {
+            _threads.add(new WorkerThread(this));
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
         _authTopicClient.disconnect(this);
+
+        for (int i = 0; i < _threads.size(); i++) {
+            _threads.get(i).finish();
+        }
+
+        for (int i = 0; i < _threads.size(); i++) {
+            WorkerThread thread = _threads.get(i);
+
+            try {
+                thread.join(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (thread.isAlive()) {
+                thread.interrupt();
+            }
+        }
+
+        _threads.clear();
+
         super.onDestroy();
+    }
+
+    private void setAuth(OAuth auth) {
+        synchronized (TAG) {
+            _auth = auth;
+        }
+    }
+
+    private OAuth getAuth() {
+        synchronized (TAG) {
+            return _auth;
+        }
+    }
+
+    private boolean allowSync() {
+        // TODO need to calculate by collecting config information and compare to phone state
+        return true;
     }
 
     @Override
@@ -90,8 +139,6 @@ public class WebTransactionService extends Service implements WebTransactionCons
             }
         }
 
-        startTransaction();
-
         return START_STICKY;
     }
 
@@ -106,10 +153,8 @@ public class WebTransactionService extends Service implements WebTransactionCons
         @Override
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
-            _auth = oauth;
-            Log.v(TAG, _auth.toJson().display());
+            setAuth(oauth);
             _isAuthenticated = true;
-            startTransaction();
         }
 
         @Override
@@ -118,54 +163,57 @@ public class WebTransactionService extends Service implements WebTransactionCons
         }
     };
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    class WorkerThread extends Thread {
+        private String TAG = UniqueTag.makeTag("WorkerThread");
+        private Context context;
+        private boolean _running = true;
 
-    private void startTransaction() {
-        Log.v(TAG, "startTransaction");
+        public WorkerThread(Context context) {
+            super();
+            setName(TAG);
+            this.context = context;
+            start();
+        }
 
-        if (_auth == null || !_isAuthenticated)
-            return;
-
-        synchronized (TAG) {
-            if (THREAD_COUNT >= MAX_THREAD_COUNT) {
-                Log.v(TAG, "startTransaction leaving: " + THREAD_COUNT);
-                return;
+        private void sleep() {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        // TODO calculate allow sync.
-        boolean allowSync = true;
 
-        WebTransaction next = WebTransaction.getNext(this, allowSync);
-        if (next == null) {
-            return;
+        public void finish() {
+            _running = false;
         }
 
-        if (next.getKey() != null)
-            Log.v(TAG, next.getKey());
+        @Override
+        public void run() {
+            Log.v(TAG, "start");
+            while (_running) {
 
-        new AsyncTaskEx<Object, Object, Object>() {
+                boolean allowSync = allowSync();
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                synchronized (TAG) {
-                    THREAD_COUNT++;
+                WebTransaction trans = WebTransaction.getNext(context, allowSync);
+
+                if (trans == null) {
+                    Log.v(TAG, "skip no transaction");
+                    sleep();
+                    continue;
                 }
-            }
-
-            @Override
-            protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
-                WebTransaction trans = (WebTransaction) params[1];
-                OAuth auth = (OAuth) params[2];
 
                 // at some point call the web service
                 JsonObject request = trans.getRequest().copy();
                 try {
                     if (trans.useAuth()) {
+                        OAuth auth = getAuth();
+                        if (auth == null || !_isAuthenticated) {
+                            Log.v(TAG, "skip no auth");
+                            trans.requeue(context);
+                            sleep();
+                            continue;
+                        }
+
                         if (!request.has(HttpJsonBuilder.PARAM_WEB_HOST)) {
                             request.put(HttpJsonBuilder.PARAM_WEB_HOST, auth.getHost());
                         }
@@ -187,34 +235,34 @@ public class WebTransactionService extends Service implements WebTransactionCons
                         Log.v(TAG, "Reauth");
                         _isAuthenticated = false;
                         AuthTopicClient.dispatchInvalidateCommand(context);
-                        requeue(context, trans);
+                        trans.requeue(context);
                         AuthTopicClient.dispatchRequestCommand(context);
-                        return null;
+                        continue;
                     } else if (result.getResponseCode() == 400) {
                         // Bad request
                         // need to report this
 
                         // need to re-auth?
                         Thread.sleep(5000);
-                        requeue(context, trans);
+                        trans.requeue(context);
                         AuthTopicClient.dispatchRequestCommand(context);
                     } else if (result.getResponseCode() == 401) {
                         Log.v(TAG, "Reauth");
                         _isAuthenticated = false;
                         AuthTopicClient.dispatchInvalidateCommand(context);
-                        requeue(context, trans);
+                        trans.requeue(context);
                         AuthTopicClient.dispatchRequestCommand(context);
-                        return null;
+                        continue;
                     } else if (result.getResponseCode() == 404) {
                         Thread.sleep(5000);
-                        requeue(context, trans);
+                        trans.requeue(context);
                         AuthTopicClient.dispatchRequestCommand(context);
-                        return null;
+                        continue;
                     } else if (result.getResponseCode() == 502) {
                         Thread.sleep(5000);
-                        requeue(context, trans);
+                        trans.requeue(context);
                         AuthTopicClient.dispatchRequestCommand(context);
-                        return null;
+                        continue;
                     }
 
                     String handler = trans.getHandlerName();
@@ -229,45 +277,27 @@ public class WebTransactionService extends Service implements WebTransactionCons
                             case ERROR:
                                 WebTransaction.delete(context, trans.getId());
                                 Transform.deleteTransaction(context, trans.getId());
-                                startTransaction();
                                 break;
                             case FINISH:
                                 WebTransaction.delete(context, trans.getId());
                                 Transform.deleteTransaction(context, trans.getId());
-                                startTransaction();
                                 break;
                             case REQUEUE:
-                                requeue(context, trans);
-                                startTransaction();
+                                trans.requeue(context);
                                 break;
                         }
                     }
-                    return null;
+                    continue;
                 } catch (UnknownHostException ex) {
                     // probably offline
                     ex.printStackTrace();
-                    requeue(context, trans);
-                    return null;
+                    trans.requeue(context);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    requeue(context, trans);
-                    return null;
+                    trans.requeue(context);
                 }
             }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                synchronized (TAG) {
-                    THREAD_COUNT--;
-                }
-                startTransaction();
-            }
-        }.executeEx(WebTransactionService.this, next, _auth);
-    }
-
-    private static void requeue(Context context, WebTransaction trans) {
-        trans.setState(WebTransaction.State.IDLE);
-        trans.save(context);
-
+            Log.v(TAG, "finish");
+        }
     }
 }

@@ -27,6 +27,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private Priority _priority;
     private JsonObject _request;
     private String _key;
+    private long _queueTime;
 
     public enum State {
         BUILDING, IDLE, WORKING
@@ -42,6 +43,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
         _isSync = cursor.getInt(Column.IS_SYNC.getIndex()) == 1;
+        _queueTime = cursor.getLong(Column.QUEUE_TIME.getIndex());
         try {
             _request = new JsonObject(cursor.getBlob(Column.REQUEST.getIndex()));
         } catch (Exception ex) {
@@ -57,6 +59,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
         _state = State.values()[bundle.getInt(PARAM_STATE)];
         _isSync = bundle.getBoolean(PARAM_IS_SYNC);
+        _queueTime = bundle.getLong(PARAM_QUEUE_TIME);
         try {
             _request = new JsonObject(bundle.getByteArray(PARAM_REQUEST));
         } catch (Exception ex) {
@@ -76,6 +79,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putString(PARAM_KEY, _key);
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
         bundle.putBoolean(PARAM_IS_SYNC, _isSync);
+        bundle.putLong(PARAM_QUEUE_TIME, _queueTime);
         return bundle;
     }
 
@@ -140,6 +144,20 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public void setHandlerParams(byte[] params) {
         _handlerParams = params;
+    }
+
+    public long getQueueTime() {
+        return _queueTime;
+    }
+
+    public void setQueueTime(long queueTime) {
+        _queueTime = queueTime;
+    }
+
+    public void requeue(Context context) {
+        setState(State.IDLE);
+        setQueueTime(System.currentTimeMillis());
+        save(context);
     }
 
     public WebTransaction save(Context context) {
@@ -223,7 +241,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                                     + (allowSync ? "" : " AND " + Column.IS_SYNC + " = 0"),
                             new String[]{State.IDLE.ordinal() + ""},
                             null, null,
-                            "PRIORITY DESC, " + Column.ID + " ASC ",
+                            Column.QUEUE_TIME + " ASC, "
+                                    + Column.PRIORITY + " DESC, "
+                                    + Column.ID + " ASC",
                             "1");
                     try {
                         if (cursor.moveToFirst()) {
@@ -257,6 +277,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.PRIORITY.getName(), obj._priority.ordinal());
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
         v.put(Column.IS_SYNC.getName(), obj._isSync ? 1 : 0);
+        v.put(Column.QUEUE_TIME.getName(), obj._queueTime);
 
         boolean success = false;
         synchronized (TAG) {
@@ -294,6 +315,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.REQUEST.getName(), request);
         v.put(Column.PRIORITY.getName(), priority.ordinal());
         v.put(Column.KEY.getName(), key);
+        v.put(Column.QUEUE_TIME.getName(), 0);
 
         long id = -1;
         synchronized (TAG) {
