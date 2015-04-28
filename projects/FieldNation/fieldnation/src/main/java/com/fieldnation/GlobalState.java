@@ -13,7 +13,6 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.utils.misc;
@@ -50,13 +49,15 @@ public class GlobalState extends Application {
 
     public GlobalState() {
         super();
+        Log.v(TAG, "GlobalState");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
         Log.v(TAG, "onCreate");
+
+        PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
 
         _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
         Log.v(TAG, "memoryClass " + _memoryClass);

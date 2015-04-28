@@ -1,5 +1,6 @@
 package com.fieldnation.rpc.server;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
@@ -52,17 +53,23 @@ public class HttpResult {
                     _baResults = misc.readAllFromStream(in, 1024, -1, 3000);
                 }
                 in.close();
+
+                if (_baResults != null) {
+                    Log.v("HttpJson", "data size " + misc.readableFileSize(conn.getContentLength()) + ", " + misc.readableFileSize(_baResults.length));
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
             _baResults = null;
             try {
-
                 if (conn.getContentLength() > 10240) {
                     // TODO put data in temp storage
                     _baResults = misc.readAllFromStream(conn.getErrorStream(), 1024, -1, 1000);
                 } else {
                     _baResults = misc.readAllFromStream(conn.getErrorStream(), 1024, -1, 1000);
+                }
+                if (_baResults != null) {
+                    Log.v("HttpJson", "data size " + misc.readableFileSize(conn.getContentLength()) + ", " + misc.readableFileSize(_baResults.length));
                 }
             } catch (Exception ex1) {
                 ex1.printStackTrace();

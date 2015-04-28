@@ -46,6 +46,7 @@ public interface WorkorderDataConstants {
     public static final String PARAM_ACTION_GET_SIGNATURE = "PARAM_ACTION_GET_SIGNATURE";
     public static final String PARAM_ACTION_DOWNLOAD_DELIVERABLE = "PARAM_ACTION_DOWNLOAD_DELIVERABLE";
     public static final String PARAM_ACTION_DELIVERABLE = "PARAM_ACTION_DELIVERABLE";
+    public static final String PARAM_ACTION_DELIVERABLE_LIST = "PARAM_ACTION_DELIVERABLE_LIST";
 
     public static final String PARAM_LIST_SELECTOR = "PARAM_LIST_SELECTOR";
     public static final String PARAM_PAGE = "PARAM_PAGE";
@@ -70,5 +71,6 @@ public interface WorkorderDataConstants {
     public static final String PSO_SIGNATURE = "Signature";
     public static final String PSO_BUNDLE = "Bundle";
     public static final String PSO_DELIVERABLE = "Deliverable";
+    public static final String PSO_DELIVERABLE_LIST = "DeliverableList";
     public static final String PSO_DELIVERABLE_FILE = "DeliverableFile";
 }

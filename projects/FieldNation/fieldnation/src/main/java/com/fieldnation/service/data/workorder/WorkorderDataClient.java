@@ -10,6 +10,7 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.data.workorder.Deliverable;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -251,8 +252,47 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId, filename);
     }
 
-    public static void requestGetDeliverable(Context context, long workorderId, long workorderUploadId) {
+    public static void requestGetDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
+        Intent intent = new Intent(context, WorkorderDataService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DELIVERABLE);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
+        context.startService(intent);
+    }
 
+    public static void requestDownloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+        Intent intent = new Intent(context, WorkorderDataService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
+        intent.putExtra(PARAM_URL, url);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
+        context.startService(intent);
+    }
+
+    public boolean registerDeliverableList(boolean isSync) {
+        return registerDeliverableList(isSync, -1);
+    }
+
+    public boolean registerDeliverableList(boolean isSync, long workorderId) {
+        if (!isConnected())
+            return false;
+
+        Log.v(TAG, "registerDeliverableList");
+
+        return register(PARAM_ACTION_DELIVERABLE_LIST
+                + (isSync ? "/Sync" : "")
+                + (workorderId <= 0 ? "" : "/" + workorderId), TAG);
+    }
+
+
+    public static void requestDeliverableList(Context context, long workorderId, boolean isSync) {
+        Intent intent = new Intent(context, WorkorderDataService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DELIVERABLE_LIST);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
+        context.startService(intent);
     }
 
     /*-**********************************-*/
@@ -273,7 +313,39 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
                 preCheckIn((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_CHECKOUT)) {
                 preCheckOut((Bundle) payload);
+            } else if (topicId.startsWith(PARAM_ACTION_DELIVERABLE_LIST)) {
+                preDeliverableList((Bundle) payload);
             }
+        }
+
+        private void preDeliverableList(Bundle payload) {
+            new AsyncTaskEx<Object, Object, List<Deliverable>>() {
+                private long workorderId;
+
+                @Override
+                protected List<Deliverable> doInBackground(Object... params) {
+                    Bundle payload = (Bundle) params[0];
+
+                    workorderId = payload.getLong(PARAM_ID);
+                    JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
+
+                    List<Deliverable> list = new LinkedList<>();
+                    for (int i = 0; i < ja.size(); i++) {
+                        list.add(Deliverable.fromJson(ja.getJsonObject(i)));
+                    }
+
+                    return list;
+                }
+
+                @Override
+                protected void onPostExecute(List<Deliverable> o) {
+                    onDeliverableList(o, workorderId);
+                }
+            }.executeEx(payload);
+
+        }
+
+        public void onDeliverableList(List<Deliverable> list, long workorderId) {
         }
 
         private void preCheckOut(Bundle payload) {

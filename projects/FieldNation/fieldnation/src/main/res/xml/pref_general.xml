@@ -10,7 +10,7 @@
             android:summary="@string/pref_allow_data_purge_summary" />
         <ListPreference
             android:dependency="@string/pref_allow_data_purge_key"
-            android:defaultValue="7"
+            android:defaultValue="@string/pref_purge_default"
             android:entries="@array/pref_purge_titles"
             android:entryValues="@array/pref_purge_values"
             android:key="@string/pref_purge_rate_key"

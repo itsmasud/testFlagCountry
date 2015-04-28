@@ -1,20 +1,26 @@
 package com.fieldnation.service.crawler;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
 import com.fieldnation.Log;
+import com.fieldnation.ThreadManager;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.workorder.Deliverable;
 import com.fieldnation.data.workorder.Signature;
+import com.fieldnation.data.workorder.UploadSlot;
+import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.service.data.workorder.WorkorderDataClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -22,9 +28,12 @@ import java.util.List;
  */
 public class WebCrawlerService extends Service {
     private static final String TAG = "WebCrawlerService";
+    private final Object LOCK = new Object();
 
     private ProfileDataClient _profileClient;
     private WorkorderDataClient _workorderClient;
+    private final ThreadManager _workorderThreadManager = new ThreadManager();
+    private final List<Workorder> _workorderDetails = new LinkedList<>();
 
     private boolean _haveProfile = false;
 
@@ -48,7 +57,6 @@ public class WebCrawlerService extends Service {
             }
         }.executeEx();
 */
-
         startStuff();
     }
 
@@ -57,6 +65,7 @@ public class WebCrawlerService extends Service {
         Log.v(TAG, "onDestroy");
         _workorderClient.disconnect(this);
         _profileClient.disconnect(this);
+        _workorderThreadManager.shutdown();
         super.onDestroy();
     }
 
@@ -74,6 +83,10 @@ public class WebCrawlerService extends Service {
 
     public void startStuff() {
         Log.v(TAG, "startStuff");
+
+        _workorderThreadManager.addThread(
+                new WorkorderDetailWorker(_workorderThreadManager, this, _workorderDetails));
+
         _profileClient = new ProfileDataClient(_profileClient_listener);
         _profileClient.connect(this);
 
@@ -143,10 +156,12 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_workorderClient_listener.onConnected");
             _workorderClient.registerList(true);
             _workorderClient.registerDetails(true);
+            _workorderClient.registerDeliverableList(true);
 
             WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true);
             WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true);
             WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.COMPLETED, 0, true);
+
         }
 
         @Override
@@ -164,7 +179,14 @@ public class WebCrawlerService extends Service {
                 Workorder workorder = list.get(i);
 
                 WorkorderDataClient.requestDetails(WebCrawlerService.this, workorder.getWorkorderId(), true);
-                WorkorderDataClient.requestBundle(WebCrawlerService.this, workorder.getWorkorderId(), true);
+                if (workorder.getBundleId() != null && workorder.getBundleId() > 0)
+                    WorkorderDataClient.requestBundle(WebCrawlerService.this, workorder.getBundleId(), true);
+                WorkorderDataClient.requestDeliverableList(WebCrawlerService.this, workorder.getWorkorderId(), true);
+
+                // get notifications
+                // get messages
+                // get tasks
+
             }
             Log.v(TAG, "onWorkorderList, done");
         }
@@ -172,24 +194,79 @@ public class WebCrawlerService extends Service {
         @Override
         public void onDetails(Workorder workorder) {
             Log.v(TAG, "onDetails " + workorder.getWorkorderId());
+            synchronized (LOCK) {
+                _workorderDetails.add(workorder);
+
+                Log.v(TAG, "workorder list size " + _workorderDetails.size());
+            }
+            _workorderThreadManager.wakeUp();
+        }
+
+        @Override
+        public void onDeliverableList(List<Deliverable> list, long workorderId) {
+            Log.v(TAG, "onDeliverableList");
+            for (int i = 0; i < list.size(); i++) {
+                Deliverable d = list.get(i);
+                WorkorderDataClient.requestDownloadDeliverable(WebCrawlerService.this, workorderId,
+                        d.getWorkorderUploadId(), d.getStorageSrc(), true);
+            }
+
+        }
+    };
+
+    public class WorkorderDetailWorker extends ThreadManager.ManagedThread {
+        private final List<Workorder> _work;
+        private final Context _context;
+
+        public WorkorderDetailWorker(ThreadManager manager, Context context, List<Workorder> workorders) {
+            super(manager, "WorkorderDetailWorker");
+            _context = context;
+            _work = workorders;
+
+            start();
+        }
+
+        @Override
+        public boolean doWork() {
+            Workorder workorder = null;
+            synchronized (LOCK) {
+                if (_work != null && _work.size() > 0) {
+                    workorder = _work.remove(0);
+                }
+            }
+
+            if (workorder == null)
+                return false;
+
             // get signatures
             Signature[] sigs = workorder.getSignatureList();
             if (sigs != null && sigs.length > 0) {
                 for (int i = 0; i < sigs.length; i++) {
                     Log.v(TAG, "getSignature");
-                    WorkorderDataClient.requestGetSignature(WebCrawlerService.this, workorder.getWorkorderId(), sigs[i].getSignatureId(), true);
+                    WorkorderDataClient.requestGetSignature(_context, workorder.getWorkorderId(), sigs[i].getSignatureId(), true);
                 }
             }
 
-            // get bundle
-            if (workorder.getBundleId() != null && workorder.getBundleId() > 0) {
-                WorkorderDataClient.requestBundle(WebCrawlerService.this, workorder.getBundleId(), true);
+            UploadSlot[] slots = workorder.getUploadSlots();
+            if (slots != null && slots.length > 0) {
+                for (int i = 0; i < slots.length; i++) {
+                    UploadSlot slot = slots[i];
+
+                    UploadedDocument[] docs = slot.getUploadedDocuments();
+                    if (docs != null && docs.length > 0) {
+                        for (int j = 0; j < docs.length; j++) {
+                            UploadedDocument doc = docs[j];
+
+                            // todo request document
+                            //doc.getDownloadLink();
+                            //
+                        }
+                    }
+                }
             }
 
-            // get notifications
-            // get messages
-            // get deliverables
-            // get tasks
+            return true;
         }
-    };
+
+    }
 }

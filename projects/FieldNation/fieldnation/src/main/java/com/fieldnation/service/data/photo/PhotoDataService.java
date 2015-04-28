@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.fieldnation.Log;
+import com.fieldnation.ThreadManager;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 
@@ -22,8 +23,8 @@ public class PhotoDataService extends MSService implements PhotoConstants {
     }
 
     @Override
-    public WorkerThread getNewWorker(List<Intent> intents) {
-        return new MyWorkerThread(this, intents);
+    public WorkerThread getNewWorker(ThreadManager manager, List<Intent> intents) {
+        return new MyWorkerThread(manager, this, intents);
     }
 
 
@@ -35,8 +36,8 @@ public class PhotoDataService extends MSService implements PhotoConstants {
     private class MyWorkerThread extends WorkerThread {
         private Context _context;
 
-        public MyWorkerThread(Context context, List<Intent> intents) {
-            super("MyWorkerThread", intents);
+        public MyWorkerThread(ThreadManager manager, Context context, List<Intent> intents) {
+            super(manager, "MyWorkerThread", intents);
             _context = context;
         }
 

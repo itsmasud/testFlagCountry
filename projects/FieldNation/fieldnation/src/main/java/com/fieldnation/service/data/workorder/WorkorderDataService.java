@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.fieldnation.Log;
+import com.fieldnation.ThreadManager;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.MSService;
@@ -24,15 +25,15 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
     }
 
     @Override
-    public WorkerThread getNewWorker(List<Intent> intents) {
-        return new MyWorkerThread(this, intents);
+    public WorkerThread getNewWorker(ThreadManager manager, List<Intent> intents) {
+        return new MyWorkerThread(manager, this, intents);
     }
 
     private class MyWorkerThread extends WorkerThread {
         private Context _context;
 
-        public MyWorkerThread(Context context, List<Intent> intents) {
-            super("MyWorkerThread", intents);
+        public MyWorkerThread(ThreadManager manager, Context context, List<Intent> intents) {
+            super(manager, "MyWorkerThread", intents);
             _context = context;
         }
 
@@ -55,9 +56,27 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
                     getDeliverable(_context, intent);
                 } else if (action.equals(PARAM_ACTION_DOWNLOAD_DELIVERABLE)) {
                     downloadDeliverable(_context, intent);
-                }
+                } else if (action.equals(PARAM_ACTION_DELIVERABLE_LIST))
+                    listDeliverables(_context, intent);
             }
         }
+    }
+
+    private static void listDeliverables(Context context, Intent intent) {
+        Log.v(TAG, "listDeliverables");
+        long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+
+        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_LIST, workorderId);
+        if (obj != null) {
+            try {
+                WorkorderDispatch.deliverableList(context, new JsonArray(obj.getData()), workorderId, isSync);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        WorkorderTransactionBuilder.listDeliverables(context, workorderId, isSync);
     }
 
     // commands
@@ -154,41 +173,41 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
 
     private static void getDeliverable(Context context, Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
-        long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
+        long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE, uploadSlotId);
+        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE, deliverableId);
 
         if (obj != null) {
             try {
-                WorkorderDispatch.deliverable(context, new JsonObject(obj.getData()), workorderId, uploadSlotId, isSync);
+                WorkorderDispatch.deliverable(context, new JsonObject(obj.getData()), workorderId, deliverableId, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
         if (obj == null || isSync) {
-            WorkorderTransactionBuilder.getDeliverable(context, workorderId, uploadSlotId, isSync);
+            WorkorderTransactionBuilder.getDeliverable(context, workorderId, deliverableId, isSync);
         }
     }
 
     private static void downloadDeliverable(Context context, Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
-        long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
+        long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
         String url = intent.getStringExtra(PARAM_URL);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, uploadSlotId);
+        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, deliverableId);
 
         if (obj != null) {
             try {
-                WorkorderDispatch.deliverableFile(context, workorderId, uploadSlotId, obj.getFile(), isSync);
+                WorkorderDispatch.deliverableFile(context, workorderId, deliverableId, obj.getFile(), isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         if (obj == null || isSync) {
-            WorkorderTransactionBuilder.downloadDeliverable(context, workorderId, uploadSlotId, url, isSync);
+            WorkorderTransactionBuilder.downloadDeliverable(context, workorderId, deliverableId, url, isSync);
         }
     }
 }

@@ -121,6 +121,25 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
         }
     }
 
+    public static void listDeliverables(Context context, long workorderId, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pList(workorderId))
+                    .key((isSync ? "Sync/" : "") + "ListDeliverables/" + workorderId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/deliverables"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)

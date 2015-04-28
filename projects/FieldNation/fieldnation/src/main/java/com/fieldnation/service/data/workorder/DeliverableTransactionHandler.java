@@ -3,6 +3,7 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -42,6 +43,17 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         }
     }
 
+    public static byte[] pList(long workorderId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pList");
+            obj.put("workorderId", workorderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     public static byte[] pDownload(long workorderId, long deliverableId, String url) {
         try {
             JsonObject obj = new JsonObject("action", "pDownload");
@@ -66,6 +78,8 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
                 return handleGet(context, transaction, resultData, params);
             } else if (action.equals("pDownload")) {
                 return handleDownload(context, transaction, resultData, params);
+            } else if (action.equals("pList")) {
+                return handleList(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -90,6 +104,17 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         StoredObject.put(context, PSO_DELIVERABLE, deliverableId, data);
 
         WorkorderDispatch.deliverable(context, new JsonObject(data), workorderId, deliverableId, transaction.isSync());
+
+        return Result.FINISH;
+    }
+
+    public Result handleList(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        long workorderId = params.getLong("workorderId");
+        byte[] data = resultData.getResultsAsByteArray();
+
+        StoredObject.put(context, PSO_DELIVERABLE_LIST, workorderId, data);
+
+        WorkorderDispatch.deliverableList(context, new JsonArray(data), workorderId, transaction.isSync());
 
         return Result.FINISH;
     }

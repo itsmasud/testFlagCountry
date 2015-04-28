@@ -88,4 +88,12 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         TopicService.dispatchEvent(context, PARAM_ACTION_DELIVERABLE + (isSync ? "/Sync" : "") + "/" + workorderId + "/" + deliverableId, bundle, true);
     }
 
+    public static void deliverableList(Context context, JsonArray obj, long workorderId, boolean isSync) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_DELIVERABLE_LIST);
+        bundle.putLong(PARAM_ID, workorderId);
+        bundle.putParcelable(PARAM_DATA_PARCELABLE, obj);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DELIVERABLE_LIST + (isSync ? "/Sync" : "") + "/" + workorderId, bundle, true);
+    }
 }

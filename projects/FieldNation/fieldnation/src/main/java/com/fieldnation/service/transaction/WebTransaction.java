@@ -168,7 +168,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-             Database interface          -*/
     /*-*****************************************-*/
     public static boolean keyExists(Context context, String key) {
-        Log.v(TAG, "keyExists(" + key + ")");
+//        Log.v(TAG, "keyExists(" + key + ")");
         synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
             try {
@@ -195,7 +195,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction get(Context context, long id) {
-        Log.v(TAG, "get(" + id + ")");
+//        Log.v(TAG, "get(" + id + ")");
         WebTransaction obj = null;
         synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
@@ -226,8 +226,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
-    public static WebTransaction getNext(Context context, boolean allowSync) {
-        Log.v(TAG, "getNext()");
+    public static WebTransaction getNext(Context context, boolean allowSync, boolean allowAuth) {
+//        Log.v(TAG, "getNext()");
         WebTransaction obj = null;
         synchronized (TAG) {
             WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
@@ -238,7 +238,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
                             Column.STATE + "=?"
-                                    + (allowSync ? "" : " AND " + Column.IS_SYNC + " = 0"),
+                                    + (allowSync ? "" : " AND " + Column.IS_SYNC + " = 0")
+                                    + (allowAuth ? "" : " AND " + Column.USE_AUTH + " = 0"),
                             new String[]{State.IDLE.ordinal() + ""},
                             null, null,
                             Column.QUEUE_TIME + " ASC, "
@@ -267,7 +268,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction put(Context context, WebTransaction obj) {
-        Log.v(TAG, "put(" + obj._key + ")");
+//        Log.v(TAG, "put(" + obj._key + ")");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), obj._handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), obj._handlerParams);
@@ -305,7 +306,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public static WebTransaction put(Context context, Priority priority, String key, boolean useAuth,
                                      boolean isSync, byte[] request, String handlerName, byte[] handlerParams) {
-        Log.v(TAG, "put(" + key + ")");
+//        Log.v(TAG, "put(" + key + ")");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), handlerParams);
@@ -340,7 +341,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static boolean delete(Context context, long id) {
-        Log.v(TAG, "delete(" + id + ")");
+//        Log.v(TAG, "delete(" + id + ")");
         Transform.deleteTransaction(context, id);
         boolean success = false;
         synchronized (TAG) {

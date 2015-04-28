@@ -298,6 +298,7 @@
     <!-- Preferences -->
     <string name="pref_data_settings">Data Settings</string>
 
+    <string name="pref_purge_default">7</string>
     <string name="pref_allow_data_purge">Allow Data Purging</string>
     <string name="pref_allow_data_purge_summary">Allows removing old data</string>
     <string name="pref_allow_data_purge_key">pref_allow_data_purge_key</string>
