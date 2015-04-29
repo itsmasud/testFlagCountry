@@ -103,11 +103,9 @@ public class WebCrawlerService extends Service {
             _profileClient.registerAllNotifications(true);
             _profileClient.registerProfile(true);
 
-/*
             ProfileDataClient.getProfile(WebCrawlerService.this, true);
             ProfileDataClient.getAllMessages(WebCrawlerService.this, 0, true);
             ProfileDataClient.getAllNotifications(WebCrawlerService.this, 0, true);
-*/
         }
 
         @Override
@@ -183,7 +181,6 @@ public class WebCrawlerService extends Service {
                 WorkorderDataClient.requestDetails(WebCrawlerService.this, workorder.getWorkorderId(), true);
                 if (workorder.getBundleId() != null && workorder.getBundleId() > 0)
                     WorkorderDataClient.requestBundle(WebCrawlerService.this, workorder.getBundleId(), true);
-                WorkorderDataClient.requestDeliverableList(WebCrawlerService.this, workorder.getWorkorderId(), true);
 
                 // get notifications
                 // get messages
@@ -267,6 +264,11 @@ public class WebCrawlerService extends Service {
                         }
                     }
                 }
+            }
+
+            Deliverable[] deliverables = workorder.getDeliverables();
+            if (deliverables != null && deliverables.length > 0){
+                WorkorderDataClient.requestDeliverableList(WebCrawlerService.this, workorder.getWorkorderId(), true);
             }
             return true;
         }

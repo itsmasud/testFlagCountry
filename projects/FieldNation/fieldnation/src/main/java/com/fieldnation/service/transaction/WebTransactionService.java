@@ -1,6 +1,5 @@
 package com.fieldnation.service.transaction;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,11 +14,13 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
+import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.utils.misc;
 
 import java.net.UnknownHostException;
+import java.util.List;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -28,7 +29,7 @@ import java.net.UnknownHostException;
  * 1) Accepts transactions from the rest of the application
  * 2) processes transactions from the queue until they are complete
  */
-public class WebTransactionService extends Service implements WebTransactionConstants {
+public class WebTransactionService extends MSService implements WebTransactionConstants {
     private static final String TAG = "WebTransactionService";
 
     private OAuth _auth;
@@ -37,15 +38,26 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private boolean _isAuthenticated = false;
     private ThreadManager _manager;
 
+
+    @Override
+    public int getMaxWorkerCount() {
+        return 1;
+    }
+
+    @Override
+    public MSService.WorkerThread getNewWorker(ThreadManager manager, List<Intent> intents) {
+        return new IntentThread(this, manager, intents);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.v(TAG, "onCreate");
 
         if (GlobalState.getContext().getMemoryClass() <= 64) {
-            MAX_THREAD_COUNT = 2;
+            MAX_THREAD_COUNT = 4;
         } else {
-            MAX_THREAD_COUNT = 10;
+            MAX_THREAD_COUNT = 8;
         }
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
@@ -53,7 +65,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
         _manager = new ThreadManager();
         for (int i = 0; i < MAX_THREAD_COUNT; i++) {
-            _manager.addThread(new WorkerThread(_manager, this));
+            _manager.addThread(new TransactionThread(_manager, this));
         }
     }
 
@@ -61,6 +73,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     public IBinder onBind(Intent intent) {
         return null;
     }
+
 
     @Override
     public void onDestroy() {
@@ -84,12 +97,14 @@ public class WebTransactionService extends Service implements WebTransactionCons
 
 
     private void setAuth(OAuth auth) {
+        Log.v(TAG, "setAuth");
         synchronized (TAG) {
             _auth = auth;
         }
     }
 
     private OAuth getAuth() {
+        Log.v(TAG, "getAuth");
         synchronized (TAG) {
             return _auth;
         }
@@ -98,49 +113,6 @@ public class WebTransactionService extends Service implements WebTransactionCons
     private boolean allowSync() {
         // TODO need to calculate by collecting config information and compare to phone state
         return true;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-//        Log.v(TAG, "onStartCommand");
-        // get transaction and transforms from intent, push into the database
-        // kick off the next transaction if not running
-        if (intent != null && intent.getExtras() != null) {
-            try {
-                Bundle extras = intent.getExtras();
-
-                if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(this, extras.getString(PARAM_KEY))) {
-//                    Log.v(TAG, "Duplicate key: " + extras.getString(PARAM_KEY));
-                    // TODO, need to send a response!?
-                    return START_STICKY;
-                }
-
-                WebTransaction transaction = WebTransaction.put(this,
-                        Priority.values()[extras.getInt(PARAM_PRIORITY)],
-                        extras.getString(PARAM_KEY),
-                        extras.getBoolean(PARAM_USE_AUTH),
-                        extras.getBoolean(PARAM_IS_SYNC),
-                        extras.getByteArray(PARAM_REQUEST),
-                        extras.getString(PARAM_HANDLER_NAME),
-                        extras.getByteArray(PARAM_HANDLER_PARAMS));
-
-                if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
-                    Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
-                    for (int i = 0; i < transforms.length; i++) {
-                        Bundle transform = (Bundle) transforms[i];
-                        Transform.put(this, transaction.getId(), transform);
-                    }
-                }
-
-                transaction.setState(WebTransaction.State.IDLE);
-                transaction.save(this);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        _manager.wakeUp();
-        return START_STICKY;
     }
 
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
@@ -165,11 +137,58 @@ public class WebTransactionService extends Service implements WebTransactionCons
         }
     };
 
-    class WorkerThread extends ThreadManager.ManagedThread {
+    class IntentThread extends WorkerThread {
+        private String TAG = UniqueTag.makeTag("IntentThread");
+        private Context context;
+
+        public IntentThread(Context context, ThreadManager manager, List<Intent> list) {
+            super(manager, list);
+            setName(TAG);
+            this.context = context;
+        }
+
+        @Override
+        public void processIntent(Intent intent) {
+            if (intent != null && intent.getExtras() != null) {
+                try {
+                    Bundle extras = intent.getExtras();
+
+                    if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(context, extras.getString(PARAM_KEY))) {
+                        return;
+                    }
+
+                    WebTransaction transaction = WebTransaction.put(context,
+                            Priority.values()[extras.getInt(PARAM_PRIORITY)],
+                            extras.getString(PARAM_KEY),
+                            extras.getBoolean(PARAM_USE_AUTH),
+                            extras.getBoolean(PARAM_IS_SYNC),
+                            extras.getByteArray(PARAM_REQUEST),
+                            extras.getString(PARAM_HANDLER_NAME),
+                            extras.getByteArray(PARAM_HANDLER_PARAMS));
+
+                    if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
+                        Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
+                        for (int i = 0; i < transforms.length; i++) {
+                            Bundle transform = (Bundle) transforms[i];
+                            Transform.put(context, transaction.getId(), transform);
+                        }
+                    }
+
+                    transaction.setState(WebTransaction.State.IDLE);
+                    transaction.save(context);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            _manager.wakeUp();
+        }
+    }
+
+    class TransactionThread extends ThreadManager.ManagedThread {
         private String TAG = UniqueTag.makeTag("TransactionThread");
         private Context context;
 
-        public WorkerThread(ThreadManager manager, Context context) {
+        public TransactionThread(ThreadManager manager, Context context) {
             super(manager);
             setName(TAG);
             this.context = context;
