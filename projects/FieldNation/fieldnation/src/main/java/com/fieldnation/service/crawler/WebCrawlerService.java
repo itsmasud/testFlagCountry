@@ -7,6 +7,7 @@ import android.os.IBinder;
 
 import com.fieldnation.Log;
 import com.fieldnation.ThreadManager;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
@@ -102,9 +103,11 @@ public class WebCrawlerService extends Service {
             _profileClient.registerAllNotifications(true);
             _profileClient.registerProfile(true);
 
+/*
             ProfileDataClient.getProfile(WebCrawlerService.this, true);
             ProfileDataClient.getAllMessages(WebCrawlerService.this, 0, true);
             ProfileDataClient.getAllNotifications(WebCrawlerService.this, 0, true);
+*/
         }
 
         @Override
@@ -161,7 +164,6 @@ public class WebCrawlerService extends Service {
             WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true);
             WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true);
             WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.COMPLETED, 0, true);
-
         }
 
         @Override
@@ -215,11 +217,13 @@ public class WebCrawlerService extends Service {
     };
 
     public class WorkorderDetailWorker extends ThreadManager.ManagedThread {
+        private String TAG = UniqueTag.makeTag("WorkorderDetailWorkerThread");
         private final List<Workorder> _work;
         private final Context _context;
 
         public WorkorderDetailWorker(ThreadManager manager, Context context, List<Workorder> workorders) {
-            super(manager, "WorkorderDetailWorker");
+            super(manager);
+            setName(TAG);
             _context = context;
             _work = workorders;
 
@@ -264,7 +268,6 @@ public class WebCrawlerService extends Service {
                     }
                 }
             }
-
             return true;
         }
 

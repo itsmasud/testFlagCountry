@@ -41,7 +41,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
             JsonObject obj = new JsonObject(transaction.getHandlerParams());
             page = obj.getInt("page");
             selector = obj.getString("selector");
-            byte[] bdata = resultData.getResultsAsByteArray();
+            byte[] bdata = resultData.getByteArray();
             Log.v(TAG, "page: " + page + " selector:" + selector);
 
             StoredObject.put(context, PSO_WORKORDER_LIST + selector, page, bdata);

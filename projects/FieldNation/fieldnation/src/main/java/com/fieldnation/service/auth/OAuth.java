@@ -210,9 +210,8 @@ public class OAuth implements Parcelable {
 
         Log.v(TAG, result.getResponseCode() + "");
         Log.v(TAG, result.getResponseMessage());
-        Log.v(TAG, result.getResultsAsString());
 
-        JsonObject token = result.getResultsAsJsonObject();
+        JsonObject token = result.getJsonObject();
         token.put("username", username);
         token.put("host", host);
         OAuth auth = OAuth.fromJson(token);

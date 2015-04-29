@@ -80,7 +80,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
     private Result handleGetProfile(Context context, WebTransaction transaction, HttpResult resultData) throws ParseException {
         Log.v(TAG, "PARAM_ACTION_GET_MY_PROFILE");
         // store object
-        byte[] profiledata = resultData.getResultsAsByteArray();
+        byte[] profiledata = resultData.getByteArray();
 
         StoredObject.put(context, PSO_PROFILE, PSO_MY_PROFILE_KEY, profiledata);
 
@@ -93,7 +93,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
         int page = params.getInt("page");
         // store object
-        byte[] pagedata = resultData.getResultsAsByteArray();
+        byte[] pagedata = resultData.getByteArray();
 
         StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
 
@@ -105,7 +105,7 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         Log.v(TAG, "PARAM_ACTION_GET_ALL_MESSAGES");
         int page = params.getInt("page");
         // store object
-        byte[] pagedata = resultData.getResultsAsByteArray();
+        byte[] pagedata = resultData.getByteArray();
 
         StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
 

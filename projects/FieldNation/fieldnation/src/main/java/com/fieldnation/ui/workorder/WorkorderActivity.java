@@ -364,7 +364,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
         @Override
         public void onConnected() {
-            _workorderClient.registerDetails();
+            _workorderClient.registerDetails(_workorderId);
             getData();
         }
 

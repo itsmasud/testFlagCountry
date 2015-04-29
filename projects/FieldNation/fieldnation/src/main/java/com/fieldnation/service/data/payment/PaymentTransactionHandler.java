@@ -59,11 +59,11 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
     private Result handleGetAll(Context context, WebTransaction transaction, HttpResult resultData,
                                 JsonObject params) throws ParseException {
         int page = params.getInt("page");
-        byte[] data = resultData.getResultsAsByteArray();
+        byte[] data = resultData.getByteArray();
 
         StoredObject.put(context, PSO_PAYMENT_GET_ALL, page, data);
 
-        PaymentDataDispatch.allPage(context, page, new JsonArray(data), transaction.isSync());
+        PaymentDataDispatch.page(context, page, new JsonArray(data), transaction.isSync());
         return Result.FINISH;
     }
 
@@ -71,7 +71,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
                              JsonObject params) throws ParseException {
         long paymentId = params.getLong("paymentId");
 
-        byte[] data = resultData.getResultsAsByteArray();
+        byte[] data = resultData.getByteArray();
 
         StoredObject.put(context, PSO_PAYMENT_GET, paymentId, data);
 

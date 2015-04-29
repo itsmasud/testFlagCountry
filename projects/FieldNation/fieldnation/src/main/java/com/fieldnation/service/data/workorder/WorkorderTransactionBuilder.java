@@ -88,7 +88,7 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(BundleTransactionHandler.class)
-                    .handlerParams(BundleTransactionHandler.generateGetParams(bundleId))
+                    .handlerParams(BundleTransactionHandler.pBundle(bundleId))
                     .key((isSync ? "Sync/" : "") + "GetBundle/" + bundleId)
                     .useAuth(true)
                     .isSyncCall(isSync)

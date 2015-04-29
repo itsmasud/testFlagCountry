@@ -39,10 +39,10 @@ public class Transform implements Parcelable, TransformConstants {
         _action = cursor.getString(Column.ACTION.getIndex());
         _data = cursor.getBlob(Column.DATA.getIndex());
 
-        Log.v(TAG, "get Transform(" + _id + "," + _transactionId + "," + _objectNameKey + ")");
-        Log.v(TAG, "action: " + _action);
-        Log.v(TAG, "data: " + new String(_data));
-        Log.v(TAG, "------------");
+//        Log.v(TAG, "get Transform(" + _id + "," + _transactionId + "," + _objectNameKey + ")");
+//        Log.v(TAG, "action: " + _action);
+//        Log.v(TAG, "data: " + new String(_data));
+//        Log.v(TAG, "------------");
     }
 
     public Transform(Bundle bundle) {
@@ -100,7 +100,7 @@ public class Transform implements Parcelable, TransformConstants {
     }
 
     public static Bundle makeTransformQuery(String objectName, String objectKey, String action, byte[] data) {
-        Log.v(TAG, "makeTransformQuery(" + objectName + "," + objectKey + "," + action + ")");
+//        Log.v(TAG, "makeTransformQuery(" + objectName + "," + objectKey + "," + action + ")");
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_OBJECT_NAME_KEY, objectName + "/" + objectKey);
         bundle.putString(PARAM_OBJECT_NAME, objectName);
@@ -114,7 +114,7 @@ public class Transform implements Parcelable, TransformConstants {
     /*-         Database            -*/
     /*-*****************************-*/
     public static Transform get(Context context, long id) {
-        Log.v(TAG, "get(" + id + ")");
+//        Log.v(TAG, "get(" + id + ")");
         Transform obj = null;
         synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
@@ -211,7 +211,7 @@ public class Transform implements Parcelable, TransformConstants {
     public static Transform put(Context context, long transactionId, String objectName, String objectKey, String action, byte[] data) {
         final String objectNameKey = objectName + "/" + objectKey;
 
-        Log.v(TAG, "put(" + transactionId + "," + objectName + "," + objectKey + "," + action + "," + new String(data) + ")");
+//        Log.v(TAG, "put(" + transactionId + "," + objectName + "," + objectKey + "," + action + "," + new String(data) + ")");
         ContentValues v = new ContentValues();
         v.put(Column.TRANSACTION_ID.getName(), transactionId);
         v.put(Column.OBJECT_NAME_KEY.getName(), objectNameKey);
@@ -241,7 +241,7 @@ public class Transform implements Parcelable, TransformConstants {
     }
 
     public static boolean deleteTransaction(Context context, long transactionId) {
-        Log.v(TAG, "deleteTransaction(" + transactionId + ")");
+//        Log.v(TAG, "deleteTransaction(" + transactionId + ")");
         boolean success = false;
         synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);
@@ -263,7 +263,7 @@ public class Transform implements Parcelable, TransformConstants {
     }
 
     public static boolean delete(Context context, long id) {
-        Log.v(TAG, "delete(" + id + ")");
+//        Log.v(TAG, "delete(" + id + ")");
         boolean success = false;
         synchronized (TAG) {
             TransformSqlHelper helper = new TransformSqlHelper(context);

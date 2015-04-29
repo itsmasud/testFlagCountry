@@ -14,7 +14,7 @@ public class NullWebTransactionHandler extends WebTransactionHandler {
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         Log.v(TAG, transaction.getKey());
-        Log.v(TAG, resultData.getResultsAsString());
+        Log.v(TAG, resultData.getString());
         return Result.FINISH;
     }
 }

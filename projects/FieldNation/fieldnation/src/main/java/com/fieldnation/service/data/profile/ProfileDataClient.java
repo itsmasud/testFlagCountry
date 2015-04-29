@@ -54,7 +54,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_HAVE_PROFILE + (isSync ? "/Sync" : ""), TAG);
+        return register(TOPIC_ID_HAVE_PROFILE + (isSync ? "-SYNC" : ""), TAG);
     }
 
     public static void getAllNotifications(Context context, int page) {
@@ -78,7 +78,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_ALL_NOTIFICATION_LIST + (isSync ? "/Sync" : ""), TAG);
+        return register(TOPIC_ID_ALL_NOTIFICATION_LIST + (isSync ? "-SYNC" : ""), TAG);
     }
 
     public static void getAllMessages(Context context, int page) {
@@ -101,7 +101,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_ALL_MESSAGES_LIST + (isSync ? "/Sync" : ""), TAG);
+        return register(TOPIC_ID_ALL_MESSAGES_LIST + (isSync ? "-SYNC" : ""), TAG);
     }
 
     public void addBlockedCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {

@@ -166,7 +166,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
     };
 
     class WorkerThread extends ThreadManager.ManagedThread {
-        private String TAG = UniqueTag.makeTag("WorkerThread");
+        private String TAG = UniqueTag.makeTag("TransactionThread");
         private Context context;
 
         public WorkerThread(ThreadManager manager, Context context) {
@@ -214,12 +214,12 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    Log.v(TAG, result.getResultsAsString());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
 
-                if (result.getResultsAsString().equals("You must provide a valid OAuth token to make a request")) {
+                if (!result.isFile()
+                        && result.getString().equals("You must provide a valid OAuth token to make a request")) {
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
                     AuthTopicClient.dispatchInvalidateCommand(context);
@@ -280,6 +280,7 @@ public class WebTransactionService extends Service implements WebTransactionCons
                 ex.printStackTrace();
                 trans.requeue(context);
             } catch (Exception ex) {
+                // no freaking clue
                 ex.printStackTrace();
                 trans.requeue(context);
             }

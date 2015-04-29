@@ -776,6 +776,83 @@ public class misc {
         return Data;
     }
 
+    public static byte[] readAllFromStreamUntil(InputStream in, int packetSize, int expectedSize, int maxSize, long timeoutInMilli) throws IOException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
+        int read = 0;
+        int pos = 0;
+        int size = expectedSize;
+        long timeout = System.currentTimeMillis() + timeoutInMilli;
+
+        if (packetSize > expectedSize && expectedSize != -1) {
+            packetSize = expectedSize;
+        }
+
+        byte[] packet = new byte[packetSize];
+        boolean error = false;
+        boolean timedOut = false;
+        boolean complete = false;
+
+        try {
+            while (!error && !timedOut && !complete && bout.size() < maxSize) {
+
+				/*
+                 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
+				 * break; }
+				 */
+
+                read = in.read(packet, 0, packetSize);
+
+                if (read > 0) {
+                    pos += read;
+
+                    if (size - pos < packetSize && size != -1) {
+                        packetSize = size - pos;
+                    }
+
+                    bout.write(packet, 0, read);
+                    timeout = System.currentTimeMillis() + timeoutInMilli;
+                } else if (read == 0) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception ex) {
+                    }
+                } else if (read == -1) {
+                    // error, stop
+                    error = true;
+                }
+
+                // finished, stop
+                if (pos == size && size != -1) {
+                    complete = true;
+                }
+
+                // read too much!
+                if (pos > size && size != -1) {
+                    error = true;
+                }
+
+                // timeout, stop
+                if (timeout < System.currentTimeMillis()) {
+                    timedOut = true;
+                }
+
+            }
+        } catch (IOException e) {
+            return bout.toByteArray();
+        }
+
+        if (timedOut && size != -1) {
+            return bout.toByteArray();
+        } else if (complete) {
+            return bout.toByteArray();
+        } else if (size == -1) {
+            return bout.toByteArray();
+        }
+
+        return null;
+    }
+
     public static byte[] readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
 

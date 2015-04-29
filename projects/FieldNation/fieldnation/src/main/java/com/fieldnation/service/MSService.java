@@ -45,6 +45,8 @@ public abstract class MSService extends Service {
         if (intent != null) {
             synchronized (LOCK) {
                 _intents.add(intent);
+
+                Log.v(TAG, "intents " + _intents.size());
             }
         }
 
@@ -69,6 +71,12 @@ public abstract class MSService extends Service {
             start();
         }
 
+        public WorkerThread(ThreadManager manager, List<Intent> intents) {
+            super(manager);
+            _intents = intents;
+            start();
+        }
+
         @Override
         public boolean doWork() {
             Intent intent = null;
@@ -76,6 +84,8 @@ public abstract class MSService extends Service {
                 if (_intents.size() > 0) {
                     intent = _intents.remove(0);
                 }
+
+                Log.v(TAG, "intents " + _intents.size());
             }
 
             if (intent != null) {

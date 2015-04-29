@@ -187,7 +187,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             _password = _passwordEditText.getText().toString();
 
             new AsyncTaskEx<Object, Object, OAuth>() {
-
                 @Override
                 protected OAuth doInBackground(Object... params) {
                     Context context = (Context) params[0];
@@ -214,8 +213,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 @Override
                 protected void onPostExecute(OAuth auth) {
                     if (auth == null) {
-                        Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect,
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
                         GlobalTopicClient.dispatchNetworkDisconnected(AuthActivity.this);
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);

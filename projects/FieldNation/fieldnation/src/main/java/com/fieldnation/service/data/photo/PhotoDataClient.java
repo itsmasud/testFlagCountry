@@ -34,7 +34,9 @@ public class PhotoDataClient extends TopicClient implements PhotoConstants {
 
     public boolean getPhoto(Context context, String url, boolean getCircle) {
         dispatchGetPhoto(context, url, getCircle, false);
-        return register(TOPIC_ID_PHOTO_READY + "/" + url, TAG);
+        return register(TOPIC_ID_PHOTO_READY
+                + (getCircle ? "/Circle" : "")
+                + "/" + url, TAG);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

@@ -11,17 +11,9 @@ import com.fieldnation.service.topics.TopicService;
 /**
  * Created by Michael Carver on 3/17/2015.
  */
-public class AuthTopicClient extends TopicClient {
+public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     private String TAG = UniqueTag.makeTag("AuthTopicClient");
 
-    private static final String TOPIC_AUTH_STATE = "AuthTopicClient:TOPIC_AUTH_STATE";
-    private static final String PARAM_STATE = "AuthTopicClient:PARAM_STATE";
-    private static final String PARAM_OAUTH = "AuthTopicClient:PARAM_OAUTH";
-
-    private static final String TOPIC_AUTH_COMMAND_REQUEST = "AuthTopicClient:TOPIC_AUTH_COMMAND_REQUEST";
-    private static final String TOPIC_AUTH_COMMAND_INVALIDATE = "AuthTopicClient:TOPIC_AUTH_COMMAND_INVALIDATE";
-    private static final String TOPIC_AUTH_COMMAND_REMOVE = "AuthTopicClient:TOPIC_AUTH_COMMAND_REMOVE";
-    private static final String TOPIC_AUTH_COMMAND_ADDED_ACCOUNT = "AuthTopicClient:TOPIC_AUTH_COMMAND_ADDED_ACCOUNT";
 
     public AuthTopicClient(Listener listener) {
         super(listener);

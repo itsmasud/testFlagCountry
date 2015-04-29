@@ -40,7 +40,9 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         super.disconnect(context, TAG);
     }
 
-    // list
+    /*-*****************************-*/
+    /*-             list            -*/
+    /*-*****************************-*/
     public static void requestList(Context context, WorkorderDataSelector selector, int page) {
         requestList(context, selector, page, false);
     }
@@ -54,18 +56,26 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerList() {
-        return registerList(false);
+    public boolean registerList(boolean isSync) {
+        return registerList(null, isSync);
     }
 
-    public boolean registerList(boolean isSync) {
+    public boolean registerList(WorkorderDataSelector selector) {
+        return registerList(selector, false);
+    }
+
+    public boolean registerList(WorkorderDataSelector selector, boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_LIST + (isSync ? "/Sync" : ""), TAG);
+        return register(PARAM_ACTION_LIST
+                + (isSync ? "-SYNC" : "")
+                + (selector != null ? "/" + selector.getCall() : ""), TAG);
     }
 
-    // details
+    /*-********************************-*/
+    /*-             details            -*/
+    /*-********************************-*/
     public static void requestDetails(Context context, long id) {
         requestDetails(context, id, false);
     }
@@ -78,18 +88,27 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerDetails() {
-        return registerDetails(false);
+    public boolean registerDetails(boolean isSync) {
+        return registerDetails(0, isSync);
     }
 
-    public boolean registerDetails(boolean isSync) {
+    public boolean registerDetails(long workorderId) {
+        return registerDetails(workorderId, false);
+    }
+
+    public boolean registerDetails(long workorderId, boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_DETAILS + (isSync ? "/Sync" : ""), TAG);
+        return register(PARAM_ACTION_DETAILS
+                + (isSync ? "-SYNC" : "")
+                + (workorderId > 0 ? "/" + workorderId : ""), TAG);
     }
 
-    // get signature
+    /*-**********************************-*/
+    /*-             signature            -*/
+    /*-**********************************-*/
+
     public static void requestGetSignature(Context context, long workorderId, long signatureId) {
         requestGetSignature(context, workorderId, signatureId, false);
     }
@@ -103,15 +122,18 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerGetSignature() {
-        return registerGetSignature(false);
+    public boolean registerGetSignature(boolean isSync) {
+        return registerGetSignature(0, 0, isSync);
     }
 
-    public boolean registerGetSignature(boolean isSync) {
+    public boolean registerGetSignature(long workorderId, long signatureId, boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(PARAM_ACTION_GET_SIGNATURE + (isSync ? "/Sync" : ""), TAG);
+        return register(PARAM_ACTION_GET_SIGNATURE
+                + (isSync ? "-SYNC" : "")
+                + (workorderId > 0 ? "/" + workorderId : "")
+                + (signatureId > 0 ? "/" + signatureId : ""), TAG);
     }
 
     // add signature json
@@ -124,51 +146,12 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         WorkorderTransactionBuilder.postSignatureJsonTask(context, workorderId, taskId, name, json);
     }
 
+    /*-******************************************-*/
+    /*-             workorder actions            -*/
+    /*-******************************************-*/
     // complete workorder
     public static void requestComplete(Context context, long workorderId) {
         WorkorderTransactionBuilder.postComplete(context, workorderId);
-    }
-
-    // checkin workorder
-    public boolean registerCheckin() {
-        if (!isConnected())
-            return false;
-
-        return register(PARAM_ACTION_CHECKIN, TAG);
-    }
-
-    public static void requestCheckin(Context context, long workorderId) {
-        WorkorderTransactionBuilder.postCheckin(context, workorderId);
-    }
-
-    public static void requestCheckin(Context context, long workorderId, Location location) {
-        Log.v(STAG, "requestCheckin");
-        WorkorderTransactionBuilder.postCheckin(context, workorderId, location);
-        requestDetails(context, workorderId, false);
-    }
-
-    // checkout
-    public boolean registerCheckout() {
-        if (!isConnected())
-            return false;
-
-        return register(PARAM_ACTION_CHECKOUT, TAG);
-    }
-
-    public static void requestCheckout(Context context, long workorderId) {
-        WorkorderTransactionBuilder.postCheckout(context, workorderId);
-    }
-
-    public static void requestCheckout(Context context, long workorderId, Location location) {
-        WorkorderTransactionBuilder.postCheckout(context, workorderId, location);
-    }
-
-    public static void requestCheckout(Context context, long workorderId, int deviceCount) {
-        WorkorderTransactionBuilder.postCheckout(context, workorderId, deviceCount);
-    }
-
-    public static void requestCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        WorkorderTransactionBuilder.postCheckout(context, workorderId, deviceCount, location);
     }
 
     public static void requestSetClosingNotes(Context context, long workorderId, String closingNotes) {
@@ -197,7 +180,56 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         WorkorderTransactionBuilder.postConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601);
     }
 
-    // Bundle
+    /*-******************************************-*/
+    /*-             workorder checkin            -*/
+    /*-******************************************-*/
+    public boolean registerCheckin() {
+        if (!isConnected())
+            return false;
+
+        return register(PARAM_ACTION_CHECKIN, TAG);
+    }
+
+    public static void requestCheckin(Context context, long workorderId) {
+        WorkorderTransactionBuilder.postCheckin(context, workorderId);
+    }
+
+    public static void requestCheckin(Context context, long workorderId, Location location) {
+        Log.v(STAG, "requestCheckin");
+        WorkorderTransactionBuilder.postCheckin(context, workorderId, location);
+        requestDetails(context, workorderId, false);
+    }
+
+    /*-*******************************************-*/
+    /*-             workorder checkout            -*/
+    /*-*******************************************-*/
+    public boolean registerCheckout() {
+        if (!isConnected())
+            return false;
+
+        return register(PARAM_ACTION_CHECKOUT, TAG);
+    }
+
+    public static void requestCheckout(Context context, long workorderId) {
+        WorkorderTransactionBuilder.postCheckout(context, workorderId);
+    }
+
+    public static void requestCheckout(Context context, long workorderId, Location location) {
+        WorkorderTransactionBuilder.postCheckout(context, workorderId, location);
+    }
+
+    public static void requestCheckout(Context context, long workorderId, int deviceCount) {
+        WorkorderTransactionBuilder.postCheckout(context, workorderId, deviceCount);
+    }
+
+    public static void requestCheckout(Context context, long workorderId, int deviceCount, Location location) {
+        WorkorderTransactionBuilder.postCheckout(context, workorderId, deviceCount, location);
+    }
+
+
+    /*-*****************************************-*/
+    /*-             workorder bundle            -*/
+    /*-*****************************************-*/
     public static void requestBundle(Context context, long bundleId) {
         requestBundle(context, bundleId, false);
     }
@@ -220,9 +252,12 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
         Log.v(TAG, "registerBundle");
 
-        return register(PARAM_ACTION_GET_BUNDLE + (isSync ? "/Sync" : ""), TAG);
+        return register(PARAM_ACTION_GET_BUNDLE + (isSync ? "-SYNC" : ""), TAG);
     }
 
+    /*-*************************************-*/
+    /*-             deliverables            -*/
+    /*-*************************************-*/
     public static void requestUploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
         Intent intent = new Intent(context, WorkorderDataService.class);
@@ -272,18 +307,13 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public boolean registerDeliverableList(boolean isSync) {
-        return registerDeliverableList(isSync, -1);
-    }
-
-    public boolean registerDeliverableList(boolean isSync, long workorderId) {
         if (!isConnected())
             return false;
 
         Log.v(TAG, "registerDeliverableList");
 
         return register(PARAM_ACTION_DELIVERABLE_LIST
-                + (isSync ? "/Sync" : "")
-                + (workorderId <= 0 ? "" : "/" + workorderId), TAG);
+                + (isSync ? "-SYNC" : ""), TAG);
     }
 
 

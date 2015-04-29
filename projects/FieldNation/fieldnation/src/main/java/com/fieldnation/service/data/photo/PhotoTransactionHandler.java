@@ -48,7 +48,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             Log.v(TAG, "handleResult " + url + "," + getCircle);
 
             // generate the bitmaps
-            byte[] imageData = resultData.getResultsAsByteArray();
+            byte[] imageData = resultData.getByteArray();
             Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
             Bitmap circleBitmap = misc.extractCircle(imageBitmap);
 
@@ -82,9 +82,9 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             // done!
             if (getCircle) {
-                PhotoDataDispatch.photo(context, circleObj.getFile(), url, getCircle);
+                PhotoDataDispatch.photo(context, circleObj.getFile(), url, true);
             } else {
-                PhotoDataDispatch.photo(context, imageObj.getFile(), url, getCircle);
+                PhotoDataDispatch.photo(context, imageObj.getFile(), url, false);
             }
             Log.v(TAG, "handleResult");
             return Result.FINISH;

@@ -197,9 +197,7 @@ public class TopicClient implements TopicConstants {
 
             switch (msg.what) {
                 case WHAT_REGISTER_LISTENER:
-                    client._listener.onRegistered(
-                            msg.getData()
-                                    .getString(PARAM_TOPIC_ID));
+                    client._listener.onRegistered(msg.getData().getString(PARAM_TOPIC_ID));
                     break;
                 case WHAT_DISPATCH_EVENT: {
                     Bundle payload = msg.getData();

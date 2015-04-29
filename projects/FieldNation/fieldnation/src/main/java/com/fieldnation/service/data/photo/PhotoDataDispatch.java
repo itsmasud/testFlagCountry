@@ -17,6 +17,8 @@ public class PhotoDataDispatch implements PhotoConstants {
         response.putBoolean(PARAM_CIRCLE, getCircle);
         response.putString(PARAM_URL, url);
         response.putSerializable(RESULT_IMAGE_FILE, file);
-        TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY + "/" + url, response, true);
+        TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY
+                + (getCircle ? "/Circle" : "")
+                + "/" + url, response, true);
     }
 }

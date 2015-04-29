@@ -34,11 +34,11 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     }
 
     // get all
-    public static void requestGetAll(Context context, int page) {
-        requestGetAll(context, page, false);
+    public static void requestPage(Context context, int page) {
+        requestPage(context, page, false);
     }
 
-    public static void requestGetAll(Context context, int page, boolean isSync) {
+    public static void requestPage(Context context, int page, boolean isSync) {
         Intent intent = new Intent(context, PaymentDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL);
         intent.putExtra(PARAM_PAGE, page);
@@ -46,23 +46,23 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
         context.startService(intent);
     }
 
-    public boolean registerGetAll() {
-        return registerGetAll(false);
+    public boolean registerPage() {
+        return registerPage(false);
     }
 
-    public boolean registerGetAll(boolean isSync) {
+    public boolean registerPage(boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_GET_ALL + (isSync ? "/Sync" : ""), TAG);
+        return register(TOPIC_ID_GET_ALL + (isSync ? "-SYNC" : ""), TAG);
     }
 
     // get payment
-    public static void requestGetPayment(Context context, long paymentId) {
-        requestGetPayment(context, paymentId, false);
+    public static void requestPayment(Context context, long paymentId) {
+        requestPayment(context, paymentId, false);
     }
 
-    public static void requestGetPayment(Context context, long paymentId, boolean isSync) {
+    public static void requestPayment(Context context, long paymentId, boolean isSync) {
         Intent intent = new Intent(context, PaymentDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_PAYMENT);
         intent.putExtra(PARAM_ID, paymentId);
@@ -70,15 +70,17 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
         context.startService(intent);
     }
 
-    public boolean registerGetPayment() {
-        return registerGetPayment(false);
+    public boolean registerPayment(long paymentId) {
+        return registerPayment(paymentId, false);
     }
 
-    public boolean registerGetPayment(boolean isSync) {
+    public boolean registerPayment(long paymentId, boolean isSync) {
         if (!isConnected())
             return false;
 
-        return register(TOPIC_ID_PAYMENT + (isSync ? "/Sync" : ""), TAG);
+        return register(TOPIC_ID_PAYMENT
+                + (isSync ? "-SYNC" : "")
+                + (paymentId > 0 ? "/" + paymentId : ""), TAG);
     }
 
     /*-*********************************-*/

@@ -1,15 +1,18 @@
 package com.fieldnation.rpc.server;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.text.ParseException;
-import java.util.Map;
 
 /**
  * Represents an HTTP response with some extra parsing.
@@ -17,12 +20,11 @@ import java.util.Map;
  * @author michael.carver
  */
 public class HttpResult {
-
     private byte[] _baResults = null;
     private String _sResults = null;
     private JsonObject _jsonResults = null;
     private JsonArray _jaResults = null;
-    private Map<String, String> _headers;
+    private File _file = null;
 
     private int _responseCode;
     private String _responseMessage;
@@ -41,18 +43,36 @@ public class HttpResult {
         return _responseMessage;
     }
 
+    private void storeData(InputStream in) throws IOException {
+
+        _baResults = misc.readAllFromStreamUntil(in, 1024, -1, 102400, 1000);
+
+        if (_baResults.length >= 102400) {
+            // temp file
+            File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
+            tempFolder.mkdirs();
+            File tempFile = File.createTempFile("web", "dat", tempFolder);
+            FileOutputStream fout = new FileOutputStream(tempFile, false);
+            fout.write(_baResults);
+            misc.copyStream(in, fout, 1024, -1, 1000);
+            fout.close();
+            _baResults = null;
+
+            _file = tempFile;
+        }
+
+    }
+
     private void cacheResults(HttpURLConnection conn) {
         try {
             if (conn.getDoInput()) {
-                InputStream in = conn.getInputStream();
 
-                if (conn.getContentLength() > 10240) {
-                    // TODO put data in temp storage
-                    _baResults = misc.readAllFromStream(in, 1024, -1, 3000);
-                } else {
-                    _baResults = misc.readAllFromStream(in, 1024, -1, 3000);
+                InputStream in = conn.getInputStream();
+                try {
+                    storeData(in);
+                } finally {
+                    in.close();
                 }
-                in.close();
 
                 if (_baResults != null) {
                     Log.v("HttpJson", "data size " + misc.readableFileSize(conn.getContentLength()) + ", " + misc.readableFileSize(_baResults.length));
@@ -62,14 +82,11 @@ public class HttpResult {
             ex.printStackTrace();
             _baResults = null;
             try {
-                if (conn.getContentLength() > 10240) {
-                    // TODO put data in temp storage
-                    _baResults = misc.readAllFromStream(conn.getErrorStream(), 1024, -1, 1000);
-                } else {
-                    _baResults = misc.readAllFromStream(conn.getErrorStream(), 1024, -1, 1000);
-                }
-                if (_baResults != null) {
-                    Log.v("HttpJson", "data size " + misc.readableFileSize(conn.getContentLength()) + ", " + misc.readableFileSize(_baResults.length));
+                InputStream in = conn.getErrorStream();
+                try {
+                    storeData(in);
+                } finally {
+                    in.close();
                 }
             } catch (Exception ex1) {
                 ex1.printStackTrace();
@@ -77,29 +94,42 @@ public class HttpResult {
         }
     }
 
-    public byte[] getResultsAsByteArray() {
+    public boolean isFile() {
+        return _file != null;
+    }
+
+    public File getFile() {
+        return _file;
+    }
+
+    public byte[] getByteArray() {
+        if (_file != null && _baResults == null) {
+            try {
+                _baResults = misc.readAllFromStream(new FileInputStream(_file), 1024, -1, 1000);
+            } catch (IOException e) {
+            }
+        }
         return _baResults;
     }
 
-    public String getResultsAsString() {
+    public String getString() {
         if (_sResults == null) {
-            _sResults = new String(getResultsAsByteArray());
+            _sResults = new String(getByteArray());
         }
         return _sResults;
     }
 
-    public JsonObject getResultsAsJsonObject() throws ParseException {
+    public JsonObject getJsonObject() throws ParseException {
         if (_jsonResults == null) {
-            _jsonResults = new JsonObject(getResultsAsString());
+            _jsonResults = new JsonObject(getByteArray());
         }
         return _jsonResults;
     }
 
     public JsonArray getResultsAsJsonArray() throws ParseException {
         if (_jaResults == null) {
-            _jaResults = new JsonArray(getResultsAsString());
+            _jaResults = new JsonArray(getByteArray());
         }
         return _jaResults;
     }
-
 }

@@ -49,7 +49,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         if (!cursor.isNull(Column.DATA.getIndex())) {
             if (_isFile) {
                 _file = new File(new String(cursor.getBlob(Column.DATA.getIndex())));
-                Log.v(TAG, "updateFromDatabase isFile, " + _file.getAbsolutePath());
+//                Log.v(TAG, "updateFromDatabase isFile, " + _file.getAbsolutePath());
             } else {
                 _data = cursor.getBlob(Column.DATA.getIndex());
             }
@@ -128,7 +128,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public StoredObject save(Context context) {
-        Log.v(TAG, "save");
+//        Log.v(TAG, "save");
         return put(context, this);
     }
 
@@ -191,7 +191,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @return the object, null if there was an error.
      */
     public static StoredObject get(Context context, String objectTypeName, String objectKey) {
-        Log.v(TAG, "get(" + objectTypeName + "/" + objectKey + ")");
+//        Log.v(TAG, "get(" + objectTypeName + "/" + objectKey + ")");
         StoredObject obj = null;
         synchronized (TAG) {
             ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
@@ -231,7 +231,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @return the updated object
      */
     public static StoredObject put(Context context, StoredObject obj) {
-        Log.v(TAG, "put1(" + obj._id + ", " + obj._objName + "/" + obj._objKey + ");");
+//        Log.v(TAG, "put1(" + obj._id + ", " + obj._objName + "/" + obj._objKey + ");");
         ContentValues v = new ContentValues();
         v.put(Column.OBJ_NAME.getName(), obj._objName);
         v.put(Column.OBJ_KEY.getName(), obj._objKey);
@@ -240,14 +240,14 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.EXPIRES.getName(), obj._expires);
 
         if (obj._isFile) {
-            Log.v(TAG, "put1 is file, " + obj.getFile().getAbsolutePath());
+//            Log.v(TAG, "put1 is file, " + obj.getFile().getAbsolutePath());
             // this is a file object. check that it's in the file store, if not, then copy it in.
             String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
             String filepath = appFileStore + "/os" + obj._id + ".dat";
 
             // file isn't in the store
             if (!filepath.equals(obj._file.getAbsolutePath())) {
-                Log.v(TAG, "put1 moving file to data store");
+//                Log.v(TAG, "put1 moving file to data store");
                 new File(appFileStore).mkdirs();
                 File dest = new File(filepath);
 
@@ -315,10 +315,10 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static StoredObject put(Context context, String objectTypeName, String objectKey, File file, boolean expires) {
-        Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
+//        Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(context, objectTypeName, objectKey);
         if (result != null) {
-            Log.v(TAG, "put2, overwrite");
+//            Log.v(TAG, "put2, overwrite");
             result.setFile(file);
             result = result.save(context);
             return result;
@@ -346,7 +346,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
         }
         if (id != -1) {
-            Log.v(TAG, "put2, copy file, " + id);
+//            Log.v(TAG, "put2, copy file, " + id);
             // copy the file to the file store
             String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
             new File(appFileStore).mkdirs();
@@ -363,11 +363,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
 
             if (!copySuccess) {
-                Log.v(TAG, "put2, copy failed");
+//                Log.v(TAG, "put2, copy failed");
                 delete(context, id);
                 dest.delete();
             } else {
-                Log.v(TAG, "put2, copy success");
+//                Log.v(TAG, "put2, copy success");
                 result = get(context, id);
                 result.setFile(dest);
                 result = result.save(context);
@@ -391,7 +391,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] data, boolean expires) {
-        Log.v(TAG, "put3(" + objectTypeName + "/" + objectKey + ")");
+//        Log.v(TAG, "put3(" + objectTypeName + "/" + objectKey + ")");
         StoredObject result = get(context, objectTypeName, objectKey);
 
         if (result != null) {
@@ -535,7 +535,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
         for (int i = 0; i < list.size(); i++) {
             StoredObject obj = list.get(i);
-            Log.v(TAG, "flush " + obj.getObjName() + "/" + obj.getObjKey());
+//            Log.v(TAG, "flush " + obj.getObjName() + "/" + obj.getObjKey());
             if (obj.isFile()) {
                 obj.getFile().delete();
             }

@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.fieldnation.Log;
 import com.fieldnation.ThreadManager;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.MSService;
@@ -30,10 +31,12 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
     }
 
     private class MyWorkerThread extends WorkerThread {
+        private String TAG = UniqueTag.makeTag("WorkorderDataServiceThread");
         private Context _context;
 
         public MyWorkerThread(ThreadManager manager, Context context, List<Intent> intents) {
-            super(manager, "MyWorkerThread", intents);
+            super(manager, intents);
+            setName(TAG);
             _context = context;
         }
 

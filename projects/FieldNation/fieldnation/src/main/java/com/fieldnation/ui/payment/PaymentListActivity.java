@@ -1,17 +1,12 @@
 package com.fieldnation.ui.payment;
 
-import android.content.Intent;
-import android.os.ResultReceiver;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.json.JsonArray;
 import com.fieldnation.service.data.payment.PaymentDataClient;
-import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.ui.ItemListActivity;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class PaymentListActivity extends ItemListActivity<Payment> {
@@ -38,7 +33,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
 
     @Override
     public void requestData(int page) {
-        PaymentDataClient.requestGetAll(this, page);
+        PaymentDataClient.requestPage(this, page);
     }
 
     @Override
@@ -60,7 +55,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     private final PaymentDataClient.Listener _payment_listener = new PaymentDataClient.Listener() {
         @Override
         public void onConnected() {
-            _paymentClient.registerGetAll();
+            _paymentClient.registerPage();
         }
 
         @Override

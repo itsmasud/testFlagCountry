@@ -90,7 +90,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleCheckIn");
         long workorderId = params.getLong("workorderId");
 
-        WorkorderDispatch.checkIn(context, workorderId, resultData.getResultsAsByteArray());
+        WorkorderDispatch.checkIn(context, workorderId, resultData.getByteArray());
 
         return Result.FINISH;
     }
@@ -100,7 +100,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleCheckOut");
         long workorderId = params.getLong("workorderId");
 
-        WorkorderDispatch.checkOut(context, workorderId, resultData.getResultsAsByteArray());
+        WorkorderDispatch.checkOut(context, workorderId, resultData.getByteArray());
 
         return Result.FINISH;
     }
@@ -110,7 +110,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                                  JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleDetails " + transaction.getId());
         long workorderId = params.getLong("workorderId");
-        byte[] workorderData = resultData.getResultsAsByteArray();
+        byte[] workorderData = resultData.getByteArray();
 
         Log.v(TAG, "handleDetails workorderId:" + workorderId);
 
@@ -129,7 +129,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleGetSignature(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         long workorderId = params.getLong("workorderId");
         long signatureId = params.getLong("signatureId");
-        byte[] data = resultData.getResultsAsByteArray();
+        byte[] data = resultData.getByteArray();
 
         //store the signature data
         StoredObject.put(context, PSO_SIGNATURE, signatureId, data);

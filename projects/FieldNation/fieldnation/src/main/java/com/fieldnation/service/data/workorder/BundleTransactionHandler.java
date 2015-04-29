@@ -14,10 +14,10 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
  */
 public class BundleTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
 
-    public static byte[] generateGetParams(long bundleId) {
+    public static byte[] pBundle(long bundleId) {
         try {
             JsonObject obj = new JsonObject();
-            obj.put("action", "get");
+            obj.put("action", "pBundle");
             obj.put("bundleId", bundleId);
             return obj.toByteArray();
         } catch (Exception ex) {
@@ -32,7 +32,7 @@ public class BundleTransactionHandler extends WebTransactionHandler implements W
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
             long bundleId = params.getLong("bundleId");
-            byte[] data = resultData.getResultsAsByteArray();
+            byte[] data = resultData.getByteArray();
 
             StoredObject.put(context, PSO_BUNDLE, bundleId, data);
 

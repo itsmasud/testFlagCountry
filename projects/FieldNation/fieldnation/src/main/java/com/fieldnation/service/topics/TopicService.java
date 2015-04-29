@@ -10,9 +10,10 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
+
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -108,7 +109,6 @@ public class TopicService extends Service implements TopicConstants {
         String userTag = bundle.getString(PARAM_USER_TAG);
 
 //        Log.v(TAG, "register(" + userTag + ", " + topicId + ")");
-
         TopicUser c = null;
         synchronized (TAG) {
             c = TopicUser.getUser(userTag);
@@ -150,34 +150,38 @@ public class TopicService extends Service implements TopicConstants {
         }
     }
 
+    // sends events
     private void dispatchEvent(Bundle bundle) {
         String topicId = bundle.getString(PARAM_TOPIC_ID);
+        String rootTopicId = (topicId.contains("/") ? topicId.substring(0, topicId.indexOf("/")) : null);
         boolean keepLast = bundle.getBoolean(PARAM_KEEP_LAST);
-        Parcelable payload = bundle.getParcelable(PARAM_TOPIC_PARCELABLE);
 
-//        Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
-
-        Bundle response = new Bundle();
-        //response.putString(TopicConstants.ACTION, TopicConstants.ACTION_DISPATCH_EVENT);
-        response.putString(PARAM_TOPIC_ID, topicId);
 
         synchronized (TAG) {
-            Set<TopicUser> users = null;
-            Iterator<TopicUser> iter = null;
-            users = TopicUser.getUsers(topicId);
-            iter = users.iterator();
-//            Log.v(TAG, "Topic: " + topicId);
-//            Log.v(TAG, "Users: " + users.size());
-            while (iter.hasNext()) {
-                TopicUser c = iter.next();
-                //Log.v(TAG, "Client: " + c.tag);
-                bundle.putParcelable(PARAM_TOPIC_PARCELABLE, payload);
+            if (rootTopicId != null) {
+                Log.v(TAG, "dispatch(" + rootTopicId + "--" + topicId + ", " + keepLast + ")");
+            } else {
+                Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
+            }
+            // exact match
+            Set<TopicUser> users = TopicUser.getUsers(topicId);
+            for (TopicUser c : users) {
                 sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
+            }
+            if (keepLast)
+                _lastSent.put(topicId, bundle.getParcelable(PARAM_TOPIC_PARCELABLE));
+
+            // all match
+            if (rootTopicId != null) {
+                users = TopicUser.getUsers(rootTopicId);
+                for (TopicUser c : users) {
+                    sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
+                }
+                if (keepLast)
+                    _lastSent.put(rootTopicId, bundle.getParcelable(PARAM_TOPIC_PARCELABLE));
             }
         }
 
-        if (keepLast)
-            _lastSent.put(topicId, payload);
 
         // Todo shutdown?
 //        if (topicId.equals(.TOPIC_SHUTDOWN)) {
@@ -185,13 +189,17 @@ public class TopicService extends Service implements TopicConstants {
 //        }
     }
 
+    // queues up an event for sending
     public static void dispatchEvent(Context context, String topicId, Parcelable payload, boolean keepLast) {
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
+
+        // casting is there to ensure we call the correct overloaded method
         if (payload != null)
             intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) payload);
         else
             intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) new Bundle());
+
         intent.putExtra(PARAM_KEEP_LAST, keepLast);
 
         context.startService(intent);
@@ -200,6 +208,7 @@ public class TopicService extends Service implements TopicConstants {
     /*-**********************************-*/
     /*-              Plumbing            -*/
     /*-**********************************-*/
+    // accepts messages from clients
     private static class IncomeHandler extends Handler {
         private WeakReference<TopicService> _wr;
 

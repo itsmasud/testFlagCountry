@@ -20,7 +20,8 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
         bundle.putLong(PARAM_ID, workorderId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS + (isSync ? "/Sync" : ""), bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS
+                + (isSync ? "-SYNC" : ""), bundle, true);
     }
 
     public static void workorderList(Context context, JsonArray workorders, int page, String selector, boolean isSync) {
@@ -30,7 +31,9 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putString(PARAM_LIST_SELECTOR, selector);
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, PARAM_ACTION_LIST + (isSync ? "/Sync" : ""), bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_LIST
+                + (isSync ? "-SYNC" : "")
+                + "/" + selector, bundle, true);
     }
 
     public static void bundle(Context context, JsonObject data, long bundleId, boolean isSync) {
@@ -39,7 +42,8 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putLong(PARAM_ID, bundleId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE + (isSync ? "/Sync" : ""), bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE
+                + (isSync ? "-SYNC" : ""), bundle, true);
     }
 
     public static void checkIn(Context context, long workorderId, byte[] data) {
@@ -65,7 +69,8 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putLong(PARAM_ID, workorderId);
         bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE + (isSync ? "/Sync" : ""), bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_GET_SIGNATURE
+                + (isSync ? "-SYNC" : ""), bundle, true);
     }
 
     public static void deliverableFile(Context context, long workorderId, long deliverableId, File file, boolean isSync) {
@@ -75,7 +80,8 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putLong(PARAM_DELIVERABLE_ID, deliverableId);
         bundle.putSerializable(PARAM_FILE, file);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, PARAM_ACTION_DOWNLOAD_DELIVERABLE + (isSync ? "/Sync" : "") + "/" + workorderId + "/" + deliverableId, bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DOWNLOAD_DELIVERABLE
+                + (isSync ? "-SYNC" : "") + "/" + workorderId + "/" + deliverableId, bundle, true);
     }
 
     public static void deliverable(Context context, JsonObject obj, long workorderId, long deliverableId, boolean isSync) {
@@ -85,7 +91,8 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putLong(PARAM_DELIVERABLE_ID, deliverableId);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, obj);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, PARAM_ACTION_DELIVERABLE + (isSync ? "/Sync" : "") + "/" + workorderId + "/" + deliverableId, bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DELIVERABLE
+                + (isSync ? "-SYNC" : "") + "/" + workorderId + "/" + deliverableId, bundle, true);
     }
 
     public static void deliverableList(Context context, JsonArray obj, long workorderId, boolean isSync) {
@@ -94,6 +101,7 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putLong(PARAM_ID, workorderId);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, obj);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, PARAM_ACTION_DELIVERABLE_LIST + (isSync ? "/Sync" : "") + "/" + workorderId, bundle, true);
+        TopicService.dispatchEvent(context, PARAM_ACTION_DELIVERABLE_LIST
+                + (isSync ? "-SYNC" : ""), bundle, true);
     }
 }

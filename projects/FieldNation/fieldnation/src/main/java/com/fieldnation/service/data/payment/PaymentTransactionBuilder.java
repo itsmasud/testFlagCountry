@@ -11,7 +11,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
  */
 public class PaymentTransactionBuilder implements PaymentConstants {
 
-    public static void getAll(Context context, int page, boolean isSync) {
+    public static void page(Context context, int page, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
@@ -19,7 +19,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                     .handlerParams(
                             PaymentTransactionHandler.pGetAll(page)
                     )
-                    .key((isSync ? "Sync/" : "") + "PaymentGetAll" + page)
+                    .key((isSync ? "Sync/" : "") + "PaymentPage" + page)
                     .useAuth(true)
                     .isSyncCall(isSync)
                     .request(
@@ -34,13 +34,13 @@ public class PaymentTransactionBuilder implements PaymentConstants {
         }
     }
 
-    public static void getPayment(Context context, long paymentId, boolean isSync) {
+    public static void payment(Context context, long paymentId, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(PaymentTransactionHandler.class)
                     .handlerParams(PaymentTransactionHandler.pPayment(paymentId))
-                    .key((isSync ? "Sync/" : "") + "GetPayment" + paymentId)
+                    .key((isSync ? "Sync/" : "") + "Payment/" + paymentId)
                     .useAuth(true)
                     .isSyncCall(isSync)
                     .request(

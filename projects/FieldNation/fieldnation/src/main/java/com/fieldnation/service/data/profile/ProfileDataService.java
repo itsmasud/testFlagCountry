@@ -6,6 +6,7 @@ import android.os.IBinder;
 
 import com.fieldnation.Log;
 import com.fieldnation.ThreadManager;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.MSService;
@@ -21,7 +22,7 @@ public class ProfileDataService extends MSService implements ProfileConstants {
 
     @Override
     public int getMaxWorkerCount() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -35,10 +36,12 @@ public class ProfileDataService extends MSService implements ProfileConstants {
     }
 
     private class MyWorkerThread extends WorkerThread {
+        private String TAG = UniqueTag.makeTag("ProfileDataServiceThread");
         private Context _context;
 
         public MyWorkerThread(ThreadManager manager, Context context, List<Intent> intents) {
-            super(manager, "MyWorkerThread", intents);
+            super(manager, intents);
+            setName(TAG);
             _context = context;
         }
 
@@ -56,7 +59,6 @@ public class ProfileDataService extends MSService implements ProfileConstants {
             }
         }
     }
-
 
     private static void getMyUserInformation(Context context, Intent intent) {
         Log.v(TAG, "getMyUserInformation");

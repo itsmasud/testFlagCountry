@@ -75,7 +75,6 @@ public class HttpJson {
         conn = (HttpURLConnection) new URL(url).openConnection();
         Log.v(TAG, url);
 
-
         conn.setRequestMethod(method);
 
         if (headers != null) {

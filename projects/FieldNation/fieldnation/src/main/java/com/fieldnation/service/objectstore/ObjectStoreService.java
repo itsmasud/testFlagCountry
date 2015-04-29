@@ -52,14 +52,14 @@ public class ObjectStoreService extends Service implements ObjectStoreConstants 
     @Override
     public IBinder onBind(Intent intent) {
         _bindCount++;
-        Log.v(TAG, "onBind:" + _bindCount);
+//        Log.v(TAG, "onBind:" + _bindCount);
         return _me.getBinder();
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         _bindCount--;
-        Log.v(TAG, "onUnbind:" + _bindCount);
+//        Log.v(TAG, "onUnbind:" + _bindCount);
         if (_bindCount == 0 && _lastStartId != -1) {
             stopSelf(_lastStartId);
             _lastStartId = -1;

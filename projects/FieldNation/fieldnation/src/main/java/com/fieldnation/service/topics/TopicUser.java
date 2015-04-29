@@ -4,7 +4,6 @@ import android.os.Messenger;
 
 import com.fieldnation.Log;
 
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -70,11 +69,9 @@ class TopicUser {
     public static void deleteUser(String userTag) {
         TopicUser c = _instances.get(userTag);
 
-        Enumeration<String> e = _topics.keys();
-        while (e.hasMoreElements()) {
-            String key = e.nextElement();
+        Set<String> e = _topics.keySet();
+        for (String key : e) {
             Set<TopicUser> clients = getUsers(key);
-
             if (clients.contains(c))
                 clients.remove(c);
         }

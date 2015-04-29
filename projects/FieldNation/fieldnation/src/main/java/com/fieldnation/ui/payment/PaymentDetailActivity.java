@@ -86,7 +86,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     }
 
     private void requestData() {
-        PaymentDataClient.requestGetPayment(this, _paymentId);
+        PaymentDataClient.requestPayment(this, _paymentId);
     }
 
     private void populateUi() {
@@ -132,7 +132,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     private PaymentDataClient.Listener _paymentClient_listener = new PaymentDataClient.Listener() {
         @Override
         public void onConnected() {
-            _paymentClient.registerGetPayment();
+            _paymentClient.registerPayment(-1, false);
         }
 
         @Override

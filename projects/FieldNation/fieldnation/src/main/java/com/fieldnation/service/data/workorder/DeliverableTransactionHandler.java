@@ -99,7 +99,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
     public Result handleGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         long workorderId = params.getLong("workorderId");
         long deliverableId = params.getLong("deliverableId");
-        byte[] data = resultData.getResultsAsByteArray();
+        byte[] data = resultData.getByteArray();
 
         StoredObject.put(context, PSO_DELIVERABLE, deliverableId, data);
 
@@ -110,7 +110,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 
     public Result handleList(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         long workorderId = params.getLong("workorderId");
-        byte[] data = resultData.getResultsAsByteArray();
+        byte[] data = resultData.getByteArray();
 
         StoredObject.put(context, PSO_DELIVERABLE_LIST, workorderId, data);
 
@@ -123,19 +123,23 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         long workorderId = params.getLong("workorderId");
         long deliverableId = params.getLong("deliverableId");
 
-        File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
-        tempFolder.mkdirs();
+        if (resultData.isFile()) {
+            StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, resultData.getFile());
+            resultData.getFile().delete();
+            WorkorderDispatch.deliverableFile(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
+        } else {
+            File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
+            tempFolder.mkdirs();
+            File tempFile = File.createTempFile("tmp", "dat", tempFolder);
+            FileOutputStream fout = new FileOutputStream(tempFile, false);
+            fout.write(resultData.getByteArray());
+            fout.close();
 
-        File tempFile = File.createTempFile("dd", "dat", tempFolder);
-        FileOutputStream fout = new FileOutputStream(tempFile, false);
-        fout.write(resultData.getResultsAsByteArray());
-        fout.close();
+            StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, tempFile);
+            tempFile.delete();
+            WorkorderDispatch.deliverableFile(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
+        }
 
-        StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, tempFile);
-
-        tempFile.delete();
-
-        WorkorderDispatch.deliverableFile(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
         return Result.FINISH;
     }
 }

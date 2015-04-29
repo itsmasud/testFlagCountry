@@ -16,7 +16,8 @@ public class ProfileDispatch implements ProfileConstants {
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE + (isSync ? "/Sync" : ""), bundle, true);
+        TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE
+                + (isSync ? "-SYNC" : ""), bundle, true);
     }
 
     public static void allNotifications(Context context, JsonArray data, int page, boolean isSync) {
@@ -25,7 +26,8 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putInt(PARAM_PAGE, page);
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST + (isSync ? "/Sync" : ""), bundle, false);
+        TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST
+                + (isSync ? "-SYNC" : ""), bundle, false);
 
     }
 
@@ -35,6 +37,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putInt(PARAM_PAGE, page);
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST + (isSync ? "/Sync" : ""), bundle, false);
+        TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST
+                + (isSync ? "-SYNC" : ""), bundle, false);
     }
 }

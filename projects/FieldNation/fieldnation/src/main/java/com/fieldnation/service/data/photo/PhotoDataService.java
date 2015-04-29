@@ -6,6 +6,7 @@ import android.os.IBinder;
 
 import com.fieldnation.Log;
 import com.fieldnation.ThreadManager;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 
@@ -19,7 +20,7 @@ public class PhotoDataService extends MSService implements PhotoConstants {
 
     @Override
     public int getMaxWorkerCount() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -34,10 +35,12 @@ public class PhotoDataService extends MSService implements PhotoConstants {
     }
 
     private class MyWorkerThread extends WorkerThread {
+        private String TAG = UniqueTag.makeTag("PhotoDataServiceThread");
         private Context _context;
 
         public MyWorkerThread(ThreadManager manager, Context context, List<Intent> intents) {
-            super(manager, "MyWorkerThread", intents);
+            super(manager, intents);
+            setName(TAG);
             _context = context;
         }
 
