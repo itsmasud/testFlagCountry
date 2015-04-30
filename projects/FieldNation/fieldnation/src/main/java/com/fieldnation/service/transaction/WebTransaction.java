@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 
@@ -57,14 +56,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _handlerName = bundle.getString(PARAM_HANDLER_NAME);
         _handlerParams = bundle.getByteArray(PARAM_HANDLER_PARAMS);
         _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
-        _state = State.values()[bundle.getInt(PARAM_STATE)];
+        _state = (State) bundle.getSerializable(PARAM_STATE);
         _isSync = bundle.getBoolean(PARAM_IS_SYNC);
         _queueTime = bundle.getLong(PARAM_QUEUE_TIME);
         try {
             _request = new JsonObject(bundle.getByteArray(PARAM_REQUEST));
         } catch (Exception ex) {
         }
-        _priority = Priority.values()[bundle.getInt(PARAM_PRIORITY)];
+        _priority = (Priority) bundle.getSerializable(PARAM_PRIORITY);
         _key = bundle.getString(PARAM_KEY);
     }
 
@@ -73,9 +72,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putLong(PARAM_ID, _id);
         bundle.putString(PARAM_HANDLER_NAME, _handlerName);
         bundle.putByteArray(PARAM_HANDLER_PARAMS, _handlerParams);
-        bundle.putInt(PARAM_STATE, _state.ordinal());
+        bundle.putSerializable(PARAM_STATE, _state);
         bundle.putByteArray(PARAM_REQUEST, _request.toByteArray());
-        bundle.putInt(PARAM_PRIORITY, _priority.ordinal());
+        bundle.putSerializable(PARAM_PRIORITY, _priority);
         bundle.putString(PARAM_KEY, _key);
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
         bundle.putBoolean(PARAM_IS_SYNC, _isSync);

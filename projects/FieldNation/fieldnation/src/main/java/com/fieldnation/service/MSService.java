@@ -44,7 +44,7 @@ public abstract class MSService extends Service {
         Log.v(TAG, "onStartCommand");
         if (intent != null) {
             synchronized (LOCK) {
-                _intents.add(intent);
+                addIntent(_intents, intent);
 
                 Log.v(TAG, "intents " + _intents.size());
             }
@@ -52,6 +52,10 @@ public abstract class MSService extends Service {
 
         _manager.wakeUp();
         return START_STICKY;
+    }
+
+    public void addIntent(List<Intent> intents, Intent intent) {
+        intents.add(intent);
     }
 
     @Override

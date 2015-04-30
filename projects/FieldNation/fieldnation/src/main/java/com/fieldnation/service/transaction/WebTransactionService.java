@@ -34,7 +34,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
-    private int MAX_THREAD_COUNT = 2;
     private boolean _isAuthenticated = false;
     private ThreadManager _manager;
 
@@ -54,18 +53,22 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         super.onCreate();
         Log.v(TAG, "onCreate");
 
+        int threadCount = 4;
         if (GlobalState.getContext().getMemoryClass() <= 64) {
-            MAX_THREAD_COUNT = 4;
+            threadCount = 4;
         } else {
-            MAX_THREAD_COUNT = 8;
+            threadCount = 8;
         }
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(this);
 
         _manager = new ThreadManager();
-        for (int i = 0; i < MAX_THREAD_COUNT; i++) {
-            _manager.addThread(new TransactionThread(_manager, this));
+        _manager.addThread(new TransactionThread(_manager, this, false)); // 0
+        _manager.addThread(new TransactionThread(_manager, this, true)); // 1
+        for (int i = 2; i < threadCount; i++) {
+            // every other can do sync
+            _manager.addThread(new TransactionThread(_manager, this, i % 2 == 1));
         }
     }
 
@@ -137,6 +140,15 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         }
     };
 
+    @Override
+    public void addIntent(List<Intent> intents, Intent intent) {
+        if (intent.getBooleanExtra(PARAM_IS_SYNC, false)) {
+            intents.add(intent);
+        } else {
+            intents.add(0, intent);
+        }
+    }
+
     class IntentThread extends WorkerThread {
         private String TAG = UniqueTag.makeTag("IntentThread");
         private Context context;
@@ -158,7 +170,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     }
 
                     WebTransaction transaction = WebTransaction.put(context,
-                            Priority.values()[extras.getInt(PARAM_PRIORITY)],
+                            (Priority) extras.getSerializable(PARAM_PRIORITY),
                             extras.getString(PARAM_KEY),
                             extras.getBoolean(PARAM_USE_AUTH),
                             extras.getBoolean(PARAM_IS_SYNC),
@@ -187,25 +199,28 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     class TransactionThread extends ThreadManager.ManagedThread {
         private String TAG = UniqueTag.makeTag("TransactionThread");
         private Context context;
+        private boolean _allowSync = false;
 
-        public TransactionThread(ThreadManager manager, Context context) {
+        public TransactionThread(ThreadManager manager, Context context, boolean allowSync) {
             super(manager);
             setName(TAG);
             this.context = context;
+            _allowSync = allowSync;
             start();
         }
 
         @Override
         public boolean doWork() {
-            boolean allowSync = allowSync();
+            // try to get a transaction
+            WebTransaction trans = WebTransaction.getNext(context, _allowSync && allowSync(), _isAuthenticated);
 
-            WebTransaction trans = WebTransaction.getNext(context, allowSync, _isAuthenticated);
-
+            // if failed, then exit
             if (trans == null) {
-//                    Log.v(TAG, "skip no transaction");
+                // Log.v(TAG, "skip no transaction");
                 return false;
             }
 
+            // debug if have key, output
             if (!misc.isEmptyOrNull(trans.getKey())) {
                 Log.v(TAG, "Key: " + trans.getKey());
             }
@@ -213,10 +228,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             // at some point call the web service
             JsonObject request = trans.getRequest().copy();
             try {
+                // apply authentication if needed
                 if (trans.useAuth()) {
                     OAuth auth = getAuth();
                     if (!_isAuthenticated) {
-//                            Log.v(TAG, "skip no auth");
+                        // Log.v(TAG, "skip no auth");
                         trans.requeue(context);
                         return false;
                     }
@@ -228,8 +244,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     auth.applyToRequest(request);
                 }
                 Log.v(TAG, request.display());
+
+                // perform request
                 HttpResult result = HttpJson.run(context, request);
 
+                // debug output
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
@@ -237,6 +256,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     ex.printStackTrace();
                 }
 
+                // check for invalid auth
                 if (!result.isFile()
                         && result.getString().equals("You must provide a valid OAuth token to make a request")) {
                     Log.v(TAG, "Reauth");
@@ -248,23 +268,25 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 } else if (result.getResponseCode() == 400) {
                     // Bad request
                     // need to report this
-
                     // need to re-auth?
                     Thread.sleep(5000);
                     trans.requeue(context);
                     AuthTopicClient.dispatchRequestCommand(context);
                 } else if (result.getResponseCode() == 401) {
+                    // 401 usually means bad auth token
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
                     AuthTopicClient.dispatchInvalidateCommand(context);
                     trans.requeue(context);
                     AuthTopicClient.dispatchRequestCommand(context);
                     return true;
+                    // not found?... not sure, requeue
                 } else if (result.getResponseCode() == 404) {
                     Thread.sleep(5000);
                     trans.requeue(context);
                     AuthTopicClient.dispatchRequestCommand(context);
                     return true;
+                    // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
                     Thread.sleep(5000);
                     trans.requeue(context);

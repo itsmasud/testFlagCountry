@@ -152,17 +152,14 @@ public class TopicService extends Service implements TopicConstants {
 
     // sends events
     private void dispatchEvent(Bundle bundle) {
-        String topicId = bundle.getString(PARAM_TOPIC_ID);
-        String rootTopicId = (topicId.contains("/") ? topicId.substring(0, topicId.indexOf("/")) : null);
+        String[] topicIdTree = bundle.getString(PARAM_TOPIC_ID).split("/");
+//        String rootTopicId = (topicId.contains("/") ? topicId.substring(0, topicId.indexOf("/")) : null);
         boolean keepLast = bundle.getBoolean(PARAM_KEEP_LAST);
 
 
         synchronized (TAG) {
-            if (rootTopicId != null) {
-                Log.v(TAG, "dispatch(" + rootTopicId + "--" + topicId + ", " + keepLast + ")");
-            } else {
-                Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
-            }
+            String topicId = topicIdTree[0];
+            Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
             // exact match
             Set<TopicUser> users = TopicUser.getUsers(topicId);
             for (TopicUser c : users) {
@@ -171,14 +168,16 @@ public class TopicService extends Service implements TopicConstants {
             if (keepLast)
                 _lastSent.put(topicId, bundle.getParcelable(PARAM_TOPIC_PARCELABLE));
 
-            // all match
-            if (rootTopicId != null) {
-                users = TopicUser.getUsers(rootTopicId);
+            for (int i = 1; i < topicIdTree.length; i++) {
+                topicId += "/" + topicIdTree[i];
+                Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
+
+                users = TopicUser.getUsers(topicId);
                 for (TopicUser c : users) {
                     sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
                 }
                 if (keepLast)
-                    _lastSent.put(rootTopicId, bundle.getParcelable(PARAM_TOPIC_PARCELABLE));
+                    _lastSent.put(topicId, bundle.getParcelable(PARAM_TOPIC_PARCELABLE));
             }
         }
 

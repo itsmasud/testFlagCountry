@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 
 import java.util.List;
@@ -38,6 +37,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
 
     @Override
     public void requestData(int page) {
+        Log.v(TAG, "requestData " + page);
         ProfileDataClient.getAllNotifications(this, page);
     }
 
@@ -75,7 +75,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
 
         @Override
         public void onAllNotificationPage(List<Notification> list, int page) {
-            Log.v(TAG, "onAllNotificationPage");
+            Log.v(TAG, "onAllNotificationPage " + page);
             addPage(page, list);
         }
 

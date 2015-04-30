@@ -7,13 +7,13 @@ public interface WorkorderDataConstants {
 
     public static final String PARAM_ACTION = "PARAM_ACTION";
     public static final String PARAM_ACTION_LIST = "WorkorderDataConstants:PARAM_ACTION_LIST";
-    public static final String PARAM_ACTION_DETAILS = "PARAM_ACTION_DETAILS";
+    public static final String PARAM_ACTION_DETAILS = "WorkorderDataConstants:PARAM_ACTION_DETAILS";
     public static final String PARAM_ACTION_DECLINE = "PARAM_ACTION_DECLINE";
     public static final String PARAM_ACTION_REQUEST = "PARAM_ACTION_REQUEST";
     public static final String PARAM_ACTION_CONFIRM_ASSIGNMENT = "PARAM_ACTION_CONFIRM_ASSIGNMENT";
     public static final String PARAM_ACTION_READY = "PARAM_ACTION_READY";
-    public static final String PARAM_ACTION_CHECKIN = "PARAM_ACTION_CHECKIN";
-    public static final String PARAM_ACTION_CHECKOUT = "PARAM_ACTION_CHECKOUT";
+    public static final String PARAM_ACTION_CHECKIN = "WorkorderDataConstants:PARAM_ACTION_CHECKIN";
+    public static final String PARAM_ACTION_CHECKOUT = "WorkorderDataConstants:PARAM_ACTION_CHECKOUT";
     public static final String PARAM_ACTION_CLOSING_NOTES = "PARAM_CLOSING_NOTES";
     public static final String PARAM_ACTION_ACK_HOLD = "PARAM_ACTION_ACK_HOLD";
     public static final String PARAM_ACTION_COMPLETE = "PARAM_ACTION_COMPLETE";

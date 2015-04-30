@@ -97,12 +97,17 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public boolean registerDetails(long workorderId, boolean isSync) {
-        if (!isConnected())
-            return false;
+        String topicId = PARAM_ACTION_DETAILS;
 
-        return register(PARAM_ACTION_DETAILS
-                + (isSync ? "-SYNC" : "")
-                + (workorderId > 0 ? "/" + workorderId : ""), TAG);
+        if (isSync) {
+            topicId += "-SYNC";
+        }
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+        }
+
+        return register(topicId, TAG);
     }
 
     /*-**********************************-*/

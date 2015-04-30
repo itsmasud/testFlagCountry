@@ -35,7 +35,7 @@ public class WebTransactionBuilder implements WebTransactionConstants {
 
     // Intent
     public WebTransactionBuilder priority(Priority priority) {
-        intent.putExtra(PARAM_PRIORITY, priority.ordinal());
+        intent.putExtra(PARAM_PRIORITY, priority);
         return this;
     }
 
@@ -51,7 +51,8 @@ public class WebTransactionBuilder implements WebTransactionConstants {
 
     public WebTransactionBuilder isSyncCall(boolean sync) {
         intent.putExtra(PARAM_IS_SYNC, sync);
-        intent.putExtra(PARAM_PRIORITY, Priority.LOW.ordinal());
+        if (sync)
+            intent.putExtra(PARAM_PRIORITY, Priority.LOW);
         return this;
     }
 

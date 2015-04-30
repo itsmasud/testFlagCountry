@@ -35,7 +35,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     public static void getAllNotifications(Context context, int page, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(Priority.LOW)
+                    .priority(Priority.HIGH)
                     .handler(ProfileWebTransactionHandler.class)
                     .handlerParams(ProfileWebTransactionHandler.generateGetAllNotificationsParams(page))
                     .key((isSync ? "Sync/" : "") + "NotificationPage" + page)
@@ -56,7 +56,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     public static void getAllMessages(Context context, int page, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
-                    .priority(Priority.LOW)
+                    .priority(Priority.HIGH)
                     .handler(ProfileWebTransactionHandler.class)
                     .handlerParams(ProfileWebTransactionHandler.generateGetAllMessagesParams(page))
                     .key((isSync ? "Sync/" : "") + "MessagePage" + page)

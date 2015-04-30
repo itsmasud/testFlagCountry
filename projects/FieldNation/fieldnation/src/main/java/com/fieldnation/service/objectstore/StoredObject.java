@@ -9,7 +9,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.GlobalState;
-import com.fieldnation.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.utils.misc;
 

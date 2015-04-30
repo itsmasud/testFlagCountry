@@ -52,6 +52,9 @@ public class TopicClient implements TopicConstants {
     /*-         Commands            -*/
     /*-*****************************-*/
     public boolean register(String topicId, String userTag) {
+        if (!isConnected())
+            return false;
+        
 //        Log.v(TAG, "register(" + topicId + ", " + userTag + ")");
         try {
             Bundle bundle = new Bundle();
