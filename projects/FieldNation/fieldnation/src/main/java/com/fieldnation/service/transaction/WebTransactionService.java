@@ -165,7 +165,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 try {
                     Bundle extras = intent.getExtras();
 
-                    if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(context, extras.getString(PARAM_KEY))) {
+                    if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(context,
+                            extras.getString(PARAM_KEY))) {
                         return;
                     }
 
@@ -212,6 +213,9 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         @Override
         public boolean doWork() {
             // try to get a transaction
+
+//            Log.v(TAG, "Trans Count: " + WebTransaction.count(context));
+
             WebTransaction trans = WebTransaction.getNext(context, _allowSync && allowSync(), _isAuthenticated);
 
             // if failed, then exit

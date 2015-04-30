@@ -362,6 +362,30 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return success;
     }
 
+    public static int count(Context context) {
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = new WebTransactionSqlHelper(context);
+            try {
+                SQLiteDatabase db = helper.getReadableDatabase();
+                try {
+                    Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME, null);
+
+                    try {
+                        if (cursor.moveToNext()) {
+                            return cursor.getInt(0);
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                } finally {
+                    db.close();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+        return 0;
+    }
 
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/

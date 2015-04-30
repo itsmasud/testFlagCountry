@@ -43,11 +43,11 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     /*-*****************************-*/
     /*-             list            -*/
     /*-*****************************-*/
-    public static void requestList(Context context, WorkorderDataSelector selector, int page) {
-        requestList(context, selector, page, false);
+    public static void list(Context context, WorkorderDataSelector selector, int page) {
+        list(context, selector, page, false);
     }
 
-    public static void requestList(Context context, WorkorderDataSelector selector, int page, boolean isSync) {
+    public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
@@ -56,31 +56,36 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerList(boolean isSync) {
-        return registerList(null, isSync);
+    public boolean subList(boolean isSync) {
+        return subList(null, isSync);
     }
 
-    public boolean registerList(WorkorderDataSelector selector) {
-        return registerList(selector, false);
+    public boolean subList(WorkorderDataSelector selector) {
+        return subList(selector, false);
     }
 
-    public boolean registerList(WorkorderDataSelector selector, boolean isSync) {
-        if (!isConnected())
-            return false;
+    public boolean subList(WorkorderDataSelector selector, boolean isSync) {
+        String topicId = PARAM_ACTION_LIST;
 
-        return register(PARAM_ACTION_LIST
-                + (isSync ? "-SYNC" : "")
-                + (selector != null ? "/" + selector.getCall() : ""), TAG);
+        if (isSync) {
+            topicId += "-SYNC";
+        }
+
+        if (selector != null) {
+            topicId += "/" + selector.getCall();
+        }
+
+        return register(topicId, TAG);
     }
 
     /*-********************************-*/
     /*-             details            -*/
     /*-********************************-*/
-    public static void requestDetails(Context context, long id) {
-        requestDetails(context, id, false);
+    public static void get(Context context, long id) {
+        get(context, id, false);
     }
 
-    public static void requestDetails(Context context, long id, boolean isSync) {
+    public static void get(Context context, long id, boolean isSync) {
         Intent intent = new Intent(context, WorkorderDataService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DETAILS);
         intent.putExtra(PARAM_ID, id);
@@ -88,15 +93,15 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
         context.startService(intent);
     }
 
-    public boolean registerDetails(boolean isSync) {
-        return registerDetails(0, isSync);
+    public boolean subGet(boolean isSync) {
+        return subGet(0, isSync);
     }
 
-    public boolean registerDetails(long workorderId) {
-        return registerDetails(workorderId, false);
+    public boolean subGet(long workorderId) {
+        return subGet(workorderId, false);
     }
 
-    public boolean registerDetails(long workorderId, boolean isSync) {
+    public boolean subGet(long workorderId, boolean isSync) {
         String topicId = PARAM_ACTION_DETAILS;
 
         if (isSync) {
@@ -114,42 +119,6 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     /*-             signature            -*/
     /*-**********************************-*/
 
-    public static void requestGetSignature(Context context, long workorderId, long signatureId) {
-        requestGetSignature(context, workorderId, signatureId, false);
-    }
-
-    public static void requestGetSignature(Context context, long workorderId, long signatureId, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderDataService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
-        intent.putExtra(PARAM_ID, workorderId);
-        intent.putExtra(PARAM_SIGNATURE_ID, signatureId);
-        intent.putExtra(PARAM_IS_SYNC, isSync);
-        context.startService(intent);
-    }
-
-    public boolean registerGetSignature(boolean isSync) {
-        return registerGetSignature(0, 0, isSync);
-    }
-
-    public boolean registerGetSignature(long workorderId, long signatureId, boolean isSync) {
-        if (!isConnected())
-            return false;
-
-        return register(PARAM_ACTION_GET_SIGNATURE
-                + (isSync ? "-SYNC" : "")
-                + (workorderId > 0 ? "/" + workorderId : "")
-                + (signatureId > 0 ? "/" + signatureId : ""), TAG);
-    }
-
-    // add signature json
-    public static void requestAddSignatureJson(Context context, long workorderId, String name, String json) {
-        WorkorderTransactionBuilder.postSignatureJson(context, workorderId, name, json);
-    }
-
-    // complete signature
-    public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String name, String json) {
-        WorkorderTransactionBuilder.postSignatureJsonTask(context, workorderId, taskId, name, json);
-    }
 
     /*-******************************************-*/
     /*-             workorder actions            -*/
@@ -200,9 +169,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public static void requestCheckin(Context context, long workorderId, Location location) {
-        Log.v(STAG, "requestCheckin");
         WorkorderTransactionBuilder.postCheckin(context, workorderId, location);
-        requestDetails(context, workorderId, false);
     }
 
     /*-*******************************************-*/

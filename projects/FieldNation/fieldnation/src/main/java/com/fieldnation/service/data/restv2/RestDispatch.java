@@ -15,7 +15,7 @@ public class RestDispatch implements RestConstants {
         bundle.putString(PARAM_RESULT_TAG, resultTag);
         bundle.putString(PARAM_OBJECT_TYPE, objectType);
         bundle.putString(PARAM_OBJECT_ID, id);
-        bundle.putBundle(PARAM_OBJECT_DATA, object);
+        bundle.putBundle(PARAM_OBJECT_DATA_BUNDLE, object);
         bundle.putBoolean(PARAM_SYNC, isSync);
 
         String topicId = TOPIC_OBJECT;

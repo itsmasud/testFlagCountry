@@ -38,10 +38,18 @@ public class RestService extends MSService implements RestConstants {
 
         @Override
         public void processIntent(Intent intent) {
-            String topic = intent.getStringExtra(PARAM_ACTION);
+            String topic = intent.getStringExtra(PARAM_TOPIC);
             switch (topic) {
                 case TOPIC_LIST:
                     list(_context, intent);
+                    break;
+                case TOPIC_ACTION:
+                    break;
+                case TOPIC_CREATE:
+                    break;
+                case TOPIC_DELETE:
+                    break;
+                case TOPIC_GET:
                     break;
             }
         }
@@ -50,6 +58,7 @@ public class RestService extends MSService implements RestConstants {
     private static void list(Context context, Intent intent) {
         String resultTag = intent.getStringExtra(PARAM_RESULT_TAG);
         String objectType = intent.getStringExtra(PARAM_OBJECT_TYPE);
+        String params = intent.getStringExtra(PARAM_URL_PARAMS);
         boolean isSync = intent.getBooleanExtra(PARAM_SYNC, false);
 
         List<StoredObject> list = StoredObject.list(context, objectType);
@@ -59,6 +68,8 @@ public class RestService extends MSService implements RestConstants {
                 RestDispatch.object(context, resultTag, objectType, obj.getObjKey(), obj.toBundle(), isSync);
             }
         }
+
+        RestTransactionBuilder.list(context, resultTag, objectType, params, isSync);
 
 
     }
