@@ -12,7 +12,7 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
 /**
  * Created by Michael on 3/31/2015.
  */
-public class BundleTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
+public class BundleTransactionHandler extends WebTransactionHandler implements WorkorderConstants {
 
     public static byte[] pBundle(long bundleId) {
         try {

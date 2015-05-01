@@ -11,7 +11,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
@@ -35,7 +35,7 @@ public class MessageFragment extends WorkorderFragment {
     private Random _rand = new Random(System.currentTimeMillis());
     private Profile _profile;
     private Workorder _workorder;
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
     private List<Message> _messages = new LinkedList<Message>();
     private MessagesAdapter _adapter;
 

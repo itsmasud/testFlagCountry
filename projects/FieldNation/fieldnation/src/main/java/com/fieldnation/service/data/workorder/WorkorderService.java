@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/24/2015.
  */
-public class WorkorderDataService extends MSService implements WorkorderDataConstants {
+public class WorkorderService extends MSService implements WorkorderConstants {
     private static final String TAG = "WorkorderDataService";
 
     @Override
@@ -98,7 +98,7 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
                     Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
                 }
 
-                WorkorderDispatch.workorderList(context, ja, page, selector, isSync);
+                WorkorderDispatch.list(context, ja, page, selector, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -121,7 +121,7 @@ public class WorkorderDataService extends MSService implements WorkorderDataCons
 
                 Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
-                WorkorderDispatch.workorder(context, workorder, workorderId, isSync);
+                WorkorderDispatch.get(context, workorder, workorderId, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

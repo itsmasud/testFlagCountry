@@ -14,7 +14,8 @@ import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.signature.SignatureClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.utils.Stopwatch;
 
 /**
@@ -50,7 +51,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     private SorryFragment _sorryFrag;
 
     // Data
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
 
     private int _displayMode = DISPLAY_SUMMARY;
     private String _name;
@@ -165,7 +166,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(this);
     }
 
@@ -198,21 +199,21 @@ public class SignOffActivity extends AuthFragmentActivity {
     private void sendSignature() {
         // not a task
         if (_taskId == -1) {
-            WorkorderDataClient.requestAddSignatureJson(this, _workorder.getWorkorderId(), _name, _signatureJson);
+            SignatureClient.requestAddSignatureJson(this, _workorder.getWorkorderId(), _name, _signatureJson);
         } else {
             // is a task
-            WorkorderDataClient.requestCompleteSignatureTaskJson(this, _workorder.getWorkorderId(), _taskId, _name, _signatureJson);
+            SignatureClient.requestCompleteSignatureTaskJson(this, _workorder.getWorkorderId(), _taskId, _name, _signatureJson);
         }
 
         if (_completeWorkorder) {
-            WorkorderDataClient.requestComplete(this, _workorder.getWorkorderId());
+            WorkorderClient.actionComplete(this, _workorder.getWorkorderId());
             ((GlobalState) getApplication()).setCompletedWorkorder();
             GoogleAnalyticsTopicClient.dispatchEvent(
                     SignOffActivity.this,
                     "WorkorderActivity",
                     GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK,
                     "SignOffActivity", 1);
-            WorkorderDataClient.requestDetails(this, _workorder.getWorkorderId());
+            WorkorderClient.get(this, _workorder.getWorkorderId());
         }
 
         _thankYouFrag.setUploadComplete();
@@ -221,7 +222,7 @@ public class SignOffActivity extends AuthFragmentActivity {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
 

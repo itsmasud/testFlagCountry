@@ -12,7 +12,7 @@ import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -37,7 +37,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     // Data
     private long _workorderId = 0;
     private long _bundleId = 0;
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
     private BundleAdapter _adapter;
     private com.fieldnation.data.workorder.Bundle _woBundle;
 
@@ -82,10 +82,10 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(this);
 
-        WorkorderDataClient.requestBundle(this, _bundleId);
+        WorkorderClient.requestBundle(this, _bundleId);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         super.onPause();
     }
 
-    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
             _workorderClient.registerBundle();

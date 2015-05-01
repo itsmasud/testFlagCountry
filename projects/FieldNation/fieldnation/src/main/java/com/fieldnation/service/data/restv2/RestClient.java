@@ -70,14 +70,17 @@ public class RestClient extends TopicClient implements RestConstants {
         context.startService(intent);
     }
 
-    public static void action(Context context, String resultTag, String objectType, String id, String action, byte[] body, boolean isSync) {
+    public static void action(Context context, String resultTag, String objectType, String id, String action,
+                              String urlParams, String contentType, String body, boolean isSync) {
         Intent intent = new Intent(context, RestService.class);
         intent.putExtra(PARAM_TOPIC, TOPIC_ACTION);
         intent.putExtra(PARAM_RESULT_TAG, resultTag);
         intent.putExtra(PARAM_OBJECT_TYPE, objectType);
         intent.putExtra(PARAM_OBJECT_ID, id);
         intent.putExtra(PARAM_ACTION, action);
-        intent.putExtra(PARAM_OBJECT_DATA_BYTE_ARRAY, body);
+        intent.putExtra(PARAM_URL_PARAMS, urlParams);
+        intent.putExtra(PARAM_CONTENT_TYPE, contentType);
+        intent.putExtra(PARAM_OBJECT_DATA_STRING, body);
         intent.putExtra(PARAM_SYNC, isSync);
         context.startService(intent);
     }

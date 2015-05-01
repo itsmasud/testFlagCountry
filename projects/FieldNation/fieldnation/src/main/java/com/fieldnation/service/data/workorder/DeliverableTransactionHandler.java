@@ -18,7 +18,7 @@ import java.text.ParseException;
 /**
  * Created by Michael on 4/9/2015.
  */
-public class DeliverableTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
+public class DeliverableTransactionHandler extends WebTransactionHandler implements WorkorderConstants {
 
     public static byte[] pChange(long workorderId) {
         try {

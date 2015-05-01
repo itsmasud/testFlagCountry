@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -44,7 +44,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private WorkorderTabView _tabview;
 
     // Data
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
     private long _workorderId = 0;
     private int _currentTab = 0;
     private int _currentFragment = 0;
@@ -214,7 +214,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(this);
     }
 
@@ -274,7 +274,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     public void getData() {
         Log.v(TAG, "getData");
         setLoading(true);
-        WorkorderDataClient.requestDetails(this, _workorderId);
+        WorkorderClient.get(this, _workorderId);
     }
 
     /*-*************************-*/
@@ -361,10 +361,10 @@ public class WorkorderActivity extends AuthActionBarActivity {
     /*-*****************************-*/
     /*-			Web Events			-*/
     /*-*****************************-*/
-    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
-            _workorderClient.registerDetails(_workorderId);
+            _workorderClient.subGet(_workorderId);
             getData();
         }
 

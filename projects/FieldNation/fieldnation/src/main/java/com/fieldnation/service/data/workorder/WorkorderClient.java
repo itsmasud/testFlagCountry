@@ -28,11 +28,11 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class WorkorderDataClient extends TopicClient implements WorkorderDataConstants {
+public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static final String STAG = "WorkorderDataClient";
     public final String TAG = UniqueTag.makeTag(STAG);
 
-    public WorkorderDataClient(Listener listener) {
+    public WorkorderClient(Listener listener) {
         super(listener);
     }
 
@@ -48,7 +48,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderDataService.class);
+        Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
         intent.putExtra(PARAM_PAGE, page);
@@ -86,7 +86,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public static void get(Context context, long id, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderDataService.class);
+        Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DETAILS);
         intent.putExtra(PARAM_ID, id);
         intent.putExtra(PARAM_IS_SYNC, isSync);
@@ -124,78 +124,64 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     /*-             workorder actions            -*/
     /*-******************************************-*/
     // complete workorder
-    public static void requestComplete(Context context, long workorderId) {
-        WorkorderTransactionBuilder.postComplete(context, workorderId);
+    public static void actionComplete(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionComplete(context, workorderId);
     }
 
-    public static void requestSetClosingNotes(Context context, long workorderId, String closingNotes) {
-        WorkorderTransactionBuilder.postClosingNotes(context, workorderId, closingNotes);
+    public static void actionSetClosingNotes(Context context, long workorderId, String closingNotes) {
+        WorkorderTransactionBuilder.actionClosingNotes(context, workorderId, closingNotes);
     }
 
     // acknowledge hold
-    public static void requestAcknowledgeHold(Context context, long workorderId) {
-        WorkorderTransactionBuilder.postAcknowledgeHold(context, workorderId);
+    public static void actionAcknowledgeHold(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionAcknowledgeHold(context, workorderId);
     }
 
     // counter offer
-    public static void requestCounterOffer(Context context, long workorderId, boolean expires,
-                                           String reason, int expiresAfterInSecond, Pay pay,
-                                           Schedule schedule, Expense[] expenses) {
-        WorkorderTransactionBuilder.postCounterOffer(context, workorderId, expires, reason,
+    public static void actionCounterOffer(Context context, long workorderId, boolean expires,
+                                          String reason, int expiresAfterInSecond, Pay pay,
+                                          Schedule schedule, Expense[] expenses) {
+        WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
 
     // request
-    public static void request(Context context, long workorderId, long expireInSeconds) {
-        WorkorderTransactionBuilder.postRequest(context, workorderId, expireInSeconds);
+    public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+        WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
     }
 
-    public static void requestConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
-        WorkorderTransactionBuilder.postConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601);
+    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+        WorkorderTransactionBuilder.actionConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601);
     }
 
     /*-******************************************-*/
     /*-             workorder checkin            -*/
     /*-******************************************-*/
-    public boolean registerCheckin() {
-        if (!isConnected())
-            return false;
-
-        return register(PARAM_ACTION_CHECKIN, TAG);
+    public static void actionCheckin(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionCheckin(context, workorderId);
     }
 
-    public static void requestCheckin(Context context, long workorderId) {
-        WorkorderTransactionBuilder.postCheckin(context, workorderId);
-    }
-
-    public static void requestCheckin(Context context, long workorderId, Location location) {
-        WorkorderTransactionBuilder.postCheckin(context, workorderId, location);
+    public static void actionCheckin(Context context, long workorderId, Location location) {
+        WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
     }
 
     /*-*******************************************-*/
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
-    public boolean registerCheckout() {
-        if (!isConnected())
-            return false;
-
-        return register(PARAM_ACTION_CHECKOUT, TAG);
+    public static void actionCheckout(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId);
     }
 
-    public static void requestCheckout(Context context, long workorderId) {
-        WorkorderTransactionBuilder.postCheckout(context, workorderId);
+    public static void actionCheckout(Context context, long workorderId, Location location) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
     }
 
-    public static void requestCheckout(Context context, long workorderId, Location location) {
-        WorkorderTransactionBuilder.postCheckout(context, workorderId, location);
+    public static void actionCheckout(Context context, long workorderId, int deviceCount) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
     }
 
-    public static void requestCheckout(Context context, long workorderId, int deviceCount) {
-        WorkorderTransactionBuilder.postCheckout(context, workorderId, deviceCount);
-    }
-
-    public static void requestCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        WorkorderTransactionBuilder.postCheckout(context, workorderId, deviceCount, location);
+    public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
 
 
@@ -207,7 +193,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public static void requestBundle(Context context, long bundleId, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderDataService.class);
+        Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
         intent.putExtra(PARAM_ID, bundleId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
@@ -232,7 +218,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     /*-*************************************-*/
     public static void requestUploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
-        Intent intent = new Intent(context, WorkorderDataService.class);
+        Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
         intent.putExtra(PARAM_ID, workorderId);
         intent.putExtra(PARAM_UPLOAD_SLOT_ID, uploadSlotId);
@@ -260,7 +246,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public static void requestGetDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderDataService.class);
+        Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DELIVERABLE);
         intent.putExtra(PARAM_ID, workorderId);
         intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
@@ -269,7 +255,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
     }
 
     public static void requestDownloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderDataService.class);
+        Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
         intent.putExtra(PARAM_ID, workorderId);
         intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
@@ -290,7 +276,7 @@ public class WorkorderDataClient extends TopicClient implements WorkorderDataCon
 
 
     public static void requestDeliverableList(Context context, long workorderId, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderDataService.class);
+        Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DELIVERABLE_LIST);
         intent.putExtra(PARAM_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);

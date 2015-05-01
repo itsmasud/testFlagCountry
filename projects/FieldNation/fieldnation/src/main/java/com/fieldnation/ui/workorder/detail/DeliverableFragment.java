@@ -29,7 +29,7 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -68,7 +68,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     // Data
     private Workorder _workorder;
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
     private GlobalTopicClient _globalClient;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
@@ -159,7 +159,7 @@ public class DeliverableFragment extends WorkorderFragment {
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(activity);
 
-        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(activity);
 
     }
@@ -329,13 +329,13 @@ public class DeliverableFragment extends WorkorderFragment {
                     return false;
 
                 Log.v(TAG, "local path");
-                WorkorderDataClient.requestUploadDeliverable(getActivity(),
+                WorkorderClient.requestUploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(), _uploadingSlotId, _tempFile.getName(),
                         _tempFile.getAbsolutePath());
                 return true;
             } else {
                 Log.v(TAG, "from intent");
-                WorkorderDataClient.requestUploadDeliverable(getActivity(),
+                WorkorderClient.requestUploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(),
                         _uploadingSlotId, data);
                 return true;
@@ -367,7 +367,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
-            WorkorderDataClient.requestDeleteDeliverable(getActivity(), _workorder.getWorkorderId(),
+            WorkorderClient.requestDeleteDeliverable(getActivity(), _workorder.getWorkorderId(),
                     document.getWorkorderUploadId(), document.getFileName());
         }
     };
@@ -438,7 +438,7 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
-    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
 

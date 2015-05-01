@@ -44,12 +44,16 @@ public class RestService extends MSService implements RestConstants {
                     list(_context, intent);
                     break;
                 case TOPIC_ACTION:
+                    action(_context, intent);
                     break;
                 case TOPIC_CREATE:
+                    create(_context, intent);
                     break;
                 case TOPIC_DELETE:
+                    delete(_context, intent);
                     break;
                 case TOPIC_GET:
+                    get(_context, intent);
                     break;
             }
         }
@@ -70,7 +74,40 @@ public class RestService extends MSService implements RestConstants {
         }
 
         RestTransactionBuilder.list(context, resultTag, objectType, params, isSync);
+    }
 
+    private static void action(Context context, Intent intent) {
+        String resultTag = intent.getStringExtra(PARAM_RESULT_TAG);
+        String objectType = intent.getStringExtra(PARAM_OBJECT_TYPE);
+        String id = intent.getStringExtra(PARAM_OBJECT_ID);
+        String action = intent.getStringExtra(PARAM_ACTION);
+        boolean isSync = intent.getBooleanExtra(PARAM_SYNC, false);
+        String params = intent.getStringExtra(PARAM_URL_PARAMS);
+        String body = intent.getStringExtra(PARAM_OBJECT_DATA_STRING);
+        String contentType = intent.getStringExtra(PARAM_CONTENT_TYPE);
+
+        RestTransactionBuilder.action(context, resultTag, objectType, id, action, params, contentType, body, isSync);
+
+        RestClient.get(context, resultTag, objectType, id, isSync);
+    }
+
+    private static void create(Context context, Intent intent) {
+        String resultTag = intent.getStringExtra(PARAM_RESULT_TAG);
+        String objectType = intent.getStringExtra(PARAM_OBJECT_TYPE);
+
+        if (intent.hasExtra(PARAM_OBJECT_DATA_BYTE_ARRAY)) {
+            RestTransactionBuilder.create(context, resultTag, objectType, new String(intent.getByteArrayExtra(PARAM_OBJECT_DATA_BYTE_ARRAY)));
+        } else if (intent.hasExtra(PARAM_OBJECT_DATA_STRING)) {
+            RestTransactionBuilder.create(context, resultTag, objectType, intent.getStringExtra(PARAM_OBJECT_DATA_STRING));
+        }
+
+    }
+
+    private static void delete(Context context, Intent intent) {
+
+    }
+
+    private static void get(Context context, Intent intent) {
 
     }
 }

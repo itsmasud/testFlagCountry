@@ -2,6 +2,7 @@ package com.fieldnation.service.data.signature;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
@@ -66,5 +67,13 @@ public class SignatureClient extends TopicClient implements SignatureConstants {
     // complete signature
     public static void requestCompleteSignatureTaskJson(Context context, long workorderId, long taskId, String name, String json) {
         WorkorderTransactionBuilder.postSignatureJsonTask(context, workorderId, taskId, name, json);
+    }
+
+
+    public static abstract class Listener extends TopicClient.Listener {
+        @Override
+        public void onEvent(String topicId, Parcelable payload) {
+
+        }
     }
 }

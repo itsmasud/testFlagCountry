@@ -23,7 +23,7 @@ import java.io.File;
 /**
  * Created by Michael Carver on 4/22/2015.
  */
-public class WorkorderTransactionBuilder implements WorkorderDataConstants {
+public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void getWorkorder(Context context, long workorderId, boolean isSync) {
         try {
@@ -239,241 +239,107 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
         }
     }
 
-    public static void postComplete(Context context, long workorderId) {
+    public static void action(Context context, long workorderId, String action, String params, String contentType, String body) {
         try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.complete", "working");
+            JsonObject _action = new JsonObject();
+            _action.put("_action[0].action", action);
+
+            HttpJsonBuilder http = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/" + action);
+
+            if (params != null) {
+                http.urlParams(params);
+            }
+
+            if (body != null) {
+                http.body(body);
+
+                if (contentType != null) {
+                    http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, contentType);
+                }
+            }
 
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
                     .useAuth(true)
-                    .key("Workorder/Complete/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/complete"))
+                    .key("Workorder/" + workorderId + "/" + action)
+                    .request(http)
                     .transform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
                             workorderId,
                             "merges",
-                            WorkorderTransfer.makeMarkCompleteTransfer().getBytes()))
+                            _action.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void postCheckin(Context context, long workorderId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/Checkin/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
-                            .body("checkin_time=" + ISO8601.now()))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCheckinTransfer().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void actionComplete(Context context, long workorderId) {
+        action(context, workorderId, "complete", null, null, null);
     }
 
-    public static void postCheckin(Context context, long workorderId, Location location) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pCheckIn(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/Checkin/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/checkin")
-                            .body("checkin_time=" + ISO8601.now()
-                                    + "&gps_lat=" + location.getLatitude()
-                                    + "&gps_lon=" + location.getLongitude()))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCheckinTransfer().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void actionCheckin(Context context, long workorderId) {
+        action(context, workorderId, "checkin", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "checkin_time=" + ISO8601.now());
     }
 
-    public static void postCheckout(Context context, long workorderId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/Checkout/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                            .body("checkout_time=" + ISO8601.now()))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCheckoutTransfer().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void actionCheckin(Context context, long workorderId, Location location) {
+        action(context, workorderId, "checkin", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "checkin_time=" + ISO8601.now()
+                        + "&gps_lat=" + location.getLatitude()
+                        + "&gps_lon=" + location.getLongitude());
     }
 
-    public static void postCheckout(Context context, long workorderId, Location location) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/Checkout/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                            .body("checkout_time=" + ISO8601.now()
-                                    + "&gps_lat=" + location.getLatitude()
-                                    + "&gps_lon=" + location.getLongitude()))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCheckoutTransfer().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void actionCheckout(Context context, long workorderId) {
+        action(context, workorderId, "checkout", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "checkout_time=" + ISO8601.now());
     }
 
-    public static void postCheckout(Context context, long workorderId, int deviceCount) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/Checkout/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                            .body("device_count=" + deviceCount
-                                    + "&checkout_time=" + ISO8601.now()))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCheckoutTransfer().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void actionCheckout(Context context, long workorderId, Location location) {
+        action(context, workorderId, "checkout", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "checkout_time=" + ISO8601.now()
+                        + "&gps_lat=" + location.getLatitude()
+                        + "&gps_lon=" + location.getLongitude());
     }
 
-    public static void postCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pCheckOut(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/Checkout/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/checkout")
-                            .body("device_count=" + deviceCount
-                                    + "&checkout_time=" + ISO8601.now()
-                                    + "&gps_lat=" + location.getLatitude()
-                                    + "&gps_lon=" + location.getLongitude()))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCheckoutTransfer().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void actionCheckout(Context context, long workorderId, int deviceCount) {
+        action(context, workorderId, "checkout", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "device_count=" + deviceCount
+                        + "&checkout_time=" + ISO8601.now());
     }
 
-    public static void postClosingNotes(Context context, long workorderId, String closingNotes) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/" + workorderId + "/closingNotes")
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/closing-notes")
-                            .body("notes=" + (closingNotes == null ? "" : misc.escapeForURL(closingNotes))))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeClosingNotesTransfer(closingNotes).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
+        action(context, workorderId, "checkout", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "device_count=" + deviceCount
+                        + "&checkout_time=" + ISO8601.now()
+                        + "&gps_lat=" + location.getLatitude()
+                        + "&gps_lon=" + location.getLongitude());
     }
 
-    public static void postAcknowledgeHold(Context context, long workorderId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/AckHold/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/acknowledge-hold"))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeAckHoldTransfer().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void actionClosingNotes(Context context, long workorderId, String closingNotes) {
+        action(context, workorderId, "closing-notes", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "notes=" + (closingNotes == null ? "" : misc.escapeForURL(closingNotes)));
     }
 
-    public static void postCounterOffer(Context context, long workorderId, boolean expires,
-                                        String reason, int expiresAfterInSecond, Pay pay,
-                                        Schedule schedule, Expense[] expenses) {
+    public static void actionAcknowledgeHold(Context context, long workorderId) {
+        action(context, workorderId, "acknowledge-hold", null, null, null);
+    }
+
+    public static void actionCounterOffer(Context context, long workorderId, boolean expires,
+                                          String reason, int expiresAfterInSecond, Pay pay,
+                                          Schedule schedule, Expense[] expenses) {
         String payload = "";
         // reason/expire
         if (expires)
@@ -529,86 +395,63 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
             payload += "&expenses=" + json.toString();
         }
 
+        action(context, workorderId, "counter_offer", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                payload);
+    }
+
+    public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+        String body = null;
+
+        if (expireInSeconds != -1) {
+            body = "expiration=" + expireInSeconds;
+        }
+
+        action(context, workorderId, "request", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, body);
+    }
+
+    public static void actionDecline(Context context, long workorderId) {
+        action(context, workorderId, "decline", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
+    }
+
+    public static void actionReady(Context context, long workorderId) {
+        action(context, workorderId, "ready", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "");
+    }
+
+    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+        action(context, workorderId, "assignment", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601);
+    }
+
+    public static void actionWithdrawRequest(Context context, long workorderId) {
         try {
+            JsonObject _action = new JsonObject();
+            _action.put("_action[0].action", "withdraw-request");
+
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/counter_offer")
-                            .body(payload))
+                            .method("DELETE")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/withdraw-request"))
                     .transform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
                             workorderId,
                             "merges",
-                            WorkorderTransfer.makeCounterOfferTransfer().getBytes()))
+                            _action.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void postRequest(Context context, long workorderId, long expireInSeconds) {
-        HttpJsonBuilder builder;
-        try {
-            builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                    .method("POST")
-                    .path("/api/rest/v1/workorder/" + workorderId + "/request");
-
-            if (expireInSeconds != -1) {
-                builder.body("expiration=" + expireInSeconds);
-            }
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/Request/" + workorderId)
-                    .request(builder)
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeRequestTransfer().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void postConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
-        try {
-            JsonObject _proc = new JsonObject();
-            _proc.put("_proc.confirm", "working");
-
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth(true)
-                    .key("Workorder/Assignment/" + workorderId)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/assignment")
-                            .body("start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeConfirmAssignment().getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId, String filename) {
         try {
@@ -635,43 +478,6 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
         }
     }
 
-    public static void postDecline(Context context, long workorderId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-                    .useAuth(true)
-                    .key("Workorder/Decline/" + workorderId)
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/decline"))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void postReady(Context context, long workorderId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-                    .key("Workorder/Ready/" + workorderId)
-                    .useAuth(true)
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/ready"))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     public static void postCustomField(Context context, long workorderId, long customFieldId, String value) {
         try {
@@ -926,19 +732,4 @@ public class WorkorderTransactionBuilder implements WorkorderDataConstants {
         }
     }
 
-    public static void deleteRequest(Context context, long workorderId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("DELETE")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/withdraw-request"))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 }

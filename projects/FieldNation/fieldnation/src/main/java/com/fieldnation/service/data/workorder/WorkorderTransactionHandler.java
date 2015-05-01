@@ -15,7 +15,7 @@ import java.text.ParseException;
 /**
  * Created by Michael Carver on 3/6/2015.
  */
-public class WorkorderTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
+public class WorkorderTransactionHandler extends WebTransactionHandler implements WorkorderConstants {
     private static final String TAG = "WorkorderTransactionHandler";
 
     // parameter generators
@@ -90,7 +90,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleCheckIn");
         long workorderId = params.getLong("workorderId");
 
-        WorkorderDispatch.checkIn(context, workorderId, resultData.getByteArray());
+        // TODO... need to do something here
+//        WorkorderDispatch.get(context, workorderId, resultData.getByteArray());
 
         return Result.FINISH;
     }
@@ -100,7 +101,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleCheckOut");
         long workorderId = params.getLong("workorderId");
 
-        WorkorderDispatch.checkOut(context, workorderId, resultData.getByteArray());
+        // TODO... need to do something here
+//        WorkorderDispatch.get(context, workorderId, resultData.getByteArray());
 
         return Result.FINISH;
     }
@@ -122,7 +124,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
         // dispatch the event
-        WorkorderDispatch.workorder(context, workorder, workorderId, transaction.isSync());
+        WorkorderDispatch.get(context, workorder, workorderId, transaction.isSync());
         return Result.FINISH;
     }
 

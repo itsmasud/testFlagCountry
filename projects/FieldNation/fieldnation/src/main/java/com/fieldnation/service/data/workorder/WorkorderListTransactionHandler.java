@@ -15,7 +15,7 @@ import com.fieldnation.utils.Stopwatch;
 /**
  * Created by Michael Carver on 3/4/2015.
  */
-public class WorkorderListTransactionHandler extends WebTransactionHandler implements WorkorderDataConstants {
+public class WorkorderListTransactionHandler extends WebTransactionHandler implements WorkorderConstants {
     private static final String TAG = "WorkorderListTransactionHandler";
 
     public static byte[] generateParams(int page, String selector) {
@@ -54,7 +54,7 @@ public class WorkorderListTransactionHandler extends WebTransactionHandler imple
                 Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
             }
 
-            WorkorderDispatch.workorderList(context, ja, page, selector, transaction.isSync());
+            WorkorderDispatch.list(context, ja, page, selector, transaction.isSync());
 
             return Result.FINISH;
         } catch (Exception ex) {

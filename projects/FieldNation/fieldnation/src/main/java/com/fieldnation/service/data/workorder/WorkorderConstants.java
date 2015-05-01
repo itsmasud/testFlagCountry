@@ -3,7 +3,7 @@ package com.fieldnation.service.data.workorder;
 /**
  * Created by Michael Carver on 3/24/2015.
  */
-public interface WorkorderDataConstants {
+public interface WorkorderConstants {
 
     public static final String PARAM_ACTION = "PARAM_ACTION";
     public static final String PARAM_ACTION_LIST = "WorkorderDataConstants:PARAM_ACTION_LIST";

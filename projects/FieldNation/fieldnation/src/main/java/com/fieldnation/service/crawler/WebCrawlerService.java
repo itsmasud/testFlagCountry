@@ -18,7 +18,8 @@ import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.service.data.profile.ProfileDataClient;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.signature.SignatureClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.util.LinkedList;
@@ -32,7 +33,7 @@ public class WebCrawlerService extends Service {
     private final Object LOCK = new Object();
 
     private ProfileDataClient _profileClient;
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
     private final ThreadManager _workorderThreadManager = new ThreadManager();
     private final List<Workorder> _workorderDetails = new LinkedList<>();
 
@@ -91,7 +92,7 @@ public class WebCrawlerService extends Service {
         _profileClient = new ProfileDataClient(_profileClient_listener);
         _profileClient.connect(this);
 
-        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(this);
     }
 
@@ -151,17 +152,17 @@ public class WebCrawlerService extends Service {
     };
 
 
-    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
             Log.v(TAG, "_workorderClient_listener.onConnected");
-            _workorderClient.registerList(true);
-            _workorderClient.registerDetails(true);
+            _workorderClient.subList(true);
+            _workorderClient.subGet(true);
             _workorderClient.registerDeliverableList(true);
 
-            WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true);
-            WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true);
-            WorkorderDataClient.requestList(WebCrawlerService.this, WorkorderDataSelector.COMPLETED, 0, true);
+            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true);
+            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true);
+            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.COMPLETED, 0, true);
         }
 
         @Override
@@ -172,15 +173,15 @@ public class WebCrawlerService extends Service {
             }
             Log.v(TAG, "onWorkorderList(" + list.size() + "," + selector.getCall() + "," + page + ")");
 
-            WorkorderDataClient.requestList(WebCrawlerService.this, selector, page + 1, true);
+            WorkorderClient.list(WebCrawlerService.this, selector, page + 1, true);
 
             Log.v(TAG, "onWorkorderList, Request details");
             for (int i = 0; i < list.size(); i++) {
                 Workorder workorder = list.get(i);
 
-                WorkorderDataClient.requestDetails(WebCrawlerService.this, workorder.getWorkorderId(), true);
+                WorkorderClient.get(WebCrawlerService.this, workorder.getWorkorderId(), true);
                 if (workorder.getBundleId() != null && workorder.getBundleId() > 0)
-                    WorkorderDataClient.requestBundle(WebCrawlerService.this, workorder.getBundleId(), true);
+                    WorkorderClient.requestBundle(WebCrawlerService.this, workorder.getBundleId(), true);
 
                 // get notifications
                 // get messages
@@ -206,7 +207,7 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "onDeliverableList");
             for (int i = 0; i < list.size(); i++) {
                 Deliverable d = list.get(i);
-                WorkorderDataClient.requestDownloadDeliverable(WebCrawlerService.this, workorderId,
+                WorkorderClient.requestDownloadDeliverable(WebCrawlerService.this, workorderId,
                         d.getWorkorderUploadId(), d.getStorageSrc(), true);
             }
 
@@ -244,7 +245,8 @@ public class WebCrawlerService extends Service {
             if (sigs != null && sigs.length > 0) {
                 for (int i = 0; i < sigs.length; i++) {
                     Log.v(TAG, "getSignature");
-                    WorkorderDataClient.requestGetSignature(_context, workorder.getWorkorderId(), sigs[i].getSignatureId(), true);
+
+                    SignatureClient.get(_context, workorder.getWorkorderId(), sigs[i].getSignatureId(), true);
                 }
             }
 
@@ -267,8 +269,8 @@ public class WebCrawlerService extends Service {
             }
 
             Deliverable[] deliverables = workorder.getDeliverables();
-            if (deliverables != null && deliverables.length > 0){
-                WorkorderDataClient.requestDeliverableList(WebCrawlerService.this, workorder.getWorkorderId(), true);
+            if (deliverables != null && deliverables.length > 0) {
+                WorkorderClient.requestDeliverableList(WebCrawlerService.this, workorder.getWorkorderId(), true);
             }
             return true;
         }

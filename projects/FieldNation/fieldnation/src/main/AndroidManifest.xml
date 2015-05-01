@@ -213,7 +213,7 @@
             android:exported="false"
             android:process=":backside" />
         <service
-            android:name=".service.data.workorder.WorkorderDataService"
+            android:name=".service.data.workorder.WorkorderService"
             android:exported="false"
             android:process=":backside" />
         <service

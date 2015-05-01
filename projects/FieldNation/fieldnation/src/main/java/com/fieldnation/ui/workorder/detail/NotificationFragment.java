@@ -10,7 +10,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -31,7 +31,7 @@ public class NotificationFragment extends WorkorderFragment {
     // Data
     private Workorder _workorder;
     private Random _rand = new Random();
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
     private List<Notification> _notes;
     private NotificationListAdapter _adapter;
 

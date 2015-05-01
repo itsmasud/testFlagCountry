@@ -12,9 +12,9 @@ import java.io.File;
 /**
  * Created by Michael Carver on 4/20/2015.
  */
-public class WorkorderDispatch implements WorkorderDataConstants {
+public class WorkorderDispatch implements WorkorderConstants {
 
-    public static void workorder(Context context, JsonObject workorder, long workorderId, boolean isSync) {
+    public static void get(Context context, JsonObject workorder, long workorderId, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_DETAILS);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
@@ -24,7 +24,7 @@ public class WorkorderDispatch implements WorkorderDataConstants {
                 + (isSync ? "-SYNC" : "") + "/" + workorderId, bundle, true);
     }
 
-    public static void workorderList(Context context, JsonArray workorders, int page, String selector, boolean isSync) {
+    public static void list(Context context, JsonArray workorders, int page, String selector, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_DATA_PARCELABLE, workorders);
         bundle.putInt(PARAM_PAGE, page);
@@ -44,22 +44,6 @@ public class WorkorderDispatch implements WorkorderDataConstants {
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE
                 + (isSync ? "-SYNC" : ""), bundle, true);
-    }
-
-    public static void checkIn(Context context, long workorderId, byte[] data) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_CHECKIN);
-        bundle.putLong(PARAM_ID, workorderId);
-        bundle.putByteArray(PARAM_DATA_BYTE_ARRAY, data);
-        TopicService.dispatchEvent(context, PARAM_ACTION_CHECKIN, bundle, true);
-    }
-
-    public static void checkOut(Context context, long workorderId, byte[] data) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_CHECKOUT);
-        bundle.putLong(PARAM_ID, workorderId);
-        bundle.putByteArray(PARAM_DATA_BYTE_ARRAY, data);
-        TopicService.dispatchEvent(context, PARAM_ACTION_CHECKOUT, bundle, true);
     }
 
     public static void signature(Context context, JsonObject signature, long workorderId, long signatureId, boolean isSync) {

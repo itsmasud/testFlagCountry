@@ -19,7 +19,8 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.signature.SignatureClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.utils.misc;
 
 /**
@@ -68,7 +69,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private long _signatureId = -1;
 
     // Service
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
+    private SignatureClient _signatureClient;
 
     @Override
     public int getLayoutResource() {
@@ -101,8 +103,11 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         _loadingView = (LoadingView) findViewById(R.id.loading_view);
 
-        _workorderClient = new WorkorderDataClient(_workorderClient_listener);
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(this);
+
+        _signatureClient = new SignatureClient(_signatureClient_listener);
+        _signatureClient.connect(this);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -189,10 +194,10 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _loadingView.setVisibility(View.VISIBLE);
 
         if (_workorderClient.isConnected()) {
-            _workorderClient.registerGetSignature(_workorder.getWorkorderId(), _signatureId, false);
+            _signatureClient.subGet(_workorder.getWorkorderId(), _signatureId, false);
         }
 
-        WorkorderDataClient.requestGetSignature(this, _workorder.getWorkorderId(), _signatureId);
+        SignatureClient.get(this, _workorder.getWorkorderId(), _signatureId);
     }
 
     @Override
@@ -297,7 +302,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _loadingView.setVisibility(View.GONE);
     }
 
-    private final WorkorderDataClient.Listener _workorderClient_listener = new WorkorderDataClient.Listener() {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
         }
@@ -306,6 +311,13 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         public void onGetSignature(Signature signature) {
             _signature = signature;
             populateUi();
+        }
+    };
+
+    private final SignatureClient.Listener _signatureClient_listener = new SignatureClient.Listener() {
+        @Override
+        public void onConnected() {
+
         }
     };
 

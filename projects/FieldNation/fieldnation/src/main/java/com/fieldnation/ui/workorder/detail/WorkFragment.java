@@ -45,7 +45,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.profile.ProfileDataClient;
-import com.fieldnation.service.data.workorder.WorkorderDataClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GpsLocationService;
 import com.fieldnation.ui.OverScrollView;
@@ -144,7 +144,7 @@ public class WorkFragment extends WorkorderFragment {
     private OneButtonDialog _locationLoadingDialog;
 
     // Data
-    private WorkorderDataClient _workorderClient;
+    private WorkorderClient _workorderClient;
     private ProfileDataClient _profileClient;
 
     private File _tempFile;
@@ -573,12 +573,12 @@ public class WorkFragment extends WorkorderFragment {
         _gpsLocationService.setListener(null);
         GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity", GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
-            WorkorderDataClient.requestCheckin(getActivity(), _workorder.getWorkorderId(),
+            WorkorderClient.actionCheckin(getActivity(), _workorder.getWorkorderId(),
                     _gpsLocationService.getLocation());
         } else {
-            WorkorderDataClient.requestCheckin(getActivity(), _workorder.getWorkorderId());
+            WorkorderClient.actionCheckin(getActivity(), _workorder.getWorkorderId());
         }
-        WorkorderDataClient.requestDetails(getActivity(), _workorder.getWorkorderId());
+        WorkorderClient.get(getActivity(), _workorder.getWorkorderId());
     }
 
     private void doCheckOut() {
@@ -588,18 +588,18 @@ public class WorkFragment extends WorkorderFragment {
                 GoogleAnalyticsTopicClient.EventAction.CHECKOUT, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
-                WorkorderDataClient.requestCheckout(getActivity(), _workorder.getWorkorderId(),
+                WorkorderClient.actionCheckout(getActivity(), _workorder.getWorkorderId(),
                         _deviceCount, _gpsLocationService.getLocation());
             } else {
-                WorkorderDataClient.requestCheckout(getActivity(), _workorder.getWorkorderId(),
+                WorkorderClient.actionCheckout(getActivity(), _workorder.getWorkorderId(),
                         _gpsLocationService.getLocation());
             }
         } else {
             if (_deviceCount > -1) {
-                WorkorderDataClient.requestCheckout(getActivity(), _workorder.getWorkorderId(),
+                WorkorderClient.actionCheckout(getActivity(), _workorder.getWorkorderId(),
                         _deviceCount);
             } else {
-                WorkorderDataClient.requestCheckout(getActivity(), _workorder.getWorkorderId());
+                WorkorderClient.actionCheckout(getActivity(), _workorder.getWorkorderId());
             }
         }
     }
@@ -644,11 +644,11 @@ public class WorkFragment extends WorkorderFragment {
                 && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
-                WorkorderDataClient.requestUploadDeliverable(getActivity(),
+                WorkorderClient.requestUploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(), _currentTask.getSlotId(), _tempFile.getName(),
                         _tempFile.getAbsolutePath());
             } else {
-                WorkorderDataClient.requestUploadDeliverable(getActivity(),
+                WorkorderClient.requestUploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(), _currentTask.getSlotId(), data);
             }
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
@@ -714,7 +714,7 @@ public class WorkFragment extends WorkorderFragment {
     private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
-            WorkorderDataClient.requestSetClosingNotes(getActivity(), _workorder.getWorkorderId(), message);
+            WorkorderClient.actionSetClosingNotes(getActivity(), _workorder.getWorkorderId(), message);
             _workorder.dispatchOnChange();
             setLoading(true);
         }
@@ -731,7 +731,7 @@ public class WorkFragment extends WorkorderFragment {
                 GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
                         GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkFragment", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                WorkorderDataClient.requestConfirmAssignment(getActivity(),
+                WorkorderClient.actionConfirmAssignment(getActivity(),
                         _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
                 setLoading(true);
 
