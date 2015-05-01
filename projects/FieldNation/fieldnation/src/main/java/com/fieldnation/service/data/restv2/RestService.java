@@ -83,8 +83,9 @@ public class RestService extends MSService implements RestConstants {
         String action = intent.getStringExtra(PARAM_ACTION);
         boolean isSync = intent.getBooleanExtra(PARAM_SYNC, false);
         String params = intent.getStringExtra(PARAM_URL_PARAMS);
-        String body = intent.getStringExtra(PARAM_OBJECT_DATA_STRING);
         String contentType = intent.getStringExtra(PARAM_CONTENT_TYPE);
+
+        String body = intent.getStringExtra(PARAM_OBJECT_DATA_STRING);
 
         RestTransactionBuilder.action(context, resultTag, objectType, id, action, params, contentType, body, isSync);
 

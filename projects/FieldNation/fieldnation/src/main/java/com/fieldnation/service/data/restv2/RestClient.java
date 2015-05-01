@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
 
+import java.io.File;
+
 /**
  * Created by Michael Carver on 4/30/2015.
  */
@@ -29,12 +31,33 @@ public class RestClient extends TopicClient implements RestConstants {
         context.startService(intent);
     }
 
-    public static void create(Context context, String resultTag, String objectType, byte[] obj) {
+    // TODO, I don't like this, wont handle files, or large data, doesn't handle different content types
+    public static void create(Context context, String resultTag, String objectType, String contentType, byte[] obj) {
         Intent intent = new Intent(context, RestService.class);
         intent.putExtra(PARAM_TOPIC, TOPIC_CREATE);
         intent.putExtra(PARAM_RESULT_TAG, resultTag);
         intent.putExtra(PARAM_OBJECT_TYPE, objectType);
+        intent.putExtra(PARAM_CONTENT_TYPE, contentType);
         intent.putExtra(PARAM_OBJECT_DATA_BYTE_ARRAY, obj);
+        context.startService(intent);
+    }
+
+    public static void create(Context context, String resultTag, String objectType, String contentType, String obj) {
+        Intent intent = new Intent(context, RestService.class);
+        intent.putExtra(PARAM_TOPIC, TOPIC_CREATE);
+        intent.putExtra(PARAM_RESULT_TAG, resultTag);
+        intent.putExtra(PARAM_OBJECT_TYPE, objectType);
+        intent.putExtra(PARAM_CONTENT_TYPE, contentType);
+        intent.putExtra(PARAM_OBJECT_DATA_STRING, obj);
+        context.startService(intent);
+    }
+
+    public static void create(Context context, String resultTag, String objectType, File file) {
+        Intent intent = new Intent(context, RestService.class);
+        intent.putExtra(PARAM_TOPIC, TOPIC_CREATE);
+        intent.putExtra(PARAM_RESULT_TAG, resultTag);
+        intent.putExtra(PARAM_OBJECT_TYPE, objectType);
+        intent.putExtra(PARAM_OBJECT_DATA_FILE, file);
         context.startService(intent);
     }
 
@@ -48,17 +71,40 @@ public class RestClient extends TopicClient implements RestConstants {
         context.startService(intent);
     }
 
-    public static void update(Context context, String resultTag, String objectType, String id, byte[] body, boolean isSync) {
+    public static void update(Context context, String resultTag, String objectType, String id, String contentType, byte[] body, boolean isSync) {
         Intent intent = new Intent(context, RestService.class);
         intent.putExtra(PARAM_TOPIC, TOPIC_GET);
         intent.putExtra(PARAM_RESULT_TAG, resultTag);
         intent.putExtra(PARAM_OBJECT_TYPE, objectType);
         intent.putExtra(PARAM_OBJECT_ID, id);
+        intent.putExtra(PARAM_CONTENT_TYPE, contentType);
         intent.putExtra(PARAM_OBJECT_DATA_BYTE_ARRAY, body);
         intent.putExtra(PARAM_SYNC, isSync);
         context.startService(intent);
     }
 
+    public static void update(Context context, String resultTag, String objectType, String id, String contentType, String body, boolean isSync) {
+        Intent intent = new Intent(context, RestService.class);
+        intent.putExtra(PARAM_TOPIC, TOPIC_GET);
+        intent.putExtra(PARAM_RESULT_TAG, resultTag);
+        intent.putExtra(PARAM_OBJECT_TYPE, objectType);
+        intent.putExtra(PARAM_OBJECT_ID, id);
+        intent.putExtra(PARAM_CONTENT_TYPE, contentType);
+        intent.putExtra(PARAM_OBJECT_DATA_STRING, body);
+        intent.putExtra(PARAM_SYNC, isSync);
+        context.startService(intent);
+    }
+
+    public static void update(Context context, String resultTag, String objectType, String id, File file, boolean isSync) {
+        Intent intent = new Intent(context, RestService.class);
+        intent.putExtra(PARAM_TOPIC, TOPIC_GET);
+        intent.putExtra(PARAM_RESULT_TAG, resultTag);
+        intent.putExtra(PARAM_OBJECT_TYPE, objectType);
+        intent.putExtra(PARAM_OBJECT_ID, id);
+        intent.putExtra(PARAM_OBJECT_DATA_FILE, file);
+        intent.putExtra(PARAM_SYNC, isSync);
+        context.startService(intent);
+    }
 
     public static void delete(Context context, String resultTag, String objectType, String id, boolean isSync) {
         Intent intent = new Intent(context, RestService.class);
@@ -103,6 +149,24 @@ public class RestClient extends TopicClient implements RestConstants {
             if (id != null) {
                 topicId += "/" + id;
             }
+        }
+
+        return register(topicId, TAG);
+    }
+
+    public boolean subList(String resultTag, String objectType, boolean isSync) {
+        String topicId = TOPIC_OBJECT + "_LIST";
+
+        if (isSync) {
+            topicId += "_SYNC";
+        }
+
+        if (resultTag != null) {
+            topicId += "/" + resultTag;
+        }
+
+        if (objectType != null) {
+            topicId += "/" + objectType;
         }
 
         return register(topicId, TAG);

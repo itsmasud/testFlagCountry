@@ -25,7 +25,7 @@ import java.io.File;
  */
 public class WorkorderTransactionBuilder implements WorkorderConstants {
 
-    public static void getWorkorder(Context context, long workorderId, boolean isSync) {
+    public static void get(Context context, long workorderId, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
@@ -44,7 +44,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void getWorkorderList(Context context, String selector, int page, boolean isSync) {
+    public static void list(Context context, String selector, int page, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
@@ -58,181 +58,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .method("GET")
                             .path("/api/rest/v1/workorder/" + selector)
                             .urlParams("?page=" + page))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void getSignature(Context context, long workorderId, long signatureId, boolean isSync) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
-                    .key((isSync ? "Sync/" : "") + "GetSignature/" + workorderId + "/" + signatureId)
-                    .useAuth(true)
-                    .isSyncCall(isSync)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void getBundle(Context context, long bundleId, boolean isSync) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(BundleTransactionHandler.class)
-                    .handlerParams(BundleTransactionHandler.pBundle(bundleId))
-                    .key((isSync ? "Sync/" : "") + "GetBundle/" + bundleId)
-                    .useAuth(true)
-                    .isSyncCall(isSync)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/bundle/" + bundleId))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(DeliverableTransactionHandler.class)
-                    .handlerParams(DeliverableTransactionHandler.pGet(workorderId, deliverableId))
-                    .key((isSync ? "Sync/" : "") + "GetDeliverable/" + workorderId + "/" + deliverableId)
-                    .useAuth(true)
-                    .isSyncCall(isSync)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void listDeliverables(Context context, long workorderId, boolean isSync) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(DeliverableTransactionHandler.class)
-                    .handlerParams(DeliverableTransactionHandler.pList(workorderId))
-                    .key((isSync ? "Sync/" : "") + "ListDeliverables/" + workorderId)
-                    .useAuth(true)
-                    .isSyncCall(isSync)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/deliverables"))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(DeliverableTransactionHandler.class)
-                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
-                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
-                    .isSyncCall(isSync)
-                    .request(new HttpJsonBuilder()
-                            .method("GET")
-                            .path(url))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void postDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
-        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
-
-        try {
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
-                    .multipartFile("file", filename, upFile)
-                    .doNotRead();
-
-            if (uploadSlotId != 0) {
-                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
-            }
-
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(DeliverableTransactionHandler.class)
-                    .handlerParams(DeliverableTransactionHandler.pChange(workorderId))
-                    .useAuth(true)
-                    .request(builder)
-                    .transform(Transform.makeTransformQuery(
-                            "Workorder",
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeUploadDeliverable(uploadSlotId, filename).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void postSignatureJson(Context context, long workorderId, String name, String json) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/signature")
-                            .body("signatureFormat=json"
-                                    + "&printName=" + misc.escapeForURL(name)
-                                    + "&signature=" + json))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeAddSignatureTransfer(name).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void postSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
-                            .body("print_name=" + misc.escapeForURL(name)
-                                    + "&signature_json=" + json))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCompletingTaskTransfer("signature", taskId, name).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -446,6 +271,181 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             workorderId,
                             "merges",
                             _action.toByteArray()))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void getSignature(Context context, long workorderId, long signatureId, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
+                    .key((isSync ? "Sync/" : "") + "GetSignature/" + workorderId + "/" + signatureId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void getBundle(Context context, long bundleId, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(BundleTransactionHandler.class)
+                    .handlerParams(BundleTransactionHandler.pBundle(bundleId))
+                    .key((isSync ? "Sync/" : "") + "GetBundle/" + bundleId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/bundle/" + bundleId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pGet(workorderId, deliverableId))
+                    .key((isSync ? "Sync/" : "") + "GetDeliverable/" + workorderId + "/" + deliverableId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void listDeliverables(Context context, long workorderId, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pList(workorderId))
+                    .key((isSync ? "Sync/" : "") + "ListDeliverables/" + workorderId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/deliverables"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
+                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .method("GET")
+                            .path(url))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
+        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
+
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
+                    .multipartFile("file", filename, upFile)
+                    .doNotRead();
+
+            if (uploadSlotId != 0) {
+                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
+            }
+
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(DeliverableTransactionHandler.class)
+                    .handlerParams(DeliverableTransactionHandler.pChange(workorderId))
+                    .useAuth(true)
+                    .request(builder)
+                    .transform(Transform.makeTransformQuery(
+                            "Workorder",
+                            workorderId,
+                            "merges",
+                            WorkorderTransfer.makeUploadDeliverable(uploadSlotId, filename).getBytes()))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postSignatureJson(Context context, long workorderId, String name, String json) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(NullWebTransactionHandler.class)
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/signature")
+                            .body("signatureFormat=json"
+                                    + "&printName=" + misc.escapeForURL(name)
+                                    + "&signature=" + json))
+                    .transform(Transform.makeTransformQuery(
+                            PSO_WORKORDER,
+                            workorderId,
+                            "merges",
+                            WorkorderTransfer.makeAddSignatureTransfer(name).getBytes()))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void postSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
+                            .body("print_name=" + misc.escapeForURL(name)
+                                    + "&signature_json=" + json))
+                    .transform(Transform.makeTransformQuery(
+                            PSO_WORKORDER,
+                            workorderId,
+                            "merges",
+                            WorkorderTransfer.makeCompletingTaskTransfer("signature", taskId, name).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();

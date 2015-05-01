@@ -21,6 +21,7 @@ public interface RestConstants {
     public static final String PARAM_OBJECT_DATA_BYTE_ARRAY = "PARAM_OBJECT_DATA_BYTE_ARRAY";
     public static final String PARAM_OBJECT_DATA_PARCELABLE = "PARAM_OBJECT_DATA_PARCELABLE";
     public static final String PARAM_OBJECT_DATA_BUNDLE = "PARAM_OBJECT_DATA_BUNDLE";
+    public static final String PARAM_OBJECT_DATA_FILE = "PARAM_OBJECT_DATA_FILE";
     public static final String PARAM_OBJECT_ID = "PARAM_OBJECT_ID";
     public static final String PARAM_URL_PARAMS = "PARAM_URL_PARAMS";
     public static final String PARAM_CONTENT_TYPE = "PARAM_CONTENT_TYPE";

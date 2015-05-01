@@ -19,7 +19,7 @@ public class RestTransactionBuilder {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(RestTransactionHandler.class)
-                    .handlerParams(RestTransactionHandler.pList(resultTag))
+                    .handlerParams(RestTransactionHandler.pList(resultTag, objectType))
                     .key((isSync ? "Sync/" : "") + "List" + objectType)
                     .useAuth(true)
                     .isSyncCall(isSync)
@@ -38,15 +38,15 @@ public class RestTransactionBuilder {
     public static void action(Context context, String resultTag, String objectType, String id,
                               String action, String params, String contentType, String body, boolean isSync) {
         try {
-            JsonObject actionDescription = new JsonObject();
-            actionDescription.put("_action[0].resultTag", resultTag);
-            actionDescription.put("_action[0].action", action);
-            actionDescription.put("_action[0].params", params);
+            JsonObject _action = new JsonObject();
+            _action.put("_action[0].resultTag", resultTag);
+            _action.put("_action[0].action", action);
+            _action.put("_action[0].params", params);
 
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
-                    .path("/api/rest/v1/" + objectType + "/" + id + "/" + action);
+                    .path(REST_PATH + objectType + "/" + id + "/" + action);
 
             if (params != null) {
                 http.urlParams(params);
@@ -72,13 +72,12 @@ public class RestTransactionBuilder {
                             objectType,
                             id,
                             "merges",
-                            actionDescription.toByteArray()))
+                            _action.toByteArray()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-
 
     public static void create(Context context, String resultTag, String objectType, String body) {
         try {

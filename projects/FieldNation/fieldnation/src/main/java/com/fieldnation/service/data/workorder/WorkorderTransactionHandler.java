@@ -116,8 +116,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         Log.v(TAG, "handleDetails workorderId:" + workorderId);
 
-        // store it in the store
-        StoredObject.put(context, PSO_WORKORDER, workorderId, workorderData);
 
         JsonObject workorder = new JsonObject(workorderData);
 
@@ -125,6 +123,10 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         // dispatch the event
         WorkorderDispatch.get(context, workorder, workorderId, transaction.isSync());
+
+        // store it in the store
+        StoredObject.put(context, PSO_WORKORDER, workorderId, workorderData);
+
         return Result.FINISH;
     }
 
@@ -133,10 +135,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long signatureId = params.getLong("signatureId");
         byte[] data = resultData.getByteArray();
 
-        //store the signature data
-        StoredObject.put(context, PSO_SIGNATURE, signatureId, data);
 
         WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, transaction.isSync());
+
+        //store the signature data
+        StoredObject.put(context, PSO_SIGNATURE, signatureId, data);
 
         return Result.FINISH;
     }

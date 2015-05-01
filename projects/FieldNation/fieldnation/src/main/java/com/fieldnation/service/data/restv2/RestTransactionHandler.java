@@ -2,7 +2,6 @@ package com.fieldnation.service.data.restv2;
 
 import android.content.Context;
 
-import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -16,10 +15,11 @@ import java.text.ParseException;
  */
 public class RestTransactionHandler extends WebTransactionHandler {
 
-    public static byte[] pList(String resultTag) {
+    public static byte[] pList(String resultTag, String objectType) {
         try {
             JsonObject obj = new JsonObject("action", "pList");
             obj.put("resultTag", resultTag);
+            obj.put("objectType", objectType);
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -76,27 +76,33 @@ public class RestTransactionHandler extends WebTransactionHandler {
 
     private static Result list(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         String resultTag = params.getString("resultTag");
+        String objectType = params.getString("objectType");
 
-        JsonArray ja = new JsonArray(resultData.getByteArray());
+        JsonObject envelope = resultData.getJsonObject();
 
-        for (int i = 0; i < ja.size(); i++) {
-            JsonObject obj = ja.getJsonObject(i);
-            String type = obj.getString("object");
+        // TODO not sure I wanna do this
+/*
+        JsonArray list = envelope.getJsonArray("list");
+        for (int i = 0; i < list.size(); i++) {
+            JsonObject obj = list.getJsonObject(i);
             String id = obj.getString("id");
 
             // do this first, it's fast
-            RestDispatch.object(context, resultTag, type, id, obj, transaction.isSync());
+            RestDispatch.object(context, resultTag, objectType, id, obj, transaction.isSync());
         }
 
-        for (int i = 0; i < ja.size(); i++) {
-            JsonObject obj = ja.getJsonObject(i);
-            String type = obj.getString("object");
+        for (int i = 0; i < list.size(); i++) {
+            JsonObject obj = list.getJsonObject(i);
             String id = obj.getString("id");
 
             // do this second, it's slow
-            StoredObject.put(context, type, id, obj.toByteArray());
+            StoredObject.put(context, objectType, id, obj.toByteArray());
         }
+*/
 
+        RestDispatch.list(context, resultTag, objectType, envelope, transaction.isSync());
+
+        StoredObject.put(context, objectType + "List", envelope.getLong("page"), envelope.toByteArray());
 
         return Result.FINISH;
     }

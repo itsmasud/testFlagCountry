@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.topics.TopicService;
 
 /**
@@ -40,7 +41,8 @@ public class RestDispatch implements RestConstants {
         TopicService.dispatchEvent(context, topicId, bundle, true);
     }
 
-    public static void object(Context context, String resultTag, String objectType, String id, Parcelable object, boolean isSync) {
+    public static void object(Context context, String resultTag, String objectType, String id,
+                              Parcelable object, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_RESULT_TAG, resultTag);
         bundle.putString(PARAM_OBJECT_TYPE, objectType);
@@ -64,6 +66,31 @@ public class RestDispatch implements RestConstants {
             if (id != null) {
                 topicId += "/" + id;
             }
+        }
+
+        TopicService.dispatchEvent(context, topicId, bundle, true);
+    }
+
+    public static void list(Context context, String resultTag, String objectType,
+                            JsonObject envelope, boolean isSync) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_RESULT_TAG, resultTag);
+        bundle.putString(PARAM_OBJECT_TYPE, objectType);
+        bundle.putParcelable(PARAM_OBJECT_DATA_PARCELABLE, envelope);
+        bundle.putBoolean(PARAM_SYNC, isSync);
+
+        String topicId = TOPIC_OBJECT + "_LIST";
+
+        if (isSync) {
+            topicId += "_SYNC";
+        }
+
+        if (resultTag != null) {
+            topicId += "/" + resultTag;
+        }
+
+        if (objectType != null) {
+            topicId += "/" + objectType;
         }
 
         TopicService.dispatchEvent(context, topicId, bundle, true);
