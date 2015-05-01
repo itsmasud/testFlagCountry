@@ -400,6 +400,12 @@ public class DrawerView extends RelativeLayout {
         } else {
             _paidLayout.setVisibility(View.GONE);
         }
+
+        if (_profile != null && _profile.getCanViewPayments()) {
+            _paymentView.setVisibility(View.VISIBLE);
+        } else {
+            _paymentView.setVisibility(View.GONE);
+        }
     }
 
     private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {

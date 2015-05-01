@@ -11,8 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
@@ -558,7 +560,7 @@ public class WorkorderCardView extends RelativeLayout {
         // if Hourly, then use pay.fixedAmount
         // if Blended, then use payblendedAdditionalRate
         Pay pay = _workorder.getPay();
-        if (pay != null) {
+        if (pay != null && _workorder.getCanViewServicePayRateInfo()) {
             String desc = pay.toDisplayStringShort();
             _basisTextView.setText(pay.getPayRateBasis());
             if (desc != null) {
@@ -800,13 +802,16 @@ public class WorkorderCardView extends RelativeLayout {
                 _rightLayout.setVisibility(VISIBLE);
                 break;
             case APPROVED_PROCESSINGPAYMENT:
-                _actionButton.setText("Payments");
+                Profile profile = GlobalState.getContext().getProfile();
+                if (profile != null && profile.getCanViewPayments()) {
+                    _actionButton.setVisibility(VISIBLE);
+                    _actionButton.setText("Payments");
+                }
 
                 _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _rightLayout.setVisibility(VISIBLE);
-                _actionButton.setVisibility(VISIBLE);
                 break;
             case PAID:
                 _titleTextView.setVisibility(VISIBLE);
@@ -839,8 +844,11 @@ public class WorkorderCardView extends RelativeLayout {
             case CANCELED_LATEFEEPAID:
                 break;
             case CANCELED_LATEFEEPROCESSING:
-                _actionButton.setVisibility(VISIBLE);
-                _actionButton.setText("Payments");
+                Profile profile = GlobalState.getContext().getProfile();
+                if (profile != null && profile.getCanViewPayments()) {
+                    _actionButton.setVisibility(VISIBLE);
+                    _actionButton.setText("Payments");
+                }
                 break;
             default:
                 Log.v(TAG,
