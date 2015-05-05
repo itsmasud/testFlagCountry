@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-
 import android.view.Window;
 import android.widget.Toast;
 
@@ -342,7 +341,14 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(SignOffActivity.this);
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getByteArray(KEY_RESPONSE_ERROR) != null) {
+                String response = new String(resultData.getByteArray(KEY_RESPONSE_ERROR));
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(getContext(), true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(getContext(), false);
             Toast.makeText(SignOffActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
             _thankYouFrag.setUploadComplete();
         }

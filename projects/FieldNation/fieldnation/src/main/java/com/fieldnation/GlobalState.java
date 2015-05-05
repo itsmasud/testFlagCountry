@@ -161,7 +161,14 @@ public class GlobalState extends Application {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             _service = null;
-            AuthTopicService.requestAuthInvalid(GlobalState.this);
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getByteArray(KEY_RESPONSE_ERROR) != null) {
+                String response = new String(resultData.getByteArray(KEY_RESPONSE_ERROR));
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(GlobalState.this, true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(GlobalState.this, false);
         }
     };
 

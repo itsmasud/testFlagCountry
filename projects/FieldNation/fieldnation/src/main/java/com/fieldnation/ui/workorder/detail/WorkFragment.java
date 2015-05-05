@@ -1515,7 +1515,15 @@ public class WorkFragment extends WorkorderFragment {
             _authToken = null;
             _service = null;
             _profileService = null;
-            AuthTopicService.requestAuthInvalid(GlobalState.getContext());
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getByteArray(KEY_RESPONSE_ERROR) != null) {
+                String response = new String(resultData.getByteArray(KEY_RESPONSE_ERROR));
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(getContext(), true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(getContext(), false);
+
             try {
                 Toast.makeText(GlobalState.getContext(), new String(resultData.getByteArray(KEY_RESPONSE_DATA)), Toast.LENGTH_LONG).show();
             } catch (Exception ex) {

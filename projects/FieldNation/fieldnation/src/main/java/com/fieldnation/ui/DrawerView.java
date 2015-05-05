@@ -247,10 +247,12 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), PaymentListActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            attachAnimations();
+//            Intent intent = new Intent(getContext(), PaymentListActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            getContext().startActivity(intent);
+//            attachAnimations();
+            AuthTopicService.requestAuthInvalid(getContext(), false);
+
         }
     };
     private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
@@ -260,17 +262,19 @@ public class DrawerView extends RelativeLayout {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getContext().startActivity(intent);
 //            attachAnimations();
-            AuthTopicService.requestAuthInvalid(getContext());
+            AuthTopicService.requestAuthInvalid(getContext(), false);
         }
     };
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AuthTopicService.requestAuthRemove(getContext());
-
-            Log.v(TAG, "SplashActivity");
-            SplashActivity.startNew(getContext());
-            attachAnimations();
+//            AuthTopicService.requestAuthRemove(getContext());
+//
+//            Log.v(TAG, "SplashActivity");
+//            SplashActivity.startNew(getContext());
+//            attachAnimations();
+//            AuthTopicService.requestAuthInvalid(getContext(), false);
+            Topics.dispatchNetworkDown(getContext());
         }
     };
 
@@ -418,7 +422,14 @@ public class DrawerView extends RelativeLayout {
             super.onError(resultCode, resultData, errorType);
 
             _dataService = null;
-            AuthTopicService.requestAuthInvalid(getContext());
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getByteArray(KEY_RESPONSE_ERROR) != null) {
+                String response = new String(resultData.getByteArray(KEY_RESPONSE_ERROR));
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(getContext(), true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(getContext(), false);
         }
     };
 

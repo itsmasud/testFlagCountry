@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.app.NotificationCompat;
 
-
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -117,6 +116,7 @@ public class HttpPostFileRunnable extends HttpRunnable implements WebServiceCons
                 _noteManager.notify(NOTIFICATION_ID, _noteBuilder.build());
             } else {
                 try {
+                    Topics.dispatchNetworkUp(_context);
                     // happy path
                     _bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
                     _bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());

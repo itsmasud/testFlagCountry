@@ -179,7 +179,14 @@ public abstract class ItemListActivity<O> extends DrawerActivity {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             invalidateService();
-            AuthTopicService.requestAuthInvalid(getApplicationContext());
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getByteArray(KEY_RESPONSE_ERROR) != null) {
+                String response = new String(resultData.getByteArray(KEY_RESPONSE_ERROR));
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(getContext(), true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(getContext(), false);
             Toast.makeText(ItemListActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
             _refreshView.refreshFailed();
         }
