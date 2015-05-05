@@ -104,7 +104,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             }
         }
 
-        WorkorderTransactionBuilder.getWorkorderList(context, selector, page, isSync);
+        WorkorderTransactionBuilder.list(context, selector, page, isSync);
     }
 
     private static void details(Context context, Intent intent) {
@@ -112,7 +112,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        WorkorderTransactionBuilder.getWorkorder(context, workorderId, isSync);
+        WorkorderTransactionBuilder.get(context, workorderId, isSync);
 
         StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
         if (obj != null) {

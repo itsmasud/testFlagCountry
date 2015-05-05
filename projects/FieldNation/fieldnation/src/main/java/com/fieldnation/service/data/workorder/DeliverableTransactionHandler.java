@@ -91,7 +91,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
     public Result handleChange(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         long workorderId = params.getLong("workorderId");
 
-        WorkorderTransactionBuilder.getWorkorder(context, workorderId, false);
+        WorkorderTransactionBuilder.get(context, workorderId, false);
 
         return Result.FINISH;
     }
