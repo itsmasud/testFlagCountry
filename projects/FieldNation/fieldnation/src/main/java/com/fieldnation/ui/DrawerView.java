@@ -247,34 +247,34 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            Intent intent = new Intent(getContext(), PaymentListActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            getContext().startActivity(intent);
-//            attachAnimations();
-            AuthTopicService.requestAuthInvalid(getContext(), false);
+            Intent intent = new Intent(getContext(), PaymentListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+            attachAnimations();
+//            AuthTopicService.requestAuthInvalid(getContext(), false);
 
         }
     };
     private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            Intent intent = new Intent(getContext(), SettingsActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            getContext().startActivity(intent);
-//            attachAnimations();
-            AuthTopicService.requestAuthInvalid(getContext(), false);
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+            attachAnimations();
+//            AuthTopicService.requestAuthInvalid(getContext(), false);
         }
     };
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            AuthTopicService.requestAuthRemove(getContext());
-//
-//            Log.v(TAG, "SplashActivity");
-//            SplashActivity.startNew(getContext());
-//            attachAnimations();
-//            AuthTopicService.requestAuthInvalid(getContext(), false);
-            Topics.dispatchNetworkDown(getContext());
+            AuthTopicService.requestAuthRemove(getContext());
+
+            Log.v(TAG, "SplashActivity");
+            SplashActivity.startNew(getContext());
+            attachAnimations();
+            AuthTopicService.requestAuthInvalid(getContext(), false);
+//            Topics.dispatchNetworkDown(getContext());
         }
     };
 
