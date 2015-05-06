@@ -241,7 +241,7 @@ public class Workorder implements Parcelable {
         if (_canViewServicePayRateInfo == null)
             return true;
 
-        return false;
+        return _canViewServicePayRateInfo;
     }
 
     public Double getCancelFee() {
