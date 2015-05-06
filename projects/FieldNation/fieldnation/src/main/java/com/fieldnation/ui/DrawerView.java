@@ -209,7 +209,7 @@ public class DrawerView extends RelativeLayout {
     private final OnClickListener _sendlog_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            File tempfile = misc.dumpLogcat(getContext());
+            File tempfile = misc.dumpLogcat(getContext(), BuildConfig.VERSION_NAME);
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("plain/text");
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
@@ -251,6 +251,8 @@ public class DrawerView extends RelativeLayout {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
+//            AuthTopicService.requestAuthInvalid(getContext(), false);
+
         }
     };
     private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
@@ -260,7 +262,7 @@ public class DrawerView extends RelativeLayout {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getContext().startActivity(intent);
 //            attachAnimations();
-            AuthTopicService.requestAuthInvalid(getContext());
+//            AuthTopicService.requestAuthInvalid(getContext(), false);
         }
     };
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
@@ -271,6 +273,8 @@ public class DrawerView extends RelativeLayout {
             Log.v(TAG, "SplashActivity");
             SplashActivity.startNew(getContext());
             attachAnimations();
+            AuthTopicService.requestAuthInvalid(getContext(), false);
+//            Topics.dispatchNetworkDown(getContext());
         }
     };
 
@@ -424,7 +428,14 @@ public class DrawerView extends RelativeLayout {
             super.onError(resultCode, resultData, errorType);
 
             _dataService = null;
-            AuthTopicService.requestAuthInvalid(getContext());
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
+                String response = resultData.getString(KEY_RESPONSE_ERROR);
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(getContext(), true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(getContext(), false);
         }
     };
 
