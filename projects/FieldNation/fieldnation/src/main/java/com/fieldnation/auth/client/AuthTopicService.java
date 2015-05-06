@@ -33,6 +33,7 @@ public class AuthTopicService extends Service {
     // Params
     public static final String BUNDLE_PARAM_AUTH_TOKEN = "BUNDLE_PARAM_AUTH_TOKEN";
     public static final String BUNDLE_PARAM_USERNAME = "BUNDLE_PARAM_USERNAME";
+    public static final String BUNDLE_PARAM_ONLINE = "BUNDLE_PARAM_ONLINE";
 
     // Types
     public static final String BUNDLE_PARAM_TYPE = "BUNDLE_PARAM_TYPE";
@@ -190,6 +191,9 @@ public class AuthTopicService extends Service {
             }
 
             if (BUNDLE_PARAM_TYPE_INVALID.equals(type)) {
+                if (parcel.containsKey(BUNDLE_PARAM_ONLINE)) {
+                    _isNetworkDown = false;
+                }
                 handleInvalid();
             } else if (BUNDLE_PARAM_TYPE_REQUEST.equals(type)) {
                 handleRequest();
@@ -543,13 +547,16 @@ public class AuthTopicService extends Service {
         TopicService.dispatchTopic(context, TOPIC_AUTH_COMMAND, bundle);
     }
 
-    public static void requestAuthInvalid(Context context) {
+    public static void requestAuthInvalid(Context context, boolean isOnline) {
         if (context == null)
             return;
 
         startService(context);
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_PARAM_TYPE, BUNDLE_PARAM_TYPE_INVALID);
+
+        if (isOnline)
+            bundle.putBoolean(BUNDLE_PARAM_ONLINE, isOnline);
 
         TopicService.dispatchTopic(context, TOPIC_AUTH_COMMAND, bundle);
     }
