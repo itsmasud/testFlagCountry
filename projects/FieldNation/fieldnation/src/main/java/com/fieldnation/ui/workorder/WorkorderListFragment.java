@@ -765,7 +765,7 @@ public class WorkorderListFragment extends Fragment {
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-            Log.v(TAG, "_adapter.getView");
+//            Log.v(TAG, "_adapter.getView");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
