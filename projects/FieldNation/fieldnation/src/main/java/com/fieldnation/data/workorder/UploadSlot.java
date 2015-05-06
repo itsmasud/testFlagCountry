@@ -9,8 +9,8 @@ public class UploadSlot {
 	private String _maxFileSize;
     @Json(name = "maxFiles")
     private Integer _maxFiles;
-	@Json(name="minFileSize")
-	private Object _minFileSize;
+//	@Json(name="minFileSize")
+//	private Object _minFileSize;
     @Json(name = "minFiles")
     private Integer _minFiles;
     @Json(name = "slotId")
@@ -32,9 +32,9 @@ public class UploadSlot {
         return _maxFiles;
     }
 
-	public Object getMinFileSize(){
-		return _minFileSize;
-	}
+//	public Object getMinFileSize(){
+//		return _minFileSize;
+//	}
 
     public Integer getMinFiles() {
         return _minFiles;

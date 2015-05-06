@@ -272,8 +272,8 @@ public class NotificationFragment extends WorkorderFragment {
             if (getActivity() == null)
                 return;
 
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getByteArray(KEY_RESPONSE_ERROR) != null) {
-                String response = new String(resultData.getByteArray(KEY_RESPONSE_ERROR));
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
+                String response = resultData.getString(KEY_RESPONSE_ERROR);
                 if (response.contains("The authtoken is invalid or has expired.")) {
                     AuthTopicService.requestAuthInvalid(getContext(), true);
                     return;
