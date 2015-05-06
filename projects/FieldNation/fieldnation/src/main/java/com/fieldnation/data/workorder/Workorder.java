@@ -451,6 +451,7 @@ public class Workorder implements Parcelable {
 
     public Pay getPay() {
         return _pay;
+//        return null;
     }
 
     public Long getPaymentId() {
@@ -657,7 +658,8 @@ public class Workorder implements Parcelable {
     public boolean canCounterOffer() {
         return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
                 && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED
-                && !isBundle();
+                && !isBundle()
+                && getPay() != null;
     }
 
     public boolean canComplete() {

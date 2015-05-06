@@ -722,15 +722,16 @@ public class WorkorderCardView extends RelativeLayout {
                 _actionButton.setText("Withdraw");
                 break;
             case COUNTEROFFERED:
-                _actionButton.setVisibility(VISIBLE);
-                // _actionButton.setTextSize(10F);
-                _actionButton.setText("View Counter");
+                if (_workorder.canCounterOffer()) {
+                    _actionButton.setVisibility(VISIBLE);
+                    // _actionButton.setTextSize(10F);
+                    _actionButton.setText("View Counter");
+                }
 
                 _titleTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _rightLayout.setVisibility(VISIBLE);
-                _actionButton.setVisibility(VISIBLE);
                 break;
             default:
                 _titleTextView.setVisibility(VISIBLE);

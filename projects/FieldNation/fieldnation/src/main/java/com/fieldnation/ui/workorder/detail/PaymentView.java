@@ -112,7 +112,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
         Pay pay = _workorder.getPay();
         if (pay != null) {
-            setVisibility(VISIBLE);
+            _termsTextView.setVisibility(VISIBLE);
             String[] paytext = pay.toDisplayStringLong();
 
             if (paytext[0] != null) {
@@ -129,13 +129,14 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
                 _pay2TextView.setVisibility(GONE);
             }
         } else {
-            setVisibility(GONE);
-            return;
+            _pay1TextView.setVisibility(GONE);
+            _pay2TextView.setVisibility(GONE);
+            _termsTextView.setVisibility(GONE);
         }
 
         _counterOfferLabelTextView.setText(R.string.counter_offer);
 
-        if (_workorder.getCounterOfferInfo() != null && _workorder.getCounterOfferInfo().getPay() != null) {
+        if (pay != null && _workorder.getCounterOfferInfo() != null && _workorder.getCounterOfferInfo().getPay() != null) {
             _counterOfferLabelTextView.setText(R.string.view_counter);
 
             Pay co = _workorder.getCounterOfferInfo().getPay();
@@ -206,18 +207,12 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
             }
         }
 
-        if (_workorder.canCounterOffer()) {
+        if (_workorder.canCounterOffer() && pay != null) {
             _counterOfferLayout.setVisibility(View.VISIBLE);
         } else {
             _counterOfferLayout.setVisibility(View.GONE);
         }
         setVisibility(View.VISIBLE);
-
-        if (!_workorder.canCounterOffer())
-            _counterOfferLayout.setVisibility(View.GONE);
-        else
-            _counterOfferLayout.setVisibility(View.VISIBLE);
-
 
         if (!_workorder.canChangeExpenses())
             _addExpenseLayout.setVisibility(View.GONE);
