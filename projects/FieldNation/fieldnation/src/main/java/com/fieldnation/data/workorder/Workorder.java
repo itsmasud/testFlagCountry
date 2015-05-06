@@ -238,6 +238,9 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean getCanViewServicePayRateInfo() {
+        if (_canViewServicePayRateInfo == null)
+            return true;
+
         return _canViewServicePayRateInfo;
     }
 
