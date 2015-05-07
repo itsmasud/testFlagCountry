@@ -450,8 +450,8 @@ public class Workorder implements Parcelable {
     }
 
     public Pay getPay() {
-        return _pay;
-//        return null;
+//        return _pay;
+        return null;
     }
 
     public Long getPaymentId() {
@@ -762,8 +762,10 @@ public class Workorder implements Parcelable {
 
     public boolean canAcceptSignature() {
         WorkorderStatus status = getWorkorderStatus();
-        return (status == WorkorderStatus.ASSIGNED && getWorkorderSubstatus() != WorkorderSubstatus.UNCONFIRMED)
-                || status == WorkorderStatus.INPROGRESS;
+        WorkorderSubstatus substatus = getWorkorderSubstatus();
+        return ((status == WorkorderStatus.ASSIGNED && getWorkorderSubstatus() != WorkorderSubstatus.UNCONFIRMED)
+                || status == WorkorderStatus.INPROGRESS)
+                && (substatus != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED && substatus != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED);
     }
 
     public boolean canChangeClosingNotes() {
