@@ -65,8 +65,8 @@ public class Profile implements Parcelable {
         if (_canViewPayments == null)
             return true;
 
-//        return _canViewPayments;
-        return false;
+        return _canViewPayments;
+//        return false;
     }
 
     public String getCity() {

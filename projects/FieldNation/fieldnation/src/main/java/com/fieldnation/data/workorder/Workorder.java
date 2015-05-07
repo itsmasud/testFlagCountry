@@ -450,8 +450,8 @@ public class Workorder implements Parcelable {
     }
 
     public Pay getPay() {
-//        return _pay;
-        return null;
+        return _pay;
+//        return null;
     }
 
     public Long getPaymentId() {
