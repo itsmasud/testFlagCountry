@@ -16,10 +16,6 @@ public enum WorkorderStatus {
         _value = value;
     }
 
-    public String getValue() {
-        return _value;
-    }
-
     public static WorkorderStatus fromValue(String value) {
         if (value == null)
             return NA;

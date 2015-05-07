@@ -190,7 +190,7 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         _tacCheckBox.setChecked(_tacAccept);
 
-        String display = _schedule.getDisplayString();
+        String display = _schedule.getDisplayString(false);
         _scheduleTextView.setText(display);
         setDuration(3600000);
         if (_schedule.isExact()) {

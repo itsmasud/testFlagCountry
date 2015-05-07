@@ -175,12 +175,28 @@ public class Location {
         }
     }
 
-    public String getFullAddress() {
+    public String getFullAddressAndContactName() {
         String address = "";
 
         if (!misc.isEmptyOrNull(_name)) {
             address += _name + "\n";
         }
+
+        String topAddr = getTopAddressLine();
+        if (!misc.isEmptyOrNull(topAddr)) {
+            address += topAddr + "\n";
+        }
+
+        if (!misc.isEmptyOrNull(_city) && !misc.isEmptyOrNull(_state) && !misc.isEmptyOrNull(_zip) && !misc.isEmptyOrNull(_country)) {
+            address += _city + ", " + _state + " " + _zip + "\n";
+            address += _country;
+        }
+
+        return address.trim();
+    }
+
+    public String getFullAddress() {
+        String address = "";
 
         String topAddr = getTopAddressLine();
         if (!misc.isEmptyOrNull(topAddr)) {

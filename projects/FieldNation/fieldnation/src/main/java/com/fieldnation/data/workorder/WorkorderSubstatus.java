@@ -24,10 +24,7 @@ public enum WorkorderSubstatus {
 
     private WorkorderSubstatus(String value) {
         _value = value;
-    }
 
-    public String getValue() {
-        return _value;
     }
 
     public static WorkorderSubstatus fromValue(String value) {

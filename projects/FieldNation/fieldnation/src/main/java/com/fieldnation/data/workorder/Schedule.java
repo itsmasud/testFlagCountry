@@ -134,7 +134,7 @@ public class Schedule implements Parcelable {
         }
     }
 
-    public String getDisplayString() {
+    public String getDisplayString(boolean asStartAndDuration) {
         if (isExact()) {
             try {
                 String dayDate;
@@ -151,6 +151,27 @@ public class Schedule implements Parcelable {
                 e.printStackTrace();
             }
         } else {
+            if (asStartAndDuration) {
+                try {
+                    Calendar cal = ISO8601.toCalendar(getStartTime());
+                    String dayDate;
+                    String time = "";
+
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
+                    time = misc.formatTime(cal, false);
+
+                    String msg = "You will need to arrive at\n\t" + dayDate + " at " + time + ".\n\tAnd work for ";
+
+                    long length = ISO8601.toUtc(getEndTime()) - ISO8601.toUtc(getStartTime());
+
+                    msg += misc.convertMsToHuman(length);
+
+                    return msg;
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
             try {
                 Calendar cal = ISO8601.toCalendar(getStartTime());
                 String dayDate;
@@ -179,6 +200,7 @@ public class Schedule implements Parcelable {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+        }
         }
         return null;
     }

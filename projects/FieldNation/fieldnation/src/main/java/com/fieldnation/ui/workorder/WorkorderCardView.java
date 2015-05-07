@@ -10,9 +10,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
@@ -333,6 +335,11 @@ public class WorkorderCardView extends RelativeLayout {
                         _listener.onViewPayments(WorkorderCardView.this, _workorder);
                     }
                     break;
+                case Workorder.BUTTON_ACTION_WITHDRAW_REQUEST:
+                    if (_listener != null) {
+                        _listener.actionWithdrawRequest(WorkorderCardView.this, _workorder);
+                    }
+                    break;
             }
         }
     };
@@ -531,8 +538,15 @@ public class WorkorderCardView extends RelativeLayout {
             }
         }
         // when scheduledTimeStart/scheduledTimeEnd
+        if (_workorder.getEstimatedSchedule() != null) {
+            String when = _workorder.getEstimatedSchedule().getFormatedTime();
 
-        if (_workorder.getSchedule() != null) {
+            if (when == null) {
+                _whenTextView.setVisibility(GONE);
+            } else {
+                _whenTextView.setText(when);
+            }
+        } else if (_workorder.getSchedule() != null) {
             String when = _workorder.getSchedule().getFormatedTime();
 
             if (when == null) {
@@ -710,15 +724,16 @@ public class WorkorderCardView extends RelativeLayout {
                 _paymentLayout.setVisibility(VISIBLE);
                 break;
             case COUNTEROFFERED:
-                _actionButton.setVisibility(VISIBLE);
-                // _actionButton.setTextSize(10F);
-                _actionButton.setText(R.string.btn_view_counter);
+                if (_workorder.canCounterOffer()) {
+                    _actionButton.setVisibility(VISIBLE);
+                    // _actionButton.setTextSize(10F);
+                    _actionButton.setText(R.string.btn_view_counter);
+                }
 
 //                _titleTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _paymentLayout.setVisibility(VISIBLE);
-                _actionButton.setVisibility(VISIBLE);
                 break;
             default:
 //                _titleTextView.setVisibility(VISIBLE);
@@ -790,13 +805,16 @@ public class WorkorderCardView extends RelativeLayout {
                 _paymentLayout.setVisibility(VISIBLE);
                 break;
             case APPROVED_PROCESSINGPAYMENT:
-                _actionButton.setText(R.string.btn_payments);
+                Profile profile = GlobalState.getContext().getProfile();
+                if (profile != null && profile.getCanViewPayments()) {
+                    _actionButton.setVisibility(VISIBLE);
+                    _actionButton.setText(R.string.btn_payments);
+                }
 
 //                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _paymentLayout.setVisibility(VISIBLE);
-                _actionButton.setVisibility(VISIBLE);
                 break;
             case PAID:
 //                _titleTextView.setVisibility(VISIBLE);
@@ -829,8 +847,11 @@ public class WorkorderCardView extends RelativeLayout {
             case CANCELED_LATEFEEPAID:
                 break;
             case CANCELED_LATEFEEPROCESSING:
-                _actionButton.setVisibility(VISIBLE);
-                _actionButton.setText(R.string.btn_payments);
+                Profile profile = GlobalState.getContext().getProfile();
+                if (profile != null && profile.getCanViewPayments()) {
+                    _actionButton.setVisibility(VISIBLE);
+                    _actionButton.setText(R.string.btn_payments);
+                }
                 break;
             default:
                 Log.v(TAG,
@@ -843,6 +864,8 @@ public class WorkorderCardView extends RelativeLayout {
     public interface Listener {
 
         public void actionRequest(WorkorderCardView view, Workorder workorder);
+
+        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder);
 
         public void actionAssignment(WorkorderCardView view, Workorder workorder);
 

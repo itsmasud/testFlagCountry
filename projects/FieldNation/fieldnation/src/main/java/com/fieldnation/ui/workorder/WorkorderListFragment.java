@@ -512,6 +512,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         @Override
+        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder) {
+            // TODO, withdraw the request
+        }
+
+        @Override
         public void actionCheckout(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
             Pay pay = workorder.getPay();

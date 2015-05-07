@@ -176,6 +176,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
 
         @Override
+        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder) {
+            // TODO actionWithdrawRequest
+        }
+
+        @Override
         public void actionCheckout(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: actionCheckout()
             Log.v(TAG, "Method Stub: actionCheckout()");

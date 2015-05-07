@@ -240,6 +240,9 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean getCanViewServicePayRateInfo() {
+        if (_canViewServicePayRateInfo == null)
+            return true;
+
         return _canViewServicePayRateInfo;
     }
 
@@ -450,6 +453,7 @@ public class Workorder implements Parcelable {
 
     public Pay getPay() {
         return _pay;
+//        return null;
     }
 
     public Long getPaymentId() {
@@ -592,6 +596,7 @@ public class Workorder implements Parcelable {
     public static final int BUTTON_ACTION_ACKNOWLEDGE_HOLD = 5;
     public static final int BUTTON_ACTION_VIEW_COUNTER = 6;
     public static final int BUTTON_ACTION_VIEW_PAYMENT = 7;
+    public static final int BUTTON_ACTION_WITHDRAW_REQUEST = 8;
 
     public static final int NOT_INTERESTED_ACTION_NONE = 0;
     public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
@@ -657,7 +662,10 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canCounterOffer() {
-        return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE && !isBundle();
+        return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
+                && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED
+                && !isBundle()
+                && getPay() != null;
     }
 
     public boolean canComplete() {
@@ -725,6 +733,10 @@ public class Workorder implements Parcelable {
                     && substatus != WorkorderSubstatus.COUNTEROFFERED;
         }
         return false;
+    }
+
+    public boolean canWithdrawRequest() {
+        return getStatus().getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED;
     }
 
     public boolean canAcceptWork() {
@@ -898,6 +910,7 @@ public class Workorder implements Parcelable {
                 Log.v(TAG, "Unknown Status (" + _workorderId + "): "
                         + status.toJson().toString());
                 break;
+
         }
     }
 
@@ -912,6 +925,7 @@ public class Workorder implements Parcelable {
                 _notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
                 break;
             case REQUESTED:
+                _buttonAction = BUTTON_ACTION_WITHDRAW_REQUEST;
                 _notInterestedAction = NOT_INTERESTED_ACTION_WITHDRAW_REQUEST;
                 break;
             case COUNTEROFFERED:

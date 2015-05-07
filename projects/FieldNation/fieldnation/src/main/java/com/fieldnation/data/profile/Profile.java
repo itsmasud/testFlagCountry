@@ -11,6 +11,8 @@ import com.fieldnation.utils.ISO8601;
 public class Profile implements Parcelable {
     @Json(name = "acceptedTos")
     private Boolean _acceptedTos;
+    @Json(name = "canViewPayments")
+    private Boolean _canViewPayments;
     @Json(name = "city")
     private String _city;
     @Json(name = "description")
@@ -57,6 +59,14 @@ public class Profile implements Parcelable {
 
     public Boolean getAcceptedTos() {
         return _acceptedTos;
+    }
+
+    public Boolean getCanViewPayments() {
+        if (_canViewPayments == null)
+            return true;
+
+        return _canViewPayments;
+//        return false;
     }
 
     public String getCity() {

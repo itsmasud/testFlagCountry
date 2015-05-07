@@ -1147,6 +1147,11 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
+        public void onWithdrawRequest(Workorder workorder) {
+            // TODO onWithdrawRequest
+        }
+
+        @Override
         public void onNotInterested(Workorder workorder) {
             _declineDialog.show();
         }

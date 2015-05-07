@@ -63,6 +63,8 @@
     <string name="btn_not_now">NOT NOW</string>
     <string name="btn_later">LATER</string>
     <string name="btn_no_later">NEVER SHOW AGAIN</string>
+    <string name="btn_not_interested">NOT INTERESTED</string>
+    <string name="btn_withdraw_request">WITHDRAW</string>
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
