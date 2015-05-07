@@ -197,33 +197,38 @@ public class DrawerView extends RelativeLayout {
 
     private void populateUi() {
         if (_estPayment != null) {
-            _estimatedLayout.setVisibility(View.VISIBLE);
+            _estimatedLayout.setVisibility(VISIBLE);
             _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
             _estimatedDateTextView.setText("Pending");
         } else {
-            _estimatedLayout.setVisibility(View.GONE);
+            _estimatedLayout.setVisibility(GONE);
         }
 
-        if (_paidPayment != null) {
-            _paidLayout.setVisibility(View.VISIBLE);
-            _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
-            try {
-                Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
-                _paidDateTextView.setText("Paid " + misc.formatDate(cal));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                _paidDateTextView.setText("");
+        if (_profile.getCanViewPayments()) {
+            _paymentView.setVisibility(VISIBLE);
+            if (_paidPayment != null) {
+                _paidLayout.setVisibility(VISIBLE);
+                _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
+                try {
+                    Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
+                    _paidDateTextView.setText("Paid " + misc.formatDate(cal));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    _paidDateTextView.setText("");
+                }
+            } else {
+                _paidLayout.setVisibility(GONE);
             }
         } else {
-            _paidLayout.setVisibility(View.GONE);
+            _paymentView.setVisibility(GONE);
         }
 
         if (_profile != null) {
-            _providerIdTextView.setVisibility(View.VISIBLE);
+            _providerIdTextView.setVisibility(VISIBLE);
             _providerIdTextView.setText("Provider Id: " + _profile.getUserId());
 
             _profileNameTextView.setText(_profile.getFirstname() + " " + _profile.getLastname());
-            _profileNameTextView.setVisibility(View.VISIBLE);
+            _profileNameTextView.setVisibility(VISIBLE);
 
             // TODO add service company name
             addProfilePhoto();

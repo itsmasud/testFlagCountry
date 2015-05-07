@@ -42,13 +42,13 @@
                             android:text="Firstname Lastname" />
 
                         <TextView
-                            style="@style/DrawerProfileDetails"
                             android:id="@+id/profile_company_textview"
+                            style="@style/DrawerProfileDetails"
                             android:text="Company Name" />
 
                         <TextView
-                            style="@style/DrawerProfileDetails"
                             android:id="@+id/providerid_textview"
+                            style="@style/DrawerProfileDetails"
                             android:text="Provider Id: 12354654" />
 
                     </LinearLayout>
@@ -69,16 +69,16 @@
 
             <com.fieldnation.ui.NavProfileDetailListView
                 android:id="@+id/profile_detail_list"
-                android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/link_container"
-                android:visibility="visible"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <View
                     style="@style/DrawerSeparator"
@@ -144,12 +144,6 @@
                 </RelativeLayout>
 
                 <!-- Payment -->
-            <LinearLayout
-                android:id="@+id/payment_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
                 <RelativeLayout
                     android:id="@+id/payment_view"
                     style="@style/DrawerItem"
@@ -233,7 +227,6 @@
                 <View
                     style="@style/DrawerSeparator"
                     android:layout_marginBottom="8dp" />
-            </LinearLayout>
 
                 <!-- Settings -->
 
