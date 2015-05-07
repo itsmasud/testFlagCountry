@@ -29,7 +29,7 @@ public class MessageSentView extends RelativeLayout {
     private ImageView _profileImageView;
     private TextView _timeTextView;
     private TextView _pendingTextView;
-    private ImageView _checkImageView;
+    private TextView _checkIconFont;
 
     // Data
     private PhotoDataClient _photos;
@@ -58,7 +58,7 @@ public class MessageSentView extends RelativeLayout {
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         // _pendingTextView = (TextView) findViewById(R.id.pending_textview);
-        _checkImageView = (ImageView) findViewById(R.id.check_imageview);
+        _checkIconFont = (TextView) findViewById(R.id.check_iconfont);
 
         _photos = new PhotoDataClient(_photo_listener);
         _photos.connect(getContext());
@@ -93,9 +93,11 @@ public class MessageSentView extends RelativeLayout {
 
 
         if (_message.isRead()) {
-            _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
+//            _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
+            // TODO switch to check mark
         } else {
-            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
+//            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
+            _checkIconFont.setText(R.string.icfont_message_alert);
         }
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _profileImageView.setBackgroundResource(R.drawable.missing);

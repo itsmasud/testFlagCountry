@@ -18,37 +18,37 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="left"
             android:layout_weight="1"
+            android:gravity="left"
             android:text="Hours" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="Date" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="Start" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="End" />
 
         <TextView
             android:id="@+id/devices_textview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="right"
             android:layout_weight="1"
+            android:gravity="right"
             android:text="Devices" />
     </LinearLayout>
 
@@ -80,12 +80,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.fieldnation.ui.IconFontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginRight="5dp"
-            android:background="@drawable/ic_clock_large" />
+            android:text="@string/icfont_clock"
+            android:textSize="32dp" />
 
         <TextView
             style="@style/TextViewLink"
@@ -96,7 +97,7 @@
     </LinearLayout>
 
     <View
-        android:layout_width="match_parent"
-        style="@style/WorkorderDetail_Separator" />
+        style="@style/WorkorderDetail_Separator"
+        android:layout_width="match_parent" />
 
 </LinearLayout>

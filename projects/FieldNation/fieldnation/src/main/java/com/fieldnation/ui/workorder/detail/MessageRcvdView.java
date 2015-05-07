@@ -28,7 +28,7 @@ public class MessageRcvdView extends RelativeLayout {
     private TextView _messageTextView;
     private ImageView _profileImageView;
     private TextView _timeTextView;
-    private ImageView _checkImageView;
+    private TextView _checkIconFont;
     private TextView _usernameTextView;
 
     // Data
@@ -57,7 +57,7 @@ public class MessageRcvdView extends RelativeLayout {
         _messageTextView = (TextView) findViewById(R.id.message_textview);
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _checkImageView = (ImageView) findViewById(R.id.check_imageview);
+        _checkIconFont = (TextView) findViewById(R.id.check_iconfont);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
         _photos = new PhotoDataClient(_photo_listener);
@@ -92,9 +92,11 @@ public class MessageRcvdView extends RelativeLayout {
         }
 
         if (_message.isRead()) {
-            _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
+//            _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
+            // TODO need the check box
         } else {
-            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
+//            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
+            _checkIconFont.setText(R.string.icfont_message_alert);
         }
 
         _usernameTextView.setText(_message.getFromUser().getFirstname());

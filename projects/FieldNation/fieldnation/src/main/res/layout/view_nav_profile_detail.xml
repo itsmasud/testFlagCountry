@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/profile_list"
-            android:animateLayoutChanges="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical" />
 
         <LinearLayout
@@ -25,9 +25,9 @@
                 android:src="@drawable/ic_drawer_plus" />
 
             <LinearLayout
-                android:layout_gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
@@ -42,14 +42,14 @@
             style="@style/DrawerItem"
             android:orientation="horizontal">
 
-            <ImageView
-                style="@style/DrawerItemIcon"
-                android:src="@drawable/ic_drawer_people" />
+            <com.fieldnation.ui.IconFontTextView
+                style="@style/DrawerItemTextFont"
+                android:text="@string/icfont_people_2" />
 
             <LinearLayout
-                android:layout_gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView

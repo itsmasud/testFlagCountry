@@ -1,6 +1,6 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/activityMainStyle"
     android:id="@+id/container"
+    style="?attr/activityMainStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -35,19 +35,21 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <ImageView
+                        <com.fieldnation.ui.IconFontTextView
                             android:id="@+id/bundle_imageview"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_bundle"
-                            android:layout_marginRight="4dp" />
-
-                        <TextView
-                            android:maxLines="1"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/bundle" />
+                            android:layout_marginRight="4dp"
+                            android:text="@string/icfont_bundle"
+                            android:textColor="@color/fn_accent_color"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:text="@string/bundle"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
                     </LinearLayout>
 
                     <TextView
@@ -89,10 +91,10 @@
         </LinearLayout>
 
         <com.fieldnation.ui.ReconnectWarningView
-            android:visibility="gone"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
 
         <com.fieldnation.ui.LoadingView
             android:id="@+id/loading_layout"

@@ -69,6 +69,7 @@ public class DrawerView extends RelativeLayout {
     // sub items
     private LinearLayout _settingsView;
     private LinearLayout _feedbackView;
+    private LinearLayout _debugView;
     private LinearLayout _helpView;
     private LinearLayout _logoutView;
 
@@ -150,6 +151,9 @@ public class DrawerView extends RelativeLayout {
         _settingsView = (LinearLayout) findViewById(R.id.settings_view);
         _settingsView.setOnClickListener(_settingsView_onClick);
 
+        _debugView = (LinearLayout) findViewById(R.id.debug_view);
+        _debugView.setOnClickListener(_debugView_onClick);
+
         _feedbackView = (LinearLayout) findViewById(R.id.feedback_view);
         _feedbackView.setOnClickListener(_feedback_onClick);
 
@@ -162,7 +166,7 @@ public class DrawerView extends RelativeLayout {
         // other status
         _versionTextView = (TextView) findViewById(R.id.version_textview);
         try {
-            _versionTextView.setText("v" + BuildConfig.VERSION_NAME);
+            _versionTextView.setText("Version " + BuildConfig.VERSION_NAME);
             _versionTextView.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             _versionTextView.setVisibility(View.GONE);
@@ -289,20 +293,6 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _sendlog_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            File tempfile = misc.dumpLogcat(getContext());
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("plain/text");
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
-            intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
-            getContext().startActivity(intent);
-        }
-    };
-
     /*-*************************************-*/
     /*-				Item Events				-*/
     /*-*************************************-*/
@@ -345,6 +335,20 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
             attachAnimations();
 //            AuthTopicClient.dispatchInvalidateCommand(getContext());
+        }
+    };
+
+    private final View.OnClickListener _debugView_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            File tempfile = misc.dumpLogcat(getContext());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
+            intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
+            getContext().startActivity(intent);
         }
     };
 

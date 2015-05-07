@@ -22,19 +22,19 @@
             android:visibility="gone">
 
             <TextView
-                android:layout_marginRight="5dp"
                 android:id="@+id/tiplabel_textview"
                 style="@style/WorkorderDetail_FieldSubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
                 android:text="@string/tip_colon_space" />
 
             <TextView
-                android:layout_toRightOf="@+id/tiplabel_textview"
                 android:id="@+id/tip_textview"
                 style="@style/WorkorderDetail_Field_Gray"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tiplabel_textview" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -50,12 +50,13 @@
                 android:gravity="center_vertical"
                 android:visibility="gone" />
 
-            <Button
+            <com.fieldnation.ui.IconFontButton
                 android:id="@+id/datetime_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/ic_calendar"
+                android:text="@string/icfont_calendar"
+                android:textSize="36sp"
                 android:visibility="gone" />
         </RelativeLayout>
 

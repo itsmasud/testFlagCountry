@@ -327,6 +327,34 @@
         <item>180</item>
     </string-array>
 
+    <string name="icfont_arrow_r">\uF106</string>
+    <string name="icfont_bundle">\uF10D</string>
+    <string name="icfont_calendar">\uF10E</string>
+    <string name="icfont_clock">\uF115</string>
+    <string name="icfont_feedback">\uF116</string>
+    <string name="icfont_people_2">\uF117</string>
+    <string name="icfont_credit_card">\uF11B</string>
+    <string name="icfont_dollar">\uF11E</string>
+    <string name="icfont_file_doc">\uF121</string>
+    <string name="icfont_file_docx">\uF122</string>
+    <string name="icfont_file_none">\uF123</string>
+    <string name="icfont_file_jpg">\uF124</string>
+    <string name="icfont_file_pdf">\uF125</string>
+    <string name="icfont_file_png">\uF126</string>
+    <string name="icfont_file_xls">\uF127</string>
+    <string name="icfont_hiring">\uF12D</string>
+    <string name="icfont_logout">\uF134</string>
+    <string name="icfont_search">\uF135</string>
+    <string name="icfont_message_alert">\uF137</string>
+    <string name="icfont_cash">\uF139</string>
+    <string name="icfont_person">\uF13D</string>
+    <string name="icfont_help">\uF149</string>
+    <string name="icfont_trash">\uF14A</string>
+    <string name="icfont_shipments">\uF14B</string>
+    <string name="icfont_x">\uF14F</string>
+    <string name="icfont_settings">\uF154</string>
+    <string name="icfont_profile_pic">\uF156</string>
+
     <!-- login error messages -->
     <string name="login_error_no_error">Success!</string>
     <string name="login_error_not_found_in_db">Authentication Failed, check your network settings, and retry.[1]</string>

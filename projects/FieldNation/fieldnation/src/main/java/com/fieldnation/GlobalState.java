@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -46,6 +47,7 @@ public class GlobalState extends Application {
     private ProfileDataClient _profileClient;
     private AuthTopicClient _authTopicClient;
     private int _memoryClass;
+    private Typeface _iconFont;
 
     public GlobalState() {
         super();
@@ -64,6 +66,7 @@ public class GlobalState extends Application {
 
         startService(new Intent(this, AuthTopicService.class));
 
+        _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
         _context = this;
         new ExpenseCategories(this);
 
@@ -102,6 +105,10 @@ public class GlobalState extends Application {
 
     public static GlobalState getContext() {
         return _context;
+    }
+
+    public Typeface getIconFont() {
+        return _iconFont;
     }
 
     /*-**********************-*/

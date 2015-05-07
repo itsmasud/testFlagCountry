@@ -120,15 +120,15 @@
                     android:id="@+id/market_view"
                     style="@style/DrawerItem">
 
-                    <ImageView
-                        android:id="@+id/market_imageview"
-                        style="@style/DrawerItemIcon"
-                        android:src="@drawable/ic_nav_marketplace" />
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/market_icon"
+                        style="@style/DrawerItemTextFont"
+                        android:text="@string/icfont_hiring" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/market_imageview"
+                        android:layout_toRightOf="@+id/market_icon"
                         android:orientation="vertical">
 
                         <TextView
@@ -150,10 +150,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageView
+                    <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/payment_imageview"
-                        style="@style/DrawerItemIcon"
-                        android:src="@drawable/ic_nav_payment" />
+                        style="@style/DrawerItemTextFont"
+                        android:text="@string/icfont_hiring" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -235,9 +235,9 @@
                     style="@style/DrawerSubitem"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        style="@style/DrawerItemIcon"
-                        android:src="@drawable/ic_nav_settings" />
+                    <com.fieldnation.ui.IconFontTextView
+                        style="@style/DrawerItemTextFont"
+                        android:text="@string/icfont_settings" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
@@ -251,13 +251,29 @@
                     style="@style/DrawerSubitem"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        style="@style/DrawerItemIcon"
-                        android:src="@drawable/ic_nav_feedback" />
+                    <com.fieldnation.ui.IconFontTextView
+                        style="@style/DrawerItemTextFont"
+                        android:text="@string/icfont_feedback" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
                         android:text="Feedback" />
+                </LinearLayout>
+
+                <!-- Debug Log -->
+
+                <LinearLayout
+                    android:id="@+id/debug_view"
+                    style="@style/DrawerSubitem"
+                    android:orientation="horizontal">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        style="@style/DrawerItemIcon"
+                        android:text="@string/icfont_feedback" />
+
+                    <TextView
+                        style="@style/DrawerSubitemTitle"
+                        android:text="Debug log" />
                 </LinearLayout>
 
                 <!-- Help -->
@@ -267,9 +283,9 @@
                     style="@style/DrawerSubitem"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        style="@style/DrawerItemIcon"
-                        android:src="@drawable/ic_nav_help" />
+                    <com.fieldnation.ui.IconFontTextView
+                        style="@style/DrawerItemTextFont"
+                        android:text="@string/icfont_help" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
@@ -283,27 +299,27 @@
                     style="@style/DrawerSubitem"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        style="@style/DrawerItemIcon"
-                        android:src="@drawable/ic_nav_logout" />
+                    <com.fieldnation.ui.IconFontTextView
+                        style="@style/DrawerItemTextFont"
+                        android:text="@string/icfont_logout" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
                         android:text="@string/logout_title" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/version_textview"
+                    style="?attr/dialogCaptionStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="garbage" />
             </LinearLayout>
         </LinearLayout>
 
     </ScrollView>
 
-    <TextView
-        android:id="@+id/version_textview"
-        style="?attr/dialogCaptionStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="garbage" />
 </RelativeLayout>

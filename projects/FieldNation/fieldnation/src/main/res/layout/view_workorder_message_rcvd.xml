@@ -34,7 +34,8 @@
         android:layout_below="@+id/message_layout"
         android:orientation="horizontal">
 
-        <ImageView style="@style/MessageView_Status_Clock" />
+        <com.fieldnation.ui.IconFontTextView
+            style="@style/MessageView_Status_Clock_IconFont" />
 
         <TextView
             android:id="@+id/time_textview"
@@ -42,7 +43,7 @@
             android:text="@string/placeholder_date_short" />
 
         <ImageView
-            android:id="@+id/check_imageview"
+            android:id="@+id/check_iconfont"
             style="@style/MessageView_Status_Check" />
     </LinearLayout>
 

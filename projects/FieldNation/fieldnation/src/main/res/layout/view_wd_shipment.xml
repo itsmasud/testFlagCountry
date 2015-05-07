@@ -22,11 +22,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.fieldnation.ui.IconFontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
-            android:background="@drawable/ic_shipment_truck" />
+            android:text="@string/icfont_shipments"
+            android:textSize="32sp" />
 
         <TextView
             style="@style/TextViewLink"
@@ -37,7 +38,7 @@
     </LinearLayout>
 
     <View
-        android:layout_width="match_parent"
-        style="@style/WorkorderDetail_Separator" />
+        style="@style/WorkorderDetail_Separator"
+        android:layout_width="match_parent" />
 
 </LinearLayout>

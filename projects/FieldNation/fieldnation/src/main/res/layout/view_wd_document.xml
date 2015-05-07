@@ -4,14 +4,16 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="20dp">
 
-    <ImageView
+    <com.fieldnation.ui.IconFontTextView
         android:id="@+id/filetype_imageview"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dp"
-        android:src="@drawable/ic_file_grey" />
+        android:text="@string/icfont_file_none"
+        android:textColor="@color/fn_light_text"
+        android:textSize="48sp" />
 
     <LinearLayout
         android:id="@+id/data_layout"
@@ -27,8 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="middle"
-            android:singleLine="true"
             android:maxLines="1"
+            android:singleLine="true"
             android:text="File Name.ext"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/fn_dark_text" />

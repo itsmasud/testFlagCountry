@@ -52,11 +52,11 @@ public class WorkorderCardView extends RelativeLayout {
     // status
     private TextView _statusTextView;
     // bundle
-    private ImageView _bundleImageView;
+    private TextView _bundleIconFont;
 
     // center panel
     // title
-    private ImageView _messageAlertImageView;
+    private TextView _messageAlertIconFont;
     private ImageView _notificationAlertImageView;
     private TextView _titleTextView;
     // items
@@ -145,11 +145,11 @@ public class WorkorderCardView extends RelativeLayout {
         _statusTextView = (TextView) findViewById(R.id.status_textview);
 
         // bundle bar
-        _bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);
+        _bundleIconFont = (TextView) findViewById(R.id.bundle_imageview);
 
         // center panel
         // title box
-        _messageAlertImageView = (ImageView) findViewById(R.id.message_alert_imageview);
+        _messageAlertIconFont = (TextView) findViewById(R.id.message_alert_imageview);
         _notificationAlertImageView = (ImageView) findViewById(R.id.notification_alert_imageview);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         // items
@@ -221,9 +221,9 @@ public class WorkorderCardView extends RelativeLayout {
 
     public void showMessageAlertIcon(boolean enabled) {
         if (enabled) {
-            _messageAlertImageView.setVisibility(VISIBLE);
+            _messageAlertIconFont.setVisibility(VISIBLE);
         } else {
-            _messageAlertImageView.setVisibility(GONE);
+            _messageAlertIconFont.setVisibility(GONE);
         }
     }
 
@@ -247,9 +247,9 @@ public class WorkorderCardView extends RelativeLayout {
 
     public void setIsBundle(boolean isBundle) {
         if (isBundle) {
-            _bundleImageView.setVisibility(VISIBLE);
+            _bundleIconFont.setVisibility(VISIBLE);
         } else {
-            _bundleImageView.setVisibility(GONE);
+            _bundleIconFont.setVisibility(GONE);
         }
         _isBundle = isBundle;
     }

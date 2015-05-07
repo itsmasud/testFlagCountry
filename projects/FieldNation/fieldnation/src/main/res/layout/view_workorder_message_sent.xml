@@ -26,16 +26,16 @@
         android:layout_below="@+id/message_layout"
         android:orientation="horizontal">
 
-        <ImageView style="@style/MessageView_Status_Clock" />
+        <com.fieldnation.ui.IconFontTextView style="@style/MessageView_Status_Clock_IconFont" />
 
         <TextView
             android:id="@+id/time_textview"
             style="@style/MessageView_Status_Time"
             android:text="@string/placeholder_date_short" />
 
-        <ImageView
-            android:id="@+id/check_imageview"
-            style="@style/MessageView_Status_Orange" />
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/check_iconfont"
+            style="@style/MessageView_Status_Orange_IconFont" />
     </LinearLayout>
 
 </RelativeLayout>
