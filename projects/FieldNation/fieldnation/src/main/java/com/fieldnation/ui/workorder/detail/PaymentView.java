@@ -113,7 +113,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         boolean isShowingSomething = false;
 
         Pay pay = _workorder.getPay();
-        if (pay != null) {
+        if (pay != null && !pay.hidePay()) {
             isShowingSomething = true;
             _termsTextView.setVisibility(VISIBLE);
             String[] paytext = pay.toDisplayStringLong();
@@ -139,7 +139,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
         _counterOfferLabelTextView.setText(R.string.counter_offer);
 
-        if (pay != null && _workorder.getCounterOfferInfo() != null && _workorder.getCounterOfferInfo().getPay() != null) {
+        if (pay != null && !pay.hidePay()
+                && _workorder.getCounterOfferInfo() != null && _workorder.getCounterOfferInfo().getPay() != null) {
             _counterOfferLabelTextView.setText(R.string.view_counter);
 
             Pay co = _workorder.getCounterOfferInfo().getPay();

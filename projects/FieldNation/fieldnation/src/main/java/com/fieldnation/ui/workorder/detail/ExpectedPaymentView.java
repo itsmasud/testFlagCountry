@@ -87,7 +87,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         if (pay == null) {
             this.setVisibility(GONE);
             return;
-        } else if (_workorder.getPay() == null) {
+        } else if (_workorder.getPay() == null || _workorder.getPay().hidePay()) {
             setVisibility(GONE);
             return;
         } else {

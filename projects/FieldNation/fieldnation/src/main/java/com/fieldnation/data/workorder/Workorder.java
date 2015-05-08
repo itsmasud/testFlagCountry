@@ -659,7 +659,8 @@ public class Workorder implements Parcelable {
         return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
                 && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED
                 && !isBundle()
-                && getPay() != null;
+                && getPay() != null
+                && !getPay().hidePay();
     }
 
     public boolean canComplete() {
