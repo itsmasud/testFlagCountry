@@ -47,8 +47,8 @@ public class Task implements Parcelable {
     private Boolean _showAlertMenu;
     @Json(name = "showTimeMenu")
     private Boolean _showTimeMenu;
-	@Json(name="slotData")
-	private SlotData _slotData;
+    @Json(name = "slotData")
+    private SlotData _slotData;
     @Json(name = "slotId")
     private Long _slotId;
     @Json(name = "stage")
@@ -143,12 +143,18 @@ public class Task implements Parcelable {
         return _showTimeMenu;
     }
 
-	public SlotData getSlotData(){
-		return _slotData;
-	}
+    public SlotData getSlotData() {
+        return _slotData;
+    }
 
     public Long getSlotId() {
-        return _slotId;
+        if (_slotId != null)
+            return _slotId;
+
+        if (_identifier != null)
+            return (long) _identifier;
+
+        return null;
     }
 
     public String getStage() {

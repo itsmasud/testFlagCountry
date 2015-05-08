@@ -119,6 +119,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_CURRENT_TASK = "ui.workorder.detail.WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_SIGNATURES = "ui.workorder.detail.WorkFragment:STATE_SIGNATURES";
     private static final String STATE_DEVICE_COUNT = "ui.workorder.detail.WorkFragment:STATE_DEVICE_COUNT";
+    private static final String STATE_TEMP_FILE = "ui.workorder.detail.WorkFragment:STATE_TEMP_FILE";
 
 
     // UI
@@ -272,6 +273,9 @@ public class WorkFragment extends WorkorderFragment {
                 _service = new WorkorderService(view.getContext(), _username, _authToken, _resultReceiver);
                 _profileService = new ProfileService(view.getContext(), _username, _authToken, _resultReceiver);
             }
+            if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
+                _tempFile = (File) savedInstanceState.getSerializable(STATE_TEMP_FILE);
+            }
         }
 
         populateUi(true);
@@ -308,6 +312,10 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_currentTask != null) {
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
+        }
+
+        if (_tempFile != null) {
+            outState.putSerializable(STATE_TEMP_FILE, _tempFile);
         }
 
         super.onSaveInstanceState(outState);
@@ -531,13 +539,10 @@ public class WorkFragment extends WorkorderFragment {
 
     private PendingIntent getNotificationIntent() {
         Intent intent = new Intent(GlobalState.getContext(), WorkorderActivity.class);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
-                WorkorderActivity.TAB_DETAILS);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
-                _workorder.getWorkorderId());
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
 
-        return PendingIntent.getActivity(GlobalState.getContext(), _rand.nextInt(), intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(GlobalState.getContext(), _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void showClosingNotesDialog() {
@@ -578,8 +583,6 @@ public class WorkFragment extends WorkorderFragment {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkInListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckin();
-            if (_locationLoadingDialog != null)
-                _locationLoadingDialog.dismiss();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -608,8 +611,6 @@ public class WorkFragment extends WorkorderFragment {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckOut();
-            if (_locationLoadingDialog != null)
-                _locationLoadingDialog.dismiss();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -694,7 +695,13 @@ public class WorkFragment extends WorkorderFragment {
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-        if (!isAdded() || _service == null) {
+        if (!isAdded()
+                || _service == null
+                || _workorder == null
+                || _currentTask == null
+                || GlobalState.getContext() == null
+                || (_tempFile == null && data == null)) {
+            Log.v(TAG, "onActivityResult wait...");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -702,15 +709,18 @@ public class WorkFragment extends WorkorderFragment {
                 }
             }, 500);
         } else {
+            Log.v(TAG, "onActivityResult execute...");
 
             if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                     && resultCode == Activity.RESULT_OK) {
 
                 if (data == null) {
+                    Log.v(TAG, "BP");
                     GlobalState.getContext().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
                             _workorder.getWorkorderId(), _currentTask.getSlotId(),
                             _tempFile.getAbsolutePath(), getNotificationIntent()));
                 } else {
+                    Log.v(TAG, "BP");
                     GlobalState.getContext().startService(_service.uploadDeliverable(
                             WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
                             _currentTask.getSlotId(), data, getNotificationIntent()));

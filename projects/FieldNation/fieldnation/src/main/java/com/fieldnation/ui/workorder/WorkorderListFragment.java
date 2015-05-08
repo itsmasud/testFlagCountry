@@ -366,6 +366,8 @@ public class WorkorderListFragment extends Fragment {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkInListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckin();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible())
+                _locationLoadingDialog.dismiss();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -395,6 +397,8 @@ public class WorkorderListFragment extends Fragment {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkOutListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckOut();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible())
+                _locationLoadingDialog.dismiss();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -678,6 +682,8 @@ public class WorkorderListFragment extends Fragment {
             // request the workorder
             if (_service == null) {
                 new Handler().postDelayed(new RequestWorkRunnable(workorder, time), 1000);
+            } else {
+                new RequestWorkRunnable(workorder, time).run();
             }
 
             // notify the UI
