@@ -214,15 +214,27 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     private void sendSignature() {
-        // not a task
-        if (_taskId == -1) {
-            startService(
-                    _service.addSignatureJson(WEB_UPLOAD_SIGNATURE, _workorder.getWorkorderId(), _name, _signatureJson));
+        if (_service == null || _workorder == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    sendSignature();
+                }
+            }, 100);
         } else {
-            // is a task
-            startService(
-                    _service.completeSignatureTaskJson(WEB_COMPLETE_TASK, _workorder.getWorkorderId(),
-                            _taskId, _name, _signatureJson));
+            // not a task
+            if (_taskId == -1) {
+                startService(
+                        _service.addSignatureJson(WEB_UPLOAD_SIGNATURE,
+                                _workorder.getWorkorderId(),
+                                _name,
+                                _signatureJson));
+            } else {
+                // is a task
+                startService(
+                        _service.completeSignatureTaskJson(WEB_COMPLETE_TASK, _workorder.getWorkorderId(),
+                                _taskId, _name, _signatureJson));
+            }
         }
     }
 

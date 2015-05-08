@@ -376,6 +376,8 @@ public class WorkFragment extends WorkorderFragment {
                 getString(R.string.dialog_location_loading_body),
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
+
+        populateUi(true);
     }
 
     @Override
@@ -417,6 +419,9 @@ public class WorkFragment extends WorkorderFragment {
 
     private void populateUi(boolean isCached) {
         if (_workorder == null)
+            return;
+
+        if (!isAdded())
             return;
 
         if (_sumView != null) {
@@ -573,6 +578,8 @@ public class WorkFragment extends WorkorderFragment {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkInListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckin();
+            if (_locationLoadingDialog != null)
+                _locationLoadingDialog.dismiss();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -601,6 +608,8 @@ public class WorkFragment extends WorkorderFragment {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckOut();
+            if (_locationLoadingDialog != null)
+                _locationLoadingDialog.dismiss();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -671,7 +680,6 @@ public class WorkFragment extends WorkorderFragment {
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkInListener.onLocation");
             startCheckin();
-            _locationLoadingDialog.dismiss();
         }
     };
     private final GpsLocationService.Listener _gps_checkOutListener = new GpsLocationService.Listener() {
@@ -679,37 +687,46 @@ public class WorkFragment extends WorkorderFragment {
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkOutListener.onLocation");
             startCheckOut();
-            _locationLoadingDialog.dismiss();
         }
     };
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-        if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
-                && resultCode == Activity.RESULT_OK) {
+        if (!isAdded() || _service == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            }, 500);
+        } else {
 
-            if (data == null) {
-                GlobalState.getContext().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-                        _workorder.getWorkorderId(), _currentTask.getSlotId(),
-                        _tempFile.getAbsolutePath(), getNotificationIntent()));
-            } else {
-                GlobalState.getContext().startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _currentTask.getSlotId(), data, getNotificationIntent()));
+            if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+                    && resultCode == Activity.RESULT_OK) {
+
+                if (data == null) {
+                    GlobalState.getContext().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
+                            _workorder.getWorkorderId(), _currentTask.getSlotId(),
+                            _tempFile.getAbsolutePath(), getNotificationIntent()));
+                } else {
+                    GlobalState.getContext().startService(_service.uploadDeliverable(
+                            WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
+                            _currentTask.getSlotId(), data, getNotificationIntent()));
+                }
+            } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+                GlobalState gs = GlobalState.getContext();
+                if (gs.shouldShowReviewDialog()) {
+                    showReviewDialog();
+                    gs.setShownReviewDialog();
+                    requestWorkorder(false);
+                }
+            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+                startCheckin();
+            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+                startCheckOut();
             }
-        } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
-            GlobalState gs = GlobalState.getContext();
-            if (gs.shouldShowReviewDialog()) {
-                showReviewDialog();
-                gs.setShownReviewDialog();
-                requestWorkorder(false);
-            }
-        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
-            startCheckin();
-        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-            startCheckOut();
         }
     }
 
@@ -934,11 +951,26 @@ public class WorkFragment extends WorkorderFragment {
                 ex.printStackTrace();
             }
 
-            GlobalState.getContext().startService(
-                    _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
+            completeWorkorder();
             setLoading(true);
         }
     };
+
+    private void completeWorkorder() {
+        if (_service == null || _workorder == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    completeWorkorder();
+                }
+            }, 500);
+            return;
+        }
+
+        GlobalState.getContext().startService(
+                _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
+
+    }
 
     private ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
