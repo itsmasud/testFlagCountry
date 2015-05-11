@@ -431,7 +431,7 @@ public class SignatureView extends View {
 
         super.onDraw(canvas);
 
-        Log.v(TAG, "onDraw time " + stopwatch.finish());
+//        Log.v(TAG, "onDraw time " + stopwatch.finish());
     }
 
     public void clear() {
