@@ -46,6 +46,7 @@ public class SignatureView extends View {
     private boolean _isMeasured;
     private Canvas _canvas;
     private Bitmap _map;
+    private boolean _redraw = false;
 
     public SignatureView(Context context) {
         super(context);
@@ -64,7 +65,7 @@ public class SignatureView extends View {
 
     public void init() {
         _shape = new Shape();
-        _shapes = new LinkedList<Shape>();
+        _shapes = new LinkedList<>();
         _shapes.add(_shape);
         _myPaint = new Paint();
         _myPaint.setColor(Color.BLACK);
@@ -280,6 +281,7 @@ public class SignatureView extends View {
         @Override
         protected void onPostExecute(List<Shape> shapes) {
             super.onPostExecute(shapes);
+            _redraw = true;
             invalidate();
         }
     }
@@ -355,23 +357,13 @@ public class SignatureView extends View {
         }
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        Stopwatch stopwatch = new Stopwatch();
-        // walk through the shapes list... draw those
-        if (_map == null) {
-            _map = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
-            _canvas = new Canvas(_map);
-        }
-
-        canvas.drawBitmap(_map, 0, 0, _myPaint);
-
-        if (_shape.size() > 0) {
-            Point lp = _shape.get(0);
+    private void drawShape(Canvas canvas, Shape shape) {
+        if (shape.size() > 0) {
+            Point lp = shape.get(0);
             Point p = null;
 
-            for (int j = 1; j < _shape.size(); j++) {
-                p = _shape.get(j);
+            for (int j = 1; j < shape.size(); j++) {
+                p = shape.get(j);
                 // this way we calculate the stroke for new points only
                 // makes rendering the drawing faster in the future
                 if (p.stroke == null) {
@@ -415,13 +407,36 @@ public class SignatureView extends View {
             }
 
         }
+
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        Stopwatch stopwatch = new Stopwatch();
+        // walk through the shapes list... draw those
+        if (_map == null) {
+            _map = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+            _canvas = new Canvas(_map);
+        }
+
+        canvas.drawBitmap(_map, 0, 0, _myPaint);
+
+        if (_redraw) {
+            for (int i = 0; i < _shapes.size(); i++) {
+                drawShape(canvas, _shapes.get(i));
+            }
+            _redraw = false;
+        } else {
+            drawShape(canvas, _shape);
+        }
+
         super.onDraw(canvas);
 
-        Log.v(TAG, "onDraw time " + stopwatch.finish());
+//        Log.v(TAG, "onDraw time " + stopwatch.finish());
     }
 
     public void clear() {
-        _shapes = new LinkedList<Shape>();
+        _shapes = new LinkedList<>();
         _shape = new Shape();
         _shapes.add(_shape);
         _scale = 1;
