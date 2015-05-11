@@ -8,6 +8,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.misc;
 
 import java.io.IOException;

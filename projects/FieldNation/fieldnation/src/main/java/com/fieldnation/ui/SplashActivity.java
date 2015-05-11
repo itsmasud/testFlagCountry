@@ -65,7 +65,7 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        AuthTopicService.requestAuthInvalid(this);
+        AuthTopicService.requestAuthInvalid(this, false);
         AuthTopicService.subscribeNeedUsernameAndPassword(this, TAG, _topicReceiver);
         AuthTopicService.requestAuthentication(this);
     }

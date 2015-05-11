@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.rpc.client.PhotoService;
@@ -43,6 +44,7 @@ public class MessageCardView extends RelativeLayout {
     private String[] _substatus;
     private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private WeakReference<Drawable> _profilePic = null;
+    private int _memoryClass;
 
     /*-*****************************-*/
     /*-			LifeCycle			-*/
@@ -80,6 +82,8 @@ public class MessageCardView extends RelativeLayout {
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
         _statusView = findViewById(R.id.status_view);
         _unreadImageView = (ImageView) findViewById(R.id.unread_imageview);
+
+        _memoryClass = GlobalState.getContext().getMemoryClass();
 
         populateUi();
     }
@@ -169,7 +173,13 @@ public class MessageCardView extends RelativeLayout {
         }
 
         if (_profilePic == null || _profilePic.get() == null) {
-            String url = _message.getFromUser().getPhotoUrl();
+            String url = null;
+            if (_memoryClass <= 64) {
+                url = _message.getFromUser().getPhotoThumbUrl();
+            } else {
+                url = _message.getFromUser().getPhotoUrl();
+            }
+
             if (misc.isEmptyOrNull(url)) {
                 _profileImageView.setBackgroundResource(R.drawable.missing_circle);
             } else {
@@ -198,7 +208,11 @@ public class MessageCardView extends RelativeLayout {
                 Drawable d = new BitmapDrawable(getContext().getResources(), photo);
                 _profilePic = new WeakReference<>(d);
                 _profileImageView.setBackgroundDrawable(_profilePic.get());
-                _picCache.put(_message.getFromUser().getPhotoUrl(), _profilePic);
+                if (_memoryClass <= 64) {
+                    _picCache.put(_message.getFromUser().getPhotoThumbUrl(), _profilePic);
+                } else {
+                    _picCache.put(_message.getFromUser().getPhotoUrl(), _profilePic);
+                }
                 addPhoto();
             }
             super.onReceiveResult(resultCode, resultData);

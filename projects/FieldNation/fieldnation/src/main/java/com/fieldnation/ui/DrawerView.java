@@ -50,7 +50,7 @@ public class DrawerView extends RelativeLayout {
     // UI
     private RelativeLayout _myworkView;
     private RelativeLayout _marketView;
-    private RelativeLayout _paymentView;
+    private LinearLayout _paymentView;
     //    private RelativeLayout _settingsView;
     private RelativeLayout _logoutView;
     private TextView _paidAmountTextView;
@@ -112,7 +112,7 @@ public class DrawerView extends RelativeLayout {
         _marketView = (RelativeLayout) findViewById(R.id.market_view);
         _marketView.setOnClickListener(_marketView_onClick);
 
-        _paymentView = (RelativeLayout) findViewById(R.id.payment_view);
+        _paymentView = (LinearLayout) findViewById(R.id.payment_view);
         _paymentView.setOnClickListener(_paymentView_onClick);
 
 //        _settingsView = (RelativeLayout) findViewById(R.id.settings_view);
@@ -209,7 +209,7 @@ public class DrawerView extends RelativeLayout {
     private final OnClickListener _sendlog_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            File tempfile = misc.dumpLogcat(getContext());
+            File tempfile = misc.dumpLogcat(getContext(), BuildConfig.VERSION_NAME);
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("plain/text");
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
@@ -248,9 +248,11 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), PaymentListActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
+//            AuthTopicService.requestAuthInvalid(getContext(), false);
+
         }
     };
     private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
@@ -260,7 +262,7 @@ public class DrawerView extends RelativeLayout {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getContext().startActivity(intent);
 //            attachAnimations();
-            AuthTopicService.requestAuthInvalid(getContext());
+//            AuthTopicService.requestAuthInvalid(getContext(), false);
         }
     };
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
@@ -271,6 +273,8 @@ public class DrawerView extends RelativeLayout {
             Log.v(TAG, "SplashActivity");
             SplashActivity.startNew(getContext());
             attachAnimations();
+            AuthTopicService.requestAuthInvalid(getContext(), false);
+//            Topics.dispatchNetworkDown(getContext());
         }
     };
 
@@ -400,6 +404,12 @@ public class DrawerView extends RelativeLayout {
         } else {
             _paidLayout.setVisibility(View.GONE);
         }
+
+        if (_profile != null && _profile.getCanViewPayments()) {
+            _paymentView.setVisibility(View.VISIBLE);
+        } else {
+            _paymentView.setVisibility(View.GONE);
+        }
     }
 
     private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
@@ -418,7 +428,14 @@ public class DrawerView extends RelativeLayout {
             super.onError(resultCode, resultData, errorType);
 
             _dataService = null;
-            AuthTopicService.requestAuthInvalid(getContext());
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
+                String response = resultData.getString(KEY_RESPONSE_ERROR);
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(getContext(), true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(getContext(), false);
         }
     };
 

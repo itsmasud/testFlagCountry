@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-
 import android.view.Window;
 import android.widget.Toast;
 
@@ -215,15 +214,27 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     private void sendSignature() {
-        // not a task
-        if (_taskId == -1) {
-            startService(
-                    _service.addSignatureJson(WEB_UPLOAD_SIGNATURE, _workorder.getWorkorderId(), _name, _signatureJson));
+        if (_service == null || _workorder == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    sendSignature();
+                }
+            }, 100);
         } else {
-            // is a task
-            startService(
-                    _service.completeSignatureTaskJson(WEB_COMPLETE_TASK, _workorder.getWorkorderId(),
-                            _taskId, _name, _signatureJson));
+            // not a task
+            if (_taskId == -1) {
+                startService(
+                        _service.addSignatureJson(WEB_UPLOAD_SIGNATURE,
+                                _workorder.getWorkorderId(),
+                                _name,
+                                _signatureJson));
+            } else {
+                // is a task
+                startService(
+                        _service.completeSignatureTaskJson(WEB_COMPLETE_TASK, _workorder.getWorkorderId(),
+                                _taskId, _name, _signatureJson));
+            }
         }
     }
 
@@ -342,7 +353,14 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(SignOffActivity.this);
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
+                String response = resultData.getString(KEY_RESPONSE_ERROR);
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(getContext(), true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(getContext(), false);
             Toast.makeText(SignOffActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
             _thankYouFrag.setUploadComplete();
         }

@@ -7,13 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.common.AuthServiceConstants;
+import com.fieldnation.topics.Topics;
 
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -117,6 +117,7 @@ public class AuthRpc extends RpcInterface implements AuthServiceConstants {
             at = OAuth.authServer(hostname, path, grantType, clientId, clientSecret, username, password);
 
             Log.v(TAG, at.toString());
+            Topics.dispatchNetworkUp(context);
 
         } catch (UnknownHostException ex) {
             // TODO this means that the connection is down

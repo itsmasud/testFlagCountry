@@ -260,6 +260,11 @@ public class WorkorderListFragment extends Fragment {
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+
+        _locationLoadingDialog.setData(GlobalState.getContext().getString(R.string.dialog_location_loading_title),
+                GlobalState.getContext().getString(R.string.dialog_location_loading_body),
+                GlobalState.getContext().getString(R.string.dialog_location_loading_button),
+                _locationLoadingDialog_listener);
     }
 
     @Override
@@ -271,11 +276,6 @@ public class WorkorderListFragment extends Fragment {
         AuthTopicService.subscribeAuthState(GlobalState.getContext(), 0, TAG, _topicReceiver);
         GaTopic.dispatchScreenView(GlobalState.getContext(), getGaLabel());
         _gpsLocationService = new GpsLocationService(GlobalState.getContext());
-
-        _locationLoadingDialog.setData(GlobalState.getContext().getString(R.string.dialog_location_loading_title),
-                GlobalState.getContext().getString(R.string.dialog_location_loading_body),
-                GlobalState.getContext().getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
     }
 
     @Override
@@ -366,6 +366,8 @@ public class WorkorderListFragment extends Fragment {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkInListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckin();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible())
+                _locationLoadingDialog.dismiss();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -395,6 +397,8 @@ public class WorkorderListFragment extends Fragment {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkOutListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckOut();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible())
+                _locationLoadingDialog.dismiss();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -665,7 +669,7 @@ public class WorkorderListFragment extends Fragment {
     private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
 
         @Override
-        public void onOk(Workorder workorder, String dateTime) {
+        public void onOk(final Workorder workorder, String dateTime) {
             long time = -1;
             if (dateTime != null) {
                 try {
@@ -676,16 +680,40 @@ public class WorkorderListFragment extends Fragment {
                 }
             }
             // request the workorder
-            GaTopic.dispatchEvent(GlobalState.getContext(), getGaLabel(), GaTopic.ACTION_REQUEST_WORK, "WorkorderCardView", 1);
-            Intent intent = _service.request(WEB_CHANGING_WORKORDER, workorder.getWorkorderId(), time);
-            intent.putExtra(KEY_WORKORDER_ID, workorder.getWorkorderId());
-            GlobalState.getContext().startService(intent);
+            if (_service == null) {
+                new Handler().postDelayed(new RequestWorkRunnable(workorder, time), 1000);
+            } else {
+                new RequestWorkRunnable(workorder, time).run();
+            }
 
             // notify the UI
             _requestWorking.add(workorder.getWorkorderId());
             _adapter.notifyDataSetChanged();
         }
     };
+
+    private class RequestWorkRunnable implements Runnable {
+        private Workorder _workorder;
+        private long _time;
+
+
+        public RequestWorkRunnable(Workorder workorder, long time) {
+            _time = time;
+            _workorder = workorder;
+        }
+
+        @Override
+        public void run() {
+            if (_service == null) {
+                new Handler().postDelayed(new RequestWorkRunnable(_workorder, _time), 1000);
+            } else {
+                GaTopic.dispatchEvent(GlobalState.getContext(), getGaLabel(), GaTopic.ACTION_REQUEST_WORK, "WorkorderCardView", 1);
+                Intent intent = _service.request(WEB_CHANGING_WORKORDER, _workorder.getWorkorderId(), _time);
+                intent.putExtra(KEY_WORKORDER_ID, _workorder.getWorkorderId());
+                GlobalState.getContext().startService(intent);
+            }
+        }
+    }
 
     private final ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
@@ -743,7 +771,7 @@ public class WorkorderListFragment extends Fragment {
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-            Log.v(TAG, "_adapter.getView");
+//            Log.v(TAG, "_adapter.getView");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -902,7 +930,14 @@ public class WorkorderListFragment extends Fragment {
             Log.v(TAG, "_resultReciever.onError()");
             super.onError(resultCode, resultData, errorType);
             _service = null;
-            AuthTopicService.requestAuthInvalid(GlobalState.getContext());
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
+                String response = resultData.getString(KEY_RESPONSE_ERROR);
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(getContext(), true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(getContext(), false);
             setLoading(false);
             //Toast.makeText(GlobalState.getContext(), "Request failed please try again.", Toast.LENGTH_LONG).show();
         }

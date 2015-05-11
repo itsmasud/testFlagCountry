@@ -8,6 +8,7 @@ import android.os.ResultReceiver;
 
 import com.fieldnation.Log;
 import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.topics.Topics;
 
 public class HttpReadRunnable extends HttpRunnable implements WebServiceConstants {
     private static final String TAG = "rpc.server.HttpReadRunnable";
@@ -61,6 +62,7 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
                     } else {
 
                         try {
+                            Topics.dispatchNetworkUp(_context);
                             // happy path
                             bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
                             bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());

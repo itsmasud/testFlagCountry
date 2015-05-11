@@ -238,6 +238,9 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean getCanViewServicePayRateInfo() {
+        if (_canViewServicePayRateInfo == null)
+            return true;
+
         return _canViewServicePayRateInfo;
     }
 
@@ -448,6 +451,7 @@ public class Workorder implements Parcelable {
 
     public Pay getPay() {
         return _pay;
+//        return null;
     }
 
     public Long getPaymentId() {
@@ -654,7 +658,9 @@ public class Workorder implements Parcelable {
     public boolean canCounterOffer() {
         return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
                 && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED
-                && !isBundle();
+                && !isBundle()
+                && getPay() != null
+                && !getPay().hidePay();
     }
 
     public boolean canComplete() {
@@ -757,8 +763,10 @@ public class Workorder implements Parcelable {
 
     public boolean canAcceptSignature() {
         WorkorderStatus status = getWorkorderStatus();
-        return (status == WorkorderStatus.ASSIGNED && getWorkorderSubstatus() != WorkorderSubstatus.UNCONFIRMED)
-                || status == WorkorderStatus.INPROGRESS;
+        WorkorderSubstatus substatus = getWorkorderSubstatus();
+        return ((status == WorkorderStatus.ASSIGNED && getWorkorderSubstatus() != WorkorderSubstatus.UNCONFIRMED)
+                || status == WorkorderStatus.INPROGRESS)
+                && (substatus != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED && substatus != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED);
     }
 
     public boolean canChangeClosingNotes() {

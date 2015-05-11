@@ -9,6 +9,7 @@
     <facet type="java-gradle" name="Java-Gradle">
       <configuration>
         <option name="BUILD_FOLDER_PATH" value="$MODULE_DIR$/build" />
+        <option name="BUILDABLE" value="true" />
       </configuration>
     </facet>
   </component>
@@ -27,6 +28,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="android-v7" level="project" />
+    <orderEntry type="library" exported="" name="libUtils.libUtils" level="project" />
   </component>
 </module>
-

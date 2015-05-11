@@ -1,11 +1,10 @@
 package com.fieldnation;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
+import android.os.*;
 
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -48,6 +47,8 @@ public class GlobalState extends Application {
     private Profile _profile;
     private static GlobalState _context;
 
+    private int _memoryClass;
+
     public GlobalState() {
         super();
 
@@ -57,6 +58,9 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
+        Log.v(TAG, "memoryClass " + _memoryClass);
+
         _context = this;
         DataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
@@ -68,12 +72,21 @@ public class GlobalState extends Application {
             System.setProperty("http.keepalive", "false");
         }
 
+//        Log.v(TAG, "MANUFACTURER: " + Build.MANUFACTURER);
+//        Log.v(TAG, "MODEL: " + Build.MODEL);
+//        Log.v(TAG, "RELEASE: " + Build.VERSION.RELEASE);
+//        Log.v(TAG, "SDK: " + Build.VERSION.SDK_INT);
+
         GaTopic.subscribeEvent(this, TAG, _gaevent_receiver);
         GaTopic.subscribeScreenView(this, TAG, _gaevent_receiver);
         GaTopic.subscribeTiming(this, TAG, _gaevent_receiver);
 
         AuthTopicService.subscribeAuthState(this, 0, TAG + ":AuthTopicService", _authReceiver);
         Topics.subscribeProfileInvalidated(this, TAG + ":ProfileService", _profile_topicReceiver);
+    }
+
+    public int getMemoryClass() {
+        return _memoryClass;
     }
 
     @Override
@@ -161,7 +174,14 @@ public class GlobalState extends Application {
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
             _service = null;
-            AuthTopicService.requestAuthInvalid(GlobalState.this);
+            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
+                String response = resultData.getString(KEY_RESPONSE_ERROR);
+                if (response.contains("The authtoken is invalid or has expired.")) {
+                    AuthTopicService.requestAuthInvalid(GlobalState.this, true);
+                    return;
+                }
+            }
+            AuthTopicService.requestAuthInvalid(GlobalState.this, false);
         }
     };
 
