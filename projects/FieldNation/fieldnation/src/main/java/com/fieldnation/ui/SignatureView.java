@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -412,7 +411,7 @@ public class SignatureView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Stopwatch stopwatch = new Stopwatch();
+//        Stopwatch stopwatch = new Stopwatch();
         // walk through the shapes list... draw those
         if (_map == null) {
             _map = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
