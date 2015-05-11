@@ -1,11 +1,10 @@
 package com.fieldnation;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
+import android.os.*;
 
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -48,6 +47,8 @@ public class GlobalState extends Application {
     private Profile _profile;
     private static GlobalState _context;
 
+    private int _memoryClass;
+
     public GlobalState() {
         super();
 
@@ -57,6 +58,9 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
+        Log.v(TAG, "memoryClass " + _memoryClass);
+
         _context = this;
         DataCacheNode.flush(this);
         PhotoCacheNode.flush(this);
@@ -79,6 +83,10 @@ public class GlobalState extends Application {
 
         AuthTopicService.subscribeAuthState(this, 0, TAG + ":AuthTopicService", _authReceiver);
         Topics.subscribeProfileInvalidated(this, TAG + ":ProfileService", _profile_topicReceiver);
+    }
+
+    public int getMemoryClass() {
+        return _memoryClass;
     }
 
     @Override
