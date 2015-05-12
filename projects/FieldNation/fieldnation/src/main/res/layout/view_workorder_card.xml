@@ -222,7 +222,7 @@
 
     <!-- status layout -->
     <View
-        android:id="@id/status_view"
+        android:id="@+id/status_view"
         style="@style/Card_Body_Left" />
 
     <com.fieldnation.ui.VerticalTextView

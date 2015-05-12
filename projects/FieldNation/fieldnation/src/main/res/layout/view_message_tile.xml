@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/tileStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/container"
+        style="?attr/tileContainerStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="74dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/tileTextTitleStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/placeholder_paragraph" />
+
+        <TextView
+            android:id="@+id/messagebody_textview"
+            style="?attr/tileTextBodyStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/placeholder_paragraph" />
+    </LinearLayout>
+
+    <View
+        style="?attr/tileDividerStyle"
+        android:layout_alignBottom="@+id/container"
+        android:layout_alignLeft="@+id/container"
+        android:layout_marginLeft="16dp" />
+
+    <com.fieldnation.ui.ProfilePicView
+        android:id="@+id/pic_view"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp" />
+
+</RelativeLayout>

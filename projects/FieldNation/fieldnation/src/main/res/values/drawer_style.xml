@@ -34,7 +34,6 @@
     <style name="DrawerProfileImage">
         <item name="android:layout_width">64dp</item>
         <item name="android:layout_height">64dp</item>
-        <item name="android:src">@drawable/missing_circle</item>
     </style>
 
     <style name="DrawerProfileDataContainer">

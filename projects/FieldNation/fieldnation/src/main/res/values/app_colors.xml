@@ -31,13 +31,16 @@
     <color name="fn_grad_start">#FF8EADDB</color>
     <color name="fn_grad_end">#FF61C4B2</color>
 
-    <color name="fn_divider">#FFd8d8d3</color>
+    <color name="fn_divider">#3F989898</color>
 
     <color name="fn_white_text">#FFFFFFFF</color>
     <color name="fn_white_text_50">#80FFFFFF</color>
 
     <color name="fn_light_text">#FF989898</color>
     <color name="fn_light_text_80">#CC989898</color>
+    <color name="fn_light_text_50">#80989898</color>
+    <color name="fn_light_text_25">#3F989898</color>
+    <color name="fn_light_text_10">#19989898</color>
     <color name="fn_light_text_0">#00989898</color>
 
     <color name="fn_dark_text">#FF1e1e1e</color>

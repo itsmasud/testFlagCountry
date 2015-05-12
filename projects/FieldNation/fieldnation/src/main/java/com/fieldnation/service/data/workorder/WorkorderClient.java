@@ -12,14 +12,17 @@ import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Deliverable;
 import com.fieldnation.data.workorder.Expense;
+import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -115,6 +118,46 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return register(topicId, TAG);
     }
 
+    public static void listMessages(Context context, long workorderId, boolean isSync) {
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
+        context.startService(intent);
+    }
+
+    public boolean subListMessages(boolean isSync) {
+        return subListMessages(0, isSync);
+    }
+
+    public boolean subListMessages(long workorderId, boolean isSync) {
+        String topicId = PARAM_ACTION_LIST_MESSAGES;
+
+        if (isSync) {
+            topicId += "/SYNC";
+        }
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+        }
+
+        return register(topicId, TAG);
+    }
+
+    public boolean subActions() {
+        return subActions(0);
+    }
+
+    public boolean subActions(long workorderId) {
+        String topicId = PARAM_ACTION;
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+        }
+
+        return register(topicId, TAG);
+    }
+
     /*-**********************************-*/
     /*-             signature            -*/
     /*-**********************************-*/
@@ -123,6 +166,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
+    public static void actionAddMessage(Context context, long workorderId, String message) {
+        WorkorderTransactionBuilder.action(context, workorderId,
+                "messages/new", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "message=" + misc.escapeForURL(message));
+    }
+
+    public static void actionMarkMessagesRead(Context context, long workorderId) {
+        WorkorderTransactionBuilder.listMessages(context, workorderId, true, false);
+    }
+
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
@@ -297,13 +350,49 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preOnGetSignature((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_GET_BUNDLE)) {
                 preOnGetBundle((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_CHECKIN)) {
-                preCheckIn((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_CHECKOUT)) {
-                preCheckOut((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_DELIVERABLE_LIST)) {
                 preDeliverableList((Bundle) payload);
+            } else if (topicId.startsWith(PARAM_ACTION_LIST_MESSAGES)) {
+                preMessageList((Bundle) payload);
+            } else if (topicId.startsWith(PARAM_ACTION)) {
+                preOnAction((Bundle) payload);
             }
+        }
+
+        private void preOnAction(Bundle payload) {
+            onAction(payload.getLong(PARAM_ID),
+                    payload.getString(PARAM_ACTION));
+        }
+
+        public void onAction(long workorderId, String ation) {
+        }
+
+        private void preMessageList(Bundle payload) {
+            new AsyncTaskEx<Object, Object, List<Message>>() {
+                private long workorderId;
+
+                @Override
+                protected List<Message> doInBackground(Object... params) {
+                    Bundle payload = (Bundle) params[0];
+
+                    workorderId = payload.getLong(PARAM_ID);
+                    JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                    List<Message> list = new LinkedList<Message>();
+                    for (int i = 0; i < ja.size(); i++) {
+                        list.add(Message.fromJson(ja.getJsonObject(i)));
+                    }
+
+                    return list;
+                }
+
+                @Override
+                protected void onPostExecute(List<Message> messages) {
+                    onMessageList(workorderId, messages);
+                }
+            }.executeEx(payload);
+        }
+
+        public void onMessageList(long workorderId, List<Message> messages) {
         }
 
         private void preDeliverableList(Bundle payload) {
@@ -334,20 +423,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         public void onDeliverableList(List<Deliverable> list, long workorderId) {
-        }
-
-        private void preCheckOut(Bundle payload) {
-            onCheckOut(payload.getLong(PARAM_ID));
-        }
-
-        public void onCheckOut(long WorkorderId) {
-        }
-
-        private void preCheckIn(Bundle payload) {
-            onCheckIn(payload.getLong(PARAM_ID));
-        }
-
-        public void onCheckIn(long WorkorderId) {
         }
 
         // list

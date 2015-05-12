@@ -3,6 +3,7 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -30,6 +31,18 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
+    public static byte[] pAction(long workorderId, String action) {
+        try {
+            JsonObject obj = new JsonObject("action", "pAction");
+            obj.put("workorderId", workorderId);
+            obj.put("param", action);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     public static byte[] pGetSignature(long workorderId, long signatureId) {
         try {
             JsonObject obj = new JsonObject("action", "pGetSignature");
@@ -42,20 +55,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
-    public static byte[] pCheckIn(long workorderId) {
+    public static byte[] pMessageList(long workorderId) {
         try {
-            JsonObject obj = new JsonObject("action", "pCheckIn");
-            obj.put("workorderId", workorderId);
-            return obj.toByteArray();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public static byte[] pCheckOut(long workorderId) {
-        try {
-            JsonObject obj = new JsonObject("action", "pCheckOut");
+            JsonObject obj = new JsonObject("action", "pMessageList");
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
@@ -70,14 +72,15 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
-            if (action.equals("pDetails")) {
-                return handleDetails(context, transaction, params, resultData);
-            } else if (action.equals("pGetSignature")) {
-                return handleGetSignature(context, transaction, params, resultData);
-            } else if (action.equals("pCheckIn")) {
-                return handleCheckIn(context, transaction, params, resultData);
-            } else if (action.equals("pCheckOut")) {
-                return handleCheckOut(context, transaction, params, resultData);
+            switch (action) {
+                case "pDetails":
+                    return handleDetails(context, transaction, params, resultData);
+                case "pGetSignature":
+                    return handleGetSignature(context, transaction, params, resultData);
+                case "pAction":
+                    return handleAction(context, transaction, params, resultData);
+                case "pMessageList":
+                    return handleMessageList(context, transaction, params, resultData);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -85,24 +88,25 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return Result.FINISH;
     }
 
-    private Result handleCheckIn(Context context, WebTransaction transaction,
-                                 JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "handleCheckIn");
+    private Result handleAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleAction");
         long workorderId = params.getLong("workorderId");
-
-        // TODO... need to do something here
-//        WorkorderDispatch.get(context, workorderId, resultData.getByteArray());
+        String action = params.getString("param");
+        
+        WorkorderDispatch.action(context, workorderId, action);
 
         return Result.FINISH;
     }
 
-    private Result handleCheckOut(Context context, WebTransaction transaction,
-                                  JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "handleCheckOut");
+    private Result handleMessageList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleMessageList");
         long workorderId = params.getLong("workorderId");
 
-        // TODO... need to do something here
-//        WorkorderDispatch.get(context, workorderId, resultData.getByteArray());
+        byte[] data = resultData.getByteArray();
+
+        WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), transaction.isSync());
+
+        StoredObject.put(context, PSO_MESSAGE_LIST, workorderId, data);
 
         return Result.FINISH;
     }

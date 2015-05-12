@@ -7,13 +7,13 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.service.data.photo.PhotoDataClient;
+import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -26,7 +26,8 @@ public class MessageRcvdView extends RelativeLayout {
 
     // UI
     private TextView _messageTextView;
-    private ImageView _profileImageView;
+    //    private ImageView _profileImageView;
+    private ProfilePicView _picView;
     private TextView _timeTextView;
     private TextView _checkIconFont;
     private TextView _usernameTextView;
@@ -55,7 +56,7 @@ public class MessageRcvdView extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_rcvd, this);
 
         _messageTextView = (TextView) findViewById(R.id.message_textview);
-        _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
+        _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _checkIconFont = (TextView) findViewById(R.id.check_iconfont);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
@@ -83,31 +84,30 @@ public class MessageRcvdView extends RelativeLayout {
         if (_message == null)
             return;
 
-        _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
-        _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        try {
+            _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
+            _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } catch (Exception ex) {
+            _messageTextView.setText(_message.getMessage());
+        }
+
         try {
             _timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        if (_message.isRead()) {
-//            _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
-            // TODO need the check box
-        } else {
-//            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
-            _checkIconFont.setText(R.string.icfont_message_alert);
-        }
+        _picView.setAlertOn(!_message.isRead());
 
         _usernameTextView.setText(_message.getFromUser().getFirstname());
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
-            _profileImageView.setBackgroundResource(R.drawable.missing);
+            _picView.setProfilePic(R.drawable.missing_circle);
             String url = _message.getFromUser().getPhotoUrl();
             if (!misc.isEmptyOrNull(url))
-                _photos.getPhoto(getContext(), url, false);
+                _photos.getPhoto(getContext(), url, true);
         } else if (_profilePic != null && _profilePic.get() != null) {
-            _profileImageView.setBackgroundDrawable(_profilePic.get());
+            _picView.setProfilePic(_profilePic.get());
         }
     }
 
@@ -121,7 +121,7 @@ public class MessageRcvdView extends RelativeLayout {
         public void onPhoto(String url, File file, boolean isCircle) {
             Drawable pic = new BitmapDrawable(getContext().getResources(), file.getAbsolutePath());
             _profilePic = new WeakReference<Drawable>(pic);
-            _profileImageView.setBackgroundDrawable(pic);
+            _picView.setProfilePic(pic);
         }
 
     };

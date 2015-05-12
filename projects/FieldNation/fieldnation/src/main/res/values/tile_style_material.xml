@@ -17,16 +17,16 @@
         <item name="android:background">@color/tileBackGroundColor_Material</item>
     </style>
 
-    <style name="TileTextTitle.Material" parent="@style/Text_Headline">
-        <item name="android:textColor">@color/tileTextColor_Material</item>
+    <style name="TileTextTitle.Material" parent="@style/Text_Title">
+        <!--<item name="android:textColor">@color/tileTextColor_Material</item>-->
     </style>
 
-    <style name="TileTextBody.Material" parent="@style/Text_Body_2">
-        <item name="android:textColor">@color/tileTextColor_Material</item>
+    <style name="TileTextBody.Material" parent="@style/Text_Caption">
+        <!--<item name="android:textColor">@color/tileTextColor_Material</item>-->
     </style>
 
     <style name="TileTextStatus.Material" parent="@style/Text_Caption">
-        <item name="android:textColor">@color/tileTextColor_Material</item>
+        <!--<item name="android:textColor">@color/tileTextColor_Material</item>-->
     </style>
 
     <style name="TileActionBar.Material">
@@ -55,8 +55,10 @@
         <item name="android:layout_marginBottom">6dp</item>
     </style>
 
-    <style name="TileSpinnerButton.Material" parent="@android:style/Widget.Spinner">
+    <style name="TileSpinnerButton.Material" parent="@android:style/Widget.Spinner"></style>
 
-    </style>
+    <style name="TileDivider.Material" parent="DividerFull" />
+
+    <style name="TileDividerPart.Material" parent="DividerPart" />
 
 </resources>

@@ -72,8 +72,8 @@
         <item name="tileSpinnerButtonStyle">@style/TileSpinnerButton.Material</item>
         <item name="tileEditText">@style/TileEditText</item>
         <item name="tileButtonStyle">@style/TileButton</item>
-        <item name="tileDividerStyle">@style/TileDivider</item>
-
+        <item name="tileDividerStyle">@style/TileDivider.Material</item>
+        <item name="tileDividerPartStyle">@style/TileDividerPart.Material</item>
 
         <!-- dialogs -->
         <item name="dialogStyle">@style/Dialog</item>

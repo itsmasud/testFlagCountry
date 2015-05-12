@@ -64,6 +64,32 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    public static void listMessages(Context context, long workorderId, boolean isRead, boolean isSync) {
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/messages");
+
+            if (isRead) {
+                builder.urlParams("?mark_read=1");
+            }
+
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pMessageList(workorderId))
+                    .key((isSync ? "Sync/" : "") + "WorkorderMessageList/" + workorderId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(builder)
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
     public static void action(Context context, long workorderId, String action, String params, String contentType, String body) {
         try {
             JsonObject _action = new JsonObject();
@@ -89,7 +115,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, action))
                     .useAuth(true)
                     .key("Workorder/" + workorderId + "/" + action)
                     .request(http)

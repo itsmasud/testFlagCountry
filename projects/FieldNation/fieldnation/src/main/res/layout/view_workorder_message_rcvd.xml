@@ -9,14 +9,15 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/profile_imageview"
-            style="@style/MessageView_ProfileImageRcvd" />
+        <com.fieldnation.ui.ProfilePicView
+            android:id="@+id/pic_view"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
 
         <TextView
             android:id="@+id/message_textview"
             style="@style/MessageView_MessageRcvd"
-            android:layout_toRightOf="@+id/profile_imageview"
+            android:layout_toRightOf="@+id/pic_view"
             android:text="@string/placeholder_paragraph" />
     </RelativeLayout>
 
@@ -25,8 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/message_layout"
-        android:layout_marginLeft="58dp"
         android:layout_below="@id/message_layout"
+        android:layout_marginLeft="58dp"
         android:text="Name" />
 
     <LinearLayout
@@ -34,17 +35,16 @@
         android:layout_below="@+id/message_layout"
         android:orientation="horizontal">
 
-        <com.fieldnation.ui.IconFontTextView
-            style="@style/MessageView_Status_Clock_IconFont" />
+        <com.fieldnation.ui.IconFontTextView style="@style/MessageView_Status_Clock_IconFont" />
 
         <TextView
             android:id="@+id/time_textview"
             style="@style/MessageView_Status_Time"
             android:text="@string/placeholder_date_short" />
 
-        <ImageView
+        <com.fieldnation.ui.IconFontTextView
             android:id="@+id/check_iconfont"
-            style="@style/MessageView_Status_Check" />
+            style="@style/MessageView_Status_Check_IconFont" />
     </LinearLayout>
 
 </RelativeLayout>

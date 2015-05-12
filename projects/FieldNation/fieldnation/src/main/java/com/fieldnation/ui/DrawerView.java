@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,7 +46,8 @@ public class DrawerView extends RelativeLayout {
 
     // UI
     private LinearLayout _profileContainerLayout;
-    private ImageView _profileImageView;
+    //    private ImageView _profileImageView;
+    private ProfilePicView _picView;
     private TextView _profileNameTextView;
     private TextView _profileCompanyTextView;
     private ImageButton _profileExpandButton;
@@ -116,7 +116,8 @@ public class DrawerView extends RelativeLayout {
         _profileContainerLayout = (LinearLayout) findViewById(R.id.profile_container);
         _profileContainerLayout.setOnClickListener(_profileContainerLayout_onClick);
 
-        _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
+        _picView = (ProfilePicView) findViewById(R.id.pic_view);
+        _picView.setProfilePic(R.drawable.missing_circle);
         _profileNameTextView = (TextView) findViewById(R.id.profile_name_textview);
         _profileNameTextView.setVisibility(View.GONE);
         _profileCompanyTextView = (TextView) findViewById(R.id.profile_company_textview);
@@ -241,17 +242,17 @@ public class DrawerView extends RelativeLayout {
 
     private void addProfilePhoto() {
         if (_profile == null || _photoClient == null || !_photoClient.isConnected()) {
-            _profileImageView.setImageResource(R.drawable.missing_circle);
+            _picView.setProfilePic(R.drawable.missing_circle);
             return;
         }
 
         if (_profilePic == null || _profilePic.get() == null) {
-            _profileImageView.setImageResource(R.drawable.missing_circle);
+            _picView.setProfilePic(R.drawable.missing_circle);
             if (!misc.isEmptyOrNull(_profile.getPhoto().getLarge())) {
                 _photoClient.getPhoto(getContext(), _profile.getPhoto().getLarge(), true);
             }
         } else {
-            _profileImageView.setImageDrawable(_profilePic.get());
+            _picView.setProfilePic(_profilePic.get());
         }
     }
 

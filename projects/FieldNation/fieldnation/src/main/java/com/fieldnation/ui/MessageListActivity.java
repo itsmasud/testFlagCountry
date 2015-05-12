@@ -56,13 +56,13 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
     @Override
     public View getView(Message object, View convertView, ViewGroup parent) {
-        MessageCardView v = null;
+        MessageTileView v = null;
         if (convertView == null) {
-            v = new MessageCardView(parent.getContext());
-        } else if (convertView instanceof MessageCardView) {
-            v = (MessageCardView) convertView;
+            v = new MessageTileView(parent.getContext());
+        } else if (convertView instanceof MessageTileView) {
+            v = (MessageTileView) convertView;
         } else {
-            v = new MessageCardView(parent.getContext());
+            v = new MessageTileView(parent.getContext());
         }
 
         v.setData(object, _messageCard_listener);
@@ -74,7 +74,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
     private final View.OnClickListener _message_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MessageCardView mv = (MessageCardView) v;
+            MessageTileView mv = (MessageTileView) v;
             Intent intent = new Intent(MessageListActivity.this, WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, mv.getMessage().getWorkorderId());
@@ -82,9 +82,9 @@ public class MessageListActivity extends ItemListActivity<Message> {
         }
     };
 
-    private final MessageCardView.Listener _messageCard_listener = new MessageCardView.Listener() {
+    private final MessageTileView.Listener _messageCard_listener = new MessageTileView.Listener() {
         @Override
-        public Drawable getPhoto(MessageCardView view, String url, boolean circle) {
+        public Drawable getPhoto(MessageTileView view, String url, boolean circle) {
             if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
                 return _picCache.get(url).get();
             } else {

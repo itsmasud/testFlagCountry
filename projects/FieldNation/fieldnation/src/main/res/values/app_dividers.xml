@@ -7,17 +7,16 @@
     <style name="DividerFull">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/dividerHeight</item>
-        <item name="android:alpha">0.12</item>
+        <!--<item name="android:alpha">0.12</item>-->
         <item name="android:background">@color/dividerColor</item>
     </style>
 
     <style name="DividerPart">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/dividerHeight</item>
-        <item name="android:alpha">0.12</item>
+        <!--<item name="android:alpha">0.12</item>-->
         <item name="android:background">@color/dividerColor</item>
         <item name="android:layout_marginRight">@dimen/dividerPartialMargin</item>
         <item name="android:layout_marginLeft">@dimen/dividerPartialMargin</item>
     </style>
-
 </resources>

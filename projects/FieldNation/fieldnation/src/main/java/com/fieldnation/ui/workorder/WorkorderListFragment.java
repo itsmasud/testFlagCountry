@@ -816,6 +816,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             Log.v(TAG, "_workorderData_listener.onConnected");
             _workorderClient.subList(_displayView);
             _workorderClient.subGet(false);
+            _workorderClient.subActions();
             _adapter.refreshPages();
         }
 
@@ -829,12 +830,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         @Override
-        public void onCheckIn(long WorkorderId) {
-            _adapter.refreshPages();
-        }
-
-        @Override
-        public void onCheckOut(long WorkorderId) {
+        public void onAction(long workorderId, String ation) {
             _adapter.refreshPages();
         }
     };

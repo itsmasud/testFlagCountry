@@ -24,8 +24,8 @@
                     android:layout_toLeftOf="@+id/profileexpand_button"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/profile_imageview"
+                    <com.fieldnation.ui.ProfilePicView
+                        android:id="@+id/pic_view"
                         style="@style/DrawerProfileImage"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true" />
@@ -33,7 +33,7 @@
                     <LinearLayout
                         android:id="@+id/profile_layout"
                         style="@style/DrawerProfileDataContainer"
-                        android:layout_toRightOf="@+id/profile_imageview"
+                        android:layout_toRightOf="@+id/pic_view"
                         android:orientation="vertical">
 
                         <TextView

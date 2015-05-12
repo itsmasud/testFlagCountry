@@ -45,24 +45,54 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             Log.v(TAG, "MyWorkerThread, processIntent");
             if (_context != null) {
                 String action = intent.getStringExtra(PARAM_ACTION);
-                if (action.equals(PARAM_ACTION_LIST)) {
-                    listWorkorders(_context, intent);
-                } else if (action.equals(PARAM_ACTION_DETAILS)) {
-                    details(_context, intent);
-                } else if (action.equals(PARAM_ACTION_GET_SIGNATURE)) {
-                    getSignature(_context, intent);
-                } else if (action.equals(PARAM_ACTION_GET_BUNDLE)) {
-                    getBundle(_context, intent);
-                } else if (action.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
-                    uploadDeliverable(_context, intent);
-                } else if (action.equals(PARAM_ACTION_DELIVERABLE)) {
-                    getDeliverable(_context, intent);
-                } else if (action.equals(PARAM_ACTION_DOWNLOAD_DELIVERABLE)) {
-                    downloadDeliverable(_context, intent);
-                } else if (action.equals(PARAM_ACTION_DELIVERABLE_LIST))
-                    listDeliverables(_context, intent);
+                switch (action) {
+                    case PARAM_ACTION_LIST:
+                        listWorkorders(_context, intent);
+                        break;
+                    case PARAM_ACTION_DETAILS:
+                        details(_context, intent);
+                        break;
+                    case PARAM_ACTION_GET_SIGNATURE:
+                        getSignature(_context, intent);
+                        break;
+                    case PARAM_ACTION_GET_BUNDLE:
+                        getBundle(_context, intent);
+                        break;
+                    case PARAM_ACTION_UPLOAD_DELIVERABLE:
+                        uploadDeliverable(_context, intent);
+                        break;
+                    case PARAM_ACTION_DELIVERABLE:
+                        getDeliverable(_context, intent);
+                        break;
+                    case PARAM_ACTION_DOWNLOAD_DELIVERABLE:
+                        downloadDeliverable(_context, intent);
+                        break;
+                    case PARAM_ACTION_DELIVERABLE_LIST:
+                        listDeliverables(_context, intent);
+                        break;
+                    case PARAM_ACTION_LIST_MESSAGES:
+                        listMessages(_context, intent);
+                        break;
+                }
             }
         }
+    }
+
+    private static void listMessages(Context context, Intent intent) {
+        long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+
+        StoredObject obj = StoredObject.get(context, PSO_MESSAGE_LIST, workorderId);
+        if (obj != null) {
+            try {
+                WorkorderDispatch.listMessages(context, workorderId, new JsonArray(obj.getData()), isSync);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        WorkorderTransactionBuilder.listMessages(context, workorderId, false, isSync);
+        WorkorderTransactionBuilder.listMessages(context, workorderId, false, isSync);
     }
 
     private static void listDeliverables(Context context, Intent intent) {

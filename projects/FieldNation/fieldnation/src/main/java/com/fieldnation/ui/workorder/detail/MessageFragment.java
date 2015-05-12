@@ -1,14 +1,16 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -17,14 +19,9 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class MessageFragment extends WorkorderFragment {
     private static final String TAG = "ui.workorder.detail.MessageFragment";
-
-    private int WEB_GET_MESSAGES = 1;
-    private int WEB_NEW_MESSAGE = 3;
-    private int WEB_MARK_READ = 4;
 
     // UI
     private ListView _listview;
@@ -32,12 +29,11 @@ public class MessageFragment extends WorkorderFragment {
     private RefreshView _refreshView;
 
     // Data
-    private Random _rand = new Random(System.currentTimeMillis());
-    private Profile _profile;
     private Workorder _workorder;
     private WorkorderClient _workorderClient;
     private List<Message> _messages = new LinkedList<Message>();
     private MessagesAdapter _adapter;
+    private boolean _isSubbed = false;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -60,12 +56,24 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        _isSubbed = false;
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(activity);
+    }
+
+    @Override
+    public void onDetach() {
+        _workorderClient.disconnect(getActivity());
+        _workorderClient = null;
+        _isSubbed = false;
+        super.onDetach();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-// TODO remove
-//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
-//        Topics.subscrubeProfileUpdated(getActivity(), TAG + ":ProfileService", _profile_topicReceiver);
-
         _markReadRunnable.run();
     }
 
@@ -73,25 +81,16 @@ public class MessageFragment extends WorkorderFragment {
     private final Runnable _markReadRunnable = new Runnable() {
         @Override
         public void run() {
-/*
-            if (getActivity() != null && _workorderService != null && _workorder != null) {
-                getActivity().startService(_workorderService.markMessagesRead(WEB_MARK_READ, _workorder.getWorkorderId()));
+            if (getActivity() != null && _workorder != null) {
+                WorkorderClient.actionMarkMessagesRead(getActivity(), _workorder.getWorkorderId());
             } else {
                 new Handler().postDelayed(_markReadRunnable, 1000);
             }
-*/
-
         }
     };
 
     @Override
     public void onPause() {
-// todo remove
-//        TopicService.delete(getActivity(), TAG);
-//        TopicService.delete(getActivity(), TAG + ":ProfileService");
-
-        WEB_GET_MESSAGES = 1;
-        WEB_NEW_MESSAGE = 3;
         if (_adapter != null) {
             _adapter.notifyDataSetInvalidated();
             _adapter = null;
@@ -102,26 +101,20 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void update() {
         Log.v(TAG, "update");
-//        if (_workorderService != null) {
-//            getActivity().startService(
-//                    _workorderService.listMessages(WEB_MARK_READ, _workorder.getWorkorderId(), true, false));
-//        }
+
+        if (getActivity() != null && _workorder != null)
+            WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false);
     }
 
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
+        subscribeData();
         getMessages();
     }
 
     private void getMessages() {
-//        if (_workorderService == null)
-//            return;
-
         if (_workorder == null)
-            return;
-
-        if (_profile == null)
             return;
 
         if (getActivity() == null)
@@ -134,9 +127,8 @@ public class MessageFragment extends WorkorderFragment {
             _adapter.notifyDataSetChanged();
 
         Log.v(TAG, "getMessages");
-        WEB_GET_MESSAGES = _rand.nextInt();
-// todo remove
-//        getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
+
+        WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false);
     }
 
     @Override
@@ -162,12 +154,9 @@ public class MessageFragment extends WorkorderFragment {
         if (this.getActivity() == null)
             return null;
 
-        if (_profile == null)
-            return null;
-
         try {
             if (_adapter == null) {
-                _adapter = new MessagesAdapter(_profile);
+                _adapter = new MessagesAdapter(GlobalState.getContext().getProfile());
                 _listview.setAdapter(_adapter);
             }
             return _adapter;
@@ -185,139 +174,50 @@ public class MessageFragment extends WorkorderFragment {
         public void onClick(View v) {
             if (getActivity() != null) {
                 _refreshView.startRefreshing();
-                WEB_NEW_MESSAGE = _rand.nextInt();
+
                 Log.v(TAG, "_send_onClick");
-// todo remove
-//                getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
-//                        _inputView.getInputText()));
+
+                WorkorderClient.actionAddMessage(getActivity(),
+                        _workorder.getWorkorderId(), _inputView.getInputText());
 
                 _inputView.clearText();
             }
         }
     };
+
+    private void subscribeData() {
+        if (_workorder == null)
+            return;
+
+        if (_workorderClient == null)
+            return;
+
+        if (_isSubbed)
+            return;
+
+        _workorderClient.subListMessages(_workorder.getWorkorderId(), false);
+        _workorderClient.subActions(_workorder.getWorkorderId());
+        _isSubbed = true;
+    }
 
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-// todo remove
-/*
-    private final TopicReceiver _profile_topicReceiver = new TopicReceiver(new Handler()) {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (getActivity() == null)
-                return;
+        public void onConnected() {
+            subscribeData();
+        }
 
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                parcel.setClassLoader(getActivity().getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-            }
-            getAdapter();
+        @Override
+        public void onMessageList(long workorderId, List<Message> messages) {
+            _messages = messages;
+            rebuildList();
+        }
+
+        @Override
+        public void onAction(long workorderId, String ation) {
             getMessages();
         }
     };
-*/
-
-    // todo remove
-/*
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
-        @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (getActivity() == null)
-                return;
-
-            if (_workorderService == null || isNew) {
-                _workorderService = new WorkorderWebClient(getActivity(), username, authToken, _resultReceiver);
-                Log.v(TAG, "_authReceiver");
-                getMessages();
-            }
-        }
-
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _workorderService = null;
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            _workorderService = null;
-        }
-
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(getActivity());
-        }
-    };
-*/
-
-/*
-    private class MessageAsyncTask extends AsyncTaskEx<Bundle, Object, List<Message>> {
-        @Override
-        protected List<Message> doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-            List<Message> list = new LinkedList<>();
-            try {
-                JsonArray messages = new JsonArray(new String(
-                        resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-
-                for (int i = 0; i < messages.size(); i++) {
-                    JsonObject obj = messages.getJsonObject(i);
-                    list.add(Message.fromJson(obj));
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return list;
-        }
-
-        @Override
-        protected void onPostExecute(List<Message> messages) {
-            super.onPostExecute(messages);
-            _messages = messages;
-            rebuildList();
-            if (_messages.size() == 0) {
-                _inputView.setHint(R.string.start_the_conversation);
-            } else {
-                _inputView.setHint(R.string.continue_the_conversation);
-            }
-        }
-    }
-*/
-
-
-/*
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_MESSAGES) {
-                new MessageAsyncTask().executeEx(resultData);
-            } else if (resultCode == WEB_NEW_MESSAGE) {
-                Stopwatch stopwatch = new Stopwatch(true);
-                _inputView.clearText();
-                getMessages();
-                Log.v(TAG, "WEB_NEW_MESSAGE time " + stopwatch.finish());
-            } else if (resultCode == WEB_MARK_READ) {
-// todo remove
-                Topics.dispatchProfileInvalid(getActivity());
-            }
-        }
-
-        @Override
-        public Context getContext() {
-            return MessageFragment.this.getActivity();
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-
-            if (getActivity() == null)
-                return;
-
-            _workorderService = null;
-
-            AuthTopicService.requestAuthInvalid(getActivity());
-            Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
-        }
-    };
-*/
 }

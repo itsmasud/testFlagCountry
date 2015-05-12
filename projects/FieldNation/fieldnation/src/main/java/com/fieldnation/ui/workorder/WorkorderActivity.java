@@ -365,6 +365,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
         @Override
         public void onConnected() {
             _workorderClient.subGet(_workorderId);
+            _workorderClient.subActions(_workorderId);
+            getData();
+        }
+
+        @Override
+        public void onAction(long workorderId, String ation) {
             getData();
         }
 
