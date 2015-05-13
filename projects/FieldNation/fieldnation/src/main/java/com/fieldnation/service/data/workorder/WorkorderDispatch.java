@@ -47,6 +47,17 @@ public class WorkorderDispatch implements WorkorderConstants {
                 + "/" + workorderId, bundle, true);
     }
 
+    public static void listAlerts(Context context, long workorderId, JsonArray alerts, boolean isSync) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(PARAM_DATA_PARCELABLE, alerts);
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
+        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putLong(PARAM_ID, workorderId);
+        TopicService.dispatchEvent(context, PARAM_ACTION_LIST_NOTIFICATIONS
+                + (isSync ? "/SYNC" : "")
+                + "/" + workorderId, bundle, true);
+    }
+
     public static void bundle(Context context, JsonObject data, long bundleId, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);

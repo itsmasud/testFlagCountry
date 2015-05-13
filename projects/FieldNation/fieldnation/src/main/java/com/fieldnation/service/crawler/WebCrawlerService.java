@@ -269,9 +269,10 @@ public class WebCrawlerService extends Service {
                 Workorder workorder = list.get(i);
 
                 incrementPendingRequestCounter(1);
-                incRequestCounter(2);
+                incRequestCounter(3);
                 WorkorderClient.get(WebCrawlerService.this, workorder.getWorkorderId(), true);
                 WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkorderId(), true);
+                WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getWorkorderId(), true);
                 if (workorder.getBundleId() != null && workorder.getBundleId() > 0) {
                     incRequestCounter(1);
                     WorkorderClient.requestBundle(WebCrawlerService.this, workorder.getBundleId(), true);

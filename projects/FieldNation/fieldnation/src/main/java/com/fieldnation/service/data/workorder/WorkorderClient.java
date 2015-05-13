@@ -10,6 +10,7 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Deliverable;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Message;
@@ -132,6 +133,32 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public boolean subListMessages(long workorderId, boolean isSync) {
         String topicId = PARAM_ACTION_LIST_MESSAGES;
+
+        if (isSync) {
+            topicId += "/SYNC";
+        }
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+        }
+
+        return register(topicId, TAG);
+    }
+
+    public static void listAlerts(Context context, long workorderId, boolean isSync) {
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
+        context.startService(intent);
+    }
+
+    public boolean subListAlerts(boolean isSync) {
+        return subListAlerts(0, isSync);
+    }
+
+    public boolean subListAlerts(long workorderId, boolean isSync) {
+        String topicId = PARAM_ACTION_LIST_NOTIFICATIONS;
 
         if (isSync) {
             topicId += "/SYNC";
@@ -342,6 +369,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
+            Log.v(STAG, "topicId " + topicId);
             if (topicId.startsWith(PARAM_ACTION_LIST)) {
                 preOnWorkorderList((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_DETAILS)) {
@@ -354,6 +382,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preDeliverableList((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_LIST_MESSAGES)) {
                 preMessageList((Bundle) payload);
+            } else if (topicId.startsWith(PARAM_ACTION_LIST_NOTIFICATIONS)) {
+                preAlertList((Bundle) payload);
+
+                // WARN this must be the last check because it will match just about anything.
             } else if (topicId.startsWith(PARAM_ACTION)) {
                 preOnAction((Bundle) payload);
             }
@@ -365,6 +397,35 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         public void onAction(long workorderId, String ation) {
+        }
+
+        private void preAlertList(Bundle payload) {
+            Log.v(STAG, "preAlertList");
+            new AsyncTaskEx<Object, Object, List<Notification>>() {
+                private long workorderId;
+
+                @Override
+                protected List<Notification> doInBackground(Object... params) {
+                    Bundle payload = (Bundle) params[0];
+
+                    workorderId = payload.getLong(PARAM_ID);
+                    JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                    List<Notification> list = new LinkedList<>();
+                    for (int i = 0; i < ja.size(); i++) {
+                        list.add(Notification.fromJson(ja.getJsonObject(i)));
+                    }
+
+                    return list;
+                }
+
+                @Override
+                protected void onPostExecute(List<Notification> alerts) {
+                    onAlertList(workorderId, alerts);
+                }
+            }.executeEx(payload);
+        }
+
+        public void onAlertList(long workorderId, List<Notification> alerts) {
         }
 
         private void preMessageList(Bundle payload) {

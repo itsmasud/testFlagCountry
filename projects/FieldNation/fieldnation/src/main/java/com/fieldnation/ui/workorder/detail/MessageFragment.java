@@ -122,7 +122,7 @@ public class MessageFragment extends WorkorderFragment {
 
         _refreshView.startRefreshing();
 
-        _messages.clear();
+//        _messages.clear();
         if (_adapter != null)
             _adapter.notifyDataSetChanged();
 
@@ -190,6 +190,9 @@ public class MessageFragment extends WorkorderFragment {
             return;
 
         if (_workorderClient == null)
+            return;
+
+        if (!_workorderClient.isConnected())
             return;
 
         if (_isSubbed)

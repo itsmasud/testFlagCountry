@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +16,11 @@ import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class NotificationFragment extends WorkorderFragment {
-    private static final String TAG = "ui.workorder.detail.NotificationFragment";
-
-    private int WEB_LIST_NOTIFICATIONS = 1;
+    private static final String TAG = "NotificationFragment";
 
     // UI
     private OverScrollListView _listview;
@@ -30,10 +29,10 @@ public class NotificationFragment extends WorkorderFragment {
 
     // Data
     private Workorder _workorder;
-    private Random _rand = new Random();
     private WorkorderClient _workorderClient;
-    private List<Notification> _notes;
+    private List<Notification> _notes = new LinkedList<>();
     private NotificationListAdapter _adapter;
+    private boolean _isSubbed = false;
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -59,63 +58,35 @@ public class NotificationFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-// todo remove
-//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        _isSubbed = false;
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(activity);
     }
 
     @Override
-    public void onPause() {
-// todo remove
-//        TopicService.delete(getActivity(), TAG);
-        super.onPause();
+    public void onDetach() {
+        _workorderClient.disconnect(getActivity());
+        _workorderClient = null;
+        _isSubbed = false;
+        super.onDetach();
     }
 
     @Override
     public void update() {
-//        getNotifications();
+        Log.v(TAG, "update");
+        if (getActivity() != null && _workorder != null)
+            WorkorderClient.listAlerts(getActivity(), _workorder.getWorkorderId(), false);
     }
 
     @Override
     public void setWorkorder(Workorder workorder) {
-        Log.v(TAG, "setWorkorder: wokorder==null:" + (workorder == null)
-                + " _gs==null:" + (getActivity() == null));
-
+        Log.v(TAG, "setWorkorder");
         _workorder = workorder;
-
-        populateUi();
+        subscribeData();
         getNotifications();
-    }
-
-    @Override
-    public void setLoading(boolean isLoading) {
-        if (_refreshView != null) {
-            if (isLoading) {
-                _refreshView.startRefreshing();
-            } else {
-                _refreshView.refreshComplete();
-            }
-        }
-    }
-
-    public void populateUi() {
-        Log.v(TAG, "populateUi, _notes:" + (_notes == null) + " _workorder:" + (_workorder == null));
-        if (_notes == null)
-            return;
-        if (_workorder == null)
-            return;
-
-        Log.v(TAG, "populateUi");
-
-        if (getAdapter() != null)
-            getAdapter().setNotifications(_notes);
-
-        if (_notes.size() == 0) {
-            _emptyTextView.setVisibility(View.VISIBLE);
-        }
-
-        _refreshView.refreshComplete();
+        populateUi();
     }
 
     private void getNotifications() {
@@ -133,21 +104,48 @@ public class NotificationFragment extends WorkorderFragment {
         Log.v(TAG, "getNotifications");
 
         _refreshView.startRefreshing();
-        _notes = null;
-        WEB_LIST_NOTIFICATIONS = _rand.nextInt();
         _emptyTextView.setVisibility(View.GONE);
-        try {
-// todo remove
-//            getActivity().startService(_service.listNotifications(WEB_LIST_NOTIFICATIONS, _workorder.getWorkorderId(), false));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Log.v(TAG, "BP");
+
+        WorkorderClient.listAlerts(getActivity(), _workorder.getWorkorderId(), false);
+    }
+
+    @Override
+    public void setLoading(boolean isLoading) {
+        if (_refreshView != null) {
+            if (isLoading) {
+                _refreshView.startRefreshing();
+            } else {
+                _refreshView.refreshComplete();
+            }
         }
     }
+
+    public void populateUi() {
+        if (_notes == null)
+            return;
+
+        if (_workorder == null)
+            return;
+
+        Log.v(TAG, "populateUi");
+
+        if (getAdapter() != null)
+            getAdapter().setNotifications(_notes);
+
+        if (_notes.size() == 0) {
+            _emptyTextView.setVisibility(View.VISIBLE);
+        } else {
+            _emptyTextView.setVisibility(View.GONE);
+        }
+
+        _refreshView.refreshComplete();
+    }
+
 
     private NotificationListAdapter getAdapter() {
         if (this.getActivity() == null)
             return null;
+
         try {
             if (_adapter == null) {
                 _adapter = new NotificationListAdapter();
@@ -165,7 +163,7 @@ public class NotificationFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
             getNotifications();
@@ -176,102 +174,37 @@ public class NotificationFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-// todo remove
-/*
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
-        @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (getActivity() == null)
-                return;
 
-            if (_service == null || isNew) {
-                _service = new WorkorderWebClient(getActivity(), username, authToken, _resultReceiver);
-                getNotifications();
-            }
-        }
+    private void subscribeData() {
+        if (_workorder == null)
+            return;
 
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _service = null;
-        }
+        if (_workorderClient == null)
+            return;
 
-        @Override
-        public void onAuthenticationInvalidated() {
-            _service = null;
-        }
+        if (!_workorderClient.isConnected())
+            return;
 
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(getActivity());
-        }
-    };
-*/
+        if (_isSubbed)
+            return;
 
+        Log.v(TAG, "subscribeData " + _workorderClient.subListAlerts(_workorder.getWorkorderId(), false));
 
-/*
-    private class NotificationParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Notification>> {
-
-        @Override
-        protected List<Notification> doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-
-            Log.v(TAG, "onSuccess2");
-            List<Notification> list = new LinkedList<>();
-            try {
-                JsonArray ja = new JsonArray(new String(
-                        resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-
-                for (int i = 0; i < ja.size(); i++) {
-                    JsonObject obj = ja.getJsonObject(i);
-                    list.add(Notification.fromJson(obj));
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return list;
-        }
-
-        @Override
-        protected void onPostExecute(List<Notification> notifications) {
-            super.onPostExecute(notifications);
-            if (notifications != null) {
-                _notes = notifications;
-                populateUi();
-            }
-        }
+        _isSubbed = true;
     }
-*/
 
-/*
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "onSuccess");
-
-            if (resultCode == WEB_LIST_NOTIFICATIONS) {
-                new NotificationParseAsyncTask().executeEx(resultData);
-            } else {
-            }
+        public void onConnected() {
+            Log.v(TAG, "onConnected");
+            subscribeData();
         }
 
         @Override
-        public Context getContext() {
-            return NotificationFragment.this.getActivity();
+        public void onAlertList(long workorderId, List<Notification> alerts) {
+            Log.v(TAG, "onAlertList");
+            _notes = alerts;
+            populateUi();
         }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            _service = null;
-            if (getActivity() == null)
-                return;
-
-            AuthTopicService.requestAuthInvalid(getActivity());
-            Toast.makeText(getActivity(), "Could not complete request", Toast.LENGTH_LONG).show();
-            _refreshView.refreshComplete();
-        }
-
     };
-*/
 }
