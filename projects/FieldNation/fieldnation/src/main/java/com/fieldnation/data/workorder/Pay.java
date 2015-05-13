@@ -84,7 +84,7 @@ public class Pay implements Parcelable {
         if (_hidePay != null)
             return _hidePay;
 
-        return true;
+        return false;
     }
 
     public Integer getMaxDevice() {
@@ -222,7 +222,7 @@ public class Pay implements Parcelable {
 
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
-	/*-*********************************************-*/
+    /*-*********************************************-*/
     public static final Parcelable.Creator<Pay> CREATOR = new Creator<Pay>() {
 
         @Override
