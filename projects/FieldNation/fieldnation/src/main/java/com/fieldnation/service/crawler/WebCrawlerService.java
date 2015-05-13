@@ -3,9 +3,12 @@ package com.fieldnation.service.crawler;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
+import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Message;
@@ -20,8 +23,12 @@ import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.service.data.signature.SignatureClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,6 +47,7 @@ public class WebCrawlerService extends Service {
     private boolean _haveProfile = false;
     private long _pendingRequestCounter = 0;
     private long _requestCounter = 0;
+    private boolean _skipProfileImages = true;
 
 
     public WebCrawlerService() {
@@ -51,18 +59,6 @@ public class WebCrawlerService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.v(TAG, "onCreate");
-
-/*
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
-                StoredObject.flush(WebCrawlerService.this, 604800000); // 1 week
-                return null;
-            }
-        }.executeEx();
-*/
-        startStuff();
     }
 
     private synchronized void incrementPendingRequestCounter(int val) {
@@ -88,19 +84,68 @@ public class WebCrawlerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
 
-        // TODO
-        // if clock is not set, set it
-        // if already running, then return
-        // if not running then
-        //      check the following
-        //      check last start time against current time
-        //      check current time against time rule
-        //      check wifi rules
-        //      check power rules
-        //      get profile image rule
-        //      if all is ok then start up
+        SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
+                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
-        return START_STICKY;
+        // we're not allowed to run, stop
+        if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false)) {
+            Log.v(TAG, "sync disabled, quiting");
+            return START_NOT_STICKY;
+        }
+
+        // if clock is not set, set it
+        long runTime = settings.getLong(getString(R.string.pref_key_sync_start_time), 180);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
+        cal.set(Calendar.MINUTE, (int) (runTime % 60));
+
+        long nextTime = cal.getTimeInMillis();
+        if (nextTime < System.currentTimeMillis()) {
+            nextTime += 86400000;
+        }
+
+        AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
+        Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
+
+        // if already running, then return
+        if (_pendingRequestCounter > 0) {
+            Log.v(TAG, "already running, stopping");
+            return START_STICKY;
+        }
+
+        // if not running then
+        if (intent.hasExtra("IS_ALARM")) {
+            //      check the following
+            //      check last start time against current time
+            //      check current time against time rule
+            //      check wifi rules
+            //      check power rules
+            //      get profile image rule
+            //      if all is ok then start up
+
+            Log.v(TAG, "alarm triggered");
+
+            // TODO do the purge... cause we got nowhere else to do it right now
+            new AsyncTaskEx<Object, Object, Object>() {
+                @Override
+                protected Object doInBackground(Object... params) {
+                    misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
+                    StoredObject.flush(WebCrawlerService.this, 604800000); // 1 week
+                    return null;
+                }
+            }.executeEx();
+
+            _skipProfileImages = settings.getBoolean(getString(R.string.pref_key_sync_skip_profile_images), true);
+
+            startStuff();
+
+            return START_STICKY;
+        }
+
+        Log.v(TAG, "Do nothing");
+
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -141,9 +186,11 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "onProfile " + _haveProfile);
             if (!_haveProfile) {
                 Log.v(TAG, "onProfile");
-                incRequestCounter(2);
-                PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
-                PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, profile.getPhoto().getThumb(), true, true);
+                if (!_skipProfileImages) {
+                    incRequestCounter(2);
+                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
+                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, profile.getPhoto().getThumb(), true, true);
+                }
                 _haveProfile = true;
             }
         }
@@ -163,11 +210,13 @@ public class WebCrawlerService extends Service {
             incRequestCounter(1);
             ProfileDataClient.getAllMessages(WebCrawlerService.this, page + 1, true);
 
-            for (int i = 0; i < list.size(); i++) {
-                Message message = list.get(i);
-                incRequestCounter(2);
-                PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+            if (!_skipProfileImages) {
+                for (int i = 0; i < list.size(); i++) {
+                    Message message = list.get(i);
+                    incRequestCounter(2);
+                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                }
             }
         }
 
@@ -220,15 +269,15 @@ public class WebCrawlerService extends Service {
                 Workorder workorder = list.get(i);
 
                 incrementPendingRequestCounter(1);
-                incRequestCounter(1);
+                incRequestCounter(2);
                 WorkorderClient.get(WebCrawlerService.this, workorder.getWorkorderId(), true);
+                WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkorderId(), true);
                 if (workorder.getBundleId() != null && workorder.getBundleId() > 0) {
                     incRequestCounter(1);
                     WorkorderClient.requestBundle(WebCrawlerService.this, workorder.getBundleId(), true);
                 }
 
                 // get notifications
-                // get messages
                 // get tasks
 
             }
@@ -245,6 +294,22 @@ public class WebCrawlerService extends Service {
                 Log.v(TAG, "workorder list size " + _workorderDetails.size());
             }
             _workorderThreadManager.wakeUp();
+        }
+
+        @Override
+        public void onMessageList(long workorderId, List<com.fieldnation.data.workorder.Message> messages) {
+            super.onMessageList(workorderId, messages);
+
+            incrementPendingRequestCounter(-1);
+
+            if (!_skipProfileImages) {
+                for (int i = 0; i < messages.size(); i++) {
+                    incRequestCounter(2);
+                    com.fieldnation.data.workorder.Message message = messages.get(i);
+                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                }
+            }
         }
 
         @Override

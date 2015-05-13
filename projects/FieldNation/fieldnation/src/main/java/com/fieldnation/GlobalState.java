@@ -14,6 +14,7 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileDataClient;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.utils.misc;
@@ -65,6 +66,7 @@ public class GlobalState extends Application {
         Log.v(TAG, "memoryClass " + _memoryClass);
 
         startService(new Intent(this, AuthTopicService.class));
+        startService(new Intent(this, WebCrawlerService.class));
 
         _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
         _context = this;
@@ -87,6 +89,10 @@ public class GlobalState extends Application {
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(this);
+
+
+        SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
     }
 
     public int getMemoryClass() {
@@ -125,7 +131,6 @@ public class GlobalState extends Application {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
-
         }
 
         @Override

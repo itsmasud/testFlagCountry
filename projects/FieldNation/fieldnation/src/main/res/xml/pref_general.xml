@@ -1,62 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:key="pref_data_settings"
-        android:title="@string/pref_data_settings">
+    <PreferenceCategory android:title="@string/pref_data_settings">
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_allow_data_purge_key"
-            android:summary="@string/pref_allow_data_purge_summary"
-            android:title="@string/pref_allow_data_purge" />
+            android:key="@string/pref_key_allow_data_purge"
+            android:summary="@string/pref_string_data_purge_summary"
+            android:title="@string/pref_string_data_purge_title" />
         <ListPreference
-            android:defaultValue="@string/pref_purge_default"
-            android:dependency="@string/pref_allow_data_purge_key"
+            android:defaultValue="@string/pref_default_purge_rate"
+            android:dependency="@string/pref_key_allow_data_purge"
             android:entries="@array/pref_purge_titles"
             android:entryValues="@array/pref_purge_values"
-            android:key="@string/pref_purge_rate_key"
+            android:key="@string/pref_key_purge_rate"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/purge_rate" />
+            android:title="@string/pref_string_purge_rate" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:key="pref_sync_settings"
-        android:title="Sync Settings">
+    <PreferenceCategory android:title="Sync Settings">
         <SwitchPreference
             android:defaultValue="true"
-            android:key="pref_key_sync_enabled"
+            android:key="@string/pref_key_sync_enabled"
             android:title="Enable Sync" />
 
         <Preference
-            android:dependency="pref_key_sync_enabled"
+            android:dependency="@string/pref_key_sync_enabled"
             android:summary="Sync will download all of your data every day so that you can access it even while disconnected from the network. This feature can use a lot of space on your phone!" />
 
         <com.fieldnation.TimePreference
             android:defaultValue="180"
-            android:dependency="pref_key_sync_enabled"
-            android:key="pref_key_sync_start_Time"
+            android:dependency="@string/pref_key_sync_enabled"
+            android:key="@string/pref_key_sync_start_time"
             android:title="Start Sync at" />
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:dependency="pref_key_sync_enabled"
-            android:key="pref_key_sync_require_wifi"
+            android:dependency="@string/pref_key_sync_enabled"
+            android:key="@string/pref_key_sync_require_wifi"
             android:summary="If checked then sync will only run when connected to wifi"
             android:title="Only run on Wifi" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:dependency="pref_key_sync_enabled"
-            android:key="pref_key_require_power"
+            android:dependency="@string/pref_key_sync_enabled"
+            android:key="@string/pref_key_require_power"
             android:summary="If checked then sync will only run while the device is plugged in"
             android:title="Only run while charging" />
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:dependency="pref_key_sync_enabled"
-            android:key="pref_key_sync_skip_profile_images"
+            android:dependency="@string/pref_key_sync_enabled"
+            android:key="@string/pref_key_sync_skip_profile_images"
             android:summary="If checked then profile images for messages will not be downloaded to save space"
             android:title="Don't sync profile images" />
-
-
     </PreferenceCategory>
 </PreferenceScreen>
