@@ -28,9 +28,6 @@ public class TimePreference extends DialogPreference {
 
     public TimePreference(Context ctxt, AttributeSet attrs, int defStyle) {
         super(ctxt, attrs, defStyle);
-
-//        setPositiveButtonText(R.string.set);
-//        setNegativeButtonText(R.string.cancel);
         calendar = Calendar.getInstance();
     }
 
@@ -65,15 +62,17 @@ public class TimePreference extends DialogPreference {
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return (a.getString(index));
+        return a.getString(index);
     }
+
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-
         if (restoreValue) {
             if (defaultValue == null) {
-                calendar.setTimeInMillis(getPersistedLong(System.currentTimeMillis()));
+                long v = getPersistedLong(0);
+                calendar.set(Calendar.HOUR_OF_DAY, (int) (v / 60));
+                calendar.set(Calendar.MINUTE, (int) (v % 60));
             } else {
                 long v = Long.parseLong((String) defaultValue);
                 calendar.set(Calendar.HOUR_OF_DAY, (int) (v / 60));
@@ -96,6 +95,7 @@ public class TimePreference extends DialogPreference {
         if (calendar == null) {
             return null;
         }
+
         return DateFormat.getTimeFormat(getContext()).format(new Date(calendar.getTimeInMillis()));
     }
 }

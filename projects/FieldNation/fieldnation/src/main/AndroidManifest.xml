@@ -227,13 +227,17 @@
         <service
             android:name=".service.crawler.WebCrawlerService"
             android:exported="false"
-            android:process=":crawler" />
+            android:process=":backside" />
 
         <provider
             android:name=".rpc.server.StubProvider"
             android:authorities="com.fieldnation.service"
             android:exported="false"
             android:syncable="true" />
+
+        <receiver
+            android:name=".service.crawler.AlarmBroadcastReceiver"
+            android:process=":backside" />
     </application>
 
 </manifest>

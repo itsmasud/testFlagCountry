@@ -2,12 +2,18 @@ package com.fieldnation.service.transaction;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
+import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonObject;
@@ -17,6 +23,7 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.net.UnknownHostException;
@@ -36,6 +43,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     private AuthTopicClient _authTopicClient;
     private boolean _isAuthenticated = false;
     private ThreadManager _manager;
+    private boolean _allowSync = true;
+    private long _syncCheckCoolDown = 0;
 
 
     @Override
@@ -113,9 +122,44 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         }
     }
 
-    private boolean allowSync() {
-        // TODO need to calculate by collecting config information and compare to phone state
-        return true;
+    private synchronized boolean allowSync() {
+        // TODO calculate by collecting config information and compare to phone state
+        if (_syncCheckCoolDown < System.currentTimeMillis()) {
+            Stopwatch watch = new Stopwatch(true);
+            _allowSync = true;
+
+            SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
+                    Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+
+            boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
+            boolean requirePower = settings.getBoolean(getString(R.string.pref_key_require_power), true);
+
+            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            boolean haveWifi = wifi.isConnected();
+
+            Log.v(TAG, "HaveWifi " + haveWifi);
+
+            if (requireWifi && !haveWifi) {
+                _allowSync = false;
+            } else {
+
+                Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+                int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+                boolean pluggedIn = plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
+
+                Log.v(TAG, "HavePower " + pluggedIn);
+
+                if (requirePower && !pluggedIn) {
+                    _allowSync = false;
+                }
+            }
+
+            _syncCheckCoolDown = System.currentTimeMillis() + 1000;
+            Log.v(TAG, "allowSync time: " + watch.finish());
+        }
+
+        return _allowSync;
     }
 
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
@@ -200,13 +244,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     class TransactionThread extends ThreadManager.ManagedThread {
         private String TAG = UniqueTag.makeTag("TransactionThread");
         private Context context;
-        private boolean _allowSync = false;
+        private boolean _syncThread = false;
 
-        public TransactionThread(ThreadManager manager, Context context, boolean allowSync) {
+        public TransactionThread(ThreadManager manager, Context context, boolean syncThread) {
             super(manager);
             setName(TAG);
             this.context = context;
-            _allowSync = allowSync;
+            _syncThread = syncThread;
             start();
         }
 
@@ -216,7 +260,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
 //            Log.v(TAG, "Trans Count: " + WebTransaction.count(context));
 
-            WebTransaction trans = WebTransaction.getNext(context, _allowSync && allowSync(), _isAuthenticated);
+            WebTransaction trans = WebTransaction.getNext(context, _syncThread && allowSync(), _isAuthenticated);
 
             // if failed, then exit
             if (trans == null) {
