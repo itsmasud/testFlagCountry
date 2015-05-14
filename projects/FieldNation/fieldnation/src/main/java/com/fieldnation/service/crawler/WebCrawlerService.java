@@ -20,7 +20,7 @@ import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.photo.PhotoDataClient;
-import com.fieldnation.service.data.profile.ProfileDataClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.signature.SignatureClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -39,7 +39,7 @@ public class WebCrawlerService extends Service {
     private static final String TAG = "WebCrawlerService";
     private final Object LOCK = new Object();
 
-    private ProfileDataClient _profileClient;
+    private ProfileClient _profileClient;
     private WorkorderClient _workorderClient;
     private final ThreadManager _workorderThreadManager = new ThreadManager();
     private final List<Workorder> _workorderDetails = new LinkedList<>();
@@ -158,26 +158,26 @@ public class WebCrawlerService extends Service {
 
         _workorderThreadManager.addThread(new WorkorderDetailWorker(_workorderThreadManager, this, _workorderDetails));
 
-        _profileClient = new ProfileDataClient(_profileClient_listener);
+        _profileClient = new ProfileClient(_profileClient_listener);
         _profileClient.connect(this);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(this);
     }
 
-    private final ProfileDataClient.Listener _profileClient_listener = new ProfileDataClient.Listener() {
+    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
             Log.v(TAG, "_profileClient_listener.onConnected");
-            _profileClient.registerAllMessages(true);
-            _profileClient.registerAllNotifications(true);
-            _profileClient.registerProfile(true);
+            _profileClient.subAllMessages(true);
+            _profileClient.subAllNotifications(true);
+            _profileClient.subProfile(true);
 
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
-            ProfileDataClient.getProfile(WebCrawlerService.this, true);
-            ProfileDataClient.getAllMessages(WebCrawlerService.this, 0, true);
-            ProfileDataClient.getAllNotifications(WebCrawlerService.this, 0, true);
+            ProfileClient.getProfile(WebCrawlerService.this, true);
+            ProfileClient.getAllMessages(WebCrawlerService.this, 0, true);
+            ProfileClient.getAllNotifications(WebCrawlerService.this, 0, true);
         }
 
         @Override
@@ -208,7 +208,7 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileDataClient.getAllMessages(WebCrawlerService.this, page + 1, true);
+            ProfileClient.getAllMessages(WebCrawlerService.this, page + 1, true);
 
             if (!_skipProfileImages) {
                 for (int i = 0; i < list.size(); i++) {
@@ -231,7 +231,7 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileDataClient.getAllNotifications(WebCrawlerService.this, page + 1, true);
+            ProfileClient.getAllNotifications(WebCrawlerService.this, page + 1, true);
         }
     };
 
@@ -242,7 +242,7 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_workorderClient_listener.onConnected");
             _workorderClient.subList(true);
             _workorderClient.subGet(true);
-            _workorderClient.registerDeliverableList(true);
+            _workorderClient.subDeliverableList(true);
 
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
@@ -276,7 +276,7 @@ public class WebCrawlerService extends Service {
                 WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkorderId(), true);
                 if (workorder.getBundleId() != null && workorder.getBundleId() > 0) {
                     incRequestCounter(1);
-                    WorkorderClient.requestBundle(WebCrawlerService.this, workorder.getBundleId(), true);
+                    WorkorderClient.getBundle(WebCrawlerService.this, workorder.getBundleId(), true);
                 }
 
                 // get notifications
@@ -321,7 +321,7 @@ public class WebCrawlerService extends Service {
             for (int i = 0; i < list.size(); i++) {
                 Deliverable d = list.get(i);
                 incRequestCounter(1);
-                WorkorderClient.requestDownloadDeliverable(WebCrawlerService.this, workorderId,
+                WorkorderClient.getDeliverable(WebCrawlerService.this, workorderId,
                         d.getWorkorderUploadId(), d.getStorageSrc(), true);
             }
 
@@ -386,7 +386,7 @@ public class WebCrawlerService extends Service {
             if (deliverables != null && deliverables.length > 0) {
                 incrementPendingRequestCounter(1);
                 incRequestCounter(1);
-                WorkorderClient.requestDeliverableList(WebCrawlerService.this, workorder.getWorkorderId(), true);
+                WorkorderClient.listDeliverables(WebCrawlerService.this, workorder.getWorkorderId(), true);
             }
             return true;
         }

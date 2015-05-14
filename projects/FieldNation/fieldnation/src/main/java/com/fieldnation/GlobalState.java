@@ -15,7 +15,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
-import com.fieldnation.service.data.profile.ProfileDataClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -45,7 +45,7 @@ public class GlobalState extends Application {
     private Profile _profile;
     private GoogleAnalyticsTopicClient _gaTopicClient;
     private GlobalTopicClient _globalTopicClient;
-    private ProfileDataClient _profileClient;
+    private ProfileClient _profileClient;
     private AuthTopicClient _authTopicClient;
     private int _memoryClass;
     private Typeface _iconFont;
@@ -84,7 +84,7 @@ public class GlobalState extends Application {
         _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
         _globalTopicClient.connect(this);
 
-        _profileClient = new ProfileDataClient(_profile_listener);
+        _profileClient = new ProfileClient(_profile_listener);
         _profileClient.connect(this);
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
@@ -153,7 +153,7 @@ public class GlobalState extends Application {
 
         @Override
         public void onProfileInvalid() {
-            ProfileDataClient.getProfile(GlobalState.this);
+            ProfileClient.getProfile(GlobalState.this);
         }
 
         @Override
@@ -176,12 +176,12 @@ public class GlobalState extends Application {
         }
     };
 
-    private final ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
+    private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
             Log.v(TAG, "_profile_listener.onConnected");
-            _profileClient.registerProfile();
-            ProfileDataClient.getProfile(GlobalState.this);
+            _profileClient.subProfile();
+            ProfileClient.getProfile(GlobalState.this);
         }
 
         @Override

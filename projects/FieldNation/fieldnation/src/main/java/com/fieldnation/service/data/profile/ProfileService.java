@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileDataService extends MSService implements ProfileConstants {
+public class ProfileService extends MSService implements ProfileConstants {
     private static final String TAG = "ProfileDataService";
 
     @Override

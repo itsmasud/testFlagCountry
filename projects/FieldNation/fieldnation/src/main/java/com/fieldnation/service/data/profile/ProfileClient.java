@@ -20,10 +20,10 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileDataClient extends TopicClient implements ProfileConstants {
+public class ProfileClient extends TopicClient implements ProfileConstants {
     private String TAG = UniqueTag.makeTag("ProfileDataClient");
 
-    public ProfileDataClient(Listener listener) {
+    public ProfileClient(Listener listener) {
         super(listener);
     }
 
@@ -31,30 +31,32 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         super.disconnect(context, TAG);
     }
 
-    public static void acceptTos(Context context, long userId) {
-        ProfileTransactionBuilder.acceptTos(context, userId);
-    }
-
+    /*-*********************************-*/
+    /*-             Commands            -*/
+    /*-*********************************-*/
     public static void getProfile(Context context) {
         getProfile(context, false);
     }
 
     public static void getProfile(Context context, boolean isSync) {
-        Intent intent = new Intent(context, ProfileDataService.class);
+        Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_MY_PROFILE);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public boolean registerProfile() {
-        return registerProfile(false);
+    public boolean subProfile() {
+        return subProfile(false);
     }
 
-    public boolean registerProfile(boolean isSync) {
-        if (!isConnected())
-            return false;
+    public boolean subProfile(boolean isSync) {
+        String topicId = TOPIC_ID_HAVE_PROFILE;
 
-        return register(TOPIC_ID_HAVE_PROFILE + (isSync ? "-SYNC" : ""), TAG);
+        if (isSync) {
+            topicId += "-SYNC";
+        }
+
+        return register(topicId, TAG);
     }
 
     public static void getAllNotifications(Context context, int page) {
@@ -62,23 +64,24 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
     }
 
     public static void getAllNotifications(Context context, int page, boolean isSync) {
-        Intent intent = new Intent(context, ProfileDataService.class);
+        Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-
-    public boolean registerAllNotifications() {
-        return registerAllNotifications(false);
+    public boolean subAllNotifications() {
+        return subAllNotifications(false);
     }
 
-    public boolean registerAllNotifications(boolean isSync) {
-        if (!isConnected())
-            return false;
+    public boolean subAllNotifications(boolean isSync) {
+        String topicId = TOPIC_ID_ALL_NOTIFICATION_LIST;
 
-        return register(TOPIC_ID_ALL_NOTIFICATION_LIST + (isSync ? "-SYNC" : ""), TAG);
+        if (isSync) {
+            topicId += "-SYNC";
+        }
+        return register(topicId, TAG);
     }
 
     public static void getAllMessages(Context context, int page) {
@@ -86,26 +89,50 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
     }
 
     public static void getAllMessages(Context context, int page, boolean isSync) {
-        Intent intent = new Intent(context, ProfileDataService.class);
+        Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public boolean registerAllMessages() {
-        return registerAllMessages(false);
+    public boolean subAllMessages() {
+        return subAllMessages(false);
     }
 
-    public boolean registerAllMessages(boolean isSync) {
-        if (!isConnected())
-            return false;
+    public boolean subAllMessages(boolean isSync) {
+        String topicId = TOPIC_ID_ALL_MESSAGES_LIST;
 
-        return register(TOPIC_ID_ALL_MESSAGES_LIST + (isSync ? "-SYNC" : ""), TAG);
+        if (isSync) {
+            topicId += "-SYNC";
+        }
+
+        return register(topicId, TAG);
     }
 
-    public void addBlockedCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
+    /*-*********************************-*/
+    /*-             Actions             -*/
+    /*-*********************************-*/
+    public static void actionAcceptTos(Context context, long userId) {
+        ProfileTransactionBuilder.acceptTos(context, userId);
+    }
+
+    public static void actionBlockCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
         ProfileTransactionBuilder.postBlockedCompany(context, profileId, companyId, eventReasonId, explanation);
+    }
+
+    public boolean subActions() {
+        return subActions(0);
+    }
+
+    public boolean subActions(long profileId) {
+        String topicId = PARAM_ACTION;
+
+        if (profileId > 0) {
+            topicId += "/" + profileId;
+        }
+
+        return register(topicId, TAG);
     }
 
     /*-******************************-*/
@@ -124,11 +151,23 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
                 preAllNotificationPage(bundle);
             } else if (topicId.startsWith(TOPIC_ID_ALL_MESSAGES_LIST)) {
                 preAllMessagesPage(bundle);
+
+                // WARN, this must be the last one
+            } else if (topicId.startsWith(PARAM_ACTION)) {
+                preOnAction(bundle);
             }
 
         }
 
-        protected void preProfile(Bundle payload) {
+        private void preOnAction(Bundle payload) {
+            onAction(payload.getLong(PARAM_PROFILE_ID),
+                    payload.getString(PARAM_ACTION));
+        }
+
+        public void onAction(long profileId, String action) {
+        }
+
+        private void preProfile(Bundle payload) {
             new AsyncTaskEx<Object, Object, Profile>() {
                 @Override
                 protected Profile doInBackground(Object... params) {
@@ -151,7 +190,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         public void onProfile(Profile profile) {
         }
 
-        protected void preAllNotificationPage(Bundle payload) {
+        private void preAllNotificationPage(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, List<Notification>>() {
                 private int page;
 
@@ -183,7 +222,7 @@ public class ProfileDataClient extends TopicClient implements ProfileConstants {
         public void onAllNotificationPage(List<Notification> list, int page) {
         }
 
-        protected void preAllMessagesPage(Bundle payload) {
+        private void preAllMessagesPage(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, List<Message>>() {
                 private int page;
 

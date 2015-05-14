@@ -329,13 +329,13 @@ public class DeliverableFragment extends WorkorderFragment {
                     return false;
 
                 Log.v(TAG, "local path");
-                WorkorderClient.requestUploadDeliverable(getActivity(),
+                WorkorderClient.uploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(), _uploadingSlotId, _tempFile.getName(),
                         _tempFile.getAbsolutePath());
                 return true;
             } else {
                 Log.v(TAG, "from intent");
-                WorkorderClient.requestUploadDeliverable(getActivity(),
+                WorkorderClient.uploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(),
                         _uploadingSlotId, data);
                 return true;
@@ -367,7 +367,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
-            WorkorderClient.requestDeleteDeliverable(getActivity(), _workorder.getWorkorderId(),
+            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
                     document.getWorkorderUploadId(), document.getFileName());
         }
     };

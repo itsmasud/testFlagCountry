@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
-import com.fieldnation.service.data.profile.ProfileDataClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     private static final String TAG = "NotificationListActivity";
 
     // Data
-    private ProfileDataClient _profiles;
+    private ProfileClient _profiles;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -25,7 +25,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     @Override
     protected void onResume() {
         super.onResume();
-        _profiles = new ProfileDataClient(_profile_listener);
+        _profiles = new ProfileClient(_profile_listener);
         _profiles.connect(this);
     }
 
@@ -38,7 +38,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     @Override
     public void requestData(int page) {
         Log.v(TAG, "requestData " + page);
-        ProfileDataClient.getAllNotifications(this, page);
+        ProfileClient.getAllNotifications(this, page);
     }
 
     @Override
@@ -67,10 +67,10 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
 
-    private ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
+    private ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
-            _profiles.registerAllNotifications();
+            _profiles.subAllNotifications();
         }
 
         @Override
@@ -78,7 +78,5 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
             Log.v(TAG, "onAllNotificationPage " + page);
             addPage(page, list);
         }
-
-
     };
 }

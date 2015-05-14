@@ -15,7 +15,7 @@ import java.text.ParseException;
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileWebTransactionHandler extends WebTransactionHandler implements ProfileConstants {
+public class ProfileTransactionHandler extends WebTransactionHandler implements ProfileConstants {
     private static final String TAG = "ProfileWebTransactionHandler";
 
     public static byte[] generateGetProfileParams() {
@@ -56,6 +56,18 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         }
     }
 
+    public static byte[] pAction(long profileId, String action) {
+        try {
+            JsonObject obj = new JsonObject("action", "pAction");
+            obj.put("profileId", profileId);
+            obj.put("param", action);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         Log.v(TAG, "handleResult");
@@ -69,6 +81,8 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
                 return handleGetAllNotifications(context, transaction, resultData, params);
             } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
                 return handleGetAllMessages(context, transaction, resultData, params);
+            } else if (action.equals("pAction")) {
+                return handleAction(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -77,15 +91,27 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         return Result.FINISH;
     }
 
+    private Result handleAction(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "handleAction");
+
+        long profileId = params.getLong("profileId");
+        String action = params.getString("param");
+
+        ProfileDispatch.action(context, profileId, action);
+
+        return Result.FINISH;
+    }
+
     private Result handleGetProfile(Context context, WebTransaction transaction, HttpResult resultData) throws ParseException {
         Log.v(TAG, "PARAM_ACTION_GET_MY_PROFILE");
         // store object
         byte[] profiledata = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_PROFILE, PSO_MY_PROFILE_KEY, profiledata);
-
         // todo parse json and put Profile/id ?
         ProfileDispatch.myUserInformation(context, new JsonObject(profiledata), transaction.isSync());
+
+        StoredObject.put(context, PSO_PROFILE, PSO_MY_PROFILE_KEY, profiledata);
+
         return Result.FINISH;
     }
 
@@ -95,9 +121,10 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         // store object
         byte[] pagedata = resultData.getByteArray();
 
+        ProfileDispatch.allNotifications(context, new JsonArray(pagedata), page, transaction.isSync());
+
         StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
 
-        ProfileDispatch.allNotifications(context, new JsonArray(pagedata), page, transaction.isSync());
         return Result.FINISH;
     }
 
@@ -107,9 +134,10 @@ public class ProfileWebTransactionHandler extends WebTransactionHandler implemen
         // store object
         byte[] pagedata = resultData.getByteArray();
 
+        ProfileDispatch.allMessages(context, new JsonArray(pagedata), page, transaction.isSync());
+
         StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
 
-        ProfileDispatch.allMessages(context, new JsonArray(pagedata), page, transaction.isSync());
         return Result.FINISH;
     }
 }

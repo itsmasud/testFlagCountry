@@ -13,7 +13,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.service.data.photo.PhotoDataClient;
-import com.fieldnation.service.data.profile.ProfileDataClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.io.File;
@@ -25,7 +25,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
     private static final String TAG = "MessageListActivity";
 
     // Data
-    private ProfileDataClient _profiles;
+    private ProfileClient _profiles;
     private PhotoDataClient _photos;
     private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
 
@@ -36,7 +36,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
     protected void onResume() {
         super.onResume();
-        _profiles = new ProfileDataClient(_profile_listener);
+        _profiles = new ProfileClient(_profile_listener);
         _profiles.connect(this);
         _photos = new PhotoDataClient(_photoClient_listener);
         _photos.connect(this);
@@ -51,7 +51,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
     @Override
     public void requestData(int page) {
-        ProfileDataClient.getAllMessages(this, page);
+        ProfileClient.getAllMessages(this, page);
     }
 
     @Override
@@ -119,10 +119,10 @@ public class MessageListActivity extends ItemListActivity<Message> {
         return true;
     }
 
-    private ProfileDataClient.Listener _profile_listener = new ProfileDataClient.Listener() {
+    private ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
-            _profiles.registerAllMessages();
+            _profiles.subAllMessages();
         }
 
         @Override

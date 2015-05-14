@@ -127,6 +127,8 @@ public class WorkorderDispatch implements WorkorderConstants {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, action);
         bundle.putLong(PARAM_ID, workorderId);
-        TopicService.dispatchEvent(context, PARAM_ACTION + "/" + workorderId, bundle, Sticky.TEMP);
+        TopicService.dispatchEvent(context,
+                PARAM_ACTION + "/" + workorderId,
+                bundle, Sticky.TEMP);
     }
 }

@@ -44,7 +44,7 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.service.data.profile.ProfileDataClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.GpsLocationService;
@@ -145,7 +145,7 @@ public class WorkFragment extends WorkorderFragment {
 
     // Data
     private WorkorderClient _workorderClient;
-    private ProfileDataClient _profileClient;
+    private ProfileClient _profileClient;
 
     private File _tempFile;
     private GpsLocationService _gpsLocationService;
@@ -318,22 +318,8 @@ public class WorkFragment extends WorkorderFragment {
         super.onAttach(activity);
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(activity);
-// todo remove
-//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
-    }
-
-    @Override
-    public void onDetach() {
-        _workorderClient.disconnect(getActivity());
-        _workorderClient = null;
-        super.onDetach();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-// todo remove
-//        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
+        _profileClient = new ProfileClient(_profileClient_listener);
+        _profileClient.connect(activity);
 
         _gpsLocationService = new GpsLocationService(getActivity());
 
@@ -361,9 +347,17 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onDetach() {
+        _workorderClient.disconnect(getActivity());
+        _workorderClient = null;
+        _profileClient.disconnect(getActivity());
+        _profileClient = null;
+        super.onDetach();
+    }
+
+
+    @Override
     public void onPause() {
-// todo remove
-//        TopicService.delete(getActivity(), TAG);
         _gpsLocationService.stopLocationUpdates();
         super.onPause();
     }
@@ -643,11 +637,11 @@ public class WorkFragment extends WorkorderFragment {
                 && resultCode == Activity.RESULT_OK) {
 
             if (data == null) {
-                WorkorderClient.requestUploadDeliverable(getActivity(),
+                WorkorderClient.uploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(), _currentTask.getSlotId(), _tempFile.getName(),
                         _tempFile.getAbsolutePath());
             } else {
-                WorkorderClient.requestUploadDeliverable(getActivity(),
+                WorkorderClient.uploadDeliverable(getActivity(),
                         _workorder.getWorkorderId(), _currentTask.getSlotId(), data);
             }
         } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
@@ -747,33 +741,26 @@ public class WorkFragment extends WorkorderFragment {
         public void termsOnClick(Workorder workorder) {
             _termsDialog.show();
         }
-
     };
 
     private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
         @Override
-        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
-                         Pay pay, Schedule schedule, Expense[] expenses) {
-            // todo remove
-/*
-            GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_COUNTER, "WorkFragment", 1);
-            getActivity().startService(
-                    _service.setCounterOffer(WEB_CHANGED, workorder.getWorkorderId(), expires, reason,
-                            expirationInSeconds, pay, schedule, expenses));
-*/
-            setLoading(true);
+        public void onOk(Workorder workorder, String reason, boolean expires,
+                         int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.COUNTER, "WorkFragment", 1);
 
+            WorkorderClient.actionCounterOffer(getActivity(), workorder.getWorkorderId(), expires,
+                    reason, expirationInSeconds, pay, schedule, expenses);
+            setLoading(true);
         }
     };
 
     private final CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
         @Override
         public void onOk(CustomField field, String value) {
-// todo remove
-/*
-            getActivity().startService(
-                    _service.setCustomField(WEB_CHANGED, _workorder.getWorkorderId(), field.getCustomLabelId(), value));
-*/
+            WorkorderClient.actionCustomField(getActivity(), _workorder.getWorkorderId(),
+                    field.getCustomLabelId(), value);
             setLoading(true);
         }
     };
@@ -781,17 +768,14 @@ public class WorkFragment extends WorkorderFragment {
     private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
         @Override
         public void onOk(boolean blockBuyer, int reasonId, String details) {
-// todo remove
-/*
-            getActivity().startService(_service.decline(WEB_CHANGED, _workorder.getWorkorderId()));
+            WorkorderClient.actionDecline(getActivity(), _workorder.getWorkorderId());
             if (blockBuyer) {
-                GlobalState gs = (GlobalState) getActivity().getApplication();
-                getActivity().startService(
-                        _profileService.addBlockedCompany(WEB_NOTHING, gs.getProfile().getUserId(), _workorder.getCompanyId(), reasonId, details));
+                ProfileClient.actionBlockCompany(getActivity(),
+                        GlobalState.getContext().getProfile().getUserId(),
+                        _workorder.getCompanyId(), reasonId, details);
             }
-*/
-            getActivity().finish();
 
+            getActivity().finish();
         }
 
         @Override
@@ -815,12 +799,8 @@ public class WorkFragment extends WorkorderFragment {
     private final DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
         @Override
         public void onOk(String description, double amount) {
-// todo remove
-/*
-            getActivity().startService(
-                    _service.addDiscount(WEB_CHANGED,
-                            _workorder.getWorkorderId(), amount, description));
-*/
+            WorkorderClient.createDiscount(getActivity(), _workorder.getWorkorderId(),
+                    description, amount);
             setLoading(true);
         }
 
@@ -833,11 +813,9 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
 // todo remove
-/*
-            getActivity().startService(
-                    _service.addExpense(WEB_CHANGED, _workorder.getWorkorderId(),
-                            description, amount, category));
-*/
+//            getActivity().startService(
+//                    _service.addExpense(WEB_CHANGED, _workorder.getWorkorderId(),
+//                            description, amount, category));
             setLoading(true);
         }
 
@@ -1497,6 +1475,7 @@ public class WorkFragment extends WorkorderFragment {
             return;
 
         _workorderClient.subListTasks(_workorder.getWorkorderId(), false);
+        _workorderClient.subActions(_workorder.getWorkorderId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -1509,7 +1488,27 @@ public class WorkFragment extends WorkorderFragment {
         public void onTaskList(long workorderId, List<Task> tasks) {
             setTasks(tasks);
         }
+
+        @Override
+        public void onAction(long workorderId, String action) {
+            // TODO _workorderClient_listener.onAction
+            Log.v(TAG, "_workorderClient_listener.onAction");
+        }
     };
+
+    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
+        @Override
+        public void onConnected() {
+            _profileClient.subActions();
+        }
+
+        @Override
+        public void onAction(long profileId, String action) {
+            //TODO _profileClient_listener.onAction
+            Log.v(TAG, "_profileClient_listener.onAction");
+        }
+    };
+
 // todo remove
 /*
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {

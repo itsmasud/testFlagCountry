@@ -64,31 +64,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void listMessages(Context context, long workorderId, boolean isRead, boolean isSync) {
-        try {
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("GET")
-                    .path("/api/rest/v1/workorder/" + workorderId + "/messages");
-
-            if (isRead) {
-                builder.urlParams("?mark_read=1");
-            }
-
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pMessageList(workorderId))
-                    .key((isSync ? "Sync/" : "") + "WorkorderMessageList/" + workorderId)
-                    .useAuth(true)
-                    .isSyncCall(isSync)
-                    .request(builder)
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     public static void listAlerts(Context context, long workorderId, boolean isRead, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
@@ -127,6 +102,28 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    public static void getBundle(Context context, long bundleId, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(BundleTransactionHandler.class)
+                    .handlerParams(BundleTransactionHandler.pBundle(bundleId))
+                    .key((isSync ? "Sync/" : "") + "GetBundle/" + bundleId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/bundle/" + bundleId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /*-*********************************-*/
+    /*-             Actions             -*/
+    /*-*********************************-*/
     public static void action(Context context, long workorderId, String action, String params, String contentType, String body) {
         try {
             JsonObject _action = new JsonObject();
@@ -340,6 +337,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    /*-************************************-*/
+    /*-             Signatures             -*/
+    /*-************************************-*/
     public static void getSignature(Context context, long workorderId, long signatureId, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
@@ -359,25 +359,59 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void getBundle(Context context, long bundleId, boolean isSync) {
+    public static void postSignatureJson(Context context, long workorderId, String name, String json) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(BundleTransactionHandler.class)
-                    .handlerParams(BundleTransactionHandler.pBundle(bundleId))
-                    .key((isSync ? "Sync/" : "") + "GetBundle/" + bundleId)
+                    .handler(NullWebTransactionHandler.class)
                     .useAuth(true)
-                    .isSyncCall(isSync)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/bundle/" + bundleId))
+                            .method("POST")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .path("/api/rest/v1/workorder/" + workorderId + "/signature")
+                            .body("signatureFormat=json"
+                                    + "&printName=" + misc.escapeForURL(name)
+                                    + "&signature=" + json))
+                    .transform(Transform.makeTransformQuery(
+                            PSO_WORKORDER,
+                            workorderId,
+                            "merges",
+                            WorkorderTransfer.makeAddSignatureTransfer(name).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    public static void postSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .method("POST")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
+                            .body("print_name=" + misc.escapeForURL(name)
+                                    + "&signature_json=" + json))
+                    .transform(Transform.makeTransformQuery(
+                            PSO_WORKORDER,
+                            workorderId,
+                            "merges",
+                            WorkorderTransfer.makeCompletingTaskTransfer("signature", taskId, name).getBytes()))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /*-**************************************-*/
+    /*-             Deliverables             -*/
+    /*-**************************************-*/
     public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
@@ -465,57 +499,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void postSignatureJson(Context context, long workorderId, String name, String json) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/signature")
-                            .body("signatureFormat=json"
-                                    + "&printName=" + misc.escapeForURL(name)
-                                    + "&signature=" + json))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeAddSignatureTransfer(name).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void postSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
-                            .body("print_name=" + misc.escapeForURL(name)
-                                    + "&signature_json=" + json))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCompletingTaskTransfer("signature", taskId, name).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId, String filename) {
         try {
             WebTransactionBuilder.builder(context)
@@ -541,64 +524,78 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-
-    public static void postCustomField(Context context, long workorderId, long customFieldId, String value) {
+    /*-**********************************-*/
+    /*-             Messages             -*/
+    /*-**********************************-*/
+    public static void listMessages(Context context, long workorderId, boolean isRead, boolean isSync) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/messages");
+
+            if (isRead) {
+                builder.urlParams("?mark_read=1");
+            }
+
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pMessageList(workorderId))
+                    .key((isSync ? "Sync/" : "") + "WorkorderMessageList/" + workorderId)
                     .useAuth(true)
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .method("POST")
-                                    .path("/api/rest/v1/workorder/" + workorderId + "/custom-fields/" + customFieldId)
-                                    .body("value=" + misc.escapeForURL(value)))
+                    .isSyncCall(isSync)
+                    .request(builder)
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void postMessagesRead(Context context, long workorderId) {
+    /*-**********************************-*/
+    /*-             Discount             -*/
+    /*-**********************************-*/
+    public static void createDiscount(Context context, long workorderId, String description, double price) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(NullWebTransactionHandler.class)
-                    .key("Workorder/MessagesRead/" + workorderId)
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("POST")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/messages")
-                            .body("?mark_read=1"))
+                            .path("/api/rest/v1/workorder/" + workorderId + "/discount")
+                            .body("description=" + misc.escapeForURL(description)
+                                    + "&price=" + misc.escapeForURL(price + "")))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void getMessages(Context context, long workorderId) {
+    public static void deleteDiscount(Context context, long workorderId, long discountId) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(NullWebTransactionHandler.class)
-                    .key("Workorder/Messages/" + workorderId)
+                    .key("Workorder/DeleteDiscount/" + workorderId + "/" + discountId)
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/messages"))
+                            .method("DELETE")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/discounts/" + discountId))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void postExpense(Context context, long workorderId, String description, double price,
-                                   ExpenseCategory category) {
+    /*-*********************************-*/
+    /*-             Expense             -*/
+    /*-*********************************-*/
+    public static void createExpense(Context context, long workorderId, String description, double price,
+                                     ExpenseCategory category) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
@@ -635,6 +632,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    /*-***********************************-*/
+    /*-             Time Logs             -*/
+    /*-***********************************-*/
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate) {
         try {
             WebTransactionBuilder.builder(context)
@@ -709,6 +709,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    /*-***********************************-*/
+    /*-             Shipments             -*/
+    /*-***********************************-*/
     public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
                                     String carrier, String carrierName, String trackingNumber) {
         try {

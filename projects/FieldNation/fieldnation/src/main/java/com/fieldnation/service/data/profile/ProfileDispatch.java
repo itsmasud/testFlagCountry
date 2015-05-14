@@ -41,4 +41,13 @@ public class ProfileDispatch implements ProfileConstants {
         TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST
                 + (isSync ? "-SYNC" : ""), bundle, Sticky.TEMP);
     }
+
+    public static void action(Context context, long profileId, String action) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, action);
+        bundle.putLong(PARAM_PROFILE_ID, profileId);
+        TopicService.dispatchEvent(context,
+                PARAM_ACTION + "/" + profileId,
+                bundle, Sticky.TEMP);
+    }
 }

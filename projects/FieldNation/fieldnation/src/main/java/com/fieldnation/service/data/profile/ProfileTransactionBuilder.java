@@ -16,8 +16,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .handlerParams(ProfileWebTransactionHandler.generateGetProfileParams())
+                    .handler(ProfileTransactionHandler.class)
+                    .handlerParams(ProfileTransactionHandler.generateGetProfileParams())
                     .key((isSync ? "Sync/" : "") + "ProfileGet")
                     .isSyncCall(isSync)
                     .useAuth(true)
@@ -36,8 +36,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .handlerParams(ProfileWebTransactionHandler.generateGetAllNotificationsParams(page))
+                    .handler(ProfileTransactionHandler.class)
+                    .handlerParams(ProfileTransactionHandler.generateGetAllNotificationsParams(page))
                     .key((isSync ? "Sync/" : "") + "NotificationPage" + page)
                     .useAuth(true)
                     .isSyncCall(isSync)
@@ -57,8 +57,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .handlerParams(ProfileWebTransactionHandler.generateGetAllMessagesParams(page))
+                    .handler(ProfileTransactionHandler.class)
+                    .handlerParams(ProfileTransactionHandler.generateGetAllMessagesParams(page))
                     .key((isSync ? "Sync/" : "") + "MessagePage" + page)
                     .useAuth(true)
                     .isSyncCall(isSync)
@@ -74,46 +74,48 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         }
     }
 
-    public static void acceptTos(Context context, long userId) {
+    public static void action(Context context, long profileId, String action, String params,
+                              String contentType, String body) {
         try {
+            HttpJsonBuilder http = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v1/profile/" + profileId + "/" + action);
+
+            if (params != null) {
+                http.urlParams(params);
+            }
+
+            if (body != null) {
+                http.body(body);
+
+                if (contentType != null) {
+                    http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, contentType);
+                }
+            }
+
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(ProfileWebTransactionHandler.class)
+                    .handler(ProfileTransactionHandler.class)
+                    .handlerParams(ProfileTransactionHandler.pAction(profileId, action))
                     .useAuth(true)
-                    .key("ProfileAcceptTos")
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("POST")
-                                    .path("/api/rest/v1/profile/" + userId + "/accept-tos")
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                    )
+                    .key("Profile/" + profileId + "/" + action)
+                    .request(http)
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void postBlockedCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(ProfileWebTransactionHandler.class)
-                    .key("BlockCompany" + profileId + "/" + companyId)
-                    .useAuth(true)
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("POST")
-                                    .path("/api/rest/v1/profile/" + profileId + "/block/" + companyId)
-                                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                                    .body("eventReasonId=" + eventReasonId
-                                            + "&explanation=" + misc.escapeForURL(explanation))
-                    )
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void acceptTos(Context context, long profileId) {
+        action(context, profileId, "accept-tos", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, null);
+    }
 
+    public static void postBlockedCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
+        action(context, profileId, "block/" + companyId, null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "eventReasonId=" + eventReasonId
+                        + "&explanation=" + misc.escapeForURL(explanation));
     }
 }

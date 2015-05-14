@@ -15,7 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.data.profile.ProfileDataClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -193,7 +193,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            ProfileDataClient.acceptTos(AuthActionBarActivity.this, _profile.getUserId());
+            ProfileClient.actionAcceptTos(AuthActionBarActivity.this, _profile.getUserId());
         }
 
         @Override

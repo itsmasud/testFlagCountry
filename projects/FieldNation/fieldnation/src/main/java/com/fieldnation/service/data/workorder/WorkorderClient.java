@@ -13,6 +13,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Deliverable;
 import com.fieldnation.data.workorder.Expense;
+import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -120,32 +121,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return register(topicId, TAG);
     }
 
-    public static void listMessages(Context context, long workorderId, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
-        intent.putExtra(PARAM_ID, workorderId);
-        intent.putExtra(PARAM_IS_SYNC, isSync);
-        context.startService(intent);
-    }
-
-    public boolean subListMessages(boolean isSync) {
-        return subListMessages(0, isSync);
-    }
-
-    public boolean subListMessages(long workorderId, boolean isSync) {
-        String topicId = PARAM_ACTION_LIST_MESSAGES;
-
-        if (isSync) {
-            topicId += "/SYNC";
-        }
-
-        if (workorderId > 0) {
-            topicId += "/" + workorderId;
-        }
-
-        return register(topicId, TAG);
-    }
-
     public static void listAlerts(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
@@ -211,14 +186,35 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return register(topicId, TAG);
     }
 
-    /*-**********************************-*/
-    /*-             signature            -*/
-    /*-**********************************-*/
+    /*-*********************************-*/
+    /*-             Messages            -*/
+    /*-*********************************-*/
+    public static void listMessages(Context context, long workorderId, boolean isSync) {
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
+        context.startService(intent);
+    }
 
+    public boolean subListMessages(boolean isSync) {
+        return subListMessages(0, isSync);
+    }
 
-    /*-******************************************-*/
-    /*-             workorder actions            -*/
-    /*-******************************************-*/
+    public boolean subListMessages(long workorderId, boolean isSync) {
+        String topicId = PARAM_ACTION_LIST_MESSAGES;
+
+        if (isSync) {
+            topicId += "/SYNC";
+        }
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+        }
+
+        return register(topicId, TAG);
+    }
+
     public static void actionAddMessage(Context context, long workorderId, String message) {
         WorkorderTransactionBuilder.action(context, workorderId,
                 "messages/new", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -227,6 +223,46 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public static void actionMarkMessagesRead(Context context, long workorderId) {
         WorkorderTransactionBuilder.listMessages(context, workorderId, true, false);
+    }
+
+    /*-*********************************-*/
+    /*-             Discounts           -*/
+    /*-*********************************-*/
+    public static void createDiscount(Context context, long workorderId, String description, double price) {
+        WorkorderTransactionBuilder.createDiscount(context, workorderId, description, price);
+    }
+
+    public static void deleteDiscount(Context context, long workorderId, long discountId) {
+        WorkorderTransactionBuilder.deleteDiscount(context, workorderId, discountId);
+    }
+
+    /*-*********************************-*/
+    /*-             Expense             -*/
+    /*-*********************************-*/
+    public static void createExpense(Context context, long workorderId, String description, double price,
+                                     ExpenseCategory category) {
+        WorkorderTransactionBuilder.createExpense(context, workorderId,
+                description, price, category);
+    }
+
+    public static void deleteExpense(Context context, long workorderId, long expenseId) {
+        WorkorderTransactionBuilder.deleteExpense(context, workorderId, expenseId);
+    }
+
+    /*-**********************************-*/
+    /*-             signature            -*/
+    /*-**********************************-*/
+
+
+    /*-******************************************-*/
+    /*-             workorder actions            -*/
+    /*-******************************************-*/
+
+    public static void actionCustomField(Context context, long workorderId, long customFieldId, String value) {
+        WorkorderTransactionBuilder.action(context,
+                workorderId, "custom-fields/" + customFieldId, null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "value=" + misc.escapeForURL(value));
     }
 
     // complete workorder
@@ -258,6 +294,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
         WorkorderTransactionBuilder.actionConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601);
+    }
+
+    public static void actionDecline(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionDecline(context, workorderId);
     }
 
     /*-******************************************-*/
@@ -294,11 +334,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*****************************************-*/
     /*-             workorder bundle            -*/
     /*-*****************************************-*/
-    public static void requestBundle(Context context, long bundleId) {
-        requestBundle(context, bundleId, false);
+    public static void getBundle(Context context, long bundleId) {
+        getBundle(context, bundleId, false);
     }
 
-    public static void requestBundle(Context context, long bundleId, boolean isSync) {
+    public static void getBundle(Context context, long bundleId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
         intent.putExtra(PARAM_ID, bundleId);
@@ -306,23 +346,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public boolean registerBundle() {
-        return registerBundle(false);
+    public boolean subBundle() {
+        return subBundle(false);
     }
 
-    public boolean registerBundle(boolean isSync) {
-        if (!isConnected())
-            return false;
+    public boolean subBundle(boolean isSync) {
+        String topicId = PARAM_ACTION_GET_BUNDLE;
 
-        Log.v(TAG, "registerBundle");
+        if (isSync) {
+            topicId += "-SYNC";
+        }
 
-        return register(PARAM_ACTION_GET_BUNDLE + (isSync ? "-SYNC" : ""), TAG);
+        return register(topicId, TAG);
     }
 
     /*-*************************************-*/
     /*-             deliverables            -*/
     /*-*************************************-*/
-    public static void requestUploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
+    public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
@@ -333,11 +374,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public static void requestUploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
+    public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
             @Override
             public void fileReady(String filename, File file) {
-                requestUploadDeliverable(context, workorderId, uploadSlotId, filename, file.getPath());
+                uploadDeliverable(context, workorderId, uploadSlotId, filename, file.getPath());
             }
 
             @Override
@@ -347,11 +388,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         });
     }
 
-    public static void requestDeleteDeliverable(Context context, long workorderId, long workorderUploadId, String filename) {
+    public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId, String filename) {
         WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId, filename);
     }
 
-    public static void requestGetDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
+    public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DELIVERABLE);
         intent.putExtra(PARAM_ID, workorderId);
@@ -360,7 +401,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public static void requestDownloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+    public static void getDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
         intent.putExtra(PARAM_ID, workorderId);
@@ -370,23 +411,22 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public boolean registerDeliverableList(boolean isSync) {
-        if (!isConnected())
-            return false;
-
-        Log.v(TAG, "registerDeliverableList");
-
-        return register(PARAM_ACTION_DELIVERABLE_LIST
-                + (isSync ? "-SYNC" : ""), TAG);
-    }
-
-
-    public static void requestDeliverableList(Context context, long workorderId, boolean isSync) {
+    public static void listDeliverables(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DELIVERABLE_LIST);
         intent.putExtra(PARAM_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
+    }
+
+    public boolean subDeliverableList(boolean isSync) {
+        String topicId = PARAM_ACTION_DELIVERABLE_LIST;
+
+        if (isSync) {
+            topicId += "-SYNC";
+        }
+
+        return register(topicId, TAG);
     }
 
     /*-**********************************-*/
@@ -424,7 +464,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                     payload.getString(PARAM_ACTION));
         }
 
-        public void onAction(long workorderId, String ation) {
+        public void onAction(long workorderId, String action) {
         }
 
         private void preTaskList(Bundle payload) {

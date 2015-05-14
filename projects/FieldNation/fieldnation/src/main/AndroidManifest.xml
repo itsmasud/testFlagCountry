@@ -209,7 +209,7 @@
             android:exported="false"
             android:process=":backside" />
         <service
-            android:name=".service.data.profile.ProfileDataService"
+            android:name=".service.data.profile.ProfileService"
             android:exported="false"
             android:process=":backside" />
         <service
