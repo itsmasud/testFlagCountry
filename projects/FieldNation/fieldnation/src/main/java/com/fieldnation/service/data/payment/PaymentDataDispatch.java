@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 
 /**
@@ -18,7 +19,10 @@ public class PaymentDataDispatch implements PaymentConstants {
         bundle.putInt(PARAM_PAGE, page);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, TOPIC_ID_GET_ALL + (isSync ? "-SYNC" : ""), bundle, true);
+        TopicService.dispatchEvent(context,
+                TOPIC_ID_GET_ALL
+                        + (isSync ? "-SYNC" : ""),
+                bundle, Sticky.TEMP);
 
     }
 
@@ -28,6 +32,9 @@ public class PaymentDataDispatch implements PaymentConstants {
         bundle.putLong(PARAM_ID, paymentId);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, TOPIC_ID_PAYMENT + (isSync ? "-SYNC" : ""), bundle, true);
+        TopicService.dispatchEvent(context,
+                TOPIC_ID_PAYMENT
+                        + (isSync ? "-SYNC" : ""),
+                bundle, Sticky.TEMP);
     }
 }

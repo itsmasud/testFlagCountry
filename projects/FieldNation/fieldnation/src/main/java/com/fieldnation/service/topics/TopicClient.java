@@ -54,7 +54,7 @@ public class TopicClient implements TopicConstants {
     public boolean register(String topicId, String userTag) {
         if (!isConnected())
             return false;
-        
+
 //        Log.v(TAG, "register(" + topicId + ", " + userTag + ")");
         try {
             Bundle bundle = new Bundle();
@@ -113,10 +113,10 @@ public class TopicClient implements TopicConstants {
      *
      * @param topicId
      * @param payload
-     * @param keepLast
+     * @param stickyType
      * @return
      */
-    public boolean dispatchEvent(String topicId, Parcelable payload, boolean keepLast) {
+    public boolean dispatchEvent(String topicId, Parcelable payload, Sticky stickyType) {
 //        Log.v(TAG, "dispatchEvent");
         try {
             Bundle bundle = new Bundle();
@@ -125,7 +125,7 @@ public class TopicClient implements TopicConstants {
                 bundle.putParcelable(PARAM_TOPIC_PARCELABLE, new Bundle());
             else
                 bundle.putParcelable(PARAM_TOPIC_PARCELABLE, payload);
-            bundle.putBoolean(PARAM_KEEP_LAST, keepLast);
+            bundle.putSerializable(PARAM_STICKY, stickyType);
 
             Message msg = Message.obtain();
             msg.what = WHAT_DISPATCH_EVENT;
@@ -144,10 +144,10 @@ public class TopicClient implements TopicConstants {
      * @param context
      * @param topicId
      * @param payload
-     * @param keepLast
+     * @param stickyType
      */
-    public static void dispatchEvent(Context context, String topicId, Parcelable payload, boolean keepLast) {
-        TopicService.dispatchEvent(context, topicId, payload, keepLast);
+    public static void dispatchEvent(Context context, String topicId, Parcelable payload, Sticky stickyType) {
+        TopicService.dispatchEvent(context, topicId, payload, stickyType);
     }
 
     /*-**********************************-*/

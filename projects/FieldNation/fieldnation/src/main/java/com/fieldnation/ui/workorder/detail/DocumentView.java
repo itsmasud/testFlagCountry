@@ -13,6 +13,7 @@ import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -20,7 +21,7 @@ public class DocumentView extends RelativeLayout {
     private static final String TAG = "ui.workorder.detail.DocumentView";
 
     // UI
-    private ImageView _fileTypeImageView;
+    private IconFontTextView _fileTypeIconFont;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _byTextView;
@@ -55,7 +56,7 @@ public class DocumentView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _fileTypeImageView = (ImageView) findViewById(R.id.filetype_imageview);
+        _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _byTextView = (TextView) findViewById(R.id.by_textview);

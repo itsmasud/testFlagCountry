@@ -25,5 +25,6 @@ public interface RestConstants {
     public static final String PARAM_OBJECT_ID = "PARAM_OBJECT_ID";
     public static final String PARAM_URL_PARAMS = "PARAM_URL_PARAMS";
     public static final String PARAM_CONTENT_TYPE = "PARAM_CONTENT_TYPE";
+    public static final String PARAM_STICKY = "PARAM_STICKY";
 
 }

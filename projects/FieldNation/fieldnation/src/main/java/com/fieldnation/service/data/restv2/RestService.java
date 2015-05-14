@@ -7,6 +7,7 @@ import com.fieldnation.ThreadManager;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.topics.Sticky;
 
 import java.util.List;
 
@@ -64,16 +65,17 @@ public class RestService extends MSService implements RestConstants {
         String objectType = intent.getStringExtra(PARAM_OBJECT_TYPE);
         String params = intent.getStringExtra(PARAM_URL_PARAMS);
         boolean isSync = intent.getBooleanExtra(PARAM_SYNC, false);
+        Sticky sticky = (Sticky) intent.getSerializableExtra(PARAM_STICKY);
 
         List<StoredObject> list = StoredObject.list(context, objectType);
 
         if (list != null && list.size() > 0) {
             for (StoredObject obj : list) {
-                RestDispatch.object(context, resultTag, objectType, obj.getObjKey(), obj.toBundle(), isSync);
+                RestDispatch.object(context, resultTag, objectType, obj.getObjKey(), obj.toBundle(), sticky, isSync);
             }
         }
 
-        RestTransactionBuilder.list(context, resultTag, objectType, params, isSync);
+        RestTransactionBuilder.list(context, resultTag, objectType, params, sticky, isSync);
     }
 
     private static void action(Context context, Intent intent) {
@@ -87,19 +89,22 @@ public class RestService extends MSService implements RestConstants {
 
         String body = intent.getStringExtra(PARAM_OBJECT_DATA_STRING);
 
-        RestTransactionBuilder.action(context, resultTag, objectType, id, action, params, contentType, body, isSync);
+        Sticky sticky = (Sticky) intent.getSerializableExtra(PARAM_STICKY);
 
-        RestClient.get(context, resultTag, objectType, id, isSync);
+        RestTransactionBuilder.action(context, resultTag, objectType, id, action, params, contentType, body, sticky, isSync);
+
+        RestClient.get(context, resultTag, objectType, id, sticky, isSync);
     }
 
     private static void create(Context context, Intent intent) {
         String resultTag = intent.getStringExtra(PARAM_RESULT_TAG);
         String objectType = intent.getStringExtra(PARAM_OBJECT_TYPE);
+        Sticky sticky = (Sticky) intent.getSerializableExtra(PARAM_STICKY);
 
         if (intent.hasExtra(PARAM_OBJECT_DATA_BYTE_ARRAY)) {
-            RestTransactionBuilder.create(context, resultTag, objectType, new String(intent.getByteArrayExtra(PARAM_OBJECT_DATA_BYTE_ARRAY)));
+            RestTransactionBuilder.create(context, resultTag, objectType, new String(intent.getByteArrayExtra(PARAM_OBJECT_DATA_BYTE_ARRAY)), sticky);
         } else if (intent.hasExtra(PARAM_OBJECT_DATA_STRING)) {
-            RestTransactionBuilder.create(context, resultTag, objectType, intent.getStringExtra(PARAM_OBJECT_DATA_STRING));
+            RestTransactionBuilder.create(context, resultTag, objectType, intent.getStringExtra(PARAM_OBJECT_DATA_STRING), sticky);
         }
 
     }

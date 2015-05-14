@@ -66,7 +66,7 @@ public class TaskListView extends RelativeLayout {
         _listener = l;
     }
 
-    public void setData(Workorder workorder, List<Task> tasks, boolean isCached) {
+    public void setData(Workorder workorder, List<Task> tasks) {
         _tasks = tasks;
         _workorder = workorder;
 

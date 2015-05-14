@@ -5,6 +5,7 @@ import android.content.Context;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 
@@ -15,11 +16,12 @@ import java.text.ParseException;
  */
 public class RestTransactionHandler extends WebTransactionHandler {
 
-    public static byte[] pList(String resultTag, String objectType) {
+    public static byte[] pList(String resultTag, String objectType, Sticky sticky) {
         try {
             JsonObject obj = new JsonObject("action", "pList");
             obj.put("resultTag", resultTag);
             obj.put("objectType", objectType);
+            obj.put("sticky", sticky.ordinal());
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -27,10 +29,11 @@ public class RestTransactionHandler extends WebTransactionHandler {
         return null;
     }
 
-    public static byte[] pObject(String resultTag) {
+    public static byte[] pObject(String resultTag, Sticky sticky) {
         try {
             JsonObject obj = new JsonObject("action", "pObject");
             obj.put("resultTag", resultTag);
+            obj.put("sticky", sticky.ordinal());
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -59,13 +62,14 @@ public class RestTransactionHandler extends WebTransactionHandler {
 
     private static Result object(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         String resultTag = params.getString("resultTag");
+        Sticky sticky = Sticky.values()[params.getInt("sticky")];
 
         JsonObject json = resultData.getJsonObject();
         String id = json.getString("id");
         String objectType = json.getString("object");
 
         // fast
-        RestDispatch.object(context, resultTag, objectType, id, json, transaction.isSync());
+        RestDispatch.object(context, resultTag, objectType, id, json, sticky, transaction.isSync());
 
         // slow
         StoredObject.put(context, objectType, id, resultData.getByteArray());
@@ -77,6 +81,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
     private static Result list(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         String resultTag = params.getString("resultTag");
         String objectType = params.getString("objectType");
+        Sticky sticky = Sticky.values()[params.getInt("sticky")];
 
         JsonObject envelope = resultData.getJsonObject();
 
@@ -100,7 +105,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
         }
 */
 
-        RestDispatch.list(context, resultTag, objectType, envelope, transaction.isSync());
+        RestDispatch.list(context, resultTag, objectType, envelope, sticky, transaction.isSync());
 
         StoredObject.put(context, objectType + "List", envelope.getLong("page"), envelope.toByteArray());
 

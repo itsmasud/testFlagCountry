@@ -5,6 +5,7 @@ import android.content.Context;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
@@ -40,7 +41,7 @@ public class BundleTransactionHandler extends WebTransactionHandler implements W
             bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
             bundle.putParcelable(PARAM_DATA_PARCELABLE, new JsonObject(data));
             bundle.putLong(PARAM_ID, bundleId);
-            TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE, bundle, true);
+            TopicService.dispatchEvent(context, PARAM_ACTION_GET_BUNDLE, bundle, Sticky.TEMP);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

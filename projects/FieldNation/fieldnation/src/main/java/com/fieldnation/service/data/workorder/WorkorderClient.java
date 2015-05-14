@@ -17,6 +17,7 @@ import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Signature;
+import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -168,6 +169,31 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             topicId += "/" + workorderId;
         }
 
+        return register(topicId, TAG);
+    }
+
+    public static void listTasks(Context context, long workorderId, boolean isSync) {
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_TASKS);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
+        context.startService(intent);
+    }
+
+    public boolean subListTasks(boolean isSync) {
+        return subListTasks(0, isSync);
+    }
+
+    public boolean subListTasks(long workorderId, boolean isSync) {
+        String topicId = PARAM_ACTION_LIST_TASKS;
+
+        if (isSync) {
+            topicId += "/SYNC";
+        }
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+        }
         return register(topicId, TAG);
     }
 
@@ -384,6 +410,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preMessageList((Bundle) payload);
             } else if (topicId.startsWith(PARAM_ACTION_LIST_NOTIFICATIONS)) {
                 preAlertList((Bundle) payload);
+            } else if (topicId.startsWith(PARAM_ACTION_LIST_TASKS)) {
+                preTaskList((Bundle) payload);
 
                 // WARN this must be the last check because it will match just about anything.
             } else if (topicId.startsWith(PARAM_ACTION)) {
@@ -397,6 +425,35 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         public void onAction(long workorderId, String ation) {
+        }
+
+        private void preTaskList(Bundle payload) {
+            Log.v(STAG, "preTaskList");
+            new AsyncTaskEx<Object, Object, List<Task>>() {
+                private long workorderId;
+
+                @Override
+                protected List<Task> doInBackground(Object... params) {
+                    Bundle payload = (Bundle) params[0];
+
+                    workorderId = payload.getLong(PARAM_ID);
+                    JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                    List<Task> list = new LinkedList<>();
+                    for (int i = 0; i < ja.size(); i++) {
+                        list.add(Task.fromJson(ja.getJsonObject(i)));
+                    }
+
+                    return list;
+                }
+
+                @Override
+                protected void onPostExecute(List<Task> tasks) {
+                    onTaskList(workorderId, tasks);
+                }
+            }.executeEx(payload);
+        }
+
+        public void onTaskList(long workorderId, List<Task> tasks) {
         }
 
         private void preAlertList(Bundle payload) {

@@ -77,6 +77,17 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
+    public static byte[] pTaskList(long workorderId){
+        try {
+            JsonObject obj = new JsonObject("action", "pTaskList");
+            obj.put("workorderId", workorderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     // plumbing
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
@@ -94,6 +105,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleMessageList(context, transaction, params, resultData);
                 case "pAlertList":
                     return handleAlertList(context, transaction, params, resultData);
+                case "pTaskList":
+                    return handleTaskList(context, transaction, params, resultData);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -133,6 +146,19 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), transaction.isSync());
 
         StoredObject.put(context, PSO_ALERT_LIST, workorderId, data);
+
+        return Result.FINISH;
+    }
+
+    private Result handleTaskList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleTaskList");
+        long workorderId = params.getLong("workorderId");
+
+        byte[] data = resultData.getByteArray();
+
+        WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), transaction.isSync());
+
+        StoredObject.put(context, PSO_TASK_LIST, workorderId, data);
 
         return Result.FINISH;
     }

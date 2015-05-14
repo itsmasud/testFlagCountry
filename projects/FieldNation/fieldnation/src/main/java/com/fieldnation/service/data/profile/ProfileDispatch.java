@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 
 /**
@@ -17,7 +18,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE
-                + (isSync ? "-SYNC" : ""), bundle, true);
+                + (isSync ? "-SYNC" : ""), bundle, Sticky.FOREVER);
     }
 
     public static void allNotifications(Context context, JsonArray data, int page, boolean isSync) {
@@ -27,7 +28,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST
-                + (isSync ? "-SYNC" : ""), bundle, false);
+                + (isSync ? "-SYNC" : ""), bundle, Sticky.TEMP);
 
     }
 
@@ -38,6 +39,6 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST
-                + (isSync ? "-SYNC" : ""), bundle, false);
+                + (isSync ? "-SYNC" : ""), bundle, Sticky.TEMP);
     }
 }

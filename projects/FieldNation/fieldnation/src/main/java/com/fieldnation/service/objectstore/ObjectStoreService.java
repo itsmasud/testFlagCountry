@@ -9,9 +9,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.service.topics.TopicService;
-
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -24,7 +21,7 @@ import java.util.List;
 public class ObjectStoreService extends Service implements ObjectStoreConstants {
     private static final String TAG = "ObjectStoreService";
 
-    public static final String TOPIC_ID_OBJECT_UPDATE = "com.fieldnation.service.objectstore.ObjectStoreService:OBJECT_UPDATE";
+//    public static final String TOPIC_ID_OBJECT_UPDATE = "com.fieldnation.service.objectstore.ObjectStoreService:OBJECT_UPDATE";
 
     private Messenger _me = new Messenger(new IncomeHandler(this));
     private int _bindCount = 0;
@@ -143,9 +140,9 @@ public class ObjectStoreService extends Service implements ObjectStoreConstants 
         }
 
         // Not sure this is a good idea because it doesn't include the merged transforms
-        if (obj != null) {
-            TopicService.dispatchEvent(this, TOPIC_ID_OBJECT_UPDATE, obj.toBundle(), false);
-        }
+//        if (obj != null) {
+//            TopicService.dispatchEvent(this, TOPIC_ID_OBJECT_UPDATE, obj.toBundle(), false);
+//        }
 
         try {
             if (replyTo != null) {

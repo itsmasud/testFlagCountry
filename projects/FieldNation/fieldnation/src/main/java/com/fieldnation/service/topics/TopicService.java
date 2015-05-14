@@ -23,10 +23,12 @@ public class TopicService extends Service implements TopicConstants {
     private static final String TAG = "TopicService";
 
     private Messenger _me = new Messenger(new IncomeHandler(this));
-    private Hashtable<String, Parcelable> _lastSent;
+    private Hashtable<String, StickyContainer> _stickies;
     private int _bindCount = 0;
     private int _lastStartId = -1;
     private Handler _handler;
+
+    private long _pruneTimer = 0;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -35,7 +37,9 @@ public class TopicService extends Service implements TopicConstants {
     public void onCreate() {
 //        Log.v(TAG, "onCreate");
         super.onCreate();
-        _lastSent = new Hashtable<>();
+        synchronized (TAG) {
+            _stickies = new Hashtable<>();
+        }
         _handler = new Handler();
     }
 
@@ -49,6 +53,12 @@ public class TopicService extends Service implements TopicConstants {
 
         if (_bindCount == 0) {
             stopSelf(startId);
+        }
+
+        if (_pruneTimer < System.currentTimeMillis()) {
+            _pruneTimer = System.currentTimeMillis() + 60000;
+
+            pruneStickies();
         }
 
         return START_NOT_STICKY;
@@ -73,10 +83,37 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     @Override
+    public void onLowMemory() {
+        pruneStickies();
+        super.onLowMemory();
+    }
+
+    private void pruneStickies() {
+        Hashtable<String, StickyContainer> ns = new Hashtable<>();
+        synchronized (TAG) {
+            Set<String> keys = _stickies.keySet();
+            for (String key : keys) {
+                StickyContainer sc = _stickies.get(key);
+
+                if (sc.stickyType == Sticky.FOREVER) {
+                    ns.put(key, sc);
+                } else if (sc.stickyType == Sticky.TEMP
+                        && sc.createdDate + 60000 > System.currentTimeMillis()) {
+                    ns.put(key, sc);
+                }
+            }
+            Log.v(TAG, "Pruning stickies done: " + ns.size() + "/" + _stickies.size());
+            _stickies = ns;
+        }
+    }
+
+    @Override
     public void onDestroy() {
 //        Log.v(TAG, "onDestroy");
         TopicUser.reset();
-        _lastSent = new Hashtable<>();
+        synchronized (TAG) {
+            _stickies.clear();
+        }
         super.onDestroy();
     }
 
@@ -120,12 +157,16 @@ public class TopicService extends Service implements TopicConstants {
         response.putString(PARAM_TOPIC_ID, topicId);
         sendEvent(replyTo, WHAT_REGISTER_LISTENER, response, c.userTag);
 
-        if (_lastSent.containsKey(topicId)) {
+        synchronized (TAG) {
+            if (_stickies.containsKey(topicId)) {
 //            Log.v(TAG, "lastsent " + topicId);
-            bundle = new Bundle();
-            bundle.putString(PARAM_TOPIC_ID, topicId);
-            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, _lastSent.get(topicId));
-            sendEvent(replyTo, WHAT_DISPATCH_EVENT, bundle, c.userTag);
+
+
+                bundle = new Bundle();
+                bundle.putString(PARAM_TOPIC_ID, topicId);
+                bundle.putParcelable(PARAM_TOPIC_PARCELABLE, _stickies.get(topicId).parcel);
+                sendEvent(replyTo, WHAT_DISPATCH_EVENT, bundle, c.userTag);
+            }
         }
     }
 
@@ -154,30 +195,35 @@ public class TopicService extends Service implements TopicConstants {
     private void dispatchEvent(Bundle bundle) {
         String[] topicIdTree = bundle.getString(PARAM_TOPIC_ID).split("/");
 //        String rootTopicId = (topicId.contains("/") ? topicId.substring(0, topicId.indexOf("/")) : null);
-        boolean keepLast = bundle.getBoolean(PARAM_KEEP_LAST);
+        Sticky stickyType = (Sticky) bundle.getSerializable(PARAM_STICKY);
 
 
         synchronized (TAG) {
             String topicId = topicIdTree[0];
-            Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
+            Log.v(TAG, "dispatch(" + topicId + ", " + stickyType + ")");
             // exact match
             Set<TopicUser> users = TopicUser.getUsers(topicId);
             for (TopicUser c : users) {
                 sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
             }
-            if (keepLast)
-                _lastSent.put(topicId, bundle.getParcelable(PARAM_TOPIC_PARCELABLE));
+            if (stickyType != Sticky.NONE) {
+                _stickies.put(topicId, new StickyContainer(
+                        bundle.getParcelable(PARAM_TOPIC_PARCELABLE),
+                        stickyType));
+            }
 
             for (int i = 1; i < topicIdTree.length; i++) {
                 topicId += "/" + topicIdTree[i];
-                Log.v(TAG, "dispatch(" + topicId + ", " + keepLast + ")");
+                Log.v(TAG, "dispatch(" + topicId + ", " + stickyType + ")");
 
                 users = TopicUser.getUsers(topicId);
                 for (TopicUser c : users) {
                     sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
                 }
-                if (keepLast)
-                    _lastSent.put(topicId, bundle.getParcelable(PARAM_TOPIC_PARCELABLE));
+                if (stickyType != Sticky.NONE)
+                    _stickies.put(topicId,
+                            new StickyContainer(bundle.getParcelable(PARAM_TOPIC_PARCELABLE),
+                                    stickyType));
             }
         }
 
@@ -189,7 +235,7 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     // queues up an event for sending
-    public static void dispatchEvent(Context context, String topicId, Parcelable payload, boolean keepLast) {
+    public static void dispatchEvent(Context context, String topicId, Parcelable payload, Sticky stickyType) {
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
 
@@ -199,7 +245,7 @@ public class TopicService extends Service implements TopicConstants {
         else
             intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) new Bundle());
 
-        intent.putExtra(PARAM_KEEP_LAST, keepLast);
+        intent.putExtra(PARAM_STICKY, stickyType);
 
         context.startService(intent);
     }
@@ -239,6 +285,19 @@ public class TopicService extends Service implements TopicConstants {
             }
 
             super.handleMessage(msg);
+        }
+    }
+
+    private class StickyContainer {
+
+        public Parcelable parcel;
+        public long createdDate;
+        public Sticky stickyType;
+
+        public StickyContainer(Parcelable parcel, Sticky stickyType) {
+            createdDate = System.currentTimeMillis();
+            this.stickyType = stickyType;
+            this.parcel = parcel;
         }
     }
 }

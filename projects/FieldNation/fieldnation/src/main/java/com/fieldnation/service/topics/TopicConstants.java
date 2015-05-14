@@ -12,5 +12,9 @@ interface TopicConstants {
     public static final String PARAM_TOPIC_ID = "PARAM_TOPIC_ID";
     public static final String PARAM_USER_TAG = "PARAM_USER_TAG";
     public static final String PARAM_TOPIC_PARCELABLE = "PARAM_TOPIC_PARCELABLE";
-    public static final String PARAM_KEEP_LAST = "PARAM_KEEP_LAST";
+    public static final String PARAM_STICKY = "PARAM_STICKY";
+
+    public static final int STICKY_NONE = 0;
+    public static final int STICKY_FOREVER = 1;
+    public static final int STICKY_SHORT = 2;
 }

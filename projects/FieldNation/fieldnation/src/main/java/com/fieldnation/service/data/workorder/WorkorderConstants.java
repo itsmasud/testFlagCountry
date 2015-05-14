@@ -70,6 +70,7 @@ public interface WorkorderConstants {
     public static final String PSO_WORKORDER = "Workorder";
     public static final String PSO_MESSAGE_LIST = "WorkorderMessageList";
     public static final String PSO_ALERT_LIST = "WorkorderAlertList";
+    public static final String PSO_TASK_LIST = "WorkorderTaskList";
     public static final String PSO_SIGNATURE = "Signature";
     public static final String PSO_BUNDLE = "Bundle";
     public static final String PSO_DELIVERABLE = "Deliverable";

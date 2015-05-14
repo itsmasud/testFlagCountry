@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.topics.TopicService;
 
@@ -68,7 +69,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         bundle.putString(EVENT_PARAM_LABEL, label);
         bundle.putLong(EVENT_PARAM_VALUE, value);
 
-        TopicService.dispatchEvent(context, EVENT, bundle, false);
+        TopicService.dispatchEvent(context, EVENT, bundle, Sticky.NONE);
     }
 
     public boolean registerEvents() {
@@ -99,7 +100,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         Bundle bundle = new Bundle();
         bundle.putString(SCREENVIEW_PARAM_NAME, screenName);
 
-        TopicService.dispatchEvent(context, SCREENVIEW, bundle, false);
+        TopicService.dispatchEvent(context, SCREENVIEW, bundle, Sticky.NONE);
     }
 
     /*-*****************************-*/
@@ -133,7 +134,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
 
         bundle.putLong(TIMING_PARAM_VALUE, duration);
 
-        TopicService.dispatchEvent(context, TIMING, bundle, false);
+        TopicService.dispatchEvent(context, TIMING, bundle, Sticky.NONE);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

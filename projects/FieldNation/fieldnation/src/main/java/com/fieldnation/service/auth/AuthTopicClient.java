@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.UniqueTag;
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.topics.TopicService;
 
@@ -27,7 +28,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
 
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_STATE, state.ordinal());
-        TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, true);
+        TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
     }
 
     public void disconnect(Context context) {
@@ -52,7 +53,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         bundle.putInt(PARAM_STATE, AuthState.AUTHENTICATED.ordinal());
         bundle.putParcelable(PARAM_OAUTH, auth);
 
-        TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, true);
+        TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
     }
 
 /*
@@ -72,7 +73,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_REQUEST, null, false);
+        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_REQUEST, null, Sticky.NONE);
     }
 
     public boolean registerRequestCommand() {
@@ -86,7 +87,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_INVALIDATE, null, false);
+        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_INVALIDATE, null, Sticky.NONE);
     }
 
     public boolean registerInvalidateCommand() {
@@ -100,7 +101,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_REMOVE, null, false);
+        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_REMOVE, null, Sticky.NONE);
     }
 
     public boolean registerRemoveCommand() {
@@ -114,7 +115,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_ADDED_ACCOUNT, null, false);
+        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_ADDED_ACCOUNT, null, Sticky.NONE);
     }
 
     public boolean registerAccountAddedCommand() {

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -14,12 +15,12 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 public class RestTransactionBuilder {
     private static final String REST_PATH = "/api/rest/v2/";
 
-    public static void list(Context context, String resultTag, String objectType, String params, boolean isSync) {
+    public static void list(Context context, String resultTag, String objectType, String params, Sticky sticky, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(RestTransactionHandler.class)
-                    .handlerParams(RestTransactionHandler.pList(resultTag, objectType))
+                    .handlerParams(RestTransactionHandler.pList(resultTag, objectType, sticky))
                     .key((isSync ? "Sync/" : "") + "List" + objectType)
                     .useAuth(true)
                     .isSyncCall(isSync)
@@ -36,7 +37,7 @@ public class RestTransactionBuilder {
     }
 
     public static void action(Context context, String resultTag, String objectType, String id,
-                              String action, String params, String contentType, String body, boolean isSync) {
+                              String action, String params, String contentType, String body, Sticky sticky, boolean isSync) {
         try {
             JsonObject _action = new JsonObject();
             _action.put("_action[0].resultTag", resultTag);
@@ -63,7 +64,7 @@ public class RestTransactionBuilder {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(RestTransactionHandler.class)
-                    .handlerParams(RestTransactionHandler.pObject(resultTag))
+                    .handlerParams(RestTransactionHandler.pObject(resultTag, sticky))
                     .key((isSync ? "Sync/" : "") + objectType + "/" + id + "/" + action)
                     .useAuth(true)
                     .isSyncCall(isSync)
@@ -79,12 +80,12 @@ public class RestTransactionBuilder {
         }
     }
 
-    public static void create(Context context, String resultTag, String objectType, String body) {
+    public static void create(Context context, String resultTag, String objectType, String body, Sticky sticky) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(RestTransactionHandler.class)
-                    .handlerParams(RestTransactionHandler.pObject(resultTag))
+                    .handlerParams(RestTransactionHandler.pObject(resultTag, sticky))
                     .key("Create" + objectType)
                     .useAuth(true)
                     .request(new HttpJsonBuilder()

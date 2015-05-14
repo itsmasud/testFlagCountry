@@ -108,6 +108,25 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    public static void listTasks(Context context, long workorderId, boolean isSync) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pTaskList(workorderId))
+                    .key((isSync ? "Sync/" : "") + "WorkorderTaskList/" + workorderId)
+                    .useAuth(true)
+                    .isSyncCall(isSync)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/tasks"))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void action(Context context, long workorderId, String action, String params, String contentType, String body) {
         try {
             JsonObject _action = new JsonObject();

@@ -246,7 +246,7 @@ public class WorkFragment extends WorkorderFragment {
                 for (int i = 0; i < tasks.length; i++) {
                     _tasks.add((Task) tasks[i]);
                 }
-                _taskList.setData(_workorder, _tasks, true);
+                _taskList.setData(_workorder, _tasks);
             }
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
                 _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
@@ -316,12 +316,16 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(activity);
 // todo remove
 //        AuthTopicService.subscribeAuthState(getActivity(), 0, TAG, _authReceiver);
     }
 
     @Override
     public void onDetach() {
+        _workorderClient.disconnect(getActivity());
+        _workorderClient = null;
         super.onDetach();
     }
 
@@ -371,19 +375,15 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        requestTasks(true);
+        subscribeData();
+        requestTasks();
         populateUi();
     }
 
-    private void setTasks(List<Task> tasks, boolean isCached) {
+    private void setTasks(List<Task> tasks) {
         _tasks = tasks;
-        _taskList.setData(_workorder, tasks, isCached);
-        if (isCached) {
-            requestTasks(false);
-            setLoading(true);
-        } else {
-            setLoading(false);
-        }
+        _taskList.setData(_workorder, tasks);
+        setLoading(false);
     }
 
     private void populateUi() {
@@ -476,15 +476,14 @@ public class WorkFragment extends WorkorderFragment {
         _workorder.dispatchOnChange();
     }
 
-    private void requestTasks(boolean allowCache) {
+    private void requestTasks() {
         if (_workorder == null)
             return;
 
         if (getActivity() == null)
             return;
 
-// todo remove
-//        getActivity().startService(_service.getTasks(WEB_GET_TASKS, _workorder.getWorkorderId(), allowCache));
+        WorkorderClient.listTasks(getActivity(), _workorder.getWorkorderId(), false);
     }
 
     @Override
@@ -607,7 +606,7 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
+    private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
             _gpsLocationService.stopLocationUpdates();
@@ -669,7 +668,7 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************************-*/
     /*-				Dialog Listeners				-*/
     /*-*********************************************-*/
-    private AcceptBundleDialog.Listener _acceptBundleDialogConfirmListener = new AcceptBundleDialog.Listener() {
+    private final AcceptBundleDialog.Listener _acceptBundleDialogConfirmListener = new AcceptBundleDialog.Listener() {
 
         @Override
         public void onOk(Workorder workorder) {
@@ -677,14 +676,14 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
+    private final AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
             _expiresDialog.show(workorder);
         }
     };
 
-    private AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
+    private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
         @Override
         public void onClick(AppPickerPackage pack) {
@@ -711,7 +710,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+    private final ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
             WorkorderClient.actionSetClosingNotes(getActivity(), _workorder.getWorkorderId(), message);
@@ -724,7 +723,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
@@ -751,7 +750,7 @@ public class WorkFragment extends WorkorderFragment {
 
     };
 
-    private CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
+    private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds,
                          Pay pay, Schedule schedule, Expense[] expenses) {
@@ -767,7 +766,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
+    private final CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
         @Override
         public void onOk(CustomField field, String value) {
 // todo remove
@@ -779,7 +778,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
+    private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
         @Override
         public void onOk(boolean blockBuyer, int reasonId, String details) {
 // todo remove
@@ -813,7 +812,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
+    private final DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
         @Override
         public void onOk(String description, double amount) {
 // todo remove
@@ -830,7 +829,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
+    private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
 // todo remove
@@ -847,7 +846,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
+    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String dateTime) {
             long seconds = -1;
@@ -870,7 +869,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
+    private final MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
         @Override
         public void onSignatureClick() {
             new AsyncTaskEx<Object, Object, Object>() {
@@ -920,7 +919,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
+    private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
 //todo remove
@@ -949,7 +948,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
+    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
 // todo remove
@@ -996,7 +995,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
+    private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
         @Override
         public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
             if (loggedWork == null) {
@@ -1044,7 +1043,7 @@ public class WorkFragment extends WorkorderFragment {
     /*-*****************************************-*/
     /*-				View Listeners				-*/
     /*-*****************************************-*/
-    private LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
+    private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -1063,7 +1062,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private LocationDialog.Listener _locationDialog_checkOutListener = new LocationDialog.Listener() {
+    private final LocationDialog.Listener _locationDialog_checkOutListener = new LocationDialog.Listener() {
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -1082,7 +1081,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
+    private final ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onComplete() {
             _markCompleteDialog.show(_workorder);
@@ -1130,7 +1129,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private ActionView.Listener _actionView_listener = new ActionView.Listener() {
+    private final ActionView.Listener _actionView_listener = new ActionView.Listener() {
 
         @Override
         public void onRequest(Workorder workorder) {
@@ -1171,21 +1170,21 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
+    private final ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
         public void onChangeClosingNotes(String closingNotes) {
             showClosingNotesDialog();
         }
     };
 
-    private CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
+    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override
         public void onClick(CustomFieldRowView view, CustomField field) {
             _customFieldDialog.show(field);
         }
     };
 
-    private PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
+    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
 
         @Override
         public void onDeleteExpense(Workorder workorder, Expense expense) {
@@ -1230,14 +1229,14 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
             requestWorkorder();
         }
     };
 
-    private ShipmentView.Listener _shipments_listener = new ShipmentView.Listener() {
+    private final ShipmentView.Listener _shipments_listener = new ShipmentView.Listener() {
 
         @Override
         public void addShipment() {
@@ -1259,7 +1258,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
+    private final SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
             SignOffActivity.startSignOff(getActivity(), _workorder);
@@ -1273,7 +1272,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private SummaryView.Listener _summaryView_listener = new SummaryView.Listener() {
+    private final SummaryView.Listener _summaryView_listener = new SummaryView.Listener() {
         @Override
         public void showConfidentialInfo(String body) {
             _termsDialog.show("Confidential Information", body);
@@ -1285,7 +1284,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
+    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onCheckin(Task task) {
             startCheckin();
@@ -1448,7 +1447,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private TimeLoggedView.Listener _timeLoggedView_listener = new TimeLoggedView.Listener() {
+    private final TimeLoggedView.Listener _timeLoggedView_listener = new TimeLoggedView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
             _worklogDialog.show("Add Worklog", null, showdevice);
@@ -1472,7 +1471,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private View.OnClickListener _bundle_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
@@ -1486,6 +1485,31 @@ public class WorkFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
+
+    private void subscribeData() {
+        if (_workorder == null)
+            return;
+
+        if (_workorderClient == null)
+            return;
+
+        if (!_workorderClient.isConnected())
+            return;
+
+        _workorderClient.subListTasks(_workorder.getWorkorderId(), false);
+    }
+
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            subscribeData();
+        }
+
+        @Override
+        public void onTaskList(long workorderId, List<Task> tasks) {
+            setTasks(tasks);
+        }
+    };
 // todo remove
 /*
     private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {

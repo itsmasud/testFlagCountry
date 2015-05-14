@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.topics.TopicService;
 
@@ -41,7 +42,7 @@ public class GlobalTopicClient extends TopicClient {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_APP_UPDATE, null, true);
+        TopicService.dispatchEvent(context, TOPIC_APP_UPDATE, null, Sticky.FOREVER);
     }
 
     public boolean registerUpdateApp() {
@@ -55,7 +56,7 @@ public class GlobalTopicClient extends TopicClient {
     public static void dispatchGotProfile(Context context, Profile profile) {
         if (context == null)
             return;
-        TopicService.dispatchEvent(context, TOPIC_GOT_PROFILE, profile, true);
+        TopicService.dispatchEvent(context, TOPIC_GOT_PROFILE, profile, Sticky.FOREVER);
     }
 
     public boolean registerGotProfile() {
@@ -70,7 +71,7 @@ public class GlobalTopicClient extends TopicClient {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_PROFILE_INVALID, null, false);
+        TopicService.dispatchEvent(context, TOPIC_PROFILE_INVALID, null, Sticky.NONE);
     }
 
     public boolean registerProfileInvalid(Context context) {
@@ -85,7 +86,7 @@ public class GlobalTopicClient extends TopicClient {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_APP_UPDATE, null, false);
+        TopicService.dispatchEvent(context, TOPIC_APP_UPDATE, null, Sticky.FOREVER);
     }
 
     public boolean registerAppShutdown() {
@@ -103,7 +104,7 @@ public class GlobalTopicClient extends TopicClient {
 
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_NETWORK_STATE, NETWORK_STATE_DISCONNECTED);
-        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, true);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, Sticky.FOREVER);
     }
 
     public static void dispathNetworkConnected(Context context) {
@@ -113,7 +114,7 @@ public class GlobalTopicClient extends TopicClient {
 
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_NETWORK_STATE, NETWORK_STATE_CONNECTED);
-        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, true);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, Sticky.FOREVER);
     }
 
     public static void dispatchNetworkConnecting(Context context) {
@@ -123,7 +124,7 @@ public class GlobalTopicClient extends TopicClient {
 
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_NETWORK_STATE, NETWORK_STATE_CONNECTING);
-        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, true);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, Sticky.FOREVER);
     }
 
     public boolean registerNetworkState() {
@@ -139,7 +140,7 @@ public class GlobalTopicClient extends TopicClient {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_NETWORK_COMMAND_CONNECT, null, false);
+        TopicService.dispatchEvent(context, TOPIC_NETWORK_COMMAND_CONNECT, null, Sticky.NONE);
     }
 
     public boolean registerNetworkConnect() {

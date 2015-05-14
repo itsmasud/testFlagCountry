@@ -120,6 +120,9 @@ public class MessageFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
+        if (_refreshView == null)
+            return;
+
         _refreshView.startRefreshing();
 
 //        _messages.clear();

@@ -3,6 +3,7 @@ package com.fieldnation.service.data.photo;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 
 import java.io.File;
@@ -17,8 +18,10 @@ public class PhotoDataDispatch implements PhotoConstants {
         response.putBoolean(PARAM_CIRCLE, getCircle);
         response.putString(PARAM_URL, url);
         response.putSerializable(RESULT_IMAGE_FILE, file);
-        TopicService.dispatchEvent(context, TOPIC_ID_PHOTO_READY
-                + (getCircle ? "/Circle" : "")
-                + "/" + url, response, true);
+        TopicService.dispatchEvent(context,
+                TOPIC_ID_PHOTO_READY
+                        + (getCircle ? "/Circle" : "")
+                        + "/" + url,
+                response, Sticky.TEMP);
     }
 }

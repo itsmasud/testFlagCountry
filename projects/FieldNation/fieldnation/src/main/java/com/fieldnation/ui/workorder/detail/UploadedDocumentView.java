@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -15,6 +14,7 @@ import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -22,7 +22,7 @@ public class UploadedDocumentView extends RelativeLayout {
     private static final String TAG = "ui.workorder.detail.UploadedDocumentView";
 
     // UI
-    private ImageView _fileTypeImageView;
+    private IconFontTextView _fileTypeIconFont;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _usernameTextView;
@@ -63,7 +63,7 @@ public class UploadedDocumentView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _fileTypeImageView = (ImageView) findViewById(R.id.filetype_imageview);
+        _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 
 /**
@@ -12,7 +13,7 @@ import com.fieldnation.service.topics.TopicService;
  */
 public class RestDispatch implements RestConstants {
 
-    public static void object(Context context, String resultTag, String objectType, String id, Bundle object, boolean isSync) {
+    public static void object(Context context, String resultTag, String objectType, String id, Bundle object, Sticky sticky, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_RESULT_TAG, resultTag);
         bundle.putString(PARAM_OBJECT_TYPE, objectType);
@@ -38,11 +39,11 @@ public class RestDispatch implements RestConstants {
             }
         }
 
-        TopicService.dispatchEvent(context, topicId, bundle, true);
+        TopicService.dispatchEvent(context, topicId, bundle, sticky);
     }
 
     public static void object(Context context, String resultTag, String objectType, String id,
-                              Parcelable object, boolean isSync) {
+                              Parcelable object, Sticky sticky, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_RESULT_TAG, resultTag);
         bundle.putString(PARAM_OBJECT_TYPE, objectType);
@@ -68,11 +69,11 @@ public class RestDispatch implements RestConstants {
             }
         }
 
-        TopicService.dispatchEvent(context, topicId, bundle, true);
+        TopicService.dispatchEvent(context, topicId, bundle, sticky);
     }
 
     public static void list(Context context, String resultTag, String objectType,
-                            JsonObject envelope, boolean isSync) {
+                            JsonObject envelope, Sticky sticky, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_RESULT_TAG, resultTag);
         bundle.putString(PARAM_OBJECT_TYPE, objectType);
@@ -93,6 +94,6 @@ public class RestDispatch implements RestConstants {
             topicId += "/" + objectType;
         }
 
-        TopicService.dispatchEvent(context, topicId, bundle, true);
+        TopicService.dispatchEvent(context, topicId, bundle, sticky);
     }
 }

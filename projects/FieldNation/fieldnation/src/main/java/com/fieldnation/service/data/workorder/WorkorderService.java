@@ -76,6 +76,8 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                     case PARAM_ACTION_LIST_NOTIFICATIONS:
                         listAlerts(_context, intent);
                         break;
+                    case PARAM_ACTION_LIST_TASKS:
+                        listTasks(_context, intent);
                 }
             }
         }
@@ -111,6 +113,22 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         }
 
         WorkorderTransactionBuilder.listAlerts(context, workorderId, false, isSync);
+    }
+
+    private static void listTasks(Context context, Intent intent) {
+        long workorderId = intent.getLongExtra(PARAM_ID, 0);
+        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+
+        StoredObject obj = StoredObject.get(context, PSO_TASK_LIST, workorderId);
+        if (obj != null) {
+            try {
+                WorkorderDispatch.listTasks(context, workorderId, new JsonArray(obj.getData()), isSync);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        WorkorderTransactionBuilder.listTasks(context, workorderId, isSync);
     }
 
 
