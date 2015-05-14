@@ -798,4 +798,39 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    public static void actionCompleteShipmentTask(Context context, long workorderId, long taskId, String printName, String signatureJson) {
+        action(context, workorderId, "tasks/complete/" + taskId, null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "print_name=" + misc.escapeForURL(printName)
+                        + "&signature_json=" + signatureJson);
+
+    }
+
+    public static void actionCompleteShipmentTask(Context context, long workorderId, long shipmentId, long taskId) {
+        action(context, workorderId, "tasks/complete/" + taskId, null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "shipment_id=" + shipmentId);
+    }
+
+    public static void actionSetShipmentDetails(Context context, long workorderId, String description, boolean isToSite,
+                                                String carrier, String carrierName, String trackingNumber) {
+        action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "description=" + misc.escapeForURL(description)
+                        + "&direction=" + (isToSite ? "to_site" : "from_site")
+                        + "&carrier=" + carrier
+                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber));
+    }
+
+    public static void actionSetShipmentDetails(Context context, long workorderId, String description, boolean isToSite,
+                                                String carrier, String carrierName, String trackingNumber, long taskId) {
+        action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "description=" + misc.escapeForURL(description)
+                        + "&direction=" + (isToSite ? "to_site" : "from_site")
+                        + "&carrier=" + carrier
+                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber)
+                        + "&task_id=" + taskId);
+    }
+
 }

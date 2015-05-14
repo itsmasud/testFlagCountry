@@ -35,7 +35,7 @@ import java.util.List;
  * Created by Michael Carver on 3/13/2015.
  */
 public class WorkorderClient extends TopicClient implements WorkorderConstants {
-    public static final String STAG = "WorkorderDataClient";
+    public static final String STAG = "WorkorderClient";
     public final String TAG = UniqueTag.makeTag(STAG);
 
     public WorkorderClient(Listener listener) {
@@ -249,6 +249,50 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.deleteExpense(context, workorderId, expenseId);
     }
 
+    /*-*************************************-*/
+    /*-             Shipments               -*/
+    /*-*************************************-*/
+    public static void createShipment(Context context, long workorderId, String description,
+                                      boolean isToSite, String carrier, String carrierName,
+                                      String trackingNumber) {
+        WorkorderTransactionBuilder.postShipment(context, workorderId, description, isToSite,
+                carrier, carrierName, trackingNumber);
+    }
+
+    public static void createShipment(Context context, long workorderId, String description,
+                                      boolean isToSite, String carrier, String carrierName,
+                                      String trackingNumber, long taskId) {
+        WorkorderTransactionBuilder.postShipment(context, workorderId, description, isToSite,
+                carrier, carrierName, trackingNumber, taskId);
+    }
+
+    public static void deleteShipment(Context context, long workorderId, long shipmentId) {
+        WorkorderTransactionBuilder.deleteShipment(context, workorderId, shipmentId);
+    }
+
+    public static void actionCompleteShipmentTask(Context context, long workorderId, long taskId, String printName, String signatureJson) {
+        WorkorderTransactionBuilder.actionCompleteShipmentTask(context, workorderId, taskId, printName, signatureJson);
+    }
+
+    public static void actionCompleteShipmentTask(Context context, long workorderId, long shipmentId, long taskId) {
+        WorkorderTransactionBuilder.actionCompleteShipmentTask(context, workorderId, shipmentId, taskId);
+    }
+
+    public static void actionSetShipmentDetails(
+            Context context, long workorderId, String description, boolean isToSite, String carrier,
+            String carrierName, String trackingNumber) {
+        WorkorderTransactionBuilder.actionSetShipmentDetails(context, workorderId, description,
+                isToSite, carrier, carrierName, trackingNumber);
+    }
+
+    public static void actionSetShipmentDetails(
+            Context context, long workorderId, String description, boolean isToSite, String carrier,
+            String carrierName, String trackingNumber, long taskId) {
+
+        WorkorderTransactionBuilder.actionSetShipmentDetails(context, workorderId, description,
+                isToSite, carrier, carrierName, trackingNumber, taskId);
+    }
+
     /*-**********************************-*/
     /*-             signature            -*/
     /*-**********************************-*/
@@ -329,7 +373,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
-
 
     /*-*****************************************-*/
     /*-             workorder bundle            -*/

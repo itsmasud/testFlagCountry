@@ -18,11 +18,9 @@ import java.text.ParseException;
 public class ProfileTransactionHandler extends WebTransactionHandler implements ProfileConstants {
     private static final String TAG = "ProfileWebTransactionHandler";
 
-    public static byte[] generateGetProfileParams() {
-        Log.v(TAG, "generateGetProfileParams");
+    public static byte[] pGetProfile() {
         try {
-            JsonObject obj = new JsonObject();
-            obj.put("action", PARAM_ACTION_GET_MY_PROFILE);
+            JsonObject obj = new JsonObject("action", "pGetProfile");
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -30,11 +28,9 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         }
     }
 
-    public static byte[] generateGetAllNotificationsParams(int page) {
-        Log.v(TAG, "generateGetAllNotificationsParams");
+    public static byte[] pGetAllNotifications(int page) {
         try {
-            JsonObject obj = new JsonObject();
-            obj.put("action", PARAM_ACTION_GET_ALL_NOTIFICATIONS);
+            JsonObject obj = new JsonObject("action", "pGetAllNotifications");
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
@@ -43,11 +39,9 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         }
     }
 
-    public static byte[] generateGetAllMessagesParams(int page) {
-        Log.v(TAG, "generateGetAllMessagesParams");
+    public static byte[] pGetAllMessages(int page) {
         try {
-            JsonObject obj = new JsonObject();
-            obj.put("action", PARAM_ACTION_GET_ALL_MESSAGES);
+            JsonObject obj = new JsonObject("action", "pGetAllMessages");
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
@@ -75,14 +69,15 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
 
-            if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
-                return handleGetProfile(context, transaction, resultData);
-            } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
-                return handleGetAllNotifications(context, transaction, resultData, params);
-            } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
-                return handleGetAllMessages(context, transaction, resultData, params);
-            } else if (action.equals("pAction")) {
-                return handleAction(context, transaction, resultData, params);
+            switch (action) {
+                case "pGetProfile":
+                    return handleGetProfile(context, transaction, resultData);
+                case "pGetAllNotifications":
+                    return handleGetAllNotifications(context, transaction, resultData, params);
+                case "pGetAllMessages":
+                    return handleGetAllMessages(context, transaction, resultData, params);
+                case "pAction":
+                    return handleAction(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

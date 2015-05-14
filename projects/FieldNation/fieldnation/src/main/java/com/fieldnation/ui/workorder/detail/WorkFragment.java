@@ -812,10 +812,8 @@ public class WorkFragment extends WorkorderFragment {
     private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
-// todo remove
-//            getActivity().startService(
-//                    _service.addExpense(WEB_CHANGED, _workorder.getWorkorderId(),
-//                            description, amount, category));
+            WorkorderClient.createExpense(getActivity(), _workorder.getWorkorderId(), description,
+                    amount, category);
             setLoading(true);
         }
 
@@ -835,13 +833,10 @@ public class WorkFragment extends WorkorderFragment {
                     e.printStackTrace();
                 }
             }
-// todo remove
-/*
-            GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_REQUEST_WORK, "WorkFragment", 1);
-            getActivity().startService(
-                    _service.request(WEB_CHANGED,
-                            _workorder.getWorkorderId(), seconds));
-*/
+
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
+            WorkorderClient.actionRequest(getActivity(), _workorder.getWorkorderId(), seconds);
             setLoading(true);
 
         }
@@ -867,58 +862,45 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onContinueClick() {
-// todo remove
-/*
-            GaTopic.dispatchEvent(getActivity(), "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "WorkFragment", 1);
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK, "WorkFragment", 1);
             try {
-                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity",
-                        GaTopic.ACTION_COMPLETE_FN_EARNED, "WorkFragment",
+                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                        GoogleAnalyticsTopicClient.EventAction.COMPLETE_FN_EARNED, "WorkFragment",
                         (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
             } catch (Exception ex) {
                 // I don't expect this to ever fail, but it could. just a safe guard.
                 ex.printStackTrace();
             }
             try {
-                GaTopic.dispatchEvent(getActivity(), "WorkorderActivity",
-                        GaTopic.ACTION_COMPLETE_FN_EARNED_GROSS, "WorkFragment",
+                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                        GoogleAnalyticsTopicClient.EventAction.COMPLETE_FN_EARNED_GROSS, "WorkFragment",
                         (long) (_workorder.getExpectedPayment().getExpectedTotal() * 100));
             } catch (Exception ex) {
                 // I don't expect this to ever fail, but it could. just a safe guard.
                 ex.printStackTrace();
             }
-*/
 
-/*
-            getActivity().startService(
-                    _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
-*/
+            WorkorderClient.actionComplete(getActivity(), _workorder.getWorkorderId());
+
             setLoading(true);
-
         }
     };
 
     private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-//todo remove
-/*
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
-                            carrier, carrierName, trackingId));
-*/
+            WorkorderClient.createShipment(getActivity(), _workorder.getWorkorderId(), description, shipToSite,
+                    carrier, carrierName, trackingId);
             setLoading(true);
         }
 
         @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-// todo remove
-/*
-            getActivity().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
-                            carrier, carrierName, trackingId, taskId));
-*/
+        public void onOk(String trackingId, String carrier, String carrierName, String description,
+                         boolean shipToSite, long taskId) {
+            WorkorderClient.createShipment(getActivity(), _workorder.getWorkorderId(), description, shipToSite,
+                    carrier, carrierName, trackingId, taskId);
             setLoading(true);
-
         }
 
         @Override
@@ -929,20 +911,13 @@ public class WorkFragment extends WorkorderFragment {
     private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
-// todo remove
-//            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
-
+            WorkorderClient.deleteShipment(getActivity(), workorder.getWorkorderId(), shipmentId);
             setLoading(true);
         }
 
         @Override
         public void onAssign(Workorder workorder, int shipmentId, long taskId) {
-            Log.v(TAG, "Method Stub: onAssign()" + shipmentId + "=" + taskId);
-// todo remove
-/*
-            getActivity().startService(
-                    _service.completeShipmentTask(WEB_CHANGED, workorder.getWorkorderId(), shipmentId, taskId));
-*/
+            WorkorderClient.actionCompleteShipmentTask(getActivity(), workorder.getWorkorderId(), shipmentId, taskId);
             setLoading(true);
         }
 
@@ -952,23 +927,15 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-// todo remove
-/*
-            GlobalState.getContext().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description,
-                            shipToSite, carrier, carrierName, trackingId));
-*/
+            WorkorderClient.actionSetShipmentDetails(getActivity(), workorder.getWorkorderId(), description,
+                    shipToSite, carrier, carrierName, trackingId);
             setLoading(true);
         }
 
         @Override
         public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-// todo remove
-/*
-            GlobalState.getContext().startService(
-                    _service.addShipmentDetails(WEB_CHANGED, workorder.getWorkorderId(), description,
-                            shipToSite, carrier, carrierName, trackingId, taskId));
-*/
+            WorkorderClient.actionSetShipmentDetails(getActivity(), workorder.getWorkorderId(), description,
+                    shipToSite, carrier, carrierName, trackingId, taskId);
             setLoading(true);
         }
     };
