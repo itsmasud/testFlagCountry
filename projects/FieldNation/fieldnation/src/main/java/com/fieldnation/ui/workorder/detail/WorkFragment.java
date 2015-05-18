@@ -216,26 +216,6 @@ public class WorkFragment extends WorkorderFragment {
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signaturelist_listener);
 
-        _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
-        _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
-        _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
-        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
-        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
-        _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
-        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
-        _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
-        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
-        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -322,6 +302,27 @@ public class WorkFragment extends WorkorderFragment {
         _profileClient.connect(activity);
 
         _gpsLocationService = new GpsLocationService(getActivity());
+
+        _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
+        _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
+        _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
+        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
+        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
+        _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
+        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
+        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
+        _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
+        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
+        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
+        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
+        _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
+        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
+        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
+        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
+
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -945,36 +946,19 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
             if (loggedWork == null) {
                 if (deviceCount <= 0) {
-// todo remove
-/*
-                    GlobalState.getContext().startService(
-                            _service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
-                                    end.getTimeInMillis()));
-*/
+                    WorkorderClient.addTimeLog(GlobalState.getContext(), _workorder.getWorkorderId(),
+                            start.getTimeInMillis(), end.getTimeInMillis());
                 } else {
-// todo remove
-/*
-                    GlobalState.getContext().startService(
-                            _service.logTime(WEB_CHANGED, _workorder.getWorkorderId(), start.getTimeInMillis(),
-                                    end.getTimeInMillis(), deviceCount));
-*/
+                    WorkorderClient.addTimeLog(GlobalState.getContext(), _workorder.getWorkorderId(),
+                            start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
                 }
             } else {
                 if (deviceCount <= 0) {
-// todo remove
-/*
-                    GlobalState.getContext().startService(
-                            _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
-                                    loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis()));
-*/
-
+                    WorkorderClient.updateTimeLog(GlobalState.getContext(), _workorder.getWorkorderId(),
+                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
                 } else {
-// todo remove
-/*
-                    GlobalState.getContext().startService(
-                            _service.updateLogTime(WEB_CHANGED, _workorder.getWorkorderId(),
-                                    loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount));
-*/
+                    WorkorderClient.updateTimeLog(GlobalState.getContext(), _workorder.getWorkorderId(),
+                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
                 }
             }
             setLoading(true);
@@ -1051,11 +1035,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAcknowledge() {
-// todo remove
-/*
-            getActivity().startService(
-                    _service.acknowledgeHold(WEB_CHANGED, _workorder.getWorkorderId()));
-*/
+            WorkorderClient.actionAcknowledgeHold(GlobalState.getContext(), _workorder.getWorkorderId());
+
             setLoading(true);
         }
 
@@ -1092,7 +1073,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onWithdrawRequest(Workorder workorder) {
-            // TODO onWithdrawRequest
+            WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), workorder.getWorkorderId());
         }
 
         @Override
@@ -1133,12 +1114,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDeleteExpense(Workorder workorder, Expense expense) {
-// todo remove
-/*
-            getActivity().startService(_service.deleteExpense(WEB_CHANGED,
-                    _workorder.getWorkorderId(),
-                    expense.getExpenseId()));
-*/
+            WorkorderClient.deleteExpense(GlobalState.getContext(), workorder.getWorkorderId(), expense.getExpenseId());
+
             setLoading(true);
         }
 
@@ -1164,12 +1141,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDeleteDiscount(Workorder workorder, int discountId) {
-// todo remove
-/*
-            getActivity().startService(
-                    _service.deleteDiscount(WEB_CHANGED,
-                            _workorder.getWorkorderId(), discountId));
-*/
+            WorkorderClient.deleteDiscount(GlobalState.getContext(), workorder.getWorkorderId(), discountId);
             setLoading(true);
         }
     };
@@ -1190,8 +1162,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDelete(Workorder workorder, int shipmentId) {
-// todo remove
-//            getActivity().startService(_service.deleteShipment(WEB_CHANGED, workorder.getWorkorderId(), shipmentId));
+            WorkorderClient.deleteShipment(GlobalState.getContext(), workorder.getWorkorderId(), shipmentId);
             setLoading(true);
         }
 
@@ -1274,12 +1245,8 @@ public class WorkFragment extends WorkorderFragment {
                     if (doc.getDocumentId().equals(_identifier)) {
                         // task completed here
                         if (!task.getCompleted()) {
-// todo remove
-/*
-                            getActivity().startService(
-                                    _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(),
-                                            task.getTaskId()));
-*/
+                            WorkorderClient.actionCompleteTask(GlobalState.getContext(),
+                                    _workorder.getWorkorderId(), task.getTaskId());
                         }
 
                         FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
@@ -1298,11 +1265,8 @@ public class WorkFragment extends WorkorderFragment {
             startActivityForResult(intent, RESULT_CODE_SEND_EMAIL);
 
             if (!task.getCompleted()) {
-// todo remove
-/*
-                getActivity().startService(
-                        _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-*/
+                WorkorderClient.actionCompleteTask(GlobalState.getContext(),
+                        _workorder.getWorkorderId(), task.getTaskId());
             }
             setLoading(true);
         }
@@ -1310,12 +1274,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onPhone(Task task) {
             if (!task.getCompleted()) {
-// todo remove
-/*
-                getActivity().startService(
-                        _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-*/
-
+                WorkorderClient.actionCompleteTask(GlobalState.getContext(),
+                        _workorder.getWorkorderId(), task.getTaskId());
                 setLoading(true);
             }
             try {
@@ -1382,12 +1342,8 @@ public class WorkFragment extends WorkorderFragment {
         public void onUniqueTask(Task task) {
             if (task.getCompleted())
                 return;
-// todo remove
-/*
-            getActivity().startService(
-                    _service.completeTask(WEB_CHANGED, _workorder.getWorkorderId(), task.getTaskId()));
-*/
-
+            WorkorderClient.actionCompleteTask(GlobalState.getContext(),
+                    _workorder.getWorkorderId(), task.getTaskId());
             setLoading(true);
         }
     };
@@ -1405,13 +1361,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-// todo remove
-/*
-            getActivity().startService(
-                    _service.deleteLogTime(WEB_CHANGED,
-                            workorder.getWorkorderId(), loggedWork.getLoggedHoursId()));
-*/
-
+            WorkorderClient.deleteTimeLog(GlobalState.getContext(), workorder.getWorkorderId(),
+                    loggedWork.getLoggedHoursId());
             setLoading(true);
         }
     };

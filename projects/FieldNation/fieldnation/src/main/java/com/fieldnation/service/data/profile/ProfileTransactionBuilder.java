@@ -107,12 +107,12 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         }
     }
 
-    public static void acceptTos(Context context, long profileId) {
+    public static void actionAcceptTos(Context context, long profileId) {
         action(context, profileId, "accept-tos", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, null);
     }
 
-    public static void postBlockedCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
+    public static void actionBlockCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
         action(context, profileId, "block/" + companyId, null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "eventReasonId=" + eventReasonId

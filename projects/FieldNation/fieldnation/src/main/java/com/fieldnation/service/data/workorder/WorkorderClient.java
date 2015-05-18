@@ -147,6 +147,23 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return register(topicId, TAG);
     }
 
+    public boolean subActions() {
+        return subActions(0);
+    }
+
+    public boolean subActions(long workorderId) {
+        String topicId = PARAM_ACTION;
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+        }
+
+        return register(topicId, TAG);
+    }
+
+    /*-*********************************-*/
+    /*-             Tasks               -*/
+    /*-*********************************-*/
     public static void listTasks(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_TASKS);
@@ -172,18 +189,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return register(topicId, TAG);
     }
 
-    public boolean subActions() {
-        return subActions(0);
-    }
-
-    public boolean subActions(long workorderId) {
-        String topicId = PARAM_ACTION;
-
-        if (workorderId > 0) {
-            topicId += "/" + workorderId;
-        }
-
-        return register(topicId, TAG);
+    public static void actionCompleteTask(Context context, long workorderId, long taskId) {
+        WorkorderTransactionBuilder.actionCompleteTask(context, workorderId, taskId);
     }
 
     /*-*********************************-*/
@@ -344,6 +351,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionDecline(context, workorderId);
     }
 
+    public static void actionWithdrawRequest(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionWithdrawRequest(context, workorderId);
+    }
+
     /*-******************************************-*/
     /*-             workorder checkin            -*/
     /*-******************************************-*/
@@ -470,6 +481,29 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         return register(topicId, TAG);
+    }
+
+    /*-*************************************-*/
+    /*-             Time Log                -*/
+    /*-*************************************-*/
+    public static void addTimeLog(Context context, long workorderId, long startDate, long endDate) {
+        WorkorderTransactionBuilder.postTimeLog(context, workorderId, startDate, endDate);
+    }
+
+    public static void addTimeLog(Context context, long workorderId, long startDate, long endDate, int numberOfDevices) {
+        WorkorderTransactionBuilder.postTimeLog(context, workorderId, startDate, endDate, numberOfDevices);
+    }
+
+    public static void updateTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
+        WorkorderTransactionBuilder.postTimeLog(context, workorderId, loggedHoursId, startDate, endDate);
+    }
+
+    public static void updateTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
+        WorkorderTransactionBuilder.postTimeLog(context, workorderId, loggedHoursId, startDate, endDate, numberOfDevices);
+    }
+
+    public static void deleteTimeLog(Context context, long workorderId, long loggedHoursId) {
+        WorkorderTransactionBuilder.deleteTimeLog(context, workorderId, loggedHoursId);
     }
 
     /*-**********************************-*/

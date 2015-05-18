@@ -11,7 +11,6 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.transaction.NullWebTransactionHandler;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -162,6 +161,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static void actionCompleteTask(Context context, long workorderId, long taskId) {
+        action(context, workorderId, "tasks/complete/" + taskId, null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
     }
 
     public static void actionComplete(Context context, long workorderId) {
@@ -320,7 +324,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "delete_request"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -363,7 +368,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "post_signature"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -559,7 +565,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_discount"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -578,7 +585,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "delete_discount"))
                     .key("Workorder/DeleteDiscount/" + workorderId + "/" + discountId)
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
@@ -599,7 +607,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_expense"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -619,7 +628,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "delete_expense"))
                     .key("Workorder/DeleteExpense/" + workorderId + "/" + expenseId)
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
@@ -636,68 +646,37 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-             Time Logs             -*/
     /*-***********************************-*/
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/log")
-                            .body("startDate=" + ISO8601.fromUTC(startDate)
-                                    + "&endDate=" + ISO8601.fromUTC(endDate)))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "startDate=" + ISO8601.fromUTC(startDate)
+                        + "&endDate=" + ISO8601.fromUTC(endDate));
+    }
+
+    public static void postTimeLog(Context context, long workorderId, long startDate, long endDate, int numberOfDevices) {
+        action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "startDate=" + ISO8601.fromUTC(startDate)
+                        + "&endDate=" + ISO8601.fromUTC(endDate)
+                        + "&noOfDevices=" + numberOfDevices);
     }
 
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId)
-                            .body("startDate=" + ISO8601.fromUTC(startDate)
-                                    + "&endDate=" + ISO8601.fromUTC(endDate)))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "startDate=" + ISO8601.fromUTC(startDate)
+                        + "&endDate=" + ISO8601.fromUTC(endDate));
     }
 
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId)
-                            .body("startDate=" + ISO8601.fromUTC(startDate)
-                                    + "&endDate=" + ISO8601.fromUTC(endDate)
-                                    + "&noOfDevices=" + numberOfDevices))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "startDate=" + ISO8601.fromUTC(startDate)
+                        + "&endDate=" + ISO8601.fromUTC(endDate)
+                        + "&noOfDevices=" + numberOfDevices);
     }
 
     public static void deleteTimeLog(Context context, long workorderId, long loggedHoursId) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "DELETE_LOG"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -717,7 +696,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_shipment"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -740,7 +720,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_shipment"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -764,7 +745,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_shipment"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -786,7 +768,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(NullWebTransactionHandler.class)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "delete_shipment"))
                     .useAuth(true)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
@@ -834,3 +817,4 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
 }
+

@@ -114,11 +114,11 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     /*-             Actions             -*/
     /*-*********************************-*/
     public static void actionAcceptTos(Context context, long userId) {
-        ProfileTransactionBuilder.acceptTos(context, userId);
+        ProfileTransactionBuilder.actionAcceptTos(context, userId);
     }
 
     public static void actionBlockCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
-        ProfileTransactionBuilder.postBlockedCompany(context, profileId, companyId, eventReasonId, explanation);
+        ProfileTransactionBuilder.actionBlockCompany(context, profileId, companyId, eventReasonId, explanation);
     }
 
     public boolean subActions() {
