@@ -67,7 +67,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     }
 
 
-    private ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
+    private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
             _profiles.subAllNotifications();

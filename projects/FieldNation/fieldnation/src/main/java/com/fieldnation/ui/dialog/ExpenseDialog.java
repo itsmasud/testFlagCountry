@@ -24,7 +24,7 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 
 public class ExpenseDialog extends DialogFragmentBase {
-    private static String TAG = "ui.dialog.ExpenseDialog";
+    private static String TAG = "ExpenseDialog";
 
     // State
     private static final String STATE_SHOW_CATEGORIES = "STATE_SHOW_CATEGORIES";
@@ -210,8 +210,8 @@ public class ExpenseDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(String description, double amount, ExpenseCategory category);
+        void onOk(String description, double amount, ExpenseCategory category);
 
-        public void onCancel();
+        void onCancel();
     }
 }

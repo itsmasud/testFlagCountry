@@ -21,7 +21,7 @@ import com.fieldnation.UniqueTag;
  * Created by Michael Carver on 1/16/2015.
  */
 public class UpdateDialog extends DialogFragmentBase {
-    private final String TAG = UniqueTag.makeTag("ui.dialog.UpdateDialog");
+    private final String TAG = UniqueTag.makeTag("UpdateDialog");
 
     // Ui
     private Button _okButton;
@@ -59,7 +59,7 @@ public class UpdateDialog extends DialogFragmentBase {
         GlobalTopicClient.dispatchAppShutdown(getActivity());
     }
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");

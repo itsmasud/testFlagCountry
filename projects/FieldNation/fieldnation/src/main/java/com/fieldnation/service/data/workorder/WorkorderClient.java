@@ -303,8 +303,50 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-**********************************-*/
     /*-             signature            -*/
     /*-**********************************-*/
+    public static void getSignature(Context context, long workorderId, long signatureId) {
+        getSignature(context, workorderId, signatureId, false);
+    }
 
+    public static void getSignature(Context context, long workorderId, long signatureId, boolean isSync) {
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
+        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_SIGNATURE_ID, signatureId);
+        intent.putExtra(PARAM_IS_SYNC, isSync);
+        context.startService(intent);
+    }
 
+    public boolean subGetSignature(boolean isSync) {
+        return subGetSignature(0, 0, isSync);
+    }
+
+    public boolean subGetSignature(long workorderId, long signatureId, boolean isSync) {
+        String topicId = "";
+
+        if (isSync) {
+            topicId += "-SYNC";
+        }
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+
+            if (signatureId > 0) {
+                topicId += "/" + signatureId;
+            }
+        }
+
+        return register(topicId, TAG);
+    }
+
+    // add signature json
+    public static void addSignatureJson(Context context, long workorderId, String name, String json) {
+        WorkorderTransactionBuilder.addSignatureJson(context, workorderId, name, json);
+    }
+
+    // complete signature
+    public static void addSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
+        WorkorderTransactionBuilder.addSignatureJsonTask(context, workorderId, taskId, name, json);
+    }
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
@@ -537,6 +579,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         private void preOnAction(Bundle payload) {
+            Log.v(STAG, "preOnAction " + payload.getLong(PARAM_ID) + " "
+                    + payload.getString(PARAM_ACTION));
             onAction(payload.getLong(PARAM_ID),
                     payload.getString(PARAM_ACTION));
         }
@@ -712,11 +756,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
                 @Override
                 protected void onPostExecute(Workorder workorder) {
-                    if (workorder.getTransfer() != null)
-                        Log.v(STAG, workorder.getTransfer().toJson().display());
-                    else
-                        Log.v(STAG, "no _proc");
-
                     onDetails(workorder);
                 }
             }.executeEx(payload);

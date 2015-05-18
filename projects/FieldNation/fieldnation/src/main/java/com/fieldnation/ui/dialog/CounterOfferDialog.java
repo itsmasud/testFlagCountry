@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,6 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +33,7 @@ import java.util.List;
  * Created by michael.carver on 11/5/2014.
  */
 public class CounterOfferDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.CounterOfferDialog";
+    private static final String TAG = "CounterOfferDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -531,7 +529,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
+        void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
     }
 
 }

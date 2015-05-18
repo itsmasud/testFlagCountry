@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.ShipmentAddDialog";
+    private static final String TAG = "ShipmentAddDialog";
 
     // State
     private static final String STATE_TASKID = "STATE_TASKID";
@@ -147,7 +147,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private TextView.OnEditorActionListener _onEditor = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener _onEditor = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             boolean handled = false;
@@ -171,7 +171,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
@@ -186,7 +186,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // TODO validate input
@@ -232,7 +232,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -240,11 +240,11 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
+        void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
 
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
+        void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
 
-        public void onCancel();
+        void onCancel();
     }
 
 

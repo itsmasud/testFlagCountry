@@ -20,7 +20,7 @@ import com.fieldnation.ui.workorder.detail.WorkorderRenderer;
  * Created by michael.carver on 12/5/2014.
  */
 public class SignatureListView extends RelativeLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.SummaryListView";
+    private static final String TAG = "SummaryListView";
 
     // Ui
     private LinearLayout _listView;
@@ -134,7 +134,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private OnClickListener _add_onClick = new OnClickListener() {
+    private final OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -142,7 +142,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         }
     };
 
-    private OnClickListener _signature_onClick = new OnClickListener() {
+    private final OnClickListener _signature_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             SignatureTileView view = (SignatureTileView) v;
@@ -153,10 +153,9 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     };
 
     public interface Listener {
-        public void addSignature();
+        void addSignature();
 
-        public void signatureOnClick(SignatureTileView view, Signature signature);
-
+        void signatureOnClick(SignatureTileView view, Signature signature);
     }
 
 }

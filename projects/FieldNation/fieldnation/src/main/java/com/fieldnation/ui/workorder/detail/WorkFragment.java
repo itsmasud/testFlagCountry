@@ -155,6 +155,7 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
+    private boolean _isSubbed = false;
 
 
 	/*-*************************************-*/
@@ -296,6 +297,7 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        _isSubbed = false;
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(activity);
         _profileClient = new ProfileClient(_profileClient_listener);
@@ -353,6 +355,7 @@ public class WorkFragment extends WorkorderFragment {
         _workorderClient = null;
         _profileClient.disconnect(getActivity());
         _profileClient = null;
+        _isSubbed = false;
         super.onDetach();
     }
 
@@ -1392,8 +1395,12 @@ public class WorkFragment extends WorkorderFragment {
         if (!_workorderClient.isConnected())
             return;
 
+        if (_isSubbed)
+            return;
+
         _workorderClient.subListTasks(_workorder.getWorkorderId(), false);
         _workorderClient.subActions(_workorder.getWorkorderId());
+        _isSubbed = true;
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -1411,6 +1418,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onAction(long workorderId, String action) {
             // TODO _workorderClient_listener.onAction
             Log.v(TAG, "_workorderClient_listener.onAction");
+            //_workorder.dispatchOnChange();
         }
     };
 

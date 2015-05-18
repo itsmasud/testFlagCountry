@@ -22,7 +22,8 @@ public class WorkorderDispatch implements WorkorderConstants {
         bundle.putLong(PARAM_ID, workorderId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         TopicService.dispatchEvent(context, PARAM_ACTION_DETAILS
-                + (isSync ? "-SYNC" : "") + "/" + workorderId, bundle, Sticky.TEMP);
+                + (isSync ? "-SYNC" : "")
+                + "/" + workorderId, bundle, Sticky.TEMP);
     }
 
     public static void list(Context context, JsonArray workorders, int page, String selector, boolean isSync) {

@@ -20,7 +20,7 @@ import com.fieldnation.R;
 import com.fieldnation.utils.misc;
 
 public class ClosingNotesDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.ClosingNotesDialog";
+    private static final String TAG = "ClosingNotesDialog";
 
     // State
     private static final String STATE_NOTES = "ui.dialog.ClosingNotesDialog.ClosingNotesDialog";
@@ -159,9 +159,9 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(String message);
+        void onOk(String message);
 
-        public void onCancel();
+        void onCancel();
 
     }
 }

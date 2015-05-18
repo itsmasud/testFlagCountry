@@ -6,7 +6,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-
 import com.fieldnation.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -16,8 +15,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 public class GpsLocationService {
-
-    private static final String TAG = "ui.GpsLocationService";
+    private static final String TAG = "GpsLocationService";
 
     private static final long INTERVAL = 1000 * 30;
     private static final long FASTEST_INTERVAL = 1000 * 5;
@@ -139,8 +137,7 @@ public class GpsLocationService {
     };
 
     public interface Listener {
-        public void onLocation(Location location);
-
+        void onLocation(Location location);
     }
 
 }

@@ -21,7 +21,6 @@ import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.photo.PhotoDataClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.data.signature.SignatureClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
@@ -278,10 +277,6 @@ public class WebCrawlerService extends Service {
                     incRequestCounter(1);
                     WorkorderClient.getBundle(WebCrawlerService.this, workorder.getBundleId(), true);
                 }
-
-                // get notifications
-                // get tasks
-
             }
             Log.v(TAG, "onWorkorderList, done");
         }
@@ -360,7 +355,7 @@ public class WebCrawlerService extends Service {
                 for (int i = 0; i < sigs.length; i++) {
                     Log.v(TAG, "getSignature");
                     incRequestCounter(1);
-                    SignatureClient.get(_context, workorder.getWorkorderId(), sigs[i].getSignatureId(), true);
+                    WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sigs[i].getSignatureId(), true);
                 }
             }
 

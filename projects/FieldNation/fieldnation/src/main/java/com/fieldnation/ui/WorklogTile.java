@@ -16,7 +16,7 @@ import com.fieldnation.utils.misc;
  * Created by michael.carver on 12/2/2014.
  */
 public class WorklogTile extends RelativeLayout {
-    private static final String TAG = "ui.WorklogTile";
+    private static final String TAG = "WorklogTile";
 
     // Ui
     private TextView _dateTextView;

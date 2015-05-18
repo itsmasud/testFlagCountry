@@ -3,7 +3,6 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,7 @@ import com.fieldnation.utils.misc;
  * Created by michael.carver on 10/29/2014.
  */
 public class CustomFieldDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.CustomFieldDialog";
+    private static final String TAG = "CustomFieldDialog";
 
     // State
     private static final String STATE_CUSTOM_FIELD = "CustomFieldDialog:STATE_CUSTOM_FIELD";
@@ -223,6 +222,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
 
     public interface Listener {
-        public void onOk(CustomField field, String value);
+        void onOk(CustomField field, String value);
     }
 }

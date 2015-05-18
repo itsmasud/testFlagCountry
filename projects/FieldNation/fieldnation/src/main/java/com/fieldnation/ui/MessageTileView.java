@@ -135,7 +135,7 @@ public class MessageTileView extends RelativeLayout {
     }
 
     public interface Listener {
-        public Drawable getPhoto(MessageTileView view, String url, boolean circle);
+        Drawable getPhoto(MessageTileView view, String url, boolean circle);
     }
 }
 

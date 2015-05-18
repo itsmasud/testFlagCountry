@@ -122,11 +122,11 @@ public class ExpenseCoView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void addExpense();
+        void addExpense();
 
-        public void removeExpense(Expense expense);
+        void removeExpense(Expense expense);
 
-        public void reset();
+        void reset();
     }
 
 }

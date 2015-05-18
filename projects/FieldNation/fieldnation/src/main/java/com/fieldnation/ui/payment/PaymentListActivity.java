@@ -10,7 +10,7 @@ import com.fieldnation.ui.ItemListActivity;
 import java.util.List;
 
 public class PaymentListActivity extends ItemListActivity<Payment> {
-    private static final String TAG = "ui.payment.PaymentListActivity";
+    private static final String TAG = "PaymentListActivity";
 
     // Data
     private PaymentDataClient _paymentClient;

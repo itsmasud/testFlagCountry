@@ -32,12 +32,12 @@ class ObjectStoreSqlHelper extends SQLiteOpenHelper {
 
         private static String[] _names = null;
 
-        private Column(int index, String name, String declaration, boolean doIndex) {
+        Column(int index, String name, String declaration, boolean doIndex) {
             this(index, name, declaration);
             _doIndex = doIndex;
         }
 
-        private Column(int index, String name, String declaration) {
+        Column(int index, String name, String declaration) {
             _index = index;
             _name = name;
             _declaration = declaration;

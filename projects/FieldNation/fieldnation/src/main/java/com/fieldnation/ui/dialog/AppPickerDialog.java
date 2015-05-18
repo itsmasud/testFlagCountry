@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 public class AppPickerDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.AppPickerDialog";
+    private static final String TAG = "AppPickerDialog";
 
     // Ui
     private ListView _items;
@@ -100,7 +100,7 @@ public class AppPickerDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onClick(AppPickerPackage pack);
+        void onClick(AppPickerPackage pack);
     }
 
 }

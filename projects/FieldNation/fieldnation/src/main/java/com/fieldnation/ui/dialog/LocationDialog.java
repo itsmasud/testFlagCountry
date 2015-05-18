@@ -19,7 +19,7 @@ import static android.view.View.OnClickListener;
  * Created by michael.carver on 2/5/2015.
  */
 public class LocationDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.LocationDialog";
+    private static final String TAG = "LocationDialog";
 
     //Ui
     private Button _okButton;
@@ -94,7 +94,7 @@ public class LocationDialog extends DialogFragmentBase {
         dismiss();
     }
 
-    private OnClickListener _ok_onClick = new OnClickListener() {
+    private final OnClickListener _ok_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -103,7 +103,7 @@ public class LocationDialog extends DialogFragmentBase {
         }
     };
 
-    private OnClickListener _notNow_onClick = new OnClickListener() {
+    private final OnClickListener _notNow_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -124,11 +124,11 @@ public class LocationDialog extends DialogFragmentBase {
     }
 
     public interface Listener {
-        public void onOk();
+        void onOk();
 
-        public void onNotNow();
+        void onNotNow();
 
-        public void onCancel();
+        void onCancel();
     }
 }
 

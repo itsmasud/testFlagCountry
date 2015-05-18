@@ -84,6 +84,6 @@ public abstract class TabActionBarFragmentActivity extends AuthActionBarActivity
     };
 
     public interface TabFragment {
-        public void isShowing();
+        void isShowing();
     }
 }

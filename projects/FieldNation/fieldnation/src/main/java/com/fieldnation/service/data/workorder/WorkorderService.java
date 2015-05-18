@@ -179,8 +179,6 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long workorderId = intent.getLongExtra(PARAM_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        WorkorderTransactionBuilder.get(context, workorderId, isSync);
-
         StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
         if (obj != null) {
             try {
@@ -193,6 +191,8 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 ex.printStackTrace();
             }
         }
+
+        WorkorderTransactionBuilder.get(context, workorderId, isSync);
     }
 
     private static void getSignature(Context context, Intent intent) {
@@ -220,8 +220,6 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long bundleId = intent.getLongExtra(PARAM_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        WorkorderTransactionBuilder.getBundle(context, bundleId, isSync);
-
         StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
         if (obj != null) {
             try {
@@ -230,6 +228,8 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 ex.printStackTrace();
             }
         }
+
+        WorkorderTransactionBuilder.getBundle(context, bundleId, isSync);
     }
 
     private static void uploadDeliverable(Context context, Intent intent) {
@@ -267,7 +267,6 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, deliverableId);
-
         if (obj != null) {
             try {
                 WorkorderDispatch.deliverableFile(context, workorderId, deliverableId, obj.getFile(), isSync);

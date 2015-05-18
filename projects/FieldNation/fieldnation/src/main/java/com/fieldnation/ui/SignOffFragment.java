@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,7 @@ import com.fieldnation.utils.misc;
  * Created by michael.carver on 12/1/2014.
  */
 public class SignOffFragment extends FragmentBase {
-    private static final String TAG = "ui.SignOffFragment";
+    private static final String TAG = "SignOffFragment";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -301,7 +300,7 @@ public class SignOffFragment extends FragmentBase {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private View.OnClickListener _signOff_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _signOff_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
@@ -310,7 +309,7 @@ public class SignOffFragment extends FragmentBase {
         }
     };
 
-    private View.OnClickListener _reject_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _reject_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -319,8 +318,8 @@ public class SignOffFragment extends FragmentBase {
     };
 
     public interface Listener {
-        public void signOffOnClick();
+        void signOffOnClick();
 
-        public void rejectOnClick();
+        void rejectOnClick();
     }
 }

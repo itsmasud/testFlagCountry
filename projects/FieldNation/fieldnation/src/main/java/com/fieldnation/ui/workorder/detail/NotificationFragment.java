@@ -127,6 +127,9 @@ public class NotificationFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
+        if (_refreshView == null)
+            return;
+
         Log.v(TAG, "populateUi");
 
         if (getAdapter() != null)

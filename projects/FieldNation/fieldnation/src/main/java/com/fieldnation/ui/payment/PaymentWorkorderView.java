@@ -6,13 +6,13 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.accounting.Workorder;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -26,7 +26,7 @@ public class PaymentWorkorderView extends RelativeLayout {
     private View _statusView;
     private TextView _statusTextView;
     // bundle
-    private ImageView _bundleImageView;
+    private IconFontTextView _bundleIconFont;
 
     // center panel
     // title
@@ -40,7 +40,9 @@ public class PaymentWorkorderView extends RelativeLayout {
     // right panel
     private TextView _paymentTextView;
     private TextView _basisTextView;
-    private Button _actionButton;
+    private Button _actionGreenButton;
+    private Button _actionGrayButton;
+    private Button _actionOrangeButton;
 
     // Data
     private Workorder _workorder;
@@ -67,7 +69,7 @@ public class PaymentWorkorderView extends RelativeLayout {
         _statusTextView = (TextView) findViewById(R.id.status_textview);
 
         // bundle
-        _bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);
+        _bundleIconFont = (IconFontTextView) findViewById(R.id.bundle_imageview);
 
         // center panel
         // title box
@@ -79,8 +81,14 @@ public class PaymentWorkorderView extends RelativeLayout {
         _whenTextView = (TextView) findViewById(R.id.when_textview);
 
         // todo need to pick a button, and hide the others
-        _actionButton = (Button) findViewById(R.id.action_button_green);
-        _actionButton.setVisibility(GONE);
+        _actionGreenButton = (Button) findViewById(R.id.action_button_green);
+        _actionGreenButton.setVisibility(GONE);
+
+        _actionGrayButton = (Button) findViewById(R.id.action_button_gray);
+        _actionGrayButton.setVisibility(GONE);
+
+        _actionOrangeButton = (Button) findViewById(R.id.action_button_orange);
+        _actionOrangeButton.setVisibility(GONE);
 
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _basisTextView = (TextView) findViewById(R.id.basis_textview);
@@ -97,9 +105,9 @@ public class PaymentWorkorderView extends RelativeLayout {
 
     private void setIsBundle(boolean isBundle) {
         if (isBundle) {
-            _bundleImageView.setVisibility(VISIBLE);
+            _bundleIconFont.setVisibility(VISIBLE);
         } else {
-            _bundleImageView.setVisibility(GONE);
+            _bundleIconFont.setVisibility(GONE);
         }
     }
 

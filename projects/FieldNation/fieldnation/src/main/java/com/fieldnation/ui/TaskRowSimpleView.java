@@ -12,7 +12,7 @@ import com.fieldnation.R;
  * Created by michael.carver on 12/2/2014.
  */
 public class TaskRowSimpleView extends RelativeLayout {
-    private static final String TAG = "ui.TaskRowSimpleView";
+    private static final String TAG = "TaskRowSimpleView";
 
     // Ui
     private TextView _textView;

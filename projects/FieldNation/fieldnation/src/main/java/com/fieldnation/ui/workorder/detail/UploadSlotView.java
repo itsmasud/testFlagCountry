@@ -16,7 +16,6 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -84,19 +83,19 @@ public class UploadSlotView extends RelativeLayout {
         _profileId = profileId;
 
         _uploadingFiles.clear();
-        if (_workorder.getTransfer() != null && _workorder.getTransfer().isUploadingDeliverable()) {
-            String[] uploads = _workorder.getTransfer().getUploadingDeliverables();
-            for (int i = 0; i < uploads.length; i++) {
-                try {
-                    JsonObject upload = new JsonObject(uploads[i]);
-                    if (upload.getInt("slotId") == _slot.getSlotId()) {
-                        _uploadingFiles.add(upload.getString("filename"));
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
+//        if (_workorder.getTransfer() != null && _workorder.getTransfer().isUploadingDeliverable()) {
+//            String[] uploads = _workorder.getTransfer().getUploadingDeliverables();
+//            for (int i = 0; i < uploads.length; i++) {
+//                try {
+//                    JsonObject upload = new JsonObject(uploads[i]);
+//                    if (upload.getInt("slotId") == _slot.getSlotId()) {
+//                        _uploadingFiles.add(upload.getString("filename"));
+//                    }
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
+//            }
+//        }
 
         populateUi();
     }

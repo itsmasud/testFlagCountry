@@ -14,7 +14,7 @@ import com.fieldnation.data.workorder.Signature;
  * Created by michael.carver on 12/5/2014.
  */
 public class SignatureTileView extends RelativeLayout {
-    public static final String TAG = "ui.SignatureTileView";
+    private static final String TAG = "SignatureTileView";
 
     // Ui
     private View _signatureThumb;

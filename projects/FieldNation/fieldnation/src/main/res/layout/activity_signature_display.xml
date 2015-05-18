@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
-            android:padding="10dp"
+            android:padding="8dp"
             android:scrollbarStyle="outsideOverlay">
 
             <LinearLayout
@@ -114,7 +114,6 @@
                     android:gravity="center"
                     android:text="Name" />
 
-
                 <Button
                     android:id="@+id/done_button"
                     style="?attr/buttonDefaultStyle"
@@ -130,7 +129,8 @@
     <com.fieldnation.ui.LoadingView
         android:id="@+id/loading_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <com.fieldnation.ui.ReconnectWarningView
         android:id="@+id/reconnect_view"

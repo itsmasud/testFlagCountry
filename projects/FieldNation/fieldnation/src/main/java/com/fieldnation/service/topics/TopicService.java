@@ -159,8 +159,7 @@ public class TopicService extends Service implements TopicConstants {
 
         synchronized (TAG) {
             if (_stickies.containsKey(topicId)) {
-//            Log.v(TAG, "lastsent " + topicId);
-
+                Log.v(TAG, "sticky " + topicId);
 
                 bundle = new Bundle();
                 bundle.putString(PARAM_TOPIC_ID, topicId);

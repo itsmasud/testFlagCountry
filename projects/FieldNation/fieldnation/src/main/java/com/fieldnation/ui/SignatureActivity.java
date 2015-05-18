@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -28,7 +27,7 @@ import java.util.Calendar;
  */
 
 public class SignatureActivity extends FragmentActivity {
-    private static final String TAG = "ui.SignatureActivity";
+    private static final String TAG = "SignatureActivity";
 
     public static final String INTENT_KEY_BITMAP = "com.fieldnation.ui.SignatureActivity:SIGNATURE";
     public static final String INTENT_KEY_ARRIVAL = "com.fieldnation.ui.SignatureActivity:ARRIVAL";
@@ -134,7 +133,7 @@ public class SignatureActivity extends FragmentActivity {
 //        return super.onOptionsItemSelected(item);
 //    }
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             byte[] signature = _sigView.getSignatureJson().getBytes();
@@ -161,14 +160,14 @@ public class SignatureActivity extends FragmentActivity {
         }
     };
 
-    private View.OnClickListener _clear_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _clear_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _sigView.clear();
         }
     };
 
-    private DialogInterface.OnClickListener _editText_onOk = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener _editText_onOk = new DialogInterface.OnClickListener() {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -181,7 +180,7 @@ public class SignatureActivity extends FragmentActivity {
         }
     };
 
-    private DialogInterface.OnClickListener _editText_onOk_onClose = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener _editText_onOk_onClose = new DialogInterface.OnClickListener() {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -195,7 +194,7 @@ public class SignatureActivity extends FragmentActivity {
         }
     };
 
-    private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             String tag = datePickerDialog.getTag();
@@ -209,7 +208,7 @@ public class SignatureActivity extends FragmentActivity {
         }
     };
 
-    private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
@@ -226,14 +225,14 @@ public class SignatureActivity extends FragmentActivity {
         }
     };
 
-    private View.OnClickListener _arrival_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _arrival_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _datePicker.show(getSupportFragmentManager(), "arrive");
         }
     };
 
-    private View.OnClickListener _departure_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _departure_onClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -241,7 +240,7 @@ public class SignatureActivity extends FragmentActivity {
         }
     };
 
-    private View.OnClickListener _name_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _name_onClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {

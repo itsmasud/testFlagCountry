@@ -44,9 +44,6 @@ import java.security.SecureRandom;
 public class DeliverableFragment extends WorkorderFragment {
     private final String TAG = UniqueTag.makeTag("ui.workorder.detail.DeliverableFragment");
 
-    // pageRequest parameters
-    public static final String PR_TASK_ID = "PR_TASK_ID";
-
     // activity result codes
     private static final int RESULT_CODE_BASE = 100;
     private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;

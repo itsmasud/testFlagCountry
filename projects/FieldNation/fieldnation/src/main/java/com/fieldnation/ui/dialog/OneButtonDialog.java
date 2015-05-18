@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import com.fieldnation.utils.misc;
  * Created by Michael on 2/6/2015.
  */
 public class OneButtonDialog extends DialogFragmentBase {
-    private static final String TAG = UniqueTag.makeTag("ui.dialog.OneButtonDialog");
+    private static final String TAG = UniqueTag.makeTag("OneButtonDialog");
 
     //Ui
     private TextView _titleTextView;
@@ -88,7 +87,7 @@ public class OneButtonDialog extends DialogFragmentBase {
             reset();
     }
 
-    private View.OnClickListener _button_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _button_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -105,8 +104,8 @@ public class OneButtonDialog extends DialogFragmentBase {
     }
 
     public interface Listener {
-        public void onButtonClick();
+        void onButtonClick();
 
-        public void onCancel();
+        void onCancel();
     }
 }

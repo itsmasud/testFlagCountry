@@ -25,7 +25,7 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import java.util.Calendar;
 
 public class ScheduleDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.ScheduleDialog";
+    private static final String TAG = "ScheduleDialog";
 
     // State
     private static final String STATE_SCHEDULE = "STATE_SCHEDULE";
@@ -200,7 +200,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     /*-*****************************-*/
     /*-			UI Events			-*/
     /*-*****************************-*/
-    private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             String tag = datePickerDialog.getTag();
@@ -214,7 +214,7 @@ public class ScheduleDialog extends DialogFragmentBase {
         }
     };
 
-    private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
             String tag = view.getTag();
@@ -238,7 +238,7 @@ public class ScheduleDialog extends DialogFragmentBase {
         }
     };
 
-    private AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -250,7 +250,7 @@ public class ScheduleDialog extends DialogFragmentBase {
         }
 
     };
-    private View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_startIsSet || _endIsSet) {
@@ -263,7 +263,7 @@ public class ScheduleDialog extends DialogFragmentBase {
             }
         }
     };
-    private View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -273,21 +273,21 @@ public class ScheduleDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _dateTimeButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _dateTimeButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _datePicker.show(_fm, "start");
         }
     };
 
-    private View.OnClickListener _startDateButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _startDateButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _datePicker.show(_fm, "start");
         }
     };
 
-    private View.OnClickListener _endDateButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _endDateButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _datePicker.show(_fm, "end");
@@ -295,9 +295,9 @@ public class ScheduleDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onComplete(Schedule schedule);
+        void onComplete(Schedule schedule);
 
-        public void onCancel();
+        void onCancel();
     }
 
 }

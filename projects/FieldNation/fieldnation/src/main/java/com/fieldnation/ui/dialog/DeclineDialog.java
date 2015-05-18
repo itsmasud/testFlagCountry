@@ -23,7 +23,7 @@ import com.fieldnation.UniqueTag;
  * Created by Michael Carver on 1/15/2015.
  */
 public class DeclineDialog extends DialogFragmentBase {
-    private final String TAG = UniqueTag.makeTag("ui.dialog.DeclineDialog");
+    private final String TAG = UniqueTag.makeTag("DeclineDialog");
 
     // Ui
     private CheckBox _blockCheckBox;
@@ -128,9 +128,9 @@ public class DeclineDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(boolean blockBuyer, int reasonId, String details);
+        void onOk(boolean blockBuyer, int reasonId, String details);
 
-        public void onCancel();
+        void onCancel();
     }
 
 }

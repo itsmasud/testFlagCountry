@@ -3,7 +3,6 @@ package com.fieldnation.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import com.fieldnation.utils.misc;
  * Created by michael.carver on 12/2/2014.
  */
 public class SignatureFragment extends FragmentBase {
-    private static final String TAG = "ui.SignatureFragment";
+    private static final String TAG = "SignatureFragment";
 
     // State
     private static final String STATE_NAME = "STATE_NAME_EDIT_TEXT";
@@ -91,14 +90,14 @@ public class SignatureFragment extends FragmentBase {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private View.OnClickListener _clear_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _clear_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _signatureView.clear();
         }
     };
 
-    private View.OnClickListener _back_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _back_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -106,7 +105,7 @@ public class SignatureFragment extends FragmentBase {
         }
     };
 
-    private View.OnClickListener _submit_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
@@ -122,8 +121,8 @@ public class SignatureFragment extends FragmentBase {
     };
 
     public interface Listener {
-        public void onBack();
+        void onBack();
 
-        public void onSubmit(String name, String signatureJson);
+        void onSubmit(String name, String signatureJson);
     }
 }

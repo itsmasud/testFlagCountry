@@ -70,6 +70,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
         _listView = (ListView) findViewById(R.id.items_listview);
         // TODO set loading info
+        requestData();
     }
 
     @Override

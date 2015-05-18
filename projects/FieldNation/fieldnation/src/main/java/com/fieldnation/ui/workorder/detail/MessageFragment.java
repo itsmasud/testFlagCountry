@@ -53,6 +53,7 @@ public class MessageFragment extends WorkorderFragment {
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
+
     }
 
     @Override

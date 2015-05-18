@@ -16,7 +16,7 @@ import com.fieldnation.UniqueTag;
  * Created by Michael Carver on 1/28/2015.
  */
 public class PagerTabListView extends RelativeLayout {
-    private static final String TAG = UniqueTag.makeTag("ui.PagerTabListView");
+    private static final String TAG = UniqueTag.makeTag("PagerTabListView");
 
     // Ui
     private LinearLayout _tabContainer;

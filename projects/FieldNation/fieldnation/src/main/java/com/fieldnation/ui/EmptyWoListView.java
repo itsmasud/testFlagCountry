@@ -35,7 +35,7 @@ public class EmptyWoListView extends RelativeLayout {
         setOnClickListener(_this_onClick);
     }
 
-    private OnClickListener _this_onClick = new OnClickListener() {
+    private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MarketActivity.class);

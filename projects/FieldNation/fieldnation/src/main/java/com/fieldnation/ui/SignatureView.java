@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SignatureView extends View {
-    private static final String TAG = "ui.SignatureView";
+    private static final String TAG = "SignatureView";
 
     // State
     private static final String STATE_SUPER = "STATE_SUPER";

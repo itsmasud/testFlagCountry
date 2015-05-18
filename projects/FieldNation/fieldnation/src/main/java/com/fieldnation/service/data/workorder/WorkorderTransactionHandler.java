@@ -77,7 +77,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
-    public static byte[] pTaskList(long workorderId){
+    public static byte[] pTaskList(long workorderId) {
         try {
             JsonObject obj = new JsonObject("action", "pTaskList");
             obj.put("workorderId", workorderId);
@@ -171,7 +171,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         byte[] workorderData = resultData.getByteArray();
 
         Log.v(TAG, "handleDetails workorderId:" + workorderId);
-
 
         JsonObject workorder = new JsonObject(workorderData);
 

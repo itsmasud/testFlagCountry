@@ -14,7 +14,6 @@ import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.signature.SignatureClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.utils.Stopwatch;
 
@@ -22,7 +21,7 @@ import com.fieldnation.utils.Stopwatch;
  * Created by michael.carver on 12/2/2014.
  */
 public class SignOffActivity extends AuthFragmentActivity {
-    private static final String TAG = "ui.SignOffActivity";
+    private static final String TAG = "SignOffActivity";
 
     // State
     private static final String STATE_DISPLAY_MODE = "STATE_DISPLAY_MODE";
@@ -199,10 +198,10 @@ public class SignOffActivity extends AuthFragmentActivity {
     private void sendSignature() {
         // not a task
         if (_taskId == -1) {
-            SignatureClient.requestAddSignatureJson(this, _workorder.getWorkorderId(), _name, _signatureJson);
+            WorkorderClient.addSignatureJson(this, _workorder.getWorkorderId(), _name, _signatureJson);
         } else {
             // is a task
-            SignatureClient.requestCompleteSignatureTaskJson(this, _workorder.getWorkorderId(), _taskId, _name, _signatureJson);
+            WorkorderClient.addSignatureJsonTask(this, _workorder.getWorkorderId(), _taskId, _name, _signatureJson);
         }
 
         if (_completeWorkorder) {
@@ -229,7 +228,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
     };
 
-    private SignOffFragment.Listener _signOff_listener = new SignOffFragment.Listener() {
+    private final SignOffFragment.Listener _signOff_listener = new SignOffFragment.Listener() {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
@@ -245,7 +244,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
             GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "SorryFragment");
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sorryFrag);
             trans.addToBackStack(null);
@@ -253,7 +252,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
     };
 
-    private SignatureFragment.Listener _signature_listener = new SignatureFragment.Listener() {
+    private final SignatureFragment.Listener _signature_listener = new SignatureFragment.Listener() {
         @Override
         public void onBack() {
             onBackPressed();
@@ -275,7 +274,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
     };
 
-    private ThankYouFragment.Listener _thankyou_listener = new ThankYouFragment.Listener() {
+    private final ThankYouFragment.Listener _thankyou_listener = new ThankYouFragment.Listener() {
         @Override
         public void onDoneClick() {
             setResult(RESULT_OK);
@@ -283,7 +282,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
     };
 
-    private SorryFragment.Listener _sorry_listener = new SorryFragment.Listener() {
+    private final SorryFragment.Listener _sorry_listener = new SorryFragment.Listener() {
         @Override
         public void onDoneClick() {
             setResult(RESULT_CANCELED);

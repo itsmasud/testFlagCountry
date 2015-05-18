@@ -22,7 +22,7 @@ import com.fieldnation.utils.misc;
  * Created by Michael on 2/6/2015.
  */
 public class TwoButtonDialog extends DialogFragmentBase {
-    private static final String TAG = UniqueTag.makeTag("ui.dialog.OneButtonDialog");
+    private static final String TAG = UniqueTag.makeTag("OneButtonDialog");
 
     //Ui
     private TextView _titleTextView;
@@ -138,10 +138,10 @@ public class TwoButtonDialog extends DialogFragmentBase {
     }
 
     public interface Listener {
-        public void onPositive();
+        void onPositive();
 
-        public void onNegative();
+        void onNegative();
 
-        public void onCancel();
+        void onCancel();
     }
 }

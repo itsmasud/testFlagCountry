@@ -12,7 +12,7 @@ import java.util.List;
  * Created by michael.carver on 12/1/2014.
  */
 public abstract class ItemListActivity<O> extends AuthActionBarActivity {
-    private static final String TAG = "ui.ItemListActivity";
+    private static final String TAG = "ItemListActivity";
 
     // UI
     private OverScrollListView _listView;
@@ -67,7 +67,7 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
         _adapter.setPage(page, list);
     }
 
-    private PagingAdapter<O> _adapter = new PagingAdapter<O>() {
+    private final PagingAdapter<O> _adapter = new PagingAdapter<O>() {
         @Override
         public View getView(int page, int position, O object, View convertView, ViewGroup parent) {
             return ItemListActivity.this.getView(object, convertView, parent);
@@ -81,21 +81,21 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
 
     public abstract View getView(O object, View convertView, ViewGroup parent);
 
-    public void notifyDataSetChanged(){
+    public void notifyDataSetChanged() {
         _adapter.notifyDataSetChanged();
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
             _adapter.refreshPages();
         }
     };
 
-    private PagingAdapter.Listener _adapter_lsitener = new PagingAdapter.Listener() {
+    private final PagingAdapter.Listener _adapter_lsitener = new PagingAdapter.Listener() {
         @Override
         public void onLoadingComplete() {
             _refreshView.refreshComplete();

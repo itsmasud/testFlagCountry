@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 
 public class DiscountDialog extends DialogFragmentBase {
-    private static String TAG = "ui.dialog.DiscountDialog";
+    private static String TAG = "DiscountDialog";
 
     // State
     private static final String STATE_TITLE = "STATE_TITLE";
@@ -138,8 +138,8 @@ public class DiscountDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(String description, double amount);
+        void onOk(String description, double amount);
 
-        public void onCancel();
+        void onCancel();
     }
 }

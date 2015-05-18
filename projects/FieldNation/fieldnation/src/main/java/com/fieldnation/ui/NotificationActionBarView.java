@@ -14,7 +14,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 
 public class NotificationActionBarView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ui.NotificationActionBarView");
+    private final String TAG = UniqueTag.makeTag("NotificationActionBarView");
 
     // UI
     private TextView _countTextView;
@@ -63,7 +63,7 @@ public class NotificationActionBarView extends RelativeLayout {
     }
 
 
-    private View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), NotificationListActivity.class);
@@ -71,7 +71,7 @@ public class NotificationActionBarView extends RelativeLayout {
         }
     };
 
-    private GlobalTopicClient.Listener _topicClient_listener = new GlobalTopicClient.Listener() {
+    private final GlobalTopicClient.Listener _topicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
             _client.registerGotProfile();

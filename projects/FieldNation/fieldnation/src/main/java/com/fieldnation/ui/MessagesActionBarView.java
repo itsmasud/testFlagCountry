@@ -16,7 +16,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 
 public class MessagesActionBarView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ui.MessagesActionBarView");
+    private final String TAG = UniqueTag.makeTag("MessagesActionBarView");
     // UI
     private TextView _countTextView;
 
@@ -63,7 +63,7 @@ public class MessagesActionBarView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    private View.OnClickListener _this_onClickListener = new View.OnClickListener() {
+    private final View.OnClickListener _this_onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MessageListActivity.class);

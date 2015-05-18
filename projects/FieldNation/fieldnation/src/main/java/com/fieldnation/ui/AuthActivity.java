@@ -144,7 +144,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
+    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
             _globalClient.registerUpdateApp();
@@ -156,6 +156,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             _updateDialog.show();
         }
     };
+    
     private final Animation.AnimationListener _fadeout_listener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {

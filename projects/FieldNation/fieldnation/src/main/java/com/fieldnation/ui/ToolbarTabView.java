@@ -15,7 +15,7 @@ import com.fieldnation.R;
  * Created by Michael Carver on 1/28/2015.
  */
 public class ToolbarTabView extends RelativeLayout {
-    private static final String TAG = "ui.TabView";
+    private static final String TAG = "ToolbarTabView";
 
     // Ui
     private TextView _back;

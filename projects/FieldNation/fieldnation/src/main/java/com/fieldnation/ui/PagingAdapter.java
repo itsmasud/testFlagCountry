@@ -14,7 +14,7 @@ import java.util.Set;
  * Created by michael.carver on 11/21/2014.
  */
 public abstract class PagingAdapter<T> extends BaseAdapter {
-    private static final String TAG = "ui.PagingAdapter";
+    private static final String TAG = "PagingAdapter";
 
     private boolean _noMorePages = false;
     private Hashtable<Integer, List<T>> _pages = new Hashtable<Integer, List<T>>();
@@ -191,7 +191,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     public abstract void requestPage(int page, boolean allowCache);
 
     public interface Listener {
-        public void onLoadingComplete();
+        void onLoadingComplete();
     }
 
 }

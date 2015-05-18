@@ -308,17 +308,16 @@ public class ObjectStoreClient implements ObjectStoreConstants {
     }
 
     public interface Listener {
+        void onConnected();
 
-        public void onConnected();
+        void onDisconnected();
 
-        public void onDisconnected();
+        void onDelete(boolean success, String objectName, String objectKey);
 
-        public void onDelete(boolean success, String objectName, String objectKey);
+        void onPut(StoredObject obj);
 
-        public void onPut(StoredObject obj);
+        void onGet(StoredObject obj);
 
-        public void onGet(StoredObject obj);
-
-        public void onList(StoredObject[] objects);
+        void onList(StoredObject[] objects);
     }
 }

@@ -3,7 +3,6 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.location.Location;
 
-import com.fieldnation.data.transfer.WorkorderTransfer;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -274,8 +273,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         if (expenses != null && expenses.length > 0) {
             StringBuilder json = new StringBuilder();
             json.append("[");
-            for (int i = 0; i < expenses.length; i++) {
-                Expense expense = expenses[i];
+            for (Expense expense : expenses) {
                 json.append("{\"description\":\"").append(expense.getDescription()).append("\",");
                 json.append("\"price\":\"").append(expense.getPrice()).append("\"}");
             }
@@ -364,55 +362,17 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void postSignatureJson(Context context, long workorderId, String name, String json) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "post_signature"))
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/signature")
-                            .body("signatureFormat=json"
-                                    + "&printName=" + misc.escapeForURL(name)
-                                    + "&signature=" + json))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeAddSignatureTransfer(name).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void addSignatureJson(Context context, long workorderId, String name, String json) {
+        action(context, workorderId, "signature", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "signatureFormat=json"
+                        + "&printName=" + misc.escapeForURL(name)
+                        + "&signature=" + json);
     }
 
-    public static void postSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .method("POST")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/tasks/complete/" + taskId)
-                            .body("print_name=" + misc.escapeForURL(name)
-                                    + "&signature_json=" + json))
-                    .transform(Transform.makeTransformQuery(
-                            PSO_WORKORDER,
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeCompletingTaskTransfer("signature", taskId, name).getBytes()))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static void addSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
+        action(context, workorderId, "tasks/complete/" + taskId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "print_name=" + misc.escapeForURL(name)
+                        + "&signature_json=" + json);
     }
 
     /*-**************************************-*/
@@ -494,11 +454,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .handlerParams(DeliverableTransactionHandler.pChange(workorderId))
                     .useAuth(true)
                     .request(builder)
-                    .transform(Transform.makeTransformQuery(
-                            "Workorder",
-                            workorderId,
-                            "merges",
-                            WorkorderTransfer.makeUploadDeliverable(uploadSlotId, filename).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -518,12 +473,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     .protocol("https")
                                     .method("DELETE")
                                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + workorderUploadId))
-                    .transform(
-                            Transform.makeTransformQuery(
-                                    PSO_WORKORDER,
-                                    workorderId,
-                                    "merges",
-                                    WorkorderTransfer.makeDeleteDeliverable(workorderUploadId, filename).getBytes()))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -574,7 +523,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                             .path("/api/rest/v1/workorder/" + workorderId + "/discount")
                             .body("description=" + misc.escapeForURL(description)
-                                    + "&price=" + misc.escapeForURL(price + "")))
+                                    + "&amount=" + misc.escapeForURL(price + "")))
                     .send();
         } catch (Exception ex) {
             ex.printStackTrace();

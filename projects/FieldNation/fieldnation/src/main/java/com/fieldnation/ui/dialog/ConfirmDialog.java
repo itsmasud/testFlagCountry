@@ -25,7 +25,7 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import java.util.Calendar;
 
 public class ConfirmDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.ConfirmDialog";
+    private static final String TAG = "ConfirmDialog";
 
     // State
     private static final String STATE_DURATION = "STATE_DURATION";
@@ -330,11 +330,11 @@ public class ConfirmDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds);
+        void onOk(Workorder workorder, String startDate, long durationMilliseconds);
 
-        public void onCancel(Workorder workorder);
+        void onCancel(Workorder workorder);
 
-        public void termsOnClick(Workorder workorder);
+        void termsOnClick(Workorder workorder);
     }
 
 }

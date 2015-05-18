@@ -22,7 +22,7 @@ import java.util.Calendar;
  * Created by michael.carver on 11/6/2014.
  */
 public class ReasonCoView extends RelativeLayout {
-    private static final String TAG = "ui.dialog.ReasonCoView";
+    private static final String TAG = "ReasonCoView";
 
     // Ui
     private EditText _requestReasonEditText;
@@ -152,7 +152,7 @@ public class ReasonCoView extends RelativeLayout {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private OnClickListener _expires_onClick = new OnClickListener() {
+    private final OnClickListener _expires_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             _expires = _expiresCheckBox.isChecked();
@@ -162,7 +162,7 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
-    private OnClickListener _tacCheck_onClick = new OnClickListener() {
+    private final OnClickListener _tacCheck_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             _tacAccepted = _tacCheckBox.isChecked();
@@ -171,7 +171,7 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _expiresButton_onClick = new OnClickListener() {
+    private final View.OnClickListener _expiresButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -179,7 +179,7 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
-    private OnClickListener _tac_onClick = new OnClickListener() {
+    private final OnClickListener _tac_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -213,10 +213,10 @@ public class ReasonCoView extends RelativeLayout {
 
 
     public interface Listener {
-        public void onTacClick();
+        void onTacClick();
 
-        public void onTacChange(boolean isChecked);
+        void onTacChange(boolean isChecked);
 
-        public void onExpirationChange(boolean expires, String date);
+        void onExpirationChange(boolean expires, String date);
     }
 }

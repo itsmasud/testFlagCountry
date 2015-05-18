@@ -23,10 +23,8 @@ import com.fieldnation.ui.dialog.UpdateDialog;
  * Created by michael.carver on 12/5/2014.
  */
 public abstract class AuthFragmentActivity extends FragmentActivity {
-    private static final String TAG_BASE = "ui.AuthFragmentActivity";
+    private static final String TAG_BASE = "AuthFragmentActivity";
     private String TAG = TAG_BASE;
-
-    private static final int AUTH_SERVICE = 1;
 
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 

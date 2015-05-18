@@ -2,7 +2,6 @@ package com.fieldnation.topics;
 
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.Log;
 
 import java.util.Enumeration;
@@ -14,7 +13,7 @@ import java.util.Set;
  * Created by michael.carver on 12/12/2014.
  */
 class TopicClient {
-    private static final String TAG = "topics.TopicClient";
+    private static final String TAG = "TopicClient";
 
     public int resultCode;
     public ResultReceiver receiver;

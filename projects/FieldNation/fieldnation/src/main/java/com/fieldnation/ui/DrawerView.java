@@ -42,7 +42,7 @@ import java.util.List;
  * @author michael.carver
  */
 public class DrawerView extends RelativeLayout {
-    private static final String TAG = "ui.DrawerView";
+    private static final String TAG = "DrawerView";
 
     // UI
     private LinearLayout _profileContainerLayout;
@@ -272,6 +272,7 @@ public class DrawerView extends RelativeLayout {
         public void onClick(View v) {
         }
     };
+
     private final OnClickListener _profileExpandButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -382,6 +383,7 @@ public class DrawerView extends RelativeLayout {
 
         }
     };
+
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -453,7 +455,6 @@ public class DrawerView extends RelativeLayout {
 
                     if (payment == null)
                         continue;
-                    ;
 
                     if (payment.getDatePaid() == null)
                         continue;

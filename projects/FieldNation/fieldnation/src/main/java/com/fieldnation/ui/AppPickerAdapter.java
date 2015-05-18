@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import java.util.List;
 
 public class AppPickerAdapter extends BaseAdapter {
-    private static String TAG = "com.fieldnation.ui.AppPickerAdapter";
+    private static String TAG = "AppPickerAdapter";
 
     private List<AppPickerPackage> _appList;
     private AppPickerRowView.OnClickListener _listener;

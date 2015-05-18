@@ -19,7 +19,6 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.signature.SignatureClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.utils.misc;
 
@@ -27,7 +26,7 @@ import com.fieldnation.utils.misc;
  * Created by michael.carver on 12/9/2014.
  */
 public class SignatureDisplayActivity extends AuthActionBarActivity {
-    private static final String TAG = "ui.SignatureDisplayActivity";
+    private static final String TAG = "SignatureDisplayActivity";
 
     // State
     private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
@@ -37,9 +36,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     // Intent Params
     public static final String INTENT_PARAM_SIGNATURE = "ui.SignatureDisplayActivity:INTENT_PARAM_SIGNATURE";
     public static final String INTENT_PARAM_WORKORDER = "ui.SignatureDisplayActivity:INTENT_PARAM_WORKORDER";
-
-    // Web
-    public static int WEB_GET_SIGNATURE = 1;
 
     // Ui
     private TextView _titleTextView;
@@ -70,7 +66,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
     // Service
     private WorkorderClient _workorderClient;
-    private SignatureClient _signatureClient;
 
     @Override
     public int getLayoutResource() {
@@ -105,9 +100,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(this);
-
-        _signatureClient = new SignatureClient(_signatureClient_listener);
-        _signatureClient.connect(this);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -170,6 +162,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         }
     }
 
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (_signature != null)
@@ -194,10 +187,10 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _loadingView.setVisibility(View.VISIBLE);
 
         if (_workorderClient.isConnected()) {
-            _signatureClient.subGet(_workorder.getWorkorderId(), _signatureId, false);
+            _workorderClient.subGetSignature(_workorder.getWorkorderId(), _signatureId, false);
         }
 
-        SignatureClient.get(this, _workorder.getWorkorderId(), _signatureId);
+        WorkorderClient.getSignature(this, _workorder.getWorkorderId(), _signatureId);
     }
 
     @Override
@@ -262,9 +255,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             _tasksLinearLayout.setVisibility(View.VISIBLE);
 
             _tasksLinearLayout.removeAllViews();
-            for (int i = 0; i < tasks.length; i++) {
-                Task task = tasks[i];
-
+            for (Task task : tasks) {
                 String display = "";
                 if (task.getTypeId() != null) {
                     TaskType type = task.getTaskType();
@@ -314,17 +305,10 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         }
     };
 
-    private final SignatureClient.Listener _signatureClient_listener = new SignatureClient.Listener() {
-        @Override
-        public void onConnected() {
-
-        }
-    };
-
     /*-*************************************-*/
     /*-                 Events              -*/
     /*-*************************************-*/
-    private View.OnClickListener _done_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _done_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             finish();

@@ -23,7 +23,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class NotificationView extends RelativeLayout {
-    private static final String TAG = "ui.NotificationView";
+    private static final String TAG = "NotificationView";
 
     // UI
     private LinearLayout _titleLayout;
@@ -129,7 +129,7 @@ public class NotificationView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_note.getWorkorder() != null) {

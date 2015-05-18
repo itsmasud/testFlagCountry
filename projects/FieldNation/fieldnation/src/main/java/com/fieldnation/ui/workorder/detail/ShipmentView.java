@@ -13,10 +13,7 @@ import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
 
 public class ShipmentView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.workorder.detail.ShipmentView";
-
-    private static final int WEB_ADD_SHIPMENT = 1;
-    private static final int WEB_DEL_SHIPMENT = 2;
+    private static final String TAG = "ShipmentView";
 
     // UI
     private LinearLayout _shipmentsLayout;
@@ -71,8 +68,12 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         }
         setVisibility(View.VISIBLE);
 
-        if (shipments == null || shipments.length == 0)
+        if (shipments == null || shipments.length == 0) {
+            _shipmentsLayout.setVisibility(View.GONE);
             return;
+        } else {
+            _shipmentsLayout.setVisibility(View.VISIBLE);
+        }
 
         ForLoopRunnable r = new ForLoopRunnable(shipments.length, new Handler()) {
             private ShipmentTracking[] _shipments = shipments;
@@ -103,7 +104,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private View.OnClickListener _add_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -111,7 +112,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
+    private final ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
         @Override
         public void onDelete(ShipmentTracking shipment) {
             if (_listener != null && _workorder.canChangeShipments()) {

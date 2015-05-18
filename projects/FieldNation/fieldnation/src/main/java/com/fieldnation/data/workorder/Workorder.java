@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.transfer.WorkorderTransfer;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -177,8 +176,6 @@ public class Workorder implements Parcelable {
     private String _timezoneIdentifier;
     @Json(name = "title")
     private String _title;
-    @Json(name = "_transfer")
-    private WorkorderTransfer _transfer;
     @Json(name = "typeOfWork")
     private String _typeOfWork;
     @Json(name = "uploadSlots")
@@ -526,10 +523,6 @@ public class Workorder implements Parcelable {
 
     public String getTitle() {
         return _title;
-    }
-
-    public WorkorderTransfer getTransfer() {
-        return _transfer;
     }
 
     public String getTypeOfWork() {

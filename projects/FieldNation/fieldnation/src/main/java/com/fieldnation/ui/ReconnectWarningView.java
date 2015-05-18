@@ -77,7 +77,7 @@ public class ReconnectWarningView extends RelativeLayout {
 
     };
 
-    private OnClickListener _retry_onClick = new OnClickListener() {
+    private final OnClickListener _retry_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             GlobalTopicClient.dispatchNetworkConnect(getContext());

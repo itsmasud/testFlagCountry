@@ -11,7 +11,7 @@ import java.util.List;
  * Created by michael.carver on 12/10/2014.
  */
 public class Shape {
-    private static final String TAG = "shortstraw.Shape";
+    private static final String TAG = "Shape";
 
     private static final float THRESHOLD = 0.95F;
     private static final int WINDOW = 3;

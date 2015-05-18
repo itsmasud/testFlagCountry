@@ -13,7 +13,7 @@ import com.fieldnation.R;
  * Created by Michael Carver on 2/23/2015.
  */
 public class NavProfileDetailListView extends RelativeLayout {
-    private static final String TAG = "ui.NavProfileDetailListView";
+    private static final String TAG = "NavProfileDetailListView";
 
     private LinearLayout _profileList;
     private LinearLayout _addLayout;

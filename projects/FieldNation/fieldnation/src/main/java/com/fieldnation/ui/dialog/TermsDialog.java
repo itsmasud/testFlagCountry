@@ -21,7 +21,7 @@ import static android.view.View.OnClickListener;
  * Created by michael.carver on 11/18/2014.
  */
 public class TermsDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.TermsDialog";
+    private static final String TAG = "TermsDialog";
 
     private static final String DEFAULT_TITLE = "Terms and Conditions";
     private static final String DEFAULT_BODY = "<b>Service Fees</b><br/>A 10% service fee will be deducted from your final total payment amount from this work order.<br/><br/><b>Terms</b><br/>All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.";
@@ -84,7 +84,7 @@ public class TermsDialog extends DialogFragmentBase {
         super.show();
     }
 
-    private OnClickListener _ok_onClick = new OnClickListener() {
+    private final OnClickListener _ok_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();

@@ -4,17 +4,17 @@ package com.fieldnation.service.topics;
  * Created by Michael Carver on 2/27/2015.
  */
 interface TopicConstants {
-    public static final int WHAT_REGISTER_LISTENER = 1;
-    public static final int WHAT_UNREGISTER_LISTENER = 2;
-    public static final int WHAT_DISPATCH_EVENT = 3;
-    public static final int WHAT_DELETE_CLIENT = 4;
+    int WHAT_REGISTER_LISTENER = 1;
+    int WHAT_UNREGISTER_LISTENER = 2;
+    int WHAT_DISPATCH_EVENT = 3;
+    int WHAT_DELETE_CLIENT = 4;
 
-    public static final String PARAM_TOPIC_ID = "PARAM_TOPIC_ID";
-    public static final String PARAM_USER_TAG = "PARAM_USER_TAG";
-    public static final String PARAM_TOPIC_PARCELABLE = "PARAM_TOPIC_PARCELABLE";
-    public static final String PARAM_STICKY = "PARAM_STICKY";
+    String PARAM_TOPIC_ID = "PARAM_TOPIC_ID";
+    String PARAM_USER_TAG = "PARAM_USER_TAG";
+    String PARAM_TOPIC_PARCELABLE = "PARAM_TOPIC_PARCELABLE";
+    String PARAM_STICKY = "PARAM_STICKY";
 
-    public static final int STICKY_NONE = 0;
-    public static final int STICKY_FOREVER = 1;
-    public static final int STICKY_SHORT = 2;
+    int STICKY_NONE = 0;
+    int STICKY_FOREVER = 1;
+    int STICKY_SHORT = 2;
 }

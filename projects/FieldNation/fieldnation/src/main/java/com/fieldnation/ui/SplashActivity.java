@@ -17,7 +17,7 @@ import com.fieldnation.ui.workorder.MyWorkActivity;
  * Created by michael.carver on 12/18/2014.
  */
 public class SplashActivity extends AuthFragmentActivity {
-    private static final String TAG = "ui.SplashActivity";
+    private static final String TAG = "SplashActivity";
 
     private static final String STATE_PROFILE = "STATE_PROFILE";
     private static final String STATE_IS_AUTH = "STATE_IS_AUTH";
@@ -154,7 +154,6 @@ public class SplashActivity extends AuthFragmentActivity {
             }
         }
     };*/
-
 
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);

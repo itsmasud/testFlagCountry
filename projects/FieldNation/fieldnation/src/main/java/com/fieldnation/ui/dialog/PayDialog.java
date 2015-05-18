@@ -19,7 +19,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 
 public class PayDialog extends DialogFragmentBase {
-    private static String TAG = "ui.dialog.PayDialog";
+    private static String TAG = "PayDialog";
 
     // State
     private static final String STATE_MODE = "STATE_MODE";
@@ -231,7 +231,7 @@ public class PayDialog extends DialogFragmentBase {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             setMode(position);
@@ -242,7 +242,7 @@ public class PayDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -251,7 +251,7 @@ public class PayDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -263,9 +263,9 @@ public class PayDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onComplete(Pay pay);
+        void onComplete(Pay pay);
 
-        public void onNothing();
+        void onNothing();
     }
 
 }
