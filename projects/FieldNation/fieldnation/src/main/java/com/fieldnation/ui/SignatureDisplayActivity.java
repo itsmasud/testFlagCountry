@@ -215,7 +215,12 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         if (_workorder == null)
             return;
 
-        _signatureView.setSignatureJson(_signature.getSignature(), true);
+        if (_signature.getSignatureFormat().equals("svg")) {
+            _signatureView.setSignatureSvg(_signature.getSignature(), true);
+        } else {
+            _signatureView.setSignatureJson(_signature.getSignature(), true);
+        }
+
         _nameTextView.setText(_signature.getPrintName());
 
         _titleTextView.setText(_workorder.getTitle());

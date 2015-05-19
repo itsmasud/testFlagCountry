@@ -71,10 +71,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subList(WorkorderDataSelector selector, boolean isSync) {
-        String topicId = PARAM_ACTION_LIST;
+        String topicId = TOPIC_ID_LIST;
 
         if (isSync) {
-            topicId += "-SYNC";
+            topicId += "_SYNC";
         }
 
         if (selector != null) {
@@ -93,8 +93,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public static void get(Context context, long id, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DETAILS);
-        intent.putExtra(PARAM_ID, id);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
+        intent.putExtra(PARAM_WORKORDER_ID, id);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
@@ -108,10 +108,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subGet(long workorderId, boolean isSync) {
-        String topicId = PARAM_ACTION_DETAILS;
+        String topicId = TOPIC_ID_GET;
 
         if (isSync) {
-            topicId += "-SYNC";
+            topicId += "_SYNC";
         }
 
         if (workorderId > 0) {
@@ -124,7 +124,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void listAlerts(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
-        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
@@ -134,10 +134,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subListAlerts(long workorderId, boolean isSync) {
-        String topicId = PARAM_ACTION_LIST_NOTIFICATIONS;
+        String topicId = TOPIC_ID_LIST_ALERTS;
 
         if (isSync) {
-            topicId += "/SYNC";
+            topicId += "_SYNC";
         }
 
         if (workorderId > 0) {
@@ -167,7 +167,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void listTasks(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_TASKS);
-        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
@@ -177,10 +177,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subListTasks(long workorderId, boolean isSync) {
-        String topicId = PARAM_ACTION_LIST_TASKS;
+        String topicId = TOPIC_ID_LIST_TASKS;
 
         if (isSync) {
-            topicId += "/SYNC";
+            topicId += "_SYNC";
         }
 
         if (workorderId > 0) {
@@ -199,7 +199,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void listMessages(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
-        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
@@ -209,10 +209,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subListMessages(long workorderId, boolean isSync) {
-        String topicId = PARAM_ACTION_LIST_MESSAGES;
+        String topicId = TOPIC_ID_LIST_MESSAGES;
 
         if (isSync) {
-            topicId += "/SYNC";
+            topicId += "_SYNC";
         }
 
         if (workorderId > 0) {
@@ -310,7 +310,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void getSignature(Context context, long workorderId, long signatureId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
-        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_SIGNATURE_ID, signatureId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
@@ -321,10 +321,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subGetSignature(long workorderId, long signatureId, boolean isSync) {
-        String topicId = "";
+        String topicId = TOPIC_ID_GET_SIGNATURE;
 
         if (isSync) {
-            topicId += "-SYNC";
+            topicId += "_SYNC";
         }
 
         if (workorderId > 0) {
@@ -339,14 +339,27 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     // add signature json
+/*
     public static void addSignatureJson(Context context, long workorderId, String name, String json) {
         WorkorderTransactionBuilder.addSignatureJson(context, workorderId, name, json);
     }
+*/
 
     // complete signature
+/*
     public static void addSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
         WorkorderTransactionBuilder.addSignatureJsonTask(context, workorderId, taskId, name, json);
     }
+*/
+
+    public static void addSignatureSvg(Context context, long workorderId, String name, String svg) {
+        WorkorderTransactionBuilder.addSignatureSvg(context, workorderId, name, svg);
+    }
+
+    public static void addSignatureSvgTask(Context context, long workorderId, long taskId, String name, String svg) {
+        WorkorderTransactionBuilder.addSignatureSvgTask(context, workorderId, taskId, name, svg);
+    }
+
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
@@ -437,7 +450,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void getBundle(Context context, long bundleId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
-        intent.putExtra(PARAM_ID, bundleId);
+        intent.putExtra(PARAM_WORKORDER_ID, bundleId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
@@ -447,10 +460,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subBundle(boolean isSync) {
-        String topicId = PARAM_ACTION_GET_BUNDLE;
+        String topicId = TOPIC_ID_GET_BUNDLE;
 
         if (isSync) {
-            topicId += "-SYNC";
+            topicId += "_SYNC";
         }
 
         return register(topicId, TAG);
@@ -463,7 +476,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         Log.v(STAG, "requestUploadDeliverable");
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
-        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_UPLOAD_SLOT_ID, uploadSlotId);
         intent.putExtra(PARAM_LOCAL_PATH, filePath);
         intent.putExtra(PARAM_FILE_NAME, filename);
@@ -490,17 +503,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DELIVERABLE);
-        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_DELIVERABLE);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public static void getDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
-        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
         intent.putExtra(PARAM_URL, url);
         intent.putExtra(PARAM_IS_SYNC, isSync);
@@ -509,17 +522,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public static void listDeliverables(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DELIVERABLE_LIST);
-        intent.putExtra(PARAM_ID, workorderId);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_DELIVERABLES);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public boolean subDeliverableList(boolean isSync) {
-        String topicId = PARAM_ACTION_DELIVERABLE_LIST;
+    public boolean subListDeliverables(boolean isSync) {
+        String topicId = TOPIC_ID_LIST_DELIVERABLES;
 
         if (isSync) {
-            topicId += "-SYNC";
+            topicId += "_SYNC";
         }
 
         return register(topicId, TAG);
@@ -555,41 +568,39 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "topicId " + topicId);
-            if (topicId.startsWith(PARAM_ACTION_LIST)) {
-                preOnWorkorderList((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_DETAILS)) {
-                preOnDetails((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_GET_SIGNATURE)) {
-                preOnGetSignature((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_GET_BUNDLE)) {
-                preOnGetBundle((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_DELIVERABLE_LIST)) {
-                preDeliverableList((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_LIST_MESSAGES)) {
-                preMessageList((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_LIST_NOTIFICATIONS)) {
-                preAlertList((Bundle) payload);
-            } else if (topicId.startsWith(PARAM_ACTION_LIST_TASKS)) {
-                preTaskList((Bundle) payload);
-
-                // WARN this must be the last check because it will match just about anything.
-            } else if (topicId.startsWith(PARAM_ACTION)) {
-                preOnAction((Bundle) payload);
+            if (topicId.startsWith(TOPIC_ID_LIST)) {
+                preList((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_GET)) {
+                preGet((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_GET_SIGNATURE)) {
+                preGetSignature((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_GET_BUNDLE)) {
+                preGetBundle((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_LIST_DELIVERABLES)) {
+                preListDeliverables((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_LIST_MESSAGES)) {
+                preListMessages((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_LIST_ALERTS)) {
+                preListAlerts((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_LIST_TASKS)) {
+                preListTasks((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
+                preAction((Bundle) payload);
             }
         }
 
-        private void preOnAction(Bundle payload) {
-            Log.v(STAG, "preOnAction " + payload.getLong(PARAM_ID) + " "
+        private void preAction(Bundle payload) {
+            Log.v(STAG, "preAction " + payload.getLong(PARAM_WORKORDER_ID) + " "
                     + payload.getString(PARAM_ACTION));
-            onAction(payload.getLong(PARAM_ID),
+            onAction(payload.getLong(PARAM_WORKORDER_ID),
                     payload.getString(PARAM_ACTION));
         }
 
         public void onAction(long workorderId, String action) {
         }
 
-        private void preTaskList(Bundle payload) {
-            Log.v(STAG, "preTaskList");
+        private void preListTasks(Bundle payload) {
+            Log.v(STAG, "preListTasks");
             new AsyncTaskEx<Object, Object, List<Task>>() {
                 private long workorderId;
 
@@ -597,7 +608,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 protected List<Task> doInBackground(Object... params) {
                     Bundle payload = (Bundle) params[0];
 
-                    workorderId = payload.getLong(PARAM_ID);
+                    workorderId = payload.getLong(PARAM_WORKORDER_ID);
                     JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
                     List<Task> list = new LinkedList<>();
                     for (int i = 0; i < ja.size(); i++) {
@@ -617,8 +628,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         public void onTaskList(long workorderId, List<Task> tasks) {
         }
 
-        private void preAlertList(Bundle payload) {
-            Log.v(STAG, "preAlertList");
+        private void preListAlerts(Bundle payload) {
+            Log.v(STAG, "preListAlerts");
             new AsyncTaskEx<Object, Object, List<Notification>>() {
                 private long workorderId;
 
@@ -626,7 +637,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 protected List<Notification> doInBackground(Object... params) {
                     Bundle payload = (Bundle) params[0];
 
-                    workorderId = payload.getLong(PARAM_ID);
+                    workorderId = payload.getLong(PARAM_WORKORDER_ID);
                     JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
                     List<Notification> list = new LinkedList<>();
                     for (int i = 0; i < ja.size(); i++) {
@@ -646,7 +657,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         public void onAlertList(long workorderId, List<Notification> alerts) {
         }
 
-        private void preMessageList(Bundle payload) {
+        private void preListMessages(Bundle payload) {
             new AsyncTaskEx<Object, Object, List<Message>>() {
                 private long workorderId;
 
@@ -654,7 +665,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 protected List<Message> doInBackground(Object... params) {
                     Bundle payload = (Bundle) params[0];
 
-                    workorderId = payload.getLong(PARAM_ID);
+                    workorderId = payload.getLong(PARAM_WORKORDER_ID);
                     JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
                     List<Message> list = new LinkedList<>();
                     for (int i = 0; i < ja.size(); i++) {
@@ -674,7 +685,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         public void onMessageList(long workorderId, List<Message> messages) {
         }
 
-        private void preDeliverableList(Bundle payload) {
+        private void preListDeliverables(Bundle payload) {
             new AsyncTaskEx<Object, Object, List<Deliverable>>() {
                 private long workorderId;
 
@@ -682,7 +693,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 protected List<Deliverable> doInBackground(Object... params) {
                     Bundle payload = (Bundle) params[0];
 
-                    workorderId = payload.getLong(PARAM_ID);
+                    workorderId = payload.getLong(PARAM_WORKORDER_ID);
                     JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
 
                     List<Deliverable> list = new LinkedList<>();
@@ -705,7 +716,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         // list
-        protected void preOnWorkorderList(Bundle payload) {
+        protected void preList(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, List<Workorder>>() {
                 private WorkorderDataSelector selector;
                 private int page;
@@ -732,16 +743,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
                 @Override
                 protected void onPostExecute(List<Workorder> workorders) {
-                    onWorkorderList(workorders, selector, page);
+                    onList(workorders, selector, page);
                 }
             }.executeEx(payload);
         }
 
-        public void onWorkorderList(List<Workorder> list, WorkorderDataSelector selector, int page) {
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page) {
         }
 
         // details
-        protected void preOnDetails(Bundle payload) {
+        protected void preGet(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, Workorder>() {
                 @Override
                 protected Workorder doInBackground(Bundle... params) {
@@ -756,16 +767,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
                 @Override
                 protected void onPostExecute(Workorder workorder) {
-                    onDetails(workorder);
+                    onGet(workorder);
                 }
             }.executeEx(payload);
         }
 
-        public void onDetails(Workorder workorder) {
+        public void onGet(Workorder workorder) {
         }
 
         // get signature
-        private void preOnGetSignature(Bundle payload) {
+        private void preGetSignature(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, Signature>() {
 
                 @Override
@@ -789,7 +800,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         public void onGetSignature(Signature signature) {
         }
 
-        private void preOnGetBundle(Bundle payload) {
+        private void preGetBundle(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, com.fieldnation.data.workorder.Bundle>() {
                 @Override
                 protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {

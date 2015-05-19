@@ -11,7 +11,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.caverock.androidsvg.SVG;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -42,6 +44,8 @@ public class SignatureView extends View {
     private float _xOff = 0;
     private float _yOff = 0;
     private String _json;
+    private String _svgString;
+    private SVG _svg;
     private boolean _isMeasured;
     private Canvas _canvas;
     private Bitmap _map;
@@ -140,6 +144,63 @@ public class SignatureView extends View {
         return out.toByteArray();
     }
 
+    public String getSignatureSvg() {
+        // setDrawingCacheEnabled(true);
+        // // we make a copy, this ensures we don't screw up the canvas
+        // Bitmap bmp = Bitmap.createBitmap(getDrawingCache());
+        // setDrawingCacheEnabled(false);
+        //
+        // ByteArrayOutputStream out = new ByteArrayOutputStream();
+        //
+        // bmp.compress(CompressFormat.PNG, 100, out);
+        //
+        // return out.toByteArray();
+
+        float maxX = Float.MIN_VALUE;
+        float maxY = Float.MIN_VALUE;
+        float minX = Float.MAX_VALUE;
+        float minY = Float.MAX_VALUE;
+        for (int i = 0; i < _shapes.size(); i++) {
+            Shape s = _shapes.get(i);
+            //s.simplify();
+            maxX = Math.max(maxX, s.getMaxX());
+            maxY = Math.max(maxY, s.getMaxY());
+            minX = Math.min(minX, s.getMinX());
+            minY = Math.min(minY, s.getMinY());
+        }
+        float scale = Math.max(maxX / 605, (maxY) / 115);
+        float xo = ((605 * scale) - (maxX + minX)) / 2;
+        float yo = ((115 * scale) - (maxY + minY)) / 2;
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        sb.append("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">");
+        sb.append("<!-- Generator: Field Nation Android ").append(BuildConfig.VERSION_NAME).append(" -->");
+        sb.append("<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" width=\"605px\" height=\"115px\" viewBox=\"0 0 605 115\" enable-background=\"new 0 0 605 115\" xml:space=\"preserve\">");
+        sb.append("<path fill=\"none\" stroke=\"#000000\" stroke-width=\"5\" stroke-miterlimit=\"10\" ");
+        sb.append("d=\"");
+
+        for (int i = 0; i < _shapes.size(); i++) {
+            Shape shape = _shapes.get(i);
+
+            if (shape.size() > 0) {
+                Point lp = shape.get(0);
+
+                sb.append("M" + lp.x + " " + lp.y);
+
+                for (int j = 1; j < shape.size(); j++) {
+                    Point p = shape.get(j);
+                    sb.append("L" + ((p.x + xo) / scale) + " " + ((p.y + yo) / scale));
+                }
+            }
+        }
+        sb.append("\"/></svg>");
+
+        return sb.toString();
+    }
+
+/*
     public String getSignatureJson() {
         // setDrawingCacheEnabled(true);
         // // we make a copy, this ensures we don't screw up the canvas
@@ -207,10 +268,20 @@ public class SignatureView extends View {
 
         return sb.toString();
     }
+*/
 
     public void setSignatureJson(String signatureJson, boolean isReadOnly) {
+        Log.v(TAG, "setSignatureJson");
         _isReadOnly = isReadOnly;
         _json = signatureJson;
+
+        populateUi();
+    }
+
+    public void setSignatureSvg(String signatureSvg, boolean isReadOnly) {
+        Log.v(TAG, "setSignatureSvg");
+        _isReadOnly = isReadOnly;
+        _svgString = signatureSvg;
 
         populateUi();
     }
@@ -286,14 +357,22 @@ public class SignatureView extends View {
     }
 
     private void populateUi() {
-        if (_json == null)
-            return;
-
         if (!_isMeasured)
             return;
 
         clear();
-        new SignatureParseAsyncTask().executeEx(_json);
+
+        if (_json != null) {
+            new SignatureParseAsyncTask().executeEx(_json);
+        } else if (_svgString != null) {
+            try {
+                _svg = SVG.getFromString(_svgString);
+                _redraw = true;
+                invalidate();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -413,22 +492,31 @@ public class SignatureView extends View {
     protected void onDraw(Canvas canvas) {
 //        Stopwatch stopwatch = new Stopwatch();
         // walk through the shapes list... draw those
+
         if (_map == null) {
             _map = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
             _canvas = new Canvas(_map);
         }
 
-        canvas.drawBitmap(_map, 0, 0, _myPaint);
+        if (_json != null) {
 
-        if (_redraw) {
-            for (int i = 0; i < _shapes.size(); i++) {
-                drawShape(canvas, _shapes.get(i));
+            canvas.drawBitmap(_map, 0, 0, _myPaint);
+
+            if (_redraw) {
+                for (int i = 0; i < _shapes.size(); i++) {
+                    drawShape(canvas, _shapes.get(i));
+                }
+                _redraw = false;
+            } else {
+                drawShape(canvas, _shape);
             }
-            _redraw = false;
-        } else {
-            drawShape(canvas, _shape);
-        }
 
+        } else if (_svg != null) {
+            if (_redraw) {
+                _svg.renderToCanvas(canvas);
+                _redraw = false;
+            }
+        }
         super.onDraw(canvas);
 
 //        Log.v(TAG, "onDraw time " + stopwatch.finish());

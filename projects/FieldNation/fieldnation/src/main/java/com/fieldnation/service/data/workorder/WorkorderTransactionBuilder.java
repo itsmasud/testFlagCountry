@@ -104,8 +104,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(BundleTransactionHandler.class)
-                    .handlerParams(BundleTransactionHandler.pBundle(bundleId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pGetBundle(bundleId))
                     .key((isSync ? "Sync/" : "") + "GetBundle/" + bundleId)
                     .useAuth(true)
                     .isSyncCall(isSync)
@@ -362,17 +362,35 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+/*
     public static void addSignatureJson(Context context, long workorderId, String name, String json) {
         action(context, workorderId, "signature", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "signatureFormat=json"
                         + "&printName=" + misc.escapeForURL(name)
                         + "&signature=" + json);
     }
+*/
 
+    public static void addSignatureSvg(Context context, long workorderId, String name, String svg) {
+        action(context, workorderId, "signature", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "signatureFormat=svg"
+                        + "&printName=" + misc.escapeForURL(name)
+                        + "&signature=" + svg);
+    }
+
+/*
     public static void addSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
         action(context, workorderId, "tasks/complete/" + taskId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "print_name=" + misc.escapeForURL(name)
                         + "&signature_json=" + json);
+    }
+*/
+
+    // TODO make sure this works
+    public static void addSignatureSvgTask(Context context, long workorderId, long taskId, String name, String svg) {
+        action(context, workorderId, "tasks/complete/" + taskId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "print_name=" + misc.escapeForURL(name)
+                        + "&signature_json=" + svg);
     }
 
     /*-**************************************-*/

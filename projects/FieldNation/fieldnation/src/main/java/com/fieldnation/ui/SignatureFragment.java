@@ -114,7 +114,7 @@ public class SignatureFragment extends FragmentBase {
                     // TODO flash name thing
                     _nameEditText.requestFocus();
                 } else {
-                    _listener.onSubmit(_nameEditText.getText().toString(), _signatureView.getSignatureJson());
+                    _listener.onSubmit(_nameEditText.getText().toString(), _signatureView.getSignatureSvg());
                 }
             }
         }

@@ -241,7 +241,7 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_workorderClient_listener.onConnected");
             _workorderClient.subList(true);
             _workorderClient.subGet(true);
-            _workorderClient.subDeliverableList(true);
+            _workorderClient.subListDeliverables(true);
 
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
@@ -251,7 +251,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onWorkorderList(List<Workorder> list, WorkorderDataSelector selector, int page) {
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page) {
             Log.v(TAG, "onWorkorderList");
             incrementPendingRequestCounter(-1);
             if (list == null || list.size() == 0) {
@@ -282,7 +282,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onDetails(Workorder workorder) {
+        public void onGet(Workorder workorder) {
             Log.v(TAG, "onDetails " + workorder.getWorkorderId());
             incrementPendingRequestCounter(-1);
             synchronized (LOCK) {
@@ -316,7 +316,7 @@ public class WebCrawlerService extends Service {
             for (int i = 0; i < list.size(); i++) {
                 Deliverable d = list.get(i);
                 incRequestCounter(1);
-                WorkorderClient.getDeliverable(WebCrawlerService.this, workorderId,
+                WorkorderClient.downloadDeliverable(WebCrawlerService.this, workorderId,
                         d.getWorkorderUploadId(), d.getStorageSrc(), true);
             }
 

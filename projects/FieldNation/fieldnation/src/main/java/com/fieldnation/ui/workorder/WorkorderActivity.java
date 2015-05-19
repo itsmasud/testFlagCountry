@@ -375,7 +375,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onDetails(Workorder workorder) {
+        public void onGet(Workorder workorder) {
             Log.v(TAG, "_workorderClient_listener.onDetails");
             if (workorder == null) {
                 try {

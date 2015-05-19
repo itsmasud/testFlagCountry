@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 21
-        versionCode 32
-        versionName "1.0.32"
+        versionCode 41
+        versionName "1.5.41"
         applicationId "com.fieldnation.android"
 
     }

@@ -88,6 +88,19 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
+    public static byte[] pGetBundle(long bundleId) {
+        try {
+            JsonObject obj = new JsonObject();
+            obj.put("action", "pGetBundle");
+            obj.put("bundleId", bundleId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+
     // plumbing
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
@@ -107,6 +120,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleAlertList(context, transaction, params, resultData);
                 case "pTaskList":
                     return handleTaskList(context, transaction, params, resultData);
+                case "pGetBundle":
+                    return handleGetBundle(context, transaction, params, resultData);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -195,6 +210,17 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         //store the signature data
         StoredObject.put(context, PSO_SIGNATURE, signatureId, data);
+
+        return Result.FINISH;
+    }
+
+    public Result handleGetBundle(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        long bundleId = params.getLong("bundleId");
+        byte[] data = resultData.getByteArray();
+
+        StoredObject.put(context, PSO_BUNDLE, bundleId, data);
+
+        WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, transaction.isSync());
 
         return Result.FINISH;
     }

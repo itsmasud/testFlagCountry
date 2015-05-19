@@ -54,7 +54,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     private int _displayMode = DISPLAY_SUMMARY;
     private String _name;
-    private String _signatureJson;
+    private String _signatureSvg;
     private Workorder _workorder;
     private long _taskId = -1;
     private boolean _completeWorkorder = false;
@@ -121,7 +121,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                     Bundle savedInstanceState = params[0];
                     int displayMode = _displayMode;
                     String name = _name;
-                    String signatureJson = _signatureJson;
+                    String signatureSvg = _signatureSvg;
                     Workorder workorder = _workorder;
                     Long taskId = _taskId;
                     Boolean completeWorkorder = _completeWorkorder;
@@ -133,7 +133,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                         name = savedInstanceState.getString(STATE_NAME);
 
                     if (savedInstanceState.containsKey(STATE_SIGNATURE))
-                        signatureJson = savedInstanceState.getString(STATE_SIGNATURE);
+                        signatureSvg = savedInstanceState.getString(STATE_SIGNATURE);
 
                     if (savedInstanceState.containsKey(STATE_WORKORDER))
                         workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -143,7 +143,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
                     if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
                         completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
-                    return new Object[]{displayMode, name, signatureJson, workorder, taskId, completeWorkorder};
+                    return new Object[]{displayMode, name, signatureSvg, workorder, taskId, completeWorkorder};
                 }
 
                 @Override
@@ -151,7 +151,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                     super.onPostExecute(objects);
                     _displayMode = (Integer) objects[0];
                     _name = (String) objects[1];
-                    _signatureJson = (String) objects[2];
+                    _signatureSvg = (String) objects[2];
                     _workorder = (Workorder) objects[3];
                     _taskId = (Long) objects[4];
                     _completeWorkorder = (Boolean) objects[5];
@@ -185,8 +185,8 @@ public class SignOffActivity extends AuthFragmentActivity {
         if (_name != null)
             outState.putString(STATE_NAME, _name);
 
-        if (_signatureJson != null)
-            outState.putString(STATE_SIGNATURE, _signatureJson);
+        if (_signatureSvg != null)
+            outState.putString(STATE_SIGNATURE, _signatureSvg);
 
         if (_workorder != null)
             outState.putParcelable(STATE_WORKORDER, _workorder);
@@ -198,10 +198,10 @@ public class SignOffActivity extends AuthFragmentActivity {
     private void sendSignature() {
         // not a task
         if (_taskId == -1) {
-            WorkorderClient.addSignatureJson(this, _workorder.getWorkorderId(), _name, _signatureJson);
+            WorkorderClient.addSignatureSvg(this, _workorder.getWorkorderId(), _name, _signatureSvg);
         } else {
             // is a task
-            WorkorderClient.addSignatureJsonTask(this, _workorder.getWorkorderId(), _taskId, _name, _signatureJson);
+            WorkorderClient.addSignatureSvgTask(this, _workorder.getWorkorderId(), _taskId, _name, _signatureSvg);
         }
 
         if (_completeWorkorder) {
@@ -259,10 +259,10 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
 
         @Override
-        public void onSubmit(String name, String signatureJson) {
+        public void onSubmit(String name, String signatureSvg) {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
-            _signatureJson = signatureJson;
+            _signatureSvg = signatureSvg;
             GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();

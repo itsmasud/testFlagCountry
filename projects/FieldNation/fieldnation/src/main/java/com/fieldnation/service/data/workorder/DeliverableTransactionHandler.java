@@ -104,7 +104,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 
         StoredObject.put(context, PSO_DELIVERABLE, deliverableId, data);
 
-        WorkorderDispatch.deliverable(context, new JsonObject(data), workorderId, deliverableId, transaction.isSync());
+        WorkorderDispatch.getDeliverable(context, new JsonObject(data), workorderId, deliverableId, transaction.isSync());
 
         return Result.FINISH;
     }
@@ -115,7 +115,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 
         StoredObject.put(context, PSO_DELIVERABLE_LIST, workorderId, data);
 
-        WorkorderDispatch.deliverableList(context, new JsonArray(data), workorderId, transaction.isSync());
+        WorkorderDispatch.listDeliverables(context, new JsonArray(data), workorderId, transaction.isSync());
 
         return Result.FINISH;
     }
@@ -127,7 +127,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         if (resultData.isFile()) {
             StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, resultData.getFile());
             resultData.getFile().delete();
-            WorkorderDispatch.deliverableFile(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
+            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
         } else {
             File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
             tempFolder.mkdirs();
@@ -138,7 +138,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 
             StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, tempFile);
             tempFile.delete();
-            WorkorderDispatch.deliverableFile(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
+            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
         }
 
         return Result.FINISH;
