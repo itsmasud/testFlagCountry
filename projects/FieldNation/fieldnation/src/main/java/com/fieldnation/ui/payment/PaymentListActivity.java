@@ -4,7 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.service.data.payment.PaymentDataClient;
+import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.ItemListActivity;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     private static final String TAG = "PaymentListActivity";
 
     // Data
-    private PaymentDataClient _paymentClient;
+    private PaymentClient _paymentClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -21,7 +21,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     @Override
     protected void onResume() {
         super.onResume();
-        _paymentClient = new PaymentDataClient(_payment_listener);
+        _paymentClient = new PaymentClient(_payment_listener);
         _paymentClient.connect(this);
     }
 
@@ -33,7 +33,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
 
     @Override
     public void requestData(int page) {
-        PaymentDataClient.list(this, page);
+        PaymentClient.list(this, page);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
         return v;
     }
 
-    private final PaymentDataClient.Listener _payment_listener = new PaymentDataClient.Listener() {
+    private final PaymentClient.Listener _payment_listener = new PaymentClient.Listener() {
         @Override
         public void onConnected() {
             _paymentClient.subList();

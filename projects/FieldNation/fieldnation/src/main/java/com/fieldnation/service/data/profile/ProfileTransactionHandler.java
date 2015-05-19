@@ -18,9 +18,10 @@ import java.text.ParseException;
 public class ProfileTransactionHandler extends WebTransactionHandler implements ProfileConstants {
     private static final String TAG = "ProfileWebTransactionHandler";
 
-    public static byte[] pGetProfile() {
+    public static byte[] pGet(long profileId) {
         try {
-            JsonObject obj = new JsonObject("action", "pGetProfile");
+            JsonObject obj = new JsonObject("action", "pGet");
+            obj.put("profileId", profileId);
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -28,9 +29,9 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         }
     }
 
-    public static byte[] pGetAllNotifications(int page) {
+    public static byte[] pListNotifications(int page) {
         try {
-            JsonObject obj = new JsonObject("action", "pGetAllNotifications");
+            JsonObject obj = new JsonObject("action", "pListNotifications");
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
@@ -39,9 +40,9 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         }
     }
 
-    public static byte[] pGetAllMessages(int page) {
+    public static byte[] pListMessages(int page) {
         try {
-            JsonObject obj = new JsonObject("action", "pGetAllMessages");
+            JsonObject obj = new JsonObject("action", "pListMessages");
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
@@ -70,12 +71,12 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             String action = params.getString("action");
 
             switch (action) {
-                case "pGetProfile":
-                    return handleGetProfile(context, transaction, resultData);
-                case "pGetAllNotifications":
-                    return handleGetAllNotifications(context, transaction, resultData, params);
-                case "pGetAllMessages":
-                    return handleGetAllMessages(context, transaction, resultData, params);
+                case "pGet":
+                    return handleGet(context, transaction, resultData, params);
+                case "pListNotifications":
+                    return handleListNotifications(context, transaction, resultData, params);
+                case "pListMessages":
+                    return handleListMessages(context, transaction, resultData, params);
                 case "pAction":
                     return handleAction(context, transaction, resultData, params);
             }
@@ -86,6 +87,46 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         return Result.FINISH;
     }
 
+    private Result handleGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "handleGet");
+        // store object
+        byte[] data = resultData.getByteArray();
+        long profileId = params.getLong("profileId");
+
+        // todo parse json and put Profile/id ?
+        ProfileDispatch.get(context, profileId, new JsonObject(data), transaction.isSync());
+
+        StoredObject.put(context, PSO_PROFILE, profileId, data);
+
+        return Result.FINISH;
+    }
+
+    private Result handleListNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
+        int page = params.getInt("page");
+        // store object
+        byte[] pagedata = resultData.getByteArray();
+
+        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, transaction.isSync());
+
+        StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
+
+        return Result.FINISH;
+    }
+
+    private Result handleListMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "PARAM_ACTION_GET_ALL_MESSAGES");
+        int page = params.getInt("page");
+        // store object
+        byte[] pagedata = resultData.getByteArray();
+
+        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, transaction.isSync());
+
+        StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
+
+        return Result.FINISH;
+    }
+
     private Result handleAction(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         Log.v(TAG, "handleAction");
 
@@ -93,45 +134,6 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         String action = params.getString("param");
 
         ProfileDispatch.action(context, profileId, action);
-
-        return Result.FINISH;
-    }
-
-    private Result handleGetProfile(Context context, WebTransaction transaction, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "PARAM_ACTION_GET_MY_PROFILE");
-        // store object
-        byte[] profiledata = resultData.getByteArray();
-
-        // todo parse json and put Profile/id ?
-        ProfileDispatch.myUserInformation(context, new JsonObject(profiledata), transaction.isSync());
-
-        StoredObject.put(context, PSO_PROFILE, PSO_MY_PROFILE_KEY, profiledata);
-
-        return Result.FINISH;
-    }
-
-    private Result handleGetAllNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
-        int page = params.getInt("page");
-        // store object
-        byte[] pagedata = resultData.getByteArray();
-
-        ProfileDispatch.allNotifications(context, new JsonArray(pagedata), page, transaction.isSync());
-
-        StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
-
-        return Result.FINISH;
-    }
-
-    private Result handleGetAllMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "PARAM_ACTION_GET_ALL_MESSAGES");
-        int page = params.getInt("page");
-        // store object
-        byte[] pagedata = resultData.getByteArray();
-
-        ProfileDispatch.allMessages(context, new JsonArray(pagedata), page, transaction.isSync());
-
-        StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
 
         return Result.FINISH;
     }

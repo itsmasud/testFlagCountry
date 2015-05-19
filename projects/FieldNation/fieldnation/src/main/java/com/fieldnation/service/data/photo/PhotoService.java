@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/12/2015.
  */
-public class PhotoDataService extends MSService implements PhotoConstants {
+public class PhotoService extends MSService implements PhotoConstants {
     public static final String TAG = "PhotoDataService";
 
     @Override
@@ -46,11 +46,16 @@ public class PhotoDataService extends MSService implements PhotoConstants {
 
         @Override
         public void processIntent(Intent intent) {
-            processImage(_context, intent);
+            String action = intent.getStringExtra(PARAM_ACTION);
+            switch (action) {
+                case PARAM_ACTION_GET:
+                    get(_context, intent);
+                    break;
+            }
         }
     }
 
-    public void processImage(Context context, Intent intent) {
+    public void get(Context context, Intent intent) {
         if (context == null)
             return;
 
@@ -63,15 +68,13 @@ public class PhotoDataService extends MSService implements PhotoConstants {
         // check cache
         StoredObject obj = StoredObject.get(context, objectName, url);
 
-        // if exists, then send result via broadcast
-        // this code keeps images for ever
         if (obj != null) {
-            PhotoDataDispatch.photo(context, obj.getFile(), url, getCircle);
+            PhotoDispatch.get(context, obj.getFile(), url, getCircle, isSync);
         }
 
         if (obj == null) {
             // doesn't exist, try to grab it.
-            PhotoTransactionBuilder.getPhoto(context, objectName, url, getCircle, isSync);
+            PhotoTransactionBuilder.get(context, objectName, url, getCircle, isSync);
         }
     }
 }

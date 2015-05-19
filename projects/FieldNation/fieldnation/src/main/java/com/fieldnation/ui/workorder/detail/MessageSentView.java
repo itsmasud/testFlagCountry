@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
-import com.fieldnation.service.data.photo.PhotoDataClient;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -32,7 +32,7 @@ public class MessageSentView extends RelativeLayout {
     private TextView _checkIconFont;
 
     // Data
-    private PhotoDataClient _photos;
+    private PhotoClient _photos;
     private Message _message = null;
     private WeakReference<Drawable> _profilePic = null;
 
@@ -60,7 +60,7 @@ public class MessageSentView extends RelativeLayout {
         // _pendingTextView = (TextView) findViewById(R.id.pending_textview);
         _checkIconFont = (TextView) findViewById(R.id.check_iconfont);
 
-        _photos = new PhotoDataClient(_photo_listener);
+        _photos = new PhotoClient(_photo_listener);
         _photos.connect(getContext());
     }
 
@@ -102,21 +102,23 @@ public class MessageSentView extends RelativeLayout {
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _profileImageView.setBackgroundResource(R.drawable.missing);
             String url = _message.getFromUser().getPhotoUrl();
-            if (!misc.isEmptyOrNull(url))
-                _photos.getPhoto(getContext(), url, false);
+            if (!misc.isEmptyOrNull(url)) {
+                PhotoClient.get(getContext(), url, false, false);
+                _photos.subGet(url, false, false);
+            }
         } else if (_profilePic != null && _profilePic.get() != null) {
             _profileImageView.setBackgroundDrawable(_profilePic.get());
         }
     }
 
-    private final PhotoDataClient.Listener _photo_listener = new PhotoDataClient.Listener() {
+    private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
             populateUi();
         }
 
         @Override
-        public void onPhoto(String url, File file, boolean isCircle) {
+        public void onGet(String url, File file, boolean isCircle) {
             Drawable pic = new BitmapDrawable(getContext().getResources(), file.getAbsolutePath());
             _profilePic = new WeakReference<>(pic);
             _profileImageView.setBackgroundDrawable(pic);

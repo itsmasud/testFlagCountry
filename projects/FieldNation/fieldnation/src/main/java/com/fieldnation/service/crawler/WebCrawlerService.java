@@ -19,7 +19,7 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.photo.PhotoDataClient;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -168,69 +168,69 @@ public class WebCrawlerService extends Service {
         @Override
         public void onConnected() {
             Log.v(TAG, "_profileClient_listener.onConnected");
-            _profileClient.subAllMessages(true);
-            _profileClient.subAllNotifications(true);
-            _profileClient.subProfile(true);
+            _profileClient.subListMessages(true);
+            _profileClient.subListNotifications(true);
+            _profileClient.subGet(true);
 
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
-            ProfileClient.getProfile(WebCrawlerService.this, true);
-            ProfileClient.getAllMessages(WebCrawlerService.this, 0, true);
-            ProfileClient.getAllNotifications(WebCrawlerService.this, 0, true);
+            ProfileClient.get(WebCrawlerService.this, 0, true);
+            ProfileClient.listMessages(WebCrawlerService.this, 0, true);
+            ProfileClient.listNotifications(WebCrawlerService.this, 0, true);
         }
 
         @Override
-        public void onProfile(Profile profile) {
+        public void onGet(Profile profile) {
             incrementPendingRequestCounter(-1);
-            Log.v(TAG, "onProfile " + _haveProfile);
+            Log.v(TAG, "onGet " + _haveProfile);
             if (!_haveProfile) {
-                Log.v(TAG, "onProfile");
+                Log.v(TAG, "onGet");
                 if (!_skipProfileImages) {
                     incRequestCounter(2);
-                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
-                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, profile.getPhoto().getThumb(), true, true);
+                    PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
+                    PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getThumb(), true, true);
                 }
                 _haveProfile = true;
             }
         }
 
         @Override
-        public void onAllMessagesPage(List<Message> list, int page) {
-            Log.v(TAG, "onAllMessagesPage");
+        public void onMessageList(List<Message> list, int page) {
+            Log.v(TAG, "onMessageList");
 
             incrementPendingRequestCounter(-1);
 
             if (list == null || list.size() == 0) {
                 return;
             }
-            Log.v(TAG, "onAllMessagesPage(" + list.size() + "," + page + ")");
+            Log.v(TAG, "onMessageList(" + list.size() + "," + page + ")");
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileClient.getAllMessages(WebCrawlerService.this, page + 1, true);
+            ProfileClient.listMessages(WebCrawlerService.this, page + 1, true);
 
             if (!_skipProfileImages) {
                 for (int i = 0; i < list.size(); i++) {
                     Message message = list.get(i);
                     incRequestCounter(2);
-                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
                 }
             }
         }
 
         @Override
-        public void onAllNotificationPage(List<Notification> list, int page) {
-            Log.v(TAG, "onAllNotificationPage");
+        public void onNotificationList(List<Notification> list, int page) {
+            Log.v(TAG, "onNotificationList");
             incrementPendingRequestCounter(-1);
             if (list == null || list.size() == 0) {
                 return;
             }
-            Log.v(TAG, "onAllNotificationPage(" + list.size() + "," + page + ")");
+            Log.v(TAG, "onNotificationList(" + list.size() + "," + page + ")");
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileClient.getAllNotifications(WebCrawlerService.this, page + 1, true);
+            ProfileClient.listNotifications(WebCrawlerService.this, page + 1, true);
         }
     };
 
@@ -303,8 +303,8 @@ public class WebCrawlerService extends Service {
                 for (int i = 0; i < messages.size(); i++) {
                     incRequestCounter(2);
                     com.fieldnation.data.workorder.Message message = messages.get(i);
-                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                    PhotoDataClient.dispatchGetPhoto(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
                 }
             }
         }

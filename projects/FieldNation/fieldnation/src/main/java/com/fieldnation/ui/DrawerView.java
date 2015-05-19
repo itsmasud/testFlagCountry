@@ -23,8 +23,8 @@ import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.crawler.WebCrawlerService;
-import com.fieldnation.service.data.payment.PaymentDataClient;
-import com.fieldnation.service.data.photo.PhotoDataClient;
+import com.fieldnation.service.data.payment.PaymentClient;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -84,8 +84,8 @@ public class DrawerView extends RelativeLayout {
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
 
-    private PaymentDataClient _paymentClient;
-    private PhotoDataClient _photoClient;
+    private PaymentClient _paymentClient;
+    private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
 
     /*-*************************************-*/
@@ -183,13 +183,13 @@ public class DrawerView extends RelativeLayout {
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(getContext());
 
-        _photoClient = new PhotoDataClient(_photo_listener);
+        _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(getContext());
 
-        _paymentClient = new PaymentDataClient(_payment_listener);
+        _paymentClient = new PaymentClient(_payment_listener);
         _paymentClient.connect(getContext());
 
-        PaymentDataClient.list(getContext(), 0);
+        PaymentClient.list(getContext(), 0);
     }
 
     @Override
@@ -209,7 +209,7 @@ public class DrawerView extends RelativeLayout {
             _estimatedLayout.setVisibility(GONE);
         }
 
-        if (_profile.getCanViewPayments()) {
+        if (_profile != null && _profile.getCanViewPayments()) {
             _paymentView.setVisibility(VISIBLE);
             if (_paidPayment != null) {
                 _paidLayout.setVisibility(VISIBLE);
@@ -236,6 +236,7 @@ public class DrawerView extends RelativeLayout {
             _profileNameTextView.setVisibility(VISIBLE);
 
             // TODO add service company name
+            subPhoto();
             addProfilePhoto();
         }
     }
@@ -249,7 +250,7 @@ public class DrawerView extends RelativeLayout {
         if (_profilePic == null || _profilePic.get() == null) {
             _picView.setProfilePic(R.drawable.missing_circle);
             if (!misc.isEmptyOrNull(_profile.getPhoto().getLarge())) {
-                _photoClient.getPhoto(getContext(), _profile.getPhoto().getLarge(), true);
+                PhotoClient.get(getContext(), _profile.getPhoto().getLarge(), true, false);
             }
         } else {
             _picView.setProfilePic(_profilePic.get());
@@ -262,6 +263,19 @@ public class DrawerView extends RelativeLayout {
             ((Activity) context).overridePendingTransition(R.anim.activity_slide_in, 0);
         }
 
+    }
+
+    private void subPhoto() {
+        if (_profile == null)
+            return;
+
+        if (_profile.getPhoto() == null)
+            return;
+
+        if (misc.isEmptyOrNull(_profile.getPhoto().getLarge()))
+            return;
+
+        _photoClient.subGet(_profile.getPhoto().getLarge(), true, false);
     }
 
     /*-*********************************-*/
@@ -419,14 +433,14 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final PhotoDataClient.Listener _photo_listener = new PhotoDataClient.Listener() {
+    private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
-            addProfilePhoto();
+            subPhoto();
         }
 
         @Override
-        public void onPhoto(String url, File file, boolean isCircle) {
+        public void onGet(String url, File file, boolean isCircle) {
             if (file == null || url == null)
                 return;
 
@@ -436,7 +450,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final PaymentDataClient.Listener _payment_listener = new PaymentDataClient.Listener() {
+    private final PaymentClient.Listener _payment_listener = new PaymentClient.Listener() {
         @Override
         public void onConnected() {
             _paymentClient.subList();
@@ -447,7 +461,7 @@ public class DrawerView extends RelativeLayout {
             if (list == null || list.size() == 0) {
                 return;
             }
-            PaymentDataClient.list(getContext(), page + 1);
+            PaymentClient.list(getContext(), page + 1);
 
             for (int i = 0; i < list.size(); i++) {
                 try {

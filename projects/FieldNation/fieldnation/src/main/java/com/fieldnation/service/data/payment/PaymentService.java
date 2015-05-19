@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/27/2015.
  */
-public class PaymentDataService extends MSService implements PaymentConstants {
+public class PaymentService extends MSService implements PaymentConstants {
     private static final String TAG = "PaymentDataService";
 
     @Override
@@ -62,7 +62,7 @@ public class PaymentDataService extends MSService implements PaymentConstants {
         StoredObject obj = StoredObject.get(context, PSO_PAYMENT_LIST, page + "");
         if (obj != null) {
             try {
-                PaymentDataDispatch.list(context, page, new JsonArray(obj.getData()), isSync);
+                PaymentDispatch.list(context, page, new JsonArray(obj.getData()), isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -80,7 +80,7 @@ public class PaymentDataService extends MSService implements PaymentConstants {
         StoredObject obj = StoredObject.get(context, PSO_PAYMENT, paymentId);
         if (obj != null) {
             try {
-                PaymentDataDispatch.get(context, paymentId, new JsonObject(obj.getData()), isSync);
+                PaymentDispatch.get(context, paymentId, new JsonObject(obj.getData()), isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

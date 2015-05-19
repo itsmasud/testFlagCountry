@@ -12,7 +12,7 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
-import com.fieldnation.service.data.photo.PhotoDataClient;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
@@ -26,7 +26,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
     // Data
     private ProfileClient _profiles;
-    private PhotoDataClient _photos;
+    private PhotoClient _photos;
     private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
 
     /*-*************************************-*/
@@ -38,7 +38,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
         super.onResume();
         _profiles = new ProfileClient(_profile_listener);
         _profiles.connect(this);
-        _photos = new PhotoDataClient(_photoClient_listener);
+        _photos = new PhotoClient(_photoClient_listener);
         _photos.connect(this);
     }
 
@@ -51,7 +51,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
 
     @Override
     public void requestData(int page) {
-        ProfileClient.getAllMessages(this, page);
+        ProfileClient.listMessages(this, page);
     }
 
     @Override
@@ -88,25 +88,26 @@ public class MessageListActivity extends ItemListActivity<Message> {
             if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
                 return _picCache.get(url).get();
             } else {
-                _photos.getPhoto(MessageListActivity.this, url, circle);
+                _photos.subGet(url, circle, false);
+                PhotoClient.get(MessageListActivity.this, url, circle, false);
             }
             return null;
         }
     };
 
-    private final PhotoDataClient.Listener _photoClient_listener = new PhotoDataClient.Listener() {
+
+    private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
         }
 
         @Override
-        public void onPhoto(String url, File file, boolean isCircle) {
+        public void onGet(String url, File file, boolean isCircle) {
             if (file == null || url == null)
                 return;
 
             Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
             _picCache.put(url, new WeakReference<>(pic));
-//            notifyDataSetChanged();
         }
     };
 
@@ -122,11 +123,11 @@ public class MessageListActivity extends ItemListActivity<Message> {
     private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
-            _profiles.subAllMessages();
+            _profiles.subListMessages();
         }
 
         @Override
-        public void onAllMessagesPage(List<Message> list, int page) {
+        public void onMessageList(List<Message> list, int page) {
             Log.v(TAG, "onAllMessagesPage");
             addPage(page, list);
         }

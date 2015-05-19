@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.service.data.payment.PaymentDataClient;
+import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -34,7 +34,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
     // Data
     private long _paymentId = -1;
-    private PaymentDataClient _paymentClient;
+    private PaymentClient _paymentClient;
     private Payment _paid;
     private PaymentDetailAdapter _adapter;
 
@@ -76,7 +76,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _paymentClient = new PaymentDataClient(_paymentClient_listener);
+        _paymentClient = new PaymentClient(_paymentClient_listener);
         _paymentClient.connect(this);
     }
 
@@ -87,7 +87,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     }
 
     private void requestData() {
-        PaymentDataClient.get(this, _paymentId);
+        PaymentClient.get(this, _paymentId);
     }
 
     private void populateUi() {
@@ -130,7 +130,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private PaymentDataClient.Listener _paymentClient_listener = new PaymentDataClient.Listener() {
+    private PaymentClient.Listener _paymentClient_listener = new PaymentClient.Listener() {
         @Override
         public void onConnected() {
             _paymentClient.subGet(-1, false);

@@ -34,77 +34,80 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     /*-*********************************-*/
     /*-             Commands            -*/
     /*-*********************************-*/
-    public static void getProfile(Context context) {
-        getProfile(context, false);
+    public static void get(Context context) {
+        get(context, 0, false);
     }
 
-    public static void getProfile(Context context, boolean isSync) {
+    public static void get(Context context, long profileId, boolean isSync) {
         Intent intent = new Intent(context, ProfileService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_MY_PROFILE);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
+
+        intent.putExtra(PARAM_PROFILE_ID, profileId);
+
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public boolean subProfile() {
-        return subProfile(false);
+    public boolean subGet() {
+        return subGet(false);
     }
 
-    public boolean subProfile(boolean isSync) {
-        String topicId = TOPIC_ID_HAVE_PROFILE;
+    public boolean subGet(boolean isSync) {
+        String topicId = TOPIC_ID_GET;
 
         if (isSync) {
-            topicId += "-SYNC";
+            topicId += "_SYNC";
         }
 
         return register(topicId, TAG);
     }
 
-    public static void getAllNotifications(Context context, int page) {
-        getAllNotifications(context, page, false);
+    public static void listNotifications(Context context, int page) {
+        listNotifications(context, page, false);
     }
 
-    public static void getAllNotifications(Context context, int page, boolean isSync) {
+    public static void listNotifications(Context context, int page, boolean isSync) {
         Intent intent = new Intent(context, ProfileService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public boolean subAllNotifications() {
-        return subAllNotifications(false);
+    public boolean subListNotifications() {
+        return subListNotifications(false);
     }
 
-    public boolean subAllNotifications(boolean isSync) {
-        String topicId = TOPIC_ID_ALL_NOTIFICATION_LIST;
+    public boolean subListNotifications(boolean isSync) {
+        String topicId = PARAM_ACTION_LIST_NOTIFICATIONS;
 
         if (isSync) {
-            topicId += "-SYNC";
+            topicId += "_SYNC";
         }
         return register(topicId, TAG);
     }
 
-    public static void getAllMessages(Context context, int page) {
-        getAllMessages(context, page, false);
+    public static void listMessages(Context context, int page) {
+        listMessages(context, page, false);
     }
 
-    public static void getAllMessages(Context context, int page, boolean isSync) {
+    public static void listMessages(Context context, int page, boolean isSync) {
         Intent intent = new Intent(context, ProfileService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public boolean subAllMessages() {
-        return subAllMessages(false);
+    public boolean subListMessages() {
+        return subListMessages(false);
     }
 
-    public boolean subAllMessages(boolean isSync) {
-        String topicId = TOPIC_ID_ALL_MESSAGES_LIST;
+    public boolean subListMessages(boolean isSync) {
+        String topicId = PARAM_ACTION_LIST_MESSAGES;
 
         if (isSync) {
-            topicId += "-SYNC";
+            topicId += "_SYNC";
         }
 
         return register(topicId, TAG);
@@ -145,14 +148,12 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                 return;
             }
             Bundle bundle = (Bundle) payload;
-            if (topicId.startsWith(TOPIC_ID_HAVE_PROFILE)) {
-                preProfile(bundle);
-            } else if (topicId.startsWith(TOPIC_ID_ALL_NOTIFICATION_LIST)) {
-                preAllNotificationPage(bundle);
-            } else if (topicId.startsWith(TOPIC_ID_ALL_MESSAGES_LIST)) {
-                preAllMessagesPage(bundle);
-
-                // WARN, this must be the last one
+            if (topicId.startsWith(TOPIC_ID_GET)) {
+                preGet(bundle);
+            } else if (topicId.startsWith(TOPIC_ID_NOTIFICATION_LIST)) {
+                preNotificationList(bundle);
+            } else if (topicId.startsWith(TOPIC_ID_MESSAGE_LIST)) {
+                preMessageList(bundle);
             } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
                 preOnAction(bundle);
             }
@@ -167,7 +168,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         public void onAction(long profileId, String action) {
         }
 
-        private void preProfile(Bundle payload) {
+        private void preGet(Bundle payload) {
             new AsyncTaskEx<Object, Object, Profile>() {
                 @Override
                 protected Profile doInBackground(Object... params) {
@@ -182,15 +183,15 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
                 @Override
                 protected void onPostExecute(Profile o) {
-                    onProfile(o);
+                    onGet(o);
                 }
             }.executeEx(payload);
         }
 
-        public void onProfile(Profile profile) {
+        public void onGet(Profile profile) {
         }
 
-        private void preAllNotificationPage(Bundle payload) {
+        private void preNotificationList(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, List<Notification>>() {
                 private int page;
 
@@ -214,15 +215,15 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
                 @Override
                 protected void onPostExecute(List<Notification> notifications) {
-                    onAllNotificationPage(notifications, page);
+                    onNotificationList(notifications, page);
                 }
             }.executeEx(payload);
         }
 
-        public void onAllNotificationPage(List<Notification> list, int page) {
+        public void onNotificationList(List<Notification> list, int page) {
         }
 
-        private void preAllMessagesPage(Bundle payload) {
+        private void preMessageList(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, List<Message>>() {
                 private int page;
 
@@ -246,12 +247,12 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
                 @Override
                 protected void onPostExecute(List<Message> messages) {
-                    onAllMessagesPage(messages, page);
+                    onMessageList(messages, page);
                 }
             }.executeEx(payload);
         }
 
-        public void onAllMessagesPage(List<Message> list, int page) {
+        public void onMessageList(List<Message> list, int page) {
         }
     }
 }

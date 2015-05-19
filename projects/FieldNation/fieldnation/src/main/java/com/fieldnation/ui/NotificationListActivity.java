@@ -38,7 +38,7 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     @Override
     public void requestData(int page) {
         Log.v(TAG, "requestData " + page);
-        ProfileClient.getAllNotifications(this, page);
+        ProfileClient.listNotifications(this, page);
     }
 
     @Override
@@ -70,11 +70,11 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
-            _profiles.subAllNotifications();
+            _profiles.subListNotifications();
         }
 
         @Override
-        public void onAllNotificationPage(List<Notification> list, int page) {
+        public void onNotificationList(List<Notification> list, int page) {
             Log.v(TAG, "onAllNotificationPage " + page);
             addPage(page, list);
         }

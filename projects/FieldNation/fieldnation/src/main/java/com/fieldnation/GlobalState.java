@@ -153,7 +153,7 @@ public class GlobalState extends Application {
 
         @Override
         public void onProfileInvalid() {
-            ProfileClient.getProfile(GlobalState.this);
+            ProfileClient.get(GlobalState.this);
         }
 
         @Override
@@ -180,12 +180,12 @@ public class GlobalState extends Application {
         @Override
         public void onConnected() {
             Log.v(TAG, "_profile_listener.onConnected");
-            _profileClient.subProfile();
-            ProfileClient.getProfile(GlobalState.this);
+            _profileClient.subGet();
+            ProfileClient.get(GlobalState.this);
         }
 
         @Override
-        public void onProfile(Profile profile) {
+        public void onGet(Profile profile) {
             Log.v(TAG, "onProfile");
             if (profile != null) {
                 _profile = profile;

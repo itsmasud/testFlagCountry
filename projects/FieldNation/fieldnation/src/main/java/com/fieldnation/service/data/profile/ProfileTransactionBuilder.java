@@ -12,32 +12,38 @@ import com.fieldnation.utils.misc;
  */
 public class ProfileTransactionBuilder implements ProfileConstants {
 
-    public static void getProfile(Context context, boolean isSync) {
+    public static void get(Context context, long profileId, boolean isSync) {
         try {
+            HttpJsonBuilder http = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET");
+
+            if (profileId > 0) {
+                http.path("/api/rest/v1/profile/" + profileId);
+            } else {
+                http.path("/api/rest/v1/profile");
+            }
+
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
-                    .handlerParams(ProfileTransactionHandler.pGetProfile())
+                    .handlerParams(ProfileTransactionHandler.pGet(profileId))
                     .key((isSync ? "Sync/" : "") + "ProfileGet")
                     .isSyncCall(isSync)
                     .useAuth(true)
-                    .request(
-                            new HttpJsonBuilder()
-                                    .protocol("https")
-                                    .method("GET")
-                                    .path("/api/rest/v1/profile")
-                    ).send();
+                    .request(http)
+                    .send();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void getAllNotifications(Context context, int page, boolean isSync) {
+    public static void listNotifications(Context context, int page, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
-                    .handlerParams(ProfileTransactionHandler.pGetAllNotifications(page))
+                    .handlerParams(ProfileTransactionHandler.pListNotifications(page))
                     .key((isSync ? "Sync/" : "") + "NotificationPage" + page)
                     .useAuth(true)
                     .isSyncCall(isSync)
@@ -53,12 +59,12 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         }
     }
 
-    public static void getAllMessages(Context context, int page, boolean isSync) {
+    public static void listMessages(Context context, int page, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
-                    .handlerParams(ProfileTransactionHandler.pGetAllMessages(page))
+                    .handlerParams(ProfileTransactionHandler.pListMessages(page))
                     .key((isSync ? "Sync/" : "") + "MessagePage" + page)
                     .useAuth(true)
                     .isSyncCall(isSync)

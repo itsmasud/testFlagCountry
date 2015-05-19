@@ -13,41 +13,64 @@ import com.fieldnation.service.topics.TopicService;
  */
 public class ProfileDispatch implements ProfileConstants {
 
-    public static void myUserInformation(Context context, JsonObject data, boolean isSync) {
+    public static void get(Context context, long profileId, JsonObject data, boolean isSync) {
         Bundle bundle = new Bundle();
+        bundle.putLong(PARAM_PROFILE_ID, profileId);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, TOPIC_ID_HAVE_PROFILE
-                + (isSync ? "-SYNC" : ""), bundle, Sticky.FOREVER);
+
+        String topicId = TOPIC_ID_GET;
+
+        if (isSync) {
+            topicId += "_SYNC";
+        }
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.FOREVER);
     }
 
-    public static void allNotifications(Context context, JsonArray data, int page, boolean isSync) {
+    public static void listNotifications(Context context, JsonArray data, int page, boolean isSync) {
         Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putInt(PARAM_PAGE, page);
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_NOTIFICATIONS);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, TOPIC_ID_ALL_NOTIFICATION_LIST
-                + (isSync ? "-SYNC" : ""), bundle, Sticky.TEMP);
 
+        String topicId = PARAM_ACTION_LIST_NOTIFICATIONS;
+
+        if (isSync) {
+            topicId += "_SYNC";
+        }
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void allMessages(Context context, JsonArray data, int page, boolean isSync) {
+    public static void listMessages(Context context, JsonArray data, int page, boolean isSync) {
         Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putInt(PARAM_PAGE, page);
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_ALL_MESSAGES);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
-        TopicService.dispatchEvent(context, TOPIC_ID_ALL_MESSAGES_LIST
-                + (isSync ? "-SYNC" : ""), bundle, Sticky.TEMP);
+
+        String topicId = PARAM_ACTION_LIST_MESSAGES;
+
+        if (isSync) {
+            topicId += "_SYNC";
+        }
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
     public static void action(Context context, long profileId, String action) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, action);
         bundle.putLong(PARAM_PROFILE_ID, profileId);
-        TopicService.dispatchEvent(context,
-                TOPIC_ID_ACTION_COMPLETE + "/" + profileId,
-                bundle, Sticky.TEMP);
+
+        String topicId = TOPIC_ID_ACTION_COMPLETE;
+
+        if (profileId > 0) {
+            topicId += "/" + profileId;
+        }
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 }

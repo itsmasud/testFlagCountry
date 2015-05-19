@@ -14,6 +14,8 @@ import android.os.Parcelable;
 import com.fieldnation.GlobalState;
 
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -25,6 +27,7 @@ public class TopicClient implements TopicConstants {
     private Messenger _rcvService = new Messenger(new IncomeHandler(this));
     private Messenger _sndService = null;
     private Listener _listener;
+    private final Set<String> _subscribed = new HashSet<>();
 
 
     /*-*****************************-*/
@@ -42,6 +45,7 @@ public class TopicClient implements TopicConstants {
     public void disconnect(Context context, String userTag) {
         delete(userTag);
         context.unbindService(_serviceConnection);
+        _subscribed.clear();
     }
 
     public boolean isConnected() {
@@ -55,6 +59,9 @@ public class TopicClient implements TopicConstants {
         if (!isConnected())
             return false;
 
+        if (_subscribed.contains(topicId))
+            return true;
+
 //        Log.v(TAG, "register(" + topicId + ", " + userTag + ")");
         try {
             Bundle bundle = new Bundle();
@@ -66,6 +73,8 @@ public class TopicClient implements TopicConstants {
             msg.setData(bundle);
             msg.replyTo = _rcvService;
             _sndService.send(msg);
+
+            _subscribed.add(topicId);
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -85,6 +94,8 @@ public class TopicClient implements TopicConstants {
             msg.setData(bundle);
             msg.replyTo = _rcvService;
             _sndService.send(msg);
+
+            _subscribed.remove(topicId);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -102,6 +113,8 @@ public class TopicClient implements TopicConstants {
             msg.setData(bundle);
             msg.replyTo = _rcvService;
             _sndService.send(msg);
+
+            _subscribed.clear();
         } catch (Exception ex) {
 //            ex.printStackTrace();
         }
@@ -201,6 +214,7 @@ public class TopicClient implements TopicConstants {
             switch (msg.what) {
                 case WHAT_REGISTER_LISTENER:
                     client._listener.onRegistered(msg.getData().getString(PARAM_TOPIC_ID));
+                    client._subscribed.add(msg.getData().getString(PARAM_TOPIC_ID));
                     break;
                 case WHAT_DISPATCH_EVENT: {
                     Bundle payload = msg.getData();

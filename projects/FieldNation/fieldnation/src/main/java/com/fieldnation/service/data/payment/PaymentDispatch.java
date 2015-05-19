@@ -11,7 +11,7 @@ import com.fieldnation.service.topics.TopicService;
 /**
  * Created by Michael Carver on 4/21/2015.
  */
-public class PaymentDataDispatch implements PaymentConstants {
+public class PaymentDispatch implements PaymentConstants {
 
     public static void list(Context context, int page, JsonArray data, boolean isSync) {
         Bundle bundle = new Bundle();

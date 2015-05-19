@@ -11,13 +11,13 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
  */
 public class PhotoTransactionBuilder implements PhotoConstants {
 
-    public static void getPhoto(Context context, String objectName, String url, boolean getCircle, boolean isSync) {
+    public static void get(Context context, String objectName, String url, boolean getCircle, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .key((isSync ? "Sync/" : "") + objectName + ":" + url)
                     .priority(Priority.LOW)
                     .handler(PhotoTransactionHandler.class)
-                    .handlerParams(PhotoTransactionHandler.generateParams(url, getCircle))
+                    .handlerParams(PhotoTransactionHandler.pGet(url, getCircle))
                     .isSyncCall(isSync)
                     .request(
                             new HttpJsonBuilder()

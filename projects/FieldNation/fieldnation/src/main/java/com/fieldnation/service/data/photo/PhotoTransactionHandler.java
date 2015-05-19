@@ -22,11 +22,11 @@ import java.io.FileOutputStream;
 public class PhotoTransactionHandler extends WebTransactionHandler implements PhotoConstants {
     private static final String TAG = "PhotoTransactionHandler";
 
-    public static byte[] generateParams(String url, boolean getCircle) {
+    public static byte[] pGet(String url, boolean getCircle) {
         try {
-            JsonObject json = new JsonObject();
-            json.put(PARAM_URL, url);
-            json.put(PARAM_CIRCLE, getCircle);
+            JsonObject json = new JsonObject("action", "pGet");
+            json.put("url", url);
+            json.put("circle", getCircle);
             return json.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -40,8 +40,8 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
         Log.v(TAG, "handleResult");
         try {
             JsonObject json = new JsonObject(transaction.getHandlerParams());
-            boolean getCircle = json.getBoolean(PARAM_CIRCLE);
-            String url = json.getString(PARAM_URL);
+            boolean getCircle = json.getBoolean("circle");
+            String url = json.getString("url");
             String imageObjectName = "PhotoCache";
             String circleObjectName = "PhotoCacheCircle";
 
@@ -82,9 +82,9 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             // done!
             if (getCircle) {
-                PhotoDataDispatch.photo(context, circleObj.getFile(), url, true);
+                PhotoDispatch.get(context, circleObj.getFile(), url, true, transaction.isSync());
             } else {
-                PhotoDataDispatch.photo(context, imageObj.getFile(), url, false);
+                PhotoDispatch.get(context, imageObj.getFile(), url, false, transaction.isSync());
             }
             Log.v(TAG, "handleResult");
             return Result.FINISH;

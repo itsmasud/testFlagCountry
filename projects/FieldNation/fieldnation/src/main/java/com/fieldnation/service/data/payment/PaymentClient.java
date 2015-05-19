@@ -18,10 +18,10 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/27/2015.
  */
-public class PaymentDataClient extends TopicClient implements PaymentConstants {
+public class PaymentClient extends TopicClient implements PaymentConstants {
     private final String TAG = UniqueTag.makeTag("PaymentDataClient");
 
-    public PaymentDataClient(Listener listener) {
+    public PaymentClient(Listener listener) {
         super(listener);
     }
 
@@ -39,7 +39,7 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     }
 
     public static void list(Context context, int page, boolean isSync) {
-        Intent intent = new Intent(context, PaymentDataService.class);
+        Intent intent = new Intent(context, PaymentService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
@@ -66,7 +66,7 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     }
 
     public static void get(Context context, long paymentId, boolean isSync) {
-        Intent intent = new Intent(context, PaymentDataService.class);
+        Intent intent = new Intent(context, PaymentService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
         intent.putExtra(PARAM_ID, paymentId);
         intent.putExtra(PARAM_IS_SYNC, isSync);

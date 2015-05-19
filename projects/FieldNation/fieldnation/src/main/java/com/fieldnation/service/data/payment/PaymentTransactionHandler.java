@@ -65,7 +65,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(context, PSO_PAYMENT_LIST, page, data);
 
-        PaymentDataDispatch.list(context, page, new JsonArray(data), transaction.isSync());
+        PaymentDispatch.list(context, page, new JsonArray(data), transaction.isSync());
         return Result.FINISH;
     }
 
@@ -77,7 +77,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(context, PSO_PAYMENT, paymentId, data);
 
-        PaymentDataDispatch.get(context, paymentId, new JsonObject(data), transaction.isSync());
+        PaymentDispatch.get(context, paymentId, new JsonObject(data), transaction.isSync());
         return Result.FINISH;
     }
 }

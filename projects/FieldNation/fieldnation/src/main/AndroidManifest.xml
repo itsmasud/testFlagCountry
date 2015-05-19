@@ -205,7 +205,7 @@
             android:exported="false"
             android:process=":backside" />
         <service
-            android:name=".service.data.photo.PhotoDataService"
+            android:name=".service.data.photo.PhotoService"
             android:exported="false"
             android:process=":backside" />
         <service
@@ -217,7 +217,7 @@
             android:exported="false"
             android:process=":backside" />
         <service
-            android:name=".service.data.payment.PaymentDataService"
+            android:name=".service.data.payment.PaymentService"
             android:exported="false"
             android:process=":backside" />
         <service

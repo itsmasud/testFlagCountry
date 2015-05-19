@@ -50,30 +50,31 @@ public class ProfileService extends MSService implements ProfileConstants {
             if (_context != null) {
                 String action = intent.getStringExtra(PARAM_ACTION);
                 switch (action) {
-                    case PARAM_ACTION_GET_MY_PROFILE:
-                        getMyUserInformation(_context, intent);
+                    case PARAM_ACTION_GET:
+                        get(_context, intent);
                         break;
-                    case PARAM_ACTION_GET_ALL_NOTIFICATIONS:
-                        getAllNotifications(_context, intent);
+                    case PARAM_ACTION_LIST_NOTIFICATIONS:
+                        listNotifications(_context, intent);
                         break;
-                    case PARAM_ACTION_GET_ALL_MESSAGES:
-                        getAllMessages(_context, intent);
+                    case PARAM_ACTION_LIST_MESSAGES:
+                        listMessages(_context, intent);
                         break;
                 }
             }
         }
     }
 
-    private static void getMyUserInformation(Context context, Intent intent) {
-        Log.v(TAG, "getMyUserInformation");
+    private static void get(Context context, Intent intent) {
+        Log.v(TAG, "get");
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        long profileId = intent.getLongExtra(PARAM_PROFILE_ID, 0);
 
         // get stored object
-        StoredObject obj = StoredObject.get(context, PSO_PROFILE, PSO_MY_PROFILE_KEY);
+        StoredObject obj = StoredObject.get(context, PSO_PROFILE, profileId);
         // if exists, then pass it back
         if (obj != null) {
             try {
-                ProfileDispatch.myUserInformation(context, new JsonObject(obj.getData()), isSync);
+                ProfileDispatch.get(context, profileId, new JsonObject(obj.getData()), isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -81,45 +82,45 @@ public class ProfileService extends MSService implements ProfileConstants {
 
         if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             // send request (we always ask for an update)
-            ProfileTransactionBuilder.getProfile(context, false);
+            ProfileTransactionBuilder.get(context, profileId, false);
         }
     }
 
-    private void getAllNotifications(Context context, Intent intent) {
-        Log.v(TAG, "getAllNotifications");
+    private void listNotifications(Context context, Intent intent) {
+        Log.v(TAG, "listNotifications");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         StoredObject obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
         if (obj != null) {
             try {
-                ProfileDispatch.allNotifications(context, new JsonArray(obj.getData()), page, isSync);
+                ProfileDispatch.listNotifications(context, new JsonArray(obj.getData()), page, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
-            ProfileTransactionBuilder.getAllNotifications(context, page, isSync);
+            ProfileTransactionBuilder.listNotifications(context, page, isSync);
         }
     }
 
-    private void getAllMessages(Context context, Intent intent) {
-        Log.v(TAG, "getAllMessages");
+    private void listMessages(Context context, Intent intent) {
+        Log.v(TAG, "listMessages");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page);
         if (obj != null) {
             try {
-                ProfileDispatch.allMessages(context, new JsonArray(obj.getData()), page, isSync);
+                ProfileDispatch.listMessages(context, new JsonArray(obj.getData()), page, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
-            ProfileTransactionBuilder.getAllMessages(context, page, isSync);
+            ProfileTransactionBuilder.listMessages(context, page, isSync);
         }
     }
 
