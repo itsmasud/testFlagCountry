@@ -47,7 +47,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putString(PARAM_ACTION, action);
         bundle.putLong(PARAM_PROFILE_ID, profileId);
         TopicService.dispatchEvent(context,
-                PARAM_ACTION + "/" + profileId,
+                TOPIC_ID_ACTION_COMPLETE + "/" + profileId,
                 bundle, Sticky.TEMP);
     }
 }

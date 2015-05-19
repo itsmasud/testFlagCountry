@@ -127,9 +127,9 @@ public class CustomField implements Parcelable {
         NUMBER("numeric"),
         PHONE("phone");
 
-        private String _value;
+        private final String _value;
 
-        private FieldType(String value) {
+        FieldType(String value) {
             _value = value;
         }
 
@@ -140,9 +140,9 @@ public class CustomField implements Parcelable {
                 return TEXT;
             }
 
-            for (int i = 0; i < vs.length; i++) {
-                if (type.equals(vs[i]._value))
-                    return vs[i];
+            for (FieldType v : vs) {
+                if (type.equals(v._value))
+                    return v;
             }
 
             Log.w(TAG, "invalid FieldType of " + type + " found!!!");

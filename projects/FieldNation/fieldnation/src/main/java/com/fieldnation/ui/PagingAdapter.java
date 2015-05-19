@@ -17,8 +17,8 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private static final String TAG = "PagingAdapter";
 
     private boolean _noMorePages = false;
-    private Hashtable<Integer, List<T>> _pages = new Hashtable<Integer, List<T>>();
-    private Set<Integer> _loadingPages = new HashSet<Integer>();
+    private Hashtable<Integer, List<T>> _pages = new Hashtable<>();
+    private Set<Integer> _loadingPages = new HashSet<>();
     private int _size;
     private Listener _listener;
 

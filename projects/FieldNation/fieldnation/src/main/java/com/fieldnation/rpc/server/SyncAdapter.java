@@ -11,17 +11,17 @@ import com.fieldnation.Log;
 
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-	private static final String TAG = "rpc.server.SyncAdapter";
+    private static final String TAG = "SyncAdapter";
 
-	public SyncAdapter(Context context, boolean autoInitialize) {
-		super(context, autoInitialize);
-	}
+    public SyncAdapter(Context context, boolean autoInitialize) {
+        super(context, autoInitialize);
+    }
 
-	@Override
-	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider,
-			SyncResult syncResult) {
-		// TODO Method Stub: onPerformSync()
-		Log.v(TAG, "Method Stub: onPerformSync()");
-	}
+    @Override
+    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider,
+                              SyncResult syncResult) {
+        // TODO Method Stub: onPerformSync()
+        Log.v(TAG, "Method Stub: onPerformSync()");
+    }
 
 }

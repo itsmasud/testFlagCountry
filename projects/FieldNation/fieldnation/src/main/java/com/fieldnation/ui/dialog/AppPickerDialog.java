@@ -30,8 +30,8 @@ public class AppPickerDialog extends DialogFragmentBase {
     private ListView _items;
 
     // Data
-    private List<AppPickerPackage> _activityList = new LinkedList<AppPickerPackage>();
-    private Set<String> _packages = new HashSet<String>();
+    private final List<AppPickerPackage> _activityList = new LinkedList<>();
+    private final Set<String> _packages = new HashSet<>();
     private Listener _listener;
 
     /*-*****************************-*/

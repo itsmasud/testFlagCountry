@@ -14,7 +14,7 @@ import java.io.File;
  * Created by Michael Carver on 3/12/2015.
  */
 public class PhotoDataClient extends TopicClient implements PhotoConstants {
-    private String TAG = UniqueTag.makeTag("PhotoDataClient");
+    private final String TAG = UniqueTag.makeTag("PhotoDataClient");
 
     public PhotoDataClient(Listener listener) {
         super(listener);

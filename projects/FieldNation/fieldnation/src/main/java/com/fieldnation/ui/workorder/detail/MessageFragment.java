@@ -31,7 +31,7 @@ public class MessageFragment extends WorkorderFragment {
     // Data
     private Workorder _workorder;
     private WorkorderClient _workorderClient;
-    private List<Message> _messages = new LinkedList<Message>();
+    private List<Message> _messages = new LinkedList<>();
     private MessagesAdapter _adapter;
     private boolean _isSubbed = false;
 

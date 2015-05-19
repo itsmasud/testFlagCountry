@@ -656,7 +656,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
                     workorderId = payload.getLong(PARAM_ID);
                     JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
-                    List<Message> list = new LinkedList<Message>();
+                    List<Message> list = new LinkedList<>();
                     for (int i = 0; i < ja.size(); i++) {
                         list.add(Message.fromJson(ja.getJsonObject(i)));
                     }

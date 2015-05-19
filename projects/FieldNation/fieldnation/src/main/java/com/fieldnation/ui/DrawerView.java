@@ -189,7 +189,7 @@ public class DrawerView extends RelativeLayout {
         _paymentClient = new PaymentDataClient(_payment_listener);
         _paymentClient.connect(getContext());
 
-        PaymentDataClient.requestPage(getContext(), 0);
+        PaymentDataClient.list(getContext(), 0);
     }
 
     @Override
@@ -439,15 +439,15 @@ public class DrawerView extends RelativeLayout {
     private final PaymentDataClient.Listener _payment_listener = new PaymentDataClient.Listener() {
         @Override
         public void onConnected() {
-            _paymentClient.registerPage();
+            _paymentClient.subList();
         }
 
         @Override
-        public void onGetAll(List<Payment> list, int page) {
+        public void onList(List<Payment> list, int page) {
             if (list == null || list.size() == 0) {
                 return;
             }
-            PaymentDataClient.requestPage(getContext(), page + 1);
+            PaymentDataClient.list(getContext(), page + 1);
 
             for (int i = 0; i < list.size(); i++) {
                 try {

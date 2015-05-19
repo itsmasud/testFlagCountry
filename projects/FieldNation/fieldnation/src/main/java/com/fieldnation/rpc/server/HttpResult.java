@@ -47,7 +47,7 @@ public class HttpResult {
 
         _baResults = misc.readAllFromStreamUntil(in, 1024, -1, 102400, 1000);
 
-        if (_baResults.length >= 102400) {
+        if (_baResults != null && _baResults.length >= 102400) {
             // temp file
             File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
             tempFolder.mkdirs();

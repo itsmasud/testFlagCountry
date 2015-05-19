@@ -95,9 +95,9 @@ public class ExpenseView extends LinearLayout {
         // TODO need to map the ID to a real string
         _categoryTextView.setVisibility(View.GONE);
         if (_categories != null && _expense.getCategoryId() != null) {
-            for (int i = 0; i < _categories.length; i++) {
-                if (_categories[i].getId() == _expense.getCategoryId()) {
-                    _categoryTextView.setText(_categories[i].getName());
+            for (ExpenseCategory _category : _categories) {
+                if (_category.getId() == _expense.getCategoryId()) {
+                    _categoryTextView.setText(_category.getName());
                     _categoryTextView.setVisibility(View.VISIBLE);
                     break;
                 }

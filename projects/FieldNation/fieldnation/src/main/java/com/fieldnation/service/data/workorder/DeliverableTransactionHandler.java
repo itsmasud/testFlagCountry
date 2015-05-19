@@ -72,14 +72,15 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
-            if (action.equals("pChange")) {
-                return handleChange(context, transaction, resultData, params);
-            } else if (action.equals("pGet")) {
-                return handleGet(context, transaction, resultData, params);
-            } else if (action.equals("pDownload")) {
-                return handleDownload(context, transaction, resultData, params);
-            } else if (action.equals("pList")) {
-                return handleList(context, transaction, resultData, params);
+            switch (action) {
+                case "pChange":
+                    return handleChange(context, transaction, resultData, params);
+                case "pGet":
+                    return handleGet(context, transaction, resultData, params);
+                case "pDownload":
+                    return handleDownload(context, transaction, resultData, params);
+                case "pList":
+                    return handleList(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

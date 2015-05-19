@@ -16,10 +16,10 @@ import java.text.ParseException;
  */
 public class PaymentTransactionHandler extends WebTransactionHandler implements PaymentConstants {
 
-    public static byte[] pGetAll(int page) {
+    public static byte[] pList(int page) {
         try {
-            JsonObject obj = new JsonObject("page", page);
-            obj.put("action", "getall");
+            JsonObject obj = new JsonObject("action", "pList");
+            obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -27,10 +27,10 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         return null;
     }
 
-    public static byte[] pPayment(long paymentId) {
+    public static byte[] pGet(long paymentId) {
         try {
-            JsonObject obj = new JsonObject("paymentId", paymentId);
-            obj.put("action", "get");
+            JsonObject obj = new JsonObject("action", "pGet");
+            obj.put("paymentId", paymentId);
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -43,10 +43,12 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         try {
             JsonObject obj = new JsonObject(transaction.getHandlerParams());
             String action = obj.getString("action");
-            if (action.equals("getall")) {
-                return handleGetAll(context, transaction, resultData, obj);
-            } else if (action.equals("get")) {
-                return handleGet(context, transaction, resultData, obj);
+
+            switch (action) {
+                case "pList":
+                    return handleList(context, transaction, resultData, obj);
+                case "pGet":
+                    return handleGet(context, transaction, resultData, obj);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -56,14 +58,14 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
     }
 
 
-    private Result handleGetAll(Context context, WebTransaction transaction, HttpResult resultData,
-                                JsonObject params) throws ParseException {
+    private Result handleList(Context context, WebTransaction transaction, HttpResult resultData,
+                              JsonObject params) throws ParseException {
         int page = params.getInt("page");
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_PAYMENT_GET_ALL, page, data);
+        StoredObject.put(context, PSO_PAYMENT_LIST, page, data);
 
-        PaymentDataDispatch.page(context, page, new JsonArray(data), transaction.isSync());
+        PaymentDataDispatch.list(context, page, new JsonArray(data), transaction.isSync());
         return Result.FINISH;
     }
 
@@ -73,9 +75,9 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_PAYMENT_GET, paymentId, data);
+        StoredObject.put(context, PSO_PAYMENT, paymentId, data);
 
-        PaymentDataDispatch.payment(context, paymentId, new JsonObject(data), transaction.isSync());
+        PaymentDataDispatch.get(context, paymentId, new JsonObject(data), transaction.isSync());
         return Result.FINISH;
     }
 }

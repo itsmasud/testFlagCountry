@@ -238,8 +238,8 @@ public class TopicService extends Service implements TopicConstants {
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
 
-        // casting is there to ensure we call the correct overloaded method
         if (payload != null)
+            //noinspection RedundantCast, casting is there to ensure we call the correct overloaded method
             intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) payload);
         else
             intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) new Bundle());

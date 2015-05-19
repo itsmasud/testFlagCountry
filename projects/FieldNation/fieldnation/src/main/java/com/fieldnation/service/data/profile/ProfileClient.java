@@ -126,7 +126,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     }
 
     public boolean subActions(long profileId) {
-        String topicId = PARAM_ACTION;
+        String topicId = TOPIC_ID_ACTION_COMPLETE;
 
         if (profileId > 0) {
             topicId += "/" + profileId;
@@ -153,7 +153,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                 preAllMessagesPage(bundle);
 
                 // WARN, this must be the last one
-            } else if (topicId.startsWith(PARAM_ACTION)) {
+            } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
                 preOnAction(bundle);
             }
 
@@ -200,7 +200,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                     try {
                         List<Notification> list = new LinkedList<>();
                         page = payload.getInt(PARAM_PAGE);
-                        JsonArray jalerts = (JsonArray) payload.getParcelable(PARAM_DATA_PARCELABLE);
+                        JsonArray jalerts = payload.getParcelable(PARAM_DATA_PARCELABLE);
                         for (int i = 0; i < jalerts.size(); i++) {
                             list.add(Notification.fromJson(jalerts.getJsonObject(i)));
                         }

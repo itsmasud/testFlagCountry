@@ -118,7 +118,7 @@ public class MessageSentView extends RelativeLayout {
         @Override
         public void onPhoto(String url, File file, boolean isCircle) {
             Drawable pic = new BitmapDrawable(getContext().getResources(), file.getAbsolutePath());
-            _profilePic = new WeakReference<Drawable>(pic);
+            _profilePic = new WeakReference<>(pic);
             _profileImageView.setBackgroundDrawable(pic);
         }
 

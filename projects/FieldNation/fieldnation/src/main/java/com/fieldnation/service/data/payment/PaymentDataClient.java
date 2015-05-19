@@ -34,53 +34,61 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     }
 
     // get all
-    public static void requestPage(Context context, int page) {
-        requestPage(context, page, false);
+    public static void list(Context context, int page) {
+        list(context, page, false);
     }
 
-    public static void requestPage(Context context, int page, boolean isSync) {
+    public static void list(Context context, int page, boolean isSync) {
         Intent intent = new Intent(context, PaymentDataService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_ALL);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public boolean registerPage() {
-        return registerPage(false);
+    public boolean subList() {
+        return subList(false);
     }
 
-    public boolean registerPage(boolean isSync) {
-        if (!isConnected())
-            return false;
+    public boolean subList(boolean isSync) {
+        String topicId = TOPIC_ID_LIST;
 
-        return register(TOPIC_ID_GET_ALL + (isSync ? "-SYNC" : ""), TAG);
+        if (isSync) {
+            topicId += "_SYNC";
+        }
+
+        return register(topicId, TAG);
     }
 
     // get payment
-    public static void requestPayment(Context context, long paymentId) {
-        requestPayment(context, paymentId, false);
+    public static void get(Context context, long paymentId) {
+        get(context, paymentId, false);
     }
 
-    public static void requestPayment(Context context, long paymentId, boolean isSync) {
+    public static void get(Context context, long paymentId, boolean isSync) {
         Intent intent = new Intent(context, PaymentDataService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_PAYMENT);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
         intent.putExtra(PARAM_ID, paymentId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
 
-    public boolean registerPayment(long paymentId) {
-        return registerPayment(paymentId, false);
+    public boolean subGet(long paymentId) {
+        return subGet(paymentId, false);
     }
 
-    public boolean registerPayment(long paymentId, boolean isSync) {
-        if (!isConnected())
-            return false;
+    public boolean subGet(long paymentId, boolean isSync) {
+        String topicId = TOPIC_ID_GET;
 
-        return register(TOPIC_ID_PAYMENT
-                + (isSync ? "-SYNC" : "")
-                + (paymentId > 0 ? "/" + paymentId : ""), TAG);
+        if (isSync) {
+            topicId += "_SYNC";
+        }
+
+        if (paymentId > 0) {
+            topicId += "/" + paymentId;
+        }
+
+        return register(topicId, TAG);
     }
 
     /*-*********************************-*/
@@ -89,14 +97,14 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            if (TOPIC_ID_GET_ALL.startsWith(topicId)) {
-                preOnGetAll((Bundle) payload);
-            } else if (TOPIC_ID_PAYMENT.startsWith(topicId)) {
-                preOnPayment((Bundle) payload);
+            if (topicId.startsWith(TOPIC_ID_LIST)) {
+                preOnList((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_GET)) {
+                preOnGet((Bundle) payload);
             }
         }
 
-        private void preOnPayment(Bundle payload) {
+        private void preOnGet(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, Payment>() {
                 @Override
                 protected Payment doInBackground(Bundle... params) {
@@ -111,15 +119,15 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
 
                 @Override
                 protected void onPostExecute(Payment payment) {
-                    onPayment(payment);
+                    onGet(payment);
                 }
             }.executeEx(payload);
         }
 
-        public void onPayment(Payment payment) {
+        public void onGet(Payment payment) {
         }
 
-        private void preOnGetAll(Bundle bundle) {
+        private void preOnList(Bundle bundle) {
             new AsyncTaskEx<Bundle, Object, List<Payment>>() {
                 private int page;
 
@@ -129,7 +137,7 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
                     page = bundle.getInt(PARAM_PAGE);
                     List<Payment> list = new LinkedList<>();
                     try {
-                        JsonArray ja = (JsonArray) bundle.getParcelable(PARAM_DATA_PARCELABLE);
+                        JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
 
                         for (int i = 0; i < ja.size(); i++) {
                             list.add(Payment.fromJson(ja.getJsonObject(i)));
@@ -143,12 +151,12 @@ public class PaymentDataClient extends TopicClient implements PaymentConstants {
 
                 @Override
                 protected void onPostExecute(List<Payment> payments) {
-                    onGetAll(payments, page);
+                    onList(payments, page);
                 }
             }.executeEx(bundle);
         }
 
-        public void onGetAll(List<Payment> list, int page) {
+        public void onList(List<Payment> list, int page) {
         }
     }
 

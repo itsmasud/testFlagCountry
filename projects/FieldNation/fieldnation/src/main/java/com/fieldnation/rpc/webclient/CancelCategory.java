@@ -10,15 +10,15 @@ enum CancelCategory {
     SCOPE_CHANGE_WITHOUT_PAY(12, "Scope of work changed without sufficient pay increase"),
     WRONG_WORK_TYPE(13, "Work type is not a fit");
 
-    private int _id;
-    private String _displayName;
-    private boolean _reasonOptional;
+    private final int _id;
+    private final String _displayName;
+    private final boolean _reasonOptional;
 
-    private CancelCategory(int id, String displayName) {
+    CancelCategory(int id, String displayName) {
         this(id, displayName, true);
     }
 
-    private CancelCategory(int id, String displayName, boolean reasonOptional) {
+    CancelCategory(int id, String displayName, boolean reasonOptional) {
         _id = id;
         _displayName = displayName;
         _reasonOptional = reasonOptional;

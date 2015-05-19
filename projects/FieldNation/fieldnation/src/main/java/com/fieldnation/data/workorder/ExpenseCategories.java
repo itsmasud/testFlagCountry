@@ -15,7 +15,7 @@ public class ExpenseCategories {
 
     private static ExpenseCategory[] _categories = null;
 
-    private Context _context;
+    private final Context _context;
     // private WorkorderService _ws;
     private Listener _listener = null;
 
@@ -40,6 +40,7 @@ public class ExpenseCategories {
         } else {
             try {
                 InputStream is = _context.getResources().openRawResource(R.raw.expensecategories);
+                //noinspection ConstantConditions, can't be null beacuse resource always exists
                 JsonArray ja = new JsonArray(
                         new String(misc.readAllFromStream(is, 1024, -1, 1000)));
 

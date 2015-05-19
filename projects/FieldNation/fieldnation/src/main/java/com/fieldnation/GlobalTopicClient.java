@@ -46,9 +46,6 @@ public class GlobalTopicClient extends TopicClient {
     }
 
     public boolean registerUpdateApp() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_APP_UPDATE, TAG);
     }
 
@@ -60,9 +57,6 @@ public class GlobalTopicClient extends TopicClient {
     }
 
     public boolean registerGotProfile() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_GOT_PROFILE, TAG);
     }
 
@@ -75,9 +69,6 @@ public class GlobalTopicClient extends TopicClient {
     }
 
     public boolean registerProfileInvalid(Context context) {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_PROFILE_INVALID, TAG);
     }
 
@@ -90,9 +81,6 @@ public class GlobalTopicClient extends TopicClient {
     }
 
     public boolean registerAppShutdown() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_APP_UPDATE, TAG);
     }
 
@@ -128,9 +116,6 @@ public class GlobalTopicClient extends TopicClient {
     }
 
     public boolean registerNetworkState() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_NETWORK_STATE, TAG);
     }
 
@@ -144,8 +129,6 @@ public class GlobalTopicClient extends TopicClient {
     }
 
     public boolean registerNetworkConnect() {
-        if (!isConnected())
-            return false;
         return register(TOPIC_NETWORK_COMMAND_CONNECT, TAG);
     }
 

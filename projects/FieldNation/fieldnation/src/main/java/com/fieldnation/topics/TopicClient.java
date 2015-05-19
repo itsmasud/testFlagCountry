@@ -18,7 +18,7 @@ class TopicClient {
     public int resultCode;
     public ResultReceiver receiver;
     public String tag;
-    public Set<String> topics = new HashSet<String>();
+    public Set<String> topics = new HashSet<>();
 
     private static Hashtable<String, TopicClient> _instances = new Hashtable<>();
     private static Hashtable<String, Set<TopicClient>> _topics = new Hashtable<>();

@@ -107,7 +107,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     private void setCategories(ExpenseCategory[] categories) {
         try {
             _categories = categories;
-            _adapter = new ArrayAdapter<ExpenseCategory>(getActivity(), android.R.layout.simple_spinner_dropdown_item,
+            _adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item,
                     categories);
             _categorySpinner.setAdapter(_adapter);
             _categorySpinner.setSelection(0);

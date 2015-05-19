@@ -169,7 +169,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
                             _customField.getPredefinedValues()[i] = "";
                     }
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                             android.R.layout.simple_spinner_item,
                             _customField.getPredefinedValues());
 

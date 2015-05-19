@@ -101,8 +101,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             for (int j = 0; j < auths.size(); j++) {
                 OAuth auth = auths.get(j);
                 boolean match = false;
-                for (int i = 0; i < accounts.length; i++) {
-                    Account account = accounts[i];
+                for (Account account : accounts) {
                     if (account.type.equals(type)) {
                         if (auth.getUsername().equals(account.name)) {
                             match = true;
@@ -268,11 +267,10 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
         Account[] accounts = _accountManager.getAccountsByType(getAccountType());
         Log.v(TAG, "Found accounts: " + accounts.length);
-        AccountManagerFuture<Bundle> future = null;
 
         // no accounts, ask account manager to add one
         if (accounts.length == 0) {
-            future = _accountManager.addAccount(
+            AccountManagerFuture<Bundle> future = _accountManager.addAccount(
                     getAccountType(), null, null, null, null, null, new Handler());
             new FutureWaitAsyncTask(_futureWaitAsync_account).execute(future);
 

@@ -49,12 +49,16 @@ public class ProfileService extends MSService implements ProfileConstants {
         public void processIntent(Intent intent) {
             if (_context != null) {
                 String action = intent.getStringExtra(PARAM_ACTION);
-                if (action.equals(PARAM_ACTION_GET_MY_PROFILE)) {
-                    getMyUserInformation(_context, intent);
-                } else if (action.equals(PARAM_ACTION_GET_ALL_NOTIFICATIONS)) {
-                    getAllNotifications(_context, intent);
-                } else if (action.equals(PARAM_ACTION_GET_ALL_MESSAGES)) {
-                    getAllMessages(_context, intent);
+                switch (action) {
+                    case PARAM_ACTION_GET_MY_PROFILE:
+                        getMyUserInformation(_context, intent);
+                        break;
+                    case PARAM_ACTION_GET_ALL_NOTIFICATIONS:
+                        getAllNotifications(_context, intent);
+                        break;
+                    case PARAM_ACTION_GET_ALL_MESSAGES:
+                        getAllMessages(_context, intent);
+                        break;
                 }
             }
         }

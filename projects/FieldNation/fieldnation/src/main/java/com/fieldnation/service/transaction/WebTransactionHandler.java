@@ -9,8 +9,8 @@ import com.fieldnation.rpc.server.HttpResult;
  */
 public abstract class WebTransactionHandler {
 
-    public static enum Result {
-        REQUEUE, FINISH, ERROR;
+    public enum Result {
+        REQUEUE, FINISH, ERROR
     }
 
 

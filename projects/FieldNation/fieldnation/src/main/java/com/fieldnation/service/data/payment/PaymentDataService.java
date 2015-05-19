@@ -47,47 +47,47 @@ public class PaymentDataService extends MSService implements PaymentConstants {
         @Override
         public void processIntent(Intent intent) {
             String action = intent.getStringExtra(PARAM_ACTION);
-            if (action.equals(PARAM_ACTION_GET_ALL)) {
-                page(_context, intent);
-            } else if (action.equals(PARAM_ACTION_PAYMENT)) {
-                getPayment(_context, intent);
+            if (action.equals(PARAM_ACTION_LIST)) {
+                list(_context, intent);
+            } else if (action.equals(PARAM_ACTION_GET)) {
+                get(_context, intent);
             }
         }
     }
 
-    private void page(Context context, Intent intent) {
+    private void list(Context context, Intent intent) {
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_PAYMENT_GET_ALL, page + "");
+        StoredObject obj = StoredObject.get(context, PSO_PAYMENT_LIST, page + "");
         if (obj != null) {
             try {
-                PaymentDataDispatch.page(context, page, new JsonArray(obj.getData()), isSync);
+                PaymentDataDispatch.list(context, page, new JsonArray(obj.getData()), isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
-            PaymentTransactionBuilder.page(context, page, isSync);
+            PaymentTransactionBuilder.list(context, page, isSync);
         }
     }
 
-    private void getPayment(Context context, Intent intent) {
+    private void get(Context context, Intent intent) {
         long paymentId = intent.getLongExtra(PARAM_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_PAYMENT_GET, paymentId);
+        StoredObject obj = StoredObject.get(context, PSO_PAYMENT, paymentId);
         if (obj != null) {
             try {
-                PaymentDataDispatch.payment(context, paymentId, new JsonObject(obj.getData()), isSync);
+                PaymentDataDispatch.get(context, paymentId, new JsonObject(obj.getData()), isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
-            PaymentTransactionBuilder.payment(context, paymentId, isSync);
+            PaymentTransactionBuilder.get(context, paymentId, isSync);
         }
     }
 

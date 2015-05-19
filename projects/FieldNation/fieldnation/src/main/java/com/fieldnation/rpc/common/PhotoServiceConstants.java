@@ -1,20 +1,20 @@
 package com.fieldnation.rpc.common;
 
 interface PhotoServiceConstants {
-    public static final String ACTION_NAME = "photo_request";
+    String ACTION_NAME = "photo_request";
 
-    public static final String KEY_PARAM_URL = "PARAM_URL";
-    public static final String KEY_RESULT_RECEIVER = "RESULT_RECEIVER";
-    public static final String KEY_RESULT_CODE = "RESULT_CODE";
-    public static final String KEY_ALLOW_CACHE = "ALLOW_CACHE";
-    public static final String KEY_GET_CIRCLE = "GET_CIRCLE";
+    String KEY_PARAM_URL = "PARAM_URL";
+    String KEY_RESULT_RECEIVER = "RESULT_RECEIVER";
+    String KEY_RESULT_CODE = "RESULT_CODE";
+    String KEY_ALLOW_CACHE = "ALLOW_CACHE";
+    String KEY_GET_CIRCLE = "GET_CIRCLE";
 
-    public static final String KEY_RESPONSE_DATA = "RESPONSE_DATA";
-    public static final String KEY_RESPONSE_CODE = "RESPONSE_CODE";
-    public static final String KEY_RESPONSE_MESSAGE = "RESPONSE_MESSAGE";
+    String KEY_RESPONSE_DATA = "RESPONSE_DATA";
+    String KEY_RESPONSE_CODE = "RESPONSE_CODE";
+    String KEY_RESPONSE_MESSAGE = "RESPONSE_MESSAGE";
 
-    public static final String KEY_RESPONSE_ERROR = "RESPONSE_ERROR";
+    String KEY_RESPONSE_ERROR = "RESPONSE_ERROR";
 
-    public static final String ERROR_NONE = "NONE";
-    public static final String ERROR_UNKNOWN = "UNKNOWN";
+    String ERROR_NONE = "NONE";
+    String ERROR_UNKNOWN = "UNKNOWN";
 }

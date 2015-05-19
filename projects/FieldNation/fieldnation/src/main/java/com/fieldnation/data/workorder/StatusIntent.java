@@ -9,7 +9,7 @@ public enum StatusIntent {
 
 	private String _value;
 
-	private StatusIntent(String value) {
+	StatusIntent(String value) {
 		_value = value;
 	}
 
@@ -23,9 +23,9 @@ public enum StatusIntent {
 		}
 
 		StatusIntent[] v = values();
-		for (int i = 0; i < v.length; i++) {
-			if (v[i]._value.equals(value)) {
-				return v[i];
+		for (StatusIntent aV : v) {
+			if (aV._value.equals(value)) {
+				return aV;
 			}
 		}
 

@@ -64,11 +64,11 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
         _workLogLinearLayout.removeAllViews();
 
         if (loggedWork != null) {
-            for (int i = 0; i < loggedWork.length; i++) {
+            for (LoggedWork aLoggedWork : loggedWork) {
                 ScheduleDetailView v = new ScheduleDetailView(getContext());
                 _workLogLinearLayout.addView(v);
                 v.setListener(_scheduleDetailView_listener);
-                v.setData(_workorder, loggedWork[i]);
+                v.setData(_workorder, aLoggedWork);
             }
         }
     }

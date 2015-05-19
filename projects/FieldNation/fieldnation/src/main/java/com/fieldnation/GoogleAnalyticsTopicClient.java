@@ -13,7 +13,7 @@ import com.fieldnation.service.topics.TopicService;
  * Created by Michael Carver on 3/17/2015.
  */
 public class GoogleAnalyticsTopicClient extends TopicClient {
-    private String TAG = UniqueTag.makeTag("GoogleAnalyticsTopicClient");
+    private final String TAG = UniqueTag.makeTag("GoogleAnalyticsTopicClient");
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -44,9 +44,9 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         COMPLETE_FN_EARNED_GROSS("CompleteWorkFnEarnedGross"),
         CLICK("ActionClick");
 
-        private String _actionName;
+        private final String _actionName;
 
-        private EventAction(String actionName) {
+        EventAction(String actionName) {
             _actionName = actionName;
         }
 
@@ -73,9 +73,6 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     }
 
     public boolean registerEvents() {
-        if (!isConnected())
-            return false;
-
         return register(EVENT, TAG);
     }
 
@@ -87,9 +84,6 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     private static final String SCREENVIEW_PARAM_NAME = "TOPIC_GA_SCREENVIEW_PARAM_NAME";
 
     public boolean registerScreenView() {
-        if (!isConnected())
-            return false;
-
         return register(SCREENVIEW, TAG);
     }
 
@@ -113,9 +107,6 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     private static final String TIMING_PARAM_VALUE = "TOPIC_GA_TIMING_PARAM_VALUE";
 
     public boolean registerTiming() {
-        if (!isConnected())
-            return false;
-
         return register(TIMING, TAG);
     }
 

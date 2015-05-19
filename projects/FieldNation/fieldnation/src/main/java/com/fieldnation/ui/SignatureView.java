@@ -103,7 +103,7 @@ public class SignatureView extends View {
 
             String raw = ((Bundle) state).getString(STATE_SHAPES);
 
-            _shapes = new LinkedList<Shape>();
+            _shapes = new LinkedList<>();
             try {
                 JsonArray jshapes = new JsonArray(raw);
 

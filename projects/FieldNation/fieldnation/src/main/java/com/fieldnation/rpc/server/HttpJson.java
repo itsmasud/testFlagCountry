@@ -71,8 +71,7 @@ public class HttpJson {
 
         String url = protocol + hostname + path + params;
 
-        HttpURLConnection conn = null;
-        conn = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         Log.v(TAG, url);
 
         conn.setRequestMethod(method);

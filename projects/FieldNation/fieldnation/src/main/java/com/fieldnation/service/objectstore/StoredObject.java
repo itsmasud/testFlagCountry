@@ -475,9 +475,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     String[] param = new String[keys.length + 1];
                     param[0] = objectTypeName;
 
-                    for (int i = 0; i < keys.length; i++) {
-                        param[i + 1] = keys[i];
-                    }
+                    System.arraycopy(keys, 0, param, 1, keys.length);
 
                     Cursor cursor = db.query(
                             ObjectStoreSqlHelper.TABLE_NAME,

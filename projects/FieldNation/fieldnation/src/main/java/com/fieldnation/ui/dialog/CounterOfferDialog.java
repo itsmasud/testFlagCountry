@@ -26,6 +26,7 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,9 +63,10 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private TermsDialog _termsDialog;
 
     // Data State
+    private final List<Expense> _expenses = new LinkedList<>();
+
     private Workorder _workorder;
     private Pay _counterPay;
-    private List<Expense> _expenses = new LinkedList<Expense>();
     private Schedule _counterSchedule;
     private String _counterReason;
     private boolean _expires = false;
@@ -95,8 +97,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_EXPENSES)) {
                 Parcelable[] parc = savedInstanceState.getParcelableArray(STATE_EXPENSES);
                 _expenses.clear();
-                for (int i = 0; i < parc.length; i++) {
-                    _expenses.add((Expense) parc[i]);
+                for (Parcelable aParc : parc) {
+                    _expenses.add((Expense) aParc);
                 }
             }
 
@@ -394,9 +396,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
             _expenses.clear();
             if (info != null && info.getExpense() != null && info.getExpense().length > 0) {
                 Expense[] exp = info.getExpense();
-                for (int i = 0; i < exp.length; i++) {
-                    _expenses.add(exp[i]);
-                }
+                Collections.addAll(_expenses, exp);
             }
             populateUi();
         }

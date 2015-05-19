@@ -83,7 +83,7 @@ class TransformSqlHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         StringBuilder sb = new StringBuilder();
-        List<String> indicies = new LinkedList<String>();
+        List<String> indicies = new LinkedList<>();
 
         sb.append("CREATE TABLE " + TABLE_NAME + " (");
         Column[] vs = Column.values();

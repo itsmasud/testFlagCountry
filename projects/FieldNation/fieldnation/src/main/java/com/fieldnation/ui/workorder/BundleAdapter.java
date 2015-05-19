@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public class BundleAdapter extends BaseAdapter {
-	private static final String TAG = "ui.workorder.BundleAdapter";
+	private static final String TAG = "BundleAdapter";
 
-	private Workorder[] _workorders;
-	private WorkorderCardView.Listener _listener;
+	private final Workorder[] _workorders;
+	private final WorkorderCardView.Listener _listener;
 
 	public BundleAdapter(Bundle bundle, WorkorderCardView.Listener listener) {
 		super();

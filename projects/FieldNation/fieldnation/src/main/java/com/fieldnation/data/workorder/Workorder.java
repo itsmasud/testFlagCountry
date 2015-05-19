@@ -615,7 +615,7 @@ public class Workorder implements Parcelable {
     private int _notInterestedAction = 0;
     // private Set<Integer> _labelIds = new HashSet<Integer>();
 
-    private final Set<Listener> _listeners = new HashSet<Workorder.Listener>();
+    private final Set<Listener> _listeners = new HashSet<>();
 
     public void addListener(Listener listener) {
         _listeners.add(listener);

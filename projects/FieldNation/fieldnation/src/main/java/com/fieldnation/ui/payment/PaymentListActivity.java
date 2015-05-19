@@ -33,7 +33,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
 
     @Override
     public void requestData(int page) {
-        PaymentDataClient.requestPage(this, page);
+        PaymentDataClient.list(this, page);
     }
 
     @Override
@@ -55,11 +55,11 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     private final PaymentDataClient.Listener _payment_listener = new PaymentDataClient.Listener() {
         @Override
         public void onConnected() {
-            _paymentClient.registerPage();
+            _paymentClient.subList();
         }
 
         @Override
-        public void onGetAll(List<Payment> list, int page) {
+        public void onList(List<Payment> list, int page) {
             addPage(page, list);
         }
     };

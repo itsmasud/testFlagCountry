@@ -176,8 +176,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
                 _expensesLabelTextView.setVisibility(VISIBLE);
                 _expensesLinearLayout.setVisibility(VISIBLE);
                 _expensesLinearLayout.removeAllViews();
-                for (int i = 0; i < expenses.length; i++) {
-                    Expense expense = expenses[i];
+                for (Expense expense : expenses) {
                     ExpenseView v = new ExpenseView(getContext());
                     v.setListener(_expenseView_listener);
                     _expensesLinearLayout.addView(v);
@@ -194,8 +193,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
                 _discountsLabelTextView.setVisibility(VISIBLE);
                 _discountsLinearLayout.setVisibility(VISIBLE);
                 _discountsLinearLayout.removeAllViews();
-                for (int i = 0; i < discounts.length; i++) {
-                    Discount discount = discounts[i];
+                for (Discount discount : discounts) {
                     DiscountView v = new DiscountView(getContext());
                     v.setListener(_discount_listener);
                     _discountsLinearLayout.addView(v);

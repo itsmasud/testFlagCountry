@@ -13,7 +13,7 @@ import com.fieldnation.service.topics.TopicService;
  * Created by Michael Carver on 3/17/2015.
  */
 public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
-    private String TAG = UniqueTag.makeTag("AuthTopicClient");
+    private final String TAG = UniqueTag.makeTag("AuthTopicClient");
 
 
     public AuthTopicClient(Listener listener) {
@@ -63,9 +63,6 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
 */
 
     public boolean registerAuthState() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_AUTH_STATE, TAG);
     }
 
@@ -77,9 +74,6 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean registerRequestCommand() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_AUTH_COMMAND_REQUEST, TAG);
     }
 
@@ -91,9 +85,6 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean registerInvalidateCommand() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_AUTH_COMMAND_INVALIDATE, TAG);
     }
 
@@ -105,9 +96,6 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean registerRemoveCommand() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_AUTH_COMMAND_REMOVE, TAG);
     }
 
@@ -119,9 +107,6 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean registerAccountAddedCommand() {
-        if (!isConnected())
-            return false;
-
         return register(TOPIC_AUTH_COMMAND_ADDED_ACCOUNT, TAG);
     }
 

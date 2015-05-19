@@ -18,8 +18,8 @@ import com.fieldnation.R;
  * @author michael.carver
  */
 public class Authenticator extends AbstractAccountAuthenticator {
-    private static final String TAG = "auth.server.Authenticator";
-    private Context _context;
+    private static final String TAG = "Authenticator";
+    private final Context _context;
 
     public Authenticator(Context context) {
         super(context.getApplicationContext());
