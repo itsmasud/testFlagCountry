@@ -28,19 +28,19 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         KEY(8, "key", "text", true),
         QUEUE_TIME(9, "queue_time", "integer not null", true);
 
-        private int _index;
-        private String _name;
-        private String _declaration;
+        private final int _index;
+        private final String _name;
+        private final String _declaration;
         private boolean _doIndex = false;
 
         private static String[] _names = null;
 
-        private Column(int index, String name, String declaration, boolean doIndex) {
+        Column(int index, String name, String declaration, boolean doIndex) {
             this(index, name, declaration);
             _doIndex = doIndex;
         }
 
-        private Column(int index, String name, String declaration) {
+        Column(int index, String name, String declaration) {
             _index = index;
             _name = name;
             _declaration = declaration;

@@ -25,9 +25,9 @@ class ObjectStoreSqlHelper extends SQLiteOpenHelper {
         EXPIRES(5, "expires", "integer not null"),
         DATA(6, "data", "blob");
 
-        private int _index;
-        private String _name;
-        private String _declaration;
+        private final int _index;
+        private final String _name;
+        private final String _declaration;
         private boolean _doIndex = false;
 
         private static String[] _names = null;
