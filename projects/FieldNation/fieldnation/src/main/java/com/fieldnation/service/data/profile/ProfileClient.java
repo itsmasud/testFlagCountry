@@ -41,9 +41,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     public static void get(Context context, long profileId, boolean isSync) {
         Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
-
         intent.putExtra(PARAM_PROFILE_ID, profileId);
-
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
@@ -79,7 +77,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     }
 
     public boolean subListNotifications(boolean isSync) {
-        String topicId = PARAM_ACTION_LIST_NOTIFICATIONS;
+        String topicId = TOPIC_ID_NOTIFICATION_LIST;
 
         if (isSync) {
             topicId += "_SYNC";
@@ -104,7 +102,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     }
 
     public boolean subListMessages(boolean isSync) {
-        String topicId = PARAM_ACTION_LIST_MESSAGES;
+        String topicId = TOPIC_ID_MESSAGE_LIST;
 
         if (isSync) {
             topicId += "_SYNC";

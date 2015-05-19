@@ -35,7 +35,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putInt(PARAM_PAGE, page);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
 
-        String topicId = PARAM_ACTION_LIST_NOTIFICATIONS;
+        String topicId = TOPIC_ID_NOTIFICATION_LIST;
 
         if (isSync) {
             topicId += "_SYNC";
@@ -51,7 +51,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putInt(PARAM_PAGE, page);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
 
-        String topicId = PARAM_ACTION_LIST_MESSAGES;
+        String topicId = TOPIC_ID_MESSAGE_LIST;
 
         if (isSync) {
             topicId += "_SYNC";

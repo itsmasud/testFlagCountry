@@ -102,7 +102,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
     }
 
     private Result handleListNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "PARAM_ACTION_GET_ALL_NOTIFICATIONS");
+        Log.v(TAG, "handleListNotifications");
         int page = params.getInt("page");
         // store object
         byte[] pagedata = resultData.getByteArray();
@@ -115,7 +115,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
     }
 
     private Result handleListMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "PARAM_ACTION_GET_ALL_MESSAGES");
+        Log.v(TAG, "handleListMessages");
         int page = params.getInt("page");
         // store object
         byte[] pagedata = resultData.getByteArray();
