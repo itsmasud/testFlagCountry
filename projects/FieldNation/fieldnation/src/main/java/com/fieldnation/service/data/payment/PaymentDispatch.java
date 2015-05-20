@@ -37,7 +37,7 @@ public class PaymentDispatch implements PaymentConstants {
         bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
 
-        String topicId = TOPIC_ID_LIST;
+        String topicId = TOPIC_ID_GET;
 
         if (isSync) {
             topicId += "_SYNC";

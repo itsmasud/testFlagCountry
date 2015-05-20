@@ -120,7 +120,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
         _adapter = new PaymentDetailAdapter(_paid);
         _listView.setAdapter(_adapter);
-        _idTextView.setText("Payment Id " + _paid.getPaymentId());
+        _idTextView.setText("Payment ID: " + _paid.getPaymentId());
         _paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
         String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
         _paymentTypeTextView.setText(paymethod);

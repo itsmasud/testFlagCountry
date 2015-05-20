@@ -5,7 +5,6 @@
     android:layout_height="match_parent">
 
     <!-- The main content view -->
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -29,7 +28,6 @@
         </LinearLayout>
 
         <!-- loading layout -->
-
         <com.fieldnation.ui.ReconnectWarningView
             android:id="@+id/reconnect_view"
             android:layout_width="match_parent"
@@ -38,8 +36,8 @@
             android:visibility="gone" />
 
     </RelativeLayout>
-    <!-- The navigation drawer -->
 
+    <!-- The navigation drawer -->
     <com.fieldnation.ui.DrawerView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

@@ -6,8 +6,8 @@ package com.fieldnation.service.data.payment;
 public interface PaymentConstants {
     long CALL_BOUNCE_TIMER = 30000;
 
-    String TOPIC_ID_LIST = "PaymentConstants:TOPIC_ID_GET_ALL";
-    String TOPIC_ID_GET = "PaymentConstants:TOPIC_ID_PAYMENT";
+    String TOPIC_ID_LIST = "PaymentConstants:TOPIC_ID_LIST";
+    String TOPIC_ID_GET = "PaymentConstants:TOPIC_ID_GET";
 
     String PARAM_ACTION = "PARAM_ACTION";
     String PARAM_ACTION_LIST = "PARAM_ACTION_LIST";

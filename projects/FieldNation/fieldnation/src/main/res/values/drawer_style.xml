@@ -12,7 +12,6 @@
 
     <style name="Drawer">
         <item name="android:background">@color/fn_menu_bg</item>
-        <item name="android:padding">@dimen/drawer_padding</item>
     </style>
 
     <style name="DrawerProfileContainer">
@@ -90,6 +89,7 @@
         <item name="android:paddingBottom">4dp</item>
         <item name="android:paddingRight">12dp</item>
         <item name="android:paddingLeft">12dp</item>
+        <item name="android:layout_marginRight">16dp</item>
         <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
@@ -99,6 +99,7 @@
         <item name="android:paddingBottom">4dp</item>
         <item name="android:paddingRight">12dp</item>
         <item name="android:paddingLeft">12dp</item>
+        <item name="android:layout_marginRight">16dp</item>
         <item name="android:textColor">@color/fn_white_text</item>
     </style>
 

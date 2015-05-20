@@ -6,7 +6,8 @@
     <ScrollView
         style="@style/Drawer"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbarStyle="outsideOverlay">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -91,15 +92,16 @@
                     android:id="@+id/mywork_view"
                     style="@style/DrawerItem">
 
-                    <ImageView
-                        android:id="@+id/mywork_imageview"
-                        style="@style/DrawerItemIcon"
-                        android:src="@drawable/ic_nav_myworkorders" />
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/mywork_icon"
+                        style="@style/DrawerItemTextFont"
+                        android:text="@string/icfont_hiring" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/mywork_imageview"
+                        android:layout_toRightOf="@+id/mywork_icon"
                         android:orientation="vertical">
 
                         <TextView
@@ -268,7 +270,7 @@
                     android:orientation="horizontal">
 
                     <com.fieldnation.ui.IconFontTextView
-                        style="@style/DrawerItemIcon"
+                        style="@style/DrawerItemTextFont"
                         android:text="@string/icfont_feedback" />
 
                     <TextView

@@ -24,8 +24,8 @@ import java.util.List;
 public class WorkorderActivity extends AuthActionBarActivity {
     private static final String TAG = "WorkorderActivity";
 
-    public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
-    public static final String INTENT_FIELD_CURRENT_TAB = "com.fieldnation.ui.workorder.WorkorderActivity:current_tab";
+    public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderActivity:workorder_id";
+    public static final String INTENT_FIELD_CURRENT_TAB = "WorkorderActivity:current_tab";
 
     public static final int TAB_DETAILS = 0;
     public static final int TAB_MESSAGE = 1;

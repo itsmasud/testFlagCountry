@@ -140,7 +140,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 
         String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
         _basisTextView.setText(paymethod);
-        _paymentTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));
+        _paymentTextView.setText(misc.toCurrency(wo.getAmount()));
         _statusTextView.setText(misc.capitalize(payment.getStatus()));
         _workorderIdTextView.setText("ID: " + _workorder.getWorkorderId());
     }
