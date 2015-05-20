@@ -13,15 +13,18 @@ import com.fieldnation.service.topics.TopicService;
  * Created by Michael Carver on 3/17/2015.
  */
 public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
-    private final String TAG = UniqueTag.makeTag("AuthTopicClient");
-
+    private static final String STAG = "AuthTopicClient";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     public AuthTopicClient(Listener listener) {
         super(listener);
     }
 
-    // State
+    public void disconnect(Context context) {
+        super.disconnect(context, TAG);
+    }
 
+    // State
     public static void dispatchAuthState(Context context, AuthState state) {
         if (context == null)
             return;
@@ -31,9 +34,6 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
-    }
 
     /*
     public static void dispatchNotAuthenticated(Context context) {
@@ -113,34 +113,38 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            if (TOPIC_AUTH_STATE.equals(topicId)) {
-                Bundle bundle = (Bundle) payload;
-                AuthState state = AuthState.values()[bundle.getInt(PARAM_STATE)];
-
-                switch (state) {
-                    case AUTHENTICATED:
-                        OAuth a = bundle.getParcelable(PARAM_OAUTH);
-                        onAuthenticated(a);
-                        break;
-                    case AUTHENTICATING:
-                        onAuthenticating();
-                        break;
-                    case NOT_AUTHENTICATED:
-                        onNotAuthenticated();
-                        break;
-                    case REMOVING:
-                        onRemoving();
-                        break;
+            switch (topicId) {
+                case TOPIC_AUTH_STATE: {
+                    Bundle bundle = (Bundle) payload;
+                    AuthState state = AuthState.values()[bundle.getInt(PARAM_STATE)];
+                    switch (state) {
+                        case AUTHENTICATED:
+                            OAuth a = bundle.getParcelable(PARAM_OAUTH);
+                            onAuthenticated(a);
+                            break;
+                        case AUTHENTICATING:
+                            onAuthenticating();
+                            break;
+                        case NOT_AUTHENTICATED:
+                            onNotAuthenticated();
+                            break;
+                        case REMOVING:
+                            onRemoving();
+                            break;
+                    }
                 }
-
-            } else if (TOPIC_AUTH_COMMAND_INVALIDATE.equals(topicId)) {
-                onCommandInvalidate();
-            } else if (TOPIC_AUTH_COMMAND_REMOVE.equals(topicId)) {
-                onCommandRemove();
-            } else if (TOPIC_AUTH_COMMAND_REQUEST.equals(topicId)) {
-                onCommandRequest();
-            } else if (TOPIC_AUTH_COMMAND_ADDED_ACCOUNT.equals(topicId)) {
-                onCommandAddedAccount();
+                case TOPIC_AUTH_COMMAND_INVALIDATE:
+                    onCommandInvalidate();
+                    break;
+                case TOPIC_AUTH_COMMAND_REMOVE:
+                    onCommandRemove();
+                    break;
+                case TOPIC_AUTH_COMMAND_REQUEST:
+                    onCommandRequest();
+                    break;
+                case TOPIC_AUTH_COMMAND_ADDED_ACCOUNT:
+                    onCommandAddedAccount();
+                    break;
             }
         }
 

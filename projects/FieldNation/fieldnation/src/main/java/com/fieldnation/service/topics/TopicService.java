@@ -249,6 +249,28 @@ public class TopicService extends Service implements TopicConstants {
         context.startService(intent);
     }
 
+    public static void dispatchEvent(Context context, Bundle event) {
+        Intent intent = new Intent(context, TopicService.class);
+        intent.putExtras(event);
+        context.startService(intent);
+    }
+
+    public static Bundle createEvent(String topicId, Parcelable payload, Sticky stickyType) {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(PARAM_TOPIC_ID, topicId);
+
+        if (payload != null)
+            //noinspection RedundantCast, casting is there to ensure we call the correct overloaded method
+            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, (Parcelable) payload);
+        else
+            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, (Parcelable) new Bundle());
+
+        bundle.putSerializable(PARAM_STICKY, stickyType);
+
+        return bundle;
+    }
+
     /*-**********************************-*/
     /*-              Plumbing            -*/
     /*-**********************************-*/

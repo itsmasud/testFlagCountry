@@ -35,8 +35,8 @@ import java.util.List;
  * Created by Michael Carver on 3/13/2015.
  */
 public class WorkorderClient extends TopicClient implements WorkorderConstants {
-    public static final String STAG = "WorkorderClient";
-    public final String TAG = UniqueTag.makeTag(STAG);
+    private static final String STAG = "WorkorderClient";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     public WorkorderClient(Listener listener) {
         super(listener);

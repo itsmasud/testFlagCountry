@@ -90,7 +90,6 @@ public class GlobalState extends Application {
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(this);
 
-
         SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
         Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
     }
@@ -124,7 +123,6 @@ public class GlobalState extends Application {
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
-            _authTopicClient.registerAuthState();
             _authTopicClient.registerAuthState();
             AuthTopicClient.dispatchRequestCommand(GlobalState.this);
         }

@@ -12,22 +12,9 @@ import com.fieldnation.service.topics.TopicService;
 /**
  * Created by Michael Carver on 3/17/2015.
  */
-public class GlobalTopicClient extends TopicClient {
+public class GlobalTopicClient extends TopicClient implements GlobalTopicConstants {
     private static final String STAG = "GlobalTopicClient";
     private String TAG = UniqueTag.makeTag("GlobalTopicClient");
-
-    private static final String TOPIC_APP_UPDATE = "GlobalTopicClient:TOPIC_APP_UPDATE";
-    private static final String TOPIC_GOT_PROFILE = "GlobalTopicClient:TOPIC_GOT_PROFILE";
-    private static final String TOPIC_PROFILE_INVALID = "GlobalTopicClient:TOPIC_PROFILE_INVALID";
-    private static final String TOPIC_SHUTDOWN = "GlobalTopicClient:TOPIC_SHUTDOWN";
-    private static final String TOPIC_NETWORK_STATE = "GlobalTopicClient:TOPIC_NETWORK_STATE";
-    private static final String PARAM_NETWORK_STATE = "NETWORK_STATE";
-    private static final int NETWORK_STATE_CONNECTED = 1;
-    private static final int NETWORK_STATE_DISCONNECTED = 2;
-    private static final int NETWORK_STATE_CONNECTING = 3;
-
-    private static final String TOPIC_NETWORK_COMMAND_CONNECT = "GlobalTopicClient:TOPIC_NETWORK_COMMAND_CONNECT";
-
 
     public GlobalTopicClient(Listener listener) {
         super(listener);
@@ -95,7 +82,7 @@ public class GlobalTopicClient extends TopicClient {
         TopicService.dispatchEvent(context, TOPIC_NETWORK_STATE, bundle, Sticky.FOREVER);
     }
 
-    public static void dispathNetworkConnected(Context context) {
+    public static void dispatchNetworkConnected(Context context) {
         Log.v(STAG, "dispathNetworkConnected");
         if (context == null)
             return;
@@ -137,28 +124,36 @@ public class GlobalTopicClient extends TopicClient {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            if (TOPIC_APP_UPDATE.equals(topicId)) {
-                onNeedAppUpdate();
-            } else if (TOPIC_GOT_PROFILE.equals(topicId) && payload instanceof Profile) {
-                onGotProfile((Profile) payload);
-            } else if (TOPIC_PROFILE_INVALID.equals(topicId)) {
-                onProfileInvalid();
-            } else if (TOPIC_SHUTDOWN.equals(topicId)) {
-                onShutdown();
-            } else if (TOPIC_NETWORK_STATE.equals(topicId)) {
-                switch (((Bundle) payload).getInt(PARAM_NETWORK_STATE)) {
-                    case NETWORK_STATE_CONNECTED:
-                        onNetworkConnected();
-                        break;
-                    case NETWORK_STATE_CONNECTING:
-                        onNetworkConnecting();
-                        break;
-                    case NETWORK_STATE_DISCONNECTED:
-                        onNetworkDisconnected();
-                        break;
+            switch (topicId) {
+                case TOPIC_APP_UPDATE:
+                    onNeedAppUpdate();
+                    break;
+                case TOPIC_GOT_PROFILE:
+                    onGotProfile((Profile) payload);
+                    break;
+                case TOPIC_PROFILE_INVALID:
+                    onProfileInvalid();
+                    break;
+                case TOPIC_SHUTDOWN:
+                    onShutdown();
+                    break;
+                case TOPIC_NETWORK_STATE: {
+                    switch (((Bundle) payload).getInt(PARAM_NETWORK_STATE)) {
+                        case NETWORK_STATE_CONNECTED:
+                            onNetworkConnected();
+                            break;
+                        case NETWORK_STATE_CONNECTING:
+                            onNetworkConnecting();
+                            break;
+                        case NETWORK_STATE_DISCONNECTED:
+                            onNetworkDisconnected();
+                            break;
+                    }
+                    break;
                 }
-            } else if (TOPIC_NETWORK_COMMAND_CONNECT.equals(topicId)) {
-                onNetworkConnect();
+                case TOPIC_NETWORK_COMMAND_CONNECT:
+                    onNetworkConnect();
+                    break;
             }
         }
 

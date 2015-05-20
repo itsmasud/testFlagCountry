@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
@@ -342,6 +343,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     return true;
                 }
 
+                GlobalTopicClient.dispatchNetworkConnected(context);
+
                 String handler = trans.getHandlerName();
                 if (!misc.isEmptyOrNull(handler)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
@@ -366,6 +369,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
             } catch (UnknownHostException ex) {
                 // probably offline
+                GlobalTopicClient.dispatchNetworkDisconnected(context);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                }
                 ex.printStackTrace();
                 trans.requeue(context);
             } catch (Exception ex) {

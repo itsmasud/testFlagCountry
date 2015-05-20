@@ -168,7 +168,7 @@
         <service
             android:name=".service.auth.AuthService"
             android:exported="true"
-            android:process=":backside">
+            android:process=":frontside">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -180,7 +180,7 @@
         <service
             android:name=".rpc.server.SyncService"
             android:exported="true"
-            android:process=":backside">
+            android:process=":frontside">
             <intent-filter>com.fieldnation.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -193,51 +193,52 @@
         <service
             android:name=".service.topics.TopicService"
             android:exported="false"
-            android:process=":topics" />
+            android:process=":frontside" />
 
         <!--web/data-->
         <service
             android:name=".service.auth.AuthTopicService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":frontside" />
         <service
             android:name=".service.transaction.WebTransactionService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":frontside" />
         <service
             android:name=".service.data.photo.PhotoService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":frontside" />
         <service
             android:name=".service.data.profile.ProfileService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":frontside" />
         <service
             android:name=".service.data.workorder.WorkorderService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":frontside" />
         <service
             android:name=".service.data.payment.PaymentService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":frontside" />
         <service
             android:name=".service.objectstore.ObjectStoreService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":frontside" />
         <service
             android:name=".service.crawler.WebCrawlerService"
             android:exported="false"
-            android:process=":backside" />
+            android:process=":frontside" />
 
         <provider
             android:name=".rpc.server.StubProvider"
             android:authorities="com.fieldnation.service"
             android:exported="false"
+            android:process=":frontside"
             android:syncable="true" />
 
         <receiver
             android:name=".service.crawler.AlarmBroadcastReceiver"
-            android:process=":backside" />
+            android:process=":frontside" />
     </application>
 
 </manifest>
