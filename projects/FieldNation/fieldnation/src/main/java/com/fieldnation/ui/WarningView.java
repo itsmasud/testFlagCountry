@@ -14,8 +14,8 @@ import com.fieldnation.UniqueTag;
 /**
  * Created by michael.carver on 12/22/2014.
  */
-public class ReconnectWarningView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ReconnectWarningView");
+public class WarningView extends RelativeLayout {
+    private final String TAG = UniqueTag.makeTag("ToastView");
 
 
     // Ui
@@ -25,23 +25,23 @@ public class ReconnectWarningView extends RelativeLayout {
     private GlobalTopicClient _globalClient;
 
 
-    public ReconnectWarningView(Context context) {
+    public WarningView(Context context) {
         super(context);
         init();
     }
 
-    public ReconnectWarningView(Context context, AttributeSet attrs) {
+    public WarningView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ReconnectWarningView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WarningView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_reconnect, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_warning, this);
 
         if (isInEditMode())
             return;
@@ -67,12 +67,12 @@ public class ReconnectWarningView extends RelativeLayout {
 
         @Override
         public void onNetworkDisconnected() {
-            ReconnectWarningView.this.setVisibility(View.VISIBLE);
+            WarningView.this.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onNetworkConnected() {
-            ReconnectWarningView.this.setVisibility(View.GONE);
+            WarningView.this.setVisibility(View.GONE);
         }
 
     };
@@ -81,7 +81,7 @@ public class ReconnectWarningView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             GlobalTopicClient.dispatchNetworkConnect(getContext());
-            ReconnectWarningView.this.setVisibility(View.GONE);
+            WarningView.this.setVisibility(View.GONE);
         }
     };
 }

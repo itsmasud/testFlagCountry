@@ -94,7 +94,7 @@
                 android:dividerHeight="0dp" />
         </LinearLayout>
 
-        <com.fieldnation.ui.ReconnectWarningView
+        <com.fieldnation.ui.WarningView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

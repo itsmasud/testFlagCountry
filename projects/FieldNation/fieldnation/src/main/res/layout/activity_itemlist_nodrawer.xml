@@ -21,7 +21,7 @@
             android:smoothScrollbar="false" />
     </LinearLayout>
 
-    <com.fieldnation.ui.ReconnectWarningView
+    <com.fieldnation.ui.WarningView
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"

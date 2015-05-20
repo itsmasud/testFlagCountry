@@ -28,7 +28,7 @@
         </LinearLayout>
 
         <!-- loading layout -->
-        <com.fieldnation.ui.ReconnectWarningView
+        <com.fieldnation.ui.WarningView
             android:id="@+id/reconnect_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

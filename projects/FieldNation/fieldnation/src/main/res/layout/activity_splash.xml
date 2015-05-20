@@ -11,7 +11,7 @@
         android:layout_height="128dp"
         android:src="@drawable/fn_logo" />
 
-    <com.fieldnation.ui.ReconnectWarningView
+    <com.fieldnation.ui.WarningView
         android:id="@+id/reconnect_view"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
