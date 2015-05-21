@@ -102,7 +102,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
         _projectNameTextView.setText(_workorder.getTitle());
 
-        _workorderIdTextView.setText("Work order Id: " + _workorder.getWorkorderId());
+        _workorderIdTextView.setText("Work Order Id: " + _workorder.getWorkorderId());
 
         if (_workorder.getCustomDisplayFields() != null && _workorder.getCustomDisplayFields().length > 0) {
             StringBuilder sb = new StringBuilder();

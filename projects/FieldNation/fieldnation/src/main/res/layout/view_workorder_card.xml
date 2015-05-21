@@ -251,14 +251,7 @@
 
     <RelativeLayout
         android:id="@+id/loading_layout"
-        style="@style/CardOverlayContainer">
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true" />
-    </RelativeLayout>
+        style="@style/CardOverlayContainer"></RelativeLayout>
 
     <!-- undo layout -->
 
