@@ -85,7 +85,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class WorkFragment extends WorkorderFragment {
-    private static final String TAG = "ui.workorder.detail.WorkFragment";
+    private static final String TAG = "WorkFragment";
 
     // Activity result codes
     private static final int RESULT_CODE_BASE = 200;
@@ -97,16 +97,16 @@ public class WorkFragment extends WorkorderFragment {
     private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = RESULT_CODE_BASE + 7;
 
     // saved state keys
-    private static final String STATE_WORKORDER = "ui.workorder.detail.WorkFragment:STATE_WORKORDER";
-    private static final String STATE_TASKS = "ui.workorder.detail.WorkFragment:STATE_TASKS";
-    private static final String STATE_CURRENT_TASK = "ui.workorder.detail.WorkFragment:STATE_CURRENT_TASK";
-    private static final String STATE_SIGNATURES = "ui.workorder.detail.WorkFragment:STATE_SIGNATURES";
-    private static final String STATE_DEVICE_COUNT = "ui.workorder.detail.WorkFragment:STATE_DEVICE_COUNT";
+    private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
+    private static final String STATE_TASKS = "WorkFragment:STATE_TASKS";
+    private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
+    private static final String STATE_SIGNATURES = "WorkFragment:STATE_SIGNATURES";
+    private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
 
     // UI
     private OverScrollView _scrollView;
     private ActionBarTopView _topBar;
-    private SummaryView _sumView;
+    private WorkSummaryView _sumView;
     private LocationView _locView;
     private ScheduleSummaryView _scheduleView;
     private ExpectedPaymentView _exView;
@@ -171,7 +171,7 @@ public class WorkFragment extends WorkorderFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        _sumView = (SummaryView) view.findViewById(R.id.summary_view);
+        _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
 
         _locView = (LocationView) view.findViewById(R.id.location_view);
@@ -224,8 +224,8 @@ public class WorkFragment extends WorkorderFragment {
             if (savedInstanceState.containsKey(STATE_TASKS)) {
                 Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
                 _tasks = new LinkedList<>();
-                for (int i = 0; i < tasks.length; i++) {
-                    _tasks.add((Task) tasks[i]);
+                for (Parcelable task : tasks) {
+                    _tasks.add((Task) task);
                 }
                 _taskList.setData(_workorder, _tasks);
             }
@@ -235,8 +235,8 @@ public class WorkFragment extends WorkorderFragment {
             if (savedInstanceState.containsKey(STATE_SIGNATURES)) {
                 Parcelable[] sigs = savedInstanceState.getParcelableArray(STATE_SIGNATURES);
                 _signatures = new LinkedList<>();
-                for (int i = 0; i < sigs.length; i++) {
-                    _signatures.add((Signature) sigs[i]);
+                for (Parcelable sig : sigs) {
+                    _signatures.add((Signature) sig);
                 }
             }
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
@@ -1191,7 +1191,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final SummaryView.Listener _summaryView_listener = new SummaryView.Listener() {
+    private final WorkSummaryView.Listener _summaryView_listener = new WorkSummaryView.Listener() {
         @Override
         public void showConfidentialInfo(String body) {
             _termsDialog.show("Confidential Information", body);

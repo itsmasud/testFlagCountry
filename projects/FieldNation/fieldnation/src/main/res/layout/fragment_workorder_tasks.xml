@@ -5,16 +5,14 @@
 
     <com.fieldnation.ui.OverScrollView
         android:id="@+id/scroll_view"
-        style="@style/WorkorderDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
-            style="@style/WorkorderDetail_Data"
-            android:animateLayoutChanges="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <com.fieldnation.ui.workorder.detail.ActionBarTopView
@@ -23,50 +21,50 @@
                 android:layout_height="wrap_content" />
 
             <com.fieldnation.ui.workorder.detail.TimeLoggedView
-                android:visibility="gone"
                 android:id="@+id/timelogged_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <com.fieldnation.ui.workorder.detail.TaskListView
-                android:visibility="gone"
                 android:id="@+id/scope_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <com.fieldnation.ui.workorder.detail.CustomFieldListView
-                android:visibility="gone"
                 android:id="@+id/customfields_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <com.fieldnation.ui.workorder.detail.ShipmentView
-                android:visibility="gone"
                 android:id="@+id/shipment_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
 
             <com.fieldnation.ui.workorder.detail.ClosingNotesView
-                android:visibility="gone"
                 android:id="@+id/closingnotes_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <com.fieldnation.ui.SignatureListView
                 android:id="@+id/signature_view"
-                android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
         </LinearLayout>
 
     </com.fieldnation.ui.OverScrollView>
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
 
 </RelativeLayout>

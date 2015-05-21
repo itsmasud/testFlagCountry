@@ -73,7 +73,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     // Data
     private WorkorderClient _workorderClient;
-    //    private Set<Long> _selected = new HashSet<Long>();
     private GpsLocationService _gpsLocationService;
 
     // state data
@@ -641,7 +640,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 try {
                     time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
                 } catch (ParseException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }

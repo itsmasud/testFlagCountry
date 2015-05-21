@@ -18,12 +18,20 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     private RateMeView _rateMeView = null;
     private int _rateMePosition = 2;
-    private boolean _showRateMe = true;
+    private boolean _showRateMe = false;
     private boolean _noMorePages = false;
     private Hashtable<Integer, List<T>> _pages = new Hashtable<>();
     private Set<Integer> _loadingPages = new HashSet<>();
     private int _size;
     private Listener _listener;
+
+    public PagingAdapter() {
+
+    }
+
+    public PagingAdapter(boolean showRateMe) {
+        _showRateMe = showRateMe;
+    }
 
     public void setPage(int page, List<T> items) {
 //        Log.v(TAG, "setPage()");

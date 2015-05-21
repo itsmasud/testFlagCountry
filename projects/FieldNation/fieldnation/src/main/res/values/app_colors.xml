@@ -16,8 +16,12 @@
 
     <color name="fn_clickable_bg">#FFFFFFFF</color>
     <color name="fn_clickable_bg_80">#CCFFFFFF</color>
+    <color name="fn_clickable_bg_50">#80FFFFFF</color>
     <color name="fn_clickable_bg_0">#00FFFFFF</color>
+
     <color name="fn_menu_bg">#FFf9f9f9</color>
+    <color name="fn_menu_bg_80">#CCf9f9f9</color>
+    <color name="fn_menu_bg_50">#80f9f9f9</color>
 
     <color name="fn_accent_color">#FF3FD4AD</color>
     <color name="fn_accent_color_medium">#FF37ba98</color>

@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="WorkorderDetail">
-        <item name="android:background">@color/fn_primary_bg</item>
-    </style>
-
-    <style name="WorkorderDetail_Data">
-        <item name="android:paddingLeft">20dp</item>
-        <item name="android:paddingRight">20dp</item>
-    </style>
-
     <style name="WorkorderDetail_Separator">
         <item name="android:background">@color/fn_divider</item>
         <item name="android:layout_height">2px</item>
