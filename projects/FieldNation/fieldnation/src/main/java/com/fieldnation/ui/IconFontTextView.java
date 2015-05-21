@@ -26,6 +26,10 @@ public class IconFontTextView extends TextView {
     }
 
     private void init() {
+
+        if (isInEditMode())
+            return;
+
         setTypeface(GlobalState.getContext().getIconFont());
     }
 }

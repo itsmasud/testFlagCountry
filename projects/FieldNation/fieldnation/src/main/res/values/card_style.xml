@@ -42,4 +42,50 @@
     <color name="card_status_black_center">@color/fn_dark_text_0</color>
     <color name="card_status_black_bottom">@color/card_gradient_bottom</color>
 
+    <style name="Card">
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="CardContainer">
+        <item name="android:background">@drawable/card_bg</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CardActionBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/Button_Touch_Target</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+    </style>
+
+    <style name="CardStilt">
+        <item name="android:layout_width">1px</item>
+        <item name="android:layout_height">110dp</item>
+        <item name="android:visibility">invisible</item>
+    </style>
+
+    <style name="CardOverlayContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/card_loading</item>
+        <item name="android:layout_alignLeft">@+id/content_layout</item>
+        <item name="android:layout_alignRight">@+id/content_layout</item>
+        <item name="android:layout_alignBottom">@+id/content_layout</item>
+        <item name="android:layout_alignTop">@+id/content_layout</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+
 </resources>

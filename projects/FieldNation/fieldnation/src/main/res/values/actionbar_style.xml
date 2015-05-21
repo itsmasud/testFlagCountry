@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="NotificationText">
+        <item name="android:background">@drawable/notification_number_background</item>
+        <item name="android:textColor">@color/fn_white_text</item>
+        <!--<item name="android:textAppearance">@android:attr/textAppearanceSmall</item>-->
+        <item name="android:textSize">10dp</item>
+    </style>
+</resources>

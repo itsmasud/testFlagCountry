@@ -102,7 +102,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
                 when = misc.formatDate(cal);
 
                 _dateTextView.setVisibility(View.VISIBLE);
-                _dateTextView.setText(this.getString(R.string.estimated) + " " + when);
+                _dateTextView.setText("Paid On " + when);
             } else {
                 _dateTextView.setVisibility(View.GONE);
             }
@@ -110,9 +110,15 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             _dateTextView.setVisibility(View.GONE);
         }
 
-        _workorderCountTextView.setText(_paid.getWorkorders().length + " " + this.getString(R.string.work_orders));
+        if (_paid.getWorkorders().length == 1) {
+            _workorderCountTextView.setText(_paid.getWorkorders().length + " Work Order");
+        } else if (_paid.getWorkorders().length > 1) {
+            _workorderCountTextView.setText(_paid.getWorkorders().length + " Work Orders");
+        }
 
-        if (_paid.getFees() != null && _paid.getFees().length > 0) {
+        if (_paid.getFees() != null && _paid.getFees().length == 1) {
+            _feesCountTextView.setText(_paid.getFees().length + " Fee");
+        } else if (_paid.getFees() != null && _paid.getFees().length > 1) {
             _feesCountTextView.setText(_paid.getFees().length + " Fees");
         } else {
             _feesCountTextView.setText("0 Fees");

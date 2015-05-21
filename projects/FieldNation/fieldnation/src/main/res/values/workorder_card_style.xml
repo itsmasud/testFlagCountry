@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Card">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:paddingBottom">2dp</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-        <item name="android:paddingTop">2dp</item>
-    </style>
+    <!--<style name="Card">-->
+        <!--<item name="android:layout_height">wrap_content</item>-->
+        <!--<item name="android:layout_width">match_parent</item>-->
+        <!--<item name="android:paddingBottom">2dp</item>-->
+        <!--<item name="android:paddingLeft">4dp</item>-->
+        <!--<item name="android:paddingRight">4dp</item>-->
+        <!--<item name="android:paddingTop">2dp</item>-->
+    <!--</style>-->
 
-    <style name="Card_Container">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/card_bg</item>
-    </style>
+    <!--<style name="Card_Container">-->
+        <!--<item name="android:layout_width">match_parent</item>-->
+        <!--<item name="android:layout_height">wrap_content</item>-->
+        <!--<item name="android:background">@drawable/card_bg</item>-->
+    <!--</style>-->
 
-    <style name="Card_Stilt">
-        <item name="android:layout_width">1px</item>
-        <item name="android:layout_height">110dp</item>
-        <item name="android:visibility">invisible</item>
-    </style>
-
-
-    <style name="Card_Body_Right">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">32dp</item>
-        <item name="android:paddingBottom">2dp</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:paddingTop">8dp</item>
-    </style>
-
-    <style name="Card_Body_Left">
-        <item name="android:layout_width">32dp</item>
-        <item name="android:layout_height">16dp</item>
-        <item name="android:layout_alignBottom">@+id/content_layout</item>
-        <item name="android:layout_alignTop">@+id/content_layout</item>
-        <item name="android:background">@drawable/card_status_orange</item>
-    </style>
+    <!--<style name="Card_Stilt">-->
+        <!--<item name="android:layout_width">1px</item>-->
+        <!--<item name="android:layout_height">110dp</item>-->
+        <!--<item name="android:visibility">invisible</item>-->
+    <!--</style>-->
 
 
-    <style name="Card_OverlayContainer">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@drawable/card_loading</item>
-        <item name="android:layout_alignLeft">@+id/content_layout</item>
-        <item name="android:layout_alignRight">@+id/content_layout</item>
-        <item name="android:layout_alignBottom">@+id/content_layout</item>
-        <item name="android:layout_alignTop">@+id/content_layout</item>
-        <item name="android:layout_margin">2dp</item>
-        <item name="android:clickable">true</item>
-        <item name="android:visibility">gone</item>
-    </style>
+    <!--<style name="Card_Body_Right">-->
+        <!--<item name="android:layout_width">match_parent</item>-->
+        <!--<item name="android:layout_height">wrap_content</item>-->
+        <!--<item name="android:layout_marginLeft">32dp</item>-->
+        <!--<item name="android:paddingBottom">2dp</item>-->
+        <!--<item name="android:paddingLeft">4dp</item>-->
+        <!--<item name="android:paddingRight">8dp</item>-->
+        <!--<item name="android:paddingTop">8dp</item>-->
+    <!--</style>-->
+
+    <!--<style name="Card_Body_Left">-->
+        <!--<item name="android:layout_width">32dp</item>-->
+        <!--<item name="android:layout_height">16dp</item>-->
+        <!--<item name="android:layout_alignBottom">@+id/content_layout</item>-->
+        <!--<item name="android:layout_alignTop">@+id/content_layout</item>-->
+        <!--<item name="android:background">@drawable/card_status_orange</item>-->
+    <!--</style>-->
+
+
+    <!--<style name="Card_OverlayContainer">-->
+        <!--<item name="android:layout_width">match_parent</item>-->
+        <!--<item name="android:layout_height">match_parent</item>-->
+        <!--<item name="android:background">@drawable/card_loading</item>-->
+        <!--<item name="android:layout_alignLeft">@+id/content_layout</item>-->
+        <!--<item name="android:layout_alignRight">@+id/content_layout</item>-->
+        <!--<item name="android:layout_alignBottom">@+id/content_layout</item>-->
+        <!--<item name="android:layout_alignTop">@+id/content_layout</item>-->
+        <!--<item name="android:layout_margin">2dp</item>-->
+        <!--<item name="android:clickable">true</item>-->
+        <!--<item name="android:visibility">gone</item>-->
+    <!--</style>-->
     <!--
         <style name="WorkorderCard">
             <item name="android:background">@color/fn_transparent</item>

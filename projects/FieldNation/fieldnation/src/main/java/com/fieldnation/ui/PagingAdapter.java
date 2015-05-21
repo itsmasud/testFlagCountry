@@ -16,6 +16,9 @@ import java.util.Set;
 public abstract class PagingAdapter<T> extends BaseAdapter {
     private static final String TAG = "PagingAdapter";
 
+    private RateMeView _rateMeView = null;
+    private int _rateMePosition = 2;
+    private boolean _showRateMe = true;
     private boolean _noMorePages = false;
     private Hashtable<Integer, List<T>> _pages = new Hashtable<>();
     private Set<Integer> _loadingPages = new HashSet<>();
@@ -24,8 +27,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     public void setPage(int page, List<T> items) {
 //        Log.v(TAG, "setPage()");
-
-/*
         if (items == null || items.size() == 0) {
             int i = page;
             while (_pages.containsKey(i)) {
@@ -34,26 +35,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             }
             countItems();
         } else if (items.size() > 0) {
-            _pages.put(page, items);
-            countItems();
-        }
-
-        if (_loadingPages.contains(page)) {
-            _loadingPages.remove(page);
-        }
-
-        // request an update if results are cached
-        if (isCached)
-            preRequestPage(page, false);
-
-        if (_loadingPages.size() == 0 && _listener != null) {
-            _listener.onLoadingComplete();
-        }
-
-        notifyDataSetChanged();
-*/
-
-        if (items != null && items.size() > 0) {
             _pages.put(page, items);
             countItems();
         }
@@ -118,6 +99,12 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     public Object getItem(int position) {
 //        Log.v(TAG, "getItem()");
 
+        if (position == _rateMePosition && _showRateMe) {
+            return null;
+        } else if (position > _rateMePosition && _showRateMe) {
+            position--;
+        }
+
         // find the page that has this item
         int count = 0;
         List<T> page = null;
@@ -149,6 +136,16 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         // Log.v(TAG, "getView()");
         // find the page
+        if (position == _rateMePosition && _showRateMe) {
+            if (_rateMeView == null) {
+                _rateMeView = new RateMeView(parent.getContext());
+                _rateMeView.setListener(_rateMe_listener);
+            }
+            return _rateMeView;
+        } else if (position > _rateMePosition && _showRateMe) {
+            position--;
+        }
+
         int count = 0;
         List<T> page = null;
         int page_num = 0;
@@ -185,6 +182,14 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             requestPage(page, allowCache);
         }
     }
+
+    private final RateMeView.Listener _rateMe_listener = new RateMeView.Listener() {
+        @Override
+        public void onHide() {
+            _showRateMe = false;
+            notifyDataSetInvalidated();
+        }
+    };
 
     public abstract View getView(int page, int position, T object, View convertView, ViewGroup parent);
 
