@@ -28,7 +28,7 @@
 
             <TextView
                 android:id="@+id/projectname_textview"
-                style="@style/Text_Headline"
+                style="@style/Text_Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Name of project goes here" />
@@ -36,14 +36,14 @@
 
             <TextView
                 android:id="@+id/workorderid_textview"
-                style="@style/Text_Caption"
+                style="@style/Text_Body_1_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Work Order ID" />
 
             <TextView
                 android:id="@+id/customdisplayfields_textview"
-                style="@style/Text_Caption"
+                style="@style/Text_Body_1_Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -61,7 +61,8 @@
                 style="@style/TextViewLink"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                android:text="View Bundle Details" />
+                android:text="View Bundle Details"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -78,6 +79,7 @@
 
                 <TextView
                     android:id="@+id/descriptionShort_textview"
+                    style="@style/Text_Body_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -115,14 +117,16 @@
                 style="@style/TextViewLink"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
-                android:text="@string/view_confidential_information" />
+                android:text="@string/view_confidential_information"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/policies_textview"
                 style="@style/TextViewLink"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
-                android:text="@string/view_customer_policies_and_procedures" />
+                android:text="@string/view_customer_policies_and_procedures"
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 

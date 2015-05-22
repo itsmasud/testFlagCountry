@@ -60,6 +60,12 @@
         <item name="android:alpha">0.87</item>
     </style>
 
+    <style name="Text_Body_1_Caption">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
     <style name="Text_Caption">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">12sp</item>

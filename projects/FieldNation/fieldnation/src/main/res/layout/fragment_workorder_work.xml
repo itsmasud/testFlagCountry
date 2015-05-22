@@ -32,13 +32,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.fieldnation.ui.workorder.detail.LocationView
-                android:id="@+id/location_view"
+            <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
+                android:id="@+id/schedule_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
-                android:id="@+id/schedule_view"
+            <com.fieldnation.ui.workorder.detail.LocationView
+                android:id="@+id/location_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

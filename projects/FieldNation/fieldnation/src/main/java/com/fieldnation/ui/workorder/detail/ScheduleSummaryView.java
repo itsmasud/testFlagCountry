@@ -5,21 +5,15 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 
 public class ScheduleSummaryView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
-
-    private static final int WEB_SUBMIT_WORKLOG = 1;
+    private static final String TAG = "ScheduleSummaryView";
 
     // UI
-    private TextView _arriveTimeTextView;
-    private TextView _coLabelTextView;
-    private TextView _coTextView;
 
     // Data
     private Workorder _workorder;
@@ -43,10 +37,6 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 
         if (isInEditMode())
             return;
-
-        _arriveTimeTextView = (TextView) findViewById(R.id.arrivetime_view);
-        _coLabelTextView = (TextView) findViewById(R.id.colabel_textview);
-        _coTextView = (TextView) findViewById(R.id.co_textview);
 
         setVisibility(View.GONE);
     }
@@ -72,12 +62,14 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             else
                 display = _workorder.getSchedule().getDisplayString(false);
 
+/*
             if (display != null)
                 _arriveTimeTextView.setText(display);
+*/
         }
 
-        _coLabelTextView.setVisibility(View.GONE);
-        _coTextView.setVisibility(View.GONE);
+//        _coLabelTextView.setVisibility(View.GONE);
+//        _coTextView.setVisibility(View.GONE);
 
         if (_workorder.getCounterOfferInfo() != null
                 && _workorder.getCounterOfferInfo().getSchedule() != null) {
@@ -85,12 +77,12 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 
             String display = schedule.getDisplayString(false);
             if (display != null) {
-                _coTextView.setText(schedule.getDisplayString(false));
-                _coTextView.setVisibility(View.VISIBLE);
-                _coLabelTextView.setVisibility(View.VISIBLE);
+//                _coTextView.setText(schedule.getDisplayString(false));
+//                _coTextView.setVisibility(View.VISIBLE);
+//                _coLabelTextView.setVisibility(View.VISIBLE);
             } else {
-                _coTextView.setVisibility(View.GONE);
-                _coLabelTextView.setVisibility(View.GONE);
+//                _coTextView.setVisibility(View.GONE);
+//                _coLabelTextView.setVisibility(View.GONE);
             }
         }
         setVisibility(View.VISIBLE);

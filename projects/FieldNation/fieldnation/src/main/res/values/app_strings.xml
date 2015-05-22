@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="mapbox_accessToken">pk.eyJ1IjoiamFjb2JiZWFzbGV5IiwiYSI6IlBGelg4WDAifQ.KtpfrNfln0jplKdKO-xSZA</string>
+    <string name="mapbox_mapid">jacobbeasley.ggg811om</string>
 
     <!-- general strings -->
     <string name="placeholder_word">Word</string>
@@ -352,6 +354,7 @@
     <string name="icfont_file_png">\uF126</string>
     <string name="icfont_file_xls">\uF127</string>
     <string name="icfont_hiring">\uF12D</string>
+    <string name="icfont_map_marker">\uF133</string>
     <string name="icfont_logout">\uF134</string>
     <string name="icfont_search">\uF135</string>
     <string name="icfont_message_alert">\uF137</string>
@@ -364,6 +367,9 @@
     <string name="icfont_star">\uF153</string>
     <string name="icfont_settings">\uF154</string>
     <string name="icfont_profile_pic">\uF156</string>
+
+    <string name="icfont_car">\uF14B</string>
+
 
     <!-- login error messages -->
     <string name="login_error_no_error">Success!</string>

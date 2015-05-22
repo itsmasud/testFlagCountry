@@ -26,6 +26,9 @@ public class IconFontButton extends Button {
     }
 
     private void init() {
+        if (isInEditMode())
+            return;
+
         setTypeface(GlobalState.getContext().getIconFont());
     }
 }
