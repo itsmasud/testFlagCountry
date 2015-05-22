@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:paddingRight="8dp"
+    android:visibility="visible">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,11 +15,11 @@
         android:paddingRight="8dp">
 
         <TextView
-            style="@style/Text_Headline"
+            style="@style/Text_Subhead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Company Info" />
+            android:text="Company Information" />
     </LinearLayout>
 
 
@@ -44,15 +45,15 @@
                 android:text="Company Name"
                 android:textColor="@color/fn_clickable_text" />
 
-            <View
+            <com.fieldnation.ui.StarView
                 android:id="@+id/star_rating"
-                android:layout_width="128dp"
-                android:layout_height="32dp"
-                android:layout_alignParentRight="true"
-                android:background="@color/fn_brandcolor" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/buyerRating_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -66,6 +67,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/expectationsPercent_textview"
                     style="@style/Text_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -91,6 +93,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/professionalism_textview"
                     style="@style/Text_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -116,6 +119,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/approval_textview"
                     style="@style/Text_Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -130,13 +134,21 @@
 
         </LinearLayout>
 
-        <TextView
-            style="@style/Text_Subhead"
+        <LinearLayout
+            android:id="@+id/detail_layout"
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="Work Order Approval Times in Days" />
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Text_Subhead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Work Order Approval Times in Days" />
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

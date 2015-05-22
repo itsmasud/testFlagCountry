@@ -107,6 +107,7 @@ public class WorkFragment extends WorkorderFragment {
     private OverScrollView _scrollView;
     private ActionBarTopView _topBar;
     private WorkSummaryView _sumView;
+    private CompanySummaryView _companySummaryView;
     private LocationView _locView;
     private ScheduleSummaryView _scheduleView;
     private ExpectedPaymentView _exView;
@@ -173,6 +174,8 @@ public class WorkFragment extends WorkorderFragment {
 
         _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
+
+        _companySummaryView = (CompanySummaryView) view.findViewById(R.id.companySummary_view);
 
         _locView = (LocationView) view.findViewById(R.id.location_view);
         _scheduleView = (ScheduleSummaryView) view
@@ -393,6 +396,10 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_sumView != null) {
             _sumView.setWorkorder(_workorder);
+        }
+
+        if (_companySummaryView != null) {
+            _companySummaryView.setWorkorder(_workorder);
         }
 
         if (_locView != null) {
