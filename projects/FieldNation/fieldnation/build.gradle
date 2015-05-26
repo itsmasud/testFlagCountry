@@ -16,6 +16,12 @@ android {
         applicationId "com.fieldnation.android"
 
     }
+
+    dexOptions{
+        incremental true
+        javaMaxHeapSize "4g"
+    }
+
     buildTypes {
         release {
             minifyEnabled true

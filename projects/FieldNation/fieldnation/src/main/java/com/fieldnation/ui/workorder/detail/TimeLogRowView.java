@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,16 +16,12 @@ import com.fieldnation.utils.misc;
 import java.text.ParseException;
 import java.util.Calendar;
 
-public class ScheduleDetailView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
-
-    private static final int WEB_SUBMIT_WORKLOG = 1;
+public class TimeLogRowView extends RelativeLayout {
+    private static final String TAG = "TimeLogRowView";
 
     // UI
-    private TextView _hoursTextView;
     private TextView _dateTextView;
-    private TextView _startTextView;
-    private TextView _endTextView;
+    private TextView _timeTextView;
     private TextView _devicesTextView;
 
     // Data
@@ -38,17 +33,17 @@ public class ScheduleDetailView extends RelativeLayout {
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
-    public ScheduleDetailView(Context context) {
+    public TimeLogRowView(Context context) {
         super(context);
         init();
     }
 
-    public ScheduleDetailView(Context context, AttributeSet attrs) {
+    public TimeLogRowView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ScheduleDetailView(Context context, AttributeSet attrs, int defStyle) {
+    public TimeLogRowView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -59,10 +54,8 @@ public class ScheduleDetailView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _hoursTextView = (TextView) findViewById(R.id.hours_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _startTextView = (TextView) findViewById(R.id.start_textview);
-        _endTextView = (TextView) findViewById(R.id.end_textview);
+        _timeTextView = (TextView) findViewById(R.id.time_textview);
         _devicesTextView = (TextView) findViewById(R.id.devices_textview);
 
         setOnClickListener(_edit_onClick);
@@ -81,67 +74,52 @@ public class ScheduleDetailView extends RelativeLayout {
         populateUi();
     }
 
-    private void enableDevices(boolean enabled) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) _devicesTextView.getLayoutParams();
-        if (enabled) {
-            params.weight = 1;
-            _devicesTextView.setLayoutParams(params);
-            _devicesTextView.setVisibility(View.VISIBLE);
-        } else {
-            params.weight = 0;
-            _devicesTextView.setLayoutParams(params);
-            _devicesTextView.setVisibility(View.GONE);
-        }
-    }
-
     private void populateUi() {
         if (_loggedWork == null)
             return;
         if (_devicesTextView == null)
             return;
 
-        String startDate = _loggedWork.getStartDate();
-        Calendar startCal = null;
-        String date;
-
         try {
-            startCal = ISO8601.toCalendar(startDate);
-            _dateTextView.setText(misc.formatDate(startCal));
-            date = misc.formatTime2(startCal);
-            date += startCal.get(Calendar.AM_PM) == Calendar.AM ? " AM" : " PM";
-            _startTextView.setText(date);
+            Calendar cal = ISO8601.toCalendar(_loggedWork.getStartDate());
+            _dateTextView.setText(misc.formatDate(cal));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         try {
-            if (_loggedWork.getEndTime() != null) {
-                Calendar endCal = ISO8601.toCalendar(_loggedWork.getEndDate());
-                date = misc.formatTime2(endCal);
-                date += endCal.get(Calendar.AM_PM) == Calendar.AM ? " AM" : " PM";
-                _endTextView.setText(date);
+            Calendar cal = ISO8601.toCalendar(_loggedWork.getStartDate());
+
+            String date = misc.formatTime(cal, false);
+
+            if (_loggedWork.getEndDate() != null) {
+                cal = ISO8601.toCalendar(_loggedWork.getEndDate());
+
+                date += " - " + misc.formatTime(cal, false);
             } else {
-                _endTextView.setText("----");
+                date += " - ----";
             }
+
+            if (_loggedWork.getHours() != null) {
+                date += " (" + String.format("%.2f", _loggedWork.getHours()) + " hours)";
+            }
+
+            _timeTextView.setText(date);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if (_loggedWork.getHours() != null) {
-            _hoursTextView.setText(String.format("%.2f", _loggedWork.getHours()));
+        if (_workorder.getPay() != null && _workorder.getPay().isPerDeviceRate()) {
+            _devicesTextView.setVisibility(VISIBLE);
+            _devicesTextView.setText(_loggedWork.getNoOfDevices() + "");
+        } else {
+            _devicesTextView.setVisibility(GONE);
         }
 
         if (_workorder.canModifyTimeLog()) {
             setClickable(true);
         } else {
             setClickable(false);
-        }
-
-        if (_workorder.getPay() != null && _workorder.getPay().isPerDeviceRate()) {
-            enableDevices(true);
-            _devicesTextView.setText(_loggedWork.getNoOfDevices() + "");
-        } else {
-            enableDevices(false);
         }
     }
 
@@ -167,7 +145,7 @@ public class ScheduleDetailView extends RelativeLayout {
         @Override
         public boolean onLongClick(View v) {
             if (_listener != null) {
-                _listener.deleteWorklog(ScheduleDetailView.this, _workorder, _loggedWork);
+                _listener.deleteWorklog(TimeLogRowView.this, _workorder, _loggedWork);
                 return true;
             }
             return false;
@@ -177,6 +155,6 @@ public class ScheduleDetailView extends RelativeLayout {
     public interface Listener {
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
 
-        public void deleteWorklog(ScheduleDetailView view, Workorder workorder, LoggedWork loggedWork);
+        public void deleteWorklog(TimeLogRowView view, Workorder workorder, LoggedWork loggedWork);
     }
 }

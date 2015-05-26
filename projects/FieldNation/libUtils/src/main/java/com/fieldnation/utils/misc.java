@@ -12,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
@@ -41,6 +42,7 @@ import java.util.TimeZone;
 public class misc {
     private static final String HEXES = "0123456789ABCDEF";
     private static NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
+    private static NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
 
     // private static NumberFormat _normalNumber =
     // NumberFormat.getIntegerInstance();
@@ -51,6 +53,12 @@ public class misc {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 
     public static File dumpLogcat(Context context) {
@@ -155,9 +163,18 @@ public class misc {
         return b;
     }
 
+    public static String to2Decimal(double value) {
+        return _maxTwoDecimal.format(value);
+    }
+
+    public static String to2Decimal(float value) {
+        return _maxTwoDecimal.format(value);
+    }
+
     public static String toCurrency(double money) {
         return _currencyFormat.format(money);
     }
+
 
     public static String toCurrencyTrim(double money) {
         String curr = _currencyFormat.format(money);
@@ -358,6 +375,15 @@ public class misc {
 
     /**
      * @param calendar
+     * @return Wednesday, Jun 3, 2014
+     */
+    public static String formatDateReallyLong(Calendar calendar) {
+        calendar = applyTimeZone(calendar);
+        return String.format(Locale.US, "%tA", calendar) + ", " + String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+    }
+
+    /**
+     * @param calendar
      * @param seconds
      * @return MM/DD/YYYY HH:MM:SS am/pm
      */
@@ -405,7 +431,7 @@ public class misc {
     /**
      * @param calendar
      * @param seconds  if true, then seconds are displayed.
-     * @return HH:MM:SS am/pm
+     * @return HH:MM:SSam/pm
      */
     public static String formatTime(Calendar calendar, boolean seconds) {
         calendar = applyTimeZone(calendar);

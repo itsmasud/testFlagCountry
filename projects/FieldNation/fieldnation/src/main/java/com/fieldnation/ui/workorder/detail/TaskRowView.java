@@ -4,21 +4,23 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.misc;
 
 public class TaskRowView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.TaskRowView");
+    private final String TAG = UniqueTag.makeTag("TaskRowView");
 
     // Ui
-    private CheckBox _checkbox;
+    private IconFontTextView _iconView;
+    private TextView _descriptionTextView;
 
     // Data
     private Workorder _workorder;
@@ -47,9 +49,8 @@ public class TaskRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _checkbox = (CheckBox) findViewById(R.id.checkbox);
-        _checkbox.setOnClickListener(_checkbox_onClick);
-
+        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+        _descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
         populateUi();
     }
@@ -77,22 +78,23 @@ public class TaskRowView extends RelativeLayout {
     }
 
     private void populateUi() {
-        if (_checkbox == null)
+        if (_iconView == null)
             return;
+
         if (_workorder == null)
             return;
 
-        _checkbox.setEnabled(_workorder.canModifyTasks());
+//        _checkbox.setEnabled(_workorder.canModifyTasks());
 
         TaskType type = _task.getTaskType();
 
         if (misc.isEmptyOrNull(_task.getDescription())) {
-            _checkbox.setText(type.getDisplay(getContext()));
+            _descriptionTextView.setText(type.getDisplay(getContext()));
         } else {
-            _checkbox.setText(type.getDisplay(getContext()) + "\n" + _task.getDescription());
+            _descriptionTextView.setText(type.getDisplay(getContext()) + "\n" + _task.getDescription());
         }
 
-        _checkbox.setChecked(_task.getCompleted());
+//        _checkbox.setChecked(_task.getCompleted());
 
     }
 
@@ -146,7 +148,7 @@ public class TaskRowView extends RelativeLayout {
     private View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _checkbox.setChecked(_task.getCompleted());
+//            _checkbox.setChecked(_task.getCompleted());
 
             if (_listener != null) {
                 _listener.onTaskClick(_task);
@@ -155,7 +157,7 @@ public class TaskRowView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void onTaskClick(Task task);
+        void onTaskClick(Task task);
     }
 
 }

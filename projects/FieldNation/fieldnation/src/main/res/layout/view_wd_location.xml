@@ -10,14 +10,25 @@
         android:orientation="vertical">
 
         <TextView
-            style="@style/Text_Title"
+            style="@style/Text_Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
             android:text="Location Details" />
 
+        <TextView
+            android:id="@+id/noLocation_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            android:text="No Location, work is done remotely." />
+
         <RelativeLayout
+            android:id="@+id/map_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -40,6 +51,7 @@
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/address_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -47,8 +59,8 @@
 
             <com.fieldnation.ui.IconFontTextView
                 style="@style/Text_Title"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/icfont_map_marker"
                 android:textColor="@color/fn_light_text" />
@@ -73,7 +85,6 @@
                     android:text="65.46 miles" />
 
             </LinearLayout>
-
         </LinearLayout>
 
         <View

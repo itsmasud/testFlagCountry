@@ -1,39 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/tileStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp">
+    android:orientation="vertical">
 
-    <CheckBox
-        android:id="@+id/checkbox"
-        style="@style/CheckBox"
+    <RelativeLayout
+        style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:checked="true" />
+        android:layout_height="wrap_content">
 
-    <!--<RelativeLayout-->
-    <!--android:layout_alignParentLeft="true"-->
-    <!--android:layout_alignParentTop="true"-->
-    <!--android:layout_alignBottom="@+id/checkbox"-->
-    <!--android:layout_alignRight="@+id/checkbox"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/icon_view"
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/icfont_circle"
+            android:textSize="32sp" />
 
-    <!--<View-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@drawable/task_grey_fill" />-->
+        <TextView
+            android:id="@+id/description_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/icon_view"
+            android:text="Upload or take a picture of the upgraded ARMs serial number" />
 
-    <!--<View-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@drawable/task_green_fill" />-->
+    </RelativeLayout>
 
-    <!--<View-->
-    <!--android:layout_marginLeft="10dp"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@drawable/task_slash_bitmap" />-->
-    <!--</RelativeLayout>-->
-
-</RelativeLayout>
+    <View style="@style/DividerFull" />
+</LinearLayout>

@@ -539,7 +539,7 @@ public class WorkorderCardView extends RelativeLayout {
         }
         // when scheduledTimeStart/scheduledTimeEnd
         if (_workorder.getEstimatedSchedule() != null) {
-            String when = _workorder.getEstimatedSchedule().getFormatedTime();
+            String when = _workorder.getEstimatedSchedule().getFormatedStartTime();
 
             if (when == null) {
                 _whenTextView.setVisibility(GONE);
@@ -547,7 +547,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _whenTextView.setText(when);
             }
         } else if (_workorder.getSchedule() != null) {
-            String when = _workorder.getSchedule().getFormatedTime();
+            String when = _workorder.getSchedule().getFormatedStartTime();
 
             if (when == null) {
                 _whenTextView.setVisibility(GONE);

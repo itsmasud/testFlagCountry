@@ -18,7 +18,7 @@ import com.fieldnation.utils.misc;
 import java.util.List;
 
 public class TaskListView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.TaskListView";
+    private static final String TAG = "TaskListView";
 
     // UI
     private TextView _preVisistTextView;

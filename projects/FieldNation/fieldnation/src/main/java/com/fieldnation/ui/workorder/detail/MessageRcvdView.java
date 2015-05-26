@@ -99,7 +99,7 @@ public class MessageRcvdView extends RelativeLayout {
 
         _picView.setAlertOn(!_message.isRead());
 
-        _usernameTextView.setText(_message.getFromUser().getFirstname());
+        _usernameTextView.setText(_message.getFromUser().getFirstName());
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);

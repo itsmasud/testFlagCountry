@@ -216,7 +216,7 @@ public class Location {
 
         String topAddr = getTopAddressLine();
         if (!misc.isEmptyOrNull(topAddr)) {
-            address += topAddr + ",";
+            address += topAddr + ", ";
         }
 
         if (!misc.isEmptyOrNull(_city)

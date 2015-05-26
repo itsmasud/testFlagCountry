@@ -4,11 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-
     <TextView
-        style="@style/WorkorderDetail_FieldTitle"
+        style="@style/Text_Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
         android:text="@string/tasks" />
 
     <LinearLayout
@@ -18,9 +19,10 @@
 
         <TextView
             android:id="@+id/previsit_textview"
-            style="@style/WorkorderDetail_Field"
+            style="@style/Text_Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:text="@string/pre_visit"
             android:visibility="gone" />
 
@@ -40,16 +42,17 @@
         android:visibility="gone">
 
         <TextView
-            style="@style/WorkorderDetail_Field"
+            style="@style/Text_Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:text="@string/on_site" />
 
         <LinearLayout
             android:id="@+id/onsite_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical" />
     </LinearLayout>
 
     <LinearLayout
@@ -60,20 +63,22 @@
         android:visibility="gone">
 
         <TextView
-            style="@style/WorkorderDetail_Field"
+            style="@style/Text_Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:text="@string/post_visit" />
 
         <LinearLayout
             android:id="@+id/postvisit_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical" />
     </LinearLayout>
 
     <View
-        android:layout_width="match_parent"
-        style="@style/WorkorderDetail_Separator" />
+        style="@style/DividerFull"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

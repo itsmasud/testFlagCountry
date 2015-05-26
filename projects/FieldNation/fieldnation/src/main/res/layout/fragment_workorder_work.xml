@@ -42,7 +42,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.fieldnation.ui.workorder.detail.TimeLoggedView
+            <com.fieldnation.ui.workorder.detail.ContactListView
+                android:id="@+id/contactList_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.fieldnation.ui.workorder.detail.TimeLogListView
                 android:id="@+id/timelogged_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

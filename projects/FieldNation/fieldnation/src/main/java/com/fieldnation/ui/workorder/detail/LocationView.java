@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.GoogleAnalyticsTopicClient;
@@ -36,14 +37,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private TextView _addressTextView;
     private TextView _distanceTextView;
     private Button _navigateButton;
-
-/*
-    private TextView _addressTextView;
-    private TextView _distanceTextView;
-    private TextView _contactInfoTextView;
-    private TextView _descriptionTextView;
-    private TextView _remoteTextView;
-*/
+    private RelativeLayout _mapLayout;
+    private TextView _noLocationTextView;
+    private LinearLayout _addressLayout;
 
     // Data
     private Workorder _workorder;
@@ -75,49 +71,72 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _navigateButton = (Button) findViewById(R.id.navigate_button);
         _navigateButton.setOnClickListener(_navigate_onClick);
 
+        _mapLayout = (RelativeLayout) findViewById(R.id.map_layout);
+
+        _noLocationTextView = (TextView) findViewById(R.id.noLocation_textview);
+
+        _addressLayout = (LinearLayout) findViewById(R.id.address_layout);
+        _addressLayout.setOnClickListener(_map_onClick);
+
         setVisibility(View.GONE);
     }
 
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        refresh();
+        populateUi();
     }
 
-    private void refresh() {
-        Location location = _workorder.getLocation();
-
-        if (location == null) {
-            // TODO, EPIC FAIL, AND A BAD SOLUTION, MAKE THIS BETTER
-            setVisibility(GONE);
+    private void populateUi() {
+        if (_workorder == null)
             return;
-        }
+
+        if (_mapView == null)
+            return;
+
+        Location location = _workorder.getLocation();
 
         setVisibility(VISIBLE);
 
+        if (location == null || _workorder.getIsRemoteWork()) {
+            _mapLayout.setVisibility(GONE);
+            _noLocationTextView.setVisibility(VISIBLE);
+            _addressLayout.setVisibility(GONE);
+            _navigateButton.setVisibility(GONE);
+            return;
+        } else {
+            _mapLayout.setVisibility(VISIBLE);
+            _noLocationTextView.setVisibility(GONE);
+            _addressLayout.setVisibility(VISIBLE);
+            _navigateButton.setVisibility(VISIBLE);
+        }
+
         try {
+            // get address location
             Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-
             List<Address> addrs = geocoder.getFromLocationName(location.getFullAddress(), 1);
-
             LatLng ll = new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
 
-//            _mapView.setCenter(ll);
             _mapView.setUserLocationEnabled(true);
+            LatLng user = _mapView.getUserLocation();
+            _mapView.setUserLocationEnabled(false);
 
-            Marker marker = new Marker(_mapView, "Work", "Work here dammit!", ll);
-            marker.setMarker(getResources().getDrawable(R.drawable.ic_check));
+            Marker marker = new Marker(_mapView, "Work", "", ll);
+            marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
+            _mapView.addMarker(marker);
+
+            marker = new Marker(_mapView, "Me", "", user);
+            marker.setMarker(getResources().getDrawable(R.drawable.ic_user_location));
             _mapView.addMarker(marker);
 
             Set<LatLng> lls = new HashSet<>();
-
             lls.add(ll);
-            lls.add(_mapView.getUserLocation());
+            lls.add(user);
 
             _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, false, true);
 
             _addressTextView.setText(location.getFullAddressOneLine());
-            _distanceTextView.setText(misc.toCurrency(ll.distanceTo(_mapView.getUserLocation()) * 0.000621371).substring(1) + " miles");
+            _distanceTextView.setText(misc.to2Decimal(ll.distanceTo(user) * 0.000621371) + " miles");
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -145,9 +164,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                         GoogleAnalyticsTopicClient
                                 .dispatchEvent(getContext(), "WorkorderActivity",
                                         GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                        "WorkFragment",
-                                        1
-                                );
+                                        "WorkFragment", 1);
                         String _fullAddress = misc.escapeForURL(location.getFullAddress());
                         String _uriString = "google.navigation:q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);
@@ -169,9 +186,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                         GoogleAnalyticsTopicClient
                                 .dispatchEvent(getContext(), "WorkorderActivity",
                                         GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                        "WorkFragment",
-                                        1
-                                );
+                                        "WorkFragment", 1);
                         String _fullAddress = misc.escapeForURL(location.getFullAddress());
                         String _uriString = "geo:0,0?q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);

@@ -108,11 +108,13 @@ public class WorkFragment extends WorkorderFragment {
     private ActionBarTopView _topBar;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
-    private LocationView _locView;
     private ScheduleSummaryView _scheduleView;
+    private LocationView _locView;
+    private ContactListView _contactListView;
+
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
-    private TimeLoggedView _timeLogged;
+    private TimeLogListView _timeLogged;
     private TaskListView _taskList;
     private CustomFieldListView _customFields;
     private ShipmentView _shipments;
@@ -177,6 +179,8 @@ public class WorkFragment extends WorkorderFragment {
 
         _companySummaryView = (CompanySummaryView) view.findViewById(R.id.companySummary_view);
 
+        _contactListView = (ContactListView) view.findViewById(R.id.contactList_view);
+
         _locView = (LocationView) view.findViewById(R.id.location_view);
         _scheduleView = (ScheduleSummaryView) view
                 .findViewById(R.id.schedule_view);
@@ -208,7 +212,7 @@ public class WorkFragment extends WorkorderFragment {
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
         _taskList.setTaskListViewListener(_taskListView_listener);
 
-        _timeLogged = (TimeLoggedView) view.findViewById(R.id.timelogged_view);
+        _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
         _timeLogged.setListener(_timeLoggedView_listener);
 
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
@@ -408,6 +412,10 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_scheduleView != null) {
             _scheduleView.setWorkorder(_workorder);
+        }
+
+        if (_contactListView != null) {
+            _contactListView.setWorkorder(_workorder);
         }
 
         if (_payView != null) {
@@ -1358,7 +1366,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final TimeLoggedView.Listener _timeLoggedView_listener = new TimeLoggedView.Listener() {
+    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
             _worklogDialog.show("Add Worklog", null, showdevice);

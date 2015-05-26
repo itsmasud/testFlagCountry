@@ -92,8 +92,59 @@ public class Schedule implements Parcelable {
         _endTime = endTime;
     }
 
-    // Todo, localize this
+    public String getFormatedDate() {
+        try {
+            if (!misc.isEmptyOrNull(getStartTime())) {
+                String when = "";
+                Calendar cal = null;
+                cal = ISO8601.toCalendar(getStartTime());
+                when = misc.formatDateReallyLong(cal);
+                // Wednesday, Dec 4, 2056
+
+                if (!misc.isEmptyOrNull(getEndTime())) {
+                    cal = ISO8601.toCalendar(getEndTime());
+                    if (cal.get(Calendar.YEAR) > 2000) {
+                        when += "\n";
+                        when += misc.formatDateReallyLong(cal);
+                    }
+                }
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     public String getFormatedTime() {
+        try {
+            if (!misc.isEmptyOrNull(getStartTime())) {
+                String when = "";
+                Calendar cal = null;
+                cal = ISO8601.toCalendar(getStartTime());
+                when = misc.formatTime(cal, false);
+
+                if (!misc.isEmptyOrNull(getEndTime())) {
+                    cal = ISO8601.toCalendar(getEndTime());
+                    if (cal.get(Calendar.YEAR) > 2000) {
+                        when += " - ";
+                        when += misc.formatTime(cal, false);
+                    }
+                }
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    // Todo, localize this
+    public String getFormatedStartTime() {
         try {
             if (!misc.isEmptyOrNull(getStartTime())) {
                 String when = "";
@@ -172,35 +223,35 @@ public class Schedule implements Parcelable {
                     e.printStackTrace();
                 }
             } else {
-            try {
-                Calendar cal = ISO8601.toCalendar(getStartTime());
-                String dayDate;
-                String time = "";
+                try {
+                    Calendar cal = ISO8601.toCalendar(getStartTime());
+                    String dayDate;
+                    String time = "";
 
-                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
-                time = misc.formatTime(cal, false);
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
+                    time = misc.formatTime(cal, false);
 
-                String msg = "You will need to arrive between \n\t" + dayDate + " at " + time + " and\n\t";
+                    String msg = "You will need to arrive between \n\t" + dayDate + " at " + time + " and\n\t";
 
-                Calendar cal2 = ISO8601.toCalendar(getEndTime());
+                    Calendar cal2 = ISO8601.toCalendar(getEndTime());
 
-                // same day
-                if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
-                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += time + ".";
+                    // same day
+                    if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+                        time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                        msg += time + ".";
 
-                } else {
-                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
-                    time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                    msg += dayDate + " at " + time + ".";
+                    } else {
+                        dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
+                        time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                        msg += dayDate + " at " + time + ".";
+                    }
+
+                    return msg;
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-
-                return msg;
-
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
-        }
         }
         return null;
     }
