@@ -1,65 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        style="@style/CardContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/delete_imagebutton"
-        android:orientation="vertical">
+        android:padding="16dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/carrier_textview"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/trackingid_textview"
+                style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="123456789" />
 
             <TextView
-                android:id="@+id/carrier_textview"
+                android:id="@+id/description_textview"
+                style="@style/Text_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="Carrier Name" />
-        </RelativeLayout>
+                android:text="Shipment Description" />
+
+            <TextView
+                android:id="@+id/direction_textview"
+                style="@style/Text_Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shipping to site" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/description_textview"
+            android:id="@+id/carrier_textview"
+            style="@style/Text_Body_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Shipment Description" />
-
-        <TextView
-            android:id="@+id/direction_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Shipping to site" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/assign_button"
-        style="?attr/buttonGreenStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:visibility="gone"
-        android:text="Assign" />
-
-    <ImageButton
-        android:id="@+id/delete_imagebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_delete" />
-
+            android:layout_alignParentRight="true"
+            android:text="Carrier Name" />
+    </RelativeLayout>
 </RelativeLayout>

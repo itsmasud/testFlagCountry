@@ -355,7 +355,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
 
     public interface PageRequestListener {
-        public void requestPage(Class<? extends WorkorderFragment> clazz);
+        void requestPage(Class<? extends WorkorderFragment> clazz);
     }
 
     /*-*****************************-*/
@@ -364,6 +364,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
+            Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
             _workorderClient.subGet(_workorderId);
             _workorderClient.subActions(_workorderId);
             getData();
@@ -371,6 +372,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
         @Override
         public void onAction(long workorderId, String ation) {
+            Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + ation);
             getData();
         }
 

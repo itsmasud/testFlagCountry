@@ -117,7 +117,7 @@ public class WorkFragment extends WorkorderFragment {
     private TimeLogListView _timeLogged;
     private TaskListView _taskList;
     private CustomFieldListView _customFields;
-    private ShipmentView _shipments;
+    private ShipmentListView _shipments;
     private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
@@ -158,7 +158,6 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
-    private boolean _isSubbed = false;
 
 
 	/*-*************************************-*/
@@ -206,7 +205,7 @@ public class WorkFragment extends WorkorderFragment {
         _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _shipments = (ShipmentView) view.findViewById(R.id.shipment_view);
+        _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
         _shipments.setListener(_shipments_listener);
 
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
@@ -304,7 +303,6 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        _isSubbed = false;
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(activity);
         _profileClient = new ProfileClient(_profileClient_listener);
@@ -362,7 +360,6 @@ public class WorkFragment extends WorkorderFragment {
         _workorderClient = null;
         _profileClient.disconnect(getActivity());
         _profileClient = null;
-        _isSubbed = false;
         super.onDetach();
     }
 
@@ -1171,7 +1168,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final ShipmentView.Listener _shipments_listener = new ShipmentView.Listener() {
+    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
 
         @Override
         public void addShipment() {
@@ -1410,12 +1407,8 @@ public class WorkFragment extends WorkorderFragment {
         if (!_workorderClient.isConnected())
             return;
 
-        if (_isSubbed)
-            return;
-
         _workorderClient.subListTasks(_workorder.getWorkorderId(), false);
         _workorderClient.subActions(_workorder.getWorkorderId());
-        _isSubbed = true;
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {

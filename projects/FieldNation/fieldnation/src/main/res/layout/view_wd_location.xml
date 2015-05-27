@@ -11,11 +11,13 @@
 
         <TextView
             style="@style/Text_Subhead"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
-            android:text="Location Details" />
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:text="LOCATION" />
 
         <TextView
             android:id="@+id/noLocation_textview"
@@ -24,8 +26,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:gravity="center_horizontal"
-            android:visibility="gone"
-            android:text="No Location, work is done remotely." />
+            android:text="No Location, work is done remotely."
+            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/map_layout"

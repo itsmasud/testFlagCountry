@@ -369,10 +369,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                 if (!misc.isEmptyOrNull(handlerName)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
-                            context,
-                            handlerName,
-                            trans,
-                            result);
+                            context, handlerName, trans, result);
 
                     switch (wresult) {
                         case ERROR:

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Fields For Provider To Enter" />
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="ADDITIONAL FIELDS" />
 
     <LinearLayout
         android:id="@+id/fields_list"
@@ -21,7 +22,8 @@
     </LinearLayout>
 
     <View
-        android:layout_width="match_parent"
-        style="@style/WorkorderDetail_Separator" />
+        style="@style/DividerFull"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

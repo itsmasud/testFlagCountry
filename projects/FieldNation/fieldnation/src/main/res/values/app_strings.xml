@@ -341,8 +341,8 @@
     <string name="icfont_bundle">\uF10D</string>
     <string name="icfont_calendar">\uF10E</string>
     <string name="icfont_check">\uF10F</string>
-    <string name="icfont_circle_checked_filled">\uF110</string>
-    <string name="icfont_circle_checked">\uF111</string>
+    <!--<string name="icfont_circle_checked_filled">\uF110</string>-->
+    <!--<string name="icfont_circle_checked">\uF111</string>-->
     <string name="icfont_clock">\uF115</string>
     <string name="icfont_feedback">\uF116</string>
     <string name="icfont_people_2">\uF117</string>
@@ -371,9 +371,14 @@
     <string name="icfont_settings">\uF154</string>
     <string name="icfont_profile_pic">\uF156</string>
     <string name="icfont_debug">\uF15D</string>
+    <string name="icfont_messages_action">\uF167</string>
     <string name="icfont_clipboard">\uF168</string>
+    <string name="icfont_alert_action">\uF169</string>
     <string name="icfont_circle">\uF16E</string>
+    <string name="icfont_circle_checked">\uF16F</string>
     <string name="icfont_missing">\uF175</string>
+    <string name="icfont_circle_dollar">\uF177</string>
+    <string name="icfont_circle_truck">\uF178</string>
     <string name="icfont_car">\uF176</string>
 
 

@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-            <com.fieldnation.ui.workorder.detail.ShipmentView
+            <com.fieldnation.ui.workorder.detail.ShipmentListView
                 android:id="@+id/shipment_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

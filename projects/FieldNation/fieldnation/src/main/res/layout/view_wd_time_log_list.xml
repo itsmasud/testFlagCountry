@@ -11,7 +11,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:text="Time Logged" />
+        android:gravity="center"
+        android:text="TIME LOGGED" />
 
     <TextView
         android:id="@+id/notime_textview"

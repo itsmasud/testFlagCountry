@@ -18,7 +18,7 @@ import com.fieldnation.data.workorder.Workorder;
  */
 
 public class CustomFieldListView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.CustomFieldListView";
+    private static final String TAG = "CustomFieldListView";
 
     // Ui
     private LinearLayout _fieldsList;

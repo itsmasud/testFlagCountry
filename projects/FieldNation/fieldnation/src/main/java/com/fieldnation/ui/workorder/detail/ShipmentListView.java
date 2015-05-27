@@ -5,19 +5,22 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
 
-public class ShipmentView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "ShipmentView";
+public class ShipmentListView extends LinearLayout implements WorkorderRenderer {
+    private static final String TAG = "ShipmentListView";
 
     // UI
     private LinearLayout _shipmentsLayout;
-    private LinearLayout _addLayout;
+    private TextView _noShipmentsTextView;
+    private Button _addButton;
 
     // Data
     private Workorder _workorder;
@@ -27,20 +30,22 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
-    public ShipmentView(Context context) {
+    public ShipmentListView(Context context) {
         this(context, null);
     }
 
-    public ShipmentView(Context context, AttributeSet attrs) {
+    public ShipmentListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         LayoutInflater.from(context).inflate(R.layout.view_wd_shipment, this);
 
         if (isInEditMode())
             return;
 
-        _addLayout = (LinearLayout) findViewById(R.id.add_layout);
-        _addLayout.setOnClickListener(_add_onClick);
         _shipmentsLayout = (LinearLayout) findViewById(R.id.shipments_linearlayout);
+        _noShipmentsTextView = (TextView) findViewById(R.id.noShipments_textview);
+
+        _addButton = (Button) findViewById(R.id.add_button);
+        _addButton.setOnClickListener(_add_onClick);
     }
 
     public void setListener(Listener listener) {
@@ -57,9 +62,9 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         final ShipmentTracking[] shipments = _workorder.getShipmentTracking();
 
         if (_workorder.canChangeShipments()) {
-            _addLayout.setVisibility(View.VISIBLE);
+            _addButton.setVisibility(View.VISIBLE);
         } else {
-            _addLayout.setVisibility(View.GONE);
+            _addButton.setVisibility(View.GONE);
         }
 
         if ((shipments == null || shipments.length == 0) && !_workorder.canChangeShipments()) {
@@ -69,10 +74,12 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         setVisibility(View.VISIBLE);
 
         if (shipments == null || shipments.length == 0) {
-            _shipmentsLayout.setVisibility(View.GONE);
+            _shipmentsLayout.setVisibility(GONE);
+            _noShipmentsTextView.setVisibility(VISIBLE);
             return;
         } else {
-            _shipmentsLayout.setVisibility(View.VISIBLE);
+            _shipmentsLayout.setVisibility(VISIBLE);
+            _noShipmentsTextView.setVisibility(GONE);
         }
 
         ForLoopRunnable r = new ForLoopRunnable(shipments.length, new Handler()) {
@@ -80,11 +87,11 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
 
             @Override
             public void next(int i) throws Exception {
-                ShipmentSummary v = null;
+                ShipmentRowView v = null;
                 if (i < _shipmentsLayout.getChildCount()) {
-                    v = (ShipmentSummary) _shipmentsLayout.getChildAt(i);
+                    v = (ShipmentRowView) _shipmentsLayout.getChildAt(i);
                 } else {
-                    v = new ShipmentSummary(getContext());
+                    v = new ShipmentRowView(getContext());
                     _shipmentsLayout.addView(v);
                 }
                 v.setData(_workorder, _shipments[i]);
@@ -112,7 +119,7 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private final ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
+    private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
         @Override
         public void onDelete(ShipmentTracking shipment) {
             if (_listener != null && _workorder.canChangeShipments()) {
@@ -121,7 +128,8 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
         }
 
         @Override
-        public void onAssign(ShipmentTracking shipment) {
+        public void onEdit(ShipmentTracking shipment) {
+            // TODO need to show an edit dialog
             if (_listener != null && _workorder.canChangeShipments()) {
                 _listener.onAssign(_workorder, shipment.getWorkorderShipmentId());
             }
@@ -129,11 +137,11 @@ public class ShipmentView extends LinearLayout implements WorkorderRenderer {
     };
 
     public interface Listener {
-        public void addShipment();
+        void addShipment();
 
-        public void onDelete(Workorder workorder, int shipmentId);
+        void onDelete(Workorder workorder, int shipmentId);
 
-        public void onAssign(Workorder workorder, int shipmentId);
+        void onAssign(Workorder workorder, int shipmentId);
     }
 
 

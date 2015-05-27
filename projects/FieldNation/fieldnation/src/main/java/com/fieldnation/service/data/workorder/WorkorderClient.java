@@ -152,7 +152,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subActions(long workorderId) {
-        String topicId = PARAM_ACTION;
+        String topicId = TOPIC_ID_ACTION_COMPLETE;
 
         if (workorderId > 0) {
             topicId += "/" + workorderId;
@@ -368,7 +368,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.action(context,
                 workorderId, "custom-fields/" + customFieldId, null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "value=" + misc.escapeForURL(value));
+                (misc.isEmptyOrNull(value) ? "" : "value=" + misc.escapeForURL(value)));
     }
 
     // complete workorder
@@ -611,8 +611,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         private void preAction(Bundle payload) {
-            Log.v(STAG, "preAction " + payload.getLong(PARAM_WORKORDER_ID) + " "
+            Log.v(STAG, "preAction "
+                    + payload.getLong(PARAM_WORKORDER_ID) + " "
                     + payload.getString(PARAM_ACTION));
+
             onAction(payload.getLong(PARAM_WORKORDER_ID),
                     payload.getString(PARAM_ACTION));
         }

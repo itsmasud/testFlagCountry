@@ -155,7 +155,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/payment_imageview"
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_hiring" />
+                        android:text="@string/icfont_circle_dollar" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
