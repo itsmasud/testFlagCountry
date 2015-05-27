@@ -10,12 +10,22 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/icon_view"
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/icfont_circle_truck"
+            android:textColor="@color/fn_accent_color"
+            android:textSize="32sp" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp"
             android:layout_toLeftOf="@+id/carrier_textview"
+            android:layout_toRightOf="@+id/icon_view"
             android:orientation="vertical">
 
             <TextView

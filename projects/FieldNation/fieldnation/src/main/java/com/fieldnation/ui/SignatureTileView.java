@@ -3,12 +3,13 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
+import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by michael.carver on 12/5/2014.
@@ -17,7 +18,6 @@ public class SignatureTileView extends RelativeLayout {
     private static final String TAG = "SignatureTileView";
 
     // Ui
-    private View _signatureThumb;
     private TextView _nameTextView;
     private TextView _dateTextView;
 
@@ -45,7 +45,6 @@ public class SignatureTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _signatureThumb = findViewById(R.id.thumb_signatureview);
         _nameTextView = (TextView) findViewById(R.id.name_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
 
@@ -69,9 +68,15 @@ public class SignatureTileView extends RelativeLayout {
         if (_sig == null)
             return;
 
-        //_signatureThumb.setSignatureJson(_sig.getSignature(), true);
         _nameTextView.setText(_sig.getPrintName());
-        _dateTextView.setText(_sig.getDateSaved());
+        try {
+            _dateTextView.setText("Signed by " + _sig.getPrintName()
+                    + " on " + misc.formatDateLong(ISO8601.toCalendar(_sig.getDateSaved())));
+            _dateTextView.setVisibility(VISIBLE);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            _dateTextView.setVisibility(GONE);
+        }
     }
 
 

@@ -87,21 +87,18 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
             return;
         }
 
-        if (!_workorder.canAcceptSignature()) {
-            setVisibility(View.GONE);
-            return;
-        }
-
         setVisibility(View.VISIBLE);
 
         final Signature[] list = _workorder.getSignatureList();
 
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(View.VISIBLE);
+            _listView.setVisibility(GONE);
             return;
         }
 
         _noDataTextView.setVisibility(View.GONE);
+        _listView.setVisibility(VISIBLE);
 
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
             private Signature[] _list = list;

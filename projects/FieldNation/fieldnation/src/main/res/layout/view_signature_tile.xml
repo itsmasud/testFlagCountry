@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Card"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
     android:orientation="vertical">
 
     <RelativeLayout
-        android:orientation="vertical"
+        style="@style/CardContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <View
-            android:id="@+id/thumb_signatureview"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@drawable/ic_signature_grey" />
-
-        <LinearLayout
-            android:layout_toRightOf="@+id/thumb_signatureview"
-            android:layout_centerVertical="true"
-            android:id="@+id/info_layout"
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/icon_view"
+            style="@style/Text_Body_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/icfont_circle_pen"
+            android:textColor="@color/fn_accent_color"
+            android:textSize="32sp" />
+
+        <LinearLayout
+            android:id="@+id/info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/icon_view"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/name_textview"
-                style="@style/WorkorderDetail_Field"
-                android:padding="0dp"
+                style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Signee Name" />
 
             <TextView
-                style="@style/WorkorderDetail_Field_Gray"
                 android:id="@+id/date_textview"
-                android:padding="0dp"
+                style="@style/Text_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="January 10, 2014" />
@@ -43,9 +49,4 @@
 
 
     </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        style="@style/WorkorderDetail_Separator" />
 </LinearLayout>
