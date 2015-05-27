@@ -96,7 +96,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/mywork_icon"
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_hiring" />
+                        android:text="@string/icfont_clipboard" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -271,7 +271,7 @@
 
                     <com.fieldnation.ui.IconFontTextView
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_feedback" />
+                        android:text="@string/icfont_debug" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"

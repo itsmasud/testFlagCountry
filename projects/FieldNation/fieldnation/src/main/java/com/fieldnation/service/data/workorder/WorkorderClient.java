@@ -483,6 +483,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
+    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+
+        topicId += "/" + workorderId + "/" + uploadSlotId;
+
+        return register(topicId, TAG);
+    }
+
     public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
             @Override
@@ -586,7 +594,20 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preListTasks((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
                 preAction((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_UPLOAD_DELIVERABLE)) {
+                preUploadDeliverable((Bundle) payload);
             }
+        }
+
+        private void preUploadDeliverable(Bundle payload) {
+            onUploadDeliverable(
+                    payload.getLong(PARAM_WORKORDER_ID),
+                    payload.getLong(PARAM_UPLOAD_SLOT_ID),
+                    payload.getString(PARAM_FILE_NAME),
+                    payload.getBoolean(PARAM_IS_COMPLETE));
+        }
+
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete) {
         }
 
         private void preAction(Bundle payload) {

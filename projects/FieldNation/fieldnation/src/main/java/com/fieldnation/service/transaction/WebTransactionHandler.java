@@ -13,6 +13,20 @@ public abstract class WebTransactionHandler {
         REQUEUE, FINISH, ERROR
     }
 
+    public static Result startTransaction(Context context, String handlerName, WebTransaction transaction) {
+        try {
+            Class<?> clazz = context.getClassLoader().loadClass(handlerName);
+
+            WebTransactionHandler handler = (WebTransactionHandler) clazz.getConstructor((Class<?>[]) null)
+                    .newInstance((Object[]) null);
+
+            return handler.handleStart(context, transaction);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return Result.ERROR;
+    }
 
     public static Result completeTransaction(Context context, String handlerName, WebTransaction transaction, HttpResult resultData) {
         try {
@@ -29,5 +43,11 @@ public abstract class WebTransactionHandler {
         return Result.ERROR;
     }
 
-    public abstract Result handleResult(Context context, WebTransaction transaction, HttpResult resultData);
+    public Result handleStart(Context context, WebTransaction transaction) {
+        return Result.FINISH;
+    }
+
+    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+        return Result.FINISH;
+    }
 }

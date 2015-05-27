@@ -23,6 +23,7 @@ public class TimeLogRowView extends RelativeLayout {
     private TextView _dateTextView;
     private TextView _timeTextView;
     private TextView _devicesTextView;
+    private TextView _hoursTextView;
 
     // Data
     private Listener _listener;
@@ -49,7 +50,7 @@ public class TimeLogRowView extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_schedule_detail, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_worklog_tile, this);
 
         if (isInEditMode())
             return;
@@ -57,6 +58,7 @@ public class TimeLogRowView extends RelativeLayout {
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _devicesTextView = (TextView) findViewById(R.id.devices_textview);
+        _hoursTextView = (TextView) findViewById(R.id.hours_textview);
 
         setOnClickListener(_edit_onClick);
         setOnLongClickListener(_delete_onClick);
@@ -100,11 +102,14 @@ public class TimeLogRowView extends RelativeLayout {
                 date += " - ----";
             }
 
-            if (_loggedWork.getHours() != null) {
-                date += " (" + String.format("%.2f", _loggedWork.getHours()) + " hours)";
-            }
-
             _timeTextView.setText(date);
+
+            if (_loggedWork.getHours() != null) {
+                _hoursTextView.setVisibility(VISIBLE);
+                _hoursTextView.setText(String.format("%.2f", _loggedWork.getHours()) + " hours");
+            } else {
+                _hoursTextView.setVisibility(GONE);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

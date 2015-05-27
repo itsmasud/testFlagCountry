@@ -100,8 +100,49 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
+    public static byte[] pUploadDeliverable(long workorderId, long slotId, String filename) {
+        try {
+            JsonObject obj = new JsonObject("action", "pUploadDeliverable");
+            obj.put("workorderId", workorderId);
+            obj.put("slotId", slotId);
+            obj.put("filename", filename);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
 
     // plumbing
+
+
+    @Override
+    public Result handleStart(Context context, WebTransaction transaction) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pUploadDeliverable":
+                    return handleStartUploadDeliverable(context, transaction, params);
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return Result.FINISH;
+    }
+
+    private Result handleStartUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        long workorderId = params.getLong("workorderId");
+        long slotId = params.getLong("slotId");
+        String filename = params.getString("filename");
+
+        WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false);
+
+        return Result.FINISH;
+    }
+
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
@@ -122,6 +163,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleTaskList(context, transaction, params, resultData);
                 case "pGetBundle":
                     return handleGetBundle(context, transaction, params, resultData);
+                case "pUploadDeliverable":
+                    return handleFinishUploadDeliverable(context, transaction, params);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -224,4 +267,15 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         return Result.FINISH;
     }
+
+    private Result handleFinishUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        long workorderId = params.getLong("workorderId");
+        long slotId = params.getLong("slotId");
+        String filename = params.getString("filename");
+
+        WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true);
+
+        return Result.FINISH;
+    }
+
 }

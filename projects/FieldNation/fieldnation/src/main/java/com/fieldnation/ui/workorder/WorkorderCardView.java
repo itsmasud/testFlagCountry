@@ -514,6 +514,7 @@ public class WorkorderCardView extends RelativeLayout {
                 }
             }
 
+            // TODO hook up to geocoding
             // distance
             if (_workorder.getIsRemoteWork()) {
                 _distanceTextView.setText("Done Remotely");

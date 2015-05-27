@@ -15,6 +15,7 @@ public interface WorkorderConstants {
     String TOPIC_ID_DOWNLOAD_DELIVERABLE = "WorkorderConstants:TOPIC_ID_DOWNLOAD_DELIVERABLE";
     String TOPIC_ID_GET_DELIVERABLE = "WorkorderConstants:TOPIC_ID_GET_DELIVERABLE";
     String TOPIC_ID_LIST_DELIVERABLES = "WorkorderConstants:TOPIC_ID_LIST_DELIVERABLES";
+    String TOPIC_ID_UPLOAD_DELIVERABLE = "WorkorderConstants:TOPIC_ID_UPLOAD_DELIVERABLE";
 
     String PARAM_ACTION = "PARAM_ACTION";
     String PARAM_ACTION_COMPLETE = "PARAM_ACTION_COMPLETE";
@@ -47,6 +48,7 @@ public interface WorkorderConstants {
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
     String PARAM_FILE = "PARAM_FILE";
     String PARAM_URL = "PARAM_URL";
+    String PARAM_IS_COMPLETE = "PARAM_IS_COMPLETE";
 
     String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
 

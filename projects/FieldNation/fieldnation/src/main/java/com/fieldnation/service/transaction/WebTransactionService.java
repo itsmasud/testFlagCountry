@@ -294,6 +294,28 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
                 Log.v(TAG, request.display());
 
+                String handlerName = trans.getHandlerName();
+
+                if (!misc.isEmptyOrNull(handlerName)) {
+                    WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(context, handlerName, trans);
+                    // TODO handle result?
+/*
+                    switch (wresult) {
+                        case ERROR:
+                            WebTransaction.delete(context, trans.getId());
+                            Transform.deleteTransaction(context, trans.getId());
+                            break;
+                        case FINISH:
+                            WebTransaction.delete(context, trans.getId());
+                            Transform.deleteTransaction(context, trans.getId());
+                            break;
+                        case REQUEUE:
+                            trans.requeue(context);
+                            break;
+                    }
+*/
+                }
+
                 // perform request
                 HttpResult result = HttpJson.run(context, request);
 
@@ -345,11 +367,10 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                 GlobalTopicClient.dispatchNetworkConnected(context);
 
-                String handler = trans.getHandlerName();
-                if (!misc.isEmptyOrNull(handler)) {
+                if (!misc.isEmptyOrNull(handlerName)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
                             context,
-                            handler,
+                            handlerName,
                             trans,
                             result);
 

@@ -370,9 +370,11 @@
     <string name="icfont_star">\uF153</string>
     <string name="icfont_settings">\uF154</string>
     <string name="icfont_profile_pic">\uF156</string>
+    <string name="icfont_debug">\uF15D</string>
+    <string name="icfont_clipboard">\uF168</string>
     <string name="icfont_circle">\uF16E</string>
     <string name="icfont_missing">\uF175</string>
-    <string name="icfont_car">\uF175</string>
+    <string name="icfont_car">\uF176</string>
 
 
     <!-- login error messages -->

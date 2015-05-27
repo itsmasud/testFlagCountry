@@ -451,7 +451,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void postDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
+    public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
         StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
 
         try {
@@ -468,8 +468,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(DeliverableTransactionHandler.class)
-                    .handlerParams(DeliverableTransactionHandler.pChange(workorderId))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
                     .useAuth(true)
                     .request(builder)
                     .send();

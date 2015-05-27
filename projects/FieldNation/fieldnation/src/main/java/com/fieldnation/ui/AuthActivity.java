@@ -16,10 +16,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -46,6 +48,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private Button _forgotButton;
     private UpdateDialog _updateDialog;
     private View _stiltView;
+    private TextView _versionTextView;
 
     // data
     private String _username;
@@ -94,6 +97,10 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _stiltView.setVisibility(View.GONE);
 
         _fader = findViewById(R.id.fader);
+
+        _versionTextView = (TextView) findViewById(R.id.version_textview);
+
+        _versionTextView.setText("Version " + BuildConfig.VERSION_NAME);
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
@@ -156,7 +163,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             _updateDialog.show();
         }
     };
-    
+
     private final Animation.AnimationListener _fadeout_listener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
