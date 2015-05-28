@@ -220,6 +220,12 @@
             android:name=".service.data.payment.PaymentService"
             android:exported="false"
             android:process=":frontside" />
+
+        <service
+            android:name=".service.data.documents.DocumentService"
+            android:exported="false"
+            android:process=":frontside" />
+
         <service
             android:name=".service.objectstore.ObjectStoreService"
             android:exported="false"

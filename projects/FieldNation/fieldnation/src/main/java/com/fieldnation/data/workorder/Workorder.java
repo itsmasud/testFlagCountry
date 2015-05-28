@@ -68,8 +68,8 @@ public class Workorder implements Parcelable {
     private Integer _daysSinceApprovedOrCanceled;
     @Json(name = "declinedWo")
     private Integer _declinedWo;
-    @Json(name = "deliverables")
-    private Deliverable[] _deliverables;
+    //    @Json(name = "deliverables")
+//    private Deliverable[] _deliverables;
     @Json(name = "discounts")
     private Discount[] _discounts;
     @Json(name = "displayCounterOffer")
@@ -302,9 +302,9 @@ public class Workorder implements Parcelable {
         return _declinedWo;
     }
 
-    public Deliverable[] getDeliverables() {
-        return _deliverables;
-    }
+//    public Deliverable[] getDeliverables() {
+//        return _deliverables;
+//    }
 
     public Discount[] getDiscounts() {
         return _discounts;

@@ -25,7 +25,7 @@ public class WorkorderDispatch implements WorkorderConstants {
         String topicId = TOPIC_ID_GET;
 
         if (isSync) {
-            topicId += "-_SYNC";
+            topicId += "_SYNC";
         }
 
         if (workorderId > 0) {
@@ -205,24 +205,6 @@ public class WorkorderDispatch implements WorkorderConstants {
         }
 
         topicId += "/" + workorderId + "/" + deliverableId;
-
-        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
-    }
-
-    public static void listDeliverables(Context context, JsonArray obj, long workorderId, boolean isSync) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_DELIVERABLES);
-        bundle.putLong(PARAM_WORKORDER_ID, workorderId);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, obj);
-        bundle.putBoolean(PARAM_IS_SYNC, isSync);
-
-        String topicId = TOPIC_ID_LIST_DELIVERABLES;
-
-        if (isSync) {
-            topicId += "_SYNC";
-        }
-
-        topicId += "/" + workorderId;
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }

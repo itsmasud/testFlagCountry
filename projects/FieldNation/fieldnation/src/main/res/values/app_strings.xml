@@ -371,7 +371,9 @@
     <string name="icfont_settings">\uF154</string>
     <string name="icfont_profile_pic">\uF156</string>
     <string name="icfont_debug">\uF15D</string>
+    <string name="icfont_messages_action_filled">\uF167</string>
     <string name="icfont_clipboard">\uF168</string>
+    <string name="icfont_alert_action_filled">\uF169</string>
     <string name="icfont_circle">\uF16E</string>
     <string name="icfont_circle_checked">\uF16F</string>
     <string name="icfont_missing">\uF175</string>
@@ -379,8 +381,8 @@
     <string name="icfont_circle_dollar">\uF177</string>
     <string name="icfont_circle_truck">\uF178</string>
     <string name="icfont_circle_pen">\uF179</string>
-    <string name="icfont_messages_action">\uF17C</string>
-    <string name="icfont_alert_action">\uF17D</string>
+    <!--<string name="icfont_messages_action">\uF17C</string>-->
+    <!--<string name="icfont_alert_action">\uF17D</string>-->
 
 
     <!-- login error messages -->

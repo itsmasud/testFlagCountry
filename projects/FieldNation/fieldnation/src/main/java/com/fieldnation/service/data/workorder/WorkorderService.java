@@ -31,13 +31,13 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     }
 
     private class MyWorkerThread extends WorkerThread {
-        private String TAG = UniqueTag.makeTag("WorkorderDataServiceThread");
+        private String TAG = UniqueTag.makeTag("WorkorderServiceThread");
         private Context _context;
 
         public MyWorkerThread(ThreadManager manager, Context context, List<Intent> intents) {
             super(manager, intents);
             setName(TAG);
-            _context = context;
+            _context = context.getApplicationContext();
         }
 
         @Override
@@ -66,9 +66,6 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                         break;
                     case PARAM_ACTION_DOWNLOAD_DELIVERABLE:
                         downloadDeliverable(_context, intent);
-                        break;
-                    case PARAM_ACTION_LIST_DELIVERABLES:
-                        listDeliverables(_context, intent);
                         break;
                     case PARAM_ACTION_LIST_MESSAGES:
                         listMessages(_context, intent);
@@ -195,25 +192,6 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
         WorkorderTransactionBuilder.listTasks(context, workorderId, isSync);
     }
-
-
-    private static void listDeliverables(Context context, Intent intent) {
-        Log.v(TAG, "listDeliverables");
-        long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
-        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
-
-        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_LIST, workorderId);
-        if (obj != null) {
-            try {
-                WorkorderDispatch.listDeliverables(context, new JsonArray(obj.getData()), workorderId, isSync);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        WorkorderTransactionBuilder.listDeliverables(context, workorderId, isSync);
-    }
-
 
     private static void getBundle(Context context, Intent intent) {
         Log.v(TAG, "getBundle");

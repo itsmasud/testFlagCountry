@@ -14,11 +14,12 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Deliverable;
+import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -241,7 +242,6 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_workorderClient_listener.onConnected");
             _workorderClient.subList(true);
             _workorderClient.subGet(true);
-            _workorderClient.subListDeliverables(true);
 
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
@@ -308,19 +308,6 @@ public class WebCrawlerService extends Service {
                 }
             }
         }
-
-        @Override
-        public void onDeliverableList(List<Deliverable> list, long workorderId) {
-            Log.v(TAG, "onDeliverableList");
-            incrementPendingRequestCounter(-1);
-            for (int i = 0; i < list.size(); i++) {
-                Deliverable d = list.get(i);
-                incRequestCounter(1);
-                WorkorderClient.downloadDeliverable(WebCrawlerService.this, workorderId,
-                        d.getWorkorderUploadId(), d.getStorageSrc(), true);
-            }
-
-        }
     };
 
     public class WorkorderDetailWorker extends ThreadManager.ManagedThread {
@@ -352,37 +339,34 @@ public class WebCrawlerService extends Service {
             // get signatures
             Signature[] sigs = workorder.getSignatureList();
             if (sigs != null && sigs.length > 0) {
-                for (int i = 0; i < sigs.length; i++) {
+                for (Signature sig : sigs) {
                     Log.v(TAG, "getSignature");
                     incRequestCounter(1);
-                    WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sigs[i].getSignatureId(), true);
+                    WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
                 }
             }
 
             UploadSlot[] slots = workorder.getUploadSlots();
             if (slots != null && slots.length > 0) {
-                for (int i = 0; i < slots.length; i++) {
-                    UploadSlot slot = slots[i];
-
+                for (UploadSlot slot : slots) {
                     UploadedDocument[] docs = slot.getUploadedDocuments();
                     if (docs != null && docs.length > 0) {
-                        for (int j = 0; j < docs.length; j++) {
-                            UploadedDocument doc = docs[j];
-
-                            // todo request document
-                            //doc.getDownloadLink();
-                            //
+                        for (UploadedDocument doc : docs) {
+                            incRequestCounter(1);
+                            DocumentClient.downloadDocument(_context, doc.getId(), doc.getDownloadLink(), true);
                         }
                     }
                 }
             }
 
-            Deliverable[] deliverables = workorder.getDeliverables();
-            if (deliverables != null && deliverables.length > 0) {
-                incrementPendingRequestCounter(1);
-                incRequestCounter(1);
-                WorkorderClient.listDeliverables(WebCrawlerService.this, workorder.getWorkorderId(), true);
+            Document[] documents = workorder.getDocuments();
+            if (documents != null && documents.length > 0) {
+                for (Document doc : documents) {
+                    incRequestCounter(1);
+                    DocumentClient.downloadDocument(_context, doc.getDocumentId(), doc.getFilePath(), true);
+                }
             }
+
             return true;
         }
 

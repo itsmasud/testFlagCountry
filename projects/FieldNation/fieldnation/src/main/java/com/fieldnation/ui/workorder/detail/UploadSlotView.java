@@ -199,6 +199,6 @@ public class UploadSlotView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void onUploadClick(UploadSlotView view, UploadSlot slot);
+        void onUploadClick(UploadSlotView view, UploadSlot slot);
     }
 }

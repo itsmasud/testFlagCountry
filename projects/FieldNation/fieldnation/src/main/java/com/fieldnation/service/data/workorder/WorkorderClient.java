@@ -11,7 +11,6 @@ import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Notification;
-import com.fieldnation.data.workorder.Deliverable;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Message;
@@ -528,24 +527,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public static void listDeliverables(Context context, long workorderId, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_DELIVERABLES);
-        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
-        intent.putExtra(PARAM_IS_SYNC, isSync);
-        context.startService(intent);
-    }
-
-    public boolean subListDeliverables(boolean isSync) {
-        String topicId = TOPIC_ID_LIST_DELIVERABLES;
-
-        if (isSync) {
-            topicId += "_SYNC";
-        }
-
-        return register(topicId, TAG);
-    }
-
     /*-*************************************-*/
     /*-             Time Log                -*/
     /*-*************************************-*/
@@ -584,8 +565,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preGetSignature((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_GET_BUNDLE)) {
                 preGetBundle((Bundle) payload);
-            } else if (topicId.startsWith(TOPIC_ID_LIST_DELIVERABLES)) {
-                preListDeliverables((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_LIST_MESSAGES)) {
                 preListMessages((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_LIST_ALERTS)) {
@@ -706,36 +685,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         public void onMessageList(long workorderId, List<Message> messages) {
-        }
-
-        private void preListDeliverables(Bundle payload) {
-            new AsyncTaskEx<Object, Object, List<Deliverable>>() {
-                private long workorderId;
-
-                @Override
-                protected List<Deliverable> doInBackground(Object... params) {
-                    Bundle payload = (Bundle) params[0];
-
-                    workorderId = payload.getLong(PARAM_WORKORDER_ID);
-                    JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
-
-                    List<Deliverable> list = new LinkedList<>();
-                    for (int i = 0; i < ja.size(); i++) {
-                        list.add(Deliverable.fromJson(ja.getJsonObject(i)));
-                    }
-
-                    return list;
-                }
-
-                @Override
-                protected void onPostExecute(List<Deliverable> o) {
-                    onDeliverableList(o, workorderId);
-                }
-            }.executeEx(payload);
-
-        }
-
-        public void onDeliverableList(List<Deliverable> list, long workorderId) {
         }
 
         // list

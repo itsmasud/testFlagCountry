@@ -10,7 +10,7 @@
         android:layout_height="24dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="@string/icfont_messages_action"
+        android:text="@string/icfont_messages_action_filled"
         android:textColor="@color/fn_clickable_bg"
         android:textSize="24sp" />
 

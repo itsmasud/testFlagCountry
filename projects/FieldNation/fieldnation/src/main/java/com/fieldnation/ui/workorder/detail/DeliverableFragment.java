@@ -42,7 +42,7 @@ import java.io.File;
 import java.security.SecureRandom;
 
 public class DeliverableFragment extends WorkorderFragment {
-    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.DeliverableFragment");
+    private final String TAG = UniqueTag.makeTag("DeliverableFragment");
 
     // activity result codes
     private static final int RESULT_CODE_BASE = 100;
@@ -365,7 +365,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
             WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
-                    document.getWorkorderUploadId(), document.getFileName());
+                    document.getId(), document.getFileName());
         }
     };
 
@@ -386,7 +386,6 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         }
     };
-
 
     // step 2, user selects an app to load the file with
     private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
