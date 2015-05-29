@@ -377,8 +377,7 @@ public class misc {
         if (Calendar.getInstance().get(Calendar.YEAR) > calendar.get(Calendar.YEAR)) {
             return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
         }
-        return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + formatTime(
-                cal, false);
+        return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + formatTime(cal, false);
     }
 
     /**

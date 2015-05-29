@@ -52,6 +52,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             _listener.onLoadingComplete();
         }
 
+
         notifyDataSetChanged();
     }
 

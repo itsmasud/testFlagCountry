@@ -69,7 +69,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             String display = null;
             if (_workorder.getEstimatedSchedule() != null)
                 display = _workorder.getEstimatedSchedule().getDisplayString(true);
-            else
+            else if (_workorder.getSchedule() != null)
                 display = _workorder.getSchedule().getDisplayString(false);
 
             if (display != null)
