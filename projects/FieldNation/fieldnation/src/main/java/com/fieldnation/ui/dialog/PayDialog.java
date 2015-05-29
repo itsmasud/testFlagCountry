@@ -157,23 +157,27 @@ public class PayDialog extends DialogFragmentBase {
     }
 
     private Pay makePay() {
-        Pay pay = null;
-        switch (_mode) {
-            case MODE_FIXED:
-                return new Pay(Double.parseDouble(_fixedEditText.getText().toString()));
-            case MODE_HOURLY:
-                return new Pay(Double.parseDouble(_hourlyRateEditText.getText().toString()),
-                        Double.parseDouble(_maxHoursEditText.getText().toString()));
-            case MODE_PER_DEVICE:
-                return new Pay(Double.parseDouble(_deviceRateEditText.getText().toString()),
-                        Integer.parseInt(_maxDevicesEditText.getText().toString()));
-            case MODE_BLENDED:
-                return new Pay(Double.parseDouble(_blendedHourlyEditText.getText().toString()),
-                        Double.parseDouble(_blendedMaxHoursEditText.getText().toString()),
-                        Double.parseDouble(_extraHourlyEditText.getText().toString()),
-                        Double.parseDouble(_extraMaxHoursEditText.getText().toString()));
+        try {
+            switch (_mode) {
+                case MODE_FIXED:
+                    return new Pay(Double.parseDouble(_fixedEditText.getText().toString()));
+                case MODE_HOURLY:
+                    return new Pay(Double.parseDouble(_hourlyRateEditText.getText().toString()),
+                            Double.parseDouble(_maxHoursEditText.getText().toString()));
+                case MODE_PER_DEVICE:
+                    return new Pay(Double.parseDouble(_deviceRateEditText.getText().toString()),
+                            Integer.parseInt(_maxDevicesEditText.getText().toString()));
+                case MODE_BLENDED:
+                    return new Pay(Double.parseDouble(_blendedHourlyEditText.getText().toString()),
+                            Double.parseDouble(_blendedMaxHoursEditText.getText().toString()),
+                            Double.parseDouble(_extraHourlyEditText.getText().toString()),
+                            Double.parseDouble(_extraMaxHoursEditText.getText().toString()));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return pay;
+
+        return null;
     }
 
     private void clearUi() {
