@@ -57,9 +57,10 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null)
+        if (toolbar != null) {
             setSupportActionBar(toolbar);
-
+        }
+        
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG)) {
                 TAG = savedInstanceState.getString(STATE_TAG);

@@ -508,24 +508,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId, filename);
     }
 
-    public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_DELIVERABLE);
-        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
-        intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
-        intent.putExtra(PARAM_IS_SYNC, isSync);
-        context.startService(intent);
-    }
-
-    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
-        Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
-        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
-        intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
-        intent.putExtra(PARAM_URL, url);
-        intent.putExtra(PARAM_IS_SYNC, isSync);
-        context.startService(intent);
-    }
+//    public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
+//        Intent intent = new Intent(context, WorkorderService.class);
+//        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_DELIVERABLE);
+//        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
+//        intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
+//        intent.putExtra(PARAM_IS_SYNC, isSync);
+//        context.startService(intent);
+//    }
+//
+//    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+//        Intent intent = new Intent(context, WorkorderService.class);
+//        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
+//        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
+//        intent.putExtra(PARAM_DELIVERABLE_ID, deliverableId);
+//        intent.putExtra(PARAM_URL, url);
+//        intent.putExtra(PARAM_IS_SYNC, isSync);
+//        context.startService(intent);
+//    }
 
     /*-*************************************-*/
     /*-             Time Log                -*/
