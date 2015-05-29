@@ -482,6 +482,18 @@ public class WorkorderActivity extends AuthActionBarActivity {
         @Override
         public void onError(int resultCode, Bundle resultData, String errorType) {
             super.onError(resultCode, resultData, errorType);
+            if (resultData.getInt(KEY_RESPONSE_CODE) == 403) {
+                try {
+                    Toast.makeText(WorkorderActivity.this,
+                            new String(resultData.getByteArray(KEY_RESPONSE_DATA)),
+                            Toast.LENGTH_LONG).show();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                finish();
+                return;
+            }
+
             if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
                 String response = resultData.getString(KEY_RESPONSE_ERROR);
                 if (response.contains("The authtoken is invalid or has expired.")) {
