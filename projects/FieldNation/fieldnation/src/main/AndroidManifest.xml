@@ -26,8 +26,8 @@
         android:name=".GlobalState"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:logo="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:logo="@drawable/ic_launcher"
         android:theme="@style/AppTheme">
 
         <meta-data
@@ -36,10 +36,12 @@
 
         <activity
             android:name=".ui.workorder.MyWorkActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:process=":frontside" />
         <activity
             android:name=".ui.SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:process=":frontside">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,20 +51,24 @@
         </activity>
         <activity
             android:name=".ui.market.MarketActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:process=":frontside" />
         <activity
             android:name=".ui.SignatureActivity"
             android:exported="false"
             android:label="@string/signature_title"
+            android:process=":frontside"
             android:screenOrientation="landscape" />
         <activity
             android:name=".auth.server.AuthActivity"
             android:exported="true"
-            android:label="@string/activity_login_title" />
+            android:label="@string/activity_login_title"
+            android:process=":frontside" />
         <activity
             android:name=".ui.workorder.WorkorderActivity"
             android:exported="true"
-            android:label="@string/work_order_detail_title">
+            android:label="@string/work_order_detail_title"
+            android:process=":frontside">
             <intent-filter>
                 <data
                     android:host="testlipo.fieldnation.com"
@@ -134,44 +140,53 @@
         <activity
             android:name=".ui.MessageListActivity"
             android:exported="false"
-            android:label="@string/activity_message_list_title" />
+            android:label="@string/activity_message_list_title"
+            android:process=":frontside" />
         <activity
             android:name=".ui.payment.PaymentListActivity"
             android:exported="false"
-            android:label="@string/activity_payments_list_title" />
+            android:label="@string/activity_payments_list_title"
+            android:process=":frontside" />
         <activity
             android:name=".ui.payment.PaymentDetailActivity"
             android:exported="false"
-            android:label="@string/activity_payments_list_title" />
+            android:label="@string/activity_payments_list_title"
+            android:process=":frontside" />
         <activity
             android:name=".ui.NotificationListActivity"
             android:exported="false"
-            android:label="@string/activity_notifications_list_title" />
+            android:label="@string/activity_notifications_list_title"
+            android:process=":frontside" />
         <activity
             android:name=".ui.workorder.WorkorderBundleDetailActivity"
             android:exported="false"
-            android:label="@string/activity_bundle_detail_title" />
+            android:label="@string/activity_bundle_detail_title"
+            android:process=":frontside" />
         <activity
             android:name=".ui.SettingsActivity"
             android:exported="false"
-            android:label="@string/activity_settings_title" />
+            android:label="@string/activity_settings_title"
+            android:process=":frontside" />
         <activity
             android:name=".ui.SignOffActivity"
             android:exported="false"
-            android:label="@string/activity_sign_off_title" />
+            android:label="@string/activity_sign_off_title"
+            android:process=":frontside" />
         <activity
             android:name=".ui.SignatureDisplayActivity"
             android:exported="false"
-            android:label="@string/activity_signature_info_title" />
+            android:label="@string/activity_signature_info_title"
+            android:process=":frontside" />
 
         <service
             android:name=".auth.client.AuthTopicService"
             android:exported="false"
-            android:process=":topic" />
+            android:process=":frontside" />
+
         <service
             android:name=".auth.server.AuthService"
             android:exported="true"
-            android:process="">
+            android:process=":frontside">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -183,15 +198,15 @@
         <service
             android:name=".rpc.server.DataService"
             android:exported="false"
-            android:process=":data" />
+            android:process=":frontside" />
         <service
             android:name=".topics.TopicService"
             android:exported="false"
-            android:process=":topic" />
+            android:process=":frontside" />
         <service
             android:name=".rpc.server.SyncService"
             android:exported="true"
-            android:process=":sync">
+            android:process=":frontside">
             <intent-filter>com.fieldnation.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
