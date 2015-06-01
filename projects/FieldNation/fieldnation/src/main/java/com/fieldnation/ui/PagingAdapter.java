@@ -61,6 +61,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     }
 
     public void refreshPages() {
+        _loadingPages.clear();
         for (int i = 0; i <= _pages.size(); i++) {
             preRequestPage(i, false);
         }
@@ -179,7 +180,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     public abstract void requestPage(int page, boolean allowCache);
 
     public interface Listener {
-        public void onLoadingComplete();
+        void onLoadingComplete();
     }
 
 }

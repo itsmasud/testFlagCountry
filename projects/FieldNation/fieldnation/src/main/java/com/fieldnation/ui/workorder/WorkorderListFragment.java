@@ -310,11 +310,18 @@ public class WorkorderListFragment extends Fragment {
         _adapter.refreshPages();
     }
 
-    private void requestList(int page, boolean allowCache) {
+    private void requestList(final int page, final boolean allowCache) {
         Log.v(TAG, "requestList");
-        if (_service == null)
+        if (_service == null) {
+            Log.v(TAG, "requestList, waiting for service class");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    requestList(page, allowCache);
+                }
+            }, 500);
             return;
-
+        }
         Log.v(TAG, "requestList start");
 
         setLoading(true);

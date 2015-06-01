@@ -78,7 +78,7 @@ public class WorkorderCardView extends RelativeLayout {
     private Button _actionButton;
 
     // loading layout
-    private RelativeLayout _loadingLayout;
+    private View _loadingLayout;
 
     // undo layout
     private RelativeLayout _undoLayout;
@@ -174,7 +174,7 @@ public class WorkorderCardView extends RelativeLayout {
         //_actionButton.setMinTextSize(1F);
 
         // loading layout
-        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+        _loadingLayout = (View) findViewById(R.id.loading_layout);
 
         // undo layout
         _undoLayout = (RelativeLayout) findViewById(R.id.undo_layout);
