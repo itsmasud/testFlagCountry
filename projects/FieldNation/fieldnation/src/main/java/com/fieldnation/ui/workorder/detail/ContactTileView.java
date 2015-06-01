@@ -1,8 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -43,10 +46,11 @@ public class ContactTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-
         _nameTextView = (TextView) findViewById(R.id.name_textview);
         _phoneTextView = (TextView) findViewById(R.id.phone_textview);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
+
+        setOnClickListener(_this_onClick);
     }
 
     public void setData(String name, String phone, String title) {
@@ -84,4 +88,17 @@ public class ContactTileView extends RelativeLayout {
             _titleTextView.setVisibility(GONE);
         }
     }
+
+    private final View.OnClickListener _this_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_phone != null) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                String phNum = "tel:" + _phone;
+                callIntent.setData(Uri.parse(phNum));
+                getContext().startActivity(callIntent);
+            }
+
+        }
+    };
 }

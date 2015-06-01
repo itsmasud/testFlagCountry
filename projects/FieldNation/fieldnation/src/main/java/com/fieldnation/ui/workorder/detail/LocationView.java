@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.GoogleAnalyticsTopicClient;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
@@ -43,6 +44,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     // Data
     private Workorder _workorder;
+    private boolean _isDrawn = false;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -112,14 +114,23 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         try {
+            if (_isDrawn)
+                return;
+
+//            _isDrawn = true;
+
+            _mapView.clear();
+
             // get address location
             Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
             List<Address> addrs = geocoder.getFromLocationName(location.getFullAddress(), 1);
             LatLng ll = new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
 
+            Log.v(TAG, "Getting user location");
             _mapView.setUserLocationEnabled(true);
             LatLng user = _mapView.getUserLocation();
             _mapView.setUserLocationEnabled(false);
+            Log.v(TAG, "Getting user location done");
 
             Marker marker = new Marker(_mapView, "Work", "", ll);
             marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
@@ -133,7 +144,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             lls.add(ll);
             lls.add(user);
 
-            _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, false, true);
+            _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
+            _mapView.setZoom(_mapView.getZoomLevel() - 1);
 
             _addressTextView.setText(location.getFullAddressOneLine());
             _distanceTextView.setText(misc.to2Decimal(ll.distanceTo(user) * 0.000621371) + " miles");
