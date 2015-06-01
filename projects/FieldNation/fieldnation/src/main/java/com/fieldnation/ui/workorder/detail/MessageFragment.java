@@ -52,6 +52,7 @@ public class MessageFragment extends WorkorderFragment {
     private WorkorderService _workorderService;
     private List<Message> _messages = new LinkedList<Message>();
     private MessagesAdapter _adapter;
+    private long _messageListTimeOut = 0;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -136,6 +137,9 @@ public class MessageFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
+        if (_messageListTimeOut > System.currentTimeMillis())
+            return;
+
         _refreshView.startRefreshing();
 
         _messages.clear();
@@ -144,7 +148,8 @@ public class MessageFragment extends WorkorderFragment {
 
         Log.v(TAG, "getMessages");
         WEB_GET_MESSAGES = _rand.nextInt();
-        getActivity().startService(_workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
+        getActivity().startService(
+                _workorderService.listMessages(WEB_GET_MESSAGES, _workorder.getWorkorderId(), false));
     }
 
     @Override
@@ -195,8 +200,8 @@ public class MessageFragment extends WorkorderFragment {
                 _refreshView.startRefreshing();
                 WEB_NEW_MESSAGE = _rand.nextInt();
                 Log.v(TAG, "_send_onClick");
-                getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE, _workorder.getWorkorderId(),
-                        _inputView.getInputText()));
+                getActivity().startService(_workorderService.addMessage(WEB_NEW_MESSAGE,
+                        _workorder.getWorkorderId(), _inputView.getInputText()));
                 _inputView.clearText();
             }
         }
@@ -271,6 +276,7 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         protected void onPostExecute(List<Message> messages) {
             super.onPostExecute(messages);
+            _messageListTimeOut = System.currentTimeMillis() + 20000;
             _messages = messages;
             rebuildList();
             if (_messages.size() == 0) {

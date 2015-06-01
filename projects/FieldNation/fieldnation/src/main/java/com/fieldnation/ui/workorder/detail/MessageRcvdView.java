@@ -98,15 +98,21 @@ public class MessageRcvdView extends RelativeLayout {
         if (_message == null)
             return;
 
-        _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
-        _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        try {
+            _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
+            _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            _messageTextView.setText("");
+        }
+        
         try {
             _timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
- 		if (_message.isRead()) {
+        if (_message.isRead()) {
             _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
         } else {
             _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);

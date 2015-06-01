@@ -271,12 +271,24 @@ public class WorkorderListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
-        _adapter.refreshPages();
+        _refreshPages_delayed.run();
         setLoading(true);
         AuthTopicService.subscribeAuthState(GlobalState.getContext(), 0, TAG, _topicReceiver);
         GaTopic.dispatchScreenView(GlobalState.getContext(), getGaLabel());
         _gpsLocationService = new GpsLocationService(GlobalState.getContext());
     }
+
+    private final Runnable _refreshPages_delayed = new Runnable() {
+        @Override
+        public void run() {
+            setLoading(true);
+            if (_service == null) {
+                new Handler().postDelayed(_refreshPages_delayed, 500);
+            } else {
+                _adapter.refreshPages();
+            }
+        }
+    };
 
     @Override
     public void onPause() {
@@ -307,21 +319,21 @@ public class WorkorderListFragment extends Fragment {
 
     public void update() {
         Log.v(TAG, "update");
-        _adapter.refreshPages();
+        // _adapter.refreshPages();
     }
 
-    private void requestList(int page, boolean allowCache) {
+    private void requestList(final int page, final boolean allowCache) {
         Log.v(TAG, "requestList");
-        if (_service == null)
+        if (_service == null) {
             return;
-
+        }
         Log.v(TAG, "requestList start");
+        Log.v(TAG, "requestList " + _displayView.getCall());
 
         setLoading(true);
         Intent intent = _service.getList(WEB_GET_LIST, page, _displayView, allowCache);
         intent.putExtra(KEY_PAGE_NUM, page);
-        if (getActivity() != null)
-            getActivity().startService(intent);
+        GlobalState.getContext().startService(intent);
     }
 
     private void addPage(int page, List<Workorder> list, boolean isCached) {
