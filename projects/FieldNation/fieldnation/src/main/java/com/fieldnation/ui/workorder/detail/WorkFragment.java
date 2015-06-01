@@ -701,13 +701,15 @@ public class WorkFragment extends WorkorderFragment {
                 || _currentTask == null
                 || GlobalState.getContext() == null
                 || (_tempFile == null && data == null)) {
+            // TODO this will loop forever if the fragment is never restored... uhg.
             Log.v(TAG, "onActivityResult wait...");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    onActivityResult(requestCode, resultCode, data);
+                    if (isAdded())
+                        onActivityResult(requestCode, resultCode, data);
                 }
-            }, 500);
+            }, 1000);
         } else {
             Log.v(TAG, "onActivityResult execute...");
 
