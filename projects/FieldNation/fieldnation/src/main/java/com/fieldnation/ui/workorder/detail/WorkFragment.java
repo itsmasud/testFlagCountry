@@ -710,7 +710,8 @@ public class WorkFragment extends WorkorderFragment {
                         onActivityResult(requestCode, resultCode, data);
                 }
             }, 1000);
-        } else {            Log.v(TAG, "onActivityResult execute...");
+        } else {
+            Log.v(TAG, "onActivityResult execute...");
 
             if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                     && resultCode == Activity.RESULT_OK) {
