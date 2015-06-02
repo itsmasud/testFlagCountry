@@ -28,6 +28,5 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="android-v7" level="project" />
-    <orderEntry type="library" exported="" name="libUtils.libUtils" level="project" />
   </component>
 </module>

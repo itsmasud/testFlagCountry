@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,8 +17,8 @@
 
             <TextView
                 style="?attr/dialogTitleStyle"
-                android:text="Accept Bundle"
-                android:layout_marginBottom="@dimen/dialogContentPadding" />
+                android:layout_marginBottom="@dimen/dialogContentPadding"
+                android:text="Accept Bundle" />
 
 
             <TextView
@@ -35,24 +35,24 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_weight="1.0"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0">
 
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/bundle_button"
                     style="?attr/buttonDefaultStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="VIEW BUNDLE" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_gravity="center_vertical|right"
-                android:gravity="right"
                 android:layout_width="0dp"
-                android:layout_weight="1.50"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:layout_weight="1.50"
+                android:gravity="right"
                 android:orientation="horizontal">
 
                 <Button

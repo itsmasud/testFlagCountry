@@ -33,40 +33,42 @@
     <string name="activity_signature_info_title">Signature Info</string>
     <string name="activity_signature_name">Tap to set signer\'s name</string>
 
-    <string name="btn_ok">OK</string>
+    <string name="btn_accept">ACCEPT</string>
+    <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
+    <string name="btn_acknowledge">ACKNOWLEDGE</string>
+    <string name="btn_add_shipment">ADD SHIPMENT</string>
+    <string name="btn_add_signature">ADD SIGNATURE</string>
     <string name="btn_add">ADD</string>
-    <string name="btn_send">SEND</string>
-    <string name="btn_save">SAVE</string>
-    <string name="btn_done">DONE</string>
     <string name="btn_clear">CLEAR</string>
     <string name="btn_cancel">CANCEL</string>
-    <string name="btn_send_counter">SEND COUNTER</string>
-    <string name="btn_confirm">CONFIRM</string>
-    <string name="btn_never">NEVER</string>
-    <string name="btn_closing_notes">CLOSING NOTES</string>
-    <string name="btn_mark_completed">MARK COMPLETED</string>
-    <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
     <string name="btn_check_in">CHECK IN</string>
     <string name="btn_check_out">CHECK OUT</string>
-    <string name="btn_reject">REJECT</string>
-    <string name="btn_sign_off">SIGN OFF</string>
-    <string name="btn_login">LOGIN</string>
-    <string name="btn_update_now">UPDATE NOW</string>
-    <string name="btn_add_shipment">ADD SHIPMENT</string>
-    <string name="btn_submit">SUBMIT</string>
-    <string name="btn_no_thanks">NO THANKS</string>
+    <string name="btn_closing_notes">CLOSING NOTES</string>
+    <string name="btn_confirm">CONFIRM</string>
+    <string name="btn_continue">CONTINUE</string>
+    <string name="btn_done">DONE</string>
     <string name="btn_gps_settings">GPS SETTINGS</string>
-    <string name="btn_add_signature">ADD SIGNATURE</string>
-    <string name="btn_request">REQUEST</string>
-    <string name="btn_accept">ACCEPT</string>
-    <string name="btn_view_counter">VIEW COUNTER</string>
-    <string name="btn_acknowledge">ACKNOWLEDGE</string>
-    <string name="btn_payments">PAYMENTS</string>
-    <string name="btn_not_now">NOT NOW</string>
     <string name="btn_later">LATER</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_mark_completed">MARK COMPLETED</string>
+    <string name="btn_never">NEVER</string>
     <string name="btn_no_later">NEVER SHOW AGAIN</string>
+    <string name="btn_no_thanks">NO THANKS</string>
     <string name="btn_not_interested">NOT INTERESTED</string>
+    <string name="btn_not_now">NOT NOW</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_payments">PAYMENTS</string>
+    <string name="btn_reject">REJECT</string>
+    <string name="btn_request">REQUEST</string>
+    <string name="btn_save">SAVE</string>
+    <string name="btn_send">SEND</string>
+    <string name="btn_send_counter">SEND COUNTER</string>
+    <string name="btn_sign_off">SIGN OFF</string>
+    <string name="btn_submit">SUBMIT</string>
+    <string name="btn_update_now">UPDATE NOW</string>
+    <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_withdraw_request">WITHDRAW</string>
+
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
@@ -163,7 +165,7 @@
     <string name="try_again">Action failed, please try again</string>
     <string name="not_interested">Not Interested</string>
     <string name="bundle">Bundle</string>
-    <string name="tracking_id">Tracking ID</string>
+    <string name="tracking_number">Tracking number</string>
     <string name="carrier_name">Carrier Name</string>
     <string name="carrier">Carrier</string>
     <string name="shipment_description">Shipment Description</string>
@@ -407,6 +409,10 @@
     <string-array name="schedule_types">
         <item>Range</item>
         <item>Exact</item>
+    </string-array>
+    <string-array name="direction_list">
+        <item>Ship To Site</item>
+        <item>Ship From Site</item>
     </string-array>
 
     <!-- workorder status list -->

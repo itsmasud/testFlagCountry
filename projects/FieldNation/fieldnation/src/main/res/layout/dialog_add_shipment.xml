@@ -2,103 +2,78 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
-        android:animateLayoutChanges="true"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title_textview"
-            style="?attr/dialogTitleStyle"
-            android:text="Add Shipment" />
-
-        <RelativeLayout
+        <LinearLayout
+            style="?attr/dialogContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp">
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/trackingid_edittext"
-                style="@style/EditText"
+            <TextView
+                android:id="@+id/title_textview"
+                style="?attr/dialogTitleStyle"
+                android:text="Add Shipment" />
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/carrier_spinner"
-                android:background="@drawable/edittext_bg"
-                android:gravity="center_vertical"
-                android:hint="@string/tracking_id"
-                android:imeOptions="actionNext"
-                android:inputType="text"/>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp">
+
+                <EditText
+                    android:id="@+id/trackingid_edittext"
+                    style="@style/EditText"
+                    android:hint="@string/tracking_number"
+                    android:imeOptions="actionNext"
+                    android:inputType="text" />
+            </android.support.design.widget.TextInputLayout>
 
             <Spinner
                 android:id="@+id/carrier_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_alignBottom="@+id/trackingid_edittext"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/trackingid_edittext"
+                style="@style/Spinner"
+                android:layout_marginBottom="16dp"
                 android:text="@string/carrier" />
-        </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/carriername_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            <android.support.design.widget.TextInputLayout
 
-            <TextView
-                style="@style/WorkorderDetail_FieldSubTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Carrier Name:" />
-
-            <EditText
-                android:id="@+id/carrier_edittext"
-                style="@style/EditText"
+                android:id="@+id/carrier_layout"
                 android:layout_width="match_parent"
-                android:hint="@string/carrier_name"
-                android:imeOptions="actionNext"
-                android:inputType="text" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/carrier_edittext"
+                    style="@style/EditText"
+                    android:hint="@string/carrier_name"
+                    android:imeOptions="actionNext"
+                    android:inputType="text" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp">
+
+                <EditText
+                    android:id="@+id/description_edittext"
+                    style="@style/EditText"
+                    android:hint="@string/shipment_description"
+                    android:imeOptions="actionDone"
+                    android:inputType="text" />
+            </android.support.design.widget.TextInputLayout>
+
+            <Spinner
+                android:id="@+id/direction_spinner"
+                style="@style/Spinner"
+                android:text="@string/carrier" />
+
         </LinearLayout>
-
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description:" />
-
-        <EditText
-            android:id="@+id/description_edittext"
-            style="@style/EditText"
-            android:layout_width="match_parent"
-            android:hint="@string/shipment_description"
-            android:imeOptions="actionDone"
-            android:inputType="text" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RadioButton
-                style="@style/RadioButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/shipping_from_size" />
-
-            <RadioButton
-                android:id="@+id/shiptosite_radio"
-                style="@style/RadioButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/shipping_to_site" />
-        </RadioGroup>
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"
@@ -114,8 +89,7 @@
             <Button
                 android:id="@+id/ok_button"
                 style="?attr/dialogOkButtonStyle"
-                android:text="@string/btn_save" />
+                android:text="@string/btn_continue" />
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>

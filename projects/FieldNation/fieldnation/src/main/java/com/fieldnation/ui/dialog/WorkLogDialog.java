@@ -31,7 +31,7 @@ public class WorkLogDialog extends DialogFragmentBase {
 
     // UI
     private Button _startButton;
-    private Button _endButton;
+    private EditText _endButton;
     private LinearLayout _devicesLayout;
     private EditText _devicesEditText;
     private Button _okButton;
@@ -94,7 +94,7 @@ public class WorkLogDialog extends DialogFragmentBase {
         _startButton = (Button) v.findViewById(R.id.start_spinner);
         _startButton.setOnClickListener(_start_onClick);
 
-        _endButton = (Button) v.findViewById(R.id.end_spinner);
+        _endButton = (EditText) v.findViewById(R.id.end_spinner);
         _endButton.setOnClickListener(_end_onClick);
 
         _devicesLayout = (LinearLayout) v.findViewById(R.id.devices_layout);
