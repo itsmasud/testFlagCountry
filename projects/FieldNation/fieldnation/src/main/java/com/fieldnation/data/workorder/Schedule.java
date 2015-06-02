@@ -99,11 +99,12 @@ public class Schedule implements Parcelable {
                 Calendar cal = null;
                 cal = ISO8601.toCalendar(getStartTime());
                 when = misc.formatDateReallyLong(cal);
-                // Wednesday, Dec 4, 2056
 
+                // Wednesday, Dec 4, 2056
                 if (!misc.isEmptyOrNull(getEndTime())) {
-                    cal = ISO8601.toCalendar(getEndTime());
-                    if (cal.get(Calendar.YEAR) > 2000) {
+                    Calendar ecal = ISO8601.toCalendar(getEndTime());
+                    if (ecal.get(Calendar.YEAR) > 2000
+                            && (ecal.get(Calendar.DAY_OF_YEAR) != cal.get(Calendar.DAY_OF_YEAR))) {
                         when += "\n";
                         when += misc.formatDateReallyLong(cal);
                     }
