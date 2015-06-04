@@ -82,10 +82,6 @@
         </LinearLayout>
     </TabHost>
 
-    <View
-        style="?attr/dialogDividerStyle"
-        android:layout_above="@+id/actionbar_view" />
-
     <LinearLayout
         android:id="@+id/actionbar_view"
         style="?attr/dialogActionBarStyle"

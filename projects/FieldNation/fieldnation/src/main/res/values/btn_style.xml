@@ -3,7 +3,7 @@
 
     <dimen name="btn_shadow_left">3dp</dimen>
     <dimen name="btn_shadow_right">3dp</dimen>
-    <dimen name="btn_shadow_top">0dp</dimen>
+    <dimen name="btn_shadow_top">3dp</dimen>
     <dimen name="btn_shadow_bottom">3dp</dimen>
 
     <dimen name="btn_corner_radius">2dp</dimen>

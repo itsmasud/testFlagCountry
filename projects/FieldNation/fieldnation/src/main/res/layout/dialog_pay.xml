@@ -5,12 +5,12 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
+            style="?attr/dialogContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -48,27 +48,22 @@
 
             <!-- fixed pay -->
 
-            <LinearLayout
+            <android.support.design.widget.TextInputLayout
                 android:id="@+id/fixed_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginBottom="16dp"
                 android:visibility="gone">
-
-                <TextView
-                    style="?attr/dialogLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/fixed_pay_amount" />
 
                 <EditText
                     android:id="@+id/fixed_edittext"
-                    style="?attr/dialogEditTextStyle"
+                    style="@style/EditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/fixed_pay_amount"
                     android:imeOptions="actionDone"
                     android:inputType="numberDecimal" />
-            </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
 
             <!-- hourly -->
 
@@ -79,35 +74,31 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <TextView
-                    style="?attr/dialogLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="@string/hourly_rate" />
-
-                <EditText
-                    android:id="@+id/hourlyrate_edittext"
-                    style="?attr/dialogEditTextStyle"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
-                    android:inputType="numberDecimal"
-                    android:minEms="4" />
+                    android:layout_marginBottom="16dp">
 
-                <TextView
-                    style="?attr/dialogLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/max_hours" />
+                    <EditText
+                        android:id="@+id/hourlyrate_edittext"
+                        style="@style/EditText"
+                        android:hint="@string/hourly_rate"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/maxhours_edittext"
-                    style="?attr/dialogEditTextStyle"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:inputType="numberDecimal" />
+                    android:layout_marginBottom="16dp">
+
+                    <EditText
+                        android:id="@+id/maxhours_edittext"
+                        style="@style/EditText"
+                        android:hint="@string/max_hours"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
             <!-- per device -->
@@ -119,33 +110,31 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <TextView
-                    style="?attr/dialogLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/per_device_rate" />
-
-                <EditText
-                    android:id="@+id/devicerate_edittext"
-                    style="?attr/dialogEditTextStyle"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
-                    android:inputType="numberDecimal" />
+                    android:layout_marginBottom="16dp">
 
-                <TextView
-                    style="?attr/dialogLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/max_devices" />
+                    <EditText
+                        android:id="@+id/devicerate_edittext"
+                        style="@style/EditText"
+                        android:hint="@string/per_device_rate"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/maxdevices_edittext"
-                    style="?attr/dialogEditTextStyle"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:inputType="numberDecimal" />
+                    android:layout_marginBottom="16dp">
+
+                    <EditText
+                        android:id="@+id/maxdevices_edittext"
+                        style="@style/EditText"
+                        android:hint="@string/max_devices"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
             <!-- blended -->
@@ -155,12 +144,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
-                    style="?attr/dialogLabelStyle"
-                    android:layout_width="wrap_content"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
                     android:text="@string/fixed_rate" />
 
                 <LinearLayout
@@ -171,7 +162,7 @@
 
                     <EditText
                         android:id="@+id/blendedhourlyrate_edittext"
-                        style="?attr/dialogEditTextStyle"
+                        style="@style/EditText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -188,7 +179,7 @@
 
                     <EditText
                         android:id="@+id/blendedmaxhours_edittext"
-                        style="?attr/dialogEditTextStyle"
+                        style="@style/EditText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -197,9 +188,11 @@
                 </LinearLayout>
 
                 <TextView
-                    style="?attr/dialogLabelStyle"
-                    android:layout_width="wrap_content"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
                     android:text="@string/hourly_rate" />
 
                 <LinearLayout
@@ -209,7 +202,7 @@
 
                     <EditText
                         android:id="@+id/extrahours_edittext"
-                        style="?attr/dialogEditTextStyle"
+                        style="@style/EditText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -226,7 +219,7 @@
 
                     <EditText
                         android:id="@+id/extramaxhours_edittext"
-                        style="?attr/dialogEditTextStyle"
+                        style="@style/EditText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -238,9 +231,6 @@
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dialogActionBarPadding"
             android:orientation="horizontal">
 
             <Button
