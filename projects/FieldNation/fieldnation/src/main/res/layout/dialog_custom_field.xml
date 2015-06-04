@@ -5,67 +5,84 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title_textview"
-            style="?attr/dialogTitleStyle"
-            android:text="Custom Field" />
-
-        <RelativeLayout
-            android:id="@+id/tip_layout"
+        <LinearLayout
+            style="?attr/dialogContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tiplabel_textview"
-                style="@style/WorkorderDetail_FieldSubTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:text="@string/tip_colon_space" />
+                android:id="@+id/title_textview"
+                style="?attr/dialogTitleStyle"
+                android:text="Custom Field" />
 
-            <TextView
-                android:id="@+id/tip_textview"
-                style="@style/WorkorderDetail_Field_Gray"
+            <RelativeLayout
+                android:id="@+id/tip_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/tiplabel_textview" />
-        </RelativeLayout>
+                android:visibility="visible">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tiplabel_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/tip_colon_space" />
 
-            <EditText
-                android:id="@+id/text_edittext"
+                <TextView
+                    android:id="@+id/tip_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/tiplabel_textview" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/datetime_button"
-                android:gravity="center_vertical"
-                android:visibility="gone" />
+                android:layout_height="wrap_content">
 
-            <com.fieldnation.ui.IconFontButton
-                android:id="@+id/datetime_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentRight="true"
-                android:text="@string/icfont_calendar"
-                android:textSize="36sp"
-                android:visibility="gone" />
-        </RelativeLayout>
+                <EditText
+                    android:id="@+id/text_edittext"
+                    style="@style/EditText"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/datetime_button"
+                    android:gravity="center_vertical"
+                    android:visibility="visible" />
 
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+                <com.fieldnation.ui.IconFontButton
+                    android:id="@+id/datetime_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/icfont_calendar"
+                    android:textSize="36sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
+            <LinearLayout
+                android:id="@+id/spinner_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    style="@style/Spinner" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"
@@ -83,7 +100,5 @@
                 style="?attr/dialogOkButtonStyle"
                 android:text="@string/btn_save" />
         </LinearLayout>
-
-
     </LinearLayout>
 </ScrollView>

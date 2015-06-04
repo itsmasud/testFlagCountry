@@ -84,17 +84,20 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         Log.v(TAG, "get");
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
-        StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
-        if (obj != null) {
-            try {
-                JsonObject workorder = new JsonObject(obj.getData());
+        if (allowCache) {
+            StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
+            if (obj != null) {
+                try {
+                    JsonObject workorder = new JsonObject(obj.getData());
 
-                Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
+                    Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
-                WorkorderDispatch.get(context, workorder, workorderId, isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                    WorkorderDispatch.get(context, workorder, workorderId, isSync);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 

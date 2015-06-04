@@ -21,17 +21,30 @@
                 android:layout_height="wrap_content"
                 android:text="Change Pay" />
 
-            <TextView
-                style="?attr/dialogLabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pay_rate_basis" />
-
-            <Spinner
-                android:id="@+id/type_spinner"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dialogContentPadding" />
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/pay_rate_basis" />
+
+                <Spinner
+                    android:id="@+id/type_spinner"
+                    style="@style/Spinner" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
 
             <!-- fixed pay -->
 
@@ -151,9 +164,9 @@
                     android:text="@string/fixed_rate" />
 
                 <LinearLayout
-                    android:layout_marginBottom="@dimen/dialogContentPadding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dialogContentPadding"
                     android:orientation="horizontal">
 
                     <EditText
@@ -225,9 +238,9 @@
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"
-            android:layout_marginTop="@dimen/dialogActionBarPadding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dialogActionBarPadding"
             android:orientation="horizontal">
 
             <Button

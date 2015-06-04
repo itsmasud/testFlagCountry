@@ -99,9 +99,11 @@ public class PayDialog extends DialogFragmentBase {
         _typeSpinner = (Spinner) v.findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemSelectedListener(_type_selected);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.pay_types,
-                android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(),
+                R.array.pay_types,
+                R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _typeSpinner.setAdapter(adapter);
 
         // fixed

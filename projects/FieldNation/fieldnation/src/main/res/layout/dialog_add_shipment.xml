@@ -34,32 +34,38 @@
                     android:inputType="text" />
             </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                style="@style/Text_Caption"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="4dp"
-                android:text="Carrier" />
+                android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/carrier_spinner"
-                style="@style/Spinner"
-                android:text="@string/carrier" />
+                <TextView
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="Carrier" />
 
-            <View
-                style="@style/DividerFull"
-                android:layout_marginBottom="16dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:background="@color/fn_dark_text_80" />
+                <Spinner
+                    android:id="@+id/carrier_spinner"
+                    style="@style/Spinner"
+                    android:text="@string/carrier" />
 
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/carrier_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                android:visibility="gone">
 
                 <EditText
                     android:id="@+id/carrier_edittext"
@@ -82,25 +88,31 @@
                     android:inputType="text" />
             </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                style="@style/Text_Caption"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="4dp"
-                android:text="Direction" />
+                android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/direction_spinner"
-                style="@style/Spinner"
-                android:text="@string/carrier" />
+                <TextView
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="Direction" />
 
-            <View
-                style="@style/DividerFull"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:background="@color/fn_dark_text_80" />
+                <Spinner
+                    android:id="@+id/direction_spinner"
+                    style="@style/Spinner"
+                    android:text="@string/carrier" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
 
         </LinearLayout>
 

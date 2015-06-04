@@ -63,8 +63,8 @@ public class DeclineDialog extends DialogFragmentBase {
 
         _blockSpinner = (Spinner) v.findViewById(R.id.block_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.dialog_block_reasons,
-                android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _blockSpinner.setAdapter(adapter);
 
         _reasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);

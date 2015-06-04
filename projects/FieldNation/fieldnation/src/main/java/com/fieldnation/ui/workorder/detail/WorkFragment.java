@@ -587,7 +587,6 @@ public class WorkFragment extends WorkorderFragment {
         } else {
             WorkorderClient.actionCheckin(getActivity(), _workorder.getWorkorderId());
         }
-        WorkorderClient.get(getActivity(), _workorder.getWorkorderId());
     }
 
     private void doCheckOut() {
@@ -755,7 +754,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void termsOnClick(Workorder workorder) {
-            _termsDialog.show();
+            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
     };
 
@@ -1151,7 +1150,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onShowTerms() {
-            _termsDialog.show();
+            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
 
         @Override

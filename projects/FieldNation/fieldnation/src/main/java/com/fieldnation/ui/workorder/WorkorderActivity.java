@@ -25,6 +25,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private static final String TAG = "WorkorderActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderActivity:workorder_id";
+    public static final String INTENT_FIELD_WORKORDER = "WorkorderActivity:workorder";
     public static final String INTENT_FIELD_CURRENT_TAB = "WorkorderActivity:current_tab";
 
     public static final int TAB_DETAILS = 0;
@@ -70,6 +71,9 @@ public class WorkorderActivity extends AuthActionBarActivity {
         if (intent != null) {
             if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
                 _workorderId = intent.getLongExtra(INTENT_FIELD_WORKORDER_ID, 0);
+            }
+            if (intent.hasExtra(INTENT_FIELD_WORKORDER)) {
+                _workorder = intent.getParcelableExtra(INTENT_FIELD_WORKORDER);
             }
             if (intent.hasExtra(INTENT_FIELD_CURRENT_TAB)) {
                 _currentTab = intent.getIntExtra(INTENT_FIELD_CURRENT_TAB, 0);
@@ -271,10 +275,10 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
     }
 
-    public void getData() {
+    public void getData(boolean allowCache) {
         Log.v(TAG, "getData");
         setLoading(true);
-        WorkorderClient.get(this, _workorderId);
+        WorkorderClient.get(this, _workorderId, allowCache);
     }
 
     /*-*************************-*/
@@ -342,7 +346,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         @Override
         public void onChange(Workorder workorder) {
             Log.v(TAG, "_workorder_listener");
-            getData();
+            getData(false);
         }
     };
 
@@ -367,13 +371,13 @@ public class WorkorderActivity extends AuthActionBarActivity {
             Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
             _workorderClient.subGet(_workorderId);
             _workorderClient.subActions(_workorderId);
-            getData();
+            getData(true);
         }
 
         @Override
         public void onAction(long workorderId, String ation) {
             Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + ation);
-            getData();
+            getData(false);
         }
 
         @Override

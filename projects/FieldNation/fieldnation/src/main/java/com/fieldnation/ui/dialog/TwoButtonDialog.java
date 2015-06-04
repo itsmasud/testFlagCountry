@@ -45,6 +45,15 @@ public class TwoButtonDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("title", _title);
+        outState.putString("body", _body);
+        outState.putString("positiveText", _positiveText);
+        outState.putString("negativeText", _negativeText);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
@@ -66,6 +75,22 @@ public class TwoButtonDialog extends DialogFragmentBase {
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("title"))
+                _title = savedInstanceState.getString("title");
+
+            if (savedInstanceState.containsKey("body"))
+                _body = savedInstanceState.getString("body");
+
+            if (savedInstanceState.containsKey("positiveText"))
+                _positiveText = savedInstanceState.getString("positiveText");
+
+            if (savedInstanceState.containsKey("negativeText"))
+                _negativeText = savedInstanceState.getString("negativeText");
+
+            reset();
+        }
 
         return v;
     }

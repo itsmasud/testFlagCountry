@@ -47,6 +47,7 @@ public interface WorkorderConstants {
     String PARAM_FILE = "PARAM_FILE";
     String PARAM_URL = "PARAM_URL";
     String PARAM_IS_COMPLETE = "PARAM_IS_COMPLETE";
+    String PARAM_ALLOW_CACHE = "PARAM_ALLOW_CACHE";
 
     String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
 

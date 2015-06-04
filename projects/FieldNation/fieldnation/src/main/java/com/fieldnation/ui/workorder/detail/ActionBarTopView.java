@@ -12,7 +12,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
 public class ActionBarTopView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.ActionBarTopView";
+    private static final String TAG = "ActionBarTopView";
 
     // Ui
     private Button _checkinButton;
@@ -42,8 +42,7 @@ public class ActionBarTopView extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top,
-                this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
 
         if (isInEditMode())
             return;
@@ -94,7 +93,9 @@ public class ActionBarTopView extends RelativeLayout {
 
         if (_workorder.canComplete()) {
             _completeButton.setVisibility(View.VISIBLE);
-        } else if (_workorder.areTasksComplete() && misc.isEmptyOrNull(_workorder.getClosingNotes()) && _workorder.canChangeClosingNotes()) {
+        } else if (_workorder.areTasksComplete()
+                && misc.isEmptyOrNull(_workorder.getClosingNotes())
+                && _workorder.canChangeClosingNotes()) {
             _closingNotesButton.setVisibility(View.VISIBLE);
         }
     }
@@ -154,16 +155,16 @@ public class ActionBarTopView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void onCheckIn();
+        void onCheckIn();
 
-        public void onCheckOut();
+        void onCheckOut();
 
-        public void onAcknowledge();
+        void onAcknowledge();
 
-        public void onComplete();
+        void onComplete();
 
-        public void onConfirm();
+        void onConfirm();
 
-        public void onEnterClosingNotes();
+        void onEnterClosingNotes();
     }
 }

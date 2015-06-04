@@ -113,7 +113,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 R.array.direction_list,
                 R.layout.view_spinner_item);
         _directionAdapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _directionSpinner.setAdapter(_directionAdapter);
 
 

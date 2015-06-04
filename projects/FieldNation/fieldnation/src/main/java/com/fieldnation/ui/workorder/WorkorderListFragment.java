@@ -337,7 +337,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         // everything is awsome. checkin
         _gpsLocationService.setListener(_gps_checkInListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
-            _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkInListener);
+
+            _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
+                    _locationDialog_checkInListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckin();
         } else if (_gpsLocationService.isRunning()) {
@@ -356,7 +358,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "startCheckOut");
         _gpsLocationService.setListener(_gps_checkOutListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
-            _locationDialog.show(_currentWorkorder.getIsGpsRequired(), _locationDialog_checkOutListener);
+            _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
+                    _locationDialog_checkOutListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckOut();
         } else if (_gpsLocationService.isRunning()) {
@@ -446,6 +449,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             setLoading(false);
         }
     };
+
     private final GpsLocationService.Listener _gps_checkInListener = new GpsLocationService.Listener() {
         @Override
         public void onLocation(Location location) {
@@ -454,6 +458,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _locationLoadingDialog.dismiss();
         }
     };
+
     private final GpsLocationService.Listener _gps_checkOutListener = new GpsLocationService.Listener() {
         @Override
         public void onLocation(Location location) {
@@ -462,6 +467,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _locationLoadingDialog.dismiss();
         }
     };
+
     private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
         @Override
         public void onOk() {
@@ -579,6 +585,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 //            } else {
             Intent intent = new Intent(getActivity(), WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
+            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
 /*
                 if (workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS || workorder.getStatus().getWorkorderStatus() == WorkorderStatus.ASSIGNED) {
                     intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_TASKS);
@@ -673,7 +680,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void termsOnClick(Workorder workorder) {
-            _termsDialog.show();
+            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
 
     };

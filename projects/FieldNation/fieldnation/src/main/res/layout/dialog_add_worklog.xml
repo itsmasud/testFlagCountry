@@ -25,48 +25,64 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:text="Start Time" />-->
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="Start Time" />
 
                 <Button
                     android:id="@+id/start_spinner"
-                    style="?android:attr/spinnerStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:layout_marginBottom="16dp"
-                    android:editable="false"
-                    android:hint="@string/start_time"
-                    android:paddingLeft="4dp"
-                    android:textSize="16sp" />
+                    style="@style/SpinnerButton" />
 
-            </android.support.design.widget.TextInputLayout>
-            <!--<TextView-->
-            <!--style="@style/Text_Body_1"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="End Time" />-->
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/end_spinner"
-                    style="?android:attr/spinnerStyle"
+                <TextView
+                    style="@style/Text_Caption"
                     android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:layout_marginBottom="16dp"
-                    android:editable="false"
-                    android:hint="@string/end_time"
-                    android:paddingLeft="4dp"
-                    android:textSize="16sp" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="End Time" />
+
+                <Button
+                    android:id="@+id/end_spinner"
+                    style="@style/SpinnerButton" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
+
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/devices_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
 
                 <EditText
                     android:id="@+id/devices_edittext"

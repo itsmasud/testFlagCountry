@@ -363,7 +363,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private final ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
         @Override
         public void onTacClick() {
-            _termsDialog.show();
+            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
 
         @Override

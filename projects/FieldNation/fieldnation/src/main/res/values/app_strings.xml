@@ -143,8 +143,12 @@
         To upload a certificate of insurance and avoid the additional fee, log into the website
         from a computer and follow the instructions.</string>
 
+    <string name="dialog_terms_title">Terms and Conditions</string>
+    <string name="dialog_terms_body">&lt;b&gt;Service Fees&lt;/b&gt;&lt;br/&gt;A 10% service fee will be deducted from your final total payment amount from this work order.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Terms&lt;/b&gt;&lt;br/&gt;All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.</string>
 
-    <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
+
+
+    <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
     <string name="tab_assigned">ASSIGNED</string>
     <string name="tab_completed">COMPLETED</string>
@@ -250,7 +254,7 @@
     <string name="arrival_period_colon">Arrival Period:</string>
     <string name="date_colon">Date:</string>
     <string name="time_colon">Time:</string>
-    <string name="date_and_time_colon">Date and Time:</string>
+    <string name="date_and_time">Date and Time</string>
     <string name="counter_offers">Counter Offers</string>
     <string name="total_amount">Total Amount</string>
     <string name="between">Between</string>

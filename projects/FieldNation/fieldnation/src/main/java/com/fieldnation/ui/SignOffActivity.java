@@ -212,7 +212,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                     "WorkorderActivity",
                     GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK,
                     "SignOffActivity", 1);
-            WorkorderClient.get(this, _workorder.getWorkorderId());
+            WorkorderClient.get(this, _workorder.getWorkorderId(), false);
         }
 
         _thankYouFrag.setUploadComplete();

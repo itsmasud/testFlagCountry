@@ -96,8 +96,9 @@ public class ScheduleDialog extends DialogFragmentBase {
         _typeSpinner.setOnItemSelectedListener(_type_selected);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.schedule_types,
-                android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _typeSpinner.setAdapter(adapter);
 
         _rangeLayout = (LinearLayout) v.findViewById(R.id.range_layout);

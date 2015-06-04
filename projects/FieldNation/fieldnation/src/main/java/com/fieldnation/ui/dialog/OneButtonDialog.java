@@ -43,6 +43,14 @@ public class OneButtonDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("title", _title);
+        outState.putString("body", _body);
+        outState.putString("buttonText", _buttonText);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
@@ -61,6 +69,19 @@ public class OneButtonDialog extends DialogFragmentBase {
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("title"))
+                _title = savedInstanceState.getString("title");
+
+            if (savedInstanceState.containsKey("body"))
+                _body = savedInstanceState.getString("body");
+
+            if (savedInstanceState.containsKey("buttonText"))
+                _buttonText = savedInstanceState.getString("buttonText");
+
+            reset();
+        }
 
         return v;
     }
