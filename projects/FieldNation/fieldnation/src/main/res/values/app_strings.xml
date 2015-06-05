@@ -39,6 +39,7 @@
     <string name="btn_add_shipment">ADD SHIPMENT</string>
     <string name="btn_add_signature">ADD SIGNATURE</string>
     <string name="btn_add_expense">ADD EXPENSE</string>
+    <string name="btn_add_discount">ADD DISCOUNT</string>
     <string name="btn_add">ADD</string>
     <string name="btn_clear">CLEAR</string>
     <string name="btn_cancel">CANCEL</string>

@@ -98,6 +98,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <com.fieldnation.ui.workorder.detail.DiscountListLayout
+                android:id="@+id/discountListLayout_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <com.fieldnation.ui.workorder.detail.ExpectedPaymentView
                 android:id="@+id/expected_pay_view"
                 android:layout_width="match_parent"

@@ -12,15 +12,15 @@ import android.widget.TextView;
 
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Expense;
+import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 
 /**
  * Created by Michael Carver on 6/5/2015.
  */
-public class ExpenseListLayout extends RelativeLayout implements WorkorderRenderer {
-    private static final String TAG = "ExpenseListLayout";
+public class DiscountListLayout extends RelativeLayout implements WorkorderRenderer {
+    private static final String TAG = "DiscountListLayout";
 
     // UI
     private TextView _noDataTextView;
@@ -31,23 +31,23 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
     private Listener _listener;
     private Workorder _workorder;
 
-    public ExpenseListLayout(Context context) {
+    public DiscountListLayout(Context context) {
         super(context);
         init();
     }
 
-    public ExpenseListLayout(Context context, AttributeSet attrs) {
+    public DiscountListLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ExpenseListLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public DiscountListLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_expense_layout, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_discount_layout, this);
 
         if (isInEditMode())
             return;
@@ -87,7 +87,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
             setVisibility(VISIBLE);
         }
 
-        final Expense[] list = _workorder.getAdditionalExpenses();
+        final Discount[] list = _workorder.getDiscounts();
 
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
@@ -99,21 +99,21 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
         _listView.setVisibility(VISIBLE);
 
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
-            private Expense[] _list = list;
+            private Discount[] _list = list;
 
             @Override
             public void next(int i) throws Exception {
-                ExpenseView v = null;
+                DiscountView v = null;
                 if (i < _listView.getChildCount()) {
-                    v = (ExpenseView) _listView.getChildAt(i);
+                    v = (DiscountView) _listView.getChildAt(i);
                 } else {
-                    v = new ExpenseView(getContext());
+                    v = new DiscountView(getContext());
                     _listView.addView(v);
                 }
-                Expense expense = _list[i];
-                v.setData(_workorder, expense);
-                v.setOnClickListener(_expense_onClick);
-                v.setOnLongClickListener(_expense_onLongClick);
+                Discount discount = _list[i];
+                v.setDiscount(discount);
+                v.setOnClickListener(_discount_onClick);
+                v.setOnLongClickListener(_discount_onLongClick);
             }
 
             @Override
@@ -125,7 +125,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
         };
         post(r);
 
-        if (_workorder.canChangeExpenses()) {
+        if (_workorder.canChangeDiscounts()) {
             _addButton.setVisibility(VISIBLE);
         } else {
             _addButton.setVisibility(GONE);
@@ -135,41 +135,41 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final View.OnClickListener _expense_onClick = new OnClickListener() {
+    private final OnClickListener _discount_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workorder.canChangeExpenses()) {
-                _listener.expenseOnClick(((ExpenseView) v).getExpense());
+            if (_listener != null && _workorder.canChangeDiscounts()) {
+                _listener.discountOnClick(((DiscountView) v).getDiscount());
             }
         }
     };
 
-    private final View.OnLongClickListener _expense_onLongClick = new OnLongClickListener() {
+    private final OnLongClickListener _discount_onLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if (_listener != null && _workorder.canChangeExpenses()) {
-                _listener.expenseLongClick(((ExpenseView) v).getExpense());
+            if (_listener != null && _workorder.canChangeDiscounts()) {
+                _listener.discountLongClick(((DiscountView) v).getDiscount());
                 return true;
             }
             return false;
         }
     };
 
-    private final View.OnClickListener _add_onClick = new OnClickListener() {
+    private final OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workorder.canChangeExpenses()) {
-                _listener.addExpense();
+            if (_listener != null && _workorder.canChangeDiscounts()) {
+                _listener.addDiscount();
             }
         }
     };
 
 
     public interface Listener {
-        void addExpense();
+        void addDiscount();
 
-        void expenseOnClick(Expense expense);
+        void discountOnClick(Discount discount);
 
-        void expenseLongClick(Expense expense);
+        void discountLongClick(Discount discount);
     }
 }

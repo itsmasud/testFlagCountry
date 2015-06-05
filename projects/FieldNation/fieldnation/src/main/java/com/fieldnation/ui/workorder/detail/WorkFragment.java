@@ -33,6 +33,7 @@ import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
+import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
@@ -123,6 +124,7 @@ public class WorkFragment extends WorkorderFragment {
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
     private ExpenseListLayout _expenseListView;
+    private DiscountListLayout _discountListView;
     private ActionView _actionView;
     private RefreshView _refreshView;
 
@@ -193,6 +195,9 @@ public class WorkFragment extends WorkorderFragment {
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
+
+        _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
+        _discountListView.setListener(_discountListView_listener);
 
         _actionView = (ActionView) view.findViewById(R.id.action_view);
         _actionView.setListener(_actionView_listener);
@@ -431,6 +436,10 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_expenseListView != null) {
             _expenseListView.setWorkorder(_workorder);
+        }
+
+        if (_discountListView != null) {
+            _discountListView.setWorkorder(_workorder);
         }
 
         if (_actionView != null) {
@@ -1159,17 +1168,36 @@ public class WorkFragment extends WorkorderFragment {
     private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
         @Override
         public void addExpense() {
-            //TODO addExpense
+            _expenseDialog.show(true);
         }
 
         @Override
-        public void expenseOnClick() {
+        public void expenseOnClick(Expense expense) {
             //TODO expenseOnClick
         }
 
         @Override
-        public void expenseLongClick() {
-            //TODO expenseLongClick
+        public void expenseLongClick(Expense expense) {
+            WorkorderClient.deleteExpense(GlobalState.getContext(),
+                    _workorder.getWorkorderId(), expense.getExpenseId());
+        }
+    };
+
+    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
+        @Override
+        public void addDiscount() {
+            _discountDialog.show("Add Discount");
+        }
+
+        @Override
+        public void discountOnClick(Discount discount) {
+            // TODO discountOnClick
+        }
+
+        @Override
+        public void discountLongClick(Discount discount) {
+            WorkorderClient.deleteDiscount(GlobalState.getContext(),
+                    _workorder.getWorkorderId(), discount.getDiscountId());
         }
     };
 
