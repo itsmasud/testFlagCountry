@@ -15,7 +15,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 
 public class ActionView extends RelativeLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.workorder.detail.ActionView";
+    private static final String TAG = "ActionView";
 
     // UI
     private Button _requestButton;
