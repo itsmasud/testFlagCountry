@@ -22,7 +22,7 @@
         <!--<item name="android:buttonStyle">@style/Button.Material.Flat</item>-->
 
         <!-- android widgets -->
-        <item name="android:editTextStyle">@style/EditText</item>
+        <!--<item name="android:editTextStyle">@style/EditText</item>-->
         <!--<item name="android:buttonStyle">?attr/buttonDefaultStyle</item>-->
         <!--<item name="android:radioButtonStyle">@style/RadioButton</item>-->
 
@@ -33,7 +33,7 @@
         <item name="loginStiltStyle">@style/Login.Stilt</item>
         <item name="loginLogoStyle">@style/Login.Logo</item>
         <item name="loginContentStyle">@style/Login.Content</item>
-        <item name="loginEditTextStyle">@style/Login.EditText</item>
+        <!--<item name="loginEditTextStyle">@style/Login.EditText</item>-->
 
         <!-- drawer styles -->
         <item name="drawerStyle">@style/Drawer</item>
@@ -60,7 +60,6 @@
         <item name="buttonOrangeStyle">@style/Material.Button.Raised.Orange</item>
         <item name="buttonGreenStyle">@style/Material.Button.Raised.Green</item>
         <item name="buttonGrayStyle">@style/Material.Button.Raised.Gray</item>
-        <item name="buttonSpinnerStyle">@style/ButtonSpinner</item>
         <item name="buttonFlatStyle">@style/Material.Button.Flat</item>
 
         <!-- tile styles -->
@@ -70,10 +69,9 @@
         <item name="tileTextBodyStyle">@style/TileTextBody.Material</item>
         <item name="tileTextStatusStyle">@style/TileTextStatus.Material</item>
         <item name="tileActionBarStyle">@style/TileActionBar.Material</item>
-        <item name="tileEditTextOneLineStyle">@style/TileEditTextOneLine.Material</item>
+        <!--<item name="tileEditTextOneLineStyle">@style/TileEditTextOneLine.Material</item>-->
         <item name="tileCheckBoxStyle">@style/TileCheckBox.Material</item>
-        <item name="tileSpinnerButtonStyle">@style/TileSpinnerButton.Material</item>
-        <item name="tileEditText">@style/TileEditText</item>
+        <!--<item name="tileEditText">@style/TileEditText</item>-->
         <item name="tileButtonStyle">@style/TileButton.Material</item>
         <item name="tileDividerStyle">@style/TileDivider.Material</item>
         <item name="tileDividerPartStyle">@style/TileDividerPart.Material</item>
@@ -84,12 +82,11 @@
         <item name="dialogTitleStyle">@style/DialogTitle.Material</item>
         <item name="dialogLabelStyle">@style/DialogLabel.Material</item>
         <item name="dialogCaptionStyle">@style/DialogCaption.Material</item>
-        <item name="dialogEditTextStyle">@style/DialogEditText.Material</item>
+        <!--<item name="dialogEditTextStyle">@style/DialogEditText.Material</item>-->
         <item name="dialogActionBarStyle">@style/DialogActionBar.Material</item>
         <item name="dialogCancelButtonStyle">@style/DialogCancelButton.Material</item>
         <item name="dialogOkButtonStyle">@style/DialogOkButton.Material</item>
         <item name="dialogOkButtonGreenStyle">@style/DialogOkButtonGreen.Material</item>
-        <item name="dialogSpinnerButtonStyle">@style/DialogSpinnerButton.Material</item>
         <item name="dialogBodyStyle">@style/DialogBody</item>
         <item name="dialogDividerStyle">@style/DialogDivider</item>
 

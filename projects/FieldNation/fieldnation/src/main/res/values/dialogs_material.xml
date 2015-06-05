@@ -98,6 +98,4 @@
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="DialogSpinnerButton.Material" parent="ButtonSpinner"></style>
-
 </resources>

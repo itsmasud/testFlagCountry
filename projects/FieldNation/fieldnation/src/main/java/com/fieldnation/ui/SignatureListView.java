@@ -49,7 +49,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         init();
     }
 
-    public void init() {
+    private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_signature_list, this);
 
         if (isInEditMode())
@@ -77,13 +77,12 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     }
 
     private void populateUI() {
+        setVisibility(View.GONE);
         if (_addButton == null) {
-            setVisibility(View.GONE);
             return;
         }
 
         if (_workorder == null) {
-            setVisibility(View.GONE);
             return;
         }
 
@@ -131,7 +130,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final OnClickListener _add_onClick = new OnClickListener() {
+    private final View.OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -139,7 +138,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         }
     };
 
-    private final OnClickListener _signature_onClick = new OnClickListener() {
+    private final View.OnClickListener _signature_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             SignatureTileView view = (SignatureTileView) v;

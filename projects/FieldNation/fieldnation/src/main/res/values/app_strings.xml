@@ -38,6 +38,7 @@
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_add_shipment">ADD SHIPMENT</string>
     <string name="btn_add_signature">ADD SIGNATURE</string>
+    <string name="btn_add_expense">ADD EXPENSE</string>
     <string name="btn_add">ADD</string>
     <string name="btn_clear">CLEAR</string>
     <string name="btn_cancel">CANCEL</string>
@@ -244,7 +245,7 @@
     <string name="add_expense_to_counter_offer">Add Expense to Counter Offer</string>
     <string name="add_another_expense">Add Another Expense</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
-    <string name="reason_for_request">Reason For Request (required)</string>
+    <string name="reason_for_request">Reason For Request (optional)</string>
     <string name="delete_counter_if_not_accepted_by">Delete counter of not accepted by</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>

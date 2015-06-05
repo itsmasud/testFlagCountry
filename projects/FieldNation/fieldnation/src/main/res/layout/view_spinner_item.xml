@@ -8,5 +8,5 @@
     android:paddingLeft="4dp"
     android:singleLine="true"
     android:textAlignment="inherit"
-    android:textColor="@color/fn_light_text"
+    android:textColor="@color/fn_dark_text"
     android:textSize="18sp" />

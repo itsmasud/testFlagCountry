@@ -74,7 +74,7 @@
 
                         <Button
                             android:id="@+id/start_date_button"
-                            style="@style/Spinner"
+                            style="@style/SpinnerButton"
                             android:hint="@string/placeholder_date_long" />
 
                         <View
@@ -102,7 +102,7 @@
 
                         <Button
                             android:id="@+id/end_date_button"
-                            style="@style/Spinner"
+                            style="@style/SpinnerButton"
                             android:hint="@string/placeholder_date_long" />
 
                         <View
@@ -133,7 +133,7 @@
 
                     <Button
                         android:id="@+id/date_time_button"
-                        style="@style/Spinner"
+                        style="@style/SpinnerButton"
                         android:hint="@string/placeholder_date_long" />
 
                     <View

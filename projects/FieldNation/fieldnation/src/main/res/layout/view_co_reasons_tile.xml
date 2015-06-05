@@ -22,7 +22,7 @@
 
         <EditText
             android:id="@+id/request_reason_edittext"
-            style="?attr/tileEditText"
+            style="@style/EditText"
             android:layout_height="wrap_content"
             android:hint="@string/reason_for_request"
             android:inputType="textMultiLine"

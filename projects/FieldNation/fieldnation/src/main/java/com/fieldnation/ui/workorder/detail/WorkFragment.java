@@ -121,6 +121,8 @@ public class WorkFragment extends WorkorderFragment {
     private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
+    private CounterOfferSummaryView _coSummaryView;
+    private ExpenseListLayout _expenseListView;
     private ActionView _actionView;
     private RefreshView _refreshView;
 
@@ -185,8 +187,12 @@ public class WorkFragment extends WorkorderFragment {
                 .findViewById(R.id.schedule_view);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
-        _payView.showDetails(true);
         _payView.setListener(_paymentView_listener);
+
+        _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
+
+        _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
+        _expenseListView.setListener(_expenseListView_listener);
 
         _actionView = (ActionView) view.findViewById(R.id.action_view);
         _actionView.setListener(_actionView_listener);
@@ -417,6 +423,14 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_payView != null) {
             _payView.setWorkorder(_workorder);
+        }
+
+        if (_coSummaryView != null) {
+            _coSummaryView.setData(_workorder);
+        }
+
+        if (_expenseListView != null) {
+            _expenseListView.setWorkorder(_workorder);
         }
 
         if (_actionView != null) {
@@ -1125,38 +1139,37 @@ public class WorkFragment extends WorkorderFragment {
     };
 
     private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
-
         @Override
-        public void onDeleteExpense(Workorder workorder, Expense expense) {
-            WorkorderClient.deleteExpense(GlobalState.getContext(), workorder.getWorkorderId(), expense.getExpenseId());
-
-            setLoading(true);
-        }
-
-        @Override
-        public void onShowAddDiscountDialog() {
-            _discountDialog.show("Add Discount");
-        }
-
-        @Override
-        public void onShowAddExpenseDialog() {
-            _expenseDialog.show(true);
-        }
-
-        @Override
-        public void onShowCounterOfferDialog() {
+        public void onCounterOffer(Workorder workorder) {
             _counterOfferDialog.show(_workorder);
         }
 
         @Override
-        public void onShowTerms() {
-            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
+        public void onRequestNewPay(Workorder workorder) {
+            // TODO show request new pay dialog
         }
 
         @Override
-        public void onDeleteDiscount(Workorder workorder, int discountId) {
-            WorkorderClient.deleteDiscount(GlobalState.getContext(), workorder.getWorkorderId(), discountId);
-            setLoading(true);
+        public void onShowTerms(Workorder workorder) {
+            _termsDialog.show(getString(R.string.dialog_terms_title),
+                    getString(R.string.dialog_terms_body));
+        }
+    };
+
+    private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
+        @Override
+        public void addExpense() {
+            //TODO addExpense
+        }
+
+        @Override
+        public void expenseOnClick() {
+            //TODO expenseOnClick
+        }
+
+        @Override
+        public void expenseLongClick() {
+            //TODO expenseLongClick
         }
     };
 

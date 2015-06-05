@@ -14,7 +14,6 @@
         <attr name="loginStiltStyle" format="reference" />
         <attr name="loginLogoStyle" format="reference" />
         <attr name="loginContentStyle" format="reference" />
-        <attr name="loginEditTextStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="DrawerTheme">
@@ -44,8 +43,6 @@
         <attr name="tileTextBodyStyle" format="reference" />
         <attr name="tileTextStatusStyle" format="reference" />
         <attr name="tileActionBarStyle" format="reference" />
-        <attr name="tileEditText" format="reference" />
-        <attr name="tileEditTextOneLineStyle" format="reference" />
         <attr name="tileCheckBoxStyle" format="reference" />
         <attr name="tileSpinnerButtonStyle" format="reference" />
         <attr name="tileButtonStyle" format="reference" />
@@ -69,7 +66,6 @@
         <attr name="dialogTitleStyle" format="reference" />
         <attr name="dialogLabelStyle" format="reference" />
         <attr name="dialogCaptionStyle" format="reference" />
-        <attr name="dialogEditTextStyle" format="reference" />
         <attr name="dialogActionBarStyle" format="reference" />
         <attr name="dialogCancelButtonStyle" format="reference" />
         <attr name="dialogOkButtonStyle" format="reference" />

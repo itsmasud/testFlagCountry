@@ -400,6 +400,11 @@ public class CounterOfferDialog extends DialogFragmentBase {
             }
             populateUi();
         }
+
+        @Override
+        public void editExpense(Expense expense) {
+            // TODO editExpense
+        }
     };
 
     private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
@@ -493,10 +498,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
                 }
 
                 _counterReason = _reasonView.getReason();
-//                if (misc.isEmptyOrNull(_counterReason)){
-//                    Toast.makeText(getActivity(), "Must enter a reason to continue", Toast.LENGTH_LONG).show();
-//                    return;
-//                }
 
                 // Todo need to do some data validation
                 if (_listener != null) {

@@ -46,7 +46,7 @@
 
                     <EditText
                         android:id="@+id/amount_edittext"
-                        style="?attr/dialogEditTextStyle"
+                        style="@style/EditText"
                         android:hint="Price"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />

@@ -108,6 +108,4 @@
         <item name="android:layout_marginBottom">@dimen/dialogContentPadding</item>
     </style>
 
-    <style name="DialogSpinnerButton" parent="ButtonSpinner"></style>
-
 </resources>

@@ -654,6 +654,13 @@ public class Workorder implements Parcelable {
         return !fieldsToDo;
     }
 
+    public boolean canRequestPayIncrease() {
+        WorkorderStatus status = getStatus().getWorkorderStatus();
+        return (status == WorkorderStatus.ASSIGNED
+                || status == WorkorderStatus.INPROGRESS)
+                && getPay() != null;
+    }
+
     public boolean canCounterOffer() {
         return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
                 && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED

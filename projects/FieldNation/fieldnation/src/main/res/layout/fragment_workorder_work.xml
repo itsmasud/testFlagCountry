@@ -71,7 +71,6 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-
             <com.fieldnation.ui.workorder.detail.ClosingNotesView
                 android:id="@+id/closingnotes_view"
                 android:layout_width="match_parent"
@@ -84,9 +83,18 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-
             <com.fieldnation.ui.workorder.detail.PaymentView
                 android:id="@+id/payment_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.fieldnation.ui.workorder.detail.CounterOfferSummaryView
+                android:id="@+id/counterOfferSummary_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.fieldnation.ui.workorder.detail.ExpenseListLayout
+                android:id="@+id/expenseListLayout_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
