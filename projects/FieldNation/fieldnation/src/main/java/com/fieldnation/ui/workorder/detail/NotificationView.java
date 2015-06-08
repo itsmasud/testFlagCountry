@@ -16,12 +16,11 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class NotificationView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.NotificationView";
+    private static final String TAG = "NotificationView";
 
     // UI
     private ImageView _alertThumbImageView;
     private TextView _messageTextView;
-    private TextView _usernameTextView;
     private TextView _dateTextView;
 
     // Data
@@ -55,7 +54,6 @@ public class NotificationView extends RelativeLayout {
         _alertThumbImageView = (ImageView) findViewById(R.id.alertthumb_imageview);
         _messageTextView = (TextView) findViewById(R.id.message_textview);
         _messageTextView.setOnClickListener(_message_onClick);
-        _usernameTextView = (TextView) findViewById(R.id.username_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
     }
 
@@ -72,11 +70,18 @@ public class NotificationView extends RelativeLayout {
         _messageTextView.setText(misc.linkifyHtml(msg, Linkify.ALL));
         _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        _usernameTextView.setText(_notification.getFromUser().getFullName());
         try {
-            _dateTextView.setText(misc.formatDateTime(ISO8601.toCalendar(_notification.getDate()), false));
+            long milliseconds = System.currentTimeMillis() - ISO8601.toCalendar(_notification.getDate()).getTimeInMillis();
+
+            _dateTextView.setText(misc.toRoundDuration(milliseconds));
         } catch (Exception e) {
             _dateTextView.setText(_notification.getDate());
+        }
+
+        if (_notification.getViewed() == 1) {
+            _alertThumbImageView.setVisibility(GONE);
+        } else {
+            _alertThumbImageView.setVisibility(VISIBLE);
         }
     }
 

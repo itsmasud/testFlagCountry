@@ -26,10 +26,8 @@ public class MessageRcvdView extends RelativeLayout {
 
     // UI
     private TextView _messageTextView;
-    //    private ImageView _profileImageView;
     private ProfilePicView _picView;
     private TextView _timeTextView;
-    private TextView _checkIconFont;
     private TextView _usernameTextView;
 
     // Data
@@ -58,7 +56,6 @@ public class MessageRcvdView extends RelativeLayout {
         _messageTextView = (TextView) findViewById(R.id.message_textview);
         _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _checkIconFont = (TextView) findViewById(R.id.check_iconfont);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
         _photos = new PhotoClient(_photo_listener);
@@ -125,7 +122,5 @@ public class MessageRcvdView extends RelativeLayout {
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);
         }
-
     };
-
 }

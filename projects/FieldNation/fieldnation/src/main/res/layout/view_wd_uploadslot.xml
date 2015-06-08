@@ -1,40 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:animateLayoutChanges="true"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:orientation="vertical">
-
-    <View
-        android:id="@+id/bar1_view"
-        style="@style/WorkorderDetail_Separator"
-        android:layout_width="match_parent" />
 
     <TextView
         android:id="@+id/title_textview"
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp" />
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:text="Title" />
+
+    <TextView
+        android:id="@+id/nodocs_textview"
+        style="@style/Text_Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="No documents to view at this time"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/docs_list"
-        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:orientation="vertical" />
 
     <LinearLayout
         android:id="@+id/upload_list"
-        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:orientation="vertical" />
 
-    <TextView
-        android:id="@+id/upload_textview"
-        style="@style/TextViewLink"
-        android:layout_width="fill_parent"
-        android:text="Upload a File" />
+    <View
+        style="@style/DividerFull"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

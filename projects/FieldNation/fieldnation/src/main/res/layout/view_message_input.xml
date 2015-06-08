@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:background="@color/fn_dark_text">
 
     <EditText
         android:id="@+id/message_edittext"
@@ -13,12 +12,16 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/send_button"
-        android:hint="@string/start_the_conversation"
-        android:minLines="2" />
+        android:hint="@string/write_your_message"
+        android:minLines="1"
+        android:paddingLeft="16dp"
+        android:textColor="@color/fn_clickable_bg"
+        android:textColorHint="@color/fn_light_text"
+        android:theme="@style/Theme.AppCompat.NoActionBar" />
 
     <Button
         android:id="@+id/send_button"
-        style="?attr/buttonOrangeStyle"
+        style="?attr/buttonFlatStyle"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"

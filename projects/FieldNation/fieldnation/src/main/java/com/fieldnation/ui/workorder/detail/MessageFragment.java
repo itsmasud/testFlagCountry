@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MessageFragment extends WorkorderFragment {
-    private static final String TAG = "ui.workorder.detail.MessageFragment";
+    private static final String TAG = "MessageFragment";
 
     // UI
     private ListView _listview;
@@ -53,7 +53,6 @@ public class MessageFragment extends WorkorderFragment {
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
-
     }
 
     @Override
@@ -173,7 +172,7 @@ public class MessageFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private View.OnClickListener _send_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (getActivity() != null) {

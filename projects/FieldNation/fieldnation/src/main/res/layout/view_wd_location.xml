@@ -95,16 +95,12 @@
             android:layout_marginBottom="16dp" />
     </LinearLayout>
 
-
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/navigate_button"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        style="@style/Material.Button.Circle"
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:layout_marginTop="140dp"
-        android:background="@drawable/ic_loading_circle"
         android:text="@string/icfont_car"
-        android:textColor="@color/fn_accent_color"
         android:textSize="24sp" />
 </RelativeLayout>

@@ -1,96 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Card"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="20dp">
+    android:layout_height="wrap_content">
 
-    <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/filetype_imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:text="@string/icfont_file_none"
-        android:textColor="@color/fn_light_text"
-        android:textSize="48sp" />
-
-    <LinearLayout
-        android:id="@+id/data_layout"
+    <RelativeLayout
+        style="@style/CardContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/delete_imagebutton"
-        android:layout_toRightOf="@+id/filetype_imageview"
-        android:orientation="vertical">
+        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/filename_textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="middle"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="File Name.ext"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/fn_dark_text" />
-
-        <TextView
-            android:id="@+id/date_textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="01/02/2014 @ 12:00 AM"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/fn_light_text" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/username_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/by_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
-                android:text="@string/by"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/fn_light_text" />
-
-            <TextView
-                android:id="@+id/username_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="username"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/fn_light_text" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/status_textview"
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/filetype_imageview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Uploading..."
-            android:visibility="gone" />
-    </LinearLayout>
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:text="@string/icfont_file_none"
+            android:textColor="@color/fn_light_text"
+            android:textSize="48sp" />
 
-    <ImageButton
-        android:id="@+id/delete_imagebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_delete" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/filetype_imageview"
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/filename_textview"
+                style="@style/Text_Subhead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="File Name.ext"
+                android:textColor="@color/fn_dark_text" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/username_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/date_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dec 25, 2014 at 12:00 am" />
+
+                <TextView
+                    android:id="@+id/by_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="2dp"
+                    android:text="@string/by" />
+
+                <TextView
+                    android:id="@+id/username_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kevin Mccalister" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/status_textview"
+                style="@style/Text_Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Uploading..."
+                android:visibility="gone" />
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

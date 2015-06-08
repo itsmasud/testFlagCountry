@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.workorder.detail.LocationView";
+    private static final String TAG = "LocationView";
 
     // UI
     private MapView _mapView;

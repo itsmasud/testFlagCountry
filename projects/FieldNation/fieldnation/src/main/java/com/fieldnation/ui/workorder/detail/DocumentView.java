@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,20 +15,34 @@ import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.util.Hashtable;
+
 public class DocumentView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.DocumentView";
+    private static final String TAG = "DocumentView";
+
+    private static final Hashtable<String, Integer> _ICFN_FILES = new Hashtable<>();
 
     // UI
     private IconFontTextView _fileTypeIconFont;
     private TextView _filenameTextView;
+
     private TextView _dateTextView;
     private TextView _byTextView;
     private TextView _usernameTextView;
-    private ImageButton _deleteButton;
 
     // Data
     private Workorder _workorder;
     private Document _document;
+
+    static {
+        _ICFN_FILES.put("png", R.string.icfont_file_png);
+        _ICFN_FILES.put("doc", R.string.icfont_file_doc);
+        _ICFN_FILES.put("docx", R.string.icfont_file_docx);
+        _ICFN_FILES.put("jpg", R.string.icfont_file_jpg);
+        _ICFN_FILES.put("jpeg", R.string.icfont_file_jpg);
+        _ICFN_FILES.put("pdf", R.string.icfont_file_pdf);
+        _ICFN_FILES.put("xls", R.string.icfont_file_xls);
+    }
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
@@ -61,8 +73,6 @@ public class DocumentView extends RelativeLayout {
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _byTextView = (TextView) findViewById(R.id.by_textview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
-        _deleteButton = (ImageButton) findViewById(R.id.delete_imagebutton);
-        _deleteButton.setVisibility(GONE);
 
         setOnClickListener(_this_onClick);
     }
@@ -81,6 +91,19 @@ public class DocumentView extends RelativeLayout {
             return;
 
         _filenameTextView.setText(_document.getFileName());
+        try {
+            String ext = _document.getFileName();
+            ext = ext.substring(ext.lastIndexOf(".") + 1).trim().toLowerCase();
+            if (_ICFN_FILES.containsKey(ext)) {
+                _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+            } else {
+                _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
+        }
+
         try {
             _dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_document.getLastUpdated())));
         } catch (Exception e) {
@@ -101,12 +124,6 @@ public class DocumentView extends RelativeLayout {
             e.printStackTrace();
             _usernameTextView.setVisibility(View.GONE);
             _byTextView.setVisibility(View.GONE);
-        }
-
-        if (_workorder.canChangeDeliverables()) {
-            _deleteButton.setVisibility(View.VISIBLE);
-        } else {
-            _deleteButton.setVisibility(View.GONE);
         }
     }
 

@@ -184,6 +184,23 @@ public class misc {
         return curr;
     }
 
+    public static String toRoundDuration(long milliseconds) {
+
+        if (milliseconds < 60000) {
+            return milliseconds / 1000 + "s";
+        }
+
+        if (milliseconds < 3600000) {
+            return milliseconds / 60000 + "m";
+        }
+
+        if (milliseconds < 86400000) {
+            return milliseconds / 3600000 + "hr";
+        }
+
+        return milliseconds / 86400000 + "day";
+    }
+
     public static Spannable linkifyHtml(String html, int linkifyMask) {
         Spanned text = Html.fromHtml(html);
         URLSpan[] currentSpans = text.getSpans(0, text.length(), URLSpan.class);

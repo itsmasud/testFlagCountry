@@ -21,13 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UploadSlotView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.UploadSlotView");
+    private final String TAG = UniqueTag.makeTag("UploadSlotView");
 
     // Ui
     private TextView _titleTextView;
     private LinearLayout _docsList;
     private LinearLayout _uploadList;
-    private TextView _uploadTextView;
+    private TextView _noDocsTextView;
 
     // Data
     private Workorder _workorder;
@@ -66,8 +66,7 @@ public class UploadSlotView extends RelativeLayout {
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _docsList = (LinearLayout) findViewById(R.id.docs_list);
         _uploadList = (LinearLayout) findViewById(R.id.upload_list);
-        _uploadTextView = (TextView) findViewById(R.id.upload_textview);
-        _uploadTextView.setOnClickListener(_upload_onClick);
+        _noDocsTextView = (TextView) findViewById(R.id.nodocs_textview);
 
         populateUi();
     }
@@ -83,31 +82,17 @@ public class UploadSlotView extends RelativeLayout {
         _profileId = profileId;
 
         _uploadingFiles.clear();
-//        if (_workorder.getTransfer() != null && _workorder.getTransfer().isUploadingDeliverable()) {
-//            String[] uploads = _workorder.getTransfer().getUploadingDeliverables();
-//            for (int i = 0; i < uploads.length; i++) {
-//                try {
-//                    JsonObject upload = new JsonObject(uploads[i]);
-//                    if (upload.getInt("slotId") == _slot.getSlotId()) {
-//                        _uploadingFiles.add(upload.getString("filename"));
-//                    }
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
-//        }
-
         populateUi();
     }
 
     private void populateUi() {
-        if (_uploadTextView == null)
+        if (_titleTextView == null)
             return;
 
         if (_workorder == null)
             return;
 
-        _titleTextView.setText(_slot.getSlotName());
+        _titleTextView.setText(_slot.getSlotName().toUpperCase());
 
         final UploadedDocument[] docs = _slot.getUploadedDocuments();
         if (docs != null && docs.length > 0) {
@@ -175,9 +160,15 @@ public class UploadSlotView extends RelativeLayout {
 
 
         if (_slot.getMaxFiles() > 0 && docs.length >= _slot.getMaxFiles() || !_workorder.canChangeDeliverables()) {
-            _uploadTextView.setVisibility(GONE);
+//            _uploadTextView.setVisibility(GONE);
         } else {
-            _uploadTextView.setVisibility(VISIBLE);
+//            _uploadTextView.setVisibility(VISIBLE);
+        }
+
+        if (docs.length == 0 && _uploadingFiles.size() == 0) {
+            _noDocsTextView.setVisibility(VISIBLE);
+        } else {
+            _noDocsTextView.setVisibility(GONE);
         }
 
         if (docs.length == 0 && !_workorder.canChangeDeliverables()) {
@@ -185,18 +176,19 @@ public class UploadSlotView extends RelativeLayout {
         } else {
             setVisibility(View.VISIBLE);
         }
+
     }
 
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final View.OnClickListener _upload_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_listener != null)
-                _listener.onUploadClick(UploadSlotView.this, _slot);
-        }
-    };
+//    private final View.OnClickListener _upload_onClick = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            if (_listener != null)
+//                _listener.onUploadClick(UploadSlotView.this, _slot);
+//        }
+//    };
 
     public interface Listener {
         void onUploadClick(UploadSlotView view, UploadSlot slot);
