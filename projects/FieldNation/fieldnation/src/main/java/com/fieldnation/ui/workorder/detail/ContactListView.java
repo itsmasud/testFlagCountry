@@ -59,28 +59,41 @@ public class ContactListView extends RelativeLayout {
         if (_listLayout == null)
             return;
 
-        setVisibility(VISIBLE);
-
         _listLayout.removeAllViews();
 
+        boolean addedContact = false;
+
         if (_workorder.getWorkorderManagerInfo() != null) {
-            ContactTileView tileView = new ContactTileView(getContext());
             User user = _workorder.getWorkorderManagerInfo();
-            tileView.setData(user.getFullName(), user.getPhone(), "Work Order Manager");
-            _listLayout.addView(tileView);
+
+            if (!misc.isEmptyOrNull(user.getFullName()) || !misc.isEmptyOrNull(user.getPhone())) {
+                ContactTileView tileView = new ContactTileView(getContext());
+                tileView.setData(user.getFullName(), user.getPhone(), "Work Order Manager");
+                addedContact = true;
+                _listLayout.addView(tileView);
+            }
         }
 
         if (_workorder.getLocation() != null) {
             Location location = _workorder.getLocation();
-            ContactTileView tileView = new ContactTileView(getContext());
             String phone = location.getContactPhone();
 
-            if (!misc.isEmptyOrNull(location.getContactPhoneExt())) {
-                phone += " x" + location.getContactPhoneExt();
+            if (!misc.isEmptyOrNull(location.getContactName()) || !misc.isEmptyOrNull(phone)) {
+                ContactTileView tileView = new ContactTileView(getContext());
+                addedContact = true;
+                if (!misc.isEmptyOrNull(location.getContactPhoneExt())) {
+                    phone += " x" + location.getContactPhoneExt();
+                }
+                tileView.setData(location.getContactName(),
+                        phone, "Location Contact");
+                _listLayout.addView(tileView);
             }
-            tileView.setData(location.getContactName(),
-                    phone, "Location Contact");
-            _listLayout.addView(tileView);
+        }
+
+        if (addedContact) {
+            setVisibility(VISIBLE);
+        } else {
+            setVisibility(GONE);
         }
 
     }
