@@ -13,20 +13,20 @@
         android:text="EXPECTED PAYMENT" />
 
     <RelativeLayout
-        style="@style/Card"
+        style="?attr/tileStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            style="@style/CardContainer"
+        <RelativeLayout
+            style="?attr/tileContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:padding="16dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
                     style="@style/Text_Body_1"
@@ -35,37 +35,10 @@
                     android:text="Labor Earnings" />
 
                 <TextView
-                    android:id="@+id/labor_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="$0.00" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Expenses Approved" />
-
-                <TextView
-                    android:id="@+id/expenses_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="$0.00" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
 
                 <TextView
                     style="@style/Text_Body_1"
@@ -73,18 +46,13 @@
                     android:layout_height="wrap_content"
                     android:text="Discounts" />
 
-                <TextView
-                    android:id="@+id/discounts_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="$0.00" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                <View
+                    style="@style/DividerFull"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@null" />
 
                 <TextView
                     style="@style/Text_Body_1"
@@ -93,24 +61,79 @@
                     android:text="Total" />
 
                 <TextView
+                    android:id="@+id/feePercentage_textview"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fieldnation_expected_fee_percentage" />
+
+                <TextView
+                    android:id="@+id/insurancePercentage_textview"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fieldnation_expected_insurance_percentage" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@null" />
+
+                <TextView
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Amount" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="right"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/labor_textview"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="$0.00" />
+
+                <TextView
+                    android:id="@+id/expenses_textview"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="$0.00" />
+
+                <TextView
+                    android:id="@+id/discounts_textview"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="$0.00" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
                     android:id="@+id/expectedtotal_textview"
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:text="$0.00" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/feePercentage_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Field Nation Fee (%1$s%)" />
 
                 <TextView
                     android:id="@+id/fee_textview"
@@ -119,19 +142,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:text="$0.00" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:id="@+id/insurancePercentage_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Insurance Fee (%1$s%)" />
 
                 <TextView
                     android:id="@+id/insuranceFee_textview"
@@ -140,17 +150,13 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:text="$0.00" />
-            </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Total Amount" />
+                <View
+                    style="@style/DividerFull"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="2dp" />
 
                 <TextView
                     android:id="@+id/total_textview"
@@ -159,11 +165,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:text="$0.00" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/paystatus_textview"
@@ -172,12 +173,13 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:text="Processing" />
-            </RelativeLayout>
-        </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 
-    <View
-        style="@style/WorkorderDetail_Separator"
-        android:layout_width="match_parent" />
+    <!--<View-->
+        <!--style="@style/WorkorderDetail_Separator"-->
+        <!--android:layout_width="match_parent" />-->
 
 </LinearLayout>

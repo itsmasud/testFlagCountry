@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="This is part of a bundle of ## workorders."
+                android:text="View Bundle Details"
                 android:visibility="gone" />
 
             <com.fieldnation.ui.workorder.detail.ActionView

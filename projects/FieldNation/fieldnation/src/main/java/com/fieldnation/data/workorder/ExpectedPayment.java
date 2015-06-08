@@ -13,14 +13,16 @@ public class ExpectedPayment {
     private Double _expectedAmount;
     @Json(name = "expectedFee")
     private Double _expectedFee;
+    @Json(name = "expectedInsuranceFee")
+    private Double _expectedInsuranceFee;
     @Json(name = "expectedTotal")
     private Double _expectedTotal;
     @Json(name = "expensesApproved")
     private Double _expensesApproved;
-	@Json(name="fees")
-	private Fee[] _fees;
-	@Json(name="fnFeePercentage")
-	private Float _fnFeePercentage;
+    @Json(name = "fees")
+    private Fee[] _fees;
+    @Json(name = "fnFeePercentage")
+    private Float _fnFeePercentage;
     @Json(name = "laborEarned")
     private Double _laborEarned;
     @Json(name = "maxPayLimit")
@@ -49,6 +51,10 @@ public class ExpectedPayment {
         return _expectedFee;
     }
 
+    public Double getExpectedInsuranceFee() {
+        return _expectedInsuranceFee;
+    }
+
     public Double getExpectedTotal() {
         return _expectedTotal;
     }
@@ -57,11 +63,11 @@ public class ExpectedPayment {
         return _expensesApproved;
     }
 
-	public Fee[] getFees(){
-		return _fees;
-	}
+    public Fee[] getFees() {
+        return _fees;
+    }
 
-	public Float getFnFeePercentage(){
+    public Float getFnFeePercentage() {
         return _fnFeePercentage;
     }
 

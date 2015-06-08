@@ -493,7 +493,6 @@ public class WorkFragment extends WorkorderFragment {
         if (_bundleWarningTextView != null) {
             if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
                 _bundleWarningTextView.setVisibility(View.VISIBLE);
-                _bundleWarningTextView.setText(String.format(getString(R.string.workorder_bundle_warning), _workorder.getBundleCount()));
             } else {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }

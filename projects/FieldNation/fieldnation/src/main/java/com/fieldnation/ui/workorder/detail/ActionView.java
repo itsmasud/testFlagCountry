@@ -5,14 +5,12 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderSubstatus;
 
 public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private static final String TAG = "ActionView";
@@ -23,7 +21,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private Button _counterOfferButton;
     private Button _completeButton;
     private Button _withdrawRequestButton;
-    private LinearLayout _buttonLayout;
     private ProgressBar _progressBar;
 
     // DATA
@@ -66,24 +63,12 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         _completeButton = (Button) findViewById(R.id.complete_button);
         _completeButton.setOnClickListener(_complete_onClick);
 
-        _buttonLayout = (LinearLayout) findViewById(R.id.button_layout);
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         _withdrawRequestButton = (Button) findViewById(R.id.withdraw_request_button);
         _withdrawRequestButton.setOnClickListener(_withdraw_onClick);
 
-        setLoading(true);
         setVisibility(View.GONE);
-    }
-
-    private void setLoading(boolean isLoading) {
-        // if (isLoading) {
-        // _progressBar.setVisibility(View.VISIBLE);
-        // _buttonLayout.setVisibility(View.GONE);
-        // } else {
-        // _progressBar.setVisibility(View.GONE);
-        // _buttonLayout.setVisibility(View.VISIBLE);
-        // }
     }
 
     public void setListener(Listener listener) {
@@ -140,16 +125,23 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
             _withdrawRequestButton.setVisibility(View.GONE);
         }
 
-        setVisibility(View.VISIBLE);
+        if (_requestButton.getVisibility() == VISIBLE
+                || _notInterestedButton.getVisibility() == VISIBLE
+                || _counterOfferButton.getVisibility() == VISIBLE
+                || _completeButton.getVisibility() == VISIBLE
+                || _withdrawRequestButton.getVisibility() == VISIBLE) {
+            setVisibility(VISIBLE);
+        } else {
+            setVisibility(GONE);
+        }
     }
 
-	/*-*************************-*/
+    /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
     private final OnClickListener _withdraw_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLoading(true);
             if (_listener != null) {
                 if (_workorder.canWithdrawRequest()) {
                     _listener.onWithdrawRequest(_workorder);
@@ -161,7 +153,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLoading(true);
             if (_listener != null) {
                 if (_workorder.canAcceptWork()) {
                     _listener.onConfirmAssignment(_workorder);
@@ -177,7 +168,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLoading(true);
             if (_listener != null)
                 _listener.onNotInterested(_workorder);
         }
@@ -186,7 +176,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private final View.OnClickListener _complete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setLoading(true);
             if (_listener != null)
                 _listener.onComplete(_workorder);
         }
@@ -201,17 +190,17 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     };
 
     public interface Listener {
-        public void onComplete(Workorder workorder);
+        void onComplete(Workorder workorder);
 
-        public void onNotInterested(Workorder workorder);
+        void onNotInterested(Workorder workorder);
 
-        public void onConfirmAssignment(Workorder workorder);
+        void onConfirmAssignment(Workorder workorder);
 
-        public void onRequest(Workorder workorder);
+        void onRequest(Workorder workorder);
 
-        public void onShowCounterOfferDialog(Workorder workorder);
+        void onShowCounterOfferDialog(Workorder workorder);
 
-        public void onWithdrawRequest(Workorder workorder);
+        void onWithdrawRequest(Workorder workorder);
     }
 
 }
