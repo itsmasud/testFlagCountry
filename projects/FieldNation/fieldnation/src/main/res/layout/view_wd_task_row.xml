@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Card"
+<com.fieldnation.ui.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <RelativeLayout
-        style="@style/CardContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <com.fieldnation.ui.IconFontTextView
             android:id="@+id/icon_view"
@@ -31,4 +28,4 @@
             android:text="Upload or take a picture of the upgraded ARMs serial number" />
 
     </RelativeLayout>
-</LinearLayout>
+</com.fieldnation.ui.CardView>

@@ -14,8 +14,8 @@ import com.fieldnation.utils.misc;
 /**
  * Created by michael.carver on 12/5/2014.
  */
-public class SignatureTileView extends RelativeLayout {
-    private static final String TAG = "SignatureTileView";
+public class SignatureCardView extends RelativeLayout {
+    private static final String TAG = "SignatureCardView";
 
     // Ui
     private TextView _nameTextView;
@@ -24,23 +24,23 @@ public class SignatureTileView extends RelativeLayout {
     // Data
     private Signature _sig;
 
-    public SignatureTileView(Context context) {
+    public SignatureCardView(Context context) {
         super(context);
         init();
     }
 
-    public SignatureTileView(Context context, AttributeSet attrs) {
+    public SignatureCardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public SignatureTileView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SignatureCardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     public void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_signature_tile, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_signature_card, this);
 
         if (isInEditMode())
             return;

@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 
@@ -40,14 +39,14 @@ public class CardView extends FrameLayout {
 
     private FrameLayout getContainer() {
         if (_container == null) {
-            _container = (FrameLayout) findViewById(R.id.container);
+            _container = (FrameLayout) findViewById(R.id.card_container);
         }
         return _container;
     }
 
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        if (child.getId() == R.id.content)
+        if (child.getId() == R.id.card_content)
             super.addView(child, index, params);
         else
             getContainer().addView(child, index, params);

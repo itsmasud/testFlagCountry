@@ -54,7 +54,7 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.SignatureTileView;
+import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
@@ -1236,7 +1236,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void signatureOnClick(SignatureTileView view, Signature signature) {
+        public void signatureOnClick(SignatureCardView view, Signature signature) {
             SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
             setLoading(true);
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Card">
+    style="?attr/cardStyle">
 
     <!-- not interested layout -->
 
@@ -53,11 +53,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp">
+            android:layout_marginLeft="32dp">
 
             <!-- title + pay -->
             <LinearLayout
@@ -222,7 +218,6 @@
                         android:visibility="visible" />
                 </FrameLayout>
             </LinearLayout>
-
         </RelativeLayout>
 
     </RelativeLayout>
@@ -251,13 +246,13 @@
 
     <RelativeLayout
         android:id="@+id/loading_layout"
-        style="@style/CardOverlayContainer"></RelativeLayout>
+        style="@style/CardOverlay"></RelativeLayout>
 
     <!-- undo layout -->
 
     <RelativeLayout
         android:id="@+id/undo_layout"
-        style="@style/CardOverlayContainer">
+        style="@style/CardOverlay">
 
         <Button
             android:id="@+id/undo_button"

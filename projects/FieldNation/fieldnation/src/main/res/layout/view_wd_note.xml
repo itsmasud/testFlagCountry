@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/tileStyle"
+<com.fieldnation.ui.TileView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/conatiner"
-        style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -39,9 +36,4 @@
             android:layout_below="@+id/message_textview"
             android:text="1 day" />
     </RelativeLayout>
-
-    <View
-        style="@style/DividerFull"
-        android:layout_alignBottom="@+id/container" />
-
-</RelativeLayout>
+</com.fieldnation.ui.TileView>

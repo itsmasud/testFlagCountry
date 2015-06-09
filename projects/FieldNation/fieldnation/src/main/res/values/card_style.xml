@@ -51,14 +51,12 @@
 
     <style name="CardContainer">
         <item name="android:background">@drawable/card_bg</item>
-        <item name="android:paddingBottom">2dp</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-        <item name="android:paddingTop">2dp</item>
+        <item name="android:padding">16dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <!-- not  used -->
     <style name="CardActionBar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/Button_Touch_Target</item>
@@ -74,7 +72,15 @@
         <item name="android:visibility">invisible</item>
     </style>
 
-    <style name="CardOverlayContainer">
+    <style name="CardBody">
+
+    </style>
+
+    <style name="CardTitleBar"></style>
+
+    <style name="CardStatusBar"></style>
+
+    <style name="CardOverlay">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@drawable/card_loading</item>

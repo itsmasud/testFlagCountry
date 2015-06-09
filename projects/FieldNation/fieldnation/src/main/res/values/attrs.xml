@@ -53,6 +53,7 @@
     <declare-styleable name="CardTheme">
         <attr name="cardStyle" format="reference" />
         <attr name="cardContainerStyle" format="reference" />
+        <attr name="cardOverlayStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="ButtonTheme">

@@ -108,11 +108,11 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
 
             @Override
             public void next(int i) throws Exception {
-                SignatureTileView v = null;
+                SignatureCardView v = null;
                 if (i < _listView.getChildCount()) {
-                    v = (SignatureTileView) _listView.getChildAt(i);
+                    v = (SignatureCardView) _listView.getChildAt(i);
                 } else {
-                    v = new SignatureTileView(getContext());
+                    v = new SignatureCardView(getContext());
                     _listView.addView(v);
                 }
                 Signature sig = _list[i];
@@ -145,7 +145,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     private final View.OnClickListener _signature_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            SignatureTileView view = (SignatureTileView) v;
+            SignatureCardView view = (SignatureCardView) v;
             if (_listener != null)
                 _listener.signatureOnClick(view, view.getSignature());
 
@@ -155,7 +155,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     public interface Listener {
         void addSignature();
 
-        void signatureOnClick(SignatureTileView view, Signature signature);
+        void signatureOnClick(SignatureCardView view, Signature signature);
     }
 
 }

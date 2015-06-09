@@ -33,7 +33,7 @@
         <item name="android:background">@color/tileBackGroundColor_Material</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/Button_Touch_Target</item>
-        <item name="android:layout_marginBottom">@dimen/tileActionBarBottom_Material</item>
+        <item name="android:paddingBottom">@dimen/tileActionBarBottom_Material</item>
         <item name="android:paddingLeft">@dimen/tileActionBarMargins_material</item>
         <item name="android:paddingRight">@dimen/tileActionBarMargins_material</item>
         <item name="android:gravity">left</item>

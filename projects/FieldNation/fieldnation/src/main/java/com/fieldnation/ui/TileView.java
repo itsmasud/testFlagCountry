@@ -17,7 +17,7 @@ public class TileView extends FrameLayout {
 
     // Ui
     private FrameLayout _container;
-
+    private FrameLayout _actionBar;
 
     public TileView(Context context) {
         super(context);
@@ -40,18 +40,28 @@ public class TileView extends FrameLayout {
 
     private FrameLayout getContainer() {
         if (_container == null) {
-            _container = (FrameLayout) findViewById(R.id.container);
+            _container = (FrameLayout) findViewById(R.id.tile_container);
         }
         return _container;
     }
 
-    @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        if (child.getId() == R.id.container) {
-            super.addView(child, index, params);
-        } else {
-            getContainer().addView(child, index, params);
+    private FrameLayout getActionBar() {
+        if (_actionBar == null) {
+            _actionBar = (FrameLayout) findViewById(R.id.tile_actionBar);
         }
 
+        return _actionBar;
+    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        if (child.getId() == R.id.tile_content) {
+            super.addView(child, index, params);
+        } else if (getContainer().getChildCount() == 0) {
+            getContainer().addView(child, index, params);
+        } else {
+            getActionBar().addView(child, index, params);
+            getActionBar().setVisibility(VISIBLE);
+        }
     }
 }

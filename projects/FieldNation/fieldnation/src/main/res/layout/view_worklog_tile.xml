@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/tileStyle"
+<com.fieldnation.ui.TileView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -55,7 +52,4 @@
         </RelativeLayout>
 
     </LinearLayout>
-
-    <View style="?attr/dividerFullStyle" />
-
-</LinearLayout>
+</com.fieldnation.ui.TileView>

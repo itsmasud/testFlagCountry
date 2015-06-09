@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/tileStyle"
+<com.fieldnation.ui.TileView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/container_view"
-        style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -52,12 +48,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="$20/hour for up to 2 hours" />
-
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/actionbar_view"
-        style="?attr/tileActionBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
@@ -72,4 +68,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</com.fieldnation.ui.TileView>

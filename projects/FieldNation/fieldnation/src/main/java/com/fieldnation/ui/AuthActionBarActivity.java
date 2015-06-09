@@ -48,10 +48,9 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private Profile _profile;
     private boolean _profileBounceProtect = false;
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

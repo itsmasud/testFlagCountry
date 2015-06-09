@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Card"
+<com.fieldnation.ui.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
-        style="@style/CardContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <com.fieldnation.ui.IconFontTextView
             android:id="@+id/icon_view"
@@ -46,7 +41,5 @@
                 android:text="January 10, 2014" />
 
         </LinearLayout>
-
-
     </RelativeLayout>
-</LinearLayout>
+</com.fieldnation.ui.CardView>

@@ -12,13 +12,11 @@
         android:gravity="center"
         android:text="PAYMENT" />
 
-    <RelativeLayout
-        style="?attr/tileStyle"
+    <com.fieldnation.ui.TileView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-            style="?attr/tileContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -42,7 +40,7 @@
                 android:text="@string/placeholder_date_long" />
 
         </LinearLayout>
-    </RelativeLayout>
+    </com.fieldnation.ui.TileView>
 
     <TextView
         android:id="@+id/terms_textview"
