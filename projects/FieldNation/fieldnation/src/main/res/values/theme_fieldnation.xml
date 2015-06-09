@@ -76,6 +76,10 @@
         <item name="tileDividerStyle">@style/TileDivider.Material</item>
         <item name="tileDividerPartStyle">@style/TileDividerPart.Material</item>
 
+        <!-- card styles -->
+        <item name="cardStyle">@style/Card</item>
+        <item name="cardContainerStyle">@style/CardContainer</item>
+
         <!-- dialogs -->
         <item name="dialogStyle">@style/Dialog</item>
         <item name="dialogContainerStyle">@style/DialogContainer.Material</item>

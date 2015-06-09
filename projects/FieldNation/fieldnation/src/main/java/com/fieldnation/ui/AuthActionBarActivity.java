@@ -3,7 +3,7 @@ package com.fieldnation.ui;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +26,7 @@ import com.fieldnation.ui.dialog.UpdateDialog;
  *
  * @author michael.carver
  */
-public abstract class AuthActionBarActivity extends ActionBarActivity {
+public abstract class AuthActionBarActivity extends AppCompatActivity {
     private static final String TAG_BASE = "AuthActionBarActivity";
     private String TAG = TAG_BASE;
 
@@ -60,7 +60,7 @@ public abstract class AuthActionBarActivity extends ActionBarActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
-        
+
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG)) {
                 TAG = savedInstanceState.getString(STATE_TAG);

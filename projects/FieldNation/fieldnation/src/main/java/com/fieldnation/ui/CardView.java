@@ -6,57 +6,50 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 
 /**
- * Created by Michael Carver on 5/20/2015.
+ * Created by Michael Carver on 6/9/2015.
  */
-public class RightDrawerView extends FrameLayout {
-    private static final String TAG = "RightDrawerView";
+public class CardView extends FrameLayout {
+    private static final String TAG = "CardView";
 
     // Ui
     private FrameLayout _container;
 
-    public RightDrawerView(Context context) {
+    public CardView(Context context) {
         super(context);
         init();
     }
 
-    public RightDrawerView(Context context, AttributeSet attrs) {
+    public CardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public RightDrawerView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_right_drawer, this);
-
-        if (isInEditMode())
-            return;
-
-
+        LayoutInflater.from(getContext()).inflate(R.layout.view_card, this);
     }
 
     private FrameLayout getContainer() {
         if (_container == null) {
             _container = (FrameLayout) findViewById(R.id.container);
         }
-
         return _container;
     }
 
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        if (child.getId() == R.id.content) {
+        if (child.getId() == R.id.content)
             super.addView(child, index, params);
-        } else {
+        else
             getContainer().addView(child, index, params);
-        }
     }
-
 }

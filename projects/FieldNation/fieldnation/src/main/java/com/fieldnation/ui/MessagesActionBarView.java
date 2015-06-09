@@ -2,8 +2,6 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,7 +82,6 @@ public class MessagesActionBarView extends RelativeLayout {
         }
     };
 
-
     private void refresh() {
         if (_profile == null)
             return;
@@ -101,7 +98,7 @@ public class MessagesActionBarView extends RelativeLayout {
                 _countTextView.setText(count + "");
             }
         }
-
-        // TODO consier requesting updated information if this is cached
+        // TODO consider requesting updated information if this is cached
     }
+
 }
