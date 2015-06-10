@@ -49,7 +49,7 @@ public class MessagesActionBarView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        setOnClickListener(_this_onClickListener);
+//        setOnClickListener(_this_onClickListener);
 
         _client = new GlobalTopicClient(_client_listener);
         _client.connect(getContext());

@@ -90,7 +90,9 @@ public class MessageTileView extends RelativeLayout {
             e.printStackTrace();
         }
         try {
-            _messageBodyTextView.setText(_message.getMessage());
+            _messageBodyTextView.setText(
+                    misc.htmlify(
+                            "<b>" + _message.getFromUser().getFullName() + "</b> - " + _message.getMessage()));
         } catch (Exception e) {
             e.printStackTrace();
         }

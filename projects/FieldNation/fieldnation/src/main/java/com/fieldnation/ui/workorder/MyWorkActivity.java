@@ -7,17 +7,21 @@ import android.support.v4.app.Fragment;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.ui.RightDrawerMessagesView;
+import com.fieldnation.ui.RightDrawerNotificationsView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.utils.misc;
 
 import java.util.List;
 
 public class MyWorkActivity extends TabActionBarFragmentActivity {
-    private static final String TAG = "ui.workorder.MyWorkActivity";
+    private static final String TAG = "MyWorkActivity";
 
     // Data
     private WorkorderListFragment[] _fragments;
     private String[] _titles;
+    private RightDrawerMessagesView _messagesView;
+    private RightDrawerNotificationsView _notificationsView;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -26,6 +30,9 @@ public class MyWorkActivity extends TabActionBarFragmentActivity {
     public void onFinishCreate(Bundle savedInstanceState) {
         setTitle(R.string.mywork_title);
         super.onFinishCreate(savedInstanceState);
+
+        _messagesView = (RightDrawerMessagesView) findViewById(R.id.rightDrawerMessages_view);
+        _notificationsView = (RightDrawerNotificationsView) findViewById(R.id.rightDrawerNotifications_view);
     }
 
     @Override
@@ -36,6 +43,17 @@ public class MyWorkActivity extends TabActionBarFragmentActivity {
         _fragments[2] = getFragment(WorkorderDataSelector.CANCELED);
 
         _titles = new String[]{getString(R.string.tab_assigned), getString(R.string.tab_completed), getString(R.string.tab_canceled)};
+    }
+
+    @Override
+    public void onMessagesClick() {
+        Log.v(TAG, "onMessagesClick");
+        _messagesView.animateShow();
+    }
+
+    @Override
+    public void onNotificationClick() {
+        _notificationsView.animateShow();
     }
 
     private WorkorderListFragment getFragment(WorkorderDataSelector selector) {

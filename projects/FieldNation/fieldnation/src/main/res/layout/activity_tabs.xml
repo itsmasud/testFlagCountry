@@ -28,17 +28,15 @@
                 android:layout_height="match_parent" />
         </LinearLayout>
 
-        <!--<com.fieldnation.ui.RightDrawerView-->
-            <!--android:id="@+id/rightDrawer_view"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:visibility="visible">-->
+        <com.fieldnation.ui.RightDrawerMessagesView
+            android:id="@+id/rightDrawerMessages_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Stuff" />-->
-        <!--</com.fieldnation.ui.RightDrawerView>-->
+        <com.fieldnation.ui.RightDrawerNotificationsView
+            android:id="@+id/rightDrawerNotifications_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <com.fieldnation.ui.WarningView
             android:id="@+id/reconnect_view"
