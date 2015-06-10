@@ -29,8 +29,8 @@
 
             <TextView
                 android:id="@+id/arrival_textview"
-                android:layout_width="wrap_content"
                 style="@style/TextViewLink"
+                android:layout_width="wrap_content"
                 android:text="@string/tap_to_set_a_time" />
         </LinearLayout>
 
@@ -52,24 +52,24 @@
 
             <TextView
                 android:id="@+id/departure_textview"
-                android:layout_width="wrap_content"
                 style="@style/TextViewLink"
+                android:layout_width="wrap_content"
                 android:layout_gravity="right"
                 android:text="@string/tap_to_set_a_time" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:orientation="vertical">
 
             <LinearLayout
                 style="@style/SignatureLine"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
                 android:orientation="horizontal">
 
                 <ImageView

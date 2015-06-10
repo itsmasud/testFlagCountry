@@ -36,6 +36,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     // UI
     NotificationActionBarView _notificationsView;
     MessagesActionBarView _messagesView;
+    private ActionBarDrawerView _actionBarView;
 
     private UpdateDialog _updateDialog;
     private OneButtonDialog _notProviderDialog;
@@ -56,7 +57,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
+
+        Toolbar toolbar = _actionBarView.getToolbar();
+
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
@@ -95,6 +100,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
         _notificationsView.setOnClickListener(_notifications_onClick);
+
         _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
         _messagesView.setOnClickListener(_messages_onClick);
 
@@ -104,24 +110,16 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private final View.OnClickListener _notifications_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            onNotificationClick();
+            _actionBarView.showNotificationNav();
         }
     };
 
     private final View.OnClickListener _messages_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            onMessagesClick();
+            _actionBarView.showMessageNav();
         }
     };
-
-    // TODO make abstract!
-    public void onMessagesClick() {
-    }
-
-    // TODO make abstract
-    public void onNotificationClick() {
-    }
 
     @Override
     protected void onResume() {
