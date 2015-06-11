@@ -2,12 +2,14 @@ package com.fieldnation;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
@@ -49,6 +51,13 @@ public class GlobalState extends Application {
     private AuthTopicClient _authTopicClient;
     private int _memoryClass;
     private Typeface _iconFont;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+
+        MultiDex.install(this);
+    }
 
     public GlobalState() {
         super();

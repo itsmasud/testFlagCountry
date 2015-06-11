@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="libJson.libJson">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libJson/build/libs/libJson.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
