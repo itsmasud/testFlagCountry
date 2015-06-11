@@ -5,26 +5,30 @@
     android:layout_height="match_parent">
 
     <View
+        android:id="@+id/backgroundFader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.5"
-        android:background="@color/fn_drawer_shadow" />
+        android:background="@color/fn_dark_text_80"
+        android:clickable="true" />
 
     <LinearLayout
+        android:id="@+id/topSheet_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="75dp"
+        android:layout_marginLeft="64dp"
         android:background="@color/fn_menu_bg"
         android:orientation="vertical">
 
-        <include layout="@layout/view_toolbar" />
+        <FrameLayout
+            android:id="@+id/toolbarContainer_framelayout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:visibility="gone" />
 
         <FrameLayout
-            android:id="@+id/container"
+            android:id="@+id/bodyContainer_frameLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </FrameLayout>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

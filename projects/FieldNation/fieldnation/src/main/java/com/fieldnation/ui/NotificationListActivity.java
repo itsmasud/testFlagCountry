@@ -9,6 +9,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.ui.workorder.detail.NotificationView;
 
 import java.util.List;
 

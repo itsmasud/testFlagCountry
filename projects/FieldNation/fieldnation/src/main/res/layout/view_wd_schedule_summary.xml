@@ -37,6 +37,7 @@
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:text="Wednesday, Dec 40, 2103\nWednesday, Dec 15, 2103" />
         </LinearLayout>
 
@@ -59,6 +60,7 @@
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:text="1:00am - 2:15pm (CST)" />
         </LinearLayout>
 
@@ -83,6 +85,7 @@
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:text="For 6 Hours" />
         </LinearLayout>
 

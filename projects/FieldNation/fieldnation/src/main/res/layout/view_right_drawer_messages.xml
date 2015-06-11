@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.fieldnation.ui.RightDrawerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Body -->
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null" />
+
+    <!-- toolbar -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/toolbarNormalLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <com.fieldnation.ui.IconFontButton
+                android:id="@+id/close_button"
+                style="?attr/buttonFlatStyle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:text="@string/icfont_missing"
+                android:textColor="@color/fn_light_text"
+                android:textSize="24sp" />
+
+            <TextView
+                style="@style/Text_Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:layout_toLeftOf="@+id/writeMessage_button"
+                android:layout_toRightOf="@+id/close_button"
+                android:text="Messages" />
+
+            <com.fieldnation.ui.IconFontButton
+                android:id="@+id/writeMessage_button"
+                style="?attr/buttonFlatStyle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="@string/icfont_missing"
+                android:textColor="@color/fn_light_text"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/toolbarMultiSelectLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <com.fieldnation.ui.IconFontButton
+                android:id="@+id/back_button"
+                style="?attr/buttonFlatStyle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:text="@string/icfont_x"
+                android:textColor="@color/fn_light_text"
+                android:textSize="24sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:orientation="horizontal">
+
+                <com.fieldnation.ui.IconFontButton
+                    android:id="@+id/unknown_button"
+                    style="?attr/buttonFlatStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:text="@string/icfont_missing"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="24sp" />
+
+                <com.fieldnation.ui.IconFontButton
+                    android:id="@+id/trash_button"
+                    style="?attr/buttonFlatStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:text="@string/icfont_trash"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="24sp" />
+
+                <com.fieldnation.ui.IconFontButton
+                    android:id="@+id/menu_button"
+                    style="?attr/buttonFlatStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:text="@string/icfont_menu"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</com.fieldnation.ui.RightDrawerView>

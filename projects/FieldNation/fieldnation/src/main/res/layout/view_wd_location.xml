@@ -61,6 +61,7 @@
 
             <com.fieldnation.ui.IconFontTextView
                 style="@style/Text_Title"
+                android:layout_gravity="center_vertical"
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -68,8 +69,10 @@
                 android:textColor="@color/fn_light_text" />
 
             <LinearLayout
+                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
                 android:orientation="vertical">
 
                 <TextView

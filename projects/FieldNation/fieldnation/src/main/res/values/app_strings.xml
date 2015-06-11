@@ -381,6 +381,7 @@
     <string name="icfont_settings">\uF154</string>
     <string name="icfont_profile_pic">\uF156</string>
     <string name="icfont_debug">\uF15D</string>
+    <string name="icfont_menu">\uF16A</string>
     <string name="icfont_messages_action_filled">\uF167</string>
     <string name="icfont_clipboard">\uF168</string>
     <string name="icfont_alert_action_filled">\uF169</string>

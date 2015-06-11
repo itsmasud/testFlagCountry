@@ -50,7 +50,7 @@ public class NotificationActionBarView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        setOnClickListener(_this_onClick);
+//        setOnClickListener(_this_onClick);
 
         _client = new GlobalTopicClient(_topicClient_listener);
         _client.connect(getContext());

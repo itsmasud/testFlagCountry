@@ -7,13 +7,15 @@ import android.support.v4.app.Fragment;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.ui.RightDrawerMessagesView;
+import com.fieldnation.ui.RightDrawerNotificationsView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.utils.misc;
 
 import java.util.List;
 
 public class MyWorkActivity extends TabActionBarFragmentActivity {
-    private static final String TAG = "ui.workorder.MyWorkActivity";
+    private static final String TAG = "MyWorkActivity";
 
     // Data
     private WorkorderListFragment[] _fragments;
