@@ -18,6 +18,7 @@ public class BottomSheetView extends FrameLayout {
     private static final String TAG = "BottomSheetView";
 
     private RecyclerView _recyclerView;
+    private StaggeredGridLayoutManager _layoutManager;
 
     public BottomSheetView(Context context) {
         super(context);
@@ -42,7 +43,19 @@ public class BottomSheetView extends FrameLayout {
 
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         _recyclerView.setAdapter(_recyclerAdapter);
-        _recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        _layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        _recyclerView.setLayoutManager(_layoutManager);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setTop(_recyclerView.getChildAt(4).getBottom());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }, 1000);
     }
 
     private class MyViewHolder extends RecyclerView.ViewHolder {
@@ -52,6 +65,7 @@ public class BottomSheetView extends FrameLayout {
     }
 
     private final RecyclerView.Adapter<MyViewHolder> _recyclerAdapter = new RecyclerView.Adapter<MyViewHolder>() {
+
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
             return new MyViewHolder(new CardView(getContext()));
@@ -63,7 +77,7 @@ public class BottomSheetView extends FrameLayout {
 
         @Override
         public int getItemCount() {
-            return 20;
+            return 100;
         }
     };
 
