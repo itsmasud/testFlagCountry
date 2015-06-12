@@ -30,7 +30,7 @@ import java.text.ParseException;
  * @author michael.carver
  */
 public class WorkorderCardView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.WorkorderCardView";
+    private static final String TAG = "WorkorderCardView";
 
     public static final int MODE_NORMAL = 1;
     public static final int MODE_UNDO_NOT_INTERESTED = 2;
@@ -525,21 +525,13 @@ public class WorkorderCardView extends RelativeLayout {
             // TODO hook up to geocoding
             // distance
             if (_workorder.getIsRemoteWork()) {
-                _distanceTextView.setText("Done Remotely");
+                _distanceTextView.setText("Remote");
             } else if (location.getGeo() != null && _gpsLocation != null) {
                 _distanceTextView.setVisibility(VISIBLE);
                 LatLng siteLoc = new LatLng(location.getGeo().getLatitude(), location.getGeo().getLongitude());
                 LatLng myLoc = new LatLng(_gpsLocation);
 
-                String locationStr = "";
-                if (location.getCity() != null && location.getState() != null) {
-                    locationStr = location.getCity() + ", " + location.getState();
-                }
-
-                _distanceTextView.setText(locationStr + " " + misc.to2Decimal(myLoc.distanceTo(siteLoc) * 0.000621371) + " mi");
-            } else if (location.getCity() != null && location.getState() != null) {
-                _distanceTextView.setVisibility(VISIBLE);
-                _distanceTextView.setText(location.getCity() + ", " + location.getState());
+                _distanceTextView.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
             } else {
                 _distanceTextView.setVisibility(GONE);
             }
@@ -547,7 +539,7 @@ public class WorkorderCardView extends RelativeLayout {
             // distance
             if (_workorder.getIsRemoteWork()) {
                 _distanceTextView.setVisibility(VISIBLE);
-                _distanceTextView.setText("Done Remotely");
+                _distanceTextView.setText("Remote");
                 _clientNameTextView.setVisibility(GONE);
             } else {
                 _distanceTextView.setVisibility(GONE);
@@ -583,7 +575,7 @@ public class WorkorderCardView extends RelativeLayout {
             String desc = pay.toDisplayStringShort();
             _basisTextView.setText(pay.getPayRateBasis());
             if (desc != null) {
-                _paymentTextView.setText(desc.substring(1));
+                _paymentTextView.setText(desc);
             } else {
                 _paymentLayout.setVisibility(GONE);
             }

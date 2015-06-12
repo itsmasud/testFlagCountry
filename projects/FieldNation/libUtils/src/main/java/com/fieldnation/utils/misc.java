@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.location.Location;
 import android.os.Environment;
 import android.text.Html;
 import android.text.Spannable;
@@ -53,6 +54,17 @@ public class misc {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static Location locationFromCoordinates(double lat, double lon) {
+        Location loc = new Location("reverseGeocoded");
+        loc.setLatitude(lat);
+        loc.setLongitude(lon);
+        return loc;
+    }
+
+    public static String cardinalDirectionBetween(Location start, Location end) {
+        return null;
     }
 
     public static int dpToPx(Context context, int dp) {
