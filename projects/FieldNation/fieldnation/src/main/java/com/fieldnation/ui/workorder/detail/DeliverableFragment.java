@@ -29,6 +29,7 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
@@ -39,6 +40,7 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.Stopwatch;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.security.SecureRandom;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -74,6 +76,8 @@ public class DeliverableFragment extends WorkorderFragment {
     private int _uploadCount = 0;
     private int _deleteCount = 0;
     private File _tempFile;
+    private DocumentClient _docClient;
+
 
     // Temporary storage
     private ActivityResult _activityResult = null;
@@ -159,12 +163,15 @@ public class DeliverableFragment extends WorkorderFragment {
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(activity);
 
+        _docClient = new DocumentClient(_documentClient_listener);
+        _docClient.connect(activity);
     }
 
     @Override
     public void onDetach() {
         _globalClient.disconnect(getActivity());
         _workorderClient.disconnect(getActivity());
+        _docClient.disconnect(getActivity());
         super.onDetach();
     }
 
@@ -438,6 +445,21 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onConnected() {
 
+        }
+    };
+
+    private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
+        @Override
+        public void onConnected() {
+            _docClient.subDocument();
+        }
+
+        @Override
+        public void onDownload(long documentId, File file, String filename) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse(file.getPath()), URLConnection.guessContentTypeFromName(filename));
+            intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
     };
 

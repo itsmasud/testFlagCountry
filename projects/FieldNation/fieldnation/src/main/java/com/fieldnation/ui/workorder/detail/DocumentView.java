@@ -7,10 +7,10 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -133,9 +133,10 @@ public class DocumentView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_workorder.canChangeDeliverables())
-                FileHelper.viewOrDownloadFile(getContext(), _document.getFilePath(),
-                        _document.getFileName(), _document.getFileType());
+            if (_workorder.canChangeDeliverables()) {
+                DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
+                        _document.getFilePath(), _document.getFileName(), false);
+            }
         }
     };
 }
