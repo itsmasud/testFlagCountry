@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation;
 
 
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-import com.fieldnation.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
@@ -17,10 +16,8 @@ import com.google.android.gms.location.LocationServices;
 public class GpsLocationService {
     private static final String TAG = "GpsLocationService";
 
-    private static final long INTERVAL = 1000 * 30;
-    private static final long FASTEST_INTERVAL = 1000 * 5;
-    private static final long ONE_MIN = 1000 * 60;
-    private static final float MINIMUM_ACCURACY = 50.0f;
+    private static final long INTERVAL = 1000 * 30; // 30 seconds
+    private static final long FASTEST_INTERVAL = 1000 * 5; // 5 seconds
 
     private Context _context;
     private LocationRequest _locationRequest;
@@ -32,8 +29,9 @@ public class GpsLocationService {
     private Listener _listener;
 
     public GpsLocationService(Context context) {
+        // build a location request
         _locationRequest = LocationRequest.create();
-        _locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        _locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
         _locationRequest.setInterval(INTERVAL);
         _locationRequest.setFastestInterval(FASTEST_INTERVAL);
         _context = context;
@@ -46,10 +44,8 @@ public class GpsLocationService {
                 .addOnConnectionFailedListener(_connectionFailListener)
                 .build();
 
-        if (_googleApiClient != null) {
-            _isRunning = true;
-            _googleApiClient.connect();
-        }
+        _isRunning = true;
+        _googleApiClient.connect();
     }
 
     public void setListener(Listener listener) {
@@ -60,7 +56,7 @@ public class GpsLocationService {
         if (!_googleApiClient.isConnected() && !_googleApiClient.isConnecting()) {
             _isRunning = true;
             _googleApiClient.connect();
-        } else {
+        } else if (!_googleApiClient.isConnecting()) {
             _isRunning = true;
             _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
         }
@@ -85,7 +81,7 @@ public class GpsLocationService {
 
     public void stopLocationUpdates() {
         Log.v(TAG, "stopLocationUpdates");
-        if (_googleApiClient != null && _fusedLocationProviderApi != null && _googleApiClient.isConnected())
+        if (_googleApiClient.isConnected())
             _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
         _isRunning = false;
     }
@@ -103,13 +99,12 @@ public class GpsLocationService {
     };
 
     private final GoogleApiClient.ConnectionCallbacks _connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
-
         @Override
         public void onConnected(Bundle bundle) {
             Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected");
             Location currentLocation = _fusedLocationProviderApi.getLastLocation(_googleApiClient);
 
-            // Have a loction... this is good, grab it and shutdown
+            // Have a location... this is good, grab it and shutdown
             if (currentLocation != null) {
                 Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected Done");
                 _location = currentLocation;
@@ -117,7 +112,7 @@ public class GpsLocationService {
                     _listener.onLocation(_location);
                 stopLocationUpdates();
             } else {
-                // no location, wait for one
+                // no location, request one
                 _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
             }
         }

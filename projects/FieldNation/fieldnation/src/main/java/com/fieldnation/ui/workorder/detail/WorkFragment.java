@@ -48,7 +48,7 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
-import com.fieldnation.ui.GpsLocationService;
+import com.fieldnation.GpsLocationService;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
