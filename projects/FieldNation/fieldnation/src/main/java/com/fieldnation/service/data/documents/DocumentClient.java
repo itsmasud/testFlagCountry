@@ -34,10 +34,16 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
         context.startService(intent);
     }
 
+    public boolean subDocument() {
+        return subDocument(0);
+    }
+
     public boolean subDocument(long documentId) {
         String topicId = TOPIC_ID_DOWNLOAD_DOCUMENT;
 
-        topicId += "/" + documentId;
+        if (documentId > 0) {
+            topicId += "/" + documentId;
+        }
 
         return register(topicId, TAG);
     }
