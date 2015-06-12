@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.GoogleAnalyticsTopicClient;
+import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
@@ -22,7 +23,6 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.EmptyWoListView;
-import com.fieldnation.ui.GpsLocationService;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -337,7 +337,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         // everything is awsome. checkin
         _gpsLocationService.setListener(_gps_checkInListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
-
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkInListener);
         } else if (_gpsLocationService.hasLocation()) {
@@ -789,7 +788,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 v = new WorkorderCardView(parent.getContext());
             }
 
-            v.setWorkorder(object);
+            v.setWorkorder(object, _gpsLocationService.getLocation());
             v.setWorkorderSummaryListener(_wocv_listener);
             v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 

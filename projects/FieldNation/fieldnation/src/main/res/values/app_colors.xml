@@ -8,6 +8,13 @@
     <color name="fn_brandcolor_0">#00FF5F00</color>
     <color name="fn_brandcolor_dark">#FFbd4600</color>
 
+    <!--<color name="fn_brandcolor">#FFFF0000</color>-->
+    <!--<color name="fn_brandcolor_medium">#FF770000</color>-->
+    <!--<color name="fn_brandcolor_80">#CCFF0000</color>-->
+    <!--<color name="fn_brandcolor_0">#00FF0000</color>-->
+    <!--<color name="fn_brandcolor_dark">#FF550000</color>-->
+
+
     <color name="fn_primary_bg">#FFF3F3EB</color>
     <color name="fn_primary_bg_medium">#FFd9d9d2</color>
     <color name="fn_primary_bg_80">#CCF3F3EB</color>
@@ -23,6 +30,22 @@
     <color name="fn_menu_bg_80">#CCf9f9f9</color>
     <color name="fn_menu_bg_50">#80f9f9f9</color>
 
+
+    <!--<color name="fn_primary_bg">#FF4444FF</color>-->
+    <!--<color name="fn_primary_bg_medium">#FF4444FF</color>-->
+    <!--<color name="fn_primary_bg_80">#FF4444FF</color>-->
+    <!--<color name="fn_primary_bg_0">#FF4444FF</color>-->
+    <!--<color name="fn_primary_bg_dark">#FF4444FF</color>-->
+
+    <!--<color name="fn_clickable_bg">#FF4444FF</color>-->
+    <!--<color name="fn_clickable_bg_80">#FF4444FF</color>-->
+    <!--<color name="fn_clickable_bg_50">#FF4444FF</color>-->
+    <!--<color name="fn_clickable_bg_0">#FF4444FF</color>-->
+
+    <!--<color name="fn_menu_bg">#FF4444FF</color>-->
+    <!--<color name="fn_menu_bg_80">#FF4444FF</color>-->
+    <!--<color name="fn_menu_bg_50">#FF4444FF</color>-->
+
     <color name="fn_accent_color">#FF3FD4AD</color>
     <color name="fn_accent_color_medium">#FF37ba98</color>
     <color name="fn_accent_color_80">#CC3FD4AD</color>
@@ -32,8 +55,21 @@
     <color name="fn_accent_color_0">#003FD4AD</color>
     <color name="fn_accent_color_dark">#FF1e988a</color>
 
+    <!--<color name="fn_accent_color">#FFFFFF00</color>-->
+    <!--<color name="fn_accent_color_medium">#FF777700</color>-->
+    <!--<color name="fn_accent_color_80">#CCFFFF00</color>-->
+    <!--<color name="fn_accent_color_50">#80FFFF00</color>-->
+    <!--<color name="fn_accent_color_25">#3FFFFF00</color>-->
+    <!--<color name="fn_accent_color_10">#19FFFF00</color>-->
+    <!--<color name="fn_accent_color_0">#00FFFF00</color>-->
+    <!--<color name="fn_accent_color_dark">#FF555500</color>-->
+
     <color name="fn_grad_start">#FF8EADDB</color>
     <color name="fn_grad_end">#FF61C4B2</color>
+
+    <!--<color name="fn_grad_start">#FFFF0000</color>-->
+    <!--<color name="fn_grad_end">#FFFFFF00</color>-->
+
 
     <color name="fn_divider">#3F989898</color>
 

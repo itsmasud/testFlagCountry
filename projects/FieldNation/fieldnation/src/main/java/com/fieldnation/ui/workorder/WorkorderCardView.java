@@ -19,6 +19,7 @@ import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.text.ParseException;
 
@@ -96,6 +97,7 @@ public class WorkorderCardView extends RelativeLayout {
     private String[] _statusStrings;
     private String[] _substatusStrings;
     private String _buttonText;
+    private android.location.Location _gpsLocation;
 
     public WorkorderCardView(Context context) {
         super(context);
@@ -212,6 +214,12 @@ public class WorkorderCardView extends RelativeLayout {
     /*-*****************************************-*/
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
+        refresh();
+    }
+
+    public void setWorkorder(Workorder workorder, android.location.Location location) {
+        _workorder = workorder;
+        _gpsLocation = location;
         refresh();
     }
 
@@ -518,12 +526,20 @@ public class WorkorderCardView extends RelativeLayout {
             // distance
             if (_workorder.getIsRemoteWork()) {
                 _distanceTextView.setText("Done Remotely");
+            } else if (location.getGeo() != null && _gpsLocation != null) {
+                _distanceTextView.setVisibility(VISIBLE);
+                LatLng siteLoc = new LatLng(location.getGeo().getLatitude(), location.getGeo().getLongitude());
+                LatLng myLoc = new LatLng(_gpsLocation);
+
+                String locationStr = "";
+                if (location.getCity() != null && location.getState() != null) {
+                    locationStr = location.getCity() + ", " + location.getState();
+                }
+
+                _distanceTextView.setText(locationStr + " " + misc.to2Decimal(myLoc.distanceTo(siteLoc) * 0.000621371) + " mi");
             } else if (location.getCity() != null && location.getState() != null) {
+                _distanceTextView.setVisibility(VISIBLE);
                 _distanceTextView.setText(location.getCity() + ", " + location.getState());
-            } else if (location.getDistance() != null) {
-                _distanceTextView.setText(location.getDistance() + " mi");
-            } else if (_workorder.getDistance() != null) {
-                _distanceTextView.setText(_workorder.getDistance() + " mi");
             } else {
                 _distanceTextView.setVisibility(GONE);
             }
@@ -864,24 +880,24 @@ public class WorkorderCardView extends RelativeLayout {
 
     public interface Listener {
 
-        public void actionRequest(WorkorderCardView view, Workorder workorder);
+        void actionRequest(WorkorderCardView view, Workorder workorder);
 
-        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder);
+        void actionWithdrawRequest(WorkorderCardView view, Workorder workorder);
 
-        public void actionAssignment(WorkorderCardView view, Workorder workorder);
+        void actionAssignment(WorkorderCardView view, Workorder workorder);
 
-        public void actionCheckin(WorkorderCardView view, Workorder workorder);
+        void actionCheckin(WorkorderCardView view, Workorder workorder);
 
-        public void actionCheckout(WorkorderCardView view, Workorder workorder);
+        void actionCheckout(WorkorderCardView view, Workorder workorder);
 
-        public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder);
+        void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder);
 
-        public void viewCounter(WorkorderCardView view, Workorder workorder);
+        void viewCounter(WorkorderCardView view, Workorder workorder);
 
-        public void onLongClick(WorkorderCardView view, Workorder workorder);
+        void onLongClick(WorkorderCardView view, Workorder workorder);
 
-        public void onClick(WorkorderCardView view, Workorder workorder);
+        void onClick(WorkorderCardView view, Workorder workorder);
 
-        public void onViewPayments(WorkorderCardView view, Workorder workorder);
+        void onViewPayments(WorkorderCardView view, Workorder workorder);
     }
 }
