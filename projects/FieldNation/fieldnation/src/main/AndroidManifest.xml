@@ -225,13 +225,9 @@
             android:exported="false"
             android:process=":frontside" />
         <service
-            android:name=".service.objectstore.ObjectStoreService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".service.crawler.WebCrawlerService"
             android:exported="false"
-            android:process=":frontside" />
+            android:process=":crawler" />
 
         <provider
             android:name=".rpc.server.StubProvider"

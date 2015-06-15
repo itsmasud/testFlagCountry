@@ -372,7 +372,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             _deleteCount++;
             WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
-                    document.getId(), document.getFileName());
+                    document.getId());
         }
     };
 
@@ -455,10 +455,9 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDownload(long documentId, File file, String filename) {
+        public void onDownload(long documentId, File file) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.parse(file.getPath()), URLConnection.guessContentTypeFromName(filename));
-            intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(file.getName()));
             startActivity(intent);
         }
     };

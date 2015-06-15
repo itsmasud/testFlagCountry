@@ -415,25 +415,25 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(DeliverableTransactionHandler.class)
-                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
-                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
-                    .isSyncCall(isSync)
-                    .request(new HttpJsonBuilder()
-                            .method("GET")
-                            .path(url))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
+//    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+//        try {
+//            WebTransactionBuilder.builder(context)
+//                    .priority(Priority.HIGH)
+//                    .handler(DeliverableTransactionHandler.class)
+//                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
+//                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
+//                    .isSyncCall(isSync)
+//                    .request(new HttpJsonBuilder()
+//                            .method("GET")
+//                            .path(url))
+//                    .send();
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//    }
 
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
-        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath));
+        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath), "uploadTemp.dat");
 
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
@@ -459,7 +459,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId, String filename) {
+    public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)

@@ -64,9 +64,9 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                     case PARAM_ACTION_GET_DELIVERABLE:
                         getDeliverable(_context, intent);
                         break;
-                    case PARAM_ACTION_DOWNLOAD_DELIVERABLE:
-                        downloadDeliverable(_context, intent);
-                        break;
+//                    case PARAM_ACTION_DOWNLOAD_DELIVERABLE:
+//                        downloadDeliverable(_context, intent);
+//                        break;
                     case PARAM_ACTION_LIST_MESSAGES:
                         listMessages(_context, intent);
                         break;
@@ -241,23 +241,23 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         }
     }
 
-    private static void downloadDeliverable(Context context, Intent intent) {
-        long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
-        long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
-        String url = intent.getStringExtra(PARAM_URL);
-        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
-
-        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, deliverableId);
-        if (obj != null) {
-            try {
-                WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        if (obj == null || isSync) {
-            WorkorderTransactionBuilder.downloadDeliverable(context, workorderId, deliverableId, url, isSync);
-        }
-    }
+//    private static void downloadDeliverable(Context context, Intent intent) {
+//        long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
+//        long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
+//        String url = intent.getStringExtra(PARAM_URL);
+//        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+//
+//        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, deliverableId);
+//        if (obj != null) {
+//            try {
+//                WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), isSync);
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        }
+//
+//        if (obj == null || isSync) {
+//            WorkorderTransactionBuilder.downloadDeliverable(context, workorderId, deliverableId, url, isSync);
+//        }
+//    }
 }

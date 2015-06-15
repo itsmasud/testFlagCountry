@@ -134,9 +134,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     /*-*****************************************-*/
     /*-             Database interface          -*/
     /*-*****************************************-*/
-    public static String randomKey() {
-        return RAND.nextLong() + "";
-    }
 
     /**
      * Gets an object based on the global id
@@ -237,44 +234,8 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), obj._isFile);
         v.put(Column.EXPIRES.getName(), obj._expires);
-
         if (obj._isFile) {
-//            Log.v(TAG, "put1 is file, " + obj.getFile().getAbsolutePath());
-            // this is a file object. check that it's in the file store, if not, then copy it in.
-            String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
-            String filepath = appFileStore + "/os" + obj._id + ".dat";
-
-            // file isn't in the store
-            if (!filepath.equals(obj._file.getAbsolutePath())) {
-//                Log.v(TAG, "put1 moving file to data store");
-                new File(appFileStore).mkdirs();
-                File dest = new File(filepath);
-
-                // clear the way.
-                if (dest.exists())
-                    dest.delete();
-
-                // try to copy
-                boolean copySuccess = false;
-                try {
-                    copySuccess = misc.copyFile(obj._file, dest);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-
-                if (copySuccess) {
-                    // success, update entry to point to the file store
-                    v.put(Column.DATA.getName(), filepath.getBytes());
-                } else {
-                    // failed, delete atempt, return error
-                    dest.delete();
-                    return null;
-                }
-            } else {
-                // already in store, do nothing.
-                v.put(Column.DATA.getName(), filepath.getBytes());
-            }
-
+            v.put(Column.DATA.getName(), obj._file.getAbsolutePath().getBytes());
         } else {
             v.put(Column.DATA.getName(), obj._data);
         }
@@ -301,26 +262,23 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
     }
 
-    public static StoredObject put(Context context, String objectTypeName, long objectKey, File file) {
-        return put(context, objectTypeName, objectKey + "", file, true);
+    public static StoredObject put(Context context, String objectTypeName, long objectKey, File file, String filename) {
+        return put(context, objectTypeName, objectKey + "", file, filename, true);
     }
 
-    public static StoredObject put(Context context, String objectTypeName, long objectKey, File file, boolean expires) {
-        return put(context, objectTypeName, objectKey + "", file, expires);
+    public static StoredObject put(Context context, String objectTypeName, long objectKey, File file, String filename, boolean expires) {
+        return put(context, objectTypeName, objectKey + "", file, filename, expires);
     }
 
-    public static StoredObject put(Context context, String objectTypeName, String objectKey, File file) {
-        return put(context, objectTypeName, objectKey, file, true);
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, File file, String filename) {
+        return put(context, objectTypeName, objectKey, file, filename, true);
     }
 
-    public static StoredObject put(Context context, String objectTypeName, String objectKey, File file, boolean expires) {
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, File file, String filename, boolean expires) {
 //        Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(context, objectTypeName, objectKey);
         if (result != null) {
-//            Log.v(TAG, "put2, overwrite");
-            result.setFile(file);
-            result = result.save(context);
-            return result;
+            result.delete(context, result);
         }
 
         ContentValues v = new ContentValues();
@@ -349,7 +307,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             // copy the file to the file store
             String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
             new File(appFileStore).mkdirs();
-            File dest = new File(appFileStore + "/os" + id + ".dat");
+            File dest = new File(appFileStore + "/" + id + "_" + filename);
 
             if (dest.exists())
                 dest.delete();
@@ -532,11 +490,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
         for (int i = 0; i < list.size(); i++) {
             StoredObject obj = list.get(i);
-//            Log.v(TAG, "flush " + obj.getObjName() + "/" + obj.getObjKey());
-            if (obj.isFile()) {
-                obj.getFile().delete();
-            }
-            delete(context, obj.getId());
+            delete(context, obj);
         }
     }
 
@@ -586,6 +540,31 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                             ObjectStoreSqlHelper.TABLE_NAME,
                             Column.ID + "=?",
                             new String[]{id + ""}) > 0;
+                } finally {
+                    db.close();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+        return success;
+    }
+
+    public static boolean delete(Context context, StoredObject obj) {
+        if (obj.isFile()) {
+            obj.getFile().delete();
+        }
+
+        boolean success = false;
+        synchronized (TAG) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
+            try {
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    success = db.delete(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            Column.ID + "=?",
+                            new String[]{obj.getId() + ""}) > 0;
                 } finally {
                     db.close();
                 }

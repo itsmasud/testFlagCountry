@@ -63,12 +63,18 @@ public class WebCrawlerService extends Service {
 
     private synchronized void incrementPendingRequestCounter(int val) {
         _pendingRequestCounter += val;
-        Log.v(TAG, "_pendingRequestCounter = " + _pendingRequestCounter);
+        if (_pendingRequestCounter % 5 == 0)
+            Log.v(TAG, "_pendingRequestCounter = " + _pendingRequestCounter);
+
+        if (_pendingRequestCounter < 50) {
+            _workorderThreadManager.wakeUp();
+        }
     }
 
     private synchronized void incRequestCounter(int val) {
         _requestCounter += val;
-        Log.v(TAG, "_requestCounter = " + _requestCounter);
+        if (_requestCounter % 5 == 0)
+            Log.v(TAG, "_requestCounter = " + _requestCounter);
     }
 
     @Override
@@ -115,7 +121,7 @@ public class WebCrawlerService extends Service {
         }
 
         // if not running then
-        if (intent.hasExtra("IS_ALARM")) {
+        if (intent != null && intent.hasExtra("IS_ALARM")) {
             //      check the following
             //      check last start time against current time
             //      check current time against time rule
@@ -182,9 +188,9 @@ public class WebCrawlerService extends Service {
 
         @Override
         public void onGet(Profile profile) {
-            incrementPendingRequestCounter(-1);
-            Log.v(TAG, "onGet " + _haveProfile);
+            Log.v(TAG, "ProfileClient.onGet " + _haveProfile);
             if (!_haveProfile) {
+                incrementPendingRequestCounter(-1);
                 Log.v(TAG, "onGet");
                 if (!_skipProfileImages) {
                     incRequestCounter(2);
@@ -197,10 +203,9 @@ public class WebCrawlerService extends Service {
 
         @Override
         public void onMessageList(List<Message> list, int page) {
-            Log.v(TAG, "onMessageList");
+            Log.v(TAG, "ProfileClient.onMessageList");
 
             incrementPendingRequestCounter(-1);
-
             if (list == null || list.size() == 0) {
                 return;
             }
@@ -242,6 +247,7 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_workorderClient_listener.onConnected");
             _workorderClient.subList(true);
             _workorderClient.subGet(true);
+            _workorderClient.subListMessages(true);
 
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
@@ -251,12 +257,14 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page) {
+        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page) {
             Log.v(TAG, "onWorkorderList");
+
             incrementPendingRequestCounter(-1);
             if (list == null || list.size() == 0) {
                 return;
             }
+
             Log.v(TAG, "onWorkorderList(" + list.size() + "," + selector.getCall() + "," + page + ")");
 
             incrementPendingRequestCounter(1);
@@ -268,11 +276,8 @@ public class WebCrawlerService extends Service {
                 Workorder workorder = list.get(i);
 
                 incrementPendingRequestCounter(1);
-                incRequestCounter(4);
+                incRequestCounter(1);
                 WorkorderClient.get(WebCrawlerService.this, workorder.getWorkorderId(), true);
-                WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkorderId(), true);
-                WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getWorkorderId(), true);
-                WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkorderId(), true);
                 if (workorder.getBundleId() != null && workorder.getBundleId() > 0) {
                     incRequestCounter(1);
                     WorkorderClient.getBundle(WebCrawlerService.this, workorder.getBundleId(), true);
@@ -326,6 +331,10 @@ public class WebCrawlerService extends Service {
 
         @Override
         public boolean doWork() {
+
+            if (_pendingRequestCounter > 50)
+                return false;
+
             Workorder workorder = null;
             synchronized (LOCK) {
                 if (_work != null && _work.size() > 0) {
@@ -335,6 +344,12 @@ public class WebCrawlerService extends Service {
 
             if (workorder == null)
                 return false;
+
+            incRequestCounter(3);
+            incrementPendingRequestCounter(1);
+            WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkorderId(), true);
+            WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getWorkorderId(), true);
+            WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkorderId(), true);
 
             // get signatures
             Signature[] sigs = workorder.getSignatureList();
@@ -353,7 +368,7 @@ public class WebCrawlerService extends Service {
                     if (docs != null && docs.length > 0) {
                         for (UploadedDocument doc : docs) {
                             incRequestCounter(1);
-                            DocumentClient.downloadDocument(_context, doc.getId(), doc.getDownloadLink(), true);
+                            DocumentClient.downloadDocument(_context, doc.getId(), doc.getDownloadLink(), doc.getFileName(), true);
                         }
                     }
                 }
@@ -363,7 +378,7 @@ public class WebCrawlerService extends Service {
             if (documents != null && documents.length > 0) {
                 for (Document doc : documents) {
                     incRequestCounter(1);
-                    DocumentClient.downloadDocument(_context, doc.getDocumentId(), doc.getFilePath(), true);
+                    DocumentClient.downloadDocument(_context, doc.getDocumentId(), doc.getFilePath(), doc.getFileName(), true);
                 }
             }
 

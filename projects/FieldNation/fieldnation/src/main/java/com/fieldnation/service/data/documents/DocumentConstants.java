@@ -13,6 +13,7 @@ public interface DocumentConstants {
     String PARAM_URL = "PARAM_URL";
     String PARAM_DOCUMENT_ID = "PARAM_DOCUMENT_ID";
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
+    String PARAM_FILE_NAME = "PARAM_FILE_NAME";
 
     String PSO_DOCUMENT = "Document";
 }

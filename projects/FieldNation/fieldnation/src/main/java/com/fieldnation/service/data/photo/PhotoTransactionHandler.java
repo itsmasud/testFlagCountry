@@ -69,8 +69,8 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             fout.close();
 
             // push into data store
-            StoredObject imageObj = StoredObject.put(context, imageObjectName, url, imageFile, false);
-            StoredObject circleObj = StoredObject.put(context, circleObjectName, url, circleFile, false);
+            StoredObject imageObj = StoredObject.put(context, imageObjectName, url, imageFile, "PhotoCache.png", false);
+            StoredObject circleObj = StoredObject.put(context, circleObjectName, url, circleFile, "PhotoCacheCircle.png", false);
 
             // delete temporary stuff
             imageFile.delete();

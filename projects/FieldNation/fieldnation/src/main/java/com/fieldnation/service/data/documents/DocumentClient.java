@@ -25,12 +25,13 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
         super.disconnect(context, TAG);
     }
 
-    public static void downloadDocument(Context context, long documentId, String url, boolean isSync) {
+    public static void downloadDocument(Context context, long documentId, String url, String filename, boolean isSync) {
         Intent intent = new Intent(context, DocumentService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DOCUMENT);
         intent.putExtra(PARAM_DOCUMENT_ID, documentId);
         intent.putExtra(PARAM_URL, url);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_FILE_NAME, filename);
         context.startService(intent);
     }
 

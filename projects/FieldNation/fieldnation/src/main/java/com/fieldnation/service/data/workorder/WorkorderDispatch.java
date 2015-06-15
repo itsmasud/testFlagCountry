@@ -157,24 +157,24 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, File file, boolean isSync) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
-        bundle.putLong(PARAM_WORKORDER_ID, workorderId);
-        bundle.putLong(PARAM_DELIVERABLE_ID, deliverableId);
-        bundle.putSerializable(PARAM_FILE, file);
-        bundle.putBoolean(PARAM_IS_SYNC, isSync);
-
-        String topicId = TOPIC_ID_DOWNLOAD_DELIVERABLE;
-
-        if (isSync) {
-            topicId += "_SYNC";
-        }
-
-        topicId += "/" + workorderId + "/" + deliverableId;
-
-        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
-    }
+//    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, File file, boolean isSync) {
+//        Bundle bundle = new Bundle();
+//        bundle.putString(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DELIVERABLE);
+//        bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+//        bundle.putLong(PARAM_DELIVERABLE_ID, deliverableId);
+//        bundle.putSerializable(PARAM_FILE, file);
+//        bundle.putBoolean(PARAM_IS_SYNC, isSync);
+//
+//        String topicId = TOPIC_ID_DOWNLOAD_DELIVERABLE;
+//
+//        if (isSync) {
+//            topicId += "_SYNC";
+//        }
+//
+//        topicId += "/" + workorderId + "/" + deliverableId;
+//
+//        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
+//    }
 
     public static void uploadDeliverable(Context context, long workorderId, long slotId, String filename, boolean isComplete) {
         Bundle bundle = new Bundle();
