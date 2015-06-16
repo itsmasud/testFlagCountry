@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.IBinder;
 
 import com.fieldnation.AsyncTaskEx;
@@ -49,7 +50,6 @@ public class WebCrawlerService extends Service {
     private long _requestCounter = 0;
     private boolean _skipProfileImages = true;
 
-
     public WebCrawlerService() {
         super();
         Log.v(TAG, "WebCrawlerService");
@@ -61,31 +61,9 @@ public class WebCrawlerService extends Service {
         Log.v(TAG, "onCreate");
     }
 
-    private synchronized void incrementPendingRequestCounter(int val) {
-        _pendingRequestCounter += val;
-        if (_pendingRequestCounter % 5 == 0) {
-            Log.v(TAG, "_pendingRequestCounter = " + _pendingRequestCounter);
-            Log.v(TAG, "_workorderDetails.size() = " + _workorderDetails.size());
-        }
-
-        if (_pendingRequestCounter < 50) {
-            _workorderThreadManager.wakeUp();
-        }
-    }
-
-    private synchronized void incRequestCounter(int val) {
-        _requestCounter += val;
-//        if (_requestCounter % 5 == 0)
-//            Log.v(TAG, "_requestCounter = " + _requestCounter);
-    }
-
     @Override
-    public void onDestroy() {
-        Log.v(TAG, "onDestroy");
-        _workorderClient.disconnect(this);
-        _profileClient.disconnect(this);
-        _workorderThreadManager.shutdown();
-        super.onDestroy();
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
@@ -101,20 +79,7 @@ public class WebCrawlerService extends Service {
             return START_NOT_STICKY;
         }
 
-        // if clock is not set, set it
-        long runTime = settings.getLong(getString(R.string.pref_key_sync_start_time), 180);
-
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
-        cal.set(Calendar.MINUTE, (int) (runTime % 60));
-
-        long nextTime = cal.getTimeInMillis();
-        if (nextTime < System.currentTimeMillis()) {
-            nextTime += 86400000;
-        }
-
-        AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
-        Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
+        scheduleNext();
 
         // if already running, then return
         if (_pendingRequestCounter > 0) {
@@ -146,7 +111,7 @@ public class WebCrawlerService extends Service {
 
             _skipProfileImages = settings.getBoolean(getString(R.string.pref_key_sync_skip_profile_images), true);
 
-            startStuff();
+            runCrawler();
 
             return START_STICKY;
         }
@@ -156,13 +121,70 @@ public class WebCrawlerService extends Service {
         return START_NOT_STICKY;
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    private synchronized void incrementPendingRequestCounter(int val) {
+        _pendingRequestCounter += val;
+//        if (_pendingRequestCounter % 5 == 0) {
+            Log.v(TAG, "_pendingRequestCounter = " + _pendingRequestCounter);
+            Log.v(TAG, "_workorderDetails.size() = " + _workorderDetails.size());
+//        }
+
+        if (_pendingRequestCounter < 50) {
+            _workorderThreadManager.wakeUp();
+        }
+
+        if (_pendingRequestCounter == 0) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (_pendingRequestCounter == 0) {
+                        scheduleNext();
+                        stopSelf();
+                    } else {
+                        incrementPendingRequestCounter(0);
+                    }
+                }
+            }, 30000);
+        }
     }
 
-    public void startStuff() {
-        Log.v(TAG, "startStuff");
+    private synchronized void incRequestCounter(int val) {
+        _requestCounter += val;
+        if (_requestCounter % 5 == 0)
+            Log.v(TAG, "_requestCounter = " + _requestCounter);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        _workorderClient.disconnect(this);
+        _profileClient.disconnect(this);
+        _workorderThreadManager.shutdown();
+        super.onDestroy();
+    }
+
+    private void scheduleNext() {
+        SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
+                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+
+        // if clock is not set, set it
+        long runTime = settings.getLong(getString(R.string.pref_key_sync_start_time), 180);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
+        cal.set(Calendar.MINUTE, (int) (runTime % 60));
+
+        long nextTime = cal.getTimeInMillis();
+        if (nextTime < System.currentTimeMillis()) {
+            nextTime += 86400000;
+        }
+
+        AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
+        Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
+    }
+
+
+    public void runCrawler() {
+        Log.v(TAG, "runCrawler");
 
         _workorderThreadManager.addThread(new WorkorderDetailWorker(_workorderThreadManager, this, _workorderDetails));
 

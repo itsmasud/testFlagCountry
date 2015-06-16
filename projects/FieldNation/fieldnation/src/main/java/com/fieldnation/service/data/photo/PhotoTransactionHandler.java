@@ -91,7 +91,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.v(TAG, "handleResult");
-            return Result.REQUEUE;
+            return Result.ERROR;
         }
 
     }
