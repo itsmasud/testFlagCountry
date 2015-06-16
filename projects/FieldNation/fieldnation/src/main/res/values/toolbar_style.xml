@@ -6,11 +6,11 @@
     <style name="toolbarStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/toolbarHeight</item>
-        <item name="android:background">@drawable/toolbar_background</item>
+        <item name="android:background">@drawable/fn_gradient</item>
     </style>
 
     <style name="toolbarTabListStyle">
-        <item name="android:background">@drawable/toolbar_background</item>
+        <item name="android:background">@drawable/fn_gradient</item>
     </style>
 
     <style name="toolbarTabListContainerStyle">

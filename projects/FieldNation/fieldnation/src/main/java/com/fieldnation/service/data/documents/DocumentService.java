@@ -63,7 +63,6 @@ public class DocumentService extends MSService implements DocumentConstants {
         if (obj != null) {
             try {
                 DocumentDispatch.download(context, documentId, obj.getFile(), isSync);
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
