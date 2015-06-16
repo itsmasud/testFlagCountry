@@ -11,12 +11,12 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
  */
 public class DocumentTransactionBuilder {
 
-    public static void download(Context context, long documentId, String link, boolean isSync) {
+    public static void download(Context context, long documentId, String link, String filename, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(DocumentTransactionHandler.class)
-                    .handlerParams(DocumentTransactionHandler.pDownload(documentId))
+                    .handlerParams(DocumentTransactionHandler.pDownload(documentId, filename))
                     .key((isSync ? "Sync/" : "") + "Document/" + documentId)
                     .useAuth(false)
                     .isSyncCall(isSync)

@@ -28,6 +28,6 @@ public class DocumentDispatch implements DocumentConstants {
 
         topicId += "/" + documentId;
 
-        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
     }
 }

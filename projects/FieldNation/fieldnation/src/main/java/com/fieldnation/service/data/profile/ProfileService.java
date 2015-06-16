@@ -69,14 +69,18 @@ public class ProfileService extends MSService implements ProfileConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         long profileId = intent.getLongExtra(PARAM_PROFILE_ID, 0);
 
-        // get stored object
-        StoredObject obj = StoredObject.get(context, PSO_PROFILE, profileId);
-        // if exists, then pass it back
-        if (obj != null) {
-            try {
-                ProfileDispatch.get(context, profileId, new JsonObject(obj.getData()), isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        StoredObject obj = null;
+
+        if (!isSync) {
+            obj = StoredObject.get(context, PSO_PROFILE, profileId);
+            // get stored object
+            // if exists, then pass it back
+            if (obj != null) {
+                try {
+                    ProfileDispatch.get(context, profileId, new JsonObject(obj.getData()), isSync);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -91,12 +95,15 @@ public class ProfileService extends MSService implements ProfileConstants {
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
-        if (obj != null) {
-            try {
-                ProfileDispatch.listNotifications(context, new JsonArray(obj.getData()), page, isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        StoredObject obj = null;
+        if (!isSync) {
+            obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
+            if (obj != null) {
+                try {
+                    ProfileDispatch.listNotifications(context, new JsonArray(obj.getData()), page, isSync);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -110,12 +117,16 @@ public class ProfileService extends MSService implements ProfileConstants {
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page);
-        if (obj != null) {
-            try {
-                ProfileDispatch.listMessages(context, new JsonArray(obj.getData()), page, isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        StoredObject obj = null;
+
+        if (!isSync) {
+            obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page);
+            if (obj != null) {
+                try {
+                    ProfileDispatch.listMessages(context, new JsonArray(obj.getData()), page, isSync);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 

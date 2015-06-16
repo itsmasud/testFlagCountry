@@ -42,18 +42,18 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         }
     }
 
-    public static byte[] pDownload(long workorderId, long deliverableId, String url) {
-        try {
-            JsonObject obj = new JsonObject("action", "pDownload");
-            obj.put("workorderId", workorderId);
-            obj.put("deliverableId", deliverableId);
-            obj.put("url", url);
-            return obj.toByteArray();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
+//    public static byte[] pDownload(long workorderId, long deliverableId, String url) {
+//        try {
+//            JsonObject obj = new JsonObject("action", "pDownload");
+//            obj.put("workorderId", workorderId);
+//            obj.put("deliverableId", deliverableId);
+//            obj.put("url", url);
+//            return obj.toByteArray();
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
+//    }
 
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
@@ -65,8 +65,8 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
                     return handleChange(context, transaction, resultData, params);
                 case "pGet":
                     return handleGet(context, transaction, resultData, params);
-                case "pDownload":
-                    return handleDownload(context, transaction, resultData, params);
+//                case "pDownload":
+//                    return handleDownload(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -95,27 +95,27 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         return Result.FINISH;
     }
 
-    public Result handleDownload(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException, IOException {
-        long workorderId = params.getLong("workorderId");
-        long deliverableId = params.getLong("deliverableId");
-
-        if (resultData.isFile()) {
-            StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, resultData.getFile());
-            resultData.getFile().delete();
-            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
-        } else {
-            File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
-            tempFolder.mkdirs();
-            File tempFile = File.createTempFile("tmp", "dat", tempFolder);
-            FileOutputStream fout = new FileOutputStream(tempFile, false);
-            fout.write(resultData.getByteArray());
-            fout.close();
-
-            StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, tempFile);
-            tempFile.delete();
-            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
-        }
-
-        return Result.FINISH;
-    }
+//    public Result handleDownload(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException, IOException {
+//        long workorderId = params.getLong("workorderId");
+//        long deliverableId = params.getLong("deliverableId");
+//
+//        if (resultData.isFile()) {
+//            StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, resultData.getFile());
+//            resultData.getFile().delete();
+//            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
+//        } else {
+//            File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
+//            tempFolder.mkdirs();
+//            File tempFile = File.createTempFile("tmp", "dat", tempFolder);
+//            FileOutputStream fout = new FileOutputStream(tempFile, false);
+//            fout.write(resultData.getByteArray());
+//            fout.close();
+//
+//            StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, tempFile);
+//            tempFile.delete();
+//            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
+//        }
+//
+//        return Result.FINISH;
+//    }
 }

@@ -64,9 +64,9 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                     case PARAM_ACTION_GET_DELIVERABLE:
                         getDeliverable(_context, intent);
                         break;
-                    case PARAM_ACTION_DOWNLOAD_DELIVERABLE:
-                        downloadDeliverable(_context, intent);
-                        break;
+//                    case PARAM_ACTION_DOWNLOAD_DELIVERABLE:
+//                        downloadDeliverable(_context, intent);
+//                        break;
                     case PARAM_ACTION_LIST_MESSAGES:
                         listMessages(_context, intent);
                         break;
@@ -86,7 +86,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
-        if (allowCache) {
+        if (allowCache && !isSync) {
             StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
             if (obj != null) {
                 try {
@@ -110,18 +110,20 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page);
-        if (obj != null) {
-            try {
-                JsonArray ja = new JsonArray(obj.getData());
-                for (int i = 0; i < ja.size(); i++) {
-                    JsonObject json = ja.getJsonObject(i);
-                    Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
-                }
+        if (!isSync) {
+            StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page);
+            if (obj != null) {
+                try {
+                    JsonArray ja = new JsonArray(obj.getData());
+                    for (int i = 0; i < ja.size(); i++) {
+                        JsonObject json = ja.getJsonObject(i);
+                        Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
+                    }
 
-                WorkorderDispatch.list(context, ja, page, selector, isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                    WorkorderDispatch.list(context, ja, page, selector, isSync);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -143,7 +145,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             }
         }
 
-        if (obj == null || isSync) {
+        if (obj == null) {
             WorkorderTransactionBuilder.getSignature(context, workorderId, signatureId, isSync);
         }
     }
@@ -152,12 +154,14 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_MESSAGE_LIST, workorderId);
-        if (obj != null) {
-            try {
-                WorkorderDispatch.listMessages(context, workorderId, new JsonArray(obj.getData()), isSync);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (!isSync) {
+            StoredObject obj = StoredObject.get(context, PSO_MESSAGE_LIST, workorderId);
+            if (obj != null) {
+                try {
+                    WorkorderDispatch.listMessages(context, workorderId, new JsonArray(obj.getData()), isSync);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -168,12 +172,14 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_ALERT_LIST, workorderId);
-        if (obj != null) {
-            try {
-                WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(obj.getData()), isSync);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (!isSync) {
+            StoredObject obj = StoredObject.get(context, PSO_ALERT_LIST, workorderId);
+            if (obj != null) {
+                try {
+                    WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(obj.getData()), isSync);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -184,12 +190,14 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_TASK_LIST, workorderId);
-        if (obj != null) {
-            try {
-                WorkorderDispatch.listTasks(context, workorderId, new JsonArray(obj.getData()), isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        if (!isSync) {
+            StoredObject obj = StoredObject.get(context, PSO_TASK_LIST, workorderId);
+            if (obj != null) {
+                try {
+                    WorkorderDispatch.listTasks(context, workorderId, new JsonArray(obj.getData()), isSync);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -201,12 +209,14 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long bundleId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
-        if (obj != null) {
-            try {
-                WorkorderDispatch.bundle(context, new JsonObject(obj.getData()), bundleId, isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        if (!isSync) {
+            StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
+            if (obj != null) {
+                try {
+                    WorkorderDispatch.bundle(context, new JsonObject(obj.getData()), bundleId, isSync);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -241,23 +251,23 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         }
     }
 
-    private static void downloadDeliverable(Context context, Intent intent) {
-        long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
-        long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
-        String url = intent.getStringExtra(PARAM_URL);
-        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
-
-        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, deliverableId);
-        if (obj != null) {
-            try {
-                WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        if (obj == null || isSync) {
-            WorkorderTransactionBuilder.downloadDeliverable(context, workorderId, deliverableId, url, isSync);
-        }
-    }
+//    private static void downloadDeliverable(Context context, Intent intent) {
+//        long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
+//        long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
+//        String url = intent.getStringExtra(PARAM_URL);
+//        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+//
+//        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, deliverableId);
+//        if (obj != null) {
+//            try {
+//                WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), isSync);
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        }
+//
+//        if (obj == null || isSync) {
+//            WorkorderTransactionBuilder.downloadDeliverable(context, workorderId, deliverableId, url, isSync);
+//        }
+//    }
 }

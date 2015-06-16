@@ -9,10 +9,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -166,10 +166,8 @@ public class UploadedDocumentView extends RelativeLayout {
         public void onClick(View v) {
             if (_isLoading)
                 return;
-
-            FileHelper.viewOrDownloadFile(getContext(), _doc.getDownloadLink(),
-                    _doc.getFileName(), _doc.getFileType());
-
+            DocumentClient.downloadDocument(getContext(), _doc.getId(),
+                    _doc.getDownloadLink(), _doc.getFileName(), false);
         }
     };
 

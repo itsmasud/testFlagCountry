@@ -17,7 +17,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical">
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/fn_gradient_rev">
 
                 <LinearLayout
                     android:id="@+id/profile_container"
@@ -40,17 +41,20 @@
                         <TextView
                             android:id="@+id/profile_name_textview"
                             style="@style/DrawerProfileName"
-                            android:text="Firstname Lastname" />
+                            android:text="Firstname Lastname"
+                            android:textColor="@color/fn_white_text" />
 
                         <TextView
                             android:id="@+id/profile_company_textview"
                             style="@style/DrawerProfileDetails"
-                            android:text="Company Name" />
+                            android:text="Company Name"
+                            android:textColor="@color/fn_white_text" />
 
                         <TextView
                             android:id="@+id/providerid_textview"
                             style="@style/DrawerProfileDetails"
-                            android:text="Provider Id: 12354654" />
+                            android:text="Provider Id: 12354654"
+                            android:textColor="@color/fn_white_text" />
 
                     </LinearLayout>
                 </LinearLayout>

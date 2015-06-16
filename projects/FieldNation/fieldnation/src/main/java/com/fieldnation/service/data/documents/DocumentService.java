@@ -57,17 +57,17 @@ public class DocumentService extends MSService implements DocumentConstants {
         long documentId = intent.getLongExtra(PARAM_DOCUMENT_ID, 0);
         String url = intent.getStringExtra(PARAM_URL);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        String filename = intent.getStringExtra(PARAM_FILE_NAME);
 
         StoredObject obj = StoredObject.get(context, PSO_DOCUMENT, documentId);
         if (obj != null) {
             try {
                 DocumentDispatch.download(context, documentId, obj.getFile(), isSync);
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {
-            DocumentTransactionBuilder.download(context, documentId, url, isSync);
+            DocumentTransactionBuilder.download(context, documentId, url, filename, isSync);
         }
     }
 }

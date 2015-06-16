@@ -44,9 +44,7 @@ public class HttpResult {
     }
 
     private void storeData(InputStream in) throws IOException {
-
         _baResults = misc.readAllFromStreamUntil(in, 1024, -1, 102400, 1000);
-
         if (_baResults != null && _baResults.length >= 102400) {
             // temp file
             File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
@@ -60,7 +58,6 @@ public class HttpResult {
 
             _file = tempFile;
         }
-
     }
 
     private void cacheResults(HttpURLConnection conn) {

@@ -20,10 +20,11 @@ import java.text.ParseException;
 public class DocumentTransactionHandler extends WebTransactionHandler implements DocumentConstants {
     private static final String TAG = "DocumentTransactionHandler";
 
-    public static byte[] pDownload(long documentId) {
+    public static byte[] pDownload(long documentId, String filename) {
         try {
             JsonObject obj = new JsonObject("action", "pDownload");
             obj.put("documentId", documentId);
+            obj.put("filename", filename);
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -48,6 +49,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
     }
 
     private Result handleDownload(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException, IOException {
+        String filename = params.getString("filename");
         File file = null;
         if (resultData.isFile()) {
             file = resultData.getFile();
@@ -62,7 +64,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
 
         long documentId = params.getLong("documentId");
 
-        StoredObject obj = StoredObject.put(context, PSO_DOCUMENT, documentId, file);
+        StoredObject obj = StoredObject.put(context, PSO_DOCUMENT, documentId, file, filename);
 
         DocumentDispatch.download(context, documentId, obj.getFile(), transaction.isSync());
 
