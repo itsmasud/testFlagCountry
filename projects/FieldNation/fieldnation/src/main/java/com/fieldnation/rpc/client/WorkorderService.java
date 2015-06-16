@@ -435,6 +435,9 @@ public class WorkorderService extends WebService implements WebServiceConstants 
                 Expense expense = expenses[i];
                 json.append("{\"description\":\"").append(expense.getDescription()).append("\",");
                 json.append("\"price\":\"").append(expense.getPrice()).append("\"}");
+                if (i < expenses.length - 1) {
+                    json.append(",");
+                }
             }
             json.append("]");
 
