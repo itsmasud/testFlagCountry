@@ -101,7 +101,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle) {
+        public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle, boolean failed) {
             _woBundle = bundle;
             NumberFormat form = NumberFormat.getNumberInstance();
             form.setMinimumFractionDigits(1);

@@ -304,7 +304,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onGetSignature(Signature signature) {
+        public void onGetSignature(Signature signature, boolean failed) {
             _signature = signature;
             populateUi();
         }

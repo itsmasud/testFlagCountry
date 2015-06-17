@@ -580,14 +580,22 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         private void preUploadDeliverable(Bundle payload) {
+            if (payload.containsKey(PARAM_ERROR) && payload.getBoolean(PARAM_ERROR)) {
+                onUploadDeliverable(
+                        payload.getLong(PARAM_WORKORDER_ID),
+                        payload.getLong(PARAM_UPLOAD_SLOT_ID),
+                        payload.getString(PARAM_FILE_NAME),
+                        payload.getBoolean(PARAM_IS_COMPLETE), true);
+
+            }
             onUploadDeliverable(
                     payload.getLong(PARAM_WORKORDER_ID),
                     payload.getLong(PARAM_UPLOAD_SLOT_ID),
                     payload.getString(PARAM_FILE_NAME),
-                    payload.getBoolean(PARAM_IS_COMPLETE));
+                    payload.getBoolean(PARAM_IS_COMPLETE), false);
         }
 
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete) {
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
         }
 
         private void preAction(Bundle payload) {
@@ -596,137 +604,159 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                     + payload.getString(PARAM_ACTION));
 
             onAction(payload.getLong(PARAM_WORKORDER_ID),
-                    payload.getString(PARAM_ACTION));
+                    payload.getString(PARAM_ACTION),
+                    payload.getBoolean(PARAM_ERROR));
         }
 
-        public void onAction(long workorderId, String action) {
+        public void onAction(long workorderId, String action, boolean failed) {
         }
 
         private void preListTasks(Bundle payload) {
-            Log.v(STAG, "preListTasks");
-            new AsyncTaskEx<Object, Object, List<Task>>() {
-                private long workorderId;
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onTaskList(payload.getLong(PARAM_WORKORDER_ID), null, true);
+            } else {
+                Log.v(STAG, "preListTasks");
+                new AsyncTaskEx<Object, Object, List<Task>>() {
+                    private long workorderId;
 
-                @Override
-                protected List<Task> doInBackground(Object... params) {
-                    Bundle payload = (Bundle) params[0];
+                    @Override
+                    protected List<Task> doInBackground(Object... params) {
+                        Bundle payload = (Bundle) params[0];
 
-                    workorderId = payload.getLong(PARAM_WORKORDER_ID);
-                    JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
-                    List<Task> list = new LinkedList<>();
-                    for (int i = 0; i < ja.size(); i++) {
-                        list.add(Task.fromJson(ja.getJsonObject(i)));
+                        workorderId = payload.getLong(PARAM_WORKORDER_ID);
+                        JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                        List<Task> list = new LinkedList<>();
+                        for (int i = 0; i < ja.size(); i++) {
+                            list.add(Task.fromJson(ja.getJsonObject(i)));
+                        }
+
+                        return list;
                     }
 
-                    return list;
-                }
-
-                @Override
-                protected void onPostExecute(List<Task> tasks) {
-                    onTaskList(workorderId, tasks);
-                }
-            }.executeEx(payload);
+                    @Override
+                    protected void onPostExecute(List<Task> tasks) {
+                        onTaskList(workorderId, tasks, false);
+                    }
+                }.executeEx(payload);
+            }
         }
 
-        public void onTaskList(long workorderId, List<Task> tasks) {
+        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
         }
 
         private void preListAlerts(Bundle payload) {
-            Log.v(STAG, "preListAlerts");
-            new AsyncTaskEx<Object, Object, List<Notification>>() {
-                private long workorderId;
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onAlertList(payload.getLong(PARAM_WORKORDER_ID), null, true);
+            } else {
+                Log.v(STAG, "preListAlerts");
+                new AsyncTaskEx<Object, Object, List<Notification>>() {
+                    private long workorderId;
 
-                @Override
-                protected List<Notification> doInBackground(Object... params) {
-                    Bundle payload = (Bundle) params[0];
+                    @Override
+                    protected List<Notification> doInBackground(Object... params) {
+                        Bundle payload = (Bundle) params[0];
 
-                    workorderId = payload.getLong(PARAM_WORKORDER_ID);
-                    JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
-                    List<Notification> list = new LinkedList<>();
-                    for (int i = 0; i < ja.size(); i++) {
-                        list.add(Notification.fromJson(ja.getJsonObject(i)));
+                        workorderId = payload.getLong(PARAM_WORKORDER_ID);
+                        JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                        List<Notification> list = new LinkedList<>();
+                        for (int i = 0; i < ja.size(); i++) {
+                            list.add(Notification.fromJson(ja.getJsonObject(i)));
+                        }
+
+                        return list;
                     }
 
-                    return list;
-                }
-
-                @Override
-                protected void onPostExecute(List<Notification> alerts) {
-                    onAlertList(workorderId, alerts);
-                }
-            }.executeEx(payload);
+                    @Override
+                    protected void onPostExecute(List<Notification> alerts) {
+                        onAlertList(workorderId, alerts, false);
+                    }
+                }.executeEx(payload);
+            }
         }
 
-        public void onAlertList(long workorderId, List<Notification> alerts) {
+        public void onAlertList(long workorderId, List<Notification> alerts, boolean failed) {
         }
 
         private void preListMessages(Bundle payload) {
-            new AsyncTaskEx<Object, Object, List<Message>>() {
-                private long workorderId;
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onMessageList(payload.getLong(PARAM_WORKORDER_ID), null, true);
+            } else {
+                new AsyncTaskEx<Object, Object, List<Message>>() {
+                    private long workorderId;
 
-                @Override
-                protected List<Message> doInBackground(Object... params) {
-                    Bundle payload = (Bundle) params[0];
+                    @Override
+                    protected List<Message> doInBackground(Object... params) {
+                        Bundle payload = (Bundle) params[0];
 
-                    workorderId = payload.getLong(PARAM_WORKORDER_ID);
-                    JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
-                    List<Message> list = new LinkedList<>();
-                    for (int i = 0; i < ja.size(); i++) {
-                        list.add(Message.fromJson(ja.getJsonObject(i)));
+                        workorderId = payload.getLong(PARAM_WORKORDER_ID);
+                        JsonArray ja = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                        List<Message> list = new LinkedList<>();
+                        for (int i = 0; i < ja.size(); i++) {
+                            list.add(Message.fromJson(ja.getJsonObject(i)));
+                        }
+
+                        return list;
                     }
 
-                    return list;
-                }
-
-                @Override
-                protected void onPostExecute(List<Message> messages) {
-                    onMessageList(workorderId, messages);
-                }
-            }.executeEx(payload);
+                    @Override
+                    protected void onPostExecute(List<Message> messages) {
+                        onMessageList(workorderId, messages, false);
+                    }
+                }.executeEx(payload);
+            }
         }
 
-        public void onMessageList(long workorderId, List<Message> messages) {
+        public void onMessageList(long workorderId, List<Message> messages, boolean failed) {
         }
 
         // list
         protected void preList(Bundle payload) {
-            new AsyncTaskEx<Bundle, Object, List<Workorder>>() {
-                private WorkorderDataSelector selector;
-                private int page;
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onList(null, WorkorderDataSelector.fromCall(payload.getString(PARAM_LIST_SELECTOR)),
+                        payload.getInt(PARAM_PAGE), true);
+            } else {
+                new AsyncTaskEx<Bundle, Object, List<Workorder>>() {
+                    private WorkorderDataSelector selector;
+                    private int page;
 
-                @Override
-                protected List<Workorder> doInBackground(Bundle... params) {
-                    Bundle bundle = params[0];
-                    try {
-                        selector = WorkorderDataSelector.fromCall(bundle.getString(PARAM_LIST_SELECTOR));
-                        Log.v(STAG, "Selector " + bundle.getString(PARAM_LIST_SELECTOR));
-                        page = bundle.getInt(PARAM_PAGE);
-                        List<Workorder> list = new LinkedList<>();
-                        JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
-                        for (int i = 0; i < ja.size(); i++) {
-                            list.add(Workorder.fromJson(ja.getJsonObject(i)));
-                        }
-                        return list;
-                    } catch (Exception ex) {
+                    @Override
+                    protected List<Workorder> doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        try {
+                            selector = WorkorderDataSelector.fromCall(bundle.getString(PARAM_LIST_SELECTOR));
+                            Log.v(STAG, "Selector " + bundle.getString(PARAM_LIST_SELECTOR));
+                            page = bundle.getInt(PARAM_PAGE);
+                            List<Workorder> list = new LinkedList<>();
+                            JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
+                            for (int i = 0; i < ja.size(); i++) {
+                                list.add(Workorder.fromJson(ja.getJsonObject(i)));
+                            }
+                            return list;
+                        } catch (Exception ex) {
 //                        Log.v(STAG, selector.name());
-                        ex.printStackTrace();
+                            ex.printStackTrace();
+                        }
+                        return null;
                     }
-                    return null;
-                }
 
-                @Override
-                protected void onPostExecute(List<Workorder> workorders) {
-                    onList(workorders, selector, page);
-                }
-            }.executeEx(payload);
+                    @Override
+                    protected void onPostExecute(List<Workorder> workorders) {
+                        onList(workorders, selector, page, false);
+                    }
+                }.executeEx(payload);
+            }
         }
 
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page) {
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
         }
 
         // details
         protected void preGet(Bundle payload) {
-            onGet(Workorder.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)));
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onGet(null, true);
+            } else {
+                onGet(Workorder.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+            }
 //            new AsyncTaskEx<Bundle, Object, Workorder>() {
 //                @Override
 //                protected Workorder doInBackground(Bundle... params) {
@@ -746,12 +776,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 //            }.executeEx(payload);
         }
 
-        public void onGet(Workorder workorder) {
+        public void onGet(Workorder workorder, boolean failed) {
         }
 
         // get signature
         private void preGetSignature(Bundle payload) {
-            onGetSignature(Signature.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)));
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onGetSignature(null, true);
+            } else {
+                onGetSignature(Signature.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+            }
 //            new AsyncTaskEx<Bundle, Object, Signature>() {
 //                @Override
 //                protected Signature doInBackground(Bundle... params) {
@@ -771,11 +805,15 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 //            }.executeEx(payload);
         }
 
-        public void onGetSignature(Signature signature) {
+        public void onGetSignature(Signature signature, boolean failed) {
         }
 
         private void preGetBundle(Bundle payload) {
-            onGetBundle(com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)));
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onGetBundle(null, true);
+            } else {
+                onGetBundle(com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+            }
 //            new AsyncTaskEx<Bundle, Object, com.fieldnation.data.workorder.Bundle>() {
 //                @Override
 //                protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {
@@ -795,7 +833,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 //            }.executeEx(payload);
         }
 
-        public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle) {
+        public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle, boolean failed) {
         }
     }
 }

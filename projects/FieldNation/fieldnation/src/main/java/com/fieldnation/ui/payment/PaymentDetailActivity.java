@@ -143,7 +143,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onGet(Payment payment) {
+        public void onGet(long paymentId, Payment payment, boolean failed) {
             _paid = payment;
             populateUi();
         }

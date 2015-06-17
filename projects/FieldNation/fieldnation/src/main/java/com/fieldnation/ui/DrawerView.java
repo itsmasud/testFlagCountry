@@ -440,8 +440,8 @@ public class DrawerView extends RelativeLayout {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle) {
-            if (file == null || url == null)
+        public void onGet(String url, File file, boolean isCircle, boolean failed) {
+            if (file == null || url == null || failed)
                 return;
 
             Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
@@ -457,8 +457,8 @@ public class DrawerView extends RelativeLayout {
         }
 
         @Override
-        public void onList(List<Payment> list, int page) {
-            if (list == null || list.size() == 0) {
+        public void onList(int page, List<Payment> list, boolean failed) {
+            if (list == null || list.size() == 0 || failed) {
                 return;
             }
             PaymentClient.list(getContext(), page + 1);

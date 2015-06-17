@@ -57,6 +57,26 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         return Result.REQUEUE;
     }
 
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        try {
+            JsonObject obj = new JsonObject(transaction.getHandlerParams());
+            String action = obj.getString("action");
+
+            switch (action) {
+                case "pList":
+                    PaymentDispatch.list(context, obj.getInt("page"), null, true, transaction.isSync());
+                    break;
+                case "pGet":
+                    PaymentDispatch.get(context, obj.getLong("paymentId"), null, true, transaction.isSync());
+                    break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return Result.FINISH;
+    }
+
 
     private Result handleList(Context context, WebTransaction transaction, HttpResult resultData,
                               JsonObject params) throws ParseException {
@@ -65,7 +85,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(context, PSO_PAYMENT_LIST, page, data);
 
-        PaymentDispatch.list(context, page, new JsonArray(data), transaction.isSync());
+        PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync());
         return Result.FINISH;
     }
 
@@ -77,7 +97,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(context, PSO_PAYMENT, paymentId, data);
 
-        PaymentDispatch.get(context, paymentId, new JsonObject(data), transaction.isSync());
+        PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
         return Result.FINISH;
     }
 }

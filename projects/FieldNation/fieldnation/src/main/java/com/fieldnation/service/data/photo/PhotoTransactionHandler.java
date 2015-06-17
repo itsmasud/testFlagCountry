@@ -82,9 +82,9 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             // done!
             if (getCircle) {
-                PhotoDispatch.get(context, circleObj.getFile(), url, true, transaction.isSync());
+                PhotoDispatch.get(context, circleObj.getFile(), url, true, false, transaction.isSync());
             } else {
-                PhotoDispatch.get(context, imageObj.getFile(), url, false, transaction.isSync());
+                PhotoDispatch.get(context, imageObj.getFile(), url, false, false, transaction.isSync());
             }
             Log.v(TAG, "handleResult");
             return Result.FINISH;
@@ -94,5 +94,19 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             return Result.ERROR;
         }
 
+    }
+
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        try {
+            JsonObject json = new JsonObject(transaction.getHandlerParams());
+            boolean getCircle = json.getBoolean("circle");
+            String url = json.getString("url");
+
+            PhotoDispatch.get(context, null, url, getCircle, true, transaction.isSync());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return Result.FINISH;
     }
 }

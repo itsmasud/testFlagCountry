@@ -59,7 +59,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
         }
 
         @Override
-        public void onList(List<Payment> list, int page) {
+        public void onList(int page, List<Payment> list, boolean failed) {
             addPage(page, list);
         }
     };

@@ -10,6 +10,7 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.utils.Stopwatch;
 
 import java.text.ParseException;
 
@@ -24,6 +25,19 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         try {
             JsonObject obj = new JsonObject("action", "pDetails");
             obj.put("workorderId", workorderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] pList(int page, String selector) {
+
+        try {
+            JsonObject obj = new JsonObject("action", "pList");
+            obj.put("page", page);
+            obj.put("selector", selector);
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -138,7 +152,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long slotId = params.getLong("slotId");
         String filename = params.getString("filename");
 
-        WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false);
+        WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
         return Result.FINISH;
     }
@@ -151,6 +165,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             switch (action) {
                 case "pDetails":
                     return handleDetails(context, transaction, params, resultData);
+                case "pList":
+                    return handleList(context, transaction, params, resultData);
                 case "pGetSignature":
                     return handleGetSignature(context, transaction, params, resultData);
                 case "pAction":
@@ -172,14 +188,88 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return Result.FINISH;
     }
 
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pDetails":
+                    WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync());
+                    break;
+                case "pList":
+                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync());
+                    break;
+                case "pGetSignature":
+                    WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());
+                    break;
+                case "pAction":
+                    WorkorderDispatch.action(context, params.getLong("workorderId"), params.getString("param"), true);
+                    break;
+                case "pMessageList":
+                    WorkorderDispatch.listMessages(context, params.getLong("workorderId"), null, true, transaction.isSync());
+                    break;
+                case "pAlertList":
+                    WorkorderDispatch.listAlerts(context, params.getLong("workorderId"), null, true, transaction.isSync());
+                    break;
+                case "pTaskList":
+                    WorkorderDispatch.listTasks(context, params.getLong("workorderId"), null, true, transaction.isSync());
+                    break;
+                case "pGetBundle":
+                    WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
+                    break;
+                case "pUploadDeliverable":
+                    WorkorderDispatch.uploadDeliverable(context, params.getLong("workorderid"), params.getLong("slotId"), params.getString("filename"), false, true);
+                    break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return Result.FINISH;
+    }
+
     private Result handleAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleAction");
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
 
-        WorkorderDispatch.action(context, workorderId, action);
+        WorkorderDispatch.action(context, workorderId, action, false);
 
         return Result.FINISH;
+    }
+
+    private Result handleList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) {
+        Stopwatch watch = new Stopwatch(true);
+        Log.v(TAG, "handleResult");
+        // get the basics, send out the event
+        int page = 0;
+        String selector = "";
+
+        try {
+            page = params.getInt("page");
+            selector = params.getString("selector");
+            byte[] bdata = resultData.getByteArray();
+            Log.v(TAG, "page: " + page + " selector:" + selector);
+
+            StoredObject.put(context, PSO_WORKORDER_LIST + selector, page, bdata);
+
+            JsonArray ja = new JsonArray(bdata);
+
+            for (int i = 0; i < ja.size(); i++) {
+                JsonObject json = ja.getJsonObject(i);
+
+                Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
+            }
+
+            WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync());
+
+            return Result.FINISH;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        Log.v(TAG, "handleResult time: " + watch.finish());
+        return Result.REQUEUE;
+
     }
 
     private Result handleMessageList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -188,7 +278,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         byte[] data = resultData.getByteArray();
 
-        WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), transaction.isSync());
+        WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
         StoredObject.put(context, PSO_MESSAGE_LIST, workorderId, data);
 
@@ -201,7 +291,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         byte[] data = resultData.getByteArray();
 
-        WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), transaction.isSync());
+        WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
         StoredObject.put(context, PSO_ALERT_LIST, workorderId, data);
 
@@ -214,7 +304,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         byte[] data = resultData.getByteArray();
 
-        WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), transaction.isSync());
+        WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
         StoredObject.put(context, PSO_TASK_LIST, workorderId, data);
 
@@ -235,7 +325,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
         // dispatch the event
-        WorkorderDispatch.get(context, workorder, workorderId, transaction.isSync());
+        WorkorderDispatch.get(context, workorder, workorderId, false, transaction.isSync());
 
         // store it in the store
         StoredObject.put(context, PSO_WORKORDER, workorderId, workorderData);
@@ -249,7 +339,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         byte[] data = resultData.getByteArray();
 
 
-        WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, transaction.isSync());
+        WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, false, transaction.isSync());
 
         //store the signature data
         StoredObject.put(context, PSO_SIGNATURE, signatureId, data);
@@ -263,7 +353,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         StoredObject.put(context, PSO_BUNDLE, bundleId, data);
 
-        WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, transaction.isSync());
+        WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, false, transaction.isSync());
 
         return Result.FINISH;
     }
@@ -273,7 +363,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long slotId = params.getLong("slotId");
         String filename = params.getString("filename");
 
-        WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true);
+        WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true, false);
 
         return Result.FINISH;
     }

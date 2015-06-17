@@ -124,8 +124,8 @@ public class WebCrawlerService extends Service {
     private synchronized void incrementPendingRequestCounter(int val) {
         _pendingRequestCounter += val;
 //        if (_pendingRequestCounter % 5 == 0) {
-            Log.v(TAG, "_pendingRequestCounter = " + _pendingRequestCounter);
-            Log.v(TAG, "_workorderDetails.size() = " + _workorderDetails.size());
+        Log.v(TAG, "_pendingRequestCounter = " + _pendingRequestCounter);
+        Log.v(TAG, "_workorderDetails.size() = " + _workorderDetails.size());
 //        }
 
         if (_pendingRequestCounter < 50) {
@@ -201,21 +201,27 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_profileClient_listener.onConnected");
             _profileClient.subListMessages(true);
             _profileClient.subListNotifications(true);
-            _profileClient.subGet(true);
-
-            incrementPendingRequestCounter(3);
-            incRequestCounter(3);
-            ProfileClient.get(WebCrawlerService.this, 0, true);
-            ProfileClient.listMessages(WebCrawlerService.this, 0, true);
-            ProfileClient.listNotifications(WebCrawlerService.this, 0, true);
+//            _profileClient.subGet(true);
+//
+            incrementPendingRequestCounter(2);
+            incRequestCounter(2);
+//            _haveProfile = false;
+//            ProfileClient.get(WebCrawlerService.this, 0, true);
+            ProfileClient.listMessages(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
+            ProfileClient.listNotifications(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
         }
 
         @Override
-        public void onGet(Profile profile) {
+        public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "ProfileClient.onGet " + _haveProfile);
             if (!_haveProfile) {
+
                 incrementPendingRequestCounter(-1);
-                Log.v(TAG, "ProfileClienton.onGet");
+
+                if (failed)
+                    return;
+
+                Log.v(TAG, "ProfileClient.onGet");
                 if (!_skipProfileImages) {
                     incRequestCounter(2);
                     PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
@@ -226,11 +232,11 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page) {
+        public void onMessageList(List<Message> list, int page, boolean failed) {
             Log.v(TAG, "ProfileClient.onMessageList");
 
             incrementPendingRequestCounter(-1);
-            if (list == null || list.size() == 0) {
+            if (list == null || list.size() == 0 || failed) {
                 _workorderThreadManager.wakeUp();
                 return;
             }
@@ -251,10 +257,10 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onNotificationList(List<Notification> list, int page) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed) {
             Log.v(TAG, "onNotificationList");
             incrementPendingRequestCounter(-1);
-            if (list == null || list.size() == 0) {
+            if (list == null || list.size() == 0 || failed) {
                 _workorderThreadManager.wakeUp();
                 return;
             }
@@ -283,11 +289,12 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page) {
+        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed) {
             Log.v(TAG, "onWorkorderList");
 
             incrementPendingRequestCounter(-1);
-            if (list == null || list.size() == 0) {
+
+            if (list == null || list.size() == 0 || failed) {
                 _workorderThreadManager.wakeUp();
                 return;
             }
@@ -314,9 +321,13 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onGet(Workorder workorder) {
-            Log.v(TAG, "onDetails " + workorder.getWorkorderId());
+        public void onGet(Workorder workorder, boolean failed) {
             incrementPendingRequestCounter(-1);
+
+            if (failed) return;
+
+            Log.v(TAG, "onDetails " + workorder.getWorkorderId());
+
             synchronized (LOCK) {
                 _workorderDetails.add(workorder);
 
@@ -326,10 +337,13 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onMessageList(long workorderId, List<com.fieldnation.data.workorder.Message> messages) {
+        public void onMessageList(long workorderId, List<com.fieldnation.data.workorder.Message> messages, boolean failed) {
             Log.v(TAG, "WorkorderClient.onMessageList");
 
             incrementPendingRequestCounter(-1);
+
+            if (failed)
+                return;
 
             if (!_skipProfileImages) {
                 for (int i = 0; i < messages.size(); i++) {
@@ -415,7 +429,8 @@ public class WebCrawlerService extends Service {
             if (documents != null && documents.length > 0) {
                 for (Document doc : documents) {
                     incRequestCounter(1);
-                    DocumentClient.downloadDocument(_context, doc.getDocumentId(), doc.getFilePath(), doc.getFileName(), true);
+                    DocumentClient.downloadDocument(_context, doc.getDocumentId(),
+                            doc.getFilePath(), doc.getFileName(), true);
                 }
             }
 

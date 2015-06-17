@@ -87,6 +87,33 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         return Result.FINISH;
     }
 
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+
+            switch (action) {
+                case "pGet":
+                    ProfileDispatch.get(context, params.getLong("profileId"), null, true, transaction.isSync());
+                    break;
+                case "pListNotifications":
+                    ProfileDispatch.listNotifications(context, null, params.getInt("page"), true, transaction.isSync());
+                    break;
+                case "pListMessages":
+                    ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync());
+                    break;
+                case "pAction":
+                    ProfileDispatch.action(context, params.getLong("profileId"), params.getString("param"), true);
+                    break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Result.FINISH;
+        }
+        return Result.FINISH;
+    }
+
     private Result handleGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         Log.v(TAG, "handleGet");
         // store object
@@ -94,7 +121,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         long profileId = params.getLong("profileId");
 
         // todo parse json and put Profile/id ?
-        ProfileDispatch.get(context, profileId, new JsonObject(data), transaction.isSync());
+        ProfileDispatch.get(context, profileId, new JsonObject(data), false, transaction.isSync());
 
         StoredObject.put(context, PSO_PROFILE, profileId, data);
 
@@ -107,7 +134,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // store object
         byte[] pagedata = resultData.getByteArray();
 
-        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, transaction.isSync());
+        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync());
 
         StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
 
@@ -120,7 +147,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // store object
         byte[] pagedata = resultData.getByteArray();
 
-        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, transaction.isSync());
+        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync());
 
         StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
 
@@ -133,7 +160,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         long profileId = params.getLong("profileId");
         String action = params.getString("param");
 
-        ProfileDispatch.action(context, profileId, action);
+        ProfileDispatch.action(context, profileId, action, false);
 
         return Result.FINISH;
     }

@@ -94,7 +94,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
                     Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
-                    WorkorderDispatch.get(context, workorder, workorderId, isSync);
+                    WorkorderDispatch.get(context, workorder, workorderId, false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -120,7 +120,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                         Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
                     }
 
-                    WorkorderDispatch.list(context, ja, page, selector, isSync);
+                    WorkorderDispatch.list(context, ja, page, selector, false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -139,7 +139,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId);
         if (obj != null) {
             try {
-                WorkorderDispatch.signature(context, new JsonObject(obj.getData()), workorderId, signatureId, isSync);
+                WorkorderDispatch.signature(context, new JsonObject(obj.getData()), workorderId, signatureId, false, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -158,7 +158,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             StoredObject obj = StoredObject.get(context, PSO_MESSAGE_LIST, workorderId);
             if (obj != null) {
                 try {
-                    WorkorderDispatch.listMessages(context, workorderId, new JsonArray(obj.getData()), isSync);
+                    WorkorderDispatch.listMessages(context, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -176,7 +176,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             StoredObject obj = StoredObject.get(context, PSO_ALERT_LIST, workorderId);
             if (obj != null) {
                 try {
-                    WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(obj.getData()), isSync);
+                    WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -194,7 +194,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             StoredObject obj = StoredObject.get(context, PSO_TASK_LIST, workorderId);
             if (obj != null) {
                 try {
-                    WorkorderDispatch.listTasks(context, workorderId, new JsonArray(obj.getData()), isSync);
+                    WorkorderDispatch.listTasks(context, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -213,7 +213,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
             if (obj != null) {
                 try {
-                    WorkorderDispatch.bundle(context, new JsonObject(obj.getData()), bundleId, isSync);
+                    WorkorderDispatch.bundle(context, new JsonObject(obj.getData()), bundleId, false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -241,7 +241,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
         if (obj != null) {
             try {
-                WorkorderDispatch.getDeliverable(context, new JsonObject(obj.getData()), workorderId, deliverableId, isSync);
+                WorkorderDispatch.getDeliverable(context, new JsonObject(obj.getData()), workorderId, deliverableId, false, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

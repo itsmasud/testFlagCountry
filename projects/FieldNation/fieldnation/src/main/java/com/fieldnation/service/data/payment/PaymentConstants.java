@@ -13,9 +13,10 @@ public interface PaymentConstants {
     String PARAM_ACTION_LIST = "PARAM_ACTION_LIST";
     String PARAM_ACTION_GET = "PARAM_ACTION_GET";
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
+    String PARAM_ERROR = "PARAM_ERROR";
 
-    String PARAM_PAGE = "PAGE";
-    String PARAM_ID = "ID";
+    String PARAM_PAGE = "PARAM_PAGE";
+    String PARAM_PAYMENT_ID = "PARAM_PAYMENT_ID";
     String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
 
     String PSO_PAYMENT_LIST = "PaymentListPage";

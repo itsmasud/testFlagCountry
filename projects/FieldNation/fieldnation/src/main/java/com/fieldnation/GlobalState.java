@@ -192,11 +192,13 @@ public class GlobalState extends Application {
         }
 
         @Override
-        public void onGet(Profile profile) {
+        public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "onProfile");
             if (profile != null) {
                 _profile = profile;
                 GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
+            } else {
+                // TODO should do something... like retry or logout
             }
         }
     };

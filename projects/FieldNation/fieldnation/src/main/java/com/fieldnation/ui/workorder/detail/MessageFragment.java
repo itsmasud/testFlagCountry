@@ -216,13 +216,13 @@ public class MessageFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onMessageList(long workorderId, List<Message> messages) {
+        public void onMessageList(long workorderId, List<Message> messages, boolean failed) {
             _messages = messages;
             rebuildList();
         }
 
         @Override
-        public void onAction(long workorderId, String ation) {
+        public void onAction(long workorderId, String action, boolean failed) {
             getMessages();
         }
     };

@@ -117,7 +117,7 @@ public class MessageRcvdView extends RelativeLayout {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle) {
+        public void onGet(String url, File file, boolean isCircle, boolean failed) {
             Drawable pic = new BitmapDrawable(getContext().getResources(), file.getAbsolutePath());
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);

@@ -13,11 +13,14 @@ import com.fieldnation.service.topics.TopicService;
  */
 public class ProfileDispatch implements ProfileConstants {
 
-    public static void get(Context context, long profileId, JsonObject data, boolean isSync) {
+    public static void get(Context context, long profileId, JsonObject data, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putLong(PARAM_PROFILE_ID, profileId);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
         String topicId = TOPIC_ID_GET;
 
@@ -28,12 +31,15 @@ public class ProfileDispatch implements ProfileConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.FOREVER);
     }
 
-    public static void listNotifications(Context context, JsonArray data, int page, boolean isSync) {
+    public static void listNotifications(Context context, JsonArray data, int page, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
         String topicId = TOPIC_ID_NOTIFICATION_LIST;
 
@@ -44,12 +50,15 @@ public class ProfileDispatch implements ProfileConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void listMessages(Context context, JsonArray data, int page, boolean isSync) {
+    public static void listMessages(Context context, JsonArray data, int page, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
         String topicId = TOPIC_ID_MESSAGE_LIST;
 
@@ -60,10 +69,11 @@ public class ProfileDispatch implements ProfileConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void action(Context context, long profileId, String action) {
+    public static void action(Context context, long profileId, String action, boolean failed) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, action);
         bundle.putLong(PARAM_PROFILE_ID, profileId);
+        bundle.putBoolean(PARAM_ERROR, failed);
 
         String topicId = TOPIC_ID_ACTION_COMPLETE;
 

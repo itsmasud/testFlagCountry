@@ -62,7 +62,7 @@ public class PaymentService extends MSService implements PaymentConstants {
         StoredObject obj = StoredObject.get(context, PSO_PAYMENT_LIST, page + "");
         if (obj != null) {
             try {
-                PaymentDispatch.list(context, page, new JsonArray(obj.getData()), isSync);
+                PaymentDispatch.list(context, page, new JsonArray(obj.getData()), false, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -74,13 +74,13 @@ public class PaymentService extends MSService implements PaymentConstants {
     }
 
     private void get(Context context, Intent intent) {
-        long paymentId = intent.getLongExtra(PARAM_ID, 0);
+        long paymentId = intent.getLongExtra(PARAM_PAYMENT_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         StoredObject obj = StoredObject.get(context, PSO_PAYMENT, paymentId);
         if (obj != null) {
             try {
-                PaymentDispatch.get(context, paymentId, new JsonObject(obj.getData()), isSync);
+                PaymentDispatch.get(context, paymentId, new JsonObject(obj.getData()), false, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

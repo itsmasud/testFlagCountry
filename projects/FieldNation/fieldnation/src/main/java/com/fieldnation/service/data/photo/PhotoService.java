@@ -69,7 +69,7 @@ public class PhotoService extends MSService implements PhotoConstants {
         StoredObject obj = StoredObject.get(context, objectName, url);
 
         if (obj != null) {
-            PhotoDispatch.get(context, obj.getFile(), url, getCircle, isSync);
+            PhotoDispatch.get(context, obj.getFile(), url, getCircle, false, isSync);
         }
 
         if (obj == null) {

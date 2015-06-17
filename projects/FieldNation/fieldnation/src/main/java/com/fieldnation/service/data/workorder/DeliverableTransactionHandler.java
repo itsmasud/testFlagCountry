@@ -2,16 +2,12 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 
 /**
@@ -75,6 +71,12 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         return Result.FINISH;
     }
 
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        // TODO implement fail
+        return Result.FINISH;
+    }
+
     public Result handleChange(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         long workorderId = params.getLong("workorderId");
 
@@ -90,7 +92,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 
         StoredObject.put(context, PSO_DELIVERABLE, deliverableId, data);
 
-        WorkorderDispatch.getDeliverable(context, new JsonObject(data), workorderId, deliverableId, transaction.isSync());
+        WorkorderDispatch.getDeliverable(context, new JsonObject(data), workorderId, deliverableId, false, transaction.isSync());
 
         return Result.FINISH;
     }

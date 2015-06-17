@@ -30,6 +30,7 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GlobalState;
 import com.fieldnation.GoogleAnalyticsTopicClient;
+import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
@@ -48,13 +49,12 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
-import com.fieldnation.GpsLocationService;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
+import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
@@ -1457,12 +1457,12 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onTaskList(long workorderId, List<Task> tasks) {
+        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
             setTasks(tasks);
         }
 
         @Override
-        public void onAction(long workorderId, String action) {
+        public void onAction(long workorderId, String action, boolean failed) {
             // TODO _workorderClient_listener.onAction
             Log.v(TAG, "_workorderClient_listener.onAction");
             //_workorder.dispatchOnChange();
@@ -1476,8 +1476,9 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAction(long profileId, String action) {
+        public void onAction(long profileId, String action, boolean failed) {
             //TODO _profileClient_listener.onAction
+            // TODO ... do something!
             Log.v(TAG, "_profileClient_listener.onAction");
         }
     };

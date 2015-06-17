@@ -12,6 +12,7 @@ public interface PhotoConstants {
     String PARAM_URL = "URL";
     String PARAM_CIRCLE = "CIRCLE";
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
+    String PARAM_ERROR = "PARAM_ERROR";
 
     String RESULT_IMAGE_FILE = "IMAGE_FILE";
 }

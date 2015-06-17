@@ -20,6 +20,7 @@ public interface ProfileConstants {
     String PARAM_PAGE = "PAGE";
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
     String PARAM_PROFILE_ID = "PARAM_PROFILE_ID";
+    String PARAM_ERROR = "PARAM_ERROR";
 
     String PSO_MESSAGE_PAGE = "MessagePage";
     String PSO_NOTIFICATION_PAGE = "NotificationPage";

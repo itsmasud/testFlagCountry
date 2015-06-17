@@ -102,8 +102,8 @@ public class MessageListActivity extends ItemListActivity<Message> {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle) {
-            if (file == null || url == null)
+        public void onGet(String url, File file, boolean isCircle, boolean failed) {
+            if (file == null || url == null || failed)
                 return;
 
             Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
@@ -127,7 +127,8 @@ public class MessageListActivity extends ItemListActivity<Message> {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page) {
+        public void onMessageList(List<Message> list, int page, boolean failed) {
+            // TODO handle the failed condition
             Log.v(TAG, "onAllMessagesPage");
             addPage(page, list);
         }

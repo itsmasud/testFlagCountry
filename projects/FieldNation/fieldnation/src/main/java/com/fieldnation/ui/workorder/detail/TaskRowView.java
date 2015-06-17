@@ -159,7 +159,7 @@ public class TaskRowView extends RelativeLayout {
         }
 
         @Override
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete) {
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
             TaskType type = _task.getTaskType();
 
             if (!isComplete) {

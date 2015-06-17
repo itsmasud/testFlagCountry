@@ -44,6 +44,18 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
 
         } catch (Exception ex) {
             ex.printStackTrace();
+            return Result.ERROR;
+        }
+        return Result.FINISH;
+    }
+
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            DocumentDispatch.download(context, params.getLong("documentId"), null, true, transaction.isSync());
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return Result.FINISH;
     }
@@ -66,7 +78,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
 
         StoredObject obj = StoredObject.put(context, PSO_DOCUMENT, documentId, file, filename);
 
-        DocumentDispatch.download(context, documentId, obj.getFile(), transaction.isSync());
+        DocumentDispatch.download(context, documentId, obj.getFile(), false, transaction.isSync());
 
         return Result.FINISH;
     }
