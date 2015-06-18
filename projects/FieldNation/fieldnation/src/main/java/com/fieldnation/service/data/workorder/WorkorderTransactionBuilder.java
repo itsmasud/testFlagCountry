@@ -46,8 +46,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(WorkorderListTransactionHandler.class)
-                    .handlerParams(WorkorderListTransactionHandler.generateParams(page, selector))
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pList(page, selector))
                     .key((isSync ? "Sync/" : "") + "WorkorderList/" + selector + "/" + page)
                     .useAuth(true)
                     .isSyncCall(isSync)

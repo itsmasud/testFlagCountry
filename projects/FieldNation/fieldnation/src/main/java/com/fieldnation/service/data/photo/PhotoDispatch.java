@@ -13,13 +13,17 @@ import java.io.File;
  */
 public class PhotoDispatch implements PhotoConstants {
 
-    public static void get(Context context, File file, String url, boolean getCircle, boolean isSync) {
+    public static void get(Context context, File file, String url, boolean getCircle, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET);
         bundle.putBoolean(PARAM_CIRCLE, getCircle);
         bundle.putString(PARAM_URL, url);
-        bundle.putSerializable(RESULT_IMAGE_FILE, file);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed) {
+            bundle.putSerializable(RESULT_IMAGE_FILE, file);
+        }
 
         String topicId = TOPIC_ID_GET_PHOTO;
 

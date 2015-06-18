@@ -375,13 +375,13 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onAction(long workorderId, String ation) {
-            Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + ation);
+        public void onAction(long workorderId, String action, boolean failed) {
+            Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + action);
             getData(false);
         }
 
         @Override
-        public void onGet(Workorder workorder) {
+        public void onGet(Workorder workorder, boolean failed) {
             Log.v(TAG, "_workorderClient_listener.onDetails");
             if (workorder == null) {
                 try {

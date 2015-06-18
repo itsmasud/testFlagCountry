@@ -13,12 +13,14 @@ import com.fieldnation.service.topics.TopicService;
  */
 public class PaymentDispatch implements PaymentConstants {
 
-    public static void list(Context context, int page, JsonArray data, boolean isSync) {
+    public static void list(Context context, int page, JsonArray data, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
         bundle.putInt(PARAM_PAGE, page);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
         String topicId = TOPIC_ID_LIST;
 
@@ -27,15 +29,17 @@ public class PaymentDispatch implements PaymentConstants {
         }
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
-
     }
 
-    public static void get(Context context, long paymentId, JsonObject data, boolean isSync) {
+    public static void get(Context context, long paymentId, JsonObject data, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET);
-        bundle.putLong(PARAM_ID, paymentId);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
+        bundle.putLong(PARAM_PAYMENT_ID, paymentId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
         String topicId = TOPIC_ID_GET;
 

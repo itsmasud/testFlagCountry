@@ -77,7 +77,7 @@ public class ProfileService extends MSService implements ProfileConstants {
             // if exists, then pass it back
             if (obj != null) {
                 try {
-                    ProfileDispatch.get(context, profileId, new JsonObject(obj.getData()), isSync);
+                    ProfileDispatch.get(context, profileId, new JsonObject(obj.getData()), false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -100,7 +100,7 @@ public class ProfileService extends MSService implements ProfileConstants {
             obj = StoredObject.get(context, PSO_NOTIFICATION_PAGE, page + "");
             if (obj != null) {
                 try {
-                    ProfileDispatch.listNotifications(context, new JsonArray(obj.getData()), page, isSync);
+                    ProfileDispatch.listNotifications(context, new JsonArray(obj.getData()), page, false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -123,7 +123,7 @@ public class ProfileService extends MSService implements ProfileConstants {
             obj = StoredObject.get(context, PSO_MESSAGE_PAGE, page);
             if (obj != null) {
                 try {
-                    ProfileDispatch.listMessages(context, new JsonArray(obj.getData()), page, isSync);
+                    ProfileDispatch.listMessages(context, new JsonArray(obj.getData()), page, false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

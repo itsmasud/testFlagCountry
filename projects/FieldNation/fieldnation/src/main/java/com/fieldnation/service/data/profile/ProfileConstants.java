@@ -9,7 +9,7 @@ public interface ProfileConstants {
     String TOPIC_ID_GET = "ProfileDataService:TOPIC_ID_GET";
     String TOPIC_ID_NOTIFICATION_LIST = "ProfileDataService:TOPIC_ID_NOTIFICATION_LIST";
     String TOPIC_ID_MESSAGE_LIST = "ProfileDataService:TOPIC_ID_MESSAGE_LIST";
-    String TOPIC_ID_ACTION_COMPLETE = "ProfileConstants:PARAM_ACTION_COMPLETE";
+    String TOPIC_ID_ACTION_COMPLETE = "ProfileConstants:TOPIC_ID_ACTION_COMPLETE";
 
     String PARAM_ACTION = "PARAM_ACTION";
     String PARAM_ACTION_GET = "PARAM_ACTION_GET";
@@ -17,9 +17,10 @@ public interface ProfileConstants {
     String PARAM_ACTION_LIST_MESSAGES = "PARAM_ACTION_LIST_MESSAGES";
 
     String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
-    String PARAM_PAGE = "PAGE";
+    String PARAM_PAGE = "PARAM_PAGE";
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
     String PARAM_PROFILE_ID = "PARAM_PROFILE_ID";
+    String PARAM_ERROR = "PARAM_ERROR";
 
     String PSO_MESSAGE_PAGE = "MessagePage";
     String PSO_NOTIFICATION_PAGE = "NotificationPage";

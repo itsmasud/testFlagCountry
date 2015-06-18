@@ -156,7 +156,7 @@ public class RightDrawerMessagesView extends FrameLayout {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle) {
+        public void onGet(String url, File file, boolean isCircle, boolean failed) {
             if (file == null || url == null)
                 return;
 
@@ -172,7 +172,8 @@ public class RightDrawerMessagesView extends FrameLayout {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page) {
+        public void onMessageList(List<Message> list, int page, boolean failed) {
+            // TODO need to handle failed condition
             _adapter.setPage(page, list);
         }
     };

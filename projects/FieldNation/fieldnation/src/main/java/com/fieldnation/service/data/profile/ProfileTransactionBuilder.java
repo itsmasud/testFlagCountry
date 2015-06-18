@@ -51,7 +51,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
-                                    .path("/api/rest/v1/profile/notifications/")
+                                    .path("/api/rest/v1/profile/notifications")
                                     .urlParams("?page=" + page)
                     ).send();
         } catch (Exception ex) {
@@ -72,7 +72,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
-                                    .path("/api/rest/v1/profile/messages/")
+                                    .path("/api/rest/v1/profile/messages")
                                     .urlParams("?page=" + page)
                     ).send();
         } catch (Exception ex) {

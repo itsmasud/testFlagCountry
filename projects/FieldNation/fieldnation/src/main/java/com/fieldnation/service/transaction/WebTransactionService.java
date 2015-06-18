@@ -351,11 +351,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     trans.requeue(context);
                     AuthTopicClient.dispatchRequestCommand(context);
                     return true;
-                    // not found?... not sure, requeue
                 } else if (result.getResponseCode() == 404) {
-                    Thread.sleep(5000);
-                    trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+                    // not found?... error
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                    WebTransaction.delete(context, trans.getId());
+                    Transform.deleteTransaction(context, trans.getId());
                     return true;
                     // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
@@ -373,6 +373,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                     switch (wresult) {
                         case ERROR:
+                            WebTransactionHandler.failTransaction(context, handlerName, trans, result);
                             WebTransaction.delete(context, trans.getId());
                             Transform.deleteTransaction(context, trans.getId());
                             break;

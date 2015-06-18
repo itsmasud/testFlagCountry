@@ -15,5 +15,7 @@ public interface DocumentConstants {
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
     String PARAM_FILE_NAME = "PARAM_FILE_NAME";
 
+    String PARAM_ERROR = "PARAM_ERROR";
+
     String PSO_DOCUMENT = "Document";
 }

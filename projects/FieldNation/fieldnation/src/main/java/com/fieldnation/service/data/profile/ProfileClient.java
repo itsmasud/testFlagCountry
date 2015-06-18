@@ -160,97 +160,120 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
         private void preOnAction(Bundle payload) {
             onAction(payload.getLong(PARAM_PROFILE_ID),
-                    payload.getString(PARAM_ACTION));
+                    payload.getString(PARAM_ACTION),
+                    payload.getBoolean(PARAM_ERROR));
         }
 
-        public void onAction(long profileId, String action) {
+        public void onAction(long profileId, String action, boolean failed) {
         }
 
         private void preGet(Bundle payload) {
-            new AsyncTaskEx<Object, Object, Profile>() {
-                @Override
-                protected Profile doInBackground(Object... params) {
-                    Bundle payload = (Bundle) params[0];
-                    try {
-                        return Profile.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onGet(null, true);
+            } else {
+                new AsyncTaskEx<Object, Object, Profile>() {
+                    @Override
+                    protected Profile doInBackground(Object... params) {
+                        Bundle payload = (Bundle) params[0];
+                        try {
+                            return Profile.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        return null;
                     }
-                    return null;
-                }
 
-                @Override
-                protected void onPostExecute(Profile o) {
-                    onGet(o);
-                }
-            }.executeEx(payload);
+                    @Override
+                    protected void onPostExecute(Profile o) {
+                        if (o == null)
+                            onGet(null, true);
+                        else
+                            onGet(o, false);
+                    }
+                }.executeEx(payload);
+            }
         }
 
-        public void onGet(Profile profile) {
+        public void onGet(Profile profile, boolean failed) {
         }
 
         private void preNotificationList(Bundle payload) {
-            new AsyncTaskEx<Bundle, Object, List<Notification>>() {
-                private int page;
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onNotificationList(null, payload.getInt(PARAM_PAGE), true);
+            } else {
+                new AsyncTaskEx<Bundle, Object, List<Notification>>() {
+                    private int page;
 
-                @Override
-                protected List<Notification> doInBackground(Bundle... params) {
-                    Bundle payload = params[0];
-                    try {
-                        List<Notification> list = new LinkedList<>();
-                        page = payload.getInt(PARAM_PAGE);
-                        JsonArray jalerts = payload.getParcelable(PARAM_DATA_PARCELABLE);
-                        for (int i = 0; i < jalerts.size(); i++) {
-                            list.add(Notification.fromJson(jalerts.getJsonObject(i)));
+                    @Override
+                    protected List<Notification> doInBackground(Bundle... params) {
+                        Bundle payload = params[0];
+                        try {
+                            List<Notification> list = new LinkedList<>();
+                            page = payload.getInt(PARAM_PAGE);
+                            JsonArray jalerts = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                            for (int i = 0; i < jalerts.size(); i++) {
+                                list.add(Notification.fromJson(jalerts.getJsonObject(i)));
+                            }
+
+                            return list;
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
                         }
-
-                        return list;
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                        return null;
                     }
-                    return null;
-                }
 
-                @Override
-                protected void onPostExecute(List<Notification> notifications) {
-                    onNotificationList(notifications, page);
-                }
-            }.executeEx(payload);
+                    @Override
+                    protected void onPostExecute(List<Notification> notifications) {
+                        if (notifications == null)
+                            onNotificationList(null, page, true);
+                        else
+                            onNotificationList(notifications, page, false);
+                    }
+                }.executeEx(payload);
+            }
         }
 
-        public void onNotificationList(List<Notification> list, int page) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed) {
         }
 
         private void preMessageList(Bundle payload) {
-            new AsyncTaskEx<Bundle, Object, List<Message>>() {
-                private int page;
+            if (payload.getBoolean(PARAM_ERROR)) {
+                onMessageList(null, payload.getInt(PARAM_PAGE), true);
+            } else {
+                new AsyncTaskEx<Bundle, Object, List<Message>>() {
+                    private int page;
 
-                @Override
-                protected List<Message> doInBackground(Bundle... params) {
-                    Bundle payload = params[0];
-                    try {
-                        List<Message> list = new LinkedList<>();
-                        page = payload.getInt(PARAM_PAGE);
-                        JsonArray jalerts = payload.getParcelable(PARAM_DATA_PARCELABLE);
-                        for (int i = 0; i < jalerts.size(); i++) {
-                            list.add(Message.fromJson(jalerts.getJsonObject(i)));
+                    @Override
+                    protected List<Message> doInBackground(Bundle... params) {
+                        Bundle payload = params[0];
+                        try {
+                            List<Message> list = new LinkedList<>();
+                            page = payload.getInt(PARAM_PAGE);
+                            JsonArray jalerts = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                            for (int i = 0; i < jalerts.size(); i++) {
+                                list.add(Message.fromJson(jalerts.getJsonObject(i)));
+                            }
+
+                            return list;
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
                         }
-
-                        return list;
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                        return null;
                     }
-                    return null;
-                }
 
-                @Override
-                protected void onPostExecute(List<Message> messages) {
-                    onMessageList(messages, page);
-                }
-            }.executeEx(payload);
+                    @Override
+                    protected void onPostExecute(List<Message> messages) {
+                        if (messages == null) {
+                            onMessageList(null, page, true);
+                        } else {
+                            onMessageList(messages, page, false);
+                        }
+                    }
+                }.executeEx(payload);
+            }
         }
 
-        public void onMessageList(List<Message> list, int page) {
+        public void onMessageList(List<Message> list, int page, boolean failed) {
         }
     }
 }

@@ -825,7 +825,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         @Override
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page) {
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
             Log.v(TAG, "_workorderData_listener.onList");
             if (!selector.equals(_displayView))
                 return;
@@ -834,7 +834,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         @Override
-        public void onAction(long workorderId, String ation) {
+        public void onAction(long workorderId, String action, boolean failed) {
             _adapter.refreshPages();
         }
     };

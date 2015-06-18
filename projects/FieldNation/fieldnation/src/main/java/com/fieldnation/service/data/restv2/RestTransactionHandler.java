@@ -60,6 +60,12 @@ public class RestTransactionHandler extends WebTransactionHandler {
         return Result.FINISH;
     }
 
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        // TODO, need to handle these
+        return null;
+    }
+
     private static Result object(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
         String resultTag = params.getString("resultTag");
         Sticky sticky = Sticky.values()[params.getInt("sticky")];

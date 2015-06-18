@@ -204,7 +204,7 @@ public class NotificationFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAlertList(long workorderId, List<Notification> alerts) {
+        public void onAlertList(long workorderId, List<Notification> alerts, boolean failed) {
             Log.v(TAG, "onAlertList");
             _notes = alerts;
             populateUi();

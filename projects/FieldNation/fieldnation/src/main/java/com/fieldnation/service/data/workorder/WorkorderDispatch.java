@@ -8,19 +8,20 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 
-import java.io.File;
-
 /**
  * Created by Michael Carver on 4/20/2015.
  */
 public class WorkorderDispatch implements WorkorderConstants {
 
-    public static void get(Context context, JsonObject workorder, long workorderId, boolean isSync) {
+    public static void get(Context context, JsonObject workorder, long workorderId, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, workorder);
 
         String topicId = TOPIC_ID_GET;
 
@@ -35,13 +36,16 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void list(Context context, JsonArray workorders, int page, String selector, boolean isSync) {
+    public static void list(Context context, JsonArray workorders, int page, String selector, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, workorders);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putString(PARAM_LIST_SELECTOR, selector);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, workorders);
 
         String topicId = TOPIC_ID_LIST;
 
@@ -56,12 +60,15 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void listMessages(Context context, long workorderId, JsonArray messages, boolean isSync) {
+    public static void listMessages(Context context, long workorderId, JsonArray messages, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, messages);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, messages);
 
         String topicId = TOPIC_ID_LIST_MESSAGES;
 
@@ -76,12 +83,15 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void listAlerts(Context context, long workorderId, JsonArray alerts, boolean isSync) {
+    public static void listAlerts(Context context, long workorderId, JsonArray alerts, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, alerts);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, alerts);
 
         String topicId = TOPIC_ID_LIST_ALERTS;
 
@@ -96,12 +106,15 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void listTasks(Context context, long workorderId, JsonArray tasks, boolean isSync) {
+    public static void listTasks(Context context, long workorderId, JsonArray tasks, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_TASKS);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, tasks);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, tasks);
 
         String topicId = TOPIC_ID_LIST_TASKS;
 
@@ -116,12 +129,15 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void bundle(Context context, JsonObject data, long bundleId, boolean isSync) {
+    public static void bundle(Context context, JsonObject data, long bundleId, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
         bundle.putLong(PARAM_WORKORDER_ID, bundleId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
         String topicId = TOPIC_ID_GET_BUNDLE;
 
@@ -132,13 +148,16 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void signature(Context context, JsonObject signature, long workorderId, long signatureId, boolean isSync) {
+    public static void signature(Context context, JsonObject signature, long workorderId, long signatureId, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_SIGNATURE);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, signature);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
         bundle.putLong(PARAM_SIGNATURE_ID, signatureId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, signature);
 
         String topicId = TOPIC_ID_GET_SIGNATURE;
 
@@ -176,13 +195,14 @@ public class WorkorderDispatch implements WorkorderConstants {
 //        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
 //    }
 
-    public static void uploadDeliverable(Context context, long workorderId, long slotId, String filename, boolean isComplete) {
+    public static void uploadDeliverable(Context context, long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
         bundle.putLong(PARAM_UPLOAD_SLOT_ID, slotId);
         bundle.putString(PARAM_FILE_NAME, filename);
         bundle.putBoolean(PARAM_IS_COMPLETE, isComplete);
+        bundle.putBoolean(PARAM_ERROR, failed);
 
         String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
         topicId += "/" + workorderId + "/" + slotId;
@@ -190,13 +210,16 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void getDeliverable(Context context, JsonObject obj, long workorderId, long deliverableId, boolean isSync) {
+    public static void getDeliverable(Context context, JsonObject obj, long workorderId, long deliverableId, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET_DELIVERABLE);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
         bundle.putLong(PARAM_DELIVERABLE_ID, deliverableId);
-        bundle.putParcelable(PARAM_DATA_PARCELABLE, obj);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        if (!failed)
+            bundle.putParcelable(PARAM_DATA_PARCELABLE, obj);
 
         String topicId = TOPIC_ID_GET_DELIVERABLE;
 
@@ -209,10 +232,11 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void action(Context context, long workorderId, String action) {
+    public static void action(Context context, long workorderId, String action, boolean failed) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_COMPLETE);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+        bundle.putBoolean(PARAM_ERROR, failed);
 
         String topicId = TOPIC_ID_ACTION_COMPLETE;
         topicId += "/" + workorderId;

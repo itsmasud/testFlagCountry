@@ -13,6 +13,7 @@ import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -315,6 +316,82 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             boolean copySuccess = false;
             try {
                 copySuccess = misc.copyFile(file, dest);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (!copySuccess) {
+//                Log.v(TAG, "put2, copy failed");
+                delete(context, id);
+                dest.delete();
+            } else {
+//                Log.v(TAG, "put2, copy success");
+                result = get(context, id);
+                result.setFile(dest);
+                result = result.save(context);
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, long objectKey, byte[] data, String filename) {
+        return put(context, objectTypeName, objectKey + "", data, filename, true);
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, long objectKey, byte[] data, String filename, boolean expires) {
+        return put(context, objectTypeName, objectKey + "", data, filename, expires);
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] data, String filename) {
+        return put(context, objectTypeName, objectKey, data, filename, true);
+    }
+
+    public static StoredObject put(Context context, String objectTypeName, String objectKey, byte[] data, String filename, boolean expires) {
+//        Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
+        StoredObject result = get(context, objectTypeName, objectKey);
+        if (result != null) {
+            result.delete(context, result);
+        }
+
+        ContentValues v = new ContentValues();
+        v.put(Column.OBJ_NAME.getName(), objectTypeName);
+        v.put(Column.OBJ_KEY.getName(), objectKey);
+        v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
+        v.put(Column.IS_FILE.getName(), true);
+        v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
+
+        long id = -1;
+        synchronized (TAG) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
+            try {
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+                } finally {
+                    db.close();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+        if (id != -1) {
+//            Log.v(TAG, "put2, copy file, " + id);
+            // copy the file to the file store
+            String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
+            new File(appFileStore).mkdirs();
+            File dest = new File(appFileStore + "/" + id + "_" + filename);
+
+            if (dest.exists())
+                dest.delete();
+
+            boolean copySuccess = false;
+            try {
+                FileOutputStream fout = new FileOutputStream(dest);
+                fout.write(data);
+                fout.close();
+                copySuccess = true;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

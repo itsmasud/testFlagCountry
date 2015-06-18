@@ -2,15 +2,12 @@ package com.fieldnation.service.data.documents;
 
 import android.content.Context;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -44,29 +41,34 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
 
         } catch (Exception ex) {
             ex.printStackTrace();
+            return Result.ERROR;
+        }
+        return Result.FINISH;
+    }
+
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            DocumentDispatch.download(context, params.getLong("documentId"), null, true, transaction.isSync());
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return Result.FINISH;
     }
 
     private Result handleDownload(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException, IOException {
         String filename = params.getString("filename");
-        File file = null;
-        if (resultData.isFile()) {
-            file = resultData.getFile();
-        } else {
-            file = new File(GlobalState.getContext().getStoragePath() + "/temp");
-            file.mkdirs();
-            file = File.createTempFile("web", "dat", file);
-            FileOutputStream fout = new FileOutputStream(file, false);
-            fout.write(resultData.getByteArray());
-            fout.close();
-        }
-
         long documentId = params.getLong("documentId");
 
-        StoredObject obj = StoredObject.put(context, PSO_DOCUMENT, documentId, file, filename);
+        StoredObject obj = null;
+        if (resultData.isFile()) {
+            obj = StoredObject.put(context, PSO_DOCUMENT, documentId, resultData.getFile(), filename);
+        } else {
+            obj = StoredObject.put(context, PSO_DOCUMENT, documentId, resultData.getByteArray(), filename);
+        }
 
-        DocumentDispatch.download(context, documentId, obj.getFile(), transaction.isSync());
+        DocumentDispatch.download(context, documentId, obj.getFile(), false, transaction.isSync());
 
         return Result.FINISH;
     }

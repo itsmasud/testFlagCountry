@@ -56,13 +56,19 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
             String action = bundle.getString(PARAM_ACTION);
 
             if (action.startsWith(PARAM_ACTION_GET))
-                onGet(bundle.getString(PARAM_URL),
-                        (File) bundle.getSerializable(RESULT_IMAGE_FILE),
-                        bundle.getBoolean(PARAM_CIRCLE));
+                if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
+                    onGet(bundle.getString(PARAM_URL),
+                            null,
+                            bundle.getBoolean(PARAM_CIRCLE), true);
+                } else {
+                    onGet(bundle.getString(PARAM_URL),
+                            (File) bundle.getSerializable(RESULT_IMAGE_FILE),
+                            bundle.getBoolean(PARAM_CIRCLE), false);
+                }
         }
 
 
-        public void onGet(String url, File file, boolean isCircle) {
+        public void onGet(String url, File file, boolean isCircle, boolean failed) {
         }
     }
 }

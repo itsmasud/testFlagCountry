@@ -68,7 +68,7 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
     public static void get(Context context, long paymentId, boolean isSync) {
         Intent intent = new Intent(context, PaymentService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
-        intent.putExtra(PARAM_ID, paymentId);
+        intent.putExtra(PARAM_PAYMENT_ID, paymentId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
@@ -105,58 +105,69 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
         }
 
         private void preOnGet(Bundle payload) {
-            new AsyncTaskEx<Bundle, Object, Payment>() {
-                @Override
-                protected Payment doInBackground(Bundle... params) {
-                    try {
-                        Bundle bundle = params[0];
-                        return Payment.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    return null;
-                }
+            if (payload.containsKey(PARAM_ERROR) && payload.getBoolean(PARAM_ERROR)) {
+                onGet(payload.getLong(PARAM_PAYMENT_ID), null, true);
+            } else {
+                new AsyncTaskEx<Bundle, Object, Payment>() {
+                    private long paymentId;
 
-                @Override
-                protected void onPostExecute(Payment payment) {
-                    onGet(payment);
-                }
-            }.executeEx(payload);
+                    @Override
+                    protected Payment doInBackground(Bundle... params) {
+                        try {
+                            Bundle bundle = params[0];
+                            paymentId = bundle.getLong(PARAM_PAYMENT_ID);
+                            return Payment.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Payment payment) {
+                        onGet(paymentId, payment, false);
+                    }
+                }.executeEx(payload);
+            }
         }
 
-        public void onGet(Payment payment) {
+        public void onGet(long paymentId, Payment payment, boolean failed) {
         }
 
         private void preOnList(Bundle bundle) {
-            new AsyncTaskEx<Bundle, Object, List<Payment>>() {
-                private int page;
+            if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
+                onList(bundle.getInt(PARAM_PAGE), null, true);
+            } else {
+                new AsyncTaskEx<Bundle, Object, List<Payment>>() {
+                    private int page;
 
-                @Override
-                protected List<Payment> doInBackground(Bundle... params) {
-                    Bundle bundle = params[0];
-                    page = bundle.getInt(PARAM_PAGE);
-                    List<Payment> list = new LinkedList<>();
-                    try {
-                        JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
+                    @Override
+                    protected List<Payment> doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        page = bundle.getInt(PARAM_PAGE);
+                        List<Payment> list = new LinkedList<>();
+                        try {
+                            JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
 
-                        for (int i = 0; i < ja.size(); i++) {
-                            list.add(Payment.fromJson(ja.getJsonObject(i)));
+                            for (int i = 0; i < ja.size(); i++) {
+                                list.add(Payment.fromJson(ja.getJsonObject(i)));
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            return null;
                         }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        return null;
+                        return list;
                     }
-                    return list;
-                }
 
-                @Override
-                protected void onPostExecute(List<Payment> payments) {
-                    onList(payments, page);
-                }
-            }.executeEx(bundle);
+                    @Override
+                    protected void onPostExecute(List<Payment> payments) {
+                        onList(page, payments, false);
+                    }
+                }.executeEx(bundle);
+            }
         }
 
-        public void onList(List<Payment> list, int page) {
+        public void onList(int page, List<Payment> list, boolean failed) {
         }
     }
 
