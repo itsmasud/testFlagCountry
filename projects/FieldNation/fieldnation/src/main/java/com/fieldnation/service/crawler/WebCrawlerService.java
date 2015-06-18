@@ -46,9 +46,11 @@ public class WebCrawlerService extends Service {
     private final List<Workorder> _workorderDetails = new LinkedList<>();
 
     private boolean _haveProfile = false;
-    private long _pendingRequestCounter = 0;
+    //    private long _pendingRequestCounter = 0;
+    private long _lastRequestTime;
     private long _requestCounter = 0;
     private boolean _skipProfileImages = true;
+    private boolean _isRunning = false;
 
     public WebCrawlerService() {
         super();
@@ -82,7 +84,7 @@ public class WebCrawlerService extends Service {
         scheduleNext();
 
         // if already running, then return
-        if (_pendingRequestCounter > 0) {
+        if (_isRunning) {
             Log.v(TAG, "already running, stopping");
             return START_STICKY;
         }
@@ -122,35 +124,29 @@ public class WebCrawlerService extends Service {
     }
 
     private synchronized void incrementPendingRequestCounter(int val) {
-        _pendingRequestCounter += val;
-//        if (_pendingRequestCounter % 5 == 0) {
-        Log.v(TAG, "_pendingRequestCounter = " + _pendingRequestCounter);
         Log.v(TAG, "_workorderDetails.size() = " + _workorderDetails.size());
-//        }
-
-        if (_pendingRequestCounter < 50) {
-            _workorderThreadManager.wakeUp();
-        }
-
-        if (_pendingRequestCounter == 0) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (_pendingRequestCounter == 0) {
-                        scheduleNext();
-                        stopSelf();
-                    } else {
-                        incrementPendingRequestCounter(0);
-                    }
-                }
-            }, 30000);
-        }
     }
 
     private synchronized void incRequestCounter(int val) {
+        _lastRequestTime = System.currentTimeMillis();
         _requestCounter += val;
         if (_requestCounter % 5 == 0)
             Log.v(TAG, "_requestCounter = " + _requestCounter);
+    }
+
+    private void startActivityMonitor() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // check timer
+                if (System.currentTimeMillis() - _lastRequestTime > 60000) {
+                    // shutdown
+                    stopSelf();
+                } else {
+                    startActivityMonitor();
+                }
+            }
+        }, 60000);
     }
 
     @Override
@@ -159,6 +155,7 @@ public class WebCrawlerService extends Service {
         _workorderClient.disconnect(this);
         _profileClient.disconnect(this);
         _workorderThreadManager.shutdown();
+        _isRunning = false;
         super.onDestroy();
     }
 
@@ -186,6 +183,16 @@ public class WebCrawlerService extends Service {
     public void runCrawler() {
         Log.v(TAG, "runCrawler");
 
+        if (_isRunning) {
+            Log.v(TAG, "crawler skipping");
+            return;
+        }
+
+        _lastRequestTime = System.currentTimeMillis();
+        _isRunning = true;
+
+        startActivityMonitor();
+
         _workorderThreadManager.addThread(new WorkorderDetailWorker(_workorderThreadManager, this, _workorderDetails));
 
         _profileClient = new ProfileClient(_profileClient_listener);
@@ -201,12 +208,12 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_profileClient_listener.onConnected");
             _profileClient.subListMessages(true);
             _profileClient.subListNotifications(true);
-//            _profileClient.subGet(true);
-//
-            incrementPendingRequestCounter(2);
-            incRequestCounter(2);
-//            _haveProfile = false;
-//            ProfileClient.get(WebCrawlerService.this, 0, true);
+            _profileClient.subGet(true);
+
+            incrementPendingRequestCounter(3);
+            incRequestCounter(3);
+            _haveProfile = false;
+            ProfileClient.get(WebCrawlerService.this, 0, true);
             ProfileClient.listMessages(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
             ProfileClient.listNotifications(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
         }
@@ -259,11 +266,13 @@ public class WebCrawlerService extends Service {
         @Override
         public void onNotificationList(List<Notification> list, int page, boolean failed) {
             Log.v(TAG, "onNotificationList");
+
             incrementPendingRequestCounter(-1);
             if (list == null || list.size() == 0 || failed) {
                 _workorderThreadManager.wakeUp();
                 return;
             }
+
             Log.v(TAG, "onNotificationList(" + list.size() + "," + page + ")");
 
             incrementPendingRequestCounter(1);
@@ -375,9 +384,9 @@ public class WebCrawlerService extends Service {
         public boolean doWork() {
             Log.v(TAG, "doWork");
 
-            if (_pendingRequestCounter > 50) {
+            if (System.currentTimeMillis() - _lastRequestTime > 5000) {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

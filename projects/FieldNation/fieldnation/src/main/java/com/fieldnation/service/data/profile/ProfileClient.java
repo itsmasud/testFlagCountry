@@ -185,7 +185,10 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
                     @Override
                     protected void onPostExecute(Profile o) {
-                        onGet(o, false);
+                        if (o == null)
+                            onGet(null, true);
+                        else
+                            onGet(o, false);
                     }
                 }.executeEx(payload);
             }
@@ -221,7 +224,10 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
                     @Override
                     protected void onPostExecute(List<Notification> notifications) {
-                        onNotificationList(notifications, page, false);
+                        if (notifications == null)
+                            onNotificationList(null, page, true);
+                        else
+                            onNotificationList(notifications, page, false);
                     }
                 }.executeEx(payload);
             }
@@ -257,7 +263,11 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
                     @Override
                     protected void onPostExecute(List<Message> messages) {
-                        onMessageList(messages, page, false);
+                        if (messages == null) {
+                            onMessageList(null, page, true);
+                        } else {
+                            onMessageList(messages, page, false);
+                        }
                     }
                 }.executeEx(payload);
             }
