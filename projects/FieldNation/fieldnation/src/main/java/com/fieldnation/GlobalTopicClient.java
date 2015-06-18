@@ -24,6 +24,21 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         super.disconnect(context, TAG);
     }
 
+    // gcm
+    public static void dispatchGcm(Context context, String message) {
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_GCM_MESSAGE, message);
+
+        TopicService.dispatchEvent(context, TOPIC_GCM_MESSAGE, bundle, Sticky.NONE);
+    }
+
+    public boolean registerGcm() {
+        return register(TOPIC_GCM_MESSAGE, TAG);
+    }
+
     // update app
     public static void dispatchUpdateApp(Context context) {
         if (context == null)

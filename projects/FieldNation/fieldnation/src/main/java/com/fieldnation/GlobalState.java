@@ -13,6 +13,7 @@ import android.support.multidex.MultiDex;
 
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
+import com.fieldnation.gcm.RegistrationIntentService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
@@ -101,6 +102,9 @@ public class GlobalState extends Application {
 
         SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
         Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
+
+        Intent intent = new Intent(this, RegistrationIntentService.class);
+        startService(intent);
     }
 
     public int getMemoryClass() {
