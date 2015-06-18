@@ -32,7 +32,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     private TextView _distanceTextView;
     private TextView _dateTextView;
     private Button _requestButton;
-    private RelativeLayout _loadingLayout;
+//    private RelativeLayout _loadingLayout;
 
     // Data
     private long _workorderId = 0;
@@ -73,9 +73,9 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _requestButton = (Button) findViewById(R.id.request_button);
         _requestButton.setOnClickListener(_request_onClick);
-        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+//        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
-        _loadingLayout.setVisibility(View.VISIBLE);
+//        _loadingLayout.setVisibility(View.VISIBLE);
         // TODO put into wait mode
     }
 
@@ -124,7 +124,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
 
             _listview.setAdapter(_adapter);
 
-            _loadingLayout.setVisibility(View.GONE);
+//            _loadingLayout.setVisibility(View.GONE);
         }
     };
 

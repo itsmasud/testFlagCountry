@@ -1,117 +1,89 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
-    style="?attr/activityMainStyle"
+<com.fieldnation.ui.ActionBarDrawerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/actionbardrawerview"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- The main content view -->
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <include layout="@layout/view_toolbar" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/fn_gradient"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/fn_gradient"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:paddingBottom="10dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="10dp">
+                android:layout_weight="0.75"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.75"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <LinearLayout
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/bundle_imageview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.fieldnation.ui.IconFontTextView
-                            android:id="@+id/bundle_imageview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="4dp"
-                            android:text="@string/icfont_bundle"
-                            android:textColor="@color/fn_accent_color"
-                            android:textSize="24sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:maxLines="1"
-                            android:text="@string/bundle"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-                    </LinearLayout>
+                        android:layout_marginRight="4dp"
+                        android:text="@string/icfont_bundle"
+                        android:textColor="@color/fn_white_text"
+                        android:textSize="24sp" />
 
                     <TextView
-                        android:id="@+id/distance_textview"
+                        style="@style/Text_Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                    <TextView
-                        android:id="@+id/date_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                        android:maxLines="1"
+                        android:text="@string/bundle"
+                        android:textColor="@color/fn_white_text" />
                 </LinearLayout>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/distance_textview"
+                    style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.25"
-                    android:orientation="vertical">
+                    android:textColor="@color/fn_white_text" />
 
-                    <Button
-                        android:id="@+id/request_button"
-                        style="?attr/buttonWhiteStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="15dp"
-                        android:visibility="gone" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/date_textview"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/fn_white_text" />
             </LinearLayout>
 
-            <ListView
-                android:id="@+id/items_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@null"
-                android:dividerHeight="0dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.25"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/request_button"
+                    style="?attr/buttonWhiteStyle"
+                    android:visibility="gone" />
+            </LinearLayout>
         </LinearLayout>
 
-        <com.fieldnation.ui.WarningView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone" />
-
-        <com.fieldnation.ui.LoadingView
-            android:id="@+id/loading_layout"
+        <ListView
+            android:id="@+id/items_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true"
-            android:visibility="gone" />
-    </RelativeLayout>
-    <!-- The navigation drawer -->
+            android:divider="@null"
+            android:dividerHeight="0dp" />
+    </LinearLayout>
 
-    <com.fieldnation.ui.DrawerView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start" />
-
-</android.support.v4.widget.DrawerLayout>
+</com.fieldnation.ui.ActionBarDrawerView>
