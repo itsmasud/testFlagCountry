@@ -122,6 +122,10 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         ProfileTransactionBuilder.actionBlockCompany(context, profileId, companyId, eventReasonId, explanation);
     }
 
+    public static void actionRegisterDevice(Context context, String deviceId) {
+        ProfileTransactionBuilder.actionRegisterPhone(context, deviceId);
+    }
+
     public boolean subActions() {
         return subActions(0);
     }
@@ -155,7 +159,6 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
                 preOnAction(bundle);
             }
-
         }
 
         private void preOnAction(Bundle payload) {

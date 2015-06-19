@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_content"
-    style="?attr/cardStyle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    style="?attr/cardStyle">
 
     <FrameLayout
         android:id="@+id/card_container"
-        style="?attr/cardContainerStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        style="?attr/cardContainerStyle">
 
     </FrameLayout>
 </FrameLayout>

@@ -2,6 +2,8 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Context;
 
+import com.fieldnation.GlobalState;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -123,5 +125,36 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "eventReasonId=" + eventReasonId
                         + "&explanation=" + misc.escapeForURL(explanation));
+    }
+
+    public static void actionRegisterPhone(Context context, String deviceId) {
+        try {
+            HttpJsonBuilder http = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v1/api/record");
+
+            JsonObject body = new JsonObject();
+            body.put("ref", 1);
+            body.put("record", "register-mobile-device");
+            body.put("data.item_type", "gcm");
+            body.put("data.device_id", deviceId);
+            body.put("data.user_id", GlobalState.getContext().getProfile().getUserId());
+
+            http.body("[" + body.toString() + "]");
+
+            http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, "application/json");
+
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(ProfileTransactionHandler.class)
+                    .handlerParams(ProfileTransactionHandler.pAction(0, "register_device"))
+                    .useAuth(true)
+                    .key("Profile/RegisterDevice")
+                    .request(http)
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
