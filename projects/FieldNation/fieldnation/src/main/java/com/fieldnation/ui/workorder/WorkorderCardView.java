@@ -96,7 +96,6 @@ public class WorkorderCardView extends RelativeLayout {
     private boolean _isBundle;
     private String[] _statusStrings;
     private String[] _substatusStrings;
-    private String _buttonText;
     private android.location.Location _gpsLocation;
 
     public WorkorderCardView(Context context) {
@@ -647,13 +646,12 @@ public class WorkorderCardView extends RelativeLayout {
     private void buildStatusAssigned() {
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
             case CONFIRMED:
-                _buttonText = getResources().getString(R.string.btn_check_in);
+                _actionButton.setText(R.string.btn_check_in);
 //                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
-
                 break;
             case ONHOLD_UNACKNOWLEDGED:
                 _actionButton.setText(R.string.btn_acknowledge);
