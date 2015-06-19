@@ -3,8 +3,11 @@ package com.fieldnation;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.*;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
 
 import com.fieldnation.auth.client.AuthTopicReceiver;
 import com.fieldnation.auth.client.AuthTopicService;
@@ -83,6 +86,8 @@ public class GlobalState extends Application {
 
         AuthTopicService.subscribeAuthState(this, 0, TAG + ":AuthTopicService", _authReceiver);
         Topics.subscribeProfileInvalidated(this, TAG + ":ProfileService", _profile_topicReceiver);
+
+
     }
 
     public int getMemoryClass() {
@@ -160,6 +165,15 @@ public class GlobalState extends Application {
 
                         if (isCached && _service != null)
                             startService(_service.getMyUserInformation(0, false));
+
+                        try {
+                            Class<?> clazz = Class.forName("com.fieldnation.gcm.RegistrationIntentService");
+                            Intent intent = new Intent(GlobalState.this, clazz);
+                            startService(intent);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+
                     }
                 }
             }.executeEx(resultData);
