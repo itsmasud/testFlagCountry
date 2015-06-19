@@ -2,6 +2,7 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Context;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
@@ -131,12 +132,16 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .path("/api/rest/v1/profile/register_device");
+                    .path("/api/rest/v1/api/record");
 
-            JsonObject body = new JsonObject("type", "apns");
-            body.put("device_id", deviceId);
+            JsonObject body = new JsonObject();
+            body.put("ref", 1);
+            body.put("record", "register-mobile-device");
+            body.put("data.item_type", "gcm");
+            body.put("data.device_id", deviceId);
+            body.put("data.user_id", GlobalState.getContext().getProfile().getUserId());
 
-            http.body(body.toString());
+            http.body("[" + body.toString() + "]");
 
             http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, "application/json");
 

@@ -159,7 +159,6 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
                 preOnAction(bundle);
             }
-
         }
 
         private void preOnAction(Bundle payload) {

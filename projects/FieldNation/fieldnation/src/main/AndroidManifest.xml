@@ -233,7 +233,7 @@
             android:process=":crawler" />
 
         <service
-            android:name="gcm.MyGcmListenerService"
+            android:name=".gcm.MyGcmListenerService"
             android:exported="false"
             android:process=":frontside">
             <intent-filter>
@@ -242,7 +242,7 @@
         </service>
 
         <service
-            android:name="gcm.MyInstanceIDListenerService"
+            android:name=".gcm.MyInstanceIDListenerService"
             android:exported="false"
             android:process=":frontside">
             <intent-filter>

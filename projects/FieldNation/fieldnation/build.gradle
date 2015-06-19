@@ -62,12 +62,12 @@ dependencies {
     compile project(':libJson')
     compile project(':libUtils')
     compile project(':libDateTimePicker')
+    compile 'com.android.support:multidex:1.0.0'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.3@aar') { transitive = true }
+    compile 'com.google.android.gms:play-services:7.5.+'
+    compile 'com.google.android.gms:play-services-gcm:7.5.+'
     compile 'com.android.support:design:22.2.0'
-    compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'com.android.support:multidex:1.0.0'
-    compile 'com.google.android.gms:play-services-gcm:7.5.+'
 }
