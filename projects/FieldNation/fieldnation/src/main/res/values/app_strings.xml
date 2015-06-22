@@ -7,6 +7,7 @@
     <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
     <string name="placeholder_date_short">10/20/1963</string>
+    <string name="gcm_senderid">179310690338</string>
 
     <string name="activity_login_title">Field Nation Login</string>
     <string name="activity_login_username">Username</string>
