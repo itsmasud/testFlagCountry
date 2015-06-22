@@ -109,6 +109,11 @@ public class GlobalState extends Application {
     /*-**********************-*/
     private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
         @Override
+        public void onRegister(int resultCode, String topicId) {
+            AuthTopicService.requestAuthentication(GlobalState.this);
+        }
+
+        @Override
         public void onAuthentication(String username, String authToken, boolean isNew) {
             if (_service == null || isNew) {
                 _service = new ProfileService(GlobalState.this, username, authToken, _resultReciever);
@@ -125,11 +130,6 @@ public class GlobalState extends Application {
         @Override
         public void onAuthenticationInvalidated() {
             _service = null;
-        }
-
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(GlobalState.this);
         }
     };
 
