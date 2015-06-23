@@ -18,7 +18,7 @@ public class JsonTokenizer {
             return;
 
         char c = _source.charAt(_index);
-        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' && _index < _source.length()) {
+        while ((c == ' ' || c == '\t' || c == '\r' || c == '\n') && _index < _source.length()) {
             _index++;
             if (_index < _source.length())
                 c = _source.charAt(_index);

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.rpc.common.WebServiceConstants;
 import com.fieldnation.topics.Topics;
@@ -52,15 +51,20 @@ public class HttpReadRunnable extends HttpRunnable implements WebServiceConstant
                 try {
                     Result result = ws.httpRead(method, path, options, contentType);
 
-                    if (result.getResponseCode() / 100 != 2) {
+                    if (result.getResponseCode() / 100 == 5) {
+                        Log.v(TAG, "server down: " + result.getResponseCode());
+                        bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
+                        bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
+                        bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
+                        bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
+                        Topics.dispatchNetworkDown(_context);
+                    } else if (result.getResponseCode() / 100 != 2) {
                         Log.v(TAG, "Error response: " + result.getResponseCode());
                         bundle.putInt(KEY_RESPONSE_CODE, result.getResponseCode());
                         bundle.putString(KEY_RESPONSE_ERROR_TYPE, ERROR_HTTP_ERROR);
                         bundle.putString(KEY_RESPONSE_ERROR, result.getResponseMessage());
                         bundle.putByteArray(KEY_RESPONSE_DATA, result.getResultsAsByteArray());
-
                     } else {
-
                         try {
                             Topics.dispatchNetworkUp(_context);
                             // happy path
