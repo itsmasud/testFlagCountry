@@ -85,6 +85,6 @@ public class SorryFragment extends FragmentBase {
     };
 
     public interface Listener {
-        public void onDoneClick();
+        void onDoneClick();
     }
 }

@@ -1,7 +1,7 @@
 package com.fieldnation.rpc.server;
 
 
-
+import com.fieldnation.BuildConfig;
 import com.fieldnation.Log;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class Ws {
      * Set to true to enable HTTPS, set to false to disable HTTPS. Default =
      * True
      */
-    public static boolean USE_HTTPS = true;
+    public static boolean USE_HTTPS = BuildConfig.USE_HTTPS;
     /**
      * Set to true to enable debug mode, set to false to disable it.
      */

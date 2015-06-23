@@ -3,12 +3,10 @@ package com.fieldnation.rpc.server;
 import android.accounts.AccountManager;
 import android.content.Context;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.auth.server.AuthCache;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.misc;
 
 import java.io.IOException;
@@ -113,12 +111,14 @@ public class OAuth {
             if (Ws.DEBUG)
                 Ws.trustAllHosts();
             conn = (HttpURLConnection) new URL("https://" + hostname + path).openConnection();
+            Log.v(TAG, "https://" + hostname + path);
 
             // only allow if debugging
             if (Ws.DEBUG)
                 ((HttpsURLConnection) conn).setHostnameVerifier(Ws.DO_NOT_VERIFY);
         } else {
             conn = (HttpURLConnection) new URL("http://" + hostname + path).openConnection();
+            Log.v(TAG, "http://" + hostname + path);
         }
 
         conn.setRequestMethod("POST");
@@ -130,7 +130,7 @@ public class OAuth {
         OutputStream out = conn.getOutputStream();
 
         String payload = "grant_type=" + grantType + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&username=" + misc.escapeForURL(username) + "&password=" + misc.escapeForURL(password);
-        //Log.v(TAG, payload);
+        Log.v(TAG, payload);
         // payload = misc.escapeForURL(payload);
         out.write(payload.getBytes());
 
@@ -138,6 +138,7 @@ public class OAuth {
 
         conn.disconnect();
         Log.v(TAG, result.getResponseCode() + "");
+        Log.v(TAG, result.getResultsAsString());
         JsonObject token = result.getResultsAsJsonObject();
         // TODO, add some timing, learn how to use the refresh token
         token.put("hostname", hostname);
