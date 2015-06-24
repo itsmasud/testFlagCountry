@@ -118,6 +118,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
                 Signature sig = _list[i];
                 v.setSignature(sig);
                 v.setOnClickListener(_signature_onClick);
+                v.setOnLongClickListener(_signature_onLongClick);
             }
 
             @Override
@@ -148,7 +149,16 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
             SignatureCardView view = (SignatureCardView) v;
             if (_listener != null)
                 _listener.signatureOnClick(view, view.getSignature());
+        }
+    };
 
+    private final View.OnLongClickListener _signature_onLongClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            SignatureCardView view = (SignatureCardView) v;
+            if (_listener != null)
+                return _listener.signatureOnLongClick(view, view.getSignature());
+            return false;
         }
     };
 
@@ -156,6 +166,8 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         void addSignature();
 
         void signatureOnClick(SignatureCardView view, Signature signature);
+
+        boolean signatureOnLongClick(SignatureCardView view, Signature signature);
     }
 
 }

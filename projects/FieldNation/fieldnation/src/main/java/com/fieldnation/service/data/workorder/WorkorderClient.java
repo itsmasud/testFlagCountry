@@ -360,6 +360,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.addSignatureSvgTask(context, workorderId, taskId, name, svg);
     }
 
+    public static void deleteSignature(Context context, long workorderId, long signatureId) {
+        WorkorderTransactionBuilder.deleteSignature(context, workorderId, signatureId);
+    }
+
+
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/

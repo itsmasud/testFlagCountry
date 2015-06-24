@@ -72,6 +72,7 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
@@ -149,6 +150,7 @@ public class WorkFragment extends WorkorderFragment {
     private WorkLogDialog _worklogDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
+    private TwoButtonDialog _deleteSignatureDialog;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -340,7 +342,7 @@ public class WorkFragment extends WorkorderFragment {
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
-
+        _deleteSignatureDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -1239,6 +1241,29 @@ public class WorkFragment extends WorkorderFragment {
         public void signatureOnClick(SignatureCardView view, Signature signature) {
             SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
             setLoading(true);
+        }
+
+        @Override
+        public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
+            _deleteSignatureDialog.setData("Delete Signature",
+                    "Are you sure you want to delete this signature?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkorderClient.deleteSignature(GlobalState.getContext(),
+                                    _workorder.getWorkorderId(), signature.getSignatureId());
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _deleteSignatureDialog.show();
+            return true;
         }
     };
 

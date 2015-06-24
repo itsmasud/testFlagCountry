@@ -362,6 +362,23 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    public static void deleteSignature(Context context, long workorderId, long signatureId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "delete_signature"))
+                    .useAuth(true)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
 /*
     public static void addSignatureJson(Context context, long workorderId, String name, String json) {
         action(context, workorderId, "signature", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
