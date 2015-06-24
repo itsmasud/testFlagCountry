@@ -26,11 +26,10 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private Listener _listener;
 
     public PagingAdapter() {
-
     }
 
-    public PagingAdapter(boolean showRateMe) {
-        _showRateMe = showRateMe;
+    public void setShowRateMe(boolean show) {
+        _showRateMe = show;
     }
 
     public void setPage(int page, List<T> items) {
