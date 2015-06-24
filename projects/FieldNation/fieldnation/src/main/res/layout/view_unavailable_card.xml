@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.fieldnation.ui.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Marketplace suspension" />
+
+        <TextView
+            android:id="@+id/caption_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="You are currently suspended" />
+
+        <Button
+            android:id="@+id/action_button"
+            style="?attr/buttonGrayStyle"
+            android:text="CALL SUPPORT" />
+    </LinearLayout>
+</com.fieldnation.ui.CardView>

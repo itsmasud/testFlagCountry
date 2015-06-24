@@ -4,29 +4,29 @@
     android:layout_height="match_parent">
 
     <com.fieldnation.ui.OverScrollListView
-        android:animateLayoutChanges="true"
         android:id="@+id/workorders_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:animateLayoutChanges="true"
         android:divider="@null"
         android:dividerHeight="0dp"
         android:smoothScrollbar="true" />
 
-    <com.fieldnation.ui.EmptyWoListView
-        android:visibility="gone"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+    <com.fieldnation.ui.UnavailableCardView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone" />
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/loading_view"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
 
 </RelativeLayout>
