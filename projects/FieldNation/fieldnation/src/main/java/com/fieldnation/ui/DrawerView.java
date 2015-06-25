@@ -25,6 +25,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.ui.dialog.FeedbackDialog;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -54,6 +55,9 @@ public class DrawerView extends RelativeLayout {
     private TextView _providerIdTextView;
     private NavProfileDetailListView _profileListView;
     private LinearLayout _linkContainerView;
+
+    // Dialogs
+    private FeedbackDialog _feedbackDialog;
 
     // items
     private RelativeLayout _myworkView;
@@ -128,6 +132,13 @@ public class DrawerView extends RelativeLayout {
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+
+
+        // Dialog
+        _feedbackDialog = FeedbackDialog.getInstance(getFragmentManager(), TAG);
+        _feedbackDialog.setListener(_feedbackDialog_onOk);
+
+        ((GlobalState) getContext().getApplicationContext())
 
         // items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
