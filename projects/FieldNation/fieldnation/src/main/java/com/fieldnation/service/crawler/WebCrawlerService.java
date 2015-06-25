@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
@@ -51,6 +52,8 @@ public class WebCrawlerService extends Service {
     private long _requestCounter = 0;
     private boolean _skipProfileImages = true;
     private boolean _isRunning = false;
+    private long _imageDaysToLive = -1;
+    private boolean _runningPurge = false;
 
     public WebCrawlerService() {
         super();
@@ -75,6 +78,10 @@ public class WebCrawlerService extends Service {
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
+        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_profile_photo_ttl), "-1"));
+
+        purgeOldData();
+
         // we're not allowed to run, stop
         if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false)) {
             Log.v(TAG, "sync disabled, quiting");
@@ -91,25 +98,7 @@ public class WebCrawlerService extends Service {
 
         // if not running then
         if (intent != null && intent.hasExtra("IS_ALARM")) {
-            //      check the following
-            //      check last start time against current time
-            //      check current time against time rule
-            //      check wifi rules
-            //      check power rules
-            //      get profile image rule
-            //      if all is ok then start up
-
             Log.v(TAG, "alarm triggered");
-
-            // TODO do the purge... cause we got nowhere else to do it right now
-            new AsyncTaskEx<Object, Object, Object>() {
-                @Override
-                protected Object doInBackground(Object... params) {
-                    misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
-                    StoredObject.flush(WebCrawlerService.this, 604800000); // 1 week
-                    return null;
-                }
-            }.executeEx();
 
             _skipProfileImages = settings.getBoolean(getString(R.string.pref_key_sync_skip_profile_images), true);
 
@@ -121,6 +110,59 @@ public class WebCrawlerService extends Service {
         Log.v(TAG, "Do nothing");
 
         return START_NOT_STICKY;
+    }
+
+    private void purgeOldData() {
+        if (_runningPurge)
+            return;
+
+        _runningPurge = true;
+        // TODO do the purge... cause we got nowhere else to do it right now
+        new AsyncTaskEx<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object... params) {
+                Log.v(TAG, "Flushing logs");
+                misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
+                Log.v(TAG, "flushing data");
+                StoredObject.flush(WebCrawlerService.this, 604800000); // 1 week
+
+                Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + GlobalState.getContext().haveWifi());
+                // only flush if we have wifi, so that the app can get new ones without
+                // worrying about cell traffic
+                if (_imageDaysToLive > -1 && GlobalState.getContext().haveWifi()) {
+                    long days = _imageDaysToLive * 86400000;
+                    long cutoff = System.currentTimeMillis();
+                    List<StoredObject> list = StoredObject.list(WebCrawlerService.this, "PhotoCache");
+
+                    Log.v(TAG, "Flushing photos");
+                    int count = 0;
+                    for (StoredObject obj : list) {
+                        if (obj.getLastUpdated() + days < cutoff) {
+                            StoredObject.delete(WebCrawlerService.this, obj);
+                            count++;
+                        }
+                    }
+
+                    list = StoredObject.list(WebCrawlerService.this, "PhotoCacheCircle");
+
+                    for (StoredObject obj : list) {
+                        if (obj.getLastUpdated() + days < cutoff) {
+                            StoredObject.delete(WebCrawlerService.this, obj);
+                            count++;
+                        }
+                    }
+
+                    Log.v(TAG, "Flushing photos " + count);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                _runningPurge = false;
+            }
+        }.executeEx();
     }
 
     private synchronized void incrementPendingRequestCounter(int val) {

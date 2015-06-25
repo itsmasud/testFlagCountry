@@ -133,7 +133,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
             boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
-            boolean requirePower = settings.getBoolean(getString(R.string.pref_key_require_power), true);
+            boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
 
             ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);

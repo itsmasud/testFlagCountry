@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -357,5 +359,11 @@ public class GlobalState extends Application {
         File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName);
         temppath.mkdirs();
         return temppath.getAbsolutePath();
+    }
+
+    public boolean haveWifi() {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return wifi.isConnected();
     }
 }
